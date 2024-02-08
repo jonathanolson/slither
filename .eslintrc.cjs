@@ -1,19 +1,18 @@
 module.exports = {
-  "root": true,
-  // "parser": "@typescript-eslint/parser",
-  // "plugins": [ "@typescript-eslint" ],
-  "rules": {
-    "no-bitwise": "off"
+  root: true,
+  rules: {
+    'no-bitwise': 'off'
   },
-  "globals": {
+  globals: {
   },
-  "overrides": [
+  ignorePatterns: [ 'dist' ],
+  overrides: [
     {
-      "files": [
-        "**/*.ts"
+      files: [
+        '**/*.ts'
       ],
-      "parserOptions": {
-        "sourceType": "module"
+      parserOptions: {
+        sourceType: 'module'
       }
     }
   ],
