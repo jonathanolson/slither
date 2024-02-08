@@ -1,6 +1,6 @@
 
 import './main.css';
-import { Node, Display, Text, VBox, Font, AlignBox } from '../../scenery/js/imports.ts';
+import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from '../../scenery/js/imports.ts';
 import TextPushButton from '../../sun/js/buttons/TextPushButton.ts';
 import platform from '../../phet-core/js/platform.ts';
 import NumberProperty from '../../axon/js/NumberProperty.ts';
@@ -9,9 +9,12 @@ import StringProperty from '../../axon/js/StringProperty.ts';
 import Property from '../../axon/js/Property.ts';
 import Bounds2 from '../../dot/js/Bounds2.ts';
 
-const scene = new Node( {
+const rootNode = new Node( {
   renderer: 'svg'
 } );
+
+const scene = new Node();
+rootNode.addChild( scene );
 
 const buttonPressPatternString = new StringProperty( 'Button presses: {{count}}' );
 
@@ -20,7 +23,7 @@ const font = new Font( {
   size: 25
 } );
 
-const display = new Display( scene, {
+const display = new Display( rootNode, {
   width: 400,
   height: 100,
   allowWebGL: true,
@@ -33,6 +36,9 @@ const display = new Display( scene, {
   listenToOnlyElement: false
 } );
 document.body.appendChild( display.domElement );
+
+const zoomListener = new AnimatedPanZoomListener( scene );
+display.addInputListener( zoomListener );
 
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
@@ -66,14 +72,17 @@ let resizePending = true;
 const resize = () => {
   resizePending = false;
 
-  display.setWidthHeight( window.innerWidth, window.innerHeight );
-  layoutBoundsProperty.value = new Bounds2( 0, 0, window.innerWidth, window.innerHeight );
+  const layoutBounds = new Bounds2( 0, 0, window.innerWidth, window.innerHeight );
+  display.setWidthHeight( layoutBounds.width, layoutBounds.height );
+  layoutBoundsProperty.value = layoutBounds;
 
   if ( platform.mobileSafari ) {
     window.scrollTo( 0, 0 );
   }
 
-  // TODO: animatedPanZoomListener(!)
+  // zoomListener.setTargetScale( scale );
+  zoomListener.setTargetBounds( layoutBounds );
+  zoomListener.setPanBounds( layoutBounds );
 };
 
 const resizeListener = () => { resizePending = true; }
@@ -83,8 +92,10 @@ window.addEventListener( 'orientationchange', resizeListener );
 window.visualViewport && window.visualViewport.addEventListener( 'resize', resizeListener );
 resize();
 
-display.updateOnRequestAnimationFrame( _dt => {
+display.updateOnRequestAnimationFrame( dt => {
   if ( resizePending ) {
     resize();
   }
+
+  zoomListener.step( dt );
 } );

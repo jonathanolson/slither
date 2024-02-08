@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
     "vite": "^5.1.0",
     "eslint": "~8.28.0",
     "typescript": "~5.3.3",
