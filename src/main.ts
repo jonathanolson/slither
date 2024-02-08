@@ -9,12 +9,12 @@ import StringProperty from '../../axon/js/StringProperty.ts';
 import Property from '../../axon/js/Property.ts';
 import Bounds2 from '../../dot/js/Bounds2.ts';
 
-const rootNode = new Node( {
-  renderer: 'svg'
-} );
-
 const scene = new Node();
-rootNode.addChild( scene );
+
+const rootNode = new Node( {
+  renderer: 'svg',
+  children: [ scene ]
+} );
 
 const buttonPressPatternString = new StringProperty( 'Button presses: {{count}}' );
 
@@ -24,8 +24,6 @@ const font = new Font( {
 } );
 
 const display = new Display( rootNode, {
-  width: 400,
-  height: 100,
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
   allowSceneOverflow: false,
@@ -66,9 +64,7 @@ scene.addChild( new AlignBox( mainBox, {
 
 display.initializeEvents();
 
-
 let resizePending = true;
-
 const resize = () => {
   resizePending = false;
 
