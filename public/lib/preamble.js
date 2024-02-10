@@ -26,3 +26,21 @@ window.phet.chipper.stringRepos = [
     "requirejsNamespace": "VEGAS"
   }
 ];
+window.phet.chipper.strings = {
+  en: {
+    "a11y": {
+      "numberSpinnerRoleDescription": {
+        "value": "number spinner"
+      },
+      "close": {
+        "value": "Close"
+      },
+      "closed": {
+        "value": "Closed"
+      },
+      "titleClosePattern": {
+        "value": "{{title}}, Close."
+      }
+    }
+  }
+};

@@ -1,13 +1,11 @@
 
 import './main.css';
-import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from '../../scenery/js/imports.ts';
-import TextPushButton from '../../sun/js/buttons/TextPushButton.ts';
-import platform from '../../phet-core/js/platform.ts';
-import NumberProperty from '../../axon/js/NumberProperty.ts';
-import PatternStringProperty from '../../axon/js/PatternStringProperty.ts';
-import StringProperty from '../../axon/js/StringProperty.ts';
-import Property from '../../axon/js/Property.ts';
-import Bounds2 from '../../dot/js/Bounds2.ts';
+
+import { platform } from 'phet-lib/phet-core';
+import { Bounds2 } from 'phet-lib/dot';
+import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
+import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
+import { TextPushButton } from 'phet-lib/sun';
 
 const scene = new Node();
 
