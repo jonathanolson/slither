@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 // Using js/ts compatibility from https://github.com/vitejs/vite/issues/3040
 
