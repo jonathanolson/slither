@@ -7,6 +7,7 @@ import { Property, NumberProperty, PatternStringProperty, StringProperty } from 
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 
+// @ts-ignore
 window.assertions.enableAssert();
 
 const scene = new Node();
