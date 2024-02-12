@@ -53,14 +53,34 @@ Features:
   - Accessibility
     - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right") 
 
+- TODO: combine this with the section below
 - Solving
   - Fundamentally async/await? (e.g. delayed auto-solver in general?) - Or should we synchronous it for simple ones? 
-  - Determine what data types each solver needs (most basic is EdgeState).  
+  - Determine what data types each solver needs (most basic is EdgeState).
+  - Solvers (in Scala):
+    - can attach/detach, and mark if they are "dirty" -- re-evaluate how useful this is?
+    - Can we... list locations (and listen to state changes) to determine what we might need to re-evaluate?
+      - e.g. for a pattern... have a custom "we've checked these areas, these other areas have changed" sense?
+  - Backtrack:
+    - Generalize for any "binary toggle" that is feasible. "Edge", "Color", or vertex state might make sense. Maybe "connection" too?
+      - For instance, if an area connects 
+    - Take a state, pick a white edge, and solve both the red and black case for the edge (could extend to other things)
+      - If one fails due to invalid "state", the other is correct
+      - If not, optionally look at OTHER state that is the SAME in both versions
+        - (basically, look at the changed state for each case, and see if there is overlap) 
+    - Could... do other things than toggling an edge. Looking at combinations of edges for faces or vertices. Vertex state
+      - OOO or coloring? 
+    - Look for the most "fruitful" / changing edges/changes
+  - Pattern solving (GENERALIZE, see below in implementation)
+  - "Finder" can find patterns, or use patterns/solvers/combination to solve everything (or to a point).
+    - e.g. anything ending in backtrack will "work"
+  - Can we write... a RAW solver? To double-check?
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
   - Colorings, and the advanced "how they meet" rules
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
+  - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?"
   - Refer to things with Jordan curves
     - Different from "enclosing curve"? - how to handle going "corner through vertices" for the "needs 2+" in
       - Can JUST use FaceValue (basic), but also EdgeState (normal) or VertexState (advanced!) or coloring (yes!)
