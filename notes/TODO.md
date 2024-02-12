@@ -28,6 +28,8 @@ Features:
     - Themes INCLUDE the animation(!)
       - Show animated "previews/thumbnails" in theme picker
     - Possibly multiple views (one coloring, one vertex?)
+  - Themes
+    - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show 
   - Interaction
     - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
       - Use offset curves or "what is closest"? 
@@ -48,6 +50,8 @@ Features:
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
   - Refer to things with Jordan curves
   - Do have a solver have pseudo-edges and pseudo-faces (marked "outside") around the border?
+  - Boolean SAT, https://www.comp.nus.edu.sg/~gregory/sat/, https://www.comp.nus.edu.sg/~gregory/sat/sat.js, https://jgalenson.github.io/research.js/demos/minisat.html
+    - miniSAT looks... nice. Embrace the NP-completeness! 
 
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard" 
@@ -60,3 +64,82 @@ Features:
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
   - check r/slitherlink for more cases that were explained well!
+
+- Concepts
+  - Store "actions" as a history.
+  - "ethereal/fake/ghost" edges/faces/vertices for iterators?
+  - Separate structure from data
+    - "structure" is the topology, faces/vertices/edges/face values - doesn't change while solving
+    - "data" is the edge-state, coloring, vertex-state, etc. - changes while solving
+  - 
+  - Structure
+    - Grid
+      - Faces: Face[]
+      - Vertices: Vertex[]
+      - Edges: Edge[]
+      - "parent" - a grid with fewer "things done" (... why not save that info elsewhere?) 
+      - allowsInvalid?
+      - "openBorders" - whether the "outside" is treated as white or red
+      - Grid4:
+        - rows/cols (of faces)
+    - Edge
+      - a, b: Vertex   (vertices: Vertex[])
+      - fa, fb: Face   (faces: Face[])
+      - otherVertex(v: Vertex): Vertex
+      - otherFace(f: Face): Face
+      - Edge4 --- concept of N/S or E/W vertex/face, and coordinates in a grid (perhaps use vertex for coordinates)
+    - HalfEdge
+      - edge: Edge
+      - reversed: HalfEdge
+      - nextEdge, previousEdge: HalfEdge
+      - face: Face (... or how to handle ghost)
+      - isReversed: bool
+      - start, end: Vertex
+    - Face
+      - coordinates: { x, y }? (can we... map all coordinates that way in an integer form for all our shapes?) 
+      - halfEdges: HalfEdge[] <--- in order, do winding maps like alpenglow/kite
+      - edges: Edge[] <--- derived?
+      - vertices: Vertex[] <--- derived?
+    - Vertex
+      - coordinates: { x, y }? (can we... map all coordinates that way in an integer form for all our shapes?)
+      - incidentHalfEdges: HalfEdge[] <-- in CCW order, do winding maps like alpenglow/kite
+      - reflectedHalfEdges: HalfEdge[] <-- derived
+      - edges (CCW): Edge[] <--- derived
+      - faces: Face[] <--- derived?
+      - getEdgeTo/edgeTo( otherVertex: Vertex ): Edge
+    - CardinalDirection: N/S/E/W
+    - OrdinalDirection: NE/SE/SW/NW (Intercardinal?)
+    - Direction: CardinalDirection | OrdinalDirection
+    - square grid:
+      - N/S/E/W and NE/SE/SW/NW
+    - Face4:
+      - N/S/E/W edges, and NE/SE/SW/NW vertices
+      - getEdge( dir: CardinalDirection ): Edge
+      - directionOfEdge( edge ): CardinalDirection
+      - getVertex( dir: OrdinalDirection ): Vertex
+      - directionOfVertex( vertex ): OrdinalDirection
+    - Vertex4:
+      - N/S/E/W edges, and NE/SE/SW/NW faces 
+      - getEdge( dir: CardinalDirection ): Edge
+      - directionOfEdge( edge ): CardinalDirection
+      - getFace( dir: OrdinalDirection ): Face
+      - directionOfFace( face ): OrdinalDirection
+      - emptyDirections(): CardinalDirection[]
+  - Data:
+    - EdgeState: black / white / red
+    - SimplifiedVertexState: note if it is incident/spiked
+    - VertexState:
+      - Allow empty or every combination of 2 edges
+    - LineColor: (so we can connect things) --- note we handle this ideally for across-2s
+    - FaceColor: Inside / Outside / ...others? <--- how do we handle collections of faces and coloring?
+      - opposite: FaceColor --- display with opposite hues?
+    - Jordan curve squares (possibilities and rules)
+    - SAT formats
+    - VertexState4:
+      - bools: allowEmpty, allowHorizontal, allowVertical, allowNorthwest, allowNortheast, allowSouthwest, allowSoutheast
+      - allows( state: EdgeState red/black, dir: CardinalDirection ): bool
+      - with/without/booleanops/rotated/etc., see source in Scala
+  - Actions:
+    - EdgeStateMove: { edge: Edge, state: EdgeState }
+  - Solver
+    - canAssumeUnique? 
