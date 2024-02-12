@@ -3,7 +3,7 @@ Features:
 
 - Shapes
   - Get topological handling for any shape, but specialize for 4x4 grid
-  - Hex!
+  - Hex! And other planar tilings
   - NO sphere, easier for the graphics/model to not make that generalization right now
 
 - UI
@@ -25,12 +25,14 @@ Features:
     - Optional: red x's look ... not great on triangular potentially?
     - SLICK animation(!)
       - Can we make it more intuitive by having the line animate?
+      - Option for no animation, or animation speed
     - Themes INCLUDE the animation(!)
       - Show animated "previews/thumbnails" in theme picker
     - Possibly multiple views (one coloring, one vertex?)
   - Themes
     - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show 
   - Interaction
+    - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
     - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
       - Use offset curves or "what is closest"? 
     - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
@@ -42,7 +44,7 @@ Features:
     - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right") 
 
 - Solving
-  - Binary satisfiability rules (a more general "either or") 
+  - Determine what data types each solver needs (most basic is EdgeState).  
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
   - Colorings, and the advanced "how they meet" rules
@@ -54,12 +56,16 @@ Features:
     - miniSAT looks... nice. Embrace the NP-completeness! 
 
 - Puzzle generation
-  - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard" 
+  - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
+  - A very fast puzzle generator would be needed for people (e.g. me) to play for free
 
 - Generate/show rules
+  - Show a full explainer (with immutable views of puzzles)
+    - Link off to full databases of patterns 
   - How can we detect/visualize highlander rules?
   - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
   - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
+  - Grab rules from my discord paster
 
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
@@ -127,19 +133,95 @@ Features:
       - emptyDirections(): CardinalDirection[]
   - Data:
     - EdgeState: black / white / red
-    - SimplifiedVertexState: note if it is incident/spiked
-    - VertexState:
+    - SimplifiedVertexState: note if it is incident/spiked --- how does this extend to other grid types (don't try?)?
+    - VertexState: (can pretend to be SimplifiedVertexState)
       - Allow empty or every combination of 2 edges
     - LineColor: (so we can connect things) --- note we handle this ideally for across-2s
     - FaceColor: Inside / Outside / ...others? <--- how do we handle collections of faces and coloring?
       - opposite: FaceColor --- display with opposite hues?
-    - Jordan curve squares (possibilities and rules)
+    - Jordan curve around face (possibilities and rules)
     - SAT formats
     - VertexState4:
       - bools: allowEmpty, allowHorizontal, allowVertical, allowNorthwest, allowNortheast, allowSouthwest, allowSoutheast
       - allows( state: EdgeState red/black, dir: CardinalDirection ): bool
       - with/without/booleanops/rotated/etc., see source in Scala
+  - Utils:
+    - Spot (like an iterator, that basically holds a vertex/half-edge and provides a lot)
+      - PROVIDES ACCESS TO THE DATA/GRID?
+      - "open" or "closed" boundaries (whether it returns data that is valid or not outside of boundaries).
+      - nextLeft, nextRight, previousLeft, previousRight: Spot
+    - Spot4 --- allows "ghost" operations, where we are not on a real vertex/edge/face, but it knows the coordinates
+      - getEdge( dir: CardinalDirection ): Edge
+      - getVertex( dir: CardinalDirection ): Vertex
+      - getFace( dir: OrdinalDirection ): Face
+      - N/S/E/W edge, vertex
+      - NE/SE/SW/NW face
+      - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
   - Actions:
+    - Should be "somewhat atomic"
+    - global simplify( state: ..., actions: Action[] ): Action[]
+      - Removes ones that don't apply an affect (after the previous ones, e.g. removes duplicates)
+      - Can detect if there is no change
+    - (have one for each... data type....?) 
+    - ErrorAction (with a string or graphical representation?)
     - EdgeStateMove: { edge: Edge, state: EdgeState }
   - Solver
-    - canAssumeUnique? 
+    - How to handle "invalid grid" / "invalid vertex state"? 
+    - canAssumeUnique?
+    - Ability to "split" computation into awaits, with sleep(0)s, so we can keep our UI thread responsive
+      - Can we use... web workers? ---- WEB WORKERS!!!!!!!!!!!!!!!!
+  - Pattern (GridPattern?) -- less general than "solver"
+    - check( spot: Spot, reversed: bool ): bool - whether it matches and can be applied
+    - apply( spot: Spot, reversed: bool ): Action[] - what to do
+    - !!! data for the ability to explain the pattern to the user (in a specific case too?)
+    - bounds: ???PatternBounds? <---- maybe don't have this?
+    - shift( rowShift, colShift ): Pattern
+    - flipHorizontal/flipVertical/rotate90/rotate180/rotate270: Pattern
+    - Have types of patterns:
+      - ( FaceValue + EdgeState )
+      - ( FaceValue + EdgeState + SimplifiedVertexState )
+      - ( FaceValue + EdgeState + VertexState )
+      - ( FaceValue + EdgeState + LineColor )
+      - ( FaceValue + EdgeState + FaceColor )
+      - ( FaceValue + EdgeState + JordanState )
+    - NOTE: can be "extended" patterns, e.g. like extended-2-spike (doesn't need to be fixed and have bounds?)
+      - e.g. while vertexstate handles spike 3-2-2-3, we can have a pattern that handles this with just EdgeState
+    - NOTE: can be "mechanical/recorded" patterns too (e.g. have a database of these)
+    - NOTE: PATTERNS CAN APPLY ACROSS TOPOLOGIES IN MANY CASES
+  - Pattern examples:
+    - "If a face of value N has N black edges, the rest are red"
+      - (error state if face has more than N black edges)
+    - "If a face of value N has edgeCount-N red edges, the rest are black"
+      - (error state if face has more than edgeCount-N red edges)
+    - "If a vertex has 2 black edges, the rest are red"
+      - (error state if vertex has more than 2 black edges)
+    - "If a vertex has 1 black edge and 1 white edge, turn white => black"
+      - (error state if vertex has 1 black and N-1 red) 
+  - View
+    - Coordinates 
+      - Each vertex has view coordinates
+      - Each face has a coordinate for its center (for display of the number)
+    - Make "only the play area" zoomable?
+  - Interaction
+    - User interaction history
+      - Auto-solve can then provide additional actions
+        - E.g. if the user is toggling white/black/red on something they just toggled, we will:
+          - UNDO auto-solve, apply their action, RE-DO auto-solve
+      - Do we "combine" a white=>black=>red into a single action?
+    - Board states (for the interruptable animation to go in-between)
+    - Undo/redo (as a tree ideally)
+      - Can show "candidates" explored, that can be clicked on?
+      - Allow a "mark save point" (that can be jumped back to)
+    - Have PatternErrors that we can display to show conflict
+    - Have PatternExplainers that we can display to show what we can deduce next
+    - Have a "hint" button
+    - Have a "solve a single bit" button
+  - Configuration
+    - Save in localStorage 
+  - Puzzle input:
+    - Manual
+    - AI interpet puzzle image(!!!!!!)
+    - Generated
+    - !!!!!!!!!!!!!!! Allow sharing the puzzle with a URL!!!!!!
+  - Immutable views
+    - Would be great for an "explainer" page (this would be fun to write up) 
