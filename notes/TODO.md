@@ -13,16 +13,21 @@ Features:
     - Vertex coloring (e.g. spikes/incident, but also "all of the cases")
     - Loop (around square parity), but also maybe a "loop tool" where if you draw it, it will count automatically.
     - Area coloring (with specific known-inside or known-outside coloring, but also color other multiple-square areas)
+      - blue/yellow (from the path tracing demo) for inside/outside default? 
     - Line coloring (different color for each connected line), helps visualizing endpoints
       - Include culori(!) 
     - Lines go flush to (and include) the vertex dots
       - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
     - Numbers go "disabled" appearance once they are satisfied (if over-satisfied, red?)
     - Optional BLACK: solid line WHITE: dashed line, RED: no line
+      - IF we have this, potentially remove the vertices appearance if they won't have lines through them?
+      - DASHES seem like a good appearance for hex
+      - !!! This looks really nice
     - Optional: themes(!) control how things are displayed. Not too hard to do. Neon on black is neat
       - For other shapes, displaying the "potential" line looks really helpful
       - Potentially use localStorage for themes?
     - Optional: red x's look ... not great on triangular potentially?
+    - Borders have an offset
     - SLICK animation(!)
       - Can we make it more intuitive by having the line animate?
       - Option for no animation, or animation speed
@@ -30,7 +35,9 @@ Features:
       - Show animated "previews/thumbnails" in theme picker
     - Possibly multiple views (one coloring, one vertex?)
   - Themes
-    - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show 
+    - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show
+  - Pan/Zoom
+    - Can we do one-finger zoom? 
   - Interaction
     - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
     - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
@@ -38,12 +45,16 @@ Features:
     - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
     - Vertex interaction (note incident or spike? - or any of possible vertex states?) 
     - Chess-like history, with branching?
-    - Mistake detection (but only after you've "stabilized"?)
+    - "Safety net" - Mistake detection (but only after you've "stabilized"?)
+      - Slightly delayed "error" popup, option to turn off 
+      - Button to rewind + show error
     - Auto-solver for various sets of "solvers" (basic level is auto-X or auto-line)
+      - I'm used auto-solving only doing x's (face and vertex checks)
   - Accessibility
     - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right") 
 
 - Solving
+  - Fundamentally async/await? (e.g. delayed auto-solver in general?) - Or should we synchronous it for simple ones? 
   - Determine what data types each solver needs (most basic is EdgeState).  
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
@@ -51,21 +62,33 @@ Features:
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
   - Refer to things with Jordan curves
+    - Different from "enclosing curve"? - how to handle going "corner through vertices" for the "needs 2+" in
+      - Can JUST use FaceValue (basic), but also EdgeState (normal) or VertexState (advanced!) or coloring (yes!)
+        - For "enclosing", we need to make sure there is content inside and outside. Numbers or edges mean there will be edges.
+          - Numbers fully outside, or... hmm 
+    - "How to solve the Jordan curve walked a turn around white. Only one can get out through vertices" - think of curves that turn at verties.
+  - Jordan curve "corners" that only permit one through (and a closed area that needs 2+)
   - Do have a solver have pseudo-edges and pseudo-faces (marked "outside") around the border?
   - Boolean SAT, https://www.comp.nus.edu.sg/~gregory/sat/, https://www.comp.nus.edu.sg/~gregory/sat/sat.js, https://jgalenson.github.io/research.js/demos/minisat.html
-    - miniSAT looks... nice. Embrace the NP-completeness! 
+    - miniSAT looks... nice. Embrace the NP-completeness!
+    - How... do we express the loop (only one) constraint? Not easy.
 
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
   - A very fast puzzle generator would be needed for people (e.g. me) to play for free
+  - Try to generate puzzles which have patterns that I should learn
 
 - Generate/show rules
   - Show a full explainer (with immutable views of puzzles)
+    - !!! Not popular enough to NOT have an explainer. 
     - Link off to full databases of patterns 
   - How can we detect/visualize highlander rules?
   - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
   - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
   - Grab rules from my discord paster
+
+- Documentation
+  - Make clean! 
 
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
@@ -157,7 +180,7 @@ Features:
       - N/S/E/W edge, vertex
       - NE/SE/SW/NW face
       - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
-  - Actions:
+  - Actions (Commands? - naming):
     - Should be "somewhat atomic"
     - global simplify( state: ..., actions: Action[] ): Action[]
       - Removes ones that don't apply an affect (after the previous ones, e.g. removes duplicates)
@@ -197,6 +220,7 @@ Features:
       - (error state if vertex has more than 2 black edges)
     - "If a vertex has 1 black edge and 1 white edge, turn white => black"
       - (error state if vertex has 1 black and N-1 red) 
+    - "If a vertex has N-1 red, all are red"
   - View
     - Coordinates 
       - Each vertex has view coordinates
@@ -221,6 +245,7 @@ Features:
   - Puzzle input:
     - Manual
     - AI interpet puzzle image(!!!!!!)
+      - OpenVC: https://opencv.org/get-started/ 
     - Generated
     - !!!!!!!!!!!!!!! Allow sharing the puzzle with a URL!!!!!!
   - Immutable views
