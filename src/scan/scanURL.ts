@@ -1,5 +1,6 @@
 
 import cv from '@techstark/opencv-js';
+// import simpleBlobDetector from './simpleBlobDetector';
 
 const cvReady = new Promise( resolve => {
   // @ts-ignore
@@ -12,10 +13,21 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
 
   // imshow( img );
 
-  const imgGray = new cv.Mat();
-  cv.cvtColor( img, imgGray, cv.COLOR_BGR2GRAY );
+  const imgGray = matToGrayscale( img );
 
-  // imshow( imgGray );
+  // const imgGray = new cv.Mat();
+  // cv.cvtColor( img, imgGray, cv.COLOR_BGR2GRAY );
+
+  // const blobPoints = simpleBlobDetector( img, {
+  //   filterByArea: true,
+  //   minArea: 4,
+  //   maxArea: 50
+  // } );
+  // blobPoints.forEach( pt => {
+  //   cv.circle( imgGray, new cv.Point( pt.pt.x, pt.pt.y ), 5, new cv.Scalar( 0, 0, 0 ), 1, cv.LINE_8 );
+  // } );
+
+  imshow( imgGray );
 
   const imgBlurred = new cv.Mat();
   cv.GaussianBlur( imgGray, imgBlurred, new cv.Size( 5, 5 ), 0 );
@@ -30,10 +42,24 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const inverted = new cv.Mat();
   cv.bitwise_not( imgThreshold, inverted );
 
+  // const lines = new cv.Mat();
+  // cv.HoughLinesP( inverted, lines, 1, Math.PI / 2, 30, 10, 0 );
+  // // draw lines
+  // let dst = cv.Mat.zeros(inverted.rows, inverted.cols, cv.CV_8UC3);
+  // for (let i = 0; i < lines.rows; ++i) {
+  //     let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
+  //     let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
+  //     cv.line( dst, startPoint, endPoint, new cv.Scalar( 255, 0, 0 ) );
+  // }
+  // imshow( dst );
+
   imshow( inverted );
 
   const contours = new cv.MatVector();
   const hierarchy = new cv.Mat();
+
+  // TODO: try cv.CHAIN_APPROX_NONE, might be slower/better?
+  // TODO: cv.RETR_LIST probably just fine, we don't care about the tree in this case
   cv.findContours( inverted, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE );
 
   // Find dots: https://stackoverflow.com/questions/60603243/detect-small-dots-in-image
@@ -43,7 +69,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
 
   // https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html
 
-  imshow( contourImage( contours, hierarchy, img ) );
+  imshow( drawContoursFromImage( contours, hierarchy, img ) );
 
   // TODO: opencv cleanup
   // let sortableContours = [];
@@ -103,16 +129,22 @@ export default async ( url: string ) => {
   scanHTMLImageElement( domImage );
 };
 
-export const contourImage = ( contours: cv.MatVector, hierarchy: cv.Mat, reference: cv.Mat ) => {
+export const matToGrayscale = ( mat: cv.Mat ) => {
+  const gray = new cv.Mat();
+  cv.cvtColor( mat, gray, cv.COLOR_BGR2GRAY );
+  return gray;
+};
+
+export const drawContoursFromImage = ( contours: cv.MatVector, hierarchy: cv.Mat, reference: cv.Mat ) => {
   let result = cv.Mat.zeros( reference.rows, reference.cols, cv.CV_8UC3 );
 
   for ( let i = 0; i < contours.size(); i++ ) {
-      let color = new cv.Scalar(
-        Math.round( Math.random() * 128 + 64 ),
-        Math.round( Math.random() * 128 + 64 ),
-        Math.round( Math.random() * 128 + 64 )
-      );
-      cv.drawContours( result, contours, i, color, 1, cv.LINE_8, hierarchy, 1000 );
+    let color = new cv.Scalar(
+      Math.round( Math.random() * 128 + 64 ),
+      Math.round( Math.random() * 128 + 64 ),
+      Math.round( Math.random() * 128 + 64 )
+    );
+    cv.drawContours( result, contours, i, color, 1, cv.LINE_8, hierarchy, 1000 );
   }
 
   return result;

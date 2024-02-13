@@ -1,4 +1,6 @@
 
+import { Bounds2 } from 'phet-lib/dot';
+// @ts-ignore
 import tesseract from 'tesseract.js/dist/tesseract.esm.min.js';
 
 const createWorker = tesseract.createWorker;
@@ -15,8 +17,23 @@ export default async ( url: string ) => {
     tessedit_pageseg_mode: tesseract.PSM.PSM_SPARSE_TEXT
   } );
 
-  const ret = await worker.recognize( url );
-  const text = ret.data.text;
+  const result = await worker.recognize( url );
   await worker.terminate();
-  return text;
+
+  // NOTE: don't have a typed version of this metadata from Tesseract.js at the moment
+  return result.data.symbols.map( ( symbol: any ) => {
+    return new ScannedFaceValue(
+      parseInt( symbol.text ),
+      new Bounds2( symbol.bbox.x0, symbol.bbox.y0, symbol.bbox.x1, symbol.bbox.y1 ),
+      symbol.confidence
+    );
+  } );
 };
+
+export class ScannedFaceValue {
+  public constructor(
+    public readonly value: number,
+    public readonly bounds: Bounds2,
+    public readonly confidence: number
+  ) {}
+}
