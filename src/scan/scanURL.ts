@@ -82,7 +82,19 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   // TODO: cv.RETR_LIST probably just fine, we don't care about the tree in this case
   cv.findContours( inverted, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE );
 
-  console.log( new Contours( contours, hierarchy ) );
+  const contourCollection = new ContourCollection( contours, hierarchy );
+  const rootContour = contourCollection.rootContour;
+
+  const widestSubtree = _.maxBy( rootContour.getDescendantContours(), contour => contour.children.length )!;
+
+  {
+    const dst = matWithZeros( img );
+    widestSubtree.getDescendantContours().forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
 
   // Find dots: https://stackoverflow.com/questions/60603243/detect-small-dots-in-image
 
@@ -91,7 +103,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
 
   // https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html
 
-  imshow( drawContours( matWithZeros( img ), contours, hierarchy ) );
+
 
   console.log( contourToPoints( contours.get( 4 ) ) );
 
@@ -135,9 +147,18 @@ export class Contour {
 
     return contourToShape( simplifyContour( this.mat!, epsilon, closed ) );
   }
+
+  public getDescendantContours(): Contour[] {
+    const descendants: Contour[] = [];
+    this.children.forEach( child => {
+      descendants.push( child );
+      descendants.push( ...child.getDescendantContours() );
+    } );
+    return descendants;
+  }
 }
 
-export class Contours {
+export class ContourCollection {
 
   public readonly contours: Contour[];
   public readonly topLevelContours: Contour[] = [];
@@ -210,16 +231,19 @@ export const matWithZeros = ( mat: cv.Mat ): cv.Mat => {
   return cv.Mat.zeros( mat.rows, mat.cols, cv.CV_8UC3 );
 };
 
-export const drawContours = ( mat: cv.Mat, contours: cv.MatVector, hierarchy: cv.Mat ): cv.Mat => {
-  for ( let i = 0; i < contours.size(); i++ ) {
-    let color = new cv.Scalar(
-      Math.round( Math.random() * 128 + 64 ),
-      Math.round( Math.random() * 128 + 64 ),
-      Math.round( Math.random() * 128 + 64 )
-    );
-    cv.drawContours( mat, contours, i, color, 1, cv.LINE_8, hierarchy, 1000 );
-  }
-  return mat;
+export const arrayToMatVector = ( array: cv.Mat[] ): cv.MatVector => {
+  const vec = new cv.MatVector();
+  array.forEach( mat => vec.push_back( mat ) );
+  return vec;
+}
+
+export const drawContour = ( mat: cv.Mat, contours: cv.MatVector, index: number ): void => {
+  let color = new cv.Scalar(
+    Math.round( Math.random() * 128 + 64 ),
+    Math.round( Math.random() * 128 + 64 ),
+    Math.round( Math.random() * 128 + 64 )
+  );
+  cv.drawContours( mat, contours, index, color, 1, cv.LINE_8 );
 };
 
 export const simplifyContour = ( contour: cv.Mat, epsilon: number, closed: boolean ): cv.Mat => {
