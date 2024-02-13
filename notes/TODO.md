@@ -175,6 +175,8 @@ Features:
       - directionOfFace( face ): OrdinalDirection
       - emptyDirections(): CardinalDirection[]
   - Data:
+    - Data should be... getters (so we can wrap with thin "if we change this" during backtracking)
+      - Thin wrapper checks if our data OVERRIDES data on the "parent" 
     - EdgeState: black / white / red
     - SimplifiedVertexState: note if it is incident/spiked --- how does this extend to other grid types (don't try?)?
     - VertexState: (can pretend to be SimplifiedVertexState)
@@ -205,6 +207,8 @@ Features:
     - global simplify( state: ..., actions: Action[] ): Action[]
       - Removes ones that don't apply an affect (after the previous ones, e.g. removes duplicates)
       - Can detect if there is no change
+      - COMBINE actions of similar types into one composite (that can be scanned by solvers to determine dirtyness)
+      - Note: actions on... different data types are... different/reorderable?
     - (have one for each... data type....?) 
     - ErrorAction (with a string or graphical representation?)
     - EdgeStateMove: { edge: Edge, state: EdgeState }

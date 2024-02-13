@@ -6,6 +6,12 @@ import { Bounds2 } from 'phet-lib/dot';
 import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
+import scanURL from './opencv/scanURL';
+
+const opencvURL = localStorage.getItem( 'opencv-url' );
+if ( opencvURL ) {
+  scanURL( opencvURL );
+}
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -31,10 +37,13 @@ const display = new Display( rootNode, {
   accessibility: true,
   backgroundColor: '#eee',
 
-  assumeFullWindow: true,
-  listenToOnlyElement: false
+  // assumeFullWindow: true,
+  // listenToOnlyElement: false
+
+  assumeFullWindow: false,
+  listenToOnlyElement: true
 } );
-document.body.appendChild( display.domElement );
+// document.body.appendChild( display.domElement );
 
 const zoomListener = new AnimatedPanZoomListener( scene );
 display.addInputListener( zoomListener );
