@@ -16,6 +16,6 @@ export default defineConfig( {
 
   // Because of https://github.com/vitejs/vite/issues/12434?
   optimizeDeps: {
-    exclude: [ 'phet-lib' ]
+    exclude: [ 'phet-lib', 'tesseract.js' ]
   }
 } )

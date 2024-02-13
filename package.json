@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "phet-lib": "~0.0.4",
-    "@techstark/opencv-js": "4.9.0-release.2"
+    "@techstark/opencv-js": "4.9.0-release.2",
+    "tesseract.js": "~5.0.4"
   },
   "devDependencies": {
     "vite": "^5.1.0",
