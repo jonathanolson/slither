@@ -1,7 +1,6 @@
 
 import { Bounds2 } from 'phet-lib/dot';
-// @ts-ignore
-import tesseract from 'tesseract.js/dist/tesseract.esm.min.js';
+import tesseract from '../workarounds/tesseract';
 
 const createWorker = tesseract.createWorker;
 
