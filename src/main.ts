@@ -7,16 +7,16 @@ import { Property, NumberProperty, PatternStringProperty, StringProperty } from 
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL';
-import scanFaceValues from './scan/scanFaceValues';
+// import scanFaceValues from './scan/scanFaceValues';
 
 const opencvURL = localStorage.getItem( 'opencv-url' );
 if ( opencvURL ) {
   scanURL( opencvURL );
 
-  ( async () => {
-    const text = await scanFaceValues( opencvURL );
-    console.log( 'tesseract text:', text );
-  } )();
+  // ( async () => {
+  //   const text = await scanFaceValues( opencvURL );
+  //   console.log( 'tesseract text:', text );
+  // } )();
 }
 
 // @ts-ignore
