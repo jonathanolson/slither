@@ -6,6 +6,18 @@ import { Bounds2 } from 'phet-lib/dot';
 import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
+import scanURL from './scan/scanURL';
+// import scanFaceValues from './scan/scanFaceValues';
+
+const opencvURL = localStorage.getItem( 'opencv-url' );
+if ( opencvURL ) {
+  scanURL( opencvURL );
+
+  // ( async () => {
+  //   const text = await scanFaceValues( opencvURL );
+  //   console.log( 'tesseract text:', text );
+  // } )();
+}
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -37,7 +49,7 @@ const display = new Display( rootNode, {
   assumeFullWindow: false,
   listenToOnlyElement: true
 } );
-document.body.appendChild( display.domElement );
+// document.body.appendChild( display.domElement );
 
 const zoomListener = new AnimatedPanZoomListener( scene );
 display.addInputListener( zoomListener );
