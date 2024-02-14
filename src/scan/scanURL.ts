@@ -129,7 +129,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
         }
       }
       else {
-        unknownContours.push( contour );
+        // TODO: this... seems helpful as a fallback?
+        lineContours.push( contour );
       }
     }
   }
