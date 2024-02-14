@@ -30,20 +30,20 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   // imshow( img );
 
   const imgGray = matToGrayscale( img );
-  imshow( imgGray );
+  // imshow( imgGray );
 
-  {
-    const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
-    imshow( faceImage );
-
-    const faceValues = await scanFaceValues( matToURL( faceImage ) );
-    faceValues.forEach( faceValue => {
-      cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
-    } );
-    imshow( faceImage );
-
-    faceImage.delete();
-  }
+  // {
+  //   const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
+  //   imshow( faceImage );
+  //
+  //   const faceValues = await scanFaceValues( matToURL( faceImage ) );
+  //   faceValues.forEach( faceValue => {
+  //     cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
+  //   } );
+  //   imshow( faceImage );
+  //
+  //   faceImage.delete();
+  // }
 
   const blurSize = 0;
 
@@ -51,7 +51,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   // imshow( blurred );
 
   const blurredThreshold = withMat( threshold => cv.adaptiveThreshold( blurred, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
-  imshow( blurredThreshold );
+  // imshow( blurredThreshold );
 
   const inverted = withMat( inverted => cv.bitwise_not( blurredThreshold, inverted ) );
 
@@ -82,6 +82,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const dotContours: Contour[] = [];
   const zeroOuterContours: Contour[] = [];
   const zeroInnerContours: Contour[] = [];
+  const lineContours: Contour[] = [];
 
   // ZOMG compare convex hull vs bounding box... Xs likely to have high values, digits lower values
 
@@ -96,6 +97,10 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
         dotContours.push( contour );
       }
     }
+    // TODO: could lower this cutoff
+    else if ( contour.getDiagonality() < 0.2 ) {
+      lineContours.push( contour );
+    }
   } );
 
   {
@@ -103,6 +108,34 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     widestSubtree.getDescendantContours().forEach( contour => {
       const index = contourCollection.contours.indexOf( contour );
       drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+
+  {
+    const dst = matWithZeros( img );
+    widestSubtree.getDescendantContours().forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+
+      // TODO: could lower this cutoff
+      if ( contour.getDiagonality() > 0.2 && !dotContours.includes( contour ) && !zeroOuterContours.includes( contour ) && !zeroInnerContours.includes( contour ) ) {
+        drawContour( dst, contours, index );
+      }
+    } );
+    imshow( dst );
+  }
+
+  {
+    const dst = matWithZeros( img );
+    widestSubtree.getDescendantContours().forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+
+      // TODO: could lower this cutoff
+      if ( contour.getDiagonality() > 0.2 && !dotContours.includes( contour ) && !zeroOuterContours.includes( contour ) && !zeroInnerContours.includes( contour ) ) {
+        if ( contour.getCornerExtent() < 0.7 ) {
+          drawContour( dst, contours, index );
+        }
+      }
     } );
     imshow( dst );
   }
@@ -118,6 +151,14 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   { // Zeros
     const dst = matWithZeros( img );
     [ ...zeroOuterContours, ...zeroInnerContours ].forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // Lines
+    const dst = matWithZeros( img );
+    lineContours.forEach( contour => {
       const index = contourCollection.contours.indexOf( contour );
       drawContour( dst, contours, index );
     } );
