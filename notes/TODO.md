@@ -1,5 +1,5 @@
 
-Features:
+- Reorganize TODOs
 
 - Shapes
   - Get topological handling for any shape, but specialize for 4x4 grid
@@ -116,9 +116,33 @@ Features:
 
 - Unassert: https://github.com/unassert-js/rollup-plugin-unassert
 
+- Scan / Vision
+  - Use the locations of text-detected numbers to "vote" on what contours to use as a container
+    - Start at root. Check each child for how many it contains. Drill down until we have no child with more than the threshold.
+    - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
+  - Unit tests
+    - Much easier once we have a backtracker so that we can verify things are "uniquely solvable" and that the completion is correct. 
+  - Test with Android, and handle dashed line approach
+  - Detect on paper - perspective correction
+    - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
+  - Could use size of numbers to inform "scale" of things
+  - Could use FFT for finding scale/grid
+  - !!! Get Scenery workign with embedding DOM components, like the file input
+
+- Puzzle editor
+  - Particularly for things that didn't scan correctly.
+
+- Data
+  - Do we... consolidate the "state" into one object that gets copied?
+    - Could have API in one interface, but use composition in the implementation 
+  - 
+  - FaceValue
+  - EdgeState
+
 - Concepts
   - Store "actions" as a history.
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
+    - Only for SquareSpot? 
   - Separate structure from data
     - "structure" is the topology, faces/vertices/edges/face values - doesn't change while solving
     - "data" is the edge-state, coloring, vertex-state, etc. - changes while solving
@@ -133,7 +157,6 @@ Features:
       - "openBorders" - whether the "outside" is treated as white or red
       - Grid4:
         - rows/cols (of faces)
-    - Edge4 --- concept of N/S or E/W vertex/face, and coordinates in a grid (perhaps use vertex for coordinates)
     - square grid:
       - N/S/E/W and NE/SE/SW/NW
   - Data:
@@ -235,4 +258,6 @@ Features:
     - Generated
     - !!!!!!!!!!!!!!! Allow sharing the puzzle with a URL!!!!!!
   - Immutable views
-    - Would be great for an "explainer" page (this would be fun to write up) 
+    - Would be great for an "explainer" page (this would be fun to write up)
+
+- Be the lichess of slitherlink?
