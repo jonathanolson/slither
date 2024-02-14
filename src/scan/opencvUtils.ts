@@ -140,3 +140,17 @@ export const matFFT = ( src: cv.Mat ): cv.Mat => {
 export const imshow = ( mat: cv.Mat ) => {
   document.body.appendChild( matToCanvas( mat ) );
 };
+
+
+// {
+//   const lines = new cv.Mat();
+//   cv.HoughLinesP( inverted, lines, 1, Math.PI / 2, 30, 10, 0 );
+//   // draw lines
+//   let dst = cv.Mat.zeros(inverted.rows, inverted.cols, cv.CV_8UC3);
+//   for (let i = 0; i < lines.rows; ++i) {
+//       let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
+//       let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
+//       cv.line( dst, startPoint, endPoint, new cv.Scalar( 255, 0, 0 ) );
+//   }
+//   imshow( dst );
+// }

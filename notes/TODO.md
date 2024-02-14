@@ -156,9 +156,6 @@ Features:
       - edges (CCW): Edge[] <--- derived
       - faces: Face[] <--- derived?
       - getEdgeTo/edgeTo( otherVertex: Vertex ): Edge
-    - CardinalDirection: N/S/E/W
-    - OrdinalDirection: NE/SE/SW/NW (Intercardinal?)
-    - Direction: CardinalDirection | OrdinalDirection
     - square grid:
       - N/S/E/W and NE/SE/SW/NW
     - Face4:
