@@ -114,6 +114,8 @@ Features:
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
   - check r/slitherlink for more cases that were explained well!
 
+- Unassert: https://github.com/unassert-js/rollup-plugin-unassert
+
 - Concepts
   - Store "actions" as a history.
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
@@ -131,31 +133,7 @@ Features:
       - "openBorders" - whether the "outside" is treated as white or red
       - Grid4:
         - rows/cols (of faces)
-    - Edge
-      - a, b: Vertex   (vertices: Vertex[])
-      - fa, fb: Face   (faces: Face[])
-      - otherVertex(v: Vertex): Vertex
-      - otherFace(f: Face): Face
-      - Edge4 --- concept of N/S or E/W vertex/face, and coordinates in a grid (perhaps use vertex for coordinates)
-    - HalfEdge
-      - edge: Edge
-      - reversed: HalfEdge
-      - nextEdge, previousEdge: HalfEdge
-      - face: Face (... or how to handle ghost)
-      - isReversed: bool
-      - start, end: Vertex
-    - Face
-      - coordinates: { x, y }? (can we... map all coordinates that way in an integer form for all our shapes?) 
-      - halfEdges: HalfEdge[] <--- in order, do winding maps like alpenglow/kite
-      - edges: Edge[] <--- derived?
-      - vertices: Vertex[] <--- derived?
-    - Vertex
-      - coordinates: { x, y }? (can we... map all coordinates that way in an integer form for all our shapes?)
-      - incidentHalfEdges: HalfEdge[] <-- in CCW order, do winding maps like alpenglow/kite
-      - reflectedHalfEdges: HalfEdge[] <-- derived
-      - edges (CCW): Edge[] <--- derived
-      - faces: Face[] <--- derived?
-      - getEdgeTo/edgeTo( otherVertex: Vertex ): Edge
+    - Edge4 --- concept of N/S or E/W vertex/face, and coordinates in a grid (perhaps use vertex for coordinates)
     - square grid:
       - N/S/E/W and NE/SE/SW/NW
     - Face4:
