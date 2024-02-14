@@ -24,19 +24,19 @@ const defaults = {
 } as const;
 
 const scanFaceValues = async ( url: string, providedOptions?: scanFaceValuesOptions ): Promise<ScannedFaceValue[]> => {
-
   const options = optionize3<scanFaceValuesOptions>()( {}, defaults, providedOptions );
 
   if ( !worker ) {
     worker = await createWorker( 'eng' );
-    worker.setParameters( {
-      tessedit_char_whitelist: options.whitelistChars,
-      tessedit_pageseg_mode: {
-        'sparse-text': tesseract.PSM.SPARSE_TEXT,
-        'single-char': tesseract.PSM.SINGLE_CHAR
-      }[ options.segmentation ] // see https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163
-    } );
   }
+
+  worker.setParameters( {
+    tessedit_char_whitelist: options.whitelistChars,
+    tessedit_pageseg_mode: {
+      'sparse-text': tesseract.PSM.SPARSE_TEXT,
+      'single-char': tesseract.PSM.SINGLE_CHAR
+    }[ options.segmentation ] // see https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163
+  } );
 
   const result = await worker.recognize( url );
 
@@ -57,7 +57,7 @@ export default scanFaceValues;
 let scratchCanvas: HTMLCanvasElement | null = null;
 let scratchContext: CanvasRenderingContext2D | null = null;
 export const scanShapeFaceValue = async ( shape: Shape, options?: scanFaceValuesOptions ): Promise<ScannedFaceValue | null> => {
-  const padding = 3;
+  const padding = 7;
 
   if ( !scratchCanvas ) {
     scratchCanvas = document.createElement( 'canvas' );
@@ -74,7 +74,16 @@ export const scanShapeFaceValue = async ( shape: Shape, options?: scanFaceValues
     1, 0, 0, 1, -shape.bounds.minX + padding, -shape.bounds.minY + padding
   );
 
+  scratchContext.fillStyle = 'white';
+  scratchContext.fillRect( 0, 0, scratchCanvas.width, scratchCanvas.height );
+
+  scratchContext.beginPath();
   shape.writeToContext( scratchContext );
+
+  scratchContext.fillStyle = 'black';
+  scratchContext.fill();
+  scratchContext.strokeStyle = 'black';
+  scratchContext.stroke();
 
   return ( await scanFaceValues( scratchCanvas.toDataURL(), combineOptions<scanFaceValuesOptions>( {
     segmentation: 'single-char',

@@ -27,23 +27,23 @@ import { Contour } from './Contour.ts';
 
 const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const img = cv.imread( domImage );
-  // imshow( img );
+  imshow( img );
 
   const imgGray = matToGrayscale( img );
   // imshow( imgGray );
 
-  {
-    const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
-    imshow( faceImage );
-
-    const faceValues = await scanFaceValues( matToURL( faceImage ) );
-    faceValues.forEach( faceValue => {
-      cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
-    } );
-    imshow( faceImage );
-
-    faceImage.delete();
-  }
+  // {
+  //   const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
+  //   imshow( faceImage );
+  //
+  //   const faceValues = await scanFaceValues( matToURL( faceImage ) );
+  //   faceValues.forEach( faceValue => {
+  //     cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
+  //   } );
+  //   imshow( faceImage );
+  //
+  //   faceImage.delete();
+  // }
 
   const blurSize = 0;
 
@@ -132,105 +132,33 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     }
   }
 
-  {
-    const dst = matWithZeros( img );
-    widestSubtree.getDescendantContours().forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
+  // { // Individual contours
+  //   const dst = matWithZeros( img );
+  //   widestSubtree.getDescendantContours().forEach( contour => {
+  //     const index = contourCollection.contours.indexOf( contour );
+  //     drawContour( dst, contours, index );
+  //   } );
+  //   imshow( dst );
+  // }
 
-  {
+  { // Grouped by classification
     const dst = matWithZeros( img );
-    widestSubtree.getDescendantContours().forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-
-      // TODO: could lower this cutoff
-      if ( contour.getDiagonality() > 0.2 && !dotContours.includes( contour ) && !zeroOuterContours.includes( contour ) && !zeroInnerContours.includes( contour ) ) {
-        drawContour( dst, contours, index );
-      }
-    } );
-    imshow( dst );
-  }
-
-  {
-    const dst = matWithZeros( img );
-    widestSubtree.getDescendantContours().forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-
-      // TODO: could lower this cutoff
-      if ( contour.getDiagonality() > 0.2 && !dotContours.includes( contour ) && !zeroOuterContours.includes( contour ) && !zeroInnerContours.includes( contour ) ) {
-        if ( contour.getCornerExtent() < 0.7 ) {
-          drawContour( dst, contours, index );
-        }
-      }
-    } );
-    imshow( dst );
-  }
-
-  { // Dots
-    const dst = matWithZeros( img );
-    dotContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Lines
-    const dst = matWithZeros( img );
-    lineContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Zeros
-    const dst = matWithZeros( img );
-    [ ...zeroOuterContours, ...zeroInnerContours ].forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Ones
-    const dst = matWithZeros( img );
-    oneContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Twos
-    const dst = matWithZeros( img );
-    twoContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Threes
-    const dst = matWithZeros( img );
-    threeContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // Xs
-    const dst = matWithZeros( img );
-    xContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
-    imshow( dst );
-  }
-  { // unknown
-    const dst = matWithZeros( img );
-    unknownContours.forEach( contour => {
-      const index = contourCollection.contours.indexOf( contour );
-      drawContour( dst, contours, index );
-    } );
+    const showWithColor = ( ourContours: Contour[], color: cv.Scalar ) => {
+      ourContours.forEach( contour => {
+        const index = contourCollection.contours.indexOf( contour );
+        drawContour( dst, contours, index, color );
+      } );
+    }
+    // TODO: culori!
+    showWithColor( dotContours, new cv.Scalar( 128, 128, 128 ) );
+    showWithColor( lineContours, new cv.Scalar( 255, 255, 255 ) );
+    showWithColor( xContours, new cv.Scalar( 255, 0, 0 ) );
+    showWithColor( zeroOuterContours, new cv.Scalar( 255, 255, 0 ) );
+    showWithColor( zeroInnerContours, new cv.Scalar( 255, 255, 0 ) );
+    showWithColor( oneContours, new cv.Scalar( 100, 255, 0 ) );
+    showWithColor( twoContours, new cv.Scalar( 0, 255, 255 ) );
+    showWithColor( threeContours, new cv.Scalar( 50, 100, 255 ) );
+    showWithColor( unknownContours, new cv.Scalar( 255, 0, 255 ) );
     imshow( dst );
   }
 

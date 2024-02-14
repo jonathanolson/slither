@@ -29,8 +29,8 @@ export const arrayToMatVector = ( array: cv.Mat[] ): cv.MatVector => {
   return vec;
 }
 
-export const drawContour = ( mat: cv.Mat, contours: cv.MatVector, index: number ): void => {
-  let color = new cv.Scalar(
+export const drawContour = ( mat: cv.Mat, contours: cv.MatVector, index: number, color?: cv.Scalar | null ): void => {
+  color = color || new cv.Scalar(
     Math.round( Math.random() * 128 + 64 ),
     Math.round( Math.random() * 128 + 64 ),
     Math.round( Math.random() * 128 + 64 )
