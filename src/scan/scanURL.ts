@@ -26,11 +26,27 @@ import { Vector2 } from 'phet-lib/dot';
 // Then try to determine vertices along the lines
 
 const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
+
+  // const workaroundCanvas = document.createElement( 'canvas' );
+  // const workaroundContext = workaroundCanvas.getContext( '2d', {
+  //   alpha: false
+  // } )!;
+  // workaroundCanvas.width = domImage.width;
+  // workaroundCanvas.height = domImage.height;
+  // workaroundContext.drawImage( domImage, 0, 0 );
+
   const img = cv.imread( domImage );
   imshow( img );
 
   const imgGray = matToGrayscale( img );
   // imshow( imgGray );
+
+  // For our thresholding below, we'll need to convert dark-background to light-background
+  const grayValues = [ ...imgGray.data ];
+  const averageGrayValue = _.sum( grayValues ) / grayValues.length;
+  if ( averageGrayValue < 128 ) {
+    cv.bitwise_not( imgGray, imgGray );
+  }
 
   // {
   //   const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
@@ -50,6 +66,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const blurred = blurSize > 0 ? withMat( blurred => cv.GaussianBlur( imgGray, blurred, new cv.Size( 5, 5 ), 0 ) ) : imgGray;
   // imshow( blurred );
 
+  // const blurredThreshold = withMat( threshold => cv.threshold( blurred, threshold, 250, 255, cv.THRESH_BINARY ) );
+  // const blurredThreshold = withMat( threshold => cv.threshold( blurred, threshold, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU ) );
   const blurredThreshold = withMat( threshold => cv.adaptiveThreshold( blurred, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
   // imshow( blurredThreshold );
 
@@ -94,7 +112,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   // ZOMG compare convex hull vs bounding box... Xs likely to have high values, digits lower values
 
   for ( const contour of widestSubtree.children ) {
-    if ( contour.getConvexity() > 0.9 ) {
+    if ( contour.getConvexity() > 0.9 && contour.getBoundsSquarishness() > 0.5 ) {
       if ( contour.children.length ) {
         zeroOuterContours.push( contour );
         zeroInnerContours.push( contour.children[ 0 ] );
@@ -200,6 +218,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     const context = canvas.getContext( '2d' )!;
     canvas.width = img.cols;
     canvas.height = img.rows;
+    canvas.style.width = `${img.cols / window.devicePixelRatio}px`;
+    canvas.style.height = `${img.rows / window.devicePixelRatio}px`;
 
     context.globalAlpha = 0.2;
     context.drawImage( domImage, 0, 0 );

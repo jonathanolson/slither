@@ -37,6 +37,10 @@ export class Contour {
     return Contour.pointsToDiagonalityLength( this.points ) / this.arcLength;
   }
 
+  public getBoundsSquarishness(): number {
+    return Math.min( this.bounds.width / this.bounds.height, this.bounds.height / this.bounds.width );
+  }
+
   public getConvexHullPoints(): Vector2[] {
     return ConvexHull2.grahamScan( this.points, false );
   }
