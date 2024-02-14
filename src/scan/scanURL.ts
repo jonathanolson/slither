@@ -1,6 +1,6 @@
 
 import cv from '@techstark/opencv-js';
-import scanFaceValues from './scanFaceValues.ts';
+import scanFaceValues, { scanShapeFaceValue } from './scanFaceValues.ts';
 import { contourToPoints, cvReady, drawContour, imshow, matToGrayscale, matToURL, matWithZeros, withMat } from './opencvUtils.ts';
 import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
@@ -32,18 +32,18 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const imgGray = matToGrayscale( img );
   // imshow( imgGray );
 
-  // {
-  //   const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
-  //   imshow( faceImage );
-  //
-  //   const faceValues = await scanFaceValues( matToURL( faceImage ) );
-  //   faceValues.forEach( faceValue => {
-  //     cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
-  //   } );
-  //   imshow( faceImage );
-  //
-  //   faceImage.delete();
-  // }
+  {
+    const faceImage = withMat( threshold => cv.adaptiveThreshold( imgGray, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
+    imshow( faceImage );
+
+    const faceValues = await scanFaceValues( matToURL( faceImage ) );
+    faceValues.forEach( faceValue => {
+      cv.rectangle( faceImage, new cv.Point( faceValue.bounds.minX, faceValue.bounds.minY ), new cv.Point( faceValue.bounds.maxX, faceValue.bounds.maxY ), new cv.Scalar( 128, 128, 128 ) );
+    } );
+    imshow( faceImage );
+
+    faceImage.delete();
+  }
 
   const blurSize = 0;
 
@@ -80,13 +80,18 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const widestSubtree = _.maxBy( rootContour.getDescendantContours(), contour => contour.children.length )!;
 
   const dotContours: Contour[] = [];
+  const lineContours: Contour[] = [];
   const zeroOuterContours: Contour[] = [];
   const zeroInnerContours: Contour[] = [];
-  const lineContours: Contour[] = [];
+  const oneContours: Contour[] = [];
+  const twoContours: Contour[] = [];
+  const threeContours: Contour[] = [];
+  const xContours: Contour[] = [];
+  const unknownContours: Contour[] = [];
 
   // ZOMG compare convex hull vs bounding box... Xs likely to have high values, digits lower values
 
-  widestSubtree.children.forEach( contour => {
+  for ( const contour of widestSubtree.children ) {
     if ( contour.getConvexity() > 0.9 ) {
       if ( contour.children.length ) {
         zeroOuterContours.push( contour );
@@ -101,7 +106,31 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     else if ( contour.getDiagonality() < 0.2 ) {
       lineContours.push( contour );
     }
-  } );
+    else {
+      const scannedFaceValue = await scanShapeFaceValue( contour.shape! );
+
+      if ( scannedFaceValue ) {
+        if ( scannedFaceValue.value === '1' ) {
+          oneContours.push( contour );
+        }
+        else if ( scannedFaceValue.value === '2' ) {
+          twoContours.push( contour );
+        }
+        else if ( scannedFaceValue.value === '3' ) {
+          threeContours.push( contour );
+        }
+        else if ( scannedFaceValue.value === 'x' ) {
+          xContours.push( contour );
+        }
+        else {
+          unknownContours.push( contour );
+        }
+      }
+      else {
+        unknownContours.push( contour );
+      }
+    }
+  }
 
   {
     const dst = matWithZeros( img );
@@ -148,6 +177,14 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     } );
     imshow( dst );
   }
+  { // Lines
+    const dst = matWithZeros( img );
+    lineContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
   { // Zeros
     const dst = matWithZeros( img );
     [ ...zeroOuterContours, ...zeroInnerContours ].forEach( contour => {
@@ -156,9 +193,41 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     } );
     imshow( dst );
   }
-  { // Lines
+  { // Ones
     const dst = matWithZeros( img );
-    lineContours.forEach( contour => {
+    oneContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // Twos
+    const dst = matWithZeros( img );
+    twoContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // Threes
+    const dst = matWithZeros( img );
+    threeContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // Xs
+    const dst = matWithZeros( img );
+    xContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // unknown
+    const dst = matWithZeros( img );
+    unknownContours.forEach( contour => {
       const index = contourCollection.contours.indexOf( contour );
       drawContour( dst, contours, index );
     } );
