@@ -382,7 +382,7 @@ export class BaseFace<Structure extends TStructure> implements TFace {
   ) {}
 }
 
-export class BaseBoard<Structure extends TStructure> implements TBoard {
+export class BaseBoard<Structure extends TStructure> implements TBoard<Structure> {
   public constructor(
     public readonly edges: Structure[ 'Edge' ][],
     public readonly vertices: Structure[ 'Vertex' ][],
