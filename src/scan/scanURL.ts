@@ -77,7 +77,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const contourCollection = new ContourCollection( contours, hierarchy );
   const rootContour = contourCollection.rootContour;
 
-  const widestSubtree = _.maxBy( rootContour.getDescendantContours(), contour => contour.children.length )!;
+  const widestSubtree = _.maxBy( [ rootContour, ...rootContour.getDescendantContours() ], contour => contour.children.length )!;
 
   const dotContours: Contour[] = [];
   const lineContours: Contour[] = [];
@@ -105,7 +105,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
       }
     }
     // TODO: could lower this cutoff
-    else if ( contour.getDiagonality() < 0.2 ) {
+    else if ( contour.getDiagonality() < 0.1 ) {
       lineContours.push( contour );
     }
     else {

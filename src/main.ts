@@ -6,6 +6,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
+import scanURL from './scan/scanURL.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -55,6 +56,28 @@ const mainBox = new VBox( {
     } ),
     new Text( new PatternStringProperty( buttonPressPatternString, { count: countProperty } ), {
       font: font
+    } ),
+    new TextPushButton( 'Load image', {
+      font: font,
+      listener: () => {
+        const input = document.createElement( 'input' );
+        input.type = 'file';
+        input.onchange = event => {
+          // @ts-ignore
+          const file = event.target!.files[ 0 ];
+
+          var reader = new FileReader();
+          reader.readAsDataURL( file );
+
+          reader.onloadend = () => {
+            const url = reader.result as string;
+            scanURL( url );
+
+            document.body.removeChild( display.domElement );
+          }
+        }
+        input.click();
+      }
     } )
   ]
 } );

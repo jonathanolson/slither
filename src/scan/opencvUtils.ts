@@ -47,6 +47,7 @@ export const matToCanvas = ( mat: cv.Mat ): HTMLCanvasElement => {
   canvas.height = mat.rows;
   canvas.style.width = `${mat.cols / window.devicePixelRatio}px`;
   canvas.style.height = `${mat.rows / window.devicePixelRatio}px`;
+  canvas.style.zIndex = '1000000';
   cv.imshow( canvas, mat );
   return canvas;
 };
