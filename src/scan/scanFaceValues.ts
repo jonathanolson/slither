@@ -1,4 +1,3 @@
-
 import { Bounds2 } from 'phet-lib/dot';
 import tesseract from '../workarounds/tesseract';
 import { combineOptions, optionize3 } from 'phet-lib/phet-core';

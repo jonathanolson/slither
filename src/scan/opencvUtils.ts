@@ -1,4 +1,3 @@
-
 import cv from '@techstark/opencv-js';
 import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';

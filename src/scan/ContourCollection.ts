@@ -1,6 +1,5 @@
-
 import cv from '@techstark/opencv-js';
-import { Contour } from "./Contour";
+import { Contour } from './Contour';
 import _ from '../workarounds/_';
 
 export class ContourCollection {

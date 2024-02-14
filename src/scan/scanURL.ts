@@ -1,7 +1,6 @@
-
 import cv from '@techstark/opencv-js';
-import scanFaceValues, { scanShapeFaceValue } from './scanFaceValues.ts';
-import { contourToPoints, cvReady, drawContour, imshow, matToGrayscale, matToURL, matWithZeros, withMat } from './opencvUtils.ts';
+import { scanShapeFaceValue } from './scanFaceValues.ts';
+import { cvReady, drawContour, imshow, matToGrayscale, matWithZeros, withMat } from './opencvUtils.ts';
 import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';

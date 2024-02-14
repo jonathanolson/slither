@@ -1,9 +1,8 @@
-
 import cv from '@techstark/opencv-js';
 import { Shape } from 'phet-lib/kite';
 import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
 import assert from '../workarounds/assert';
-import { ConvexHull2, Vector2, Bounds2 } from 'phet-lib/dot';
+import { Bounds2, ConvexHull2, Vector2 } from 'phet-lib/dot';
 import _ from '../workarounds/_';
 
 export class Contour {
