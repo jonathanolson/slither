@@ -4,6 +4,7 @@ import { Shape } from 'phet-lib/kite';
 import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
 import assert from '../workarounds/assert';
 import { ConvexHull2, Vector2, Bounds2 } from 'phet-lib/dot';
+import _ from '../workarounds/_';
 
 export class Contour {
 
@@ -78,6 +79,91 @@ export class Contour {
       descendants.push( ...child.getDescendantContours() );
     } );
     return descendants;
+  }
+
+  // Also deduplicates
+  public getClusteredXYPoints( threshold: number ): Vector2[] {
+    const getCoordinateClusteredMap = ( values: number[] ): Map<number, number> => {
+      const sortedValues = _.sortBy( values );
+      const clusters: number[][] = [];
+      let currentCluster: number[] = [];
+
+      for ( let i = 0; i < sortedValues.length; i++ ) {
+        const value = sortedValues[ i ];
+
+        if ( currentCluster.length === 0 || Math.abs( currentCluster[ currentCluster.length - 1 ] - value ) <= threshold ) {
+          currentCluster.push( value );
+        }
+        else {
+          clusters.push( currentCluster );
+          currentCluster = [ value ];
+        }
+      }
+      if ( currentCluster.length > 0 ) {
+        clusters.push( currentCluster );
+      }
+
+      const clusterMap = new Map<number, number>();
+      clusters.forEach( cluster => {
+        const average = _.sum( cluster ) / cluster.length;
+        cluster.forEach( value => clusterMap.set( value, average ) );
+      } );
+      return clusterMap;
+    };
+
+    const xMap = getCoordinateClusteredMap( this.points.map( point => point.x ) );
+    const yMap = getCoordinateClusteredMap( this.points.map( point => point.y ) );
+
+    const clusteredPoints: Vector2[] = [];
+
+    this.points.forEach( point => {
+      const newPoint = new Vector2( xMap.get( point.x )!, yMap.get( point.y )! );
+
+      if ( clusteredPoints.length === 0 || !newPoint.equals( clusteredPoints[ clusteredPoints.length - 1 ] ) ) {
+        clusteredPoints.push( newPoint );
+      }
+    } );
+    while ( clusteredPoints.length > 1 && clusteredPoints[ 0 ].equals( clusteredPoints[ clusteredPoints.length - 1 ] ) ) {
+      clusteredPoints.pop();
+    }
+
+    return clusteredPoints;
+  }
+
+  public static unoverlapLoop( points: Vector2[] ): Vector2[] {
+
+    const getModulo = ( index: number ): Vector2 => points[ ( index + points.length ) % points.length ];
+
+    let found = false;
+    let endIndex = 0;
+    for ( ; endIndex < points.length; endIndex++ ) {
+      if ( getModulo( endIndex - 1 ).equals( getModulo( endIndex + 1 ) ) ) {
+        found = true;
+        break;
+      }
+    }
+
+    if ( !found ) {
+      throw new Error( 'Could not find a matching pair of points' );
+    }
+
+    const numAdditionalPoints = ( points.length - 2 ) / 2 + 1; // both endpoints are not repeated
+
+    const linePoints = [ getModulo( endIndex ) ];
+
+    for ( let i = 0; i < numAdditionalPoints; i++ ) {
+      const delta = i + 1;
+
+      const a = getModulo( endIndex - delta );
+      const b = getModulo( endIndex + delta );
+
+      if ( !a.equals( b ) ) {
+        throw new Error( 'points not matching' );
+      }
+      linePoints.push( a );
+    }
+
+    return linePoints;
   }
 
   public static pointsToDiagonalityLength( polygon: Vector2[] ): number {

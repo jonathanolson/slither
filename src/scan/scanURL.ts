@@ -5,6 +5,7 @@ import { contourToPoints, cvReady, drawContour, imshow, matToGrayscale, matToURL
 import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
+import { Vector2 } from 'phet-lib/dot';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -89,6 +90,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const xContours: Contour[] = [];
   const unknownContours: Contour[] = [];
 
+  // TODO: We need to handle "completed" puzzles. They will actually have a loop.
+
   // ZOMG compare convex hull vs bounding box... Xs likely to have high values, digits lower values
 
   for ( const contour of widestSubtree.children ) {
@@ -162,6 +165,84 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     imshow( dst );
   }
 
+  const linePaths: Vector2[][] = [];
+  const dotPoints: Vector2[] = [];
+  const xPoints: Vector2[] = [];
+  const faceLocations: FaceLocation[] = [];
+
+  lineContours.forEach( lineContour => {
+    const clusteredPoints = lineContour.getClusteredXYPoints( 10 ); // TODO: adjust in the future
+    const linePoints = Contour.unoverlapLoop( clusteredPoints );
+
+    linePaths.push( linePoints );
+  } );
+  dotContours.forEach( dotContour => {
+    dotPoints.push( dotContour.bounds.center );
+  } );
+  xContours.forEach( xContour => {
+    xPoints.push( xContour.bounds.center );
+  } );
+  zeroOuterContours.forEach( zeroOuterContour => {
+    faceLocations.push( new FaceLocation( 0, zeroOuterContour.bounds.center ) );
+  } );
+  oneContours.forEach( oneContour => {
+    faceLocations.push( new FaceLocation( 1, oneContour.bounds.center ) );
+  } );
+  twoContours.forEach( twoContour => {
+    faceLocations.push( new FaceLocation( 2, twoContour.bounds.center ) );
+  } );
+  threeContours.forEach( threeContour => {
+    faceLocations.push( new FaceLocation( 3, threeContour.bounds.center ) );
+  } );
+
+  {
+    const canvas = document.createElement( 'canvas' );
+    const context = canvas.getContext( '2d' )!;
+    canvas.width = img.cols;
+    canvas.height = img.rows;
+
+    context.globalAlpha = 0.2;
+    context.drawImage( domImage, 0, 0 );
+    context.globalAlpha = 1;
+
+    linePaths.forEach( points => {
+      context.beginPath();
+      points.forEach( ( point, index ) => {
+        if ( index === 0 ) {
+          context.moveTo( point.x, point.y );
+        }
+        else {
+          context.lineTo( point.x, point.y );
+        }
+      } );
+      context.strokeStyle = 'magenta';
+      context.stroke();
+    } );
+    dotPoints.forEach( point => {
+      context.beginPath();
+      context.arc( point.x, point.y, 3, 0, Math.PI * 2 );
+      context.fillStyle = 'black';
+      context.fill();
+    } );
+    xPoints.forEach( point => {
+      context.beginPath();
+      context.moveTo( point.x - 5, point.y - 5 );
+      context.lineTo( point.x + 5, point.y + 5 );
+      context.moveTo( point.x - 5, point.y + 5 );
+      context.lineTo( point.x + 5, point.y - 5 );
+      context.strokeStyle = 'red';
+      context.stroke();
+    } );
+    faceLocations.forEach( faceLocation => {
+      context.beginPath();
+      context.arc( faceLocation.point.x, faceLocation.point.y, 5, 0, Math.PI * 2 );
+      context.fillStyle = [ 'rgb(255,255,0)', 'rgb(100,255,0)', 'rgb(0,255,255)', 'rgb(50,100,255)' ][ faceLocation.value ];
+      context.fill();
+    } );
+
+    document.body.appendChild( canvas );
+  }
+
   // Find dots: https://stackoverflow.com/questions/60603243/detect-small-dots-in-image
 
   // TODO: yup, delete things!
@@ -169,10 +250,15 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
 
   // https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html
 
-  console.log( contourToPoints( contours.get( 4 ) ) );
-
   // TODO: opencv cleanup (delete things not used)
 };
+
+class FaceLocation {
+  public constructor(
+    public readonly value: number,
+    public readonly point: Vector2
+  ) {}
+}
 
 export default async ( url: string ) => {
   const domImage = document.createElement( 'img' );
