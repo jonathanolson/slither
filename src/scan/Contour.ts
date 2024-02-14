@@ -1,8 +1,9 @@
 
 import cv from '@techstark/opencv-js';
 import { Shape } from 'phet-lib/kite';
-import { contourToShape, simplifyContour } from './opencvUtils';
+import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
 import assert from '../workarounds/assert';
+import { ConvexHull2, Vector2 } from 'phet-lib/dot';
 
 export class Contour {
 
@@ -11,15 +12,28 @@ export class Contour {
   public firstChild: Contour | null = null;
   public parent: Contour | null = null;
   public children: Contour[] = [];
+  public readonly shape: Shape | null;
+  public readonly points: Vector2[];
+  public readonly area: number;
 
   public constructor(
     public readonly mat: cv.Mat | null
-  ) {}
+  ) {
+    this.shape = mat ? contourToShape( mat ) : null;
+    this.points = mat ? contourToPoints( mat ) : [];
+    this.area = Contour.pointsToArea( this.points );
+  }
 
-  public getShape(): Shape {
-    assert && assert( this.mat );
+  public getConvexity(): number {
+    return this.area / Contour.pointsToArea( this.getConvexHullPoints() );
+  }
 
-    return contourToShape( this.mat! );
+  public getConvexHullPoints(): Vector2[] {
+    return ConvexHull2.grahamScan( this.points, false );
+  }
+
+  public getConvexHullShape(): Shape {
+    return Shape.polygon( this.getConvexHullPoints() );
   }
 
   public getSimplified( epsilon: number, closed: boolean ): Contour {
@@ -41,5 +55,19 @@ export class Contour {
       descendants.push( ...child.getDescendantContours() );
     } );
     return descendants;
+  }
+
+  public static pointsToArea( polygon: Vector2[] ): number {
+    let area = 0;
+
+    for ( let j = 0; j < polygon.length; j++ ) {
+      const p0 = polygon[ j ];
+      const p1 = polygon[ ( j + 1 ) % polygon.length ];
+
+      // Shoelace formula for the area
+      area += ( p1.x + p0.x ) * ( p1.y - p0.y );
+    }
+
+    return Math.abs( 0.5 * area );
   }
 }

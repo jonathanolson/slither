@@ -4,6 +4,7 @@ import scanFaceValues from './scanFaceValues.ts';
 import { contourToPoints, cvReady, drawContour, imshow, matToGrayscale, matToURL, matWithZeros, withMat } from './opencvUtils.ts';
 import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
+import { Contour } from './Contour.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -26,7 +27,7 @@ import _ from '../workarounds/_';
 
 const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const img = cv.imread( domImage );
-  imshow( img );
+  // imshow( img );
 
   const imgGray = matToGrayscale( img );
   imshow( imgGray );
@@ -47,27 +48,25 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const blurSize = 0;
 
   const blurred = blurSize > 0 ? withMat( blurred => cv.GaussianBlur( imgGray, blurred, new cv.Size( 5, 5 ), 0 ) ) : imgGray;
-
-  imshow( blurred );
+  // imshow( blurred );
 
   const blurredThreshold = withMat( threshold => cv.adaptiveThreshold( blurred, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
-
   imshow( blurredThreshold );
 
   const inverted = withMat( inverted => cv.bitwise_not( blurredThreshold, inverted ) );
 
-  {
-    const lines = new cv.Mat();
-    cv.HoughLinesP( inverted, lines, 1, Math.PI / 2, 30, 10, 0 );
-    // draw lines
-    let dst = cv.Mat.zeros(inverted.rows, inverted.cols, cv.CV_8UC3);
-    for (let i = 0; i < lines.rows; ++i) {
-        let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
-        let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
-        cv.line( dst, startPoint, endPoint, new cv.Scalar( 255, 0, 0 ) );
-    }
-    imshow( dst );
-  }
+  // {
+  //   const lines = new cv.Mat();
+  //   cv.HoughLinesP( inverted, lines, 1, Math.PI / 2, 30, 10, 0 );
+  //   // draw lines
+  //   let dst = cv.Mat.zeros(inverted.rows, inverted.cols, cv.CV_8UC3);
+  //   for (let i = 0; i < lines.rows; ++i) {
+  //       let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
+  //       let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
+  //       cv.line( dst, startPoint, endPoint, new cv.Scalar( 255, 0, 0 ) );
+  //   }
+  //   imshow( dst );
+  // }
 
   const contours = new cv.MatVector();
   const hierarchy = new cv.Mat();
@@ -80,9 +79,45 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
 
   const widestSubtree = _.maxBy( rootContour.getDescendantContours(), contour => contour.children.length )!;
 
+  const dotContours: Contour[] = [];
+  const zeroOuterContours: Contour[] = [];
+  const zeroInnerContours: Contour[] = [];
+
+  // ZOMG compare convex hull vs bounding box... Xs likely to have high values, digits lower values
+
+  widestSubtree.children.forEach( contour => {
+    if ( contour.getConvexity() > 0.9 ) {
+      if ( contour.children.length ) {
+        zeroOuterContours.push( contour );
+        zeroInnerContours.push( contour.children[ 0 ] );
+      }
+      else {
+        // TODO: straight lines(!) we need to figure out those... maybe by size
+        dotContours.push( contour );
+      }
+    }
+  } );
+
   {
     const dst = matWithZeros( img );
     widestSubtree.getDescendantContours().forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+
+  { // Dots
+    const dst = matWithZeros( img );
+    dotContours.forEach( contour => {
+      const index = contourCollection.contours.indexOf( contour );
+      drawContour( dst, contours, index );
+    } );
+    imshow( dst );
+  }
+  { // Zeros
+    const dst = matWithZeros( img );
+    [ ...zeroOuterContours, ...zeroInnerContours ].forEach( contour => {
       const index = contourCollection.contours.indexOf( contour );
       drawContour( dst, contours, index );
     } );
