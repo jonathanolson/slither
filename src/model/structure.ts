@@ -273,27 +273,31 @@ export type TSquareStructure = {
   Vertex: TSquareVertex;
 };
 
-export class BaseVertex<Structure extends TStructure> {
+export type TBoard<Structure extends TStructure> = {
+  edges: Structure[ 'Edge' ][];
+  vertices: Structure[ 'Vertex' ][];
+  faces: Structure[ 'Face' ][];
+};
+
+export class BaseVertex<Structure extends TStructure> implements TVertex {
 
   // Half-edges with this vertex as their end vertex, in CCW order
-  public readonly incidentHalfEdges: Structure[ 'HalfEdge' ][] = [];
+  public incidentHalfEdges!: Structure[ 'HalfEdge' ][];
 
   // Half-edges with this vertex as their start vertex, in CCW order
-  public readonly reflectedHalfEdges: Structure[ 'HalfEdge' ][] = [];
+  public reflectedHalfEdges!: Structure[ 'HalfEdge' ][];
 
   // Edges, in CCW order
-  public readonly edges: Structure[ 'Edge' ][] = [];
+  public edges!: Structure[ 'Edge' ][];
 
   // Faces, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
-  public readonly faces: Structure[ 'Face' ][] = [];
+  public faces!: Structure[ 'Face' ][];
 
   public constructor(
     // 2d coordinates (for hex, we'll want logical/view coordinate separation)
     public readonly logicalCoordinates: Vector2,
     public readonly viewCoordinates: Vector2
-  ) {
-    // TODO: initialize all the things
-  }
+  ) {}
 
   public getHalfEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
     const halfEdge = this.reflectedHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
@@ -314,7 +318,7 @@ export class BaseVertex<Structure extends TStructure> {
   }
 }
 
-export class BaseHalfEdge<Structure extends TStructure> {
+export class BaseHalfEdge<Structure extends TStructure> implements THalfEdge {
 
   public edge!: Structure[ 'Edge' ];
 
@@ -330,12 +334,10 @@ export class BaseHalfEdge<Structure extends TStructure> {
     public readonly start: Structure[ 'Vertex' ],
     public readonly end: Structure[ 'Vertex' ],
     public readonly isReversed: boolean
-  ) {
-    // TODO: initialize all the things
-  }
+  ) {}
 }
 
-export class BaseEdge<Structure extends TStructure> {
+export class BaseEdge<Structure extends TStructure> implements TEdge {
 
   public forwardHalf!: Structure[ 'HalfEdge' ];
   public reversedHalf!: Structure[ 'HalfEdge' ];
@@ -346,9 +348,7 @@ export class BaseEdge<Structure extends TStructure> {
   public constructor(
     public readonly start: Structure[ 'Vertex' ],
     public readonly end: Structure[ 'Vertex' ]
-  ) {
-    // TODO: initialize all the things
-  }
+  ) {}
 
   public getOtherVertex( vertex: Structure[ 'Vertex' ] ): Structure[ 'Vertex' ] {
     assert && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );
@@ -364,24 +364,30 @@ export class BaseEdge<Structure extends TStructure> {
   }
 }
 
-export class BaseFace<Structure extends TStructure> {
+export class BaseFace<Structure extends TStructure> implements TFace {
 
   // Half-edges, in CCW order
-  public readonly halfEdges: Structure[ 'HalfEdge' ][] = [];
+  public halfEdges!: Structure[ 'HalfEdge' ][];
 
   // Edges, in CCW order
-  public readonly edges: Structure[ 'Edge' ][] = [];
+  public edges!: Structure[ 'Edge' ][];
 
   // Vertices, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
-  public readonly vertices: Structure[ 'Vertex' ][] = [];
+  public vertices!: Structure[ 'Vertex' ][];
 
   public constructor(
     // 2d coordinates (for hex, we'll want logical/view coordinate separation)
     public readonly logicalCoordinates: Vector2,
     public readonly viewCoordinates: Vector2 // NOTE: We may tweak the center for better "text" feel, so this might not be the centroid?
-  ) {
-    // TODO: initialize all the things
-  }
+  ) {}
+}
+
+export class BaseBoard<Structure extends TStructure> implements TBoard {
+  public constructor(
+    public readonly edges: Structure[ 'Edge' ][],
+    public readonly vertices: Structure[ 'Vertex' ][],
+    public readonly faces: Structure[ 'Face' ][]
+  ) {}
 }
 
 export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquareVertex {
@@ -502,3 +508,152 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
   }
 }
 
+export class SquareHalfEdge extends BaseHalfEdge<TSquareStructure> implements TSquareHalfEdge {
+  public orientation!: Orientation;
+  public northVertex!: TSquareVertex; // defined for vertical - should fire an assertion if guessed wrong orientation
+  public eastVertex!: TSquareVertex; // defined for horizontal - should fire an assertion if guessed wrong orientation
+  public southVertex!: TSquareVertex; // defined for vertical - should fire an assertion if guessed wrong orientation
+  public westVertex!: TSquareVertex; // defined for horizontal - should fire an assertion if guessed wrong orientation
+}
+
+export class SquareEdge extends BaseEdge<TSquareStructure> implements TSquareEdge {
+  public orientation!: Orientation;
+  public northVertex!: TSquareVertex; // defined for vertical - should fire an assertion if guessed wrong orientation
+  public eastVertex!: TSquareVertex; // defined for horizontal - should fire an assertion if guessed wrong orientation
+  public southVertex!: TSquareVertex; // defined for vertical - should fire an assertion if guessed wrong orientation
+  public westVertex!: TSquareVertex; // defined for horizontal - should fire an assertion if guessed wrong orientation
+  public northFace!: TSquareFace | null; // defined for horizontal - should fire an assertion if guessed wrong orientation
+  public eastFace!: TSquareFace | null; // defined for vertical - should fire an assertion if guessed wrong orientation
+  public southFace!: TSquareFace | null; // defined for horizontal - should fire an assertion if guessed wrong orientation
+  public westFace!: TSquareFace | null; // defined for vertical - should fire an assertion if guessed wrong orientation
+}
+
+export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFace {
+  public northHalfEdge!: TSquareHalfEdge;
+  public eastHalfEdge!: TSquareHalfEdge;
+  public southHalfEdge!: TSquareHalfEdge;
+  public westHalfEdge!: TSquareHalfEdge;
+  public northEdge!: TSquareEdge;
+  public eastEdge!: TSquareEdge;
+  public southEdge!: TSquareEdge;
+  public westEdge!: TSquareEdge;
+  public northeastVertex!: TSquareVertex;
+  public southeastVertex!: TSquareVertex;
+  public southwestVertex!: TSquareVertex;
+  public northwestVertex!: TSquareVertex;
+
+  getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge {
+    switch( direction ) {
+      case CardinalDirection.NORTH:
+        return this.northHalfEdge;
+      case CardinalDirection.EAST:
+        return this.eastHalfEdge;
+      case CardinalDirection.SOUTH:
+        return this.southHalfEdge;
+      case CardinalDirection.WEST:
+        return this.westHalfEdge;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+
+    }
+  }
+
+  getEdge( direction: CardinalDirection ): TSquareEdge {
+    switch( direction ) {
+      case CardinalDirection.NORTH:
+        return this.northEdge;
+      case CardinalDirection.EAST:
+        return this.eastEdge;
+      case CardinalDirection.SOUTH:
+        return this.southEdge;
+      case CardinalDirection.WEST:
+        return this.westEdge;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getVertex( direction: OrdinalDirection ): TSquareVertex {
+    switch( direction ) {
+      case OrdinalDirection.NORTHEAST:
+        return this.northeastVertex;
+      case OrdinalDirection.SOUTHEAST:
+        return this.southeastVertex;
+      case OrdinalDirection.SOUTHWEST:
+        return this.southwestVertex;
+      case OrdinalDirection.NORTHWEST:
+        return this.northwestVertex;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
+    if ( halfEdge === this.northHalfEdge ) {
+      return CardinalDirection.NORTH;
+    }
+    else if ( halfEdge === this.eastHalfEdge ) {
+      return CardinalDirection.EAST;
+    }
+    else if ( halfEdge === this.southHalfEdge ) {
+      return CardinalDirection.SOUTH;
+    }
+    else if ( halfEdge === this.westHalfEdge ) {
+      return CardinalDirection.WEST;
+    }
+    else {
+      throw new Error( `Invalid half-edge: ${halfEdge}` );
+    }
+  }
+
+  getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
+    if ( edge === this.northEdge ) {
+      return CardinalDirection.NORTH;
+    }
+    else if ( edge === this.eastEdge ) {
+      return CardinalDirection.EAST;
+    }
+    else if ( edge === this.southEdge ) {
+      return CardinalDirection.SOUTH;
+    }
+    else if ( edge === this.westEdge ) {
+      return CardinalDirection.WEST;
+    }
+    else {
+      throw new Error( `Invalid edge: ${edge}` );
+    }
+  }
+
+  getDirectionOfVertex( vertex: TSquareVertex ): OrdinalDirection {
+    if ( vertex === this.northeastVertex ) {
+      return OrdinalDirection.NORTHEAST;
+    }
+    else if ( vertex === this.southeastVertex ) {
+      return OrdinalDirection.SOUTHEAST;
+    }
+    else if ( vertex === this.southwestVertex ) {
+      return OrdinalDirection.SOUTHWEST;
+    }
+    else if ( vertex === this.northwestVertex ) {
+      return OrdinalDirection.NORTHWEST;
+    }
+    else {
+      throw new Error( `Invalid vertex: ${vertex}` );
+    }
+  }
+}
+
+export class SquareBoard extends BaseBoard<TSquareStructure> implements TBoard<TSquareStructure> {
+  public constructor(
+    public readonly width: number,
+    public readonly height: number
+  ) {
+
+    // TODO: fill these out
+    const faces: TSquareFace[] = [];
+    const vertices: TSquareVertex[] = [];
+    const edges: TSquareEdge[] = [];
+
+    super( edges, vertices, faces );
+  }
+}
