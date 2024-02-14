@@ -3,7 +3,7 @@ import { CardinalDirection, OrdinalDirection } from './Direction.ts';
 import { Orientation } from "phet-lib/phet-core";
 import EdgeState from "./EdgeState.ts";
 import FaceState from "./FaceState.ts";
-// import assert from "../workarounds/assert";
+import assert from "../workarounds/assert.ts";
 
 export interface TVertex {
   logicalCoordinates: Vector2;
@@ -259,113 +259,246 @@ export class EdgeStateToggleAction implements TAction<TEdgeStateData> {
   }
 }
 
-// export class Vertex {
-//
-//   // Half-edges with this vertex as their end vertex, in CCW order
-//   public readonly incidentHalfEdges: HalfEdge[] = [];
-//
-//   // Half-edges with this vertex as their start vertex, in CCW order
-//   public readonly reflectedHalfEdges: HalfEdge[] = [];
-//
-//   // Edges, in CCW order
-//   public readonly edges: Edge[] = [];
-//
-//   // Faces, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
-//   public readonly faces: Face[] = [];
-//
-//   public constructor(
-//     // 2d coordinates (for hex, we'll want logical/view coordinate separation)
-//     public readonly logicalCoordinates: Vector2,
-//     public readonly viewCoordinates: Vector2
-//   ) {
-//     // TODO: initialize all the things
-//   }
-//
-//   public getHalfEdgeTo( otherVertex: Vertex ): HalfEdge {
-//     const halfEdge = this.reflectedHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
-//     assert && assert( halfEdge );
-//     return halfEdge!;
-//   }
-//
-//   public getHalfEdgeFrom( otherVertex: Vertex ): HalfEdge {
-//     const halfEdge = this.incidentHalfEdges.find( halfEdge => halfEdge.start === otherVertex )!;
-//     assert && assert( halfEdge );
-//     return halfEdge!;
-//   }
-//
-//   public getEdgeTo( otherVertex: Vertex ): Edge {
-//     const edge = this.edges.find( edge => edge.start === otherVertex || edge.end === otherVertex )!;
-//     assert && assert( edge );
-//     return edge!;
-//   }
-// }
-//
-// export class HalfEdge {
-//
-//   public edge!: Edge;
-//
-//   public reversed!: HalfEdge;
-//
-//   public next!: HalfEdge;
-//   public previous!: HalfEdge;
-//
-//   // The face to the "left" of the directed half-edge
-//   public face!: Face | null;
-//
-//   public constructor(
-//     public readonly start: Vertex,
-//     public readonly end: Vertex,
-//     public readonly isReversed: boolean
-//   ) {
-//     // TODO: initialize all the things
-//   }
-// }
-//
-// export class Edge {
-//
-//   public forwardHalf!: HalfEdge;
-//   public reversedHalf!: HalfEdge;
-//
-//   public forwardFace!: Face | null;
-//   public reversedFace!: Face | null;
-//
-//   public constructor(
-//     public readonly start: Vertex,
-//     public readonly end: Vertex
-//   ) {
-//     // TODO: initialize all the things
-//   }
-//
-//   public getOtherVertex( vertex: Vertex ): Vertex {
-//     assert && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );
-//
-//     return vertex === this.start ? this.end : this.start;
-//   }
-//
-//   public getOtherFace( face: Face | null ): Face | null {
-//     assert && assert( face === this.forwardFace || face === this.reversedFace, 'face must be one of the two faces of this edge' );
-//
-//     // We can't have null forward/reversed faces!
-//     return face === this.forwardFace ? this.reversedFace : this.forwardFace;
-//   }
-// }
-//
-// export class Face {
-//
-//   // Half-edges, in CCW order
-//   public readonly halfEdges: HalfEdge[] = [];
-//
-//   // Edges, in CCW order
-//   public readonly edges: Edge[] = [];
-//
-//   // Vertices, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
-//   public readonly vertices: Vertex[] = [];
-//
-//   public constructor(
-//     // 2d coordinates (for hex, we'll want logical/view coordinate separation)
-//     public readonly logicalCoordinates: Vector2,
-//     public readonly viewCoordinates: Vector2 // NOTE: We may tweak the center for better "text" feel, so this might not be the centroid?
-//   ) {
-//     // TODO: initialize all the things
-//   }
-// }
+export type TStructure = {
+  HalfEdge: THalfEdge;
+  Edge: TEdge;
+  Face: TFace;
+  Vertex: TVertex;
+};
+
+export type TSquareStructure = {
+  HalfEdge: TSquareHalfEdge;
+  Edge: TSquareEdge;
+  Face: TSquareFace;
+  Vertex: TSquareVertex;
+};
+
+export class BaseVertex<Structure extends TStructure> {
+
+  // Half-edges with this vertex as their end vertex, in CCW order
+  public readonly incidentHalfEdges: Structure[ 'HalfEdge' ][] = [];
+
+  // Half-edges with this vertex as their start vertex, in CCW order
+  public readonly reflectedHalfEdges: Structure[ 'HalfEdge' ][] = [];
+
+  // Edges, in CCW order
+  public readonly edges: Structure[ 'Edge' ][] = [];
+
+  // Faces, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
+  public readonly faces: Structure[ 'Face' ][] = [];
+
+  public constructor(
+    // 2d coordinates (for hex, we'll want logical/view coordinate separation)
+    public readonly logicalCoordinates: Vector2,
+    public readonly viewCoordinates: Vector2
+  ) {
+    // TODO: initialize all the things
+  }
+
+  public getHalfEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
+    const halfEdge = this.reflectedHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
+    assert && assert( halfEdge );
+    return halfEdge!;
+  }
+
+  public getHalfEdgeFrom( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
+    const halfEdge = this.incidentHalfEdges.find( halfEdge => halfEdge.start === otherVertex )!;
+    assert && assert( halfEdge );
+    return halfEdge!;
+  }
+
+  public getEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'Edge' ] {
+    const edge = this.edges.find( edge => edge.start === otherVertex || edge.end === otherVertex )!;
+    assert && assert( edge );
+    return edge!;
+  }
+}
+
+export class BaseHalfEdge<Structure extends TStructure> {
+
+  public edge!: Structure[ 'Edge' ];
+
+  public reversed!: Structure[ 'HalfEdge' ];
+
+  public next!: Structure[ 'HalfEdge' ];
+  public previous!: Structure[ 'HalfEdge' ];
+
+  // The face to the "left" of the directed half-edge
+  public face!: Structure[ 'Face' ] | null;
+
+  public constructor(
+    public readonly start: Structure[ 'Vertex' ],
+    public readonly end: Structure[ 'Vertex' ],
+    public readonly isReversed: boolean
+  ) {
+    // TODO: initialize all the things
+  }
+}
+
+export class BaseEdge<Structure extends TStructure> {
+
+  public forwardHalf!: Structure[ 'HalfEdge' ];
+  public reversedHalf!: Structure[ 'HalfEdge' ];
+
+  public forwardFace!: Structure[ 'Face' ] | null;
+  public reversedFace!: Structure[ 'Face' ] | null;
+
+  public constructor(
+    public readonly start: Structure[ 'Vertex' ],
+    public readonly end: Structure[ 'Vertex' ]
+  ) {
+    // TODO: initialize all the things
+  }
+
+  public getOtherVertex( vertex: Structure[ 'Vertex' ] ): Structure[ 'Vertex' ] {
+    assert && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );
+
+    return vertex === this.start ? this.end : this.start;
+  }
+
+  public getOtherFace( face: Structure[ 'Face' ] | null ): Structure[ 'Face' ] | null {
+    assert && assert( face === this.forwardFace || face === this.reversedFace, 'face must be one of the two faces of this edge' );
+
+    // We can't have null forward/reversed faces!
+    return face === this.forwardFace ? this.reversedFace : this.forwardFace;
+  }
+}
+
+export class BaseFace<Structure extends TStructure> {
+
+  // Half-edges, in CCW order
+  public readonly halfEdges: Structure[ 'HalfEdge' ][] = [];
+
+  // Edges, in CCW order
+  public readonly edges: Structure[ 'Edge' ][] = [];
+
+  // Vertices, in CCW order (TODO: how to relate the order of edges/faces? Do we... link them?)
+  public readonly vertices: Structure[ 'Vertex' ][] = [];
+
+  public constructor(
+    // 2d coordinates (for hex, we'll want logical/view coordinate separation)
+    public readonly logicalCoordinates: Vector2,
+    public readonly viewCoordinates: Vector2 // NOTE: We may tweak the center for better "text" feel, so this might not be the centroid?
+  ) {
+    // TODO: initialize all the things
+  }
+}
+
+export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquareVertex {
+  public northIncidentHalfEdge!: TSquareHalfEdge;
+  public eastIncidentHalfEdge!: TSquareHalfEdge;
+  public southIncidentHalfEdge!: TSquareHalfEdge;
+  public westIncidentHalfEdge!: TSquareHalfEdge;
+  public northReflectedHalfEdge!: TSquareHalfEdge;
+  public eastReflectedHalfEdge!: TSquareHalfEdge;
+  public southReflectedHalfEdge!: TSquareHalfEdge;
+  public westReflectedHalfEdge!: TSquareHalfEdge;
+  public northEdge!: TSquareEdge;
+  public eastEdge!: TSquareEdge;
+  public southEdge!: TSquareEdge;
+  public westEdge!: TSquareEdge;
+  public northeastFace!: TSquareFace;
+  public southeastFace!: TSquareFace;
+  public southwestFace!: TSquareFace;
+  public northwestFace!: TSquareFace;
+
+  getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge {
+    switch ( direction ) {
+      case CardinalDirection.NORTH:
+        return this.northIncidentHalfEdge;
+      case CardinalDirection.EAST:
+        return this.eastIncidentHalfEdge;
+      case CardinalDirection.SOUTH:
+        return this.southIncidentHalfEdge;
+      case CardinalDirection.WEST:
+        return this.westIncidentHalfEdge;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getEdge( direction: CardinalDirection ): TSquareEdge {
+    switch ( direction ) {
+      case CardinalDirection.NORTH:
+        return this.northEdge;
+      case CardinalDirection.EAST:
+        return this.eastEdge;
+      case CardinalDirection.SOUTH:
+        return this.southEdge;
+      case CardinalDirection.WEST:
+        return this.westEdge;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getFace( direction: OrdinalDirection ): TSquareFace {
+    switch ( direction ) {
+      case OrdinalDirection.NORTHEAST:
+        return this.northeastFace;
+      case OrdinalDirection.SOUTHEAST:
+        return this.southeastFace;
+      case OrdinalDirection.SOUTHWEST:
+        return this.southwestFace;
+      case OrdinalDirection.NORTHWEST:
+        return this.northwestFace;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
+    if ( halfEdge === this.northIncidentHalfEdge ) {
+      return CardinalDirection.NORTH;
+    }
+    else if ( halfEdge === this.eastIncidentHalfEdge ) {
+      return CardinalDirection.EAST;
+    }
+    else if ( halfEdge === this.southIncidentHalfEdge ) {
+      return CardinalDirection.SOUTH;
+    }
+    else if ( halfEdge === this.westIncidentHalfEdge ) {
+      return CardinalDirection.WEST;
+    }
+    else {
+      throw new Error( `Invalid half-edge: ${halfEdge}` );
+    }
+  }
+
+  getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
+    if ( edge === this.northEdge ) {
+      return CardinalDirection.NORTH;
+    }
+    else if ( edge === this.eastEdge ) {
+      return CardinalDirection.EAST;
+    }
+    else if ( edge === this.southEdge ) {
+      return CardinalDirection.SOUTH;
+    }
+    else if ( edge === this.westEdge ) {
+      return CardinalDirection.WEST;
+    }
+    else {
+      throw new Error( `Invalid edge: ${edge}` );
+    }
+  }
+
+  getDirectionOfFace( face: TSquareFace ): OrdinalDirection {
+    if ( face === this.northeastFace ) {
+      return OrdinalDirection.NORTHEAST;
+    }
+    else if ( face === this.southeastFace ) {
+      return OrdinalDirection.SOUTHEAST;
+    }
+    else if ( face === this.southwestFace ) {
+      return OrdinalDirection.SOUTHWEST;
+    }
+    else if ( face === this.northwestFace ) {
+      return OrdinalDirection.NORTHWEST;
+    }
+    else {
+      throw new Error( `Invalid face: ${face}` );
+    }
+  }
+}
+
