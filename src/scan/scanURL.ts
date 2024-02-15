@@ -5,7 +5,7 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard, TFaceEdgeData, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
+import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard, TFaceEdgeData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
 import EdgeState from '../model/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
@@ -325,7 +325,11 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
       return location ? location.value : null;
     } ),
     new GeneralEdgeData( board, edge => {
-      const lineLocation = lineLocations.find( location => location.point.equals( edge.start.logicalCoordinates ) ) || null;
+      // TODO: don't require cast, probably make GeneralEdgeData generic
+      // TODO: or change the logical coordinates?
+      const squareEdge = edge as TSquareEdge;
+
+      const lineLocation = lineLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) || null;
 
       // TODO: xs
       if ( lineLocation ) {
