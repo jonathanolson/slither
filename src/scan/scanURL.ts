@@ -7,6 +7,8 @@ import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard, TFaceEdgeData, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
 import EdgeState from '../model/EdgeState.ts';
+import { Orientation } from 'phet-lib/phet-core';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -276,12 +278,63 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     return new FaceLocation( faceLocation.value, new Vector2( x, y ) );
   } );
 
+  const lineLocations = linePaths.flatMap( path => {
+    const locations: LineLocation[] = [];
+
+    for ( let i = 0; i < path.length - 1; i++ ) {
+      const a = path[ i ];
+      const b = path[ i + 1 ];
+
+      const aX = resultXCoordinates.indexOf( xMap.get( a.x )! );
+      const aY = resultYCoordinates.indexOf( yMap.get( a.y )! );
+      const bX = resultXCoordinates.indexOf( xMap.get( b.x )! );
+      const bY = resultYCoordinates.indexOf( yMap.get( b.y )! );
+
+      assertEnabled() && assert( aX >= 0 && aY >= 0 && bX >= 0 && bY >= 0 );
+
+      const xEqual = aX === bX;
+      const yEqual = aY === bY;
+
+      // vertical or horizontal
+      assertEnabled() && assert( xEqual !== yEqual );
+
+      if ( xEqual ) {
+        const minY = Math.min( aY, bY );
+        const maxY = Math.max( aY, bY );
+
+        for ( let y = minY; y < maxY; y++ ) {
+          locations.push( new LineLocation( new Vector2( aX, y ), Orientation.VERTICAL ) )
+        }
+      }
+      else {
+        const minX = Math.min( aX, bX );
+        const maxX = Math.max( aX, bX );
+
+        for ( let x = minX; x < maxX; x++ ) {
+          locations.push( new LineLocation( new Vector2( x, aY ), Orientation.HORIZONTAL ) )
+        }
+      }
+    }
+
+    return locations
+  } );
+
   const startingData = new CompositeFaceEdgeData(
     new GeneralFaceData( board, face => {
       const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
       return location ? location.value : null;
     } ),
-    new GeneralEdgeData( board, edge => EdgeState.WHITE )
+    new GeneralEdgeData( board, edge => {
+      const lineLocation = lineLocations.find( location => location.point.equals( edge.start.logicalCoordinates ) ) || null;
+
+      // TODO: xs
+      if ( lineLocation ) {
+        return EdgeState.BLACK;
+      }
+      else {
+        return EdgeState.WHITE;
+      }
+    } )
   );
 
   const puzzle = new BasicSquarePuzzle( board, startingData );
@@ -301,6 +354,20 @@ class FaceLocation {
   public constructor(
     public readonly value: number,
     public readonly point: Vector2
+  ) {}
+}
+
+class LineLocation {
+  public constructor(
+    public readonly point: Vector2,
+    public readonly orientation: Orientation
+  ) {}
+}
+
+class XLocation {
+  public constructor(
+    public readonly point: Vector2,
+    public readonly orientation: Orientation
   ) {}
 }
 
