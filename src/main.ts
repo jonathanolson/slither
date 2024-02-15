@@ -2,7 +2,7 @@
 import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
-import { Bounds2 } from 'phet-lib/dot';
+import { Bounds2, dotRandom } from 'phet-lib/dot';
 import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
@@ -17,9 +17,14 @@ window.assertions.enableAssert();
 const board = new SquareBoard( 10, 14 );
 const startingData = new CompositeFaceEdgeData(
   new GeneralFaceData( board, face => {
-    return [ null, 0, 1, 2, 3 ][ ( face.logicalCoordinates.x + face.logicalCoordinates.y ) % 4 ];
+    return dotRandom.sample( [ null, 0, 1, 2, 3 ] );
+    // return [ null, 0, 1, 2, 3 ][ ( face.logicalCoordinates.x + face.logicalCoordinates.y ) % 4 ];
   } ),
-  new GeneralEdgeData( board, edge => EdgeState.WHITE )
+  new GeneralEdgeData( board, edge => dotRandom.sample( [
+    EdgeState.WHITE,
+    EdgeState.BLACK,
+    EdgeState.RED
+  ] ) )
 );
 
 const puzzle = new BasicSquarePuzzle( board, startingData );
@@ -97,7 +102,7 @@ const mainBox = new VBox( {
       }
     } ),
     new BasicPuzzleNode( puzzle, {
-      scale: 30,
+      scale: 40,
       textOptions: {
         font: font,
         maxWidth: 0.9,
