@@ -155,15 +155,15 @@ export interface TSquareFace extends TFace {
 
 // TODO: do we want this on ALL of our state types? Is this valuable to separate out?
 // NOTE: Extends the state type(!)
-export type TState<StateData> = {
-  clone(): TState<StateData>;
-  createDelta(): TStateDelta<StateData>;
-} & StateData;
+export type TState<Data> = {
+  clone(): TState<Data>;
+  createDelta(): TDelta<Data>;
+} & Data;
 
-export interface TAction<StateData> {
+export interface TAction<Data> {
   // TODO: consider a concept of "will this do anything?" - when would we use that?
-  apply( state: StateData ): void;
-  getUndo( state: StateData ): TAction<StateData>; // the action to undo this action (if we applied the action on it).
+  apply( state: Data ): void;
+  getUndo( state: Data ): TAction<Data>; // the action to undo this action (if we applied the action on it).
 
   // TODO: What are we... intending with this?
   isEmpty(): boolean;
@@ -171,20 +171,20 @@ export interface TAction<StateData> {
 
 // TODO: create actions which apply auto-solve after the action is applied?
 
-export type TStateDelta<StateData> = {
-  // Refine the clone from a TState => TStateDelta
-  clone(): TStateDelta<StateData>;
+export type TDelta<Data> = {
+  // Refine the clone from a TState => TDelta
+  clone(): TDelta<Data>;
 
   // TODO: do we really need anything here? createConsolidatedAction?
-} & TState<StateData> & TAction<StateData>;
+} & TState<Data> & TAction<Data>;
 
 
-export interface TFaceStateData {
+export interface TFaceData {
   getFaceState( face: TFace ): FaceState;
   setFaceState( face: TFace, state: FaceState ): void;
 }
 
-export interface TEdgeStateData {
+export interface TEdgeData {
   getEdgeState( edge: TEdge ): EdgeState;
   setEdgeState( edge: TEdge, state: EdgeState ): void;
 };
@@ -210,18 +210,18 @@ export class CompositeAction<State> implements TAction<State> {
   }
 }
 
-export class FaceStateSetAction implements TAction<TFaceStateData> {
+export class FaceStateSetAction implements TAction<TFaceData> {
 
   public constructor(
     public readonly face: TFace,
     public readonly state: FaceState
   ) {}
 
-  public apply( state: TFaceStateData ): void {
+  public apply( state: TFaceData ): void {
     state.setFaceState( this.face, this.state );
   }
 
-  public getUndo( state: TFaceStateData ): TAction<TFaceStateData> {
+  public getUndo( state: TFaceData ): TAction<TFaceData> {
     const previousState = state.getFaceState( this.face );
     return new FaceStateSetAction( this.face, previousState );
   }
@@ -231,18 +231,18 @@ export class FaceStateSetAction implements TAction<TFaceStateData> {
   }
 }
 
-export class EdgeStateSetAction implements TAction<TEdgeStateData> {
+export class EdgeStateSetAction implements TAction<TEdgeData> {
 
   public constructor(
     public readonly edge: TEdge,
     public readonly state: EdgeState
   ) {}
 
-  public apply( state: TEdgeStateData ): void {
+  public apply( state: TEdgeData ): void {
     state.setEdgeState( this.edge, this.state );
   }
 
-  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
+  public getUndo( state: TEdgeData ): TAction<TEdgeData> {
     const previousState = state.getEdgeState( this.edge );
     return new EdgeStateSetAction( this.edge, previousState );
   }
@@ -254,14 +254,14 @@ export class EdgeStateSetAction implements TAction<TEdgeStateData> {
 
 // TODO: immediate user repeat of "toggle" should undo auto-solve (that is probably out of the scope of these simple actions)
 // TODO: Potentially a UserEdgeStateToggleAction that does this and other things?
-export class EdgeStateToggleAction implements TAction<TEdgeStateData> {
+export class EdgeStateToggleAction implements TAction<TEdgeData> {
 
   public constructor(
     public readonly edge: TEdge,
     public readonly forward: boolean = true
   ) {}
 
-  public apply( state: TEdgeStateData ): void {
+  public apply( state: TEdgeData ): void {
     const currentState = state.getEdgeState( this.edge );
     if ( currentState === EdgeState.WHITE ) {
       state.setEdgeState( this.edge, this.forward ? EdgeState.BLACK : EdgeState.RED );
@@ -274,7 +274,7 @@ export class EdgeStateToggleAction implements TAction<TEdgeStateData> {
     }
   }
 
-  public getUndo( _state: TEdgeStateData ): TAction<TEdgeStateData> {
+  public getUndo( _state: TEdgeData ): TAction<TEdgeData> {
     return new EdgeStateToggleAction( this.edge, !this.forward );
   }
 
@@ -314,12 +314,12 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
   getFace: ( x: number, y: number ) => TSquareFace | null;
 } & TBoard<Structure>;
 
-export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceStateData> = TState<TFaceStateData>> = {
+export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
   state: State;
 };
 
-export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceStateData> = TState<TFaceStateData>> = {
+export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TSquareBoard<Structure>;
   state: State;
 };
@@ -1209,20 +1209,20 @@ export const validateSquareBoard = ( board: TSquareBoard ): void => {
   } );
 };
 
-export interface TFaceStateData {
+export interface TFaceData {
   getFaceState( face: TFace ): FaceState;
   setFaceState( face: TFace, state: FaceState ): void;
 }
 
-export interface TEdgeStateData {
+export interface TEdgeData {
   getEdgeState( edge: TEdge ): EdgeState;
   setEdgeState( edge: TEdge, state: EdgeState ): void;
 };
 
-export interface TFaceEdgeStateData extends TFaceStateData, TEdgeStateData {};
+export interface TFaceEdgeData extends TFaceData, TEdgeData {};
 
 // TODO: faster forms for Square in particular
-export class GeneralFaceStateData implements TState<TFaceStateData> {
+export class GeneralFaceData implements TState<TFaceData> {
 
   public readonly faceStateMap: Map<TFace, FaceState> = new Map();
 
@@ -1247,35 +1247,35 @@ export class GeneralFaceStateData implements TState<TFaceStateData> {
     this.faceStateMap.set( face, state );
   }
 
-  public clone(): GeneralFaceStateData {
-    return new GeneralFaceStateData( this.board, face => this.getFaceState( face ) );
+  public clone(): GeneralFaceData {
+    return new GeneralFaceData( this.board, face => this.getFaceState( face ) );
   }
 
-  public createDelta(): TStateDelta<TFaceStateData> {
-    return new GeneralFaceStateDelta( this.board, this );
+  public createDelta(): TDelta<TFaceData> {
+    return new GeneralFaceDelta( this.board, this );
   }
 }
 
-export class GeneralFaceStateAction implements TAction<TFaceStateData> {
+export class GeneralFaceAction implements TAction<TFaceData> {
   public constructor(
     public readonly board: TBoard,
     public readonly faceStateMap: Map<TFace, FaceState> = new Map()
   ) {}
 
-  public apply( state: TFaceStateData ): void {
+  public apply( state: TFaceData ): void {
     for ( const [ face, faceState ] of this.faceStateMap ) {
       state.setFaceState( face, faceState );
     }
   }
 
-  public getUndo( state: TFaceStateData ): TAction<TFaceStateData> {
+  public getUndo( state: TFaceData ): TAction<TFaceData> {
     const faceStateMap = new Map<TFace, FaceState>();
 
     for ( const [ face, _faceState ] of this.faceStateMap ) {
       faceStateMap.set( face, state.getFaceState( face ) );
     }
 
-    return new GeneralFaceStateAction( this.board, faceStateMap );
+    return new GeneralFaceAction( this.board, faceStateMap );
   }
 
   public isEmpty(): boolean {
@@ -1283,10 +1283,10 @@ export class GeneralFaceStateAction implements TAction<TFaceStateData> {
   }
 }
 
-export class GeneralFaceStateDelta extends GeneralFaceStateAction implements TStateDelta<TFaceStateData> {
+export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceData> {
   public constructor(
     board: TBoard,
-    public readonly parentState: TState<TFaceStateData>,
+    public readonly parentState: TState<TFaceData>,
     faceStateMap: Map<TFace, FaceState> = new Map()
   ) {
     super( board, faceStateMap );
@@ -1305,17 +1305,17 @@ export class GeneralFaceStateDelta extends GeneralFaceStateAction implements TSt
     this.faceStateMap.set( face, state );
   }
 
-  public clone(): GeneralFaceStateDelta {
-    return new GeneralFaceStateDelta( this.board, this.parentState, new Map( this.faceStateMap ) );
+  public clone(): GeneralFaceDelta {
+    return new GeneralFaceDelta( this.board, this.parentState, new Map( this.faceStateMap ) );
   }
 
-  public createDelta(): TStateDelta<TFaceStateData> {
-    return new GeneralFaceStateDelta( this.board, this, new Map() );
+  public createDelta(): TDelta<TFaceData> {
+    return new GeneralFaceDelta( this.board, this, new Map() );
   }
 }
 
 // TODO: faster forms for Square in particular
-export class GeneralEdgeStateData implements TState<TEdgeStateData> {
+export class GeneralEdgeData implements TState<TEdgeData> {
 
   public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map();
 
@@ -1340,37 +1340,37 @@ export class GeneralEdgeStateData implements TState<TEdgeStateData> {
     this.edgeStateMap.set( edge, state );
   }
 
-  public clone(): GeneralEdgeStateData {
-    return new GeneralEdgeStateData( this.board, edge => this.getEdgeState( edge ) );
+  public clone(): GeneralEdgeData {
+    return new GeneralEdgeData( this.board, edge => this.getEdgeState( edge ) );
   }
 
-  public createDelta(): TStateDelta<TEdgeStateData> {
-    return new GeneralEdgeStateDelta( this.board, this );
+  public createDelta(): TDelta<TEdgeData> {
+    return new GeneralEdgeDelta( this.board, this );
   }
 }
 
-// TODO: we have some duplication, ideally factor out the PerElementStateData/PerElementStateAction/PerElementStateDelta
+// TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
 
-export class GeneralEdgeStateAction implements TAction<TEdgeStateData> {
+export class GeneralEdgeAction implements TAction<TEdgeData> {
   public constructor(
     public readonly board: TBoard,
     public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map()
   ) {}
 
-  public apply( state: TEdgeStateData ): void {
+  public apply( state: TEdgeData ): void {
     for ( const [ edge, edgeState ] of this.edgeStateMap ) {
       state.setEdgeState( edge, edgeState );
     }
   }
 
-  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
+  public getUndo( state: TEdgeData ): TAction<TEdgeData> {
     const edgeStateMap = new Map<TEdge, EdgeState>();
 
     for ( const [ edge, _edgeState ] of this.edgeStateMap ) {
       edgeStateMap.set( edge, state.getEdgeState( edge ) );
     }
 
-    return new GeneralEdgeStateAction( this.board, edgeStateMap );
+    return new GeneralEdgeAction( this.board, edgeStateMap );
   }
 
   public isEmpty(): boolean {
@@ -1378,10 +1378,10 @@ export class GeneralEdgeStateAction implements TAction<TEdgeStateData> {
   }
 }
 
-export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TStateDelta<TEdgeStateData> {
+export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeData> {
   public constructor(
     board: TBoard,
-    public readonly parentState: TState<TEdgeStateData>,
+    public readonly parentState: TState<TEdgeData>,
     edgeStateMap: Map<TEdge, EdgeState> = new Map()
   ) {
     super( board, edgeStateMap );
@@ -1400,20 +1400,20 @@ export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TSt
     this.edgeStateMap.set( edge, state );
   }
 
-  public clone(): GeneralEdgeStateDelta {
-    return new GeneralEdgeStateDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
+  public clone(): GeneralEdgeDelta {
+    return new GeneralEdgeDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
   }
 
-  public createDelta(): TStateDelta<TEdgeStateData> {
-    return new GeneralEdgeStateDelta( this.board, this, new Map() );
+  public createDelta(): TDelta<TEdgeData> {
+    return new GeneralEdgeDelta( this.board, this, new Map() );
   }
 }
 
 // TODO: can we do trait/mixin stuff to support a better way of doing this? TS has been picky with traits before
-export class CompositeFaceEdgeStateData implements TState<TFaceEdgeStateData> {
+export class CompositeFaceEdgeData implements TState<TFaceEdgeData> {
   public constructor(
-    public readonly faceData: TState<TFaceStateData>,
-    public readonly edgeData: TState<TEdgeStateData>
+    public readonly faceData: TState<TFaceData>,
+    public readonly edgeData: TState<TEdgeData>
   ) {}
 
   public getFaceState( face: TFace ): FaceState {
@@ -1432,30 +1432,28 @@ export class CompositeFaceEdgeStateData implements TState<TFaceEdgeStateData> {
     this.edgeData.setEdgeState( edge, state );
   }
 
-  public clone(): CompositeFaceEdgeStateData {
-    return new CompositeFaceEdgeStateData( this.faceData.clone(), this.edgeData.clone() );
+  public clone(): CompositeFaceEdgeData {
+    return new CompositeFaceEdgeData( this.faceData.clone(), this.edgeData.clone() );
   }
 
-  public createDelta(): TStateDelta<TFaceEdgeStateData> {
-    return new CompositeFaceEdgeStateDelta( this.faceData.createDelta(), this.edgeData.createDelta() );
+  public createDelta(): TDelta<TFaceEdgeData> {
+    return new CompositeFaceEdgeDelta( this.faceData.createDelta(), this.edgeData.createDelta() );
   }
 }
 
-// TODO: consider renaming StateAction => Action(!!!!!)
-
-export class CompositeFaceEdgeStateAction implements TAction<TFaceEdgeStateData> {
+export class CompositeFaceEdgeAction implements TAction<TFaceEdgeData> {
   public constructor(
-    public readonly faceAction: TAction<TFaceStateData>,
-    public readonly edgeAction: TAction<TEdgeStateData>
+    public readonly faceAction: TAction<TFaceData>,
+    public readonly edgeAction: TAction<TEdgeData>
   ) {}
 
-  public apply( state: TFaceEdgeStateData ): void {
+  public apply( state: TFaceEdgeData ): void {
     this.faceAction.apply( state );
     this.edgeAction.apply( state );
   }
 
-  public getUndo( state: TFaceEdgeStateData ): TAction<TFaceEdgeStateData> {
-    return new CompositeFaceEdgeStateAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ) );
+  public getUndo( state: TFaceEdgeData ): TAction<TFaceEdgeData> {
+    return new CompositeFaceEdgeAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ) );
   }
 
   public isEmpty(): boolean {
@@ -1463,10 +1461,10 @@ export class CompositeFaceEdgeStateAction implements TAction<TFaceEdgeStateData>
   }
 }
 
-export class CompositeFaceEdgeStateDelta extends CompositeFaceEdgeStateAction implements TStateDelta<TFaceEdgeStateData> {
+export class CompositeFaceEdgeDelta extends CompositeFaceEdgeAction implements TDelta<TFaceEdgeData> {
   public constructor(
-    public readonly faceDelta: TStateDelta<TFaceStateData>,
-    public readonly edgeDelta: TStateDelta<TEdgeStateData>
+    public readonly faceDelta: TDelta<TFaceData>,
+    public readonly edgeDelta: TDelta<TEdgeData>
   ) {
     super( faceDelta, edgeDelta );
   }
@@ -1487,11 +1485,11 @@ export class CompositeFaceEdgeStateDelta extends CompositeFaceEdgeStateAction im
     this.edgeDelta.setEdgeState( edge, state );
   }
 
-  public clone(): CompositeFaceEdgeStateDelta {
-    return new CompositeFaceEdgeStateDelta( this.faceDelta.clone(), this.edgeDelta.clone() );
+  public clone(): CompositeFaceEdgeDelta {
+    return new CompositeFaceEdgeDelta( this.faceDelta.clone(), this.edgeDelta.clone() );
   }
 
-  public createDelta(): TStateDelta<TFaceEdgeStateData> {
-    return new CompositeFaceEdgeStateDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta() );
+  public createDelta(): TDelta<TFaceEdgeData> {
+    return new CompositeFaceEdgeDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta() );
   }
 }
