@@ -62,7 +62,9 @@ const display = new Display( rootNode, {
 } );
 document.body.appendChild( display.domElement );
 
-const zoomListener = new AnimatedPanZoomListener( scene );
+const zoomListener = new AnimatedPanZoomListener( scene, {
+  maxScale: 10
+} );
 display.addInputListener( zoomListener );
 
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
