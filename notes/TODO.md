@@ -1,6 +1,9 @@
 
 - Reorganize TODOs
 
+- Try out on phone?
+  - Seems to load!! 
+
 - Shapes
   - Get topological handling for any shape, but specialize for 4x4 grid
   - Hex! And other planar tilings
@@ -37,7 +40,13 @@
   - Themes
     - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show
   - Pan/Zoom
-    - Can we do one-finger zoom? 
+    - Adjust this so we zoom an interior interface(!)(!) 
+    - Can we do one-finger zoom?
+  - Allow puzzle export
+    - Image
+    - JSON?
+    - String
+    - URL
   - Interaction
     - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
     - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
@@ -78,6 +87,8 @@
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
   - Colorings, and the advanced "how they meet" rules
+    - NOTE: determine if there is "internal" things in any "almost loop"
+      - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it) 
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
   - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?"
@@ -122,6 +133,7 @@
     - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
   - Unit tests
     - Much easier once we have a backtracker so that we can verify things are "uniquely solvable" and that the completion is correct. 
+    - !!! Make us compatible with Puppeteer/Playwright, so we can batch-handle scanning/solving (for unit tests)
   - Test with Android, and handle dashed line approach
   - Detect on paper - perspective correction
     - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
@@ -139,6 +151,11 @@
   - 
   - FaceValue
   - EdgeState
+
+- Current code TODOs
+  - !!! Forgot to make deltas no-op if a method doesn't change anything
+  - Fix disposal for my usage of opencv - likely causing HMR issues
+  - Add query parameters file, using QSM, so we can add features/debugging (e.g. "debug scanning")
 
 - Concepts
   - Board = structure of vertices/edges/faces
@@ -264,5 +281,8 @@
     - !!!!!!!!!!!!!!! Allow sharing the puzzle with a URL!!!!!!
   - Immutable views
     - Would be great for an "explainer" page (this would be fun to write up)
+
+- Implementation
+  - Use seedRandom setup so we can get reproducibility.
 
 - Be the lichess of slitherlink?
