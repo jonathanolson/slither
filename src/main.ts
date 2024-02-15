@@ -14,25 +14,6 @@ import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
 // @ts-ignore
 window.assertions.enableAssert();
 
-const board = new SquareBoard( 10, 14 );
-const startingData = new CompositeFaceEdgeData(
-  new GeneralFaceData( board, face => {
-    return dotRandom.sample( [ null, 0, 1, 2, 3 ] );
-    // return [ null, 0, 1, 2, 3 ][ ( face.logicalCoordinates.x + face.logicalCoordinates.y ) % 4 ];
-  } ),
-  new GeneralEdgeData( board, edge => dotRandom.sample( [
-    EdgeState.WHITE,
-    EdgeState.BLACK,
-    EdgeState.RED
-  ] ) )
-);
-
-const puzzle = new BasicSquarePuzzle( board, startingData );
-
-console.log( board );
-console.log( startingData );
-console.log( puzzle );
-
 const scene = new Node();
 
 const rootNode = new Node( {
@@ -93,22 +74,26 @@ const mainBox = new VBox( {
           var reader = new FileReader();
           reader.readAsDataURL( file );
 
-          reader.onloadend = () => {
+          reader.onloadend = async () => {
             const url = reader.result as string;
-            scanURL( url );
 
-            document.body.removeChild( display.domElement );
+            const puzzle = await scanURL( url );
+
+            // TODO: add debugging output as Scenery nodes.
+
+            mainBox.addChild( new BasicPuzzleNode( puzzle, {
+              scale: 40,
+              textOptions: {
+                font: font,
+                maxWidth: 0.9,
+                maxHeight: 0.9
+              }
+            } ) );
+
+            // document.body.removeChild( display.domElement );
           }
         }
         input.click();
-      }
-    } ),
-    new BasicPuzzleNode( puzzle, {
-      scale: 40,
-      textOptions: {
-        font: font,
-        maxWidth: 0.9,
-        maxHeight: 0.9
       }
     } )
   ]

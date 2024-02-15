@@ -5,6 +5,8 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
+import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard, TFaceEdgeData, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
+import EdgeState from '../model/EdgeState.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -25,7 +27,7 @@ import { Vector2 } from 'phet-lib/dot';
 // note-- we'll want to remove small lines(!)
 // Then try to determine vertices along the lines
 
-const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
+const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSquarePuzzle<TSquareStructure, TState<TFaceEdgeData>>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -175,8 +177,11 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   const xPoints: Vector2[] = [];
   const faceLocations: FaceLocation[] = [];
 
+   // TODO: adjust in the future
+  const clusterThreshold = 10;
+
   lineContours.forEach( lineContour => {
-    const clusteredPoints = lineContour.getClusteredXYPoints( 10 ); // TODO: adjust in the future
+    const clusteredPoints = lineContour.getClusteredXYPoints( clusterThreshold );
     const linePoints = Contour.unoverlapLoop( clusteredPoints );
 
     linePaths.push( linePoints );
@@ -250,7 +255,37 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
     document.body.appendChild( canvas );
   }
 
-  // Find dots: https://stackoverflow.com/questions/60603243/detect-small-dots-in-image
+  const majorXCoordinates = [ ...dotPoints.map( point => point.x ), ...linePaths.flatMap( path => path.map( point => point.x ) ) ];
+  const majorYCoordinates = [ ...dotPoints.map( point => point.y ), ...linePaths.flatMap( path => path.map( point => point.y ) ) ];
+
+  const xMap = Contour.getCoordinateClusteredMap( majorXCoordinates, clusterThreshold );
+  const yMap = Contour.getCoordinateClusteredMap( majorYCoordinates, clusterThreshold );
+
+  const resultXCoordinates = _.sortBy( _.uniq( [ ...xMap.values() ] ) );
+  const resultYCoordinates = _.sortBy( _.uniq( [ ...yMap.values() ] ) );
+
+  const width = resultXCoordinates.length - 1;
+  const height = resultYCoordinates.length - 1;
+
+  const board = new SquareBoard( width, height );
+
+  // TODO: improve computational complexity...
+  const snappedFaceLocations = faceLocations.map( faceLocation => {
+    const x = resultXCoordinates.filter( x => x < faceLocation.point.x ).length - 1;
+    const y = resultYCoordinates.filter( y => y < faceLocation.point.y ).length - 1;
+    return new FaceLocation( faceLocation.value, new Vector2( x, y ) );
+  } );
+
+  const startingData = new CompositeFaceEdgeData(
+    new GeneralFaceData( board, face => {
+      const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
+      return location ? location.value : null;
+    } ),
+    new GeneralEdgeData( board, edge => EdgeState.WHITE )
+  );
+
+  const puzzle = new BasicSquarePuzzle( board, startingData );
+
 
   // TODO: yup, delete things!
   imgGray.delete();
@@ -258,6 +293,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ) => {
   // https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html
 
   // TODO: opencv cleanup (delete things not used)
+
+  return puzzle;
 };
 
 class FaceLocation {
@@ -267,10 +304,10 @@ class FaceLocation {
   ) {}
 }
 
-export default async ( url: string ) => {
+export default async ( url: string ): Promise<TSquarePuzzle<TSquareStructure, TState<TFaceEdgeData>>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();
   await cvReady;
-  scanHTMLImageElement( domImage );
+  return scanHTMLImageElement( domImage );
 };
