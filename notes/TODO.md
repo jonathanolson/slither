@@ -141,6 +141,10 @@
   - EdgeState
 
 - Concepts
+  - Board = structure of vertices/edges/faces
+  - Puzzle = board + FaceState
+  - Delta = action + previous state
+  - 
   - Store "actions" as a history.
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
     - Only for SquareSpot? 

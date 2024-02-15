@@ -163,7 +163,7 @@ export type TState<StateData> = {
 export interface TAction<StateData> {
   // TODO: consider a concept of "will this do anything?" - when would we use that?
   apply( state: StateData ): void;
-  applyUndoable( state: StateData ): TAction<StateData>; // returns the undo action
+  getUndo( state: StateData ): TAction<StateData>; // the action to undo this action (if we applied the action on it).
 
   // TODO: What are we... intending with this?
   isEmpty(): boolean;
@@ -172,6 +172,9 @@ export interface TAction<StateData> {
 // TODO: create actions which apply auto-solve after the action is applied?
 
 export type TStateDelta<StateData> = {
+  // Refine the clone from a TState => TStateDelta
+  clone(): TStateDelta<StateData>;
+
   // TODO: do we really need anything here? createConsolidatedAction?
 } & TState<StateData> & TAction<StateData>;
 
@@ -198,12 +201,33 @@ export class CompositeAction<State> implements TAction<State> {
     }
   }
 
-  public applyUndoable( state: State ): TAction<State> {
-    return new CompositeAction( this.actions.map( action => action.applyUndoable( state ) ).reverse() );
+  public getUndo( state: State ): TAction<State> {
+    return new CompositeAction( this.actions.map( action => action.getUndo( state ) ).reverse() );
   }
 
   public isEmpty(): boolean {
     return this.actions.some( action => !action.isEmpty() );
+  }
+}
+
+export class FaceStateSetAction implements TAction<TFaceStateData> {
+
+  public constructor(
+    public readonly face: TFace,
+    public readonly state: FaceState
+  ) {}
+
+  public apply( state: TFaceStateData ): void {
+    state.setFaceState( this.face, this.state );
+  }
+
+  public getUndo( state: TFaceStateData ): TAction<TFaceStateData> {
+    const previousState = state.getFaceState( this.face );
+    return new FaceStateSetAction( this.face, previousState );
+  }
+
+  public isEmpty(): boolean {
+    return false;
   }
 }
 
@@ -218,9 +242,8 @@ export class EdgeStateSetAction implements TAction<TEdgeStateData> {
     state.setEdgeState( this.edge, this.state );
   }
 
-  public applyUndoable( state: TEdgeStateData ): TAction<TEdgeStateData> {
+  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
     const previousState = state.getEdgeState( this.edge );
-    this.apply( state );
     return new EdgeStateSetAction( this.edge, previousState );
   }
 
@@ -251,8 +274,7 @@ export class EdgeStateToggleAction implements TAction<TEdgeStateData> {
     }
   }
 
-  public applyUndoable( state: TEdgeStateData ): TAction<TEdgeStateData> {
-    this.apply( state );
+  public getUndo( _state: TEdgeStateData ): TAction<TEdgeStateData> {
     return new EdgeStateToggleAction( this.edge, !this.forward );
   }
 
@@ -291,6 +313,16 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
   getHalfEdge: ( x0: number, y0: number, x1: number, y1: number ) => TSquareHalfEdge | null;
   getFace: ( x: number, y: number ) => TSquareFace | null;
 } & TBoard<Structure>;
+
+export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceStateData> = TState<TFaceStateData>> = {
+  board: TBoard<Structure>;
+  state: State;
+};
+
+export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceStateData> = TState<TFaceStateData>> = {
+  board: TSquareBoard<Structure>;
+  state: State;
+};
 
 export class BaseVertex<Structure extends TStructure> implements TVertex {
 
@@ -1176,3 +1208,290 @@ export const validateSquareBoard = ( board: TSquareBoard ): void => {
     assert( face.southeastVertex === face.eastEdge.end );
   } );
 };
+
+export interface TFaceStateData {
+  getFaceState( face: TFace ): FaceState;
+  setFaceState( face: TFace, state: FaceState ): void;
+}
+
+export interface TEdgeStateData {
+  getEdgeState( edge: TEdge ): EdgeState;
+  setEdgeState( edge: TEdge, state: EdgeState ): void;
+};
+
+export interface TFaceEdgeStateData extends TFaceStateData, TEdgeStateData {};
+
+// TODO: faster forms for Square in particular
+export class GeneralFaceStateData implements TState<TFaceStateData> {
+
+  public readonly faceStateMap: Map<TFace, FaceState> = new Map();
+
+  public constructor(
+    public readonly board: TBoard,
+    getInitialFaceState: ( face: TFace ) => FaceState,
+  ) {
+    board.faces.forEach( face => {
+      this.faceStateMap.set( face, getInitialFaceState( face ) );
+    } );
+  }
+
+  public getFaceState( face: TFace ): FaceState {
+    assertEnabled() && assert( this.faceStateMap.has( face ) );
+
+    return this.faceStateMap.get( face )!;
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    assertEnabled() && assert( this.faceStateMap.has( face ) );
+
+    this.faceStateMap.set( face, state );
+  }
+
+  public clone(): GeneralFaceStateData {
+    return new GeneralFaceStateData( this.board, face => this.getFaceState( face ) );
+  }
+
+  public createDelta(): TStateDelta<TFaceStateData> {
+    return new GeneralFaceStateDelta( this.board, this );
+  }
+}
+
+export class GeneralFaceStateAction implements TAction<TFaceStateData> {
+  public constructor(
+    public readonly board: TBoard,
+    public readonly faceStateMap: Map<TFace, FaceState> = new Map()
+  ) {}
+
+  public apply( state: TFaceStateData ): void {
+    for ( const [ face, faceState ] of this.faceStateMap ) {
+      state.setFaceState( face, faceState );
+    }
+  }
+
+  public getUndo( state: TFaceStateData ): TAction<TFaceStateData> {
+    const faceStateMap = new Map<TFace, FaceState>();
+
+    for ( const [ face, _faceState ] of this.faceStateMap ) {
+      faceStateMap.set( face, state.getFaceState( face ) );
+    }
+
+    return new GeneralFaceStateAction( this.board, faceStateMap );
+  }
+
+  public isEmpty(): boolean {
+    return this.faceStateMap.size === 0;
+  }
+}
+
+export class GeneralFaceStateDelta extends GeneralFaceStateAction implements TStateDelta<TFaceStateData> {
+  public constructor(
+    board: TBoard,
+    public readonly parentState: TState<TFaceStateData>,
+    faceStateMap: Map<TFace, FaceState> = new Map()
+  ) {
+    super( board, faceStateMap );
+  }
+
+  public getFaceState( face: TFace ): FaceState {
+    if ( this.faceStateMap.has( face ) ) {
+      return this.faceStateMap.get( face )!;
+    }
+    else {
+      return this.parentState.getFaceState( face );
+    }
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    this.faceStateMap.set( face, state );
+  }
+
+  public clone(): GeneralFaceStateDelta {
+    return new GeneralFaceStateDelta( this.board, this.parentState, new Map( this.faceStateMap ) );
+  }
+
+  public createDelta(): TStateDelta<TFaceStateData> {
+    return new GeneralFaceStateDelta( this.board, this, new Map() );
+  }
+}
+
+// TODO: faster forms for Square in particular
+export class GeneralEdgeStateData implements TState<TEdgeStateData> {
+
+  public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map();
+
+  public constructor(
+    public readonly board: TBoard,
+    getInitialEdgeState: ( edge: TEdge ) => EdgeState,
+  ) {
+    board.edges.forEach( edge => {
+      this.edgeStateMap.set( edge, getInitialEdgeState( edge ) );
+    } );
+  }
+
+  public getEdgeState( edge: TEdge ): EdgeState {
+    assertEnabled() && assert( this.edgeStateMap.has( edge ) );
+
+    return this.edgeStateMap.get( edge )!;
+  }
+
+  public setEdgeState( edge: TEdge, state: EdgeState ): void {
+    assertEnabled() && assert( this.edgeStateMap.has( edge ) );
+
+    this.edgeStateMap.set( edge, state );
+  }
+
+  public clone(): GeneralEdgeStateData {
+    return new GeneralEdgeStateData( this.board, edge => this.getEdgeState( edge ) );
+  }
+
+  public createDelta(): TStateDelta<TEdgeStateData> {
+    return new GeneralEdgeStateDelta( this.board, this );
+  }
+}
+
+// TODO: we have some duplication, ideally factor out the PerElementStateData/PerElementStateAction/PerElementStateDelta
+
+export class GeneralEdgeStateAction implements TAction<TEdgeStateData> {
+  public constructor(
+    public readonly board: TBoard,
+    public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map()
+  ) {}
+
+  public apply( state: TEdgeStateData ): void {
+    for ( const [ edge, edgeState ] of this.edgeStateMap ) {
+      state.setEdgeState( edge, edgeState );
+    }
+  }
+
+  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
+    const edgeStateMap = new Map<TEdge, EdgeState>();
+
+    for ( const [ edge, _edgeState ] of this.edgeStateMap ) {
+      edgeStateMap.set( edge, state.getEdgeState( edge ) );
+    }
+
+    return new GeneralEdgeStateAction( this.board, edgeStateMap );
+  }
+
+  public isEmpty(): boolean {
+    return this.edgeStateMap.size === 0;
+  }
+}
+
+export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TStateDelta<TEdgeStateData> {
+  public constructor(
+    board: TBoard,
+    public readonly parentState: TState<TEdgeStateData>,
+    edgeStateMap: Map<TEdge, EdgeState> = new Map()
+  ) {
+    super( board, edgeStateMap );
+  }
+
+  public getEdgeState( edge: TEdge ): EdgeState {
+    if ( this.edgeStateMap.has( edge ) ) {
+      return this.edgeStateMap.get( edge )!;
+    }
+    else {
+      return this.parentState.getEdgeState( edge );
+    }
+  }
+
+  public setEdgeState( edge: TEdge, state: EdgeState ): void {
+    this.edgeStateMap.set( edge, state );
+  }
+
+  public clone(): GeneralEdgeStateDelta {
+    return new GeneralEdgeStateDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
+  }
+
+  public createDelta(): TStateDelta<TEdgeStateData> {
+    return new GeneralEdgeStateDelta( this.board, this, new Map() );
+  }
+}
+
+// TODO: can we do trait/mixin stuff to support a better way of doing this? TS has been picky with traits before
+export class CompositeFaceEdgeStateData implements TState<TFaceEdgeStateData> {
+  public constructor(
+    public readonly faceData: TState<TFaceStateData>,
+    public readonly edgeData: TState<TEdgeStateData>
+  ) {}
+
+  public getFaceState( face: TFace ): FaceState {
+    return this.faceData.getFaceState( face );
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    this.faceData.setFaceState( face, state );
+  }
+
+  public getEdgeState( edge: TEdge ): EdgeState {
+    return this.edgeData.getEdgeState( edge );
+  }
+
+  public setEdgeState( edge: TEdge, state: EdgeState ): void {
+    this.edgeData.setEdgeState( edge, state );
+  }
+
+  public clone(): CompositeFaceEdgeStateData {
+    return new CompositeFaceEdgeStateData( this.faceData.clone(), this.edgeData.clone() );
+  }
+
+  public createDelta(): TStateDelta<TFaceEdgeStateData> {
+    return new CompositeFaceEdgeStateDelta( this.faceData.createDelta(), this.edgeData.createDelta() );
+  }
+}
+
+// TODO: consider renaming StateAction => Action(!!!!!)
+
+export class CompositeFaceEdgeStateAction implements TAction<TFaceEdgeStateData> {
+  public constructor(
+    public readonly faceAction: TAction<TFaceStateData>,
+    public readonly edgeAction: TAction<TEdgeStateData>
+  ) {}
+
+  public apply( state: TFaceEdgeStateData ): void {
+    this.faceAction.apply( state );
+    this.edgeAction.apply( state );
+  }
+
+  public getUndo( state: TFaceEdgeStateData ): TAction<TFaceEdgeStateData> {
+    return new CompositeFaceEdgeStateAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ) );
+  }
+
+  public isEmpty(): boolean {
+    return this.faceAction.isEmpty() && this.edgeAction.isEmpty();
+  }
+}
+
+export class CompositeFaceEdgeStateDelta extends CompositeFaceEdgeStateAction implements TStateDelta<TFaceEdgeStateData> {
+  public constructor(
+    public readonly faceDelta: TStateDelta<TFaceStateData>,
+    public readonly edgeDelta: TStateDelta<TEdgeStateData>
+  ) {
+    super( faceDelta, edgeDelta );
+  }
+
+  public getFaceState( face: TFace ): FaceState {
+    return this.faceDelta.getFaceState( face );
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    this.faceDelta.setFaceState( face, state );
+  }
+
+  public getEdgeState( edge: TEdge ): EdgeState {
+    return this.edgeDelta.getEdgeState( edge );
+  }
+
+  public setEdgeState( edge: TEdge, state: EdgeState ): void {
+    this.edgeDelta.setEdgeState( edge, state );
+  }
+
+  public clone(): CompositeFaceEdgeStateDelta {
+    return new CompositeFaceEdgeStateDelta( this.faceDelta.clone(), this.edgeDelta.clone() );
+  }
+
+  public createDelta(): TStateDelta<TFaceEdgeStateData> {
+    return new CompositeFaceEdgeStateDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta() );
+  }
+}
