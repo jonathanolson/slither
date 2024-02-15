@@ -319,6 +319,33 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     return locations
   } );
 
+  const xLocations = xPoints.map( point => {
+    const rawX = point.x;
+    const rawY = point.y;
+
+    const closestX = _.minBy( resultXCoordinates, x => Math.abs( x - rawX ) )!;
+    const closestY = _.minBy( resultYCoordinates, y => Math.abs( y - rawY ) )!;
+    const nextClosestX = _.minBy( resultXCoordinates, x => x === closestX ? 100000 : Math.abs( x - rawX ) )!;
+    const nextClosestY = _.minBy( resultYCoordinates, y => y === closestY ? 100000 : Math.abs( y - rawY ) )!;
+
+    const isHorizontal = Math.abs( closestY - rawY ) < Math.abs( closestX - rawX );
+
+    const x = resultXCoordinates.indexOf( closestX );
+    const y = resultYCoordinates.indexOf( closestY );
+    const xs = resultXCoordinates.indexOf( nextClosestX );
+    const ys = resultYCoordinates.indexOf( nextClosestY );
+
+    assertEnabled() && assert( x >= 0 && y >= 0 );
+
+    return new LineLocation(
+      new Vector2(
+        isHorizontal ? Math.min( x, xs ) : x,
+        isHorizontal ? y : Math.min( y, ys )
+      ),
+      isHorizontal ? Orientation.HORIZONTAL : Orientation.VERTICAL
+    );
+  } );
+
   const startingData = new CompositeFaceEdgeData(
     new GeneralFaceData( board, face => {
       const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
@@ -336,7 +363,14 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
         return EdgeState.BLACK;
       }
       else {
-        return EdgeState.WHITE;
+        const xLocation = xLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) || null;
+
+        if ( xLocation ) {
+          return EdgeState.RED;
+        }
+        else {
+          return EdgeState.WHITE;
+        }
       }
     } )
   );
