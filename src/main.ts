@@ -1,14 +1,11 @@
-
 import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
-import { Bounds2, dotRandom } from 'phet-lib/dot';
-import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
-import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
+import { Bounds2 } from 'phet-lib/dot';
+import { NumberProperty, PatternStringProperty, Property, StringProperty } from 'phet-lib/axon';
+import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, Text, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
-import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard } from './model/structure.ts';
-import EdgeState from './model/EdgeState.ts';
 import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
 
 // @ts-ignore
