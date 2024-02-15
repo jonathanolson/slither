@@ -3,7 +3,7 @@ import { TEdge, TFace, TFaceEdgeData, TReadOnlyPuzzle, TState, TStructure } from
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/EdgeState.ts';
-import { Shape } from 'phet-lib/kite';
+import { LineStyles, Shape } from 'phet-lib/kite';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
@@ -14,13 +14,32 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
     options?: BasicPuzzleNodeOptions
   ) {
+    const backgroundContainer = new Node();
     const faceContainer = new Node();
     const vertexContainer = new Node();
     const edgeContainer = new Node();
 
+    const facesShape = new Shape();
+
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
+
+      facesShape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
     } );
+
+    const simplifiedFacesShape = facesShape.getSimplifiedAreaShape();
+
+    const expandedShape = facesShape.getStrokedShape( new LineStyles( {
+      lineWidth: 1
+    } ) ).shapeUnion( simplifiedFacesShape );
+
+    backgroundContainer.children = [
+      new Path( expandedShape, {
+        fill: 'white',
+        stroke: '#888',
+        lineWidth: 0.05
+      } )
+    ];
 
     puzzle.board.vertices.forEach( vertex => {
       faceContainer.addChild( new Rectangle( {
@@ -36,7 +55,12 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     } );
 
     super( combineOptions<BasicPuzzleNodeOptions>( {
-      children: [ faceContainer, vertexContainer, edgeContainer ]
+      children: [
+        backgroundContainer,
+        faceContainer,
+        vertexContainer,
+        edgeContainer
+      ]
     }, options ) );
   }
 }
