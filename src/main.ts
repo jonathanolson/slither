@@ -14,7 +14,7 @@ window.assertions.enableAssert();
 
 const board = new SquareBoard( 10, 14 );
 
-debugger;
+console.log( board );
 
 const scene = new Node();
 

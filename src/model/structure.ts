@@ -3,14 +3,14 @@ import { CardinalDirection, OrdinalDirection } from './Direction.ts';
 import { Orientation } from "phet-lib/phet-core";
 import EdgeState from "./EdgeState.ts";
 import FaceState from "./FaceState.ts";
-import assert from "../workarounds/assert.ts";
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 import _ from '../workarounds/_';
 
 export interface TVertex {
   logicalCoordinates: Vector2;
   viewCoordinates: Vector2;
-  incidentHalfEdges: THalfEdge[];
-  reflectedHalfEdges: THalfEdge[];
+  incomingHalfEdges: THalfEdge[];
+  outgoingHalfEdges: THalfEdge[];
   edges: TEdge[];
   faces: TFace[];
   getHalfEdgeTo( otherVertex: TVertex ): THalfEdge;
@@ -51,8 +51,8 @@ export interface TFace {
 export interface TSquareVertex extends TVertex {
   logicalCoordinates: Vector2;
   viewCoordinates: Vector2;
-  incidentHalfEdges: TSquareHalfEdge[];
-  reflectedHalfEdges: TSquareHalfEdge[];
+  incomingHalfEdges: TSquareHalfEdge[];
+  outgoingHalfEdges: TSquareHalfEdge[];
   edges: TSquareEdge[];
   faces: TSquareFace[];
   getHalfEdgeTo( otherVertex: TSquareVertex ): TSquareHalfEdge;
@@ -60,14 +60,14 @@ export interface TSquareVertex extends TVertex {
   getEdgeTo( otherVertex: TSquareVertex ): TSquareEdge;
 
   // Square-specific
-  northIncidentHalfEdge: TSquareHalfEdge | null;
-  eastIncidentHalfEdge: TSquareHalfEdge | null;
-  southIncidentHalfEdge: TSquareHalfEdge | null;
-  westIncidentHalfEdge: TSquareHalfEdge | null;
-  northReflectedHalfEdge: TSquareHalfEdge | null;
-  eastReflectedHalfEdge: TSquareHalfEdge | null;
-  southReflectedHalfEdge: TSquareHalfEdge | null;
-  westReflectedHalfEdge: TSquareHalfEdge | null;
+  northIncomingHalfEdge: TSquareHalfEdge | null;
+  eastIncomingHalfEdge: TSquareHalfEdge | null;
+  southIncomingHalfEdge: TSquareHalfEdge | null;
+  westIncomingHalfEdge: TSquareHalfEdge | null;
+  northOutgoingHalfEdge: TSquareHalfEdge | null;
+  eastOutgoingHalfEdge: TSquareHalfEdge | null;
+  southOutgoingHalfEdge: TSquareHalfEdge | null;
+  westOutgoingHalfEdge: TSquareHalfEdge | null;
   northEdge: TSquareEdge | null;
   eastEdge: TSquareEdge | null;
   southEdge: TSquareEdge | null;
@@ -76,7 +76,8 @@ export interface TSquareVertex extends TVertex {
   southeastFace: TSquareFace | null;
   southwestFace: TSquareFace | null;
   northwestFace: TSquareFace | null;
-  getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null;
+  getIncomingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null;
+  getOutgoingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null;
   getEdge( direction: CardinalDirection ): TSquareEdge | null;
   getFace( direction: OrdinalDirection ): TSquareFace | null;
   getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection;
@@ -274,19 +275,30 @@ export type TSquareStructure = {
   Vertex: TSquareVertex;
 };
 
-export type TBoard<Structure extends TStructure> = {
+export type TBoard<Structure extends TStructure = TStructure> = {
   edges: Structure[ 'Edge' ][];
   vertices: Structure[ 'Vertex' ][];
   faces: Structure[ 'Face' ][];
 };
 
+export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> = {
+  // Number of faces in each direction
+  width: number;
+  height: number;
+
+  getVertex: ( x: number, y: number ) => TSquareVertex | null;
+  getEdge: ( x: number, y: number, orientation: Orientation ) => TSquareEdge | null;
+  getHalfEdge: ( x0: number, y0: number, x1: number, y1: number ) => TSquareHalfEdge | null;
+  getFace: ( x: number, y: number ) => TSquareFace | null;
+} & TBoard<Structure>;
+
 export class BaseVertex<Structure extends TStructure> implements TVertex {
 
   // Half-edges with this vertex as their end vertex, in CCW order
-  public incidentHalfEdges!: Structure[ 'HalfEdge' ][];
+  public incomingHalfEdges!: Structure[ 'HalfEdge' ][];
 
   // Half-edges with this vertex as their start vertex, in CCW order
-  public reflectedHalfEdges!: Structure[ 'HalfEdge' ][];
+  public outgoingHalfEdges!: Structure[ 'HalfEdge' ][];
 
   // Edges, in CCW order
   public edges!: Structure[ 'Edge' ][];
@@ -301,20 +313,20 @@ export class BaseVertex<Structure extends TStructure> implements TVertex {
   ) {}
 
   public getHalfEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
-    const halfEdge = this.reflectedHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
-    assert && assert( halfEdge );
+    const halfEdge = this.outgoingHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
+    assertEnabled() && assert( halfEdge );
     return halfEdge!;
   }
 
   public getHalfEdgeFrom( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
-    const halfEdge = this.incidentHalfEdges.find( halfEdge => halfEdge.start === otherVertex )!;
-    assert && assert( halfEdge );
+    const halfEdge = this.incomingHalfEdges.find( halfEdge => halfEdge.start === otherVertex )!;
+    assertEnabled() && assert( halfEdge );
     return halfEdge!;
   }
 
   public getEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'Edge' ] {
     const edge = this.edges.find( edge => edge.start === otherVertex || edge.end === otherVertex )!;
-    assert && assert( edge );
+    assertEnabled() && assert( edge );
     return edge!;
   }
 }
@@ -352,13 +364,13 @@ export class BaseEdge<Structure extends TStructure> implements TEdge {
   ) {}
 
   public getOtherVertex( vertex: Structure[ 'Vertex' ] ): Structure[ 'Vertex' ] {
-    assert && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );
+    assertEnabled() && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );
 
     return vertex === this.start ? this.end : this.start;
   }
 
   public getOtherFace( face: Structure[ 'Face' ] | null ): Structure[ 'Face' ] | null {
-    assert && assert( face === this.forwardFace || face === this.reversedFace, 'face must be one of the two faces of this edge' );
+    assertEnabled() && assert( face === this.forwardFace || face === this.reversedFace, 'face must be one of the two faces of this edge' );
 
     // We can't have null forward/reversed faces!
     return face === this.forwardFace ? this.reversedFace : this.forwardFace;
@@ -402,14 +414,14 @@ export type SquareInitializer = {
 };
 
 export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquareVertex {
-  public northIncidentHalfEdge: TSquareHalfEdge | null = null;
-  public eastIncidentHalfEdge: TSquareHalfEdge | null = null;
-  public southIncidentHalfEdge: TSquareHalfEdge | null = null;
-  public westIncidentHalfEdge: TSquareHalfEdge | null = null;
-  public northReflectedHalfEdge: TSquareHalfEdge | null = null;
-  public eastReflectedHalfEdge: TSquareHalfEdge | null = null;
-  public southReflectedHalfEdge: TSquareHalfEdge | null = null;
-  public westReflectedHalfEdge: TSquareHalfEdge | null = null;
+  public northIncomingHalfEdge: TSquareHalfEdge | null = null;
+  public eastIncomingHalfEdge: TSquareHalfEdge | null = null;
+  public southIncomingHalfEdge: TSquareHalfEdge | null = null;
+  public westIncomingHalfEdge: TSquareHalfEdge | null = null;
+  public northOutgoingHalfEdge: TSquareHalfEdge | null = null;
+  public eastOutgoingHalfEdge: TSquareHalfEdge | null = null;
+  public southOutgoingHalfEdge: TSquareHalfEdge | null = null;
+  public westOutgoingHalfEdge: TSquareHalfEdge | null = null;
   public northEdge: TSquareEdge | null = null;
   public eastEdge: TSquareEdge | null = null;
   public southEdge: TSquareEdge | null = null;
@@ -428,48 +440,63 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     this.eastEdge = init.getEdge( x, y, Orientation.HORIZONTAL );
     this.southEdge = init.getEdge( x, y, Orientation.VERTICAL );
 
-    this.westIncidentHalfEdge = this.westEdge ? this.westEdge.forwardHalf : null;
-    this.northIncidentHalfEdge = this.northEdge ? this.northEdge.forwardHalf : null;
-    this.eastIncidentHalfEdge = this.eastEdge ? this.eastEdge.reversedHalf : null;
-    this.southIncidentHalfEdge = this.southEdge ? this.southEdge.reversedHalf : null;
-    this.westReflectedHalfEdge = this.westEdge ? this.westEdge.reversedHalf : null;
-    this.northReflectedHalfEdge = this.northEdge ? this.northEdge.reversedHalf : null;
-    this.eastReflectedHalfEdge = this.eastEdge ? this.eastEdge.forwardHalf : null;
-    this.southReflectedHalfEdge = this.southEdge ? this.southEdge.forwardHalf : null;
+    this.westIncomingHalfEdge = this.westEdge ? this.westEdge.forwardHalf : null;
+    this.northIncomingHalfEdge = this.northEdge ? this.northEdge.forwardHalf : null;
+    this.eastIncomingHalfEdge = this.eastEdge ? this.eastEdge.reversedHalf : null;
+    this.southIncomingHalfEdge = this.southEdge ? this.southEdge.reversedHalf : null;
+    this.westOutgoingHalfEdge = this.westEdge ? this.westEdge.reversedHalf : null;
+    this.northOutgoingHalfEdge = this.northEdge ? this.northEdge.reversedHalf : null;
+    this.eastOutgoingHalfEdge = this.eastEdge ? this.eastEdge.forwardHalf : null;
+    this.southOutgoingHalfEdge = this.southEdge ? this.southEdge.forwardHalf : null;
 
     this.northwestFace = init.getFace( x - 1, y - 1 );
     this.northeastFace = init.getFace( x, y - 1 );
     this.southeastFace = init.getFace( x, y );
     this.southwestFace = init.getFace( x - 1, y );
 
-    this.incidentHalfEdges = [
-      this.westIncidentHalfEdge,
-      this.southIncidentHalfEdge,
-      this.eastIncidentHalfEdge,
-      this.northIncidentHalfEdge
+    this.incomingHalfEdges = [
+      this.westIncomingHalfEdge,
+      this.southIncomingHalfEdge,
+      this.eastIncomingHalfEdge,
+      this.northIncomingHalfEdge
     ].filter( e => e !== null ) as TSquareHalfEdge[];
 
-    this.reflectedHalfEdges = [
-      this.westReflectedHalfEdge,
-      this.southReflectedHalfEdge,
-      this.eastReflectedHalfEdge,
-      this.northReflectedHalfEdge
+    this.outgoingHalfEdges = [
+      this.westOutgoingHalfEdge,
+      this.southOutgoingHalfEdge,
+      this.eastOutgoingHalfEdge,
+      this.northOutgoingHalfEdge
     ].filter( e => e !== null ) as TSquareHalfEdge[];
 
     this.edges = [ this.westEdge, this.southEdge, this.eastEdge, this.northEdge ].filter( e => e !== null ) as TSquareEdge[];
     this.faces = [ this.northwestFace, this.southwestFace, this.southeastFace, this.northeastFace ].filter( e => e !== null ) as TSquareFace[];
   }
 
-  getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
+  getIncomingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
     switch ( direction ) {
       case CardinalDirection.NORTH:
-        return this.northIncidentHalfEdge;
+        return this.northIncomingHalfEdge;
       case CardinalDirection.EAST:
-        return this.eastIncidentHalfEdge;
+        return this.eastIncomingHalfEdge;
       case CardinalDirection.SOUTH:
-        return this.southIncidentHalfEdge;
+        return this.southIncomingHalfEdge;
       case CardinalDirection.WEST:
-        return this.westIncidentHalfEdge;
+        return this.westIncomingHalfEdge;
+      default:
+        throw new Error( `Invalid direction: ${direction}` );
+    }
+  }
+
+  getOutgoingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
+    switch ( direction ) {
+      case CardinalDirection.NORTH:
+        return this.northOutgoingHalfEdge;
+      case CardinalDirection.EAST:
+        return this.eastOutgoingHalfEdge;
+      case CardinalDirection.SOUTH:
+        return this.southOutgoingHalfEdge;
+      case CardinalDirection.WEST:
+        return this.westOutgoingHalfEdge;
       default:
         throw new Error( `Invalid direction: ${direction}` );
     }
@@ -506,16 +533,16 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
   }
 
   getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
-    if ( halfEdge === this.northIncidentHalfEdge ) {
+    if ( halfEdge === this.northIncomingHalfEdge ) {
       return CardinalDirection.NORTH;
     }
-    else if ( halfEdge === this.eastIncidentHalfEdge ) {
+    else if ( halfEdge === this.eastIncomingHalfEdge ) {
       return CardinalDirection.EAST;
     }
-    else if ( halfEdge === this.southIncidentHalfEdge ) {
+    else if ( halfEdge === this.southIncomingHalfEdge ) {
       return CardinalDirection.SOUTH;
     }
-    else if ( halfEdge === this.westIncidentHalfEdge ) {
+    else if ( halfEdge === this.westIncomingHalfEdge ) {
       return CardinalDirection.WEST;
     }
     else {
@@ -576,7 +603,7 @@ export class SquareHalfEdge extends BaseHalfEdge<TSquareStructure> implements TS
     const end = this.end.logicalCoordinates;
 
     const delta = end.minus( start );
-    assert && assert( delta.magnitude === 1 );
+    assertEnabled() && assert( delta.magnitude === 1 );
     const ccw = ( v: Vector2 ) => new Vector2( v.y, -v.x );
     const cw = ( v: Vector2 ) => new Vector2( -v.y, v.x );
 
@@ -666,10 +693,10 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     const x = this.logicalCoordinates.x;
     const y = this.logicalCoordinates.y;
 
-    this.westEdge = init.getEdge( x, y, Orientation.VERTICAL )!;
-    this.southEdge = init.getEdge( x, y, Orientation.HORIZONTAL )!;
-    this.eastEdge = init.getEdge( x + 1, y, Orientation.VERTICAL )!;
     this.northEdge = init.getEdge( x, y, Orientation.HORIZONTAL )!;
+    this.westEdge = init.getEdge( x, y, Orientation.VERTICAL )!;
+    this.southEdge = init.getEdge( x, y + 1, Orientation.HORIZONTAL )!;
+    this.eastEdge = init.getEdge( x + 1, y, Orientation.VERTICAL )!;
 
     this.westHalfEdge = this.westEdge.forwardHalf;
     this.southHalfEdge = this.southEdge.forwardHalf;
@@ -787,7 +814,7 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
   }
 }
 
-export class SquareBoard extends BaseBoard<TSquareStructure> implements TBoard<TSquareStructure> {
+export class SquareBoard extends BaseBoard<TSquareStructure> implements TSquareBoard {
 
   // For the upper-left corner of each primitive. Edges go down(south) or right(east) from this.
   public readonly getVertex: ( x: number, y: number ) => TSquareVertex | null;
@@ -946,5 +973,206 @@ export class SquareBoard extends BaseBoard<TSquareStructure> implements TBoard<T
     this.getEdge = init.getEdge;
     this.getHalfEdge = init.getHalfEdge;
     this.getFace = init.getFace;
+
+    assertEnabled() && validateSquareBoard( this );
   }
 }
+
+export const validateBoard = ( board: TBoard ): void => {
+  if ( !assertEnabled() ) {
+    return;
+  }
+
+  board.edges.forEach( edge => {
+    const forwardHalf = edge.forwardHalf;
+    const reversedHalf = edge.reversedHalf;
+
+    assert( forwardHalf.edge === edge );
+    assert( reversedHalf.edge === edge );
+    assert( !forwardHalf.isReversed );
+    assert( reversedHalf.isReversed );
+
+    assert( forwardHalf.reversed === reversedHalf );
+    assert( reversedHalf.reversed === forwardHalf );
+
+    assert( forwardHalf.start === edge.start );
+    assert( forwardHalf.end === edge.end );
+    assert( reversedHalf.start === edge.end );
+    assert( reversedHalf.end === edge.start );
+
+    assert( forwardHalf.next.previous === forwardHalf );
+    assert( forwardHalf.previous.next === forwardHalf );
+    assert( reversedHalf.next.previous === reversedHalf );
+    assert( reversedHalf.previous.next === reversedHalf );
+    assert( forwardHalf.next !== forwardHalf );
+    assert( forwardHalf.previous !== forwardHalf );
+    assert( reversedHalf.next !== reversedHalf );
+    assert( reversedHalf.previous !== reversedHalf );
+
+    assert( forwardHalf.next.face === forwardHalf.face );
+    assert( forwardHalf.previous.face === forwardHalf.face );
+    assert( reversedHalf.next.face === reversedHalf.face );
+    assert( reversedHalf.previous.face === reversedHalf.face );
+
+    assert( forwardHalf.face === edge.forwardFace );
+    assert( reversedHalf.face === edge.reversedFace );
+  } );
+
+  board.vertices.forEach( vertex => {
+    vertex.incomingHalfEdges.forEach( halfEdge => {
+      assert( halfEdge.end === vertex );
+    } );
+    vertex.outgoingHalfEdges.forEach( halfEdge => {
+      assert( halfEdge.start === vertex );
+    } );
+    const getIncomingHalfEdge = ( n: number ) => vertex.incomingHalfEdges[ ( n + vertex.incomingHalfEdges.length ) % vertex.incomingHalfEdges.length ];
+    const getOutgoingHalfEdge = ( n: number ) => vertex.outgoingHalfEdges[ ( n + vertex.outgoingHalfEdges.length ) % vertex.outgoingHalfEdges.length ];
+    _.range( 0, vertex.incomingHalfEdges.length ).forEach( i => {
+      const incoming = getIncomingHalfEdge( i );
+      const outgoing = getOutgoingHalfEdge( i );
+      assert( incoming.reversed === outgoing );
+
+      assert( incoming.next === getOutgoingHalfEdge( i - 1 ) );
+      assert( outgoing.previous === getIncomingHalfEdge( i + 1 ) );
+    } );
+    vertex.edges.forEach( edge => {
+      assert( edge.start === vertex || edge.end === vertex );
+      assert( vertex.incomingHalfEdges.includes( edge.forwardHalf ) || vertex.outgoingHalfEdges.includes( edge.forwardHalf ) );
+      assert( vertex.incomingHalfEdges.includes( edge.reversedHalf ) || vertex.outgoingHalfEdges.includes( edge.reversedHalf ) );
+
+      if ( edge.forwardFace ) {
+        assert( edge.forwardFace.vertices.includes( vertex ) );
+        assert( vertex.faces.includes( edge.forwardFace ) );
+      }
+      if ( edge.reversedFace ) {
+        assert( edge.reversedFace.vertices.includes( vertex ) );
+        assert( vertex.faces.includes( edge.reversedFace ) );
+      }
+    } );
+    vertex.faces.forEach( face => {
+      assert( face.vertices.includes( vertex ) );
+    } );
+  } );
+};
+
+export const validateSquareBoard = ( board: TSquareBoard ): void => {
+
+  if ( !assertEnabled() ) {
+    return;
+  }
+  validateBoard( board );
+
+  board.vertices.forEach( vertex => {
+    const atTop = vertex.logicalCoordinates.y === 0;
+    const atBottom = vertex.logicalCoordinates.y === board.height;
+    const atLeft = vertex.logicalCoordinates.x === 0;
+    const atRight = vertex.logicalCoordinates.x === board.width;
+
+    assert( ( vertex.northIncomingHalfEdge === null ) === atTop );
+    assert( ( vertex.eastIncomingHalfEdge === null ) === atRight );
+    assert( ( vertex.southIncomingHalfEdge === null ) === atBottom );
+    assert( ( vertex.westIncomingHalfEdge === null ) === atLeft );
+    assert( ( vertex.northOutgoingHalfEdge === null ) === atTop );
+    assert( ( vertex.eastOutgoingHalfEdge === null ) === atRight );
+    assert( ( vertex.southOutgoingHalfEdge === null ) === atBottom );
+    assert( ( vertex.westOutgoingHalfEdge === null ) === atLeft );
+    assert( ( vertex.northEdge === null ) === atTop );
+    assert( ( vertex.eastEdge === null ) === atRight );
+    assert( ( vertex.southEdge === null ) === atBottom );
+    assert( ( vertex.westEdge === null ) === atLeft );
+
+    const checkEdges = (
+      edge: TSquareEdge,
+      incomingHalfEdge: TSquareHalfEdge,
+      outgoingHalfEdge: TSquareHalfEdge,
+      direction: CardinalDirection
+    ) => {
+      assert( edge.forwardHalf === incomingHalfEdge || edge.forwardHalf === outgoingHalfEdge );
+      assert( edge.reversedHalf === incomingHalfEdge || edge.reversedHalf === outgoingHalfEdge );
+      assert( incomingHalfEdge.reversed === outgoingHalfEdge );
+
+      const coordinate = vertex.logicalCoordinates.plus( direction.delta );
+      assert( incomingHalfEdge.start.logicalCoordinates.equals( coordinate ) );
+      assert( outgoingHalfEdge.end.logicalCoordinates.equals( coordinate ) );
+      assert( incomingHalfEdge.end.logicalCoordinates.equals( vertex.logicalCoordinates ) );
+      assert( outgoingHalfEdge.start.logicalCoordinates.equals( vertex.logicalCoordinates ) );
+    };
+    if ( !atTop ) {
+      checkEdges( vertex.northEdge!, vertex.northIncomingHalfEdge!, vertex.northOutgoingHalfEdge!, CardinalDirection.NORTH );
+    }
+    if ( !atRight ) {
+      checkEdges( vertex.eastEdge!, vertex.eastIncomingHalfEdge!, vertex.eastOutgoingHalfEdge!, CardinalDirection.EAST );
+    }
+    if ( !atBottom ) {
+      checkEdges( vertex.southEdge!, vertex.southIncomingHalfEdge!, vertex.southOutgoingHalfEdge!, CardinalDirection.SOUTH );
+    }
+    if ( !atLeft ) {
+      checkEdges( vertex.westEdge!, vertex.westIncomingHalfEdge!, vertex.westOutgoingHalfEdge!, CardinalDirection.WEST );
+    }
+
+    assert( ( vertex.northeastFace === null ) === ( atTop || atRight ) );
+    assert( ( vertex.southeastFace === null ) === ( atBottom || atRight ) );
+    assert( ( vertex.southwestFace === null ) === ( atBottom || atLeft ) );
+    assert( ( vertex.northwestFace === null ) === ( atTop || atLeft ) );
+  } );
+
+  board.edges.forEach( edge => {
+    assert( edge.northVertex === edge.forwardHalf.northVertex );
+    assert( edge.eastVertex === edge.forwardHalf.eastVertex );
+    assert( edge.southVertex === edge.forwardHalf.southVertex );
+    assert( edge.westVertex === edge.forwardHalf.westVertex );
+    assert( edge.northVertex === edge.reversedHalf.northVertex );
+    assert( edge.eastVertex === edge.reversedHalf.eastVertex );
+    assert( edge.southVertex === edge.reversedHalf.southVertex );
+    assert( edge.westVertex === edge.reversedHalf.westVertex );
+
+    assert( edge.orientation === edge.forwardHalf.orientation );
+    assert( edge.orientation === edge.reversedHalf.orientation );
+
+    if ( edge.orientation === Orientation.HORIZONTAL ) {
+      assert( edge.westFace === null );
+      assert( edge.eastFace === null );
+
+      assert( edge.westVertex !== null );
+      assert( edge.eastVertex !== null );
+      assert( edge.northFace === edge.forwardFace );
+      assert( edge.southFace === edge.reversedFace );
+    }
+    else {
+      assert( edge.northFace === null );
+      assert( edge.southFace === null );
+
+      assert( edge.northVertex !== null );
+      assert( edge.southVertex !== null );
+      assert( edge.eastFace === edge.forwardFace );
+      assert( edge.westFace === edge.reversedFace );
+    }
+  } );
+
+  board.faces.forEach( face => {
+    assert( face.northHalfEdge.face === face );
+    assert( face.eastHalfEdge.face === face );
+    assert( face.southHalfEdge.face === face );
+    assert( face.westHalfEdge.face === face );
+
+    // Loop around face
+    assert( face.northHalfEdge.next === face.westHalfEdge );
+    assert( face.westHalfEdge.next === face.southHalfEdge );
+    assert( face.southHalfEdge.next === face.eastHalfEdge );
+    assert( face.eastHalfEdge.next === face.northHalfEdge );
+
+    assert( face.northHalfEdge.edge === face.northEdge );
+    assert( face.eastHalfEdge.edge === face.eastEdge );
+    assert( face.southHalfEdge.edge === face.southEdge );
+    assert( face.westHalfEdge.edge === face.westEdge );
+
+    assert( face.northwestVertex === face.northEdge.start );
+    assert( face.northwestVertex === face.westEdge.start );
+    assert( face.northeastVertex === face.northEdge.end );
+    assert( face.northeastVertex === face.eastEdge.start );
+    assert( face.southwestVertex === face.southEdge.start );
+    assert( face.southwestVertex === face.westEdge.end );
+    assert( face.southeastVertex === face.southEdge.end );
+    assert( face.southeastVertex === face.eastEdge.end );
+  } );
+};

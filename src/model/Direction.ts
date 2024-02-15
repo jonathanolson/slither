@@ -1,3 +1,4 @@
+import { Vector2 } from "phet-lib/dot";
 import { Enumeration, EnumerationValue } from "phet-lib/phet-core";
 
 export class CardinalDirection extends EnumerationValue {
@@ -12,6 +13,8 @@ export class CardinalDirection extends EnumerationValue {
 
   public halfLeft!: OrdinalDirection;
   public halfRight!: OrdinalDirection;
+
+  public delta!: Vector2;
 
   public static readonly NORTH = new CardinalDirection();
   public static readonly EAST = new CardinalDirection();
@@ -71,6 +74,12 @@ CardinalDirection.WEST.cw = CardinalDirection.WEST.right = CardinalDirection.NOR
 CardinalDirection.WEST.opposite = CardinalDirection.WEST.back = CardinalDirection.EAST;
 CardinalDirection.WEST.halfLeft = OrdinalDirection.SOUTHWEST;
 CardinalDirection.WEST.halfRight = OrdinalDirection.NORTHWEST;
+
+// visual-style directions
+CardinalDirection.WEST.delta = new Vector2( -1, 0 );
+CardinalDirection.EAST.delta = new Vector2( 1, 0 );
+CardinalDirection.NORTH.delta = new Vector2( 0, -1 );
+CardinalDirection.SOUTH.delta = new Vector2( 0, 1 );
 
 OrdinalDirection.NORTHEAST.ccw = OrdinalDirection.NORTHEAST.left = OrdinalDirection.NORTHWEST;
 OrdinalDirection.NORTHEAST.cw = OrdinalDirection.NORTHEAST.right =OrdinalDirection.SOUTHEAST;
