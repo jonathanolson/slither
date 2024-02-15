@@ -7,9 +7,14 @@ import { Property, NumberProperty, PatternStringProperty, StringProperty } from 
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
+import { SquareBoard } from './model/structure.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
+
+const board = new SquareBoard( 10, 14 );
+
+debugger;
 
 const scene = new Node();
 

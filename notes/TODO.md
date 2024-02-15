@@ -128,6 +128,7 @@
   - Could use size of numbers to inform "scale" of things
   - Could use FFT for finding scale/grid
   - !!! Get Scenery workign with embedding DOM components, like the file input
+  - Note "draw interior of large region in background color" to filter out
 
 - Puzzle editor
   - Particularly for things that didn't scan correctly.
