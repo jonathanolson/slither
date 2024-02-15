@@ -7,14 +7,26 @@ import { Property, NumberProperty, PatternStringProperty, StringProperty } from 
 import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
-import { SquareBoard } from './model/structure.ts';
+import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard } from './model/structure.ts';
+import EdgeState from './model/EdgeState.ts';
+import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
 
 const board = new SquareBoard( 10, 14 );
+const startingData = new CompositeFaceEdgeData(
+  new GeneralFaceData( board, face => {
+    return [ null, 0, 1, 2, 3 ][ ( face.logicalCoordinates.x + face.logicalCoordinates.y ) % 4 ];
+  } ),
+  new GeneralEdgeData( board, edge => EdgeState.WHITE )
+);
+
+const puzzle = new BasicSquarePuzzle( board, startingData );
 
 console.log( board );
+console.log( startingData );
+console.log( puzzle );
 
 const scene = new Node();
 
@@ -82,6 +94,14 @@ const mainBox = new VBox( {
           }
         }
         input.click();
+      }
+    } ),
+    new BasicPuzzleNode( puzzle, {
+      scale: 30,
+      textOptions: {
+        font: font,
+        maxWidth: 0.9,
+        maxHeight: 0.9
       }
     } )
   ]

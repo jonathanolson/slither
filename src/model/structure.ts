@@ -5,6 +5,7 @@ import EdgeState from "./EdgeState.ts";
 import FaceState from "./FaceState.ts";
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import _ from '../workarounds/_';
+import { TProperty, TReadOnlyProperty, TinyProperty } from "phet-lib/axon";
 
 export interface TVertex {
   logicalCoordinates: Vector2;
@@ -314,14 +315,24 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
   getFace: ( x: number, y: number ) => TSquareFace | null;
 } & TBoard<Structure>;
 
+export type TReadOnlyPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
+  board: TBoard<Structure>;
+  stateProperty: TReadOnlyProperty<State>;
+};
+
 export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
-  state: State;
+  stateProperty: TProperty<State>;
 };
 
 export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TSquareBoard<Structure>;
-  state: State;
+  stateProperty: TReadOnlyProperty<State>;
+};
+
+export type TReadOnlySquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
+  board: TSquareBoard<Structure>;
+  stateProperty: TProperty<State>;
 };
 
 export class BaseVertex<Structure extends TStructure> implements TVertex {
@@ -1491,5 +1502,29 @@ export class CompositeFaceEdgeDelta extends CompositeFaceEdgeAction implements T
 
   public createDelta(): TDelta<TFaceEdgeData> {
     return new CompositeFaceEdgeDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta() );
+  }
+}
+
+export class BasicPuzzle<Data> {
+
+  public readonly stateProperty: TProperty<TState<Data>>;
+
+  public constructor(
+    public readonly board: TBoard,
+    initialState: TState<Data>
+  ) {
+    this.stateProperty = new TinyProperty( initialState );
+  }
+}
+
+export class BasicSquarePuzzle<Data> {
+
+  public readonly stateProperty: TProperty<TState<Data>>;
+
+  public constructor(
+    public readonly board: TSquareBoard,
+    initialState: TState<Data>
+  ) {
+    this.stateProperty = new TinyProperty( initialState );
   }
 }
