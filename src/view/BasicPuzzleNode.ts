@@ -7,7 +7,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
-  edgePressListener?: ( edge: TEdge, isLeftClick: boolean ) => void;
+  edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
 } & NodeOptions;
 
 // TODO: disposal!
@@ -193,11 +193,16 @@ class EdgeNode extends Node {
         .close();
       this.mouseArea = this.touchArea = pointerArea;
       this.addInputListener( new FireListener( {
-        fire: event => edgePressListener( edge, true )
+        mouseButton: 0,
+        fire: event => edgePressListener( edge, 0 )
+      } ) );
+      this.addInputListener( new FireListener( {
+        mouseButton: 1,
+        fire: event => edgePressListener( edge, 1 )
       } ) );
       this.addInputListener( new FireListener( {
         mouseButton: 2,
-        fire: event => edgePressListener( edge, false )
+        fire: event => edgePressListener( edge, 2 )
       } ) );
       this.cursor = 'pointer';
     }

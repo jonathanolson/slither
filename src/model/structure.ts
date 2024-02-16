@@ -259,7 +259,7 @@ export class EdgeStateSetAction implements TAction<TEdgeData> {
 
 // TODO: immediate user repeat of "toggle" should undo auto-solve (that is probably out of the scope of these simple actions)
 // TODO: Potentially a UserEdgeStateToggleAction that does this and other things?
-export class EdgeStateToggleAction implements TAction<TEdgeData> {
+export class EdgeStateCycleAction implements TAction<TEdgeData> {
 
   public constructor(
     public readonly edge: TEdge,
@@ -280,7 +280,7 @@ export class EdgeStateToggleAction implements TAction<TEdgeData> {
   }
 
   public getUndo( _state: TEdgeData ): TAction<TEdgeData> {
-    return new EdgeStateToggleAction( this.edge, !this.forward );
+    return new EdgeStateCycleAction( this.edge, !this.forward );
   }
 
   public isEmpty(): boolean {

@@ -147,7 +147,10 @@
   - Make the zoom only work for the "play area" 
   - Puzzle load (from URL) replaces current puzzle
   - Undo/Redo(!)
-  - Another click on the "same" edge should UNDO the state and then apply the other state 
+  - Another click on the "same" edge should UNDO the state and then apply the other state
+    - We can store a stack of (Action + ResultState).
+  - NOTE NOTE: CONFIG to determine whether our taps "cycle through" or leftmouse-black, rightmouse-red, middle-mouse-white?
+    - local storage config 
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time 
 
 - Concepts

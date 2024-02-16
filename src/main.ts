@@ -7,8 +7,9 @@ import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, VBox } from 'ph
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
-import { EdgeStateToggleAction } from './model/structure.ts';
+import { EdgeStateCycleAction, EdgeStateSetAction } from './model/structure.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
+import { getPressStyle } from './config.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -82,13 +83,19 @@ const mainBox = new VBox( {
                 maxWidth: 0.9,
                 maxHeight: 0.9
               },
-              edgePressListener: ( edge, isLeftClick ) => {
-                const newState = puzzle.stateProperty.value.clone();
+              edgePressListener: ( edge, button ) => {
+                const oldEdgeState = puzzle.stateProperty.value.getEdgeState( edge );
+                const style = getPressStyle( button );
+                const newEdgeState = style.apply( oldEdgeState );
 
-                new EdgeStateToggleAction( edge, isLeftClick ).apply( newState );
+                if ( oldEdgeState !== newEdgeState ) {
+                  const newState = puzzle.stateProperty.value.clone();
 
-                stateStack.push( newState );
-                puzzle.stateProperty.value = newState;
+                  new EdgeStateSetAction( edge, newEdgeState ).apply( newState );
+
+                  stateStack.push( newState );
+                  puzzle.stateProperty.value = newState;
+                }
               }
             } ) );
 
