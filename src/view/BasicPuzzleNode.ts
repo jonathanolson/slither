@@ -9,6 +9,7 @@ export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
 } & NodeOptions;
 
+// TODO: disposal!
 export default class BasicPuzzleNode<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> extends Node {
   public constructor(
     public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
@@ -86,7 +87,30 @@ class FaceNode extends Node {
       }
     } );
 
-    const text = new Text( faceStringProperty, options?.textOptions );
+    // TODO: disposal!!!
+    const fillProperty = new DerivedProperty( [ stateProperty ], state => {
+      const faceState = state.getFaceState( face );
+
+      if ( faceState === null ) {
+        return 'white';
+      }
+
+      const blackCount = face.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.BLACK ).length;
+
+      if ( blackCount < faceState ) {
+        return 'black';
+      }
+      else if ( blackCount === faceState ) {
+        return '#aaa';
+      }
+      else {
+        return 'red';
+      }
+    } );
+
+    const text = new Text( faceStringProperty, combineOptions<TextOptions>( {
+      fill: fillProperty
+    }, options?.textOptions ) );
 
     text.localBoundsProperty.link( localBounds => {
       if ( localBounds.isValid() ) {

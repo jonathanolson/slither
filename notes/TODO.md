@@ -21,7 +21,6 @@
       - Include culori(!) 
     - Lines go flush to (and include) the vertex dots
       - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
-    - Numbers go "disabled" appearance once they are satisfied (if over-satisfied, red?)
     - Optional BLACK: solid line WHITE: dashed line, RED: no line
       - IF we have this, potentially remove the vertices appearance if they won't have lines through them?
       - DASHES seem like a good appearance for hex
@@ -30,7 +29,6 @@
       - For other shapes, displaying the "potential" line looks really helpful
       - Potentially use localStorage for themes?
     - Optional: red x's look ... not great on triangular potentially?
-    - Borders have an offset
     - SLICK animation(!)
       - Can we make it more intuitive by having the line animate?
       - Option for no animation, or animation speed
@@ -139,7 +137,7 @@
     - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
   - Could use size of numbers to inform "scale" of things
   - Could use FFT for finding scale/grid
-  - !!! Get Scenery workign with embedding DOM components, like the file input
+  - !!! Get Scenery working with embedding DOM components, like the file input
   - Note "draw interior of large region in background color" to filter out
 
 - Puzzle editor
@@ -151,6 +149,7 @@
 - Concepts
   - Solvers:
     - Each solver listens to emitters it needs to. Sets dirty flag if it needs to run. Tracks what is "dirty" itself.
+      - Especially for "complicated" ones, we can find that "first pattern solve" and exit, and STILL be dirty(!) 
     - Pattern solvers can still work
     - Potentially separate solvers into "human-readable this solver does one thing", and "machine solver, do a bunch of things efficiently" 
   - 
