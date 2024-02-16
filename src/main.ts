@@ -1,9 +1,9 @@
 import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
-import { Bounds2 } from 'phet-lib/dot';
+import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { Property } from 'phet-lib/axon';
-import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, VBox } from 'phet-lib/scenery';
+import { AnimatedPanZoomListener, Display, Font, Node, Rectangle, Sizable, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
@@ -50,8 +50,112 @@ display.addInputListener( zoomListener );
 
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
+class PuzzleContainer extends Sizable( Node ) {
+
+  private backgroundRect: Rectangle;
+  private puzzleWrapper: Node;
+  private puzzleNode: PuzzleNode | null = null;
+
+  public constructor(
+
+  ) {
+    // TODO: isolate out these options
+    super( {
+      layoutOptions: {
+        stretch: true,
+        grow: 1
+      }
+    } );
+
+    this.backgroundRect = new Rectangle( {
+      fill: '#ccc'
+    } );
+    this.addChild( this.backgroundRect );
+
+    this.puzzleWrapper = new Node();
+
+    this.addChild( this.puzzleWrapper );
+
+    const layoutListener = this.updateLayout.bind( this );
+    this.localPreferredWidthProperty.lazyLink( layoutListener );
+    this.localPreferredHeightProperty.lazyLink( layoutListener );
+
+    this.updateLayout();
+  }
+
+  private updateLayout(): void {
+    const width = this.localPreferredWidth;
+    const height = this.localPreferredHeight;
+
+    if ( width !== null ) {
+      this.backgroundRect.rectWidth = width;
+    }
+    if ( height !== null ) {
+      this.backgroundRect.rectHeight = height;
+    }
+
+    if ( this.puzzleNode ) {
+      this.updatePuzzleNodeLayout( this.puzzleNode );
+    }
+  }
+
+  private updatePuzzleNodeLayout( puzzleNode: PuzzleNode ): void {
+    const width = this.localPreferredWidth;
+    const height = this.localPreferredHeight;
+
+    if ( width !== null && height !== null ) {
+      const padding = 20;
+
+      const availableWidth = width - padding * 2;
+      const availableHeight = height - padding * 2;
+
+      const puzzleWidth = puzzleNode.localBounds.width;
+      const puzzleHeight = puzzleNode.localBounds.height;
+
+      const scale = Math.min( availableWidth / puzzleWidth, availableHeight / puzzleHeight );
+
+      puzzleNode.setScaleMagnitude( scale );
+      puzzleNode.center = new Vector2( width / 2, height / 2 );
+    }
+  }
+
+  public setPuzzleNode( puzzleNode: PuzzleNode ): void {
+    this.puzzleNode = puzzleNode;
+    // Update before children, so we don't mess with layout
+    this.updatePuzzleNodeLayout( puzzleNode );
+    this.puzzleWrapper.children = [ puzzleNode ];
+  }
+}
+
+const puzzleNodeContainer = new PuzzleContainer();
+
+// const puzzleNodeContainer = new Node( {
+//   layoutOptions: {
+//     stretch: true,
+//     grow: 1
+//   },
+//   children: [
+//     new Rectangle( {
+//       fill: 'red',
+//       sizable: true,
+//       rectWidth: 10,
+//       rectHeight: 10
+//     } )
+//   ]
+// } );
+
+// const puzzleNodeContainer = new Rectangle( {
+//   layoutOptions: {
+//     stretch: true,
+//     grow: 1
+//   },
+//   fill: 'red',
+//   sizable: true,
+//   rectWidth: 10,
+//   rectHeight: 10
+// } );
+
 const mainBox = new VBox( {
-  spacing: 10,
   children: [
     new TextPushButton( 'Load image', {
       font: font,
@@ -68,23 +172,25 @@ const mainBox = new VBox( {
           reader.onloadend = async () => {
             const url = reader.result as string;
 
+            // TODO: UI change while working?
             const puzzle = await scanURL( url );
 
-            mainBox.addChild( new PuzzleNode( puzzle ) );
+            puzzleNodeContainer.setPuzzleNode( new PuzzleNode( puzzle ) );
           }
         }
         input.click();
       }
-    } )
+    } ),
+    puzzleNodeContainer
   ]
 } );
-
-scene.addChild( new AlignBox( mainBox, {
-  alignBoundsProperty: layoutBoundsProperty,
-  xAlign: 'center',
-  yAlign: 'top',
-  margin: 20
-} ) );
+layoutBoundsProperty.lazyLink( bounds => {
+  mainBox.preferredWidth = bounds.width;
+  mainBox.preferredHeight = bounds.height;
+  mainBox.x = bounds.left;
+  mainBox.y = bounds.top;
+} );
+scene.addChild( mainBox );
 
 display.initializeEvents();
 

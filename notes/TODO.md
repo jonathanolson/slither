@@ -144,11 +144,11 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - Separate the model out of PuzzleNode
   - Make the zoom only work for the "play area" 
-  - Puzzle load (from URL) replaces current puzzle
+  - LIGHT/DARK color themes
   - Undo/Redo(!)
-  - Another click on the "same" edge should UNDO the state and then apply the other state
-    - We can store a stack of (Action + ResultState).
+  - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
 

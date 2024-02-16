@@ -23,7 +23,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     this.stack = [ new StateTransition( null, puzzle.stateProperty.value ) ];
 
     this.addChild( new BasicPuzzleNode( puzzle, {
-      scale: 40,
       textOptions: {
         font: font,
         maxWidth: 0.9,
