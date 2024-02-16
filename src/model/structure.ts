@@ -37,6 +37,7 @@ export interface TEdge {
   reversedHalf: THalfEdge;
   forwardFace: TFace | null;
   reversedFace: TFace | null;
+  faces: TFace[];
   getOtherVertex( vertex: TVertex ): TVertex;
   getOtherFace( face: TFace | null ): TFace | null;
 };
@@ -183,15 +184,21 @@ export interface TFaceData {
   getFaceState( face: TFace ): FaceState;
   setFaceState( face: TFace, state: FaceState ): void;
 
+  // TODO: consider passing in the old value?
   faceStateChangedEmitter: TEmitter<[ TFace, FaceState ]>;
 }
+
+export type TFaceDataListener = ( face: TFace, state: FaceState ) => void;
 
 export interface TEdgeData {
   getEdgeState( edge: TEdge ): EdgeState;
   setEdgeState( edge: TEdge, state: EdgeState ): void;
 
+  // TODO: consider passing in the old value?
   edgeStateChangedEmitter: TEmitter<[ TEdge, EdgeState ]>;
 };
+
+export type TEdgeDataListener = ( edge: TEdge, state: EdgeState ) => void;
 
 export class CompositeAction<State> implements TAction<State> {
 
@@ -403,6 +410,8 @@ export class BaseEdge<Structure extends TStructure> implements TEdge {
 
   public forwardFace!: Structure[ 'Face' ] | null;
   public reversedFace!: Structure[ 'Face' ] | null;
+
+  public faces!: Structure[ 'Face' ][];
 
   public constructor(
     public readonly start: Structure[ 'Vertex' ],
@@ -705,6 +714,7 @@ export class SquareEdge extends BaseEdge<TSquareStructure> implements TSquareEdg
 
     this.forwardFace = this.forwardHalf.face;
     this.reversedFace = this.reversedHalf.face;
+    this.faces = [ this.forwardFace, this.reversedFace ].filter( f => f !== null ) as TSquareFace[];
 
     if ( orientation === Orientation.HORIZONTAL ) {
       this.westVertex = this.start;

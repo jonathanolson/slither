@@ -1,6 +1,7 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from "phet-lib/axon";
 import { getPressStyle } from "../config";
 import { EdgeStateSetAction, TEdge, TFaceEdgeData, TPuzzle, TState, TStructure } from "./structure";
+import { SimpleFaceSolver } from "./solver";
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> {
@@ -75,7 +76,20 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       this.wipeStackTop();
 
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
+
+      // TODO: how do we handle solvers? (this works well for auto-solvers, no?)
+      const autoSolver = new SimpleFaceSolver( this.puzzle.board, newState, {
+        solveToRed: true,
+        solveToBlack: true,
+      }, [] );
       userAction.apply( newState );
+      while ( autoSolver.dirty ) {
+        const action = autoSolver.nextAction();
+        if ( action ) {
+          action.apply( newState );
+        }
+      }
+      autoSolver.dispose();
 
       this.stack.push( new StateTransition( userAction, newState ) );
       this.stackLengthProperty.value = this.stack.length;

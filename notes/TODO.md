@@ -98,6 +98,7 @@
   - Boolean SAT, https://www.comp.nus.edu.sg/~gregory/sat/, https://www.comp.nus.edu.sg/~gregory/sat/sat.js, https://jgalenson.github.io/research.js/demos/minisat.html
     - miniSAT looks... nice. Embrace the NP-completeness!
     - How... do we express the loop (only one) constraint? Not easy.
+  - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
 
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
@@ -145,13 +146,16 @@
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
+  - Separate out structure.ts into a structure directory
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
 
 - Concepts
   - Solvers:
+    - CLONE()!(!(!(!))) for each solver, so that we can "branch" it with state
     - Each solver listens to emitters it needs to. Sets dirty flag if it needs to run. Tracks what is "dirty" itself.
       - Especially for "complicated" ones, we can find that "first pattern solve" and exit, and STILL be dirty(!) 
+      - Try to keep the "dirty" state as a stack, so it will handle recently-changed things first
     - Pattern solvers can still work
     - Potentially separate solvers into "human-readable this solver does one thing", and "machine solver, do a bunch of things efficiently" 
   - 
