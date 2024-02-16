@@ -37,9 +37,6 @@
     - Possibly multiple views (one coloring, one vertex?)
   - Themes
     - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show
-  - Pan/Zoom
-    - Adjust this so we zoom an interior interface(!)(!) 
-    - Can we do one-finger zoom?
   - Allow puzzle export
     - Image
     - JSON?
@@ -145,8 +142,9 @@
 
 - Current code TODOs
   - Separate the model out of PuzzleNode
-  - Make the zoom only work for the "play area" 
   - LIGHT/DARK color themes
+  - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
+  - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - Undo/Redo(!)
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
@@ -246,7 +244,6 @@
     - Coordinates 
       - Each vertex has view coordinates
       - Each face has a coordinate for its center (for display of the number)
-    - Make "only the play area" zoomable?
   - Interaction
     - User interaction history
       - Auto-solve can then provide additional actions

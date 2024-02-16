@@ -8,6 +8,7 @@ import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
+import { Shape } from 'phet-lib/kite';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -43,11 +44,6 @@ display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 
 window.oncontextmenu = e => e.preventDefault();
 
-const zoomListener = new AnimatedPanZoomListener( scene, {
-  maxScale: 10
-} );
-display.addInputListener( zoomListener );
-
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
 class PuzzleContainer extends Sizable( Node ) {
@@ -55,10 +51,9 @@ class PuzzleContainer extends Sizable( Node ) {
   private backgroundRect: Rectangle;
   private puzzleWrapper: Node;
   private puzzleNode: PuzzleNode | null = null;
+  private zoomListener: AnimatedPanZoomListener;
 
-  public constructor(
-
-  ) {
+  public constructor() {
     // TODO: isolate out these options
     super( {
       layoutOptions: {
@@ -73,6 +68,11 @@ class PuzzleContainer extends Sizable( Node ) {
     this.addChild( this.backgroundRect );
 
     this.puzzleWrapper = new Node();
+    this.zoomListener = new AnimatedPanZoomListener( this.puzzleWrapper, {
+      maxScale: 10
+    } );
+    // display.addInputListener( this.zoomListener );
+    this.addInputListener( this.zoomListener );
 
     this.addChild( this.puzzleWrapper );
 
@@ -81,6 +81,10 @@ class PuzzleContainer extends Sizable( Node ) {
     this.localPreferredHeightProperty.lazyLink( layoutListener );
 
     this.updateLayout();
+  }
+
+  public step( dt: number ): void {
+    this.zoomListener.step( dt );
   }
 
   private updateLayout(): void {
@@ -97,13 +101,25 @@ class PuzzleContainer extends Sizable( Node ) {
     if ( this.puzzleNode ) {
       this.updatePuzzleNodeLayout( this.puzzleNode );
     }
+
+    if ( width !== null && height !== null && width > 0 && height > 0 ) {
+      const bounds = new Bounds2( 0, 0, width, height );
+
+      this.clipArea = Shape.bounds( bounds );
+
+      // zoomListener.setTargetScale( scale );
+      // TODO: we're getting weird oscillation with this, but figure it out
+      // this.zoomListener.setTargetBounds( this.puzzleNode ? this.puzzleNode.bounds : bounds );
+      this.zoomListener.setTargetBounds( bounds );
+      this.zoomListener.setPanBounds( bounds );
+    }
   }
 
   private updatePuzzleNodeLayout( puzzleNode: PuzzleNode ): void {
     const width = this.localPreferredWidth;
     const height = this.localPreferredHeight;
 
-    if ( width !== null && height !== null ) {
+    if ( width !== null && height !== null && width > 0 && height > 0 ) {
       const padding = 20;
 
       const availableWidth = width - padding * 2;
@@ -128,32 +144,6 @@ class PuzzleContainer extends Sizable( Node ) {
 }
 
 const puzzleNodeContainer = new PuzzleContainer();
-
-// const puzzleNodeContainer = new Node( {
-//   layoutOptions: {
-//     stretch: true,
-//     grow: 1
-//   },
-//   children: [
-//     new Rectangle( {
-//       fill: 'red',
-//       sizable: true,
-//       rectWidth: 10,
-//       rectHeight: 10
-//     } )
-//   ]
-// } );
-
-// const puzzleNodeContainer = new Rectangle( {
-//   layoutOptions: {
-//     stretch: true,
-//     grow: 1
-//   },
-//   fill: 'red',
-//   sizable: true,
-//   rectWidth: 10,
-//   rectHeight: 10
-// } );
 
 const mainBox = new VBox( {
   children: [
@@ -205,10 +195,6 @@ const resize = () => {
   if ( platform.mobileSafari ) {
     window.scrollTo( 0, 0 );
   }
-
-  // zoomListener.setTargetScale( scale );
-  zoomListener.setTargetBounds( layoutBounds );
-  zoomListener.setPanBounds( layoutBounds );
 };
 
 const resizeListener = () => { resizePending = true; }
@@ -223,5 +209,5 @@ display.updateOnRequestAnimationFrame( dt => {
     resize();
   }
 
-  zoomListener.step( dt );
+  puzzleNodeContainer.step( dt );
 } );
