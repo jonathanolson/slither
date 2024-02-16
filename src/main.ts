@@ -31,13 +31,15 @@ const display = new Display( rootNode, {
   accessibility: true,
   backgroundColor: '#eee',
 
-  // assumeFullWindow: true,
-  // listenToOnlyElement: false
+  assumeFullWindow: true,
+  listenToOnlyElement: false
 
-  assumeFullWindow: false,
-  listenToOnlyElement: true
+  // assumeFullWindow: false,
+  // listenToOnlyElement: true
 } );
 document.body.appendChild( display.domElement );
+
+window.oncontextmenu = e => e.preventDefault();
 
 const zoomListener = new AnimatedPanZoomListener( scene, {
   maxScale: 10

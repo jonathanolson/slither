@@ -193,7 +193,11 @@ class EdgeNode extends Node {
         .close();
       this.mouseArea = this.touchArea = pointerArea;
       this.addInputListener( new FireListener( {
-        fire: event => edgePressListener( edge, event.isPrimary )
+        fire: event => edgePressListener( edge, true )
+      } ) );
+      this.addInputListener( new FireListener( {
+        mouseButton: 2,
+        fire: event => edgePressListener( edge, false )
       } ) );
       this.cursor = 'pointer';
     }
