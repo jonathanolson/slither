@@ -179,7 +179,6 @@ export type TDelta<Data> = {
   // TODO: do we really need anything here? createConsolidatedAction?
 } & TState<Data> & TAction<Data>;
 
-
 export interface TFaceData {
   getFaceState( face: TFace ): FaceState;
   setFaceState( face: TFace, state: FaceState ): void;
@@ -321,12 +320,12 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
 
 export type TReadOnlyPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
-  stateProperty: TProperty<State>;
+  stateProperty: TReadOnlyProperty<State>;
 };
 
 export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
-  stateProperty: TReadOnlyProperty<State>;
+  stateProperty: TProperty<State>;
 };
 
 export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {

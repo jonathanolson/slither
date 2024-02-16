@@ -6,10 +6,8 @@ import { Property } from 'phet-lib/axon';
 import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
-import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
-import { EdgeStateCycleAction, EdgeStateSetAction } from './model/structure.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
-import { getPressStyle } from './config.ts';
+import PuzzleNode from './view/PuzzleNode.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -72,34 +70,7 @@ const mainBox = new VBox( {
 
             const puzzle = await scanURL( url );
 
-            // TODO: add debugging output as Scenery nodes.
-
-            const stateStack = [ puzzle.stateProperty.value ];
-
-            mainBox.addChild( new BasicPuzzleNode( puzzle, {
-              scale: 40,
-              textOptions: {
-                font: font,
-                maxWidth: 0.9,
-                maxHeight: 0.9
-              },
-              edgePressListener: ( edge, button ) => {
-                const oldEdgeState = puzzle.stateProperty.value.getEdgeState( edge );
-                const style = getPressStyle( button );
-                const newEdgeState = style.apply( oldEdgeState );
-
-                if ( oldEdgeState !== newEdgeState ) {
-                  const newState = puzzle.stateProperty.value.clone();
-
-                  new EdgeStateSetAction( edge, newEdgeState ).apply( newState );
-
-                  stateStack.push( newState );
-                  puzzle.stateProperty.value = newState;
-                }
-              }
-            } ) );
-
-            // document.body.removeChild( display.domElement );
+            mainBox.addChild( new PuzzleNode( puzzle ) );
           }
         }
         input.click();
