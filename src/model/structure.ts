@@ -5,7 +5,7 @@ import EdgeState from "./EdgeState.ts";
 import FaceState from "./FaceState.ts";
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import _ from '../workarounds/_';
-import { TProperty, TReadOnlyProperty, TinyProperty } from "phet-lib/axon";
+import { TEmitter, TProperty, TReadOnlyProperty, TinyEmitter, TinyProperty } from "phet-lib/axon";
 
 export interface TVertex {
   logicalCoordinates: Vector2;
@@ -183,11 +183,15 @@ export type TDelta<Data> = {
 export interface TFaceData {
   getFaceState( face: TFace ): FaceState;
   setFaceState( face: TFace, state: FaceState ): void;
+
+  faceStateChangedEmitter: TEmitter<[ TFace, FaceState ]>;
 }
 
 export interface TEdgeData {
   getEdgeState( edge: TEdge ): EdgeState;
   setEdgeState( edge: TEdge, state: EdgeState ): void;
+
+  edgeStateChangedEmitter: TEmitter<[ TEdge, EdgeState ]>;
 };
 
 export class CompositeAction<State> implements TAction<State> {
@@ -1235,6 +1239,8 @@ export interface TFaceEdgeData extends TFaceData, TEdgeData {};
 // TODO: faster forms for Square in particular
 export class GeneralFaceData implements TState<TFaceData> {
 
+  public readonly faceStateChangedEmitter = new TinyEmitter<[ TFace, FaceState ]>();
+
   public readonly faceStateMap: Map<TFace, FaceState> = new Map();
 
   public constructor(
@@ -1255,7 +1261,13 @@ export class GeneralFaceData implements TState<TFaceData> {
   public setFaceState( face: TFace, state: FaceState ): void {
     assertEnabled() && assert( this.faceStateMap.has( face ) );
 
-    this.faceStateMap.set( face, state );
+    const oldState = this.faceStateMap.get( face )!;
+
+    if ( oldState !== state ) {
+      this.faceStateMap.set( face, state );
+
+      this.faceStateChangedEmitter.emit( face, state );
+    }
   }
 
   public clone(): GeneralFaceData {
@@ -1295,6 +1307,9 @@ export class GeneralFaceAction implements TAction<TFaceData> {
 }
 
 export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceData> {
+
+  public readonly faceStateChangedEmitter = new TinyEmitter<[ TFace, FaceState ]>();
+
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TFaceData>,
@@ -1313,7 +1328,13 @@ export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceD
   }
 
   public setFaceState( face: TFace, state: FaceState ): void {
-    this.faceStateMap.set( face, state );
+    const oldState = this.getFaceState( face );
+
+    if ( oldState !== state ) {
+      this.faceStateMap.set( face, state );
+
+      this.faceStateChangedEmitter.emit( face, state );
+    }
   }
 
   public clone(): GeneralFaceDelta {
@@ -1327,6 +1348,8 @@ export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceD
 
 // TODO: faster forms for Square in particular
 export class GeneralEdgeData implements TState<TEdgeData> {
+
+  public readonly edgeStateChangedEmitter = new TinyEmitter<[ TEdge, EdgeState ]>();
 
   public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map();
 
@@ -1348,7 +1371,13 @@ export class GeneralEdgeData implements TState<TEdgeData> {
   public setEdgeState( edge: TEdge, state: EdgeState ): void {
     assertEnabled() && assert( this.edgeStateMap.has( edge ) );
 
-    this.edgeStateMap.set( edge, state );
+    const oldState = this.edgeStateMap.get( edge )!;
+
+    if ( oldState !== state ) {
+      this.edgeStateMap.set( edge, state );
+
+      this.edgeStateChangedEmitter.emit( edge, state );
+    }
   }
 
   public clone(): GeneralEdgeData {
@@ -1390,6 +1419,9 @@ export class GeneralEdgeAction implements TAction<TEdgeData> {
 }
 
 export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeData> {
+
+  public readonly edgeStateChangedEmitter = new TinyEmitter<[ TEdge, EdgeState ]>();
+
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TEdgeData>,
@@ -1408,7 +1440,13 @@ export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeD
   }
 
   public setEdgeState( edge: TEdge, state: EdgeState ): void {
-    this.edgeStateMap.set( edge, state );
+    const oldState = this.getEdgeState( edge );
+
+    if ( oldState !== state ) {
+      this.edgeStateMap.set( edge, state );
+
+      this.edgeStateChangedEmitter.emit( edge, state );
+    }
   }
 
   public clone(): GeneralEdgeDelta {
@@ -1435,12 +1473,20 @@ export class CompositeFaceEdgeData implements TState<TFaceEdgeData> {
     this.faceData.setFaceState( face, state );
   }
 
+  public get faceStateChangedEmitter(): TEmitter<[ TFace, FaceState ]> {
+    return this.faceData.faceStateChangedEmitter;
+  }
+
   public getEdgeState( edge: TEdge ): EdgeState {
     return this.edgeData.getEdgeState( edge );
   }
 
   public setEdgeState( edge: TEdge, state: EdgeState ): void {
     this.edgeData.setEdgeState( edge, state );
+  }
+
+  public get edgeStateChangedEmitter(): TEmitter<[ TEdge, EdgeState ]> {
+    return this.edgeData.edgeStateChangedEmitter;
   }
 
   public clone(): CompositeFaceEdgeData {
@@ -1488,12 +1534,20 @@ export class CompositeFaceEdgeDelta extends CompositeFaceEdgeAction implements T
     this.faceDelta.setFaceState( face, state );
   }
 
+  public get faceStateChangedEmitter(): TEmitter<[ TFace, FaceState ]> {
+    return this.faceDelta.faceStateChangedEmitter;
+  }
+
   public getEdgeState( edge: TEdge ): EdgeState {
     return this.edgeDelta.getEdgeState( edge );
   }
 
   public setEdgeState( edge: TEdge, state: EdgeState ): void {
     this.edgeDelta.setEdgeState( edge, state );
+  }
+
+  public get edgeStateChangedEmitter(): TEmitter<[ TEdge, EdgeState ]> {
+    return this.edgeDelta.edgeStateChangedEmitter;
   }
 
   public clone(): CompositeFaceEdgeDelta {

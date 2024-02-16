@@ -145,22 +145,16 @@
 - Puzzle editor
   - Particularly for things that didn't scan correctly.
 
-- Data
-  - Do we... consolidate the "state" into one object that gets copied?
-    - Could have API in one interface, but use composition in the implementation 
-  - 
-  - FaceValue
-  - EdgeState
-
 - Current code TODOs
   - !!! Forgot to make deltas no-op if a method doesn't change anything
   - Fix disposal for my usage of opencv - likely causing HMR issues
   - Add query parameters file, using QSM, so we can add features/debugging (e.g. "debug scanning")
 
 - Concepts
-  - Board = structure of vertices/edges/faces
-  - Puzzle = board + FaceState
-  - Delta = action + previous state
+  - Solvers:
+    - Each solver listens to emitters it needs to. Sets dirty flag if it needs to run. Tracks what is "dirty" itself.
+    - Pattern solvers can still work
+    - Potentially separate solvers into "human-readable this solver does one thing", and "machine solver, do a bunch of things efficiently" 
   - 
   - Store "actions" as a history.
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
@@ -171,16 +165,9 @@
   - 
   - Structure
     - Grid
-      - Faces: Face[]
-      - Vertices: Vertex[]
-      - Edges: Edge[]
       - "parent" - a grid with fewer "things done" (... why not save that info elsewhere?) 
       - allowsInvalid?
       - "openBorders" - whether the "outside" is treated as white or red
-      - Grid4:
-        - rows/cols (of faces)
-    - square grid:
-      - N/S/E/W and NE/SE/SW/NW
   - Data:
     - Data should be... getters (so we can wrap with thin "if we change this" during backtracking)
       - Thin wrapper checks if our data OVERRIDES data on the "parent" 
@@ -286,3 +273,11 @@
   - Use seedRandom setup so we can get reproducibility.
 
 - Be the lichess of slitherlink?
+
+- Conceptual notes
+  - Structure: vertices/edges/faces and how they connect
+  - Board: a group of vertices/edges/faces with a structure
+  - Data: mutable info about the structure (face value, edge state, vertex state, coloring, etc.)
+  - Board = structure of vertices/edges/faces
+  - Puzzle = board + FaceState
+  - Delta = action + previous state
