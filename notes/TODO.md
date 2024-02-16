@@ -144,7 +144,6 @@
   - LIGHT/DARK color themes
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
-  - Undo/Redo(!)
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)

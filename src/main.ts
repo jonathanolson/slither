@@ -2,14 +2,14 @@ import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { Property } from 'phet-lib/axon';
-import { Display, Font, Node, VBox } from 'phet-lib/scenery';
-import { TextPushButton } from 'phet-lib/sun';
+import { Property, TinyProperty } from 'phet-lib/axon';
+import { Display, Node, VBox } from 'phet-lib/scenery';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
+import ControlBarNode from './view/ControlBarNode.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -21,11 +21,6 @@ const rootNode = new Node( {
   children: [ scene ]
 } );
 
-const font = new Font( {
-  family: 'sans-serif',
-  size: 25
-} );
-
 const display = new Display( rootNode, {
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
@@ -35,9 +30,6 @@ const display = new Display( rootNode, {
 
   assumeFullWindow: true,
   listenToOnlyElement: false
-
-  // assumeFullWindow: false,
-  // listenToOnlyElement: true
 } );
 document.body.appendChild( display.domElement );
 
@@ -49,11 +41,17 @@ const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth,
 
 const puzzleContainerNode = new PuzzleContainerNode();
 
+const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( null );
+puzzleModelProperty.lazyLink( puzzleModel => {
+  if ( puzzleModel ) {
+    puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzleModel ) );
+  }
+} );
+
 const mainBox = new VBox( {
   children: [
-    new TextPushButton( 'Load image', {
-      font: font,
-      listener: () => {
+    new ControlBarNode( puzzleModelProperty, {
+      userActionLoadPuzzle: () => {
         const input = document.createElement( 'input' );
         input.type = 'file';
         input.onchange = event => {
@@ -69,7 +67,7 @@ const mainBox = new VBox( {
             // TODO: UI change while working?
             const puzzle = await scanURL( url );
 
-            puzzleContainerNode.setPuzzleNode( new PuzzleNode( new PuzzleModel( puzzle ) ) );
+            puzzleModelProperty.value = new PuzzleModel( puzzle );
           }
         }
         input.click();

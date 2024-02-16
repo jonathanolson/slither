@@ -1,3 +1,4 @@
+import { DerivedProperty, NumberProperty, TReadOnlyProperty } from "phet-lib/axon";
 import { getPressStyle } from "../config";
 import { EdgeStateSetAction, TEdge, TFaceEdgeData, TPuzzle, TState, TStructure } from "./structure";
 
@@ -5,21 +6,53 @@ import { EdgeStateSetAction, TEdge, TFaceEdgeData, TPuzzle, TState, TStructure }
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> {
 
   private readonly stack: StateTransition<State>[];
-  private stackPosition: number = 0;
+  private readonly stackLengthProperty = new NumberProperty( 0 );
+  private readonly stackPositionProperty = new NumberProperty( 0 );
+
+  public readonly undoPossibleProperty: TReadOnlyProperty<boolean>;
+  public readonly redoPossibleProperty: TReadOnlyProperty<boolean>;
 
   public constructor(
     public readonly puzzle: TPuzzle<Structure, State>
   ) {
     this.stack = [ new StateTransition( null, puzzle.stateProperty.value ) ];
+    this.stackLengthProperty.value = 1;
+
+    this.undoPossibleProperty = new DerivedProperty( [
+      this.stackPositionProperty
+    ], position => {
+      return position > 0;
+    } );
+
+    this.redoPossibleProperty = new DerivedProperty( [
+      this.stackPositionProperty, this.stackLengthProperty
+    ], ( position, length ) => {
+      return position < length - 1;
+    } );
   }
 
   private updateState(): void {
-    this.puzzle.stateProperty.value = this.stack[ this.stackPosition ].state;
+    this.puzzle.stateProperty.value = this.stack[ this.stackPositionProperty.value ].state;
   }
 
   private wipeStackTop(): void {
-    while ( this.stack.length > this.stackPosition + 1 ) {
+    while ( this.stack.length > this.stackPositionProperty.value + 1 ) {
       this.stack.pop();
+    }
+    this.stackLengthProperty.value = this.stack.length;
+  }
+
+  public onUserUndo(): void {
+    if ( this.stackPositionProperty.value > 0 ) {
+      this.stackPositionProperty.value--;
+      this.updateState();
+    }
+  }
+
+  public onUserRedo(): void {
+    if ( this.stackPositionProperty.value < this.stackLengthProperty.value - 1 ) {
+      this.stackPositionProperty.value++;
+      this.updateState();
     }
   }
 
@@ -32,11 +65,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       // TODO: ... we can't interface things for TState, so ThisType<this> isn't available... how can we fix this?
       const newState = this.puzzle.stateProperty.value.clone() as State;
 
-      const lastTransition = this.stack[ this.stackPosition ];
+      const lastTransition = this.stack[ this.stackPositionProperty.value ];
 
       // If we just modified the same edge again, we'll want to undo any solving/etc. we did.
       if ( lastTransition.action && lastTransition.action.edge === edge ) {
-        this.stackPosition--;
+        this.stackPositionProperty.value--;
       }
 
       this.wipeStackTop();
@@ -45,7 +78,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       userAction.apply( newState );
 
       this.stack.push( new StateTransition( userAction, newState ) );
-      this.stackPosition++;
+      this.stackLengthProperty.value = this.stack.length;
+      this.stackPositionProperty.value++;
 
       this.updateState();
     }
