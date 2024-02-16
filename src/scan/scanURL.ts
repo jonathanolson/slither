@@ -42,6 +42,9 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
   const img = cv.imread( domImage );
   imshow( img );
 
+  const imageWidth = img.cols;
+  const imageHeight = img.rows;
+
   const imgGray = matToGrayscale( img );
   // imshow( imgGray );
 
@@ -69,11 +72,13 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
 
   const blurred = blurSize > 0 ? withMat( blurred => cv.GaussianBlur( imgGray, blurred, new cv.Size( 5, 5 ), 0 ) ) : imgGray;
   // imshow( blurred );
+  if ( imgGray !== blurred ) {
+    imgGray.delete();
+  }
 
-  // const blurredThreshold = withMat( threshold => cv.threshold( blurred, threshold, 250, 255, cv.THRESH_BINARY ) );
-  // const blurredThreshold = withMat( threshold => cv.threshold( blurred, threshold, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU ) );
   const blurredThreshold = withMat( threshold => cv.adaptiveThreshold( blurred, threshold, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2 ) );
   // imshow( blurredThreshold );
+  blurred.delete();
 
   const inverted = withMat( inverted => cv.bitwise_not( blurredThreshold, inverted ) );
 
@@ -82,6 +87,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
 
   // TODO: cv.RETR_LIST probably just fine, we don't care about the tree in this case
   cv.findContours( inverted, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE );
+  inverted.delete();
 
   const contourCollection = new ContourCollection( contours, hierarchy );
   const rootContour = contourCollection.rootContour;
@@ -151,6 +157,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
   //     drawContour( dst, contours, index );
   //   } );
   //   imshow( dst );
+  //   dst.delete();
   // }
 
   { // Grouped by classification
@@ -172,7 +179,10 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     showWithColor( threeContours, new cv.Scalar( 50, 100, 255 ) );
     showWithColor( unknownContours, new cv.Scalar( 255, 0, 255 ) );
     imshow( dst );
+    dst.delete();
   }
+
+  img.delete();
 
   const linePaths: Vector2[][] = [];
   const dotPoints: Vector2[] = [];
@@ -210,10 +220,10 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
   {
     const canvas = document.createElement( 'canvas' );
     const context = canvas.getContext( '2d' )!;
-    canvas.width = img.cols;
-    canvas.height = img.rows;
-    canvas.style.width = `${img.cols / window.devicePixelRatio}px`;
-    canvas.style.height = `${img.rows / window.devicePixelRatio}px`;
+    canvas.width = imageWidth;
+    canvas.height = imageHeight;
+    canvas.style.width = `${imageWidth / window.devicePixelRatio}px`;
+    canvas.style.height = `${imageHeight / window.devicePixelRatio}px`;
 
     context.globalAlpha = 0.2;
     context.drawImage( domImage, 0, 0 );
@@ -358,7 +368,6 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
 
       const lineLocation = lineLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) || null;
 
-      // TODO: xs
       if ( lineLocation ) {
         return EdgeState.BLACK;
       }
@@ -375,17 +384,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     } )
   );
 
-  const puzzle = new BasicSquarePuzzle( board, startingData );
-
-
-  // TODO: yup, delete things!
-  imgGray.delete();
-
-  // https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html
-
-  // TODO: opencv cleanup (delete things not used)
-
-  return puzzle;
+  return new BasicSquarePuzzle( board, startingData );
 };
 
 class FaceLocation {
@@ -396,13 +395,6 @@ class FaceLocation {
 }
 
 class LineLocation {
-  public constructor(
-    public readonly point: Vector2,
-    public readonly orientation: Orientation
-  ) {}
-}
-
-class XLocation {
   public constructor(
     public readonly point: Vector2,
     public readonly orientation: Orientation

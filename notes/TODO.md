@@ -146,8 +146,6 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - !!! Forgot to make deltas no-op if a method doesn't change anything
-  - Fix disposal for my usage of opencv - likely causing HMR issues
   - Add query parameters file, using QSM, so we can add features/debugging (e.g. "debug scanning")
 
 - Concepts
