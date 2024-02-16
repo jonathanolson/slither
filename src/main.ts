@@ -1,15 +1,15 @@
 import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
-import { Bounds2, Vector2 } from 'phet-lib/dot';
+import { Bounds2 } from 'phet-lib/dot';
 import { Property } from 'phet-lib/axon';
-import { AnimatedPanZoomListener, Display, Font, Node, Rectangle, Sizable, VBox } from 'phet-lib/scenery';
+import { Display, Font, Node, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
-import { Shape } from 'phet-lib/kite';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
+import PuzzleModel from './model/PuzzleModel.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -69,7 +69,7 @@ const mainBox = new VBox( {
             // TODO: UI change while working?
             const puzzle = await scanURL( url );
 
-            puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzle ) );
+            puzzleContainerNode.setPuzzleNode( new PuzzleNode( new PuzzleModel( puzzle ) ) );
           }
         }
         input.click();

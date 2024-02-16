@@ -141,7 +141,6 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Separate the model out of PuzzleNode
   - LIGHT/DARK color themes
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
