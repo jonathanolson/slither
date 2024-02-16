@@ -22,9 +22,10 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.backgroundRect = new Rectangle( {
       fill: '#ccc'
     } );
-    this.addChild( this.backgroundRect );
 
-    this.puzzleWrapper = new Node();
+    this.puzzleWrapper = new Node( {
+      children: [ this.backgroundRect ]
+    } );
     this.zoomListener = new AnimatedPanZoomListener( this.puzzleWrapper, {
       maxScale: 10
     } );
@@ -96,6 +97,6 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.puzzleNode = puzzleNode;
     // Update before children, so we don't mess with layout
     this.updatePuzzleNodeLayout( puzzleNode );
-    this.puzzleWrapper.children = [ puzzleNode ];
+    this.puzzleWrapper.children = [ this.backgroundRect, puzzleNode ];
   }
 }
