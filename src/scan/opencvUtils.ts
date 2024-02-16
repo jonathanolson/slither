@@ -2,6 +2,7 @@ import cv from '@techstark/opencv-js';
 import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import _ from '../workarounds/_';
+import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 
 export const cvReady = new Promise( resolve => {
   // @ts-ignore
@@ -138,7 +139,9 @@ export const matFFT = ( src: cv.Mat ): cv.Mat => {
 };
 
 export const imshow = ( mat: cv.Mat ) => {
-  document.body.appendChild( matToCanvas( mat ) );
+  if ( SlitherQueryParameters.debugScan ) {
+    document.body.appendChild( matToCanvas( mat ) );
+  }
 };
 
 

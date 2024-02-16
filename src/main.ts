@@ -8,6 +8,7 @@ import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
 import { EdgeStateToggleAction } from './model/structure.ts';
+import SlitherQueryParameters from './SlitherQueryParameters.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -38,6 +39,8 @@ const display = new Display( rootNode, {
   // listenToOnlyElement: true
 } );
 document.body.appendChild( display.domElement );
+
+display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 
 window.oncontextmenu = e => e.preventDefault();
 

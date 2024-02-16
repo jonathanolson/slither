@@ -144,11 +144,11 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - Make the zoom only work for the "play area" 
   - Puzzle load (from URL) replaces current puzzle
   - Undo/Redo(!)
   - Another click on the "same" edge should UNDO the state and then apply the other state 
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time 
-  - Add query parameters file, using QSM, so we can add features/debugging (e.g. "debug scanning")
 
 - Concepts
   - Solvers:
