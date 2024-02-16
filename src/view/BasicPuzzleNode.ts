@@ -7,7 +7,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
-  edgePressListener?: ( edge: TEdge, isPrimary: boolean ) => void;
+  edgePressListener?: ( edge: TEdge, isLeftClick: boolean ) => void;
 } & NodeOptions;
 
 // TODO: disposal!

@@ -79,10 +79,10 @@ const mainBox = new VBox( {
                 maxWidth: 0.9,
                 maxHeight: 0.9
               },
-              edgePressListener: ( edge, isPrimary ) => {
+              edgePressListener: ( edge, isLeftClick ) => {
                 const newState = puzzle.stateProperty.value.clone();
 
-                new EdgeStateToggleAction( edge, isPrimary ).apply( newState );
+                new EdgeStateToggleAction( edge, isLeftClick ).apply( newState );
 
                 stateStack.push( newState );
                 puzzle.stateProperty.value = newState;
