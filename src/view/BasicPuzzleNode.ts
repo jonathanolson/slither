@@ -1,5 +1,5 @@
 import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions } from 'phet-lib/scenery';
-import { TEdge, TFace, TFaceEdgeData, TReadOnlyPuzzle, TState, TStructure } from '../model/structure.ts';
+import { TEdge, TFace, TFaceEdgeData, TReadOnlyPuzzle, TState, TStructure, TVertex } from '../model/structure.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/EdgeState.ts';
@@ -44,12 +44,7 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     ];
 
     puzzle.board.vertices.forEach( vertex => {
-      faceContainer.addChild( new Rectangle( {
-        rectWidth: 0.1,
-        rectHeight: 0.1,
-        center: vertex.viewCoordinates,
-        fill: 'black'
-      } ) );
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, options ) );
     } );
 
     puzzle.board.edges.forEach( edge => {
@@ -64,6 +59,28 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
         edgeContainer
       ]
     }, options ) );
+  }
+}
+
+class VertexNode extends Node {
+  public constructor(
+    public readonly vertex: TVertex,
+    stateProperty: TReadOnlyProperty<TState<TFaceEdgeData>>,
+    options?: BasicPuzzleNodeOptions
+  ) {
+    super();
+
+    const visibleProperty = new DerivedProperty( [ stateProperty ], state => {
+      return vertex.edges.every( edge => state.getEdgeState( edge ) !== EdgeState.BLACK );
+    } );
+
+    this.addChild( new Rectangle( {
+      rectWidth: 0.1,
+      rectHeight: 0.1,
+      center: vertex.viewCoordinates,
+      fill: 'black',
+      visibleProperty: visibleProperty
+    } ) );
   }
 }
 
@@ -147,8 +164,11 @@ class EdgeNode extends Node {
 
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: 'black'
+      stroke: 'black',
+      lineCap: 'square' // TODO: still not ideal, the overlap shows up and is unpleasant. We'll either need to use Alpenglow, or use a different approach to drawing the lines.
     } );
+
+    // TODO: We will want to display the actual CHAIN instead of just the link?
 
     const halfSize = 0.07;
     const xShape = new Shape()
