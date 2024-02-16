@@ -2,11 +2,12 @@ import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { NumberProperty, PatternStringProperty, Property, StringProperty } from 'phet-lib/axon';
-import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, Text, VBox } from 'phet-lib/scenery';
+import { Property } from 'phet-lib/axon';
+import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL.ts';
 import BasicPuzzleNode from './view/BasicPuzzleNode.ts';
+import { EdgeStateToggleAction } from './model/structure.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -17,8 +18,6 @@ const rootNode = new Node( {
   renderer: 'svg',
   children: [ scene ]
 } );
-
-const buttonPressPatternString = new StringProperty( 'Button presses: {{count}}' );
 
 const font = new Font( {
   family: 'sans-serif',
@@ -47,18 +46,9 @@ display.addInputListener( zoomListener );
 
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
-const countProperty = new NumberProperty( 0 );
-
 const mainBox = new VBox( {
   spacing: 10,
   children: [
-    new TextPushButton( 'Test', {
-      font: font,
-      listener: () => { countProperty.value++; }
-    } ),
-    new Text( new PatternStringProperty( buttonPressPatternString, { count: countProperty } ), {
-      font: font
-    } ),
     new TextPushButton( 'Load image', {
       font: font,
       listener: () => {
@@ -78,12 +68,22 @@ const mainBox = new VBox( {
 
             // TODO: add debugging output as Scenery nodes.
 
+            const stateStack = [ puzzle.stateProperty.value ];
+
             mainBox.addChild( new BasicPuzzleNode( puzzle, {
               scale: 40,
               textOptions: {
                 font: font,
                 maxWidth: 0.9,
                 maxHeight: 0.9
+              },
+              edgePressListener: ( edge, isPrimary ) => {
+                const newState = puzzle.stateProperty.value.clone();
+
+                new EdgeStateToggleAction( edge, isPrimary ).apply( newState );
+
+                stateStack.push( newState );
+                puzzle.stateProperty.value = newState;
               }
             } ) );
 

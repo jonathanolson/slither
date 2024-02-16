@@ -321,22 +321,22 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
 
 export type TReadOnlyPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
-  stateProperty: TReadOnlyProperty<State>;
+  stateProperty: TProperty<State>;
 };
 
 export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
-  stateProperty: TProperty<State>;
+  stateProperty: TReadOnlyProperty<State>;
 };
 
 export type TSquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TSquareBoard<Structure>;
-  stateProperty: TReadOnlyProperty<State>;
+  stateProperty: TProperty<State>;
 };
 
 export type TReadOnlySquarePuzzle<Structure extends TSquareStructure = TSquareStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TSquareBoard<Structure>;
-  stateProperty: TProperty<State>;
+  stateProperty: TReadOnlyProperty<State>;
 };
 
 export class BaseVertex<Structure extends TStructure> implements TVertex {

@@ -1,4 +1,4 @@
-import { Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions } from 'phet-lib/scenery';
+import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions } from 'phet-lib/scenery';
 import { TEdge, TFace, TFaceEdgeData, TReadOnlyPuzzle, TState, TStructure } from '../model/structure.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions } from 'phet-lib/phet-core';
@@ -7,6 +7,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
+  edgePressListener?: ( edge: TEdge, isPrimary: boolean ) => void;
 } & NodeOptions;
 
 // TODO: disposal!
@@ -100,6 +101,11 @@ class FaceNode extends Node {
       if ( blackCount < faceState ) {
         return 'black';
       }
+      // else {
+      //   return '#aaa';
+      // }
+      // TODO: consider the "red" highlight here? Is annoying when we have to double-tap to X
+      // TODO: maybe simple auto-solving will obviate this need? YES
       else if ( blackCount === faceState ) {
         return '#aaa';
       }
@@ -137,6 +143,7 @@ class EdgeNode extends Node {
 
     const startPoint = edge.start.viewCoordinates;
     const endPoint = edge.end.viewCoordinates;
+    const centerPoint = startPoint.average( endPoint );
 
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
@@ -152,8 +159,24 @@ class EdgeNode extends Node {
     const x = new Path( xShape, {
       stroke: 'red',
       lineWidth: 0.02,
-      center: startPoint.average( endPoint )
+      center: centerPoint
     } );
+
+    // TODO: ALLOW DRAGGING TO SET LINES
+    const edgePressListener = options?.edgePressListener;
+    if ( edgePressListener ) {
+      const pointerArea = new Shape()
+        .moveTo( centerPoint.x - 0.5, centerPoint.y )
+        .lineTo( centerPoint.x, centerPoint.y - 0.5 )
+        .lineTo( centerPoint.x + 0.5, centerPoint.y )
+        .lineTo( centerPoint.x, centerPoint.y + 0.5 )
+        .close();
+      this.mouseArea = this.touchArea = pointerArea;
+      this.addInputListener( new FireListener( {
+        fire: event => edgePressListener( edge, event.isPrimary )
+      } ) );
+      this.cursor = 'pointer';
+    }
 
     edgeStateProperty.link( edgeState => {
       if ( edgeState === EdgeState.WHITE ) {
