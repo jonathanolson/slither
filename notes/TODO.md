@@ -60,6 +60,48 @@
 
 - TODO: combine this with the section below
 - Solving
+  - Regions:
+    - PROVE things, this is my... intuition. 
+    - Region (strict): 
+      - Two vertices (distinct and unordered) -- can relax "distinct", degenerate region with duplicated vertex and no edges works
+      - Edge set
+      - "There will be one (and only one) strongly-connecting chain between the vertices through edges in the edge set"
+      - "The final opposite part of the loop goes through none of the edge set"
+      - (it will not contain the entire loop)
+    - Completed: if its edge set is only black (no white)
+    - Final edges: set of edges in the edge set that connect to one of the vertices
+    - Dual (!): Same vertices but inverted edges (all other white/black edges not included) is a region
+    - Intersections are a region IF intersection of final edges is non-empty
+    - Single final edge (for a vertex) => it must be black
+      - Removing that edge (and moving the vertex) creates a valid region (if it wasn't the only edge? - see degenerate region) 
+    - Subregion: has a subset of edges
+    - Disjoint: no edges in common
+    - Ordering: Ordered list of disjoint non-degenerate subregions, such that subregion vertices match up (e.g. subregions AB, BC, CD -- for a region AD)
+    - 
+    - If a region AZ has a subregion AB, then ... clearly there exists a subregion BZ, but can we deduce anything about its edges?
+      - No guarantee on edges? (unless it is completed)
+    - 
+    - (!!) If a region has ANY edges that are "graph bridges" (bridges) between the two (region) vertices, then it is black.
+      - This is a generalization of the "single final edge (for a vertex)" rule 
+    - 
+    - Disjoint subregions will eventually be ordered
+    - 
+    - How does "joining" regions work?
+      - (AB) + (BC) = (AC) iff A != C  <--- but best for edge sets if we keep these separated. how can we decompose regions?
+      - (AB) + (BC) = full loop (not a region)
+    - 
+    - Degenerate region: does a single vertex with no edges count?
+    - Unit region: two vertices with a single edge (it is black)
+    - Spike2 region: two vertices across a 2
+    - 
+    - Vertex pair:
+      - Abstraction does NOT require they are endpoints
+      - They are not ordered
+    - Edge sets:
+      - Can exclude red edges
+    - Two regions with the same vertex pair:
+      - Final state will be two completed regions
+      - ... does intersection work?
   - EDGE COLORS / Chains
     - EdgeColor:
       - Both endpoint vertices (only two)
@@ -178,6 +220,7 @@
   - LINE/CHAIN COLORING!!! <--- figure out model
     - Highlight the endpoints?
   - FACE COLORING!!!! <--- figure out model   + make solvers to solve the color state + ones that integrate color into other things
+    - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
     - Each pattern needs to specify the required topology/structure for the area (what is important)
     - Going off the side of the board is "all x" - Use a way of pattern matching those
