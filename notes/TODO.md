@@ -44,6 +44,7 @@
     - URL
   - Interaction
     - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
+      - An "inverse" or "X" sticky button at the top? 
     - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
       - Use offset curves or "what is closest"? 
     - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
@@ -59,12 +60,10 @@
 
 - TODO: combine this with the section below
 - Solving
-  - Fundamentally async/await? (e.g. delayed auto-solver in general?) - Or should we synchronous it for simple ones? 
+  - Fundamentally async/await? (e.g. delayed auto-solver in general?) - Or should we synchronous it for simple ones?
+  - If we run through a solver WITHOUT applying changes, we get a list of what it can figure out without going deeper.
+  - Face values are fairly constant, can inspect up front to determine "WHERE" we can apply certain patterns.
   - Determine what data types each solver needs (most basic is EdgeState).
-  - Solvers (in Scala):
-    - can attach/detach, and mark if they are "dirty" -- re-evaluate how useful this is?
-    - Can we... list locations (and listen to state changes) to determine what we might need to re-evaluate?
-      - e.g. for a pattern... have a custom "we've checked these areas, these other areas have changed" sense?
   - Backtrack:
     - Generalize for any "binary toggle" that is feasible. "Edge", "Color", or vertex state might make sense. Maybe "connection" too?
       - For instance, if an area connects 
@@ -75,15 +74,26 @@
     - Could... do other things than toggling an edge. Looking at combinations of edges for faces or vertices. Vertex state
       - OOO or coloring? 
     - Look for the most "fruitful" / changing edges/changes
+    - Don’t overfocus on backtrack performance. Don’t tune algo much. It is NP complete. 
+      - Focus on fast solutions to human solvable puzzles. Focus on improving “pattern base” to catch things that backtrackers would
+    - With backtracking, can apply “faster” solvers in both branches before “slower” ones. Maybe bad for memory, good for early exit?
+      - Does this mean we can report the "difficulty" of the next dirty solver? 
   - Pattern solving (GENERALIZE, see below in implementation)
   - "Finder" can find patterns, or use patterns/solvers/combination to solve everything (or to a point).
     - e.g. anything ending in backtrack will "work"
   - Can we write... a RAW solver? To double-check?
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
-  - Colorings, and the advanced "how they meet" rules
+  - Edge Coloring / Chains
+    - Store chains (list of current edges + end vertices) WAIT WAI TWAIT
+    - They can WALK around spiked 2s, so these DO NOT need to be connected(!)
+  - Face Colorings, and the advanced "how they meet" rules
     - NOTE: determine if there is "internal" things in any "almost loop"
-      - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it) 
+      - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it)
+    - Create a pointer system (from face-color to face-color?) when things are joined, so we can do quick look-ups?
+      - Eventually ends up inside/outside?
+    - LOOK UP color patterns for vertex or square-loop state. Remember, a spiked 2 will continue colors past it (even though we don't know what edges will be set)
+    - OMG OMG look up how we can interact with vertex/edge/face/etc. state with patterns... could discover cool coloring patterns(!)
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
   - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?"
@@ -99,6 +109,11 @@
     - miniSAT looks... nice. Embrace the NP-completeness!
     - How... do we express the loop (only one) constraint? Not easy.
   - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
+  - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
+    - Actually, can factor out to "boolean" sets of edges (black OR red)
+
+- Performance
+  - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
 
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
@@ -143,12 +158,20 @@
 
 - Current code TODOs
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
-  - FACE COLORING!!!!
-  - LINE/CHAIN COLORING!!!
+    - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
+  - LINE/CHAIN COLORING!!! <--- figure out model
+    - Highlight the endpoints?
+  - FACE COLORING!!!! <--- figure out model   + make solvers to solve the color state + ones that integrate color into other things
+  - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
+    - Each pattern needs to specify the required topology/structure for the area (what is important)
+    - Going off the side of the board is "all x" - Use a way of pattern matching those
   - Solve (global) button
-  - Check when solved
+  - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
+    - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
+  - Check when solved - we only have one chain + all numbers satisfied
   - NUMBER ONLY rules (at the start) 
   - LIGHT/DARK color themes
+  - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - Or at least have a delay 
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
@@ -156,6 +179,7 @@
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Separate out structure.ts into a structure directory
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
+  - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
 
 - Concepts
   - Solvers:

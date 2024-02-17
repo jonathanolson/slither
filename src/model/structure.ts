@@ -1358,7 +1358,7 @@ export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceD
   }
 }
 
-// TODO: faster forms for Square in particular
+// TODO: faster forms for Square in particular (bit-pack the states!)
 export class GeneralEdgeData implements TState<TEdgeData> {
 
   public readonly edgeStateChangedEmitter = new TinyEmitter<[ TEdge, EdgeState ]>();
