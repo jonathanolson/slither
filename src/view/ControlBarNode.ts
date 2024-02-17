@@ -1,12 +1,16 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Font, HBox } from 'phet-lib/scenery';
 import PuzzleModel from '../model/PuzzleModel';
-import { TextPushButton } from 'phet-lib/sun';
+import { RectangularButton, TextPushButton } from 'phet-lib/sun';
 
 const font = new Font( {
   family: 'sans-serif',
-  size: 25
+  size: 20
 } );
+
+const useFlatButtons = false;
+
+const buttonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
 
 export type ControlBarNodeOptions = {
   userActionLoadPuzzle: () => void;
@@ -37,10 +41,12 @@ export default class ControlBarNode extends HBox {
       children: [
         new TextPushButton( 'Load image', {
           font: font,
+          buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: options.userActionLoadPuzzle
         } ),
         new TextPushButton( 'Undo', {
           font: font,
+          buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: () => {
             if ( puzzleModelProperty.value ) {
               puzzleModelProperty.value.onUserUndo();
@@ -50,6 +56,7 @@ export default class ControlBarNode extends HBox {
         } ),
         new TextPushButton( 'Redo', {
           font: font,
+          buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: () => {
             if ( puzzleModelProperty.value ) {
               puzzleModelProperty.value.onUserRedo();
