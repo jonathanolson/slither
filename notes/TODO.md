@@ -145,6 +145,7 @@
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
   - FACE COLORING!!!!
   - LINE/CHAIN COLORING!!!
+  - Solve (global) button
   - Check when solved
   - NUMBER ONLY rules (at the start) 
   - LIGHT/DARK color themes
