@@ -86,6 +86,9 @@
     - 
     - Disjoint subregions will eventually be ordered
     - 
+    - Any Jordan "cut" (that has two Jordan paths/loops) that crosses precisely 2 edges/vertices (or equivalent) creates a pair of regions
+      - A "constriction" 
+    - 
     - How does "joining" regions work?
       - (AB) + (BC) = (AC) iff A != C  <--- but best for edge sets if we keep these separated. how can we decompose regions?
       - (AB) + (BC) = full loop (not a region)
@@ -102,6 +105,9 @@
     - Two regions with the same vertex pair:
       - Final state will be two completed regions
       - ... does intersection work?
+  - FACE (OPTION) STATES
+    - How the edges can be arranged around a face - constrained by numbers, but also works for blank faces
+    - TODO: rename curreny FaceState to FaceValue, so this can be FaceState?
   - EDGE COLORS / Chains
     - EdgeColor:
       - Both endpoint vertices (only two)
