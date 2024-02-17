@@ -37,6 +37,7 @@ export interface TEdge {
   reversedHalf: THalfEdge;
   forwardFace: TFace | null;
   reversedFace: TFace | null;
+  vertices: TVertex[];
   faces: TFace[];
   getOtherVertex( vertex: TVertex ): TVertex;
   getOtherFace( face: TFace | null ): TFace | null;
@@ -411,6 +412,7 @@ export class BaseEdge<Structure extends TStructure> implements TEdge {
   public forwardFace!: Structure[ 'Face' ] | null;
   public reversedFace!: Structure[ 'Face' ] | null;
 
+  public vertices!: Structure[ 'Vertex' ][];
   public faces!: Structure[ 'Face' ][];
 
   public constructor(
@@ -714,6 +716,7 @@ export class SquareEdge extends BaseEdge<TSquareStructure> implements TSquareEdg
 
     this.forwardFace = this.forwardHalf.face;
     this.reversedFace = this.reversedHalf.face;
+    this.vertices = [ this.start, this.end ];
     this.faces = [ this.forwardFace, this.reversedFace ].filter( f => f !== null ) as TSquareFace[];
 
     if ( orientation === Orientation.HORIZONTAL ) {

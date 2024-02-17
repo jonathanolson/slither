@@ -1,7 +1,7 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from "phet-lib/axon";
 import { getPressStyle } from "../config";
 import { EdgeStateSetAction, TEdge, TFaceEdgeData, TPuzzle, TState, TStructure } from "./structure";
-import { SimpleFaceSolver } from "./solver";
+import { CompositeSolver, SimpleFaceSolver, SimpleVertexSolver } from './solver';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> {
@@ -63,8 +63,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     const newEdgeState = style.apply( oldEdgeState );
 
     if ( oldEdgeState !== newEdgeState ) {
-      // TODO: ... we can't interface things for TState, so ThisType<this> isn't available... how can we fix this?
-      const newState = this.puzzle.stateProperty.value.clone() as State;
+
 
       const lastTransition = this.stack[ this.stackPositionProperty.value ];
 
@@ -78,18 +77,36 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
 
       // TODO: how do we handle solvers? (this works well for auto-solvers, no?)
-      const autoSolver = new SimpleFaceSolver( this.puzzle.board, newState, {
-        solveToRed: true,
-        solveToBlack: true,
-      }, [] );
+      // TODO: ... we can't interface things for TState, so ThisType<this> isn't available... how can we fix this?
+      let newState = this.puzzle.stateProperty.value.clone() as State;
+
+      const autoSolver = new CompositeSolver( [
+        new SimpleVertexSolver( this.puzzle.board, newState, {
+          solveJointToRed: true,
+          solveOnlyOptionToBlack: true,
+          solveAlmostEmptyToRed: true
+        } ),
+        new SimpleFaceSolver( this.puzzle.board, newState, {
+          solveToRed: true,
+          solveToBlack: true,
+        }, [] )
+      ] );
       userAction.apply( newState );
-      while ( autoSolver.dirty ) {
-        const action = autoSolver.nextAction();
-        if ( action ) {
-          action.apply( newState );
+      try {
+        while ( autoSolver.dirty ) {
+          const action = autoSolver.nextAction();
+          if ( action ) {
+            action.apply( newState );
+          }
         }
       }
-      autoSolver.dispose();
+      catch ( e ) {
+        newState = this.puzzle.stateProperty.value.clone() as State;
+        userAction.apply( newState );
+      }
+      finally {
+        autoSolver.dispose();
+      }
 
       this.stack.push( new StateTransition( userAction, newState ) );
       this.stackLengthProperty.value = this.stack.length;

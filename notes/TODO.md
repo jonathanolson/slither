@@ -142,13 +142,19 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - Config dialog (adjust properties, see if Dialog is usable with Popupable)
+  - FACE COLORING!!!!
+  - LINE/CHAIN COLORING!!!
+  - Check when solved
+  - NUMBER ONLY rules (at the start) 
   - LIGHT/DARK color themes
+  - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
+    - Or at least have a delay 
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Separate out structure.ts into a structure directory
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
-  - Config dialog (adjust properties, see if Dialog is usable with Popupable)
 
 - Concepts
   - Solvers:
@@ -232,16 +238,6 @@
       - e.g. while vertexstate handles spike 3-2-2-3, we can have a pattern that handles this with just EdgeState
     - NOTE: can be "mechanical/recorded" patterns too (e.g. have a database of these)
     - NOTE: PATTERNS CAN APPLY ACROSS TOPOLOGIES IN MANY CASES
-  - Pattern examples:
-    - "If a face of value N has N black edges, the rest are red"
-      - (error state if face has more than N black edges)
-    - "If a face of value N has edgeCount-N red edges, the rest are black"
-      - (error state if face has more than edgeCount-N red edges)
-    - "If a vertex has 2 black edges, the rest are red"
-      - (error state if vertex has more than 2 black edges)
-    - "If a vertex has 1 black edge and 1 white edge, turn white => black"
-      - (error state if vertex has 1 black and N-1 red) 
-    - "If a vertex has N-1 red, all are red"
   - View
     - Coordinates 
       - Each vertex has view coordinates
