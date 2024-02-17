@@ -60,7 +60,27 @@
 
 - TODO: combine this with the section below
 - Solving
+  - EDGE COLORS / Chains
+    - NOTE: color vs chain (think of chain as connected, and color as for cases where we can guarantee connection) 
+    - Chain:
+      - both endpoint vertices (only two, even if we have gaps)
+      - all edges in the chain
+    - Quick edge => chain lookup
+    - 
+    - HEY we should have a separate option for "auto-solve things that join chains" (since that might give things away?)
+    - 
+    - Store chains (list of current edges + end vertices) WAIT WAI TWAIT
+    - They can WALK around spiked 2s, so these DO NOT need to be connected(!)
+  - FACE COLORS, and the advanced "how they meet" rules
+    - NOTE: determine if there is "internal" things in any "almost loop"
+      - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it)
+    - Create a pointer system (from face-color to face-color?) when things are joined, so we can do quick look-ups?
+      - Eventually ends up inside/outside?
+    - LOOK UP color patterns for vertex or square-loop state. Remember, a spiked 2 will continue colors past it (even though we don't know what edges will be set)
+    - OMG OMG look up how we can interact with vertex/edge/face/etc. state with patterns... could discover cool coloring patterns(!)
   - Fundamentally async/await? (e.g. delayed auto-solver in general?) - Or should we synchronous it for simple ones?
+    - async/await backtracker, especially between solver bits.
+    - NOT IN GENERAL
   - If we run through a solver WITHOUT applying changes, we get a list of what it can figure out without going deeper.
   - Face values are fairly constant, can inspect up front to determine "WHERE" we can apply certain patterns.
   - Determine what data types each solver needs (most basic is EdgeState).
@@ -84,16 +104,6 @@
   - Can we write... a RAW solver? To double-check?
   - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
-  - Edge Coloring / Chains
-    - Store chains (list of current edges + end vertices) WAIT WAI TWAIT
-    - They can WALK around spiked 2s, so these DO NOT need to be connected(!)
-  - Face Colorings, and the advanced "how they meet" rules
-    - NOTE: determine if there is "internal" things in any "almost loop"
-      - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it)
-    - Create a pointer system (from face-color to face-color?) when things are joined, so we can do quick look-ups?
-      - Eventually ends up inside/outside?
-    - LOOK UP color patterns for vertex or square-loop state. Remember, a spiked 2 will continue colors past it (even though we don't know what edges will be set)
-    - OMG OMG look up how we can interact with vertex/edge/face/etc. state with patterns... could discover cool coloring patterns(!)
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
   - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?"
