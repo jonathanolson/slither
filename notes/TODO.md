@@ -61,11 +61,17 @@
 - TODO: combine this with the section below
 - Solving
   - EDGE COLORS / Chains
+    - EdgeColor:
+      - Both endpoint vertices (only two)
+      - all edges in the color (lookup)
+      - Chains: Chain[]: --- all connected
+        - both endpoint vertices (only two)
+        - all edges in the chain (lookup, but ideally also in order, for fast visual display in UI)
+    - Each delta will likely "merge" or "split" chains/colors
+      - Yes, we need to think of black => white/red. 
+    - Is it... possible to insert something in-between two chains? (not really if we only do spiked-2s, but otherwise.... yes)
+      - for now, just handle spiked 2 case? hmmm what are other cases?  
     - NOTE: color vs chain (think of chain as connected, and color as for cases where we can guarantee connection) 
-    - Chain:
-      - both endpoint vertices (only two, even if we have gaps)
-      - all edges in the chain
-    - Quick edge => chain lookup
     - 
     - HEY we should have a separate option for "auto-solve things that join chains" (since that might give things away?)
     - 
