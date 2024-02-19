@@ -10,6 +10,7 @@ import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
+import { Net } from './model/region.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -113,3 +114,5 @@ display.updateOnRequestAnimationFrame( dt => {
 
   puzzleContainerNode.step( dt );
 } );
+
+window.test = Net.test;
