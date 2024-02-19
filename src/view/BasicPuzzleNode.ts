@@ -1,17 +1,25 @@
-import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions } from 'phet-lib/scenery';
-import { TEdge, TFace, TFaceEdgeData, TReadOnlyPuzzle, TState, TStructure, TVertex } from '../model/structure.ts';
+import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions, TPaint } from 'phet-lib/scenery';
+import { TEdge, TEdgeData, TFace, TFaceData, TReadOnlyPuzzle, TSimpleRegion, TSimpleRegionData, TState, TStructure, TVertex } from '../model/structure.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { combineOptions } from 'phet-lib/phet-core';
+import { arrayDifference, combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/EdgeState.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
+// @ts-ignore
+import { formatHex, toGamut } from 'culori';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  useSimpleRegionForBlack?: boolean;
 } & NodeOptions;
 
+const toRGB = toGamut( 'rgb' );
+
+export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData;
+
 // TODO: disposal!
-export default class BasicPuzzleNode<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> extends Node {
+export default class BasicPuzzleNode<Structure extends TStructure = TStructure, State extends TState<BasicPuzzleNodeData> = TState<BasicPuzzleNodeData>> extends Node {
   public constructor(
     public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
     options?: BasicPuzzleNodeOptions
@@ -51,6 +59,10 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
       edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, options ) );
     } );
 
+    if ( options?.useSimpleRegionForBlack ) {
+      edgeContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty, options ) );
+    }
+
     super( combineOptions<BasicPuzzleNodeOptions>( {
       children: [
         backgroundContainer,
@@ -65,7 +77,7 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
 class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
-    stateProperty: TReadOnlyProperty<TState<TFaceEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
     options?: BasicPuzzleNodeOptions
   ) {
     super();
@@ -88,7 +100,7 @@ class FaceNode extends Node {
 
   public constructor(
     public readonly face: TFace,
-    stateProperty: TReadOnlyProperty<TState<TFaceEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
     options?: BasicPuzzleNodeOptions
   ) {
     super( {} );
@@ -151,7 +163,7 @@ class EdgeNode extends Node {
 
   public constructor(
     public readonly edge: TEdge,
-    stateProperty: TReadOnlyProperty<TState<TFaceEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
     options?: BasicPuzzleNodeOptions
   ) {
     super( {} );
@@ -212,11 +224,166 @@ class EdgeNode extends Node {
         this.children = [];
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        this.children = [ line ];
+        this.children = options?.useSimpleRegionForBlack ? [] : [ line ];
       }
       else {
         this.children = [ x ];
       }
     } );
+  }
+}
+
+class SimpleRegionViewNode extends Node {
+
+  private readonly simpleRegionNodeMap: Map<TSimpleRegion, SimpleRegionNode> = new Map();
+  private readonly regionIdMap: Map<number, TSimpleRegion> = new Map();
+  private readonly weirdEdgeNodeMap: Map<TEdge, Node> = new Map();
+
+  private readonly regionContainer = new Node();
+  private readonly weirdEdgeContainer = new Node();
+
+  public constructor(
+    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    options?: BasicPuzzleNodeOptions
+  ) {
+    super( {
+      pickable: false
+    } );
+
+    // TODO: disposal
+
+    this.children = [ this.weirdEdgeContainer, this.regionContainer ];
+
+    stateProperty.value.getSimpleRegions().forEach( simpleRegion => this.addRegion( simpleRegion ) );
+    stateProperty.value.getWeirdEdges().forEach( edge => this.addWeirdEdge( edge ) );
+
+    stateProperty.lazyLink( ( state, oldState ) => {
+
+      const oldSimpleRegions = oldState.getSimpleRegions();
+      const newSimpleRegions = state.getSimpleRegions();
+
+      const oldWeirdEdges = oldState.getWeirdEdges();
+      const newWeirdEdges = state.getWeirdEdges();
+
+      const onlyOldRegions: TSimpleRegion[] = [];
+      const onlyNewRegions: TSimpleRegion[] = [];
+      const inBothRegions: TSimpleRegion[] = [];
+
+      arrayDifference( oldSimpleRegions, newSimpleRegions, onlyOldRegions, onlyNewRegions, inBothRegions );
+
+      const removals = new Set( onlyOldRegions );
+
+      // Handle additions first, so we can abuse our regionIdMap to handle replacements
+      for ( const region of onlyNewRegions ) {
+        if ( this.regionIdMap.has( region.id ) ) {
+          const oldRegion = this.regionIdMap.get( region.id )!;
+          this.replaceRegion( oldRegion, region );
+          removals.delete( oldRegion ); // don't remove it!
+        }
+        else {
+          this.addRegion( region );
+        }
+      }
+
+      for ( const region of removals ) {
+        this.removeRegion( region );
+      }
+
+      for ( const edge of oldWeirdEdges ) {
+        if ( !newWeirdEdges.includes( edge ) ) {
+          this.removeWeirdEdge( edge );
+        }
+      }
+
+      for ( const edge of newWeirdEdges ) {
+        if ( !oldWeirdEdges.includes( edge ) ) {
+          this.addWeirdEdge( edge );
+        }
+      }
+    } );
+  }
+
+  private addRegion( simpleRegion: TSimpleRegion ): void {
+    // TODO: improved paints
+    const paint = formatHex( toRGB( {
+      mode: 'okhsl',
+      h: Math.random() * 360,
+      s: 0.7,
+      l: 0.5
+    } ) ) as unknown as string;
+    const simpleRegionNode = new SimpleRegionNode( simpleRegion, paint );
+    this.simpleRegionNodeMap.set( simpleRegion, simpleRegionNode );
+    this.regionIdMap.set( simpleRegion.id, simpleRegion );
+    this.regionContainer.addChild( simpleRegionNode );
+  }
+
+  private replaceRegion( oldSimpleRegion: TSimpleRegion, newSimpleRegion: TSimpleRegion ): void {
+    assertEnabled() && assert( oldSimpleRegion.id === newSimpleRegion.id );
+
+    const simpleRegionNode = this.simpleRegionNodeMap.get( oldSimpleRegion );
+    simpleRegionNode!.updateRegion( newSimpleRegion );
+    this.simpleRegionNodeMap.delete( oldSimpleRegion );
+    this.simpleRegionNodeMap.set( newSimpleRegion, simpleRegionNode! );
+    this.regionIdMap.delete( oldSimpleRegion.id ); // OR we could just immediately replace it. This seems safer
+    this.regionIdMap.set( newSimpleRegion.id, newSimpleRegion );
+  }
+
+  private removeRegion( simpleRegion: TSimpleRegion ): void {
+    const simpleRegionNode = this.simpleRegionNodeMap.get( simpleRegion );
+    this.regionContainer.removeChild( simpleRegionNode! );
+    this.simpleRegionNodeMap.delete( simpleRegion );
+    this.regionIdMap.delete( simpleRegion.id );
+  }
+
+  private addWeirdEdge( edge: TEdge ): void {
+    const startPoint = edge.start.viewCoordinates;
+    const endPoint = edge.end.viewCoordinates;
+    const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
+      lineWidth: 0.1,
+      stroke: '#888',
+      lineCap: 'square'
+    } );
+    this.weirdEdgeNodeMap.set( edge, line );
+    this.weirdEdgeContainer.addChild( line );
+  }
+
+  private removeWeirdEdge( edge: TEdge ): void {
+    const node = this.weirdEdgeNodeMap.get( edge );
+    this.weirdEdgeContainer.removeChild( node! );
+    this.weirdEdgeNodeMap.delete( edge );
+  }
+}
+
+// TODO: animation
+class SimpleRegionNode extends Path {
+  public constructor(
+    public simpleRegion: TSimpleRegion,
+    public readonly paint: TPaint
+  ) {
+    super( SimpleRegionNode.toShape( simpleRegion ), {
+      stroke: paint,
+      lineWidth: 0.1,
+      lineCap: 'square',
+      lineJoin: 'round'
+    } );
+  }
+
+  public updateRegion( simpleRegion: TSimpleRegion ): void {
+    this.shape = SimpleRegionNode.toShape( simpleRegion );
+  }
+
+  public static toShape( simpleRegion: TSimpleRegion ): Shape {
+    const shape = new Shape();
+
+    let first = true;
+    for ( const halfEdge of simpleRegion.halfEdges ) {
+      if ( first ) {
+        first = false;
+        shape.moveToPoint( halfEdge.start.viewCoordinates );
+      }
+      shape.lineToPoint( halfEdge.end.viewCoordinates );
+    }
+
+    return shape.makeImmutable();
   }
 }

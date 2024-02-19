@@ -2,7 +2,7 @@ import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axo
 import { getPressStyle } from '../config';
 import { EdgeStateSetAction, TAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
 import { CompositeSolver, InvalidStateError, SimpleFaceSolver, SimpleVertexSolver } from './solver';
-import { EdgeToSimpleRegionSolver } from './region';
+import { SafeEdgeToSimpleRegionSolver } from './region';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -17,6 +17,17 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
   public constructor(
     public readonly puzzle: TPuzzle<Structure, State>
   ) {
+    // auto-solve some things on load
+    const newState = puzzle.stateProperty.value.clone() as State;
+    const safeSolver = this.getSafeSolver( newState );
+    while ( safeSolver.dirty ) {
+      const action = safeSolver.nextAction();
+      if ( action ) {
+        action.apply( newState );
+      }
+    }
+    puzzle.stateProperty.value = newState;
+
     this.stack = [ new StateTransition( null, puzzle.stateProperty.value ) ];
     this.stackLengthProperty.value = 1;
 
@@ -56,6 +67,12 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       this.stackPositionProperty.value++;
       this.updateState();
     }
+  }
+
+  private getSafeSolver( state: State ): CompositeSolver<State> {
+    return new CompositeSolver( [
+      new SafeEdgeToSimpleRegionSolver( this.puzzle.board, state )
+    ] );
   }
 
   public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
@@ -99,13 +116,12 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
         new SimpleFaceSolver( this.puzzle.board, newState, {
           solveToRed: true,
           solveToBlack: true,
-        }, [] )
+        }, [] ),
+        new SafeEdgeToSimpleRegionSolver( this.puzzle.board, newState )
       ] );
       applySafeAction( userAction );
 
-      const safeSolver = new CompositeSolver( [
-        new EdgeToSimpleRegionSolver( this.puzzle.board, newState )
-      ] );
+      const safeSolver = this.getSafeSolver( newState );
       // TODO: get a method on CompositeSolver for this? Or... somewhere else
       while ( safeSolver.dirty ) {
         applySafeAction( safeSolver.nextAction() );
@@ -137,8 +153,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       finally {
         autoSolver.dispose();
       }
-
-      console.log( newState.getSimpleRegions().map( region => region.halfEdges.length ), newState.getWeirdEdges().length );
 
       this.stack.push( new StateTransition( userAction, newState ) );
       this.stackLengthProperty.value = this.stack.length;

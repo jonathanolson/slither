@@ -17,10 +17,10 @@
     - Loop (around square parity), but also maybe a "loop tool" where if you draw it, it will count automatically.
     - Area coloring (with specific known-inside or known-outside coloring, but also color other multiple-square areas)
       - blue/yellow (from the path tracing demo) for inside/outside default? 
-    - Line coloring (different color for each connected line), helps visualizing endpoints
-      - Include culori(!) 
-    - Lines go flush to (and include) the vertex dots
-      - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
+      - ACTUALLY shades of gray? if we are coloring lines. we don't want too much color overload
+      - DO MOUSE OVER?
+      - Would it... be REALLY pretty to average colors out?
+    - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
     - Optional BLACK: solid line WHITE: dashed line, RED: no line
       - IF we have this, potentially remove the vertices appearance if they won't have lines through them?
       - DASHES seem like a good appearance for hex
@@ -305,7 +305,7 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Hahaha omg... don't auto-solve the edge we just changed (e.g. if we're trying to make it wrong) 
+  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?) 
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
     - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
   - LINE/CHAIN COLORING!!! <--- figure out model

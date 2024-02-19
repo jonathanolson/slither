@@ -602,7 +602,7 @@ export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implemen
 }
 
 let simpleRegionGlobalId = 0;
-export class EdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimpleRegionData, TAction<TEdgeData & TSimpleRegionData>> {
+export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimpleRegionData, TAction<TEdgeData & TSimpleRegionData>> {
 
   private readonly dirtyEdges = new Set<TEdge>();
 
@@ -859,8 +859,8 @@ export class EdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimpleRegi
     return new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
   }
 
-  public clone( equivalentState: TState<TEdgeData & TSimpleRegionData> ): EdgeToSimpleRegionSolver {
-    return new EdgeToSimpleRegionSolver( this.board, equivalentState );
+  public clone( equivalentState: TState<TEdgeData & TSimpleRegionData> ): SafeEdgeToSimpleRegionSolver {
+    return new SafeEdgeToSimpleRegionSolver( this.board, equivalentState );
   }
 
   public dispose(): void {

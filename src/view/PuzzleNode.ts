@@ -1,5 +1,5 @@
 import { Font, Node } from 'phet-lib/scenery';
-import { TFaceEdgeData, TState, TStructure } from '../model/structure';
+import { TCompleteData, TState, TStructure } from '../model/structure';
 import BasicPuzzleNode from './BasicPuzzleNode.ts';
 import PuzzleModel from '../model/PuzzleModel.ts';
 
@@ -10,7 +10,7 @@ const font = new Font( {
 } );
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> extends Node {
+export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> extends Node {
 
   public constructor(
     public readonly puzzleModel: PuzzleModel<Structure, State>
@@ -25,7 +25,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       },
       edgePressListener: ( edge, button ) => {
         puzzleModel.onUserEdgePress( edge, button );
-      }
+      },
+      useSimpleRegionForBlack: true
     } ) );
   }
 }
