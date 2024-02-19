@@ -262,6 +262,8 @@
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
   - A very fast puzzle generator would be needed for people (e.g. me) to play for free
   - Try to generate puzzles which have patterns that I should learn
+  - Generate different "themes" of puzzles (i.e. we solve uniqueness with different techniques)
+    - Find puzzles that need technique A that can't be solved with technique B 
 
 - Rule generation / display
   - Show a full explainer (with immutable views of puzzles)
@@ -272,6 +274,7 @@
   - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
   - Grab rules from my discord paster
   - Show the "next rule" that can be applied (and why) - consider TAnnotatedAction?
+  - In Rule Description (auto-solver) describe the rule there with images? Possibly animate it?
 
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
@@ -320,8 +323,6 @@
   - Actually.... SAVE PUZZLE STATE in localStorage?
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
   - Night mode (staring at stuff isn't great)
-  - Config dialog (adjust properties, see if Dialog is usable with Popupable)
-    - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
   - FACE COLORING!!!! <--- figure out model   + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)

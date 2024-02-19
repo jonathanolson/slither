@@ -1,11 +1,8 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../config';
 import { EdgeStateSetAction, TAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
-import { SimpleVertexSolver } from './solver/SimpleVertexSolver';
-import { SimpleFaceSolver } from './solver/SimpleFaceSolver';
 import { InvalidStateError } from './solver/InvalidStateError.ts';
-import { CompositeSolver } from './solver/CompositeSolver.ts';
-import { SafeEdgeToSimpleRegionSolver } from './solver/SafeEdgeToSimpleRegionSolver.ts';
+import { autoSolverFactoryProperty, safeSolverFactory } from './solver/autoSolver.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -20,9 +17,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
   public constructor(
     public readonly puzzle: TPuzzle<Structure, State>
   ) {
+    // TODO: START solver?
+
     // auto-solve some things on load
     const newState = puzzle.stateProperty.value.clone() as State;
-    const safeSolver = this.getSafeSolver( newState );
+    const safeSolver = safeSolverFactory( puzzle.board, newState );
     while ( safeSolver.dirty ) {
       const action = safeSolver.nextAction();
       if ( action ) {
@@ -72,12 +71,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     }
   }
 
-  private getSafeSolver( state: State ): CompositeSolver<State> {
-    return new CompositeSolver( [
-      new SafeEdgeToSimpleRegionSolver( this.puzzle.board, state )
-    ] );
-  }
-
   public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState( edge );
     const style = getPressStyle( button );
@@ -110,21 +103,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
         }
       };
 
-      const autoSolver = new CompositeSolver( [
-        new SimpleVertexSolver( this.puzzle.board, newState, {
-          solveJointToRed: true,
-          solveOnlyOptionToBlack: true,
-          solveAlmostEmptyToRed: true
-        } ),
-        new SimpleFaceSolver( this.puzzle.board, newState, {
-          solveToRed: true,
-          solveToBlack: true,
-        }, [] ),
-        new SafeEdgeToSimpleRegionSolver( this.puzzle.board, newState )
-      ] );
+      const autoSolver = autoSolverFactoryProperty.value( this.puzzle.board, newState );
       applySafeAction( userAction );
 
-      const safeSolver = this.getSafeSolver( newState );
+      const safeSolver = safeSolverFactory( this.puzzle.board, newState );
       // TODO: get a method on CompositeSolver for this? Or... somewhere else
       while ( safeSolver.dirty ) {
         applySafeAction( safeSolver.nextAction() );

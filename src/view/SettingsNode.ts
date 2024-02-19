@@ -1,7 +1,14 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
+import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
-import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
-import { Panel } from 'phet-lib/sun';
+import { AlignBox, Font, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
+import { Checkbox, Panel } from 'phet-lib/sun';
+import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
+
+// TODO: solidify font stuff (maybe have Font properties based on a theme?)
+const font = new Font( {
+  family: 'sans-serif',
+  size: 16
+} );
 
 export class SettingsNode extends Node {
   public constructor(
@@ -22,11 +29,30 @@ export class SettingsNode extends Node {
       }
     } );
 
-    // TODO: autosolve
+    const getBooleanCheckbox = ( label: string, property: Property<boolean> ) => {
+      return new Checkbox( property, new Text( label, { font: font } ), {
+
+      } );
+    };
+
+    const autoSolveNode = new VBox( {
+      stretch: true,
+      align: 'left',
+      spacing: 8,
+      children: [
+        new Text( 'Solve After Every Move', { font: font } ),
+        getBooleanCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
+        getBooleanCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
+        getBooleanCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
+        getBooleanCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
+        getBooleanCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty )
+      ]
+    } );
+
     // TODO: debug?
     // TODO: theme
 
-    const panel = new Panel( new Rectangle( 0, 0, 500, 400, { fill: 'red' } ), {
+    const panel = new Panel( autoSolveNode, {
       xMargin: 15,
       yMargin: 15
     } );
