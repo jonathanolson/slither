@@ -19,6 +19,7 @@
     "eslint": "~8.56.0",
     "typescript": "~5.3.3",
     "typescript-eslint": "~7.0.1",
+    "rollup-plugin-unassert": "~0.6.0",
 
     "@types/culori": "~2.1.0",
     "@types/jquery": "~3.5.13",

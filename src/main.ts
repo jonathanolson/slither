@@ -13,7 +13,12 @@ import ControlBarNode from './view/ControlBarNode.ts';
 import { BasicSquarePuzzle } from './model/structure.ts';
 
 // @ts-ignore
-window.assertions.enableAssert();
+if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {
+  // TODO: We should actually... have stripped these, something is going wrong
+  console.log( 'enabling assertions' );
+  // @ts-ignore
+  window.assertions.enableAssert();
+}
 
 const scene = new Node();
 

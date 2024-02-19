@@ -1,5 +1,5 @@
-
 import { resolve } from 'path'
+import unassert from 'rollup-plugin-unassert';
 import { defineConfig } from 'vite';
 
 // Using js/ts compatibility from https://github.com/vitejs/vite/issues/3040
@@ -26,7 +26,12 @@ export default defineConfig( {
       input: {
         main: resolve( __dirname, 'index.html' ),
         'scan-test': resolve( __dirname, 'scan-test.html' )
-      }
+      },
+      plugins: [
+        unassert( {
+          // include: [ '**/**.js', '**/**.ts' ]
+        } )
+      ]
     }
   }
 } )
