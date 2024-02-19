@@ -1,10 +1,11 @@
-import { DerivedProperty, NumberProperty, TReadOnlyProperty } from "phet-lib/axon";
-import { getPressStyle } from "../config";
-import { EdgeStateSetAction, TEdge, TFaceEdgeData, TPuzzle, TState, TStructure } from "./structure";
-import { CompositeSolver, SimpleFaceSolver, SimpleVertexSolver } from './solver';
+import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { getPressStyle } from '../config';
+import { EdgeStateSetAction, TAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
+import { CompositeSolver, InvalidStateError, SimpleFaceSolver, SimpleVertexSolver } from './solver';
+import { EdgeToSimpleRegionSolver } from './region';
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TFaceEdgeData> = TState<TFaceEdgeData>> {
+export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
 
   private readonly stack: StateTransition<State>[];
   private readonly stackLengthProperty = new NumberProperty( 0 );
@@ -76,9 +77,18 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
 
+      // TODO: omg this is a wreck. Create deltas lol .... oh no, are nested deltas... going to be broken?
+
       // TODO: how do we handle solvers? (this works well for auto-solvers, no?)
       // TODO: ... we can't interface things for TState, so ThisType<this> isn't available... how can we fix this?
       let newState = this.puzzle.stateProperty.value.clone() as State;
+      const safeActions: TAction<TCompleteData>[] = [];
+      const applySafeAction = ( action: TAction<TCompleteData> | null ) => {
+        if ( action ) {
+          safeActions.push( action );
+          action.apply( newState );
+        }
+      };
 
       const autoSolver = new CompositeSolver( [
         new SimpleVertexSolver( this.puzzle.board, newState, {
@@ -91,7 +101,17 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
           solveToBlack: true,
         }, [] )
       ] );
-      userAction.apply( newState );
+      applySafeAction( userAction );
+
+      const safeSolver = new CompositeSolver( [
+        new EdgeToSimpleRegionSolver( this.puzzle.board, newState )
+      ] );
+      // TODO: get a method on CompositeSolver for this? Or... somewhere else
+      while ( safeSolver.dirty ) {
+        applySafeAction( safeSolver.nextAction() );
+      }
+      safeSolver.dispose();
+
       try {
         while ( autoSolver.dirty ) {
           const action = autoSolver.nextAction();
@@ -99,14 +119,26 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
             action.apply( newState );
           }
         }
+
+        // Hah, if we try to white out something, don't immediately solve it back!
+        if ( newState.getEdgeState( edge ) !== newEdgeState ) {
+          throw new InvalidStateError( 'Auto-solver did not respect user action' );
+        }
       }
       catch ( e ) {
-        newState = this.puzzle.stateProperty.value.clone() as State;
-        userAction.apply( newState );
+        if ( e instanceof InvalidStateError ) {
+          newState = this.puzzle.stateProperty.value.clone() as State;
+          safeActions.forEach( action => action.apply( newState ) );
+        }
+        else {
+          throw e;
+        }
       }
       finally {
         autoSolver.dispose();
       }
+
+      console.log( newState.getSimpleRegions().map( region => region.halfEdges.length ), newState.getWeirdEdges().length );
 
       this.stack.push( new StateTransition( userAction, newState ) );
       this.stackLengthProperty.value = this.stack.length;
@@ -117,7 +149,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
   }
 }
 
-class StateTransition<State extends TState<TFaceEdgeData>> {
+class StateTransition<State extends TState<TCompleteData>> {
   public constructor(
     public readonly action: EdgeStateSetAction | null,
     public readonly state: State

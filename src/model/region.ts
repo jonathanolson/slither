@@ -1,8 +1,10 @@
 import EdgeState from './EdgeState';
-import { TEdge, TEdgeData, TVertex } from './structure';
+import { TAction, TBoard, TDelta, TEdge, TEdgeData, TEdgeDataListener, THalfEdge, TSimpleRegion, TSimpleRegionData, TState, TVertex } from './structure';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import _ from '../workarounds/_';
+import { TinyEmitter } from 'phet-lib/axon';
+import { TSolver } from './solver.ts';
 
 export default class SetRelation extends EnumerationValue {
   // x in A IFF x in B
@@ -345,8 +347,7 @@ export class Net {
   }
 
   public equals( other: Net ): boolean {
-    return
-      ( ( this.a === other.a && this.b === other.b ) || ( this.a === other.b && this.b === other.a ) ) &&
+    return ( ( this.a === other.a && this.b === other.b ) || ( this.a === other.b && this.b === other.a ) ) &&
       this.edges.size === other.edges.size &&
       [ ...this.edges ].every( edge => other.edges.has( edge ) );
   }
@@ -373,3 +374,515 @@ export class Constriction {
     public readonly b: Region
   ) {}
 }
+
+export class GeneralSimpleRegion implements TSimpleRegion {
+  
+  public readonly edges: TEdge[];
+  public readonly a: TVertex;
+  public readonly b: TVertex;
+  
+  public constructor(
+    public readonly id: number,
+    public readonly halfEdges: THalfEdge[]
+  ) {
+    this.a = halfEdges[ 0 ].start;
+    this.b = halfEdges[ halfEdges.length - 1 ].end;
+    this.edges = halfEdges.map( halfEdge => halfEdge.edge );
+
+    if ( assertEnabled() ) {
+      assert( halfEdges.length > 0 );
+      for ( let i = 0; i < halfEdges.length - 1; i++ ) {
+        assert( halfEdges[ i ].end === halfEdges[ i + 1 ].start );
+      }
+    }
+  }
+}
+
+
+export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
+
+  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: Iterable<TSimpleRegion>, removedRegions: Iterable<TSimpleRegion>, addedWeirdEdges: Iterable<TEdge>, removedWeirdEdges: Iterable<TEdge> ]>;
+
+  public readonly simpleRegions: Set<TSimpleRegion>;
+  public readonly weirdEdges: Set<TEdge>;
+
+  public constructor(
+    public readonly board: TBoard,
+    simpleRegions?: Iterable<TSimpleRegion>,
+    weirdEdges?: Iterable<TEdge>
+  ) {
+    this.simpleRegions = new Set( simpleRegions );
+    this.weirdEdges = new Set( weirdEdges );
+  }
+  
+  public getSimpleRegions(): TSimpleRegion[] {
+    return [ ...this.simpleRegions ];
+  }
+  
+  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
+    for ( const simpleRegion of this.simpleRegions ) {
+      if ( simpleRegion.a === vertex || simpleRegion.b === vertex ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+  
+  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
+    for ( const simpleRegion of this.simpleRegions ) {
+      if ( simpleRegion.edges.includes( edge ) ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+  
+  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
+    for ( const simpleRegion of this.simpleRegions ) {
+      if ( simpleRegion.id === id ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+
+  public getWeirdEdges(): TEdge[] {
+    return [ ...this.weirdEdges ];
+  }
+  
+  public modifyRegions(
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ): void {
+    for ( const removedRegion of removedRegions ) {
+      this.simpleRegions.delete( removedRegion );
+    }
+    for ( const newRegion of addedRegions ) {
+      this.simpleRegions.add( newRegion );
+    }
+    for ( const removedEdge of removedWeirdEdges ) {
+      this.weirdEdges.delete( removedEdge );
+    }
+    for ( const newEdge of addedWeirdEdges ) {
+      this.weirdEdges.add( newEdge );
+    }
+    this.simpleRegionsChangedEmitter.emit( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public clone(): GeneralSimpleRegionData {
+    return new GeneralSimpleRegionData( this.board, this.simpleRegions, this.weirdEdges );
+  }
+
+  public createDelta(): TDelta<TSimpleRegionData> {
+    return new GeneralSimpleRegionDelta( this.board, this );
+  }
+}
+
+// TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
+
+export class GeneralSimpleRegionAction implements TAction<TSimpleRegionData> {
+  public constructor(
+    public readonly board: TBoard,
+    public readonly addedRegions: Set<TSimpleRegion> = new Set(),
+    public readonly removedRegions: Set<TSimpleRegion> = new Set(),
+    public readonly addedWeirdEdges: Set<TEdge> = new Set(),
+    public readonly removedWeirdEdges: Set<TEdge> = new Set()
+  ) {}
+
+  public apply( state: TSimpleRegionData ): void {
+    state.modifyRegions( this.addedRegions, this.removedRegions, this.addedWeirdEdges, this.removedWeirdEdges );
+  }
+
+  public getUndo( state: TSimpleRegionData ): TAction<TSimpleRegionData> {
+    return new GeneralSimpleRegionAction( this.board, this.removedRegions, this.addedRegions, this.removedWeirdEdges, this.addedWeirdEdges );
+  }
+
+  public isEmpty(): boolean {
+    return this.addedRegions.size === 0 && this.removedRegions.size === 0 && this.addedWeirdEdges.size === 0 && this.removedWeirdEdges.size === 0;
+  }
+}
+
+export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implements TDelta<TSimpleRegionData> {
+
+  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: Iterable<TSimpleRegion>, removedRegions: Iterable<TSimpleRegion>, addedWeirdEdges: Iterable<TEdge>, removedWeirdEdges: Iterable<TEdge> ]>;
+
+  public constructor(
+    board: TBoard,
+    public readonly parentState: TState<TSimpleRegionData>,
+    addedRegions: Set<TSimpleRegion> = new Set(),
+    removedRegions: Set<TSimpleRegion> = new Set(),
+    addedWeirdEdges: Set<TEdge> = new Set(),
+    removedWeirdEdges: Set<TEdge> = new Set()
+  ) {
+    super( board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public getSimpleRegions(): TSimpleRegion[] {
+    return [
+      ...this.parentState.getSimpleRegions().filter( simpleRegion => !this.removedRegions.has( simpleRegion ) ),
+      ...this.addedRegions
+    ];
+  }
+
+  // TODO: make more efficient
+  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
+    for ( const simpleRegion of this.getSimpleRegions() ) {
+      if ( simpleRegion.a === vertex || simpleRegion.b === vertex ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+
+  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
+    for ( const simpleRegion of this.getSimpleRegions() ) {
+      if ( simpleRegion.edges.includes( edge ) ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+
+  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
+    for ( const simpleRegion of this.getSimpleRegions() ) {
+      if ( simpleRegion.id === id ) {
+        return simpleRegion;
+      }
+    }
+    return null;
+  }
+
+  public getWeirdEdges(): TEdge[] {
+    return [
+      ...this.parentState.getWeirdEdges().filter( edge => !this.removedWeirdEdges.has( edge ) ),
+      ...this.addedWeirdEdges
+    ];
+  }
+
+  public modifyRegions(
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ): void {
+    for ( const removedRegion of removedRegions ) {
+      if ( this.addedRegions.has( removedRegion ) ) {
+        this.addedRegions.delete( removedRegion );
+      }
+      else {
+        this.removedRegions.add( removedRegion );
+      }
+    }
+    for ( const newRegion of addedRegions ) {
+      this.addedRegions.add( newRegion );
+    }
+    for ( const removedEdge of removedWeirdEdges ) {
+      if ( this.addedWeirdEdges.has( removedEdge ) ) {
+        this.addedWeirdEdges.delete( removedEdge );
+      }
+      else {
+        this.removedWeirdEdges.add( removedEdge );
+      }
+    }
+    for ( const newEdge of addedWeirdEdges ) {
+      this.addedWeirdEdges.add( newEdge );
+    }
+    this.simpleRegionsChangedEmitter.emit( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public clone(): GeneralSimpleRegionDelta {
+    return new GeneralSimpleRegionDelta( this.board, this.parentState, new Set( this.addedRegions ), new Set( this.removedRegions ), new Set( this.addedWeirdEdges ), new Set( this.removedWeirdEdges ) );
+  }
+
+  public createDelta(): TDelta<TSimpleRegionData> {
+    return new GeneralSimpleRegionDelta( this.board, this );
+  }
+}
+
+let simpleRegionGlobalId = 0;
+export class EdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimpleRegionData, TAction<TEdgeData & TSimpleRegionData>> {
+
+  private readonly dirtyEdges = new Set<TEdge>();
+
+  private readonly edgeListener: TEdgeDataListener;
+
+  public constructor(
+    private readonly board: TBoard,
+    private readonly state: TState<TEdgeData & TSimpleRegionData>,
+  ) {
+    board.edges.forEach( edge => {
+      this.dirtyEdges.add( edge );
+    } );
+
+    this.edgeListener = ( edge: TEdge, state: EdgeState ) => {
+      this.dirtyEdges.add( edge );
+    };
+
+    this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
+  }
+
+  public get dirty(): boolean {
+    return this.dirtyEdges.size > 0;
+  }
+
+  public nextAction(): TAction<TEdgeData & TSimpleRegionData> | null {
+    if ( !this.dirty ) { return null; }
+
+    const oldRegions = this.state.getSimpleRegions();
+    const oldWeirdEdges = this.state.getWeirdEdges();
+
+    // TODO: handle spiked 2s(!)
+
+    const nowBlackEdges = new Set<TEdge>();
+    const nowClearedEdges = new Set<TEdge>();
+
+    for ( const edge of this.dirtyEdges ) {
+      const edgeState = this.state.getEdgeState( edge );
+      if ( edgeState === EdgeState.BLACK ) {
+        nowBlackEdges.add( edge );
+      }
+      else {
+        nowClearedEdges.add( edge );
+      }
+    }
+
+    const addedRegions = new Set<TSimpleRegion>();
+    const removedRegions = new Set<TSimpleRegion>();
+    const regions = new Set<TSimpleRegion>( oldRegions );
+    const addedWeirdEdges = new Set<TEdge>();
+    const removedWeirdEdges = new Set<TEdge>();
+    const weirdEdges = new Set<TEdge>( oldWeirdEdges );
+
+    // Handle removals from weird edges
+    for ( const edge of nowClearedEdges ) {
+      if ( weirdEdges.has( edge ) ) {
+        weirdEdges.delete( edge );
+        removedWeirdEdges.add( edge );
+      }
+    }
+
+    for ( const edge of nowBlackEdges ) {
+      // Handle additions that duplicate weird edges (we'll leave the weird edge mark)
+      if ( weirdEdges.has( edge ) ) {
+        nowBlackEdges.delete( edge );
+      }
+
+      // Handle additions that duplicate actual regions
+      if ( [ ...regions ].some( region => region.halfEdges.some( halfEdge => halfEdge.edge === edge ) ) ) {
+        nowBlackEdges.delete( edge );
+      }
+    }
+
+    // Now, we have three disjoint sets: nowBlackEdges, nowClearedEdges, and weirdEdges
+
+    // Handle removals from actual regions
+    for ( const region of oldRegions ) {
+      if ( region.halfEdges.some( halfEdge => nowClearedEdges.has( halfEdge.edge ) ) ) {
+        const halfEdgeRegions: THalfEdge[][] = [];
+        let currentHalfEdgeRegion: THalfEdge[] = [];
+
+        for ( const halfEdge of region.halfEdges ) {
+          if ( !nowClearedEdges.has( halfEdge.edge ) ) {
+            currentHalfEdgeRegion.push( halfEdge );
+          }
+          else if ( currentHalfEdgeRegion.length > 0 ) {
+            halfEdgeRegions.push( currentHalfEdgeRegion );
+            currentHalfEdgeRegion = [];
+          }
+        }
+        if ( currentHalfEdgeRegion.length > 0 ) {
+          halfEdgeRegions.push( currentHalfEdgeRegion );
+        }
+
+        removedRegions.add( region );
+        regions.delete( region );
+
+        if ( halfEdgeRegions.length ) {
+          const largestHalfEdgeRegion = _.maxBy( halfEdgeRegions, halfEdgeRegion => halfEdgeRegion.length )!;
+
+          for ( const halfEdgeRegion of halfEdgeRegions ) {
+            const newRegion = new GeneralSimpleRegion(
+              halfEdgeRegion === largestHalfEdgeRegion ? region.id : simpleRegionGlobalId++,
+              halfEdgeRegion
+            );
+            addedRegions.add( newRegion );
+            regions.add( newRegion );
+          }
+        }
+      }
+    }
+
+    const attemptToAddEdge = ( edge: TEdge ): boolean => {
+      const startVertex = edge.start;
+      const endVertex = edge.end;
+
+      // NOTE: guaranteed to NOT exist in our regions (by now)
+
+
+      // Should only be at most
+      const startRegion = [ ...regions ].find( region => region.a === startVertex || region.b === startVertex ) || null;
+      const endRegion = [ ...regions ].find( region => region.a === endVertex || region.b === endVertex ) || null;
+
+      // Check to see if it is a weird edge
+      const startVertexEdgeCount = startVertex.edges.filter( vertexEdge => this.state.getEdgeState( vertexEdge ) === EdgeState.BLACK ).length;
+      const endVertexEdgeCount = endVertex.edges.filter( vertexEdge => this.state.getEdgeState( vertexEdge ) === EdgeState.BLACK ).length;
+      if ( startVertexEdgeCount > 2 || endVertexEdgeCount > 2 ) {
+        // It's weird(!)
+        return false;
+      }
+
+      const addRegion = ( region: TSimpleRegion ) => {
+        regions.add( region );
+        addedRegions.add( region );
+      };
+      const removeRegion = ( region: TSimpleRegion ) => {
+        regions.delete( region );
+        if ( addedRegions.has( region ) ) {
+          addedRegions.delete( region );
+        }
+        else {
+          removedRegions.add( region );
+        }
+      };
+
+      const combineHalfEdgeArrays = ( ...arrays: THalfEdge[][] ): THalfEdge[] => {
+        if ( arrays.length === 0 ) {
+          return [];
+        }
+        let result = [
+          ...arrays[ 0 ]
+        ];
+        for ( let i = 1; i < arrays.length; i++ ) {
+          const arr = arrays[ i ];
+          if ( arr.length === 0 ) {
+            continue;
+          }
+
+          // TODO: could probably do things faster
+          if ( result[ 0 ].start === arr[ 0 ].start ) {
+            result = [
+              ...arr.map( halfEdge => halfEdge.reversed ).reverse(),
+              ...result
+            ];
+          }
+          else if ( result[ 0 ].start === arr[ arr.length - 1 ].end ) {
+            result = [
+              ...arr,
+              ...result
+            ];
+          }
+          else if ( result[ result.length - 1 ].end === arr[ 0 ].start ) {
+            // TODO: push instead?
+            result = [
+              ...result,
+              ...arr
+            ];
+          }
+          else if ( result[ result.length - 1 ].end === arr[ arr.length - 1 ].end ) {
+            // TODO: push instead?
+            result = [
+              ...result,
+              ...arr.map( halfEdge => halfEdge.reversed ).reverse()
+            ];
+          }
+          else {
+            throw new Error( 'Cannot combine half edge arrays' );
+          }
+        }
+        return result;
+      };
+
+      if ( startRegion && endRegion ) {
+        if ( startRegion === endRegion ) {
+          // TODO: how do we handle... completed loops? Do we check to see if it is solved?
+          // TODO: Do we... have a data type that checks these things?
+          return false; // TODO: hah, we just mark it as weird.... for now?
+        }
+        else {
+          // We are joining two regions(!)
+
+          const primaryRegion = startRegion.halfEdges.length >= endRegion.halfEdges.length ? startRegion : endRegion;
+          const secondaryRegion = primaryRegion === startRegion ? endRegion : startRegion;
+
+          const newRegion = new GeneralSimpleRegion( primaryRegion.id, combineHalfEdgeArrays( primaryRegion.halfEdges, [ edge.forwardHalf ], secondaryRegion.halfEdges ) );
+
+          removeRegion( primaryRegion );
+          removeRegion( secondaryRegion );
+          addRegion( newRegion );
+        }
+      }
+      else if ( startRegion ) {
+        const newRegion = new GeneralSimpleRegion( startRegion.id, combineHalfEdgeArrays( startRegion.halfEdges, [ edge.forwardHalf ] ) );
+
+        removeRegion( startRegion );
+        addRegion( newRegion );
+      }
+      else if ( endRegion ) {
+        const newRegion = new GeneralSimpleRegion( endRegion.id, combineHalfEdgeArrays( endRegion.halfEdges, [ edge.forwardHalf ] ) );
+
+        removeRegion( endRegion );
+        addRegion( newRegion );
+      }
+      else {
+        const newRegion = new GeneralSimpleRegion( simpleRegionGlobalId++, [ edge.forwardHalf ] );
+
+        addRegion( newRegion );
+      }
+
+      return true;
+    };
+
+    // Try weird edges first
+    for ( const weirdEdge of weirdEdges ) {
+      const success = attemptToAddEdge( weirdEdge );
+
+      if ( success ) {
+        removedWeirdEdges.add( weirdEdge );
+        weirdEdges.delete( weirdEdge );
+      }
+    }
+
+    for ( const edge of nowBlackEdges ) {
+      const success = attemptToAddEdge( edge );
+
+      if ( !success ) {
+        addedWeirdEdges.add( edge );
+        weirdEdges.add( edge ); // TODO: why, we're not saving it...?
+      }
+    }
+
+    // NOTE: only do this at the end, since if we "error out" we'll want to note we still need to be computed
+    this.dirtyEdges.clear();
+
+    return new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public clone( equivalentState: TState<TEdgeData & TSimpleRegionData> ): EdgeToSimpleRegionSolver {
+    return new EdgeToSimpleRegionSolver( this.board, equivalentState );
+  }
+
+  public dispose(): void {
+    this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
+  }
+}
+
+/*
+export interface TSolver<Data, Action extends TAction<Data>> {
+  // If there is a chance nextAction will return an action
+  dirty: boolean;
+
+  // TODO: We could also report out the "difficulty" of the next dirty solver, so we could potentially
+  // TODO: backtrack more efficiently by exploring the "easier" parts first in each black/red pair.
+  // TODO: --- decide whether this actually just... ADDs to the computational cost of the solver?
+
+  // If this returns null, the solver is "currently exhausted" / "clean", and should be marked as NOT dirty.
+  nextAction(): Action | null;
+
+  // Create a copy of this solver, but referring to an equivalent state object (allows branching).
+  clone( equivalentState: TState<Data> ): TSolver<Data, Action>;
+
+  dispose(): void;
+}
+ */

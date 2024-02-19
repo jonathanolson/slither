@@ -5,10 +5,11 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { BasicSquarePuzzle, CompositeFaceEdgeData, GeneralEdgeData, GeneralFaceData, SquareBoard, TFaceEdgeData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
+import { BasicSquarePuzzle, CompleteData, GeneralEdgeData, GeneralFaceData, SquareBoard, TCompleteData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
 import EdgeState from '../model/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { GeneralSimpleRegionData } from '../model/region.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -29,7 +30,7 @@ import assert, { assertEnabled } from '../workarounds/assert.ts';
 // note-- we'll want to remove small lines(!)
 // Then try to determine vertices along the lines
 
-const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSquarePuzzle<TSquareStructure, TState<TFaceEdgeData>>> => {
+const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSquarePuzzle<TSquareStructure, TState<TCompleteData>>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -356,7 +357,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     );
   } );
 
-  const startingData = new CompositeFaceEdgeData(
+  const startingData = new CompleteData(
     new GeneralFaceData( board, face => {
       const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
       return location ? location.value : null;
@@ -381,7 +382,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
           return EdgeState.WHITE;
         }
       }
-    } )
+    } ),
+    new GeneralSimpleRegionData( board )
   );
 
   return new BasicSquarePuzzle( board, startingData );
@@ -401,7 +403,7 @@ class LineLocation {
   ) {}
 }
 
-export default async ( url: string ): Promise<TSquarePuzzle<TSquareStructure, TState<TFaceEdgeData>>> => {
+export default async ( url: string ): Promise<TSquarePuzzle<TSquareStructure, TState<TCompleteData>>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();

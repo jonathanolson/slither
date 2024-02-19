@@ -201,6 +201,39 @@ export interface TEdgeData {
 
 export type TEdgeDataListener = ( edge: TEdge, state: EdgeState ) => void;
 
+
+export interface TSimpleRegion {
+  id: number; // tracked across simple regions over time
+  a: TVertex;
+  b: TVertex;
+  halfEdges: THalfEdge[]; // for simple regions, these are ordered from a to b
+  edges: TEdge[]; // for simple regions, these are ordered from a to b
+}
+
+export interface TSimpleRegionData {
+  getSimpleRegions(): TSimpleRegion[];
+  getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null;
+  getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null;
+  getSimpleRegionWithId( id: number ): TSimpleRegion | null;
+  getWeirdEdges(): TEdge[];
+
+  modifyRegions(
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ): void;
+
+  simpleRegionsChangedEmitter: TEmitter<[
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ]>;
+}
+
+export type TSimpleRegionDataListener = ( simpleRegions: Iterable<TSimpleRegion> ) => void;
+
 export class CompositeAction<State> implements TAction<State> {
 
   public constructor(
@@ -1248,6 +1281,8 @@ export interface TEdgeData {
 
 export interface TFaceEdgeData extends TFaceData, TEdgeData {};
 
+export interface TCompleteData extends TFaceData, TEdgeData, TSimpleRegionData {};
+
 // TODO: faster forms for Square in particular
 export class GeneralFaceData implements TState<TFaceData> {
 
@@ -1471,10 +1506,11 @@ export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeD
 }
 
 // TODO: can we do trait/mixin stuff to support a better way of doing this? TS has been picky with traits before
-export class CompositeFaceEdgeData implements TState<TFaceEdgeData> {
+export class CompleteData implements TState<TCompleteData> {
   public constructor(
     public readonly faceData: TState<TFaceData>,
-    public readonly edgeData: TState<TEdgeData>
+    public readonly edgeData: TState<TEdgeData>,
+    public readonly simpleRegionData: TState<TSimpleRegionData>
   ) {}
 
   public getFaceState( face: TFace ): FaceState {
@@ -1501,41 +1537,85 @@ export class CompositeFaceEdgeData implements TState<TFaceEdgeData> {
     return this.edgeData.edgeStateChangedEmitter;
   }
 
-  public clone(): CompositeFaceEdgeData {
-    return new CompositeFaceEdgeData( this.faceData.clone(), this.edgeData.clone() );
+  public getSimpleRegions(): TSimpleRegion[] {
+    return this.simpleRegionData.getSimpleRegions();
   }
 
-  public createDelta(): TDelta<TFaceEdgeData> {
-    return new CompositeFaceEdgeDelta( this.faceData.createDelta(), this.edgeData.createDelta() );
+  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
+    return this.simpleRegionData.getSimpleRegionWithVertex( vertex );
+  }
+  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
+    return this.simpleRegionData.getSimpleRegionWithEdge( edge );
+  }
+
+  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
+    return this.simpleRegionData.getSimpleRegionWithId( id );
+  }
+
+  public getWeirdEdges(): TEdge[] {
+    return this.simpleRegionData.getWeirdEdges();
+  }
+
+  public modifyRegions(
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ): void {
+    this.simpleRegionData.modifyRegions( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public get simpleRegionsChangedEmitter(): TEmitter<[
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ]> {
+    return this.simpleRegionData.simpleRegionsChangedEmitter;
+  }
+
+  public clone(): CompleteData {
+    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone() );
+  }
+
+  public createDelta(): TDelta<TCompleteData> {
+    return new CompleteDelta(
+      this.faceData.createDelta(),
+      this.edgeData.createDelta(),
+      this.simpleRegionData.createDelta()
+    );
   }
 }
 
-export class CompositeFaceEdgeAction implements TAction<TFaceEdgeData> {
+export class CompleteAction implements TAction<TCompleteData> {
   public constructor(
     public readonly faceAction: TAction<TFaceData>,
-    public readonly edgeAction: TAction<TEdgeData>
+    public readonly edgeAction: TAction<TEdgeData>,
+    public readonly simpleRegionAction: TAction<TSimpleRegionData>
   ) {}
 
-  public apply( state: TFaceEdgeData ): void {
+  public apply( state: TCompleteData ): void {
     this.faceAction.apply( state );
     this.edgeAction.apply( state );
+    this.simpleRegionAction.apply( state );
   }
 
-  public getUndo( state: TFaceEdgeData ): TAction<TFaceEdgeData> {
-    return new CompositeFaceEdgeAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ) );
+  public getUndo( state: TCompleteData ): TAction<TCompleteData> {
+    return new CompleteAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ), this.simpleRegionAction.getUndo( state ) );
   }
 
   public isEmpty(): boolean {
-    return this.faceAction.isEmpty() && this.edgeAction.isEmpty();
+    return this.faceAction.isEmpty() && this.edgeAction.isEmpty() && this.simpleRegionAction.isEmpty();
   }
 }
 
-export class CompositeFaceEdgeDelta extends CompositeFaceEdgeAction implements TDelta<TFaceEdgeData> {
+export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
   public constructor(
     public readonly faceDelta: TDelta<TFaceData>,
-    public readonly edgeDelta: TDelta<TEdgeData>
+    public readonly edgeDelta: TDelta<TEdgeData>,
+    public readonly simpleRegionDelta: TDelta<TSimpleRegionData>
   ) {
-    super( faceDelta, edgeDelta );
+    super( faceDelta, edgeDelta, simpleRegionDelta );
   }
 
   public getFaceState( face: TFace ): FaceState {
@@ -1562,12 +1642,49 @@ export class CompositeFaceEdgeDelta extends CompositeFaceEdgeAction implements T
     return this.edgeDelta.edgeStateChangedEmitter;
   }
 
-  public clone(): CompositeFaceEdgeDelta {
-    return new CompositeFaceEdgeDelta( this.faceDelta.clone(), this.edgeDelta.clone() );
+  public getSimpleRegions(): TSimpleRegion[] {
+    return this.simpleRegionDelta.getSimpleRegions();
   }
 
-  public createDelta(): TDelta<TFaceEdgeData> {
-    return new CompositeFaceEdgeDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta() );
+  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
+    return this.simpleRegionDelta.getSimpleRegionWithVertex( vertex );
+  }
+  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
+    return this.simpleRegionDelta.getSimpleRegionWithEdge( edge );
+  }
+
+  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
+    return this.simpleRegionDelta.getSimpleRegionWithId( id );
+  }
+
+  public getWeirdEdges(): TEdge[] {
+    return this.simpleRegionDelta.getWeirdEdges();
+  }
+
+  public modifyRegions(
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ): void {
+    this.simpleRegionDelta.modifyRegions( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+  }
+
+  public get simpleRegionsChangedEmitter(): TEmitter<[
+    addedRegions: Iterable<TSimpleRegion>,
+    removedRegions: Iterable<TSimpleRegion>,
+    addedWeirdEdges: Iterable<TEdge>,
+    removedWeirdEdges: Iterable<TEdge>
+  ]> {
+    return this.simpleRegionDelta.simpleRegionsChangedEmitter;
+  }
+
+  public clone(): CompleteDelta {
+    return new CompleteDelta( this.faceDelta.clone(), this.edgeDelta.clone(), this.simpleRegionDelta.clone() );
+  }
+
+  public createDelta(): TDelta<TCompleteData> {
+    return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta() );
   }
 }
 

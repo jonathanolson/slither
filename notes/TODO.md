@@ -61,6 +61,10 @@
 - TODO: combine this with the section below
 - Solving
   - Regions:
+    - Ok.... to detect the non-trivial regions...
+      - Face color first... we need to get things FROM that.
+        - ACTUALLY NO!!! We can detect the "simple loop" types now
+    - 
     - !!! When we turn edges from white to red/black, we REFINE existing regions, and CREATE new ones
       - NOT HORRIBLE for processing additional things
     - We COULD scan regions for ALL possible simple paths (and check if they are valid) for simple cases (with not a ton of branching)
@@ -301,6 +305,7 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - Hahaha omg... don't auto-solve the edge we just changed (e.g. if we're trying to make it wrong) 
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
     - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
   - LINE/CHAIN COLORING!!! <--- figure out model
