@@ -20,6 +20,7 @@
       - ACTUALLY shades of gray? if we are coloring lines. we don't want too much color overload
       - DO MOUSE OVER?
       - Would it... be REALLY pretty to average colors out?
+    - Line coloring: highlight endpoints/line when over it? (like make the endpoints NOTABLE in case of color similarity)
     - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
     - Optional BLACK: solid line WHITE: dashed line, RED: no line
       - IF we have this, potentially remove the vertices appearance if they won't have lines through them?
@@ -37,26 +38,30 @@
     - Possibly multiple views (one coloring, one vertex?)
   - Themes
     - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show
+  - Puzzle import:
+    - vision-based (from image) ==> show better feedback while loading
+    - Generated (see generation section)
+    - Manual input (also helpful if vision-based doesn't work)
   - Allow puzzle export
     - Image
     - JSON?
     - String
-    - URL
+    - URL <--- especially eventually this, so multiple people can play
+      - Like YouTube share, have checkbox for "save the puzzle state" - off by default
   - Interaction
+    - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
     - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
       - An "inverse" or "X" sticky button at the top? 
-    - Programmatically create the mouse/touch areas for the lines (noting vertex clicks for interactivity or dead zone)
-      - Use offset curves or "what is closest"? 
-    - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
     - Vertex interaction (note incident or spike? - or any of possible vertex states?) 
-    - Chess-like history, with branching?
     - "Safety net" - Mistake detection (but only after you've "stabilized"?)
       - Slightly delayed "error" popup, option to turn off 
       - Button to rewind + show error
-    - Auto-solver for various sets of "solvers" (basic level is auto-X or auto-line)
-      - I'm used auto-solving only doing x's (face and vertex checks)
+    - [defer] Chess-like history, with branching?
+      - Undo/redo (as a tree ideally)
+        - Can show "candidates" explored, that can be clicked on?
+      - Allow a "mark save point" (that can be jumped back to)
   - Accessibility
-    - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right") 
+    - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right")
 
 - TODO: combine this with the section below
 - Solving
@@ -181,6 +186,7 @@
     - Unit region: two vertices with a single edge (it is black)
     - Spike2 region: two vertices across a 2
     - 
+    - HEY we should have a separate option for "auto-solve things that join chains" (since that might give things away?)
     - Vertex pair:
       - Abstraction does NOT require they are endpoints
       - They are not ordered
@@ -192,23 +198,6 @@
   - FACE (OPTION) STATES
     - How the edges can be arranged around a face - constrained by numbers, but also works for blank faces
     - TODO: rename curreny FaceState to FaceValue, so this can be FaceState?
-  - EDGE COLORS / Chains
-    - EdgeColor:
-      - Both endpoint vertices (only two)
-      - all edges in the color (lookup)
-      - Chains: Chain[]: --- all connected
-        - both endpoint vertices (only two)
-        - all edges in the chain (lookup, but ideally also in order, for fast visual display in UI)
-    - Each delta will likely "merge" or "split" chains/colors
-      - Yes, we need to think of black => white/red. 
-    - Is it... possible to insert something in-between two chains? (not really if we only do spiked-2s, but otherwise.... yes)
-      - for now, just handle spiked 2 case? hmmm what are other cases?  
-    - NOTE: color vs chain (think of chain as connected, and color as for cases where we can guarantee connection) 
-    - 
-    - HEY we should have a separate option for "auto-solve things that join chains" (since that might give things away?)
-    - 
-    - Store chains (list of current edges + end vertices) WAIT WAI TWAIT
-    - They can WALK around spiked 2s, so these DO NOT need to be connected(!)
   - FACE COLORS, and the advanced "how they meet" rules
     - NOTE: determine if there is "internal" things in any "almost loop"
       - Detect case where there is a loop that is almost closed, except it has a single edge OR corner (so we can't enter it)
@@ -221,7 +210,6 @@
     - NOT IN GENERAL
   - If we run through a solver WITHOUT applying changes, we get a list of what it can figure out without going deeper.
   - Face values are fairly constant, can inspect up front to determine "WHERE" we can apply certain patterns.
-  - Determine what data types each solver needs (most basic is EdgeState).
   - Backtrack:
     - Generalize for any "binary toggle" that is feasible. "Edge", "Color", or vertex state might make sense. Maybe "connection" too?
       - For instance, if an area connects 
@@ -260,15 +248,12 @@
   - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
     - Actually, can factor out to "boolean" sets of edges (black OR red)
 
-- Performance
-  - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
-
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
   - A very fast puzzle generator would be needed for people (e.g. me) to play for free
   - Try to generate puzzles which have patterns that I should learn
 
-- Generate/show rules
+- Rule generation / display
   - Show a full explainer (with immutable views of puzzles)
     - !!! Not popular enough to NOT have an explainer. 
     - Link off to full databases of patterns 
@@ -276,9 +261,6 @@
   - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
   - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
   - Grab rules from my discord paster
-
-- Documentation
-  - Make clean! 
 
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
@@ -305,44 +287,41 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - LIGHT/DARK color themes / night mode
+    - Have things be backed by Color Properties (and use... culori nicely?)
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
   - Night mode (staring at stuff isn't great)
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
     - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
-  - LINE/CHAIN COLORING!!! <--- figure out model
-    - Highlight the endpoints?
   - FACE COLORING!!!! <--- figure out model   + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
     - Each pattern needs to specify the required topology/structure for the area (what is important)
+    - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
+    - RED EDGES essentially CHANGES the topology
+      - Make rules that can be applied to ANY cases 
     - Going off the side of the board is "all x" - Use a way of pattern matching those
   - Reapply auto-solve if it gets changed
-  - Solve (global) button
+  - Prettier/eslint
+  - Solve (global) button (should it have something other than auto-solve?)
   - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
     - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
   - Check when solved - we only have one chain + all numbers satisfied
-  - NUMBER ONLY rules (at the start) 
-  - LIGHT/DARK color themes
+  - NUMBER ONLY rules (at the start)
+    - Most of these would be pattern based. Maybe get pattern solver working first (it's noted above)
   - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - Or at least have a delay 
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
-  - Separate out structure.ts into a structure directory
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
+  - Work on solver "clone" ease, for the main PuzzleModel loop
+  - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
+    - https://github.com/richardtallent/vite-plugin-singlefile
 
 - Concepts
-  - Solvers:
-    - CLONE()!(!(!(!))) for each solver, so that we can "branch" it with state
-    - Each solver listens to emitters it needs to. Sets dirty flag if it needs to run. Tracks what is "dirty" itself.
-      - Especially for "complicated" ones, we can find that "first pattern solve" and exit, and STILL be dirty(!) 
-      - Try to keep the "dirty" state as a stack, so it will handle recently-changed things first
-    - Pattern solvers can still work
-    - Potentially separate solvers into "human-readable this solver does one thing", and "machine solver, do a bunch of things efficiently" 
-  - 
-  - Store "actions" as a history.
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
     - Only for SquareSpot? 
   - Separate structure from data
@@ -357,11 +336,9 @@
   - Data:
     - Data should be... getters (so we can wrap with thin "if we change this" during backtracking)
       - Thin wrapper checks if our data OVERRIDES data on the "parent" 
-    - EdgeState: black / white / red
     - SimplifiedVertexState: note if it is incident/spiked --- how does this extend to other grid types (don't try?)?
     - VertexState: (can pretend to be SimplifiedVertexState)
       - Allow empty or every combination of 2 edges
-    - LineColor: (so we can connect things) --- note we handle this ideally for across-2s
     - FaceColor: Inside / Outside / ...others? <--- how do we handle collections of faces and coloring?
       - opposite: FaceColor --- display with opposite hues?
     - Jordan curve around face (possibilities and rules)
@@ -382,18 +359,7 @@
       - N/S/E/W edge, vertex
       - NE/SE/SW/NW face
       - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
-  - Actions (Commands? - naming):
-    - Should be "somewhat atomic"
-    - global simplify( state: ..., actions: Action[] ): Action[]
-      - Removes ones that don't apply an affect (after the previous ones, e.g. removes duplicates)
-      - Can detect if there is no change
-      - COMBINE actions of similar types into one composite (that can be scanned by solvers to determine dirtyness)
-      - Note: actions on... different data types are... different/reorderable?
-    - (have one for each... data type....?) 
-    - ErrorAction (with a string or graphical representation?)
-    - EdgeStateMove: { edge: Edge, state: EdgeState }
   - Solver
-    - How to handle "invalid grid" / "invalid vertex state"? 
     - canAssumeUnique?
     - Ability to "split" computation into awaits, with sleep(0)s, so we can keep our UI thread responsive
       - Can we use... web workers? ---- WEB WORKERS!!!!!!!!!!!!!!!!
@@ -415,39 +381,15 @@
       - e.g. while vertexstate handles spike 3-2-2-3, we can have a pattern that handles this with just EdgeState
     - NOTE: can be "mechanical/recorded" patterns too (e.g. have a database of these)
     - NOTE: PATTERNS CAN APPLY ACROSS TOPOLOGIES IN MANY CASES
-  - View
-    - Coordinates 
-      - Each vertex has view coordinates
-      - Each face has a coordinate for its center (for display of the number)
   - Interaction
-    - User interaction history
-      - Auto-solve can then provide additional actions
-        - E.g. if the user is toggling white/black/red on something they just toggled, we will:
-          - UNDO auto-solve, apply their action, RE-DO auto-solve
-      - Do we "combine" a white=>black=>red into a single action?
-    - Board states (for the interruptable animation to go in-between)
-    - Undo/redo (as a tree ideally)
-      - Can show "candidates" explored, that can be clicked on?
-      - Allow a "mark save point" (that can be jumped back to)
     - Have PatternErrors that we can display to show conflict
     - Have PatternExplainers that we can display to show what we can deduce next
     - Have a "hint" button
     - Have a "solve a single bit" button
   - Configuration
-    - Save in localStorage 
-  - Puzzle input:
-    - Manual
-    - AI interpet puzzle image(!!!!!!)
-      - OpenVC: https://opencv.org/get-started/ 
-    - Generated
-    - !!!!!!!!!!!!!!! Allow sharing the puzzle with a URL!!!!!!
+    - Save in localStorage
   - Immutable views
     - Would be great for an "explainer" page (this would be fun to write up)
-
-- Implementation
-  - Use seedRandom setup so we can get reproducibility.
-
-- Be the lichess of slitherlink?
 
 - Conceptual notes
   - Structure: vertices/edges/faces and how they connect
@@ -456,3 +398,14 @@
   - Board = structure of vertices/edges/faces
   - Puzzle = board + FaceState
   - Delta = action + previous state
+
+- Testing
+  - Use seedRandom setup so we can get reproducibility.
+
+- Performance
+  - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
+
+- Maintainability
+  - At a certain point, cut features and clean clean 
+  - Separate out structure.ts into a structure directory
+  - Make clean! Document things! 
