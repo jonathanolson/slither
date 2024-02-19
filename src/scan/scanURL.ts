@@ -5,11 +5,10 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { BasicSquarePuzzle, CompleteData, GeneralEdgeData, GeneralFaceData, SquareBoard, TCompleteData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
+import { BasicSquarePuzzle, CompleteData, SquareBoard, TCompleteData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
 import EdgeState from '../model/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { GeneralSimpleRegionData } from '../model/region.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html

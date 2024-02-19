@@ -10,7 +10,6 @@ import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { Net } from './model/region.ts';
 import { BasicSquarePuzzle } from './model/structure.ts';
 
 // @ts-ignore
@@ -53,6 +52,11 @@ puzzleModelProperty.link( puzzleModel => {
     puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzleModel ) );
   }
 } );
+
+// @ts-ignore
+window.loadDeprecated = ( puzzleString: string ) => {
+  puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadDeprecatedScalaString( puzzleString ) );
+};
 
 const mainBox = new VBox( {
   children: [
