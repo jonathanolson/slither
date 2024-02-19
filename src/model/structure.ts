@@ -6,7 +6,8 @@ import FaceState from "./FaceState.ts";
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import _ from '../workarounds/_';
 import { TEmitter, TProperty, TReadOnlyProperty, TinyEmitter, TinyProperty } from "phet-lib/axon";
-import { GeneralSimpleRegionData } from './region.ts';
+
+import { GeneralSimpleRegionData } from './data/GeneralSimpleRegion.ts';
 
 export interface TVertex {
   logicalCoordinates: Vector2;

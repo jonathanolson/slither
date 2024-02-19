@@ -2,7 +2,7 @@ import { TSolver } from './TSolver.ts';
 import { TAction, TBoard, TEdge, TEdgeData, TEdgeDataListener, THalfEdge, TSimpleRegion, TSimpleRegionData, TState } from '../structure.ts';
 import EdgeState from '../EdgeState.ts';
 import _ from '../../workarounds/_.ts';
-import { GeneralSimpleRegion, GeneralSimpleRegionAction } from '../region.ts';
+import { GeneralSimpleRegion, GeneralSimpleRegionAction } from '../data/GeneralSimpleRegion.ts';
 
 let simpleRegionGlobalId = 0;
 
