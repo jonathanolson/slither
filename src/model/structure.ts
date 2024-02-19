@@ -354,6 +354,7 @@ export type TSquareBoard<Structure extends TSquareStructure = TSquareStructure> 
   // Number of faces in each direction
   width: number;
   height: number;
+  isSquare: true;
 
   getVertex: ( x: number, y: number ) => TSquareVertex | null;
   getEdge: ( x: number, y: number, orientation: Orientation ) => TSquareEdge | null;
@@ -915,6 +916,7 @@ export class SquareBoard extends BaseBoard<TSquareStructure> implements TSquareB
   public readonly getEdge: ( x: number, y: number, orientation: Orientation ) => TSquareEdge | null;
   public readonly getHalfEdge: ( x0: number, y0: number, x1: number, y1: number ) => TSquareHalfEdge | null;
   public readonly getFace: ( x: number, y: number ) => TSquareFace | null;
+  public readonly isSquare = true;
 
   public constructor(
     // width/height for faces

@@ -1,5 +1,5 @@
 import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions, TPaint } from 'phet-lib/scenery';
-import { TEdge, TEdgeData, TFace, TFaceData, TReadOnlyPuzzle, TSimpleRegion, TSimpleRegionData, TState, TStructure, TVertex } from '../model/structure.ts';
+import { TEdge, TEdgeData, TFace, TFaceData, TReadOnlyPuzzle, TSimpleRegion, TSimpleRegionData, TSquareBoard, TState, TStructure, TVertex } from '../model/structure.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { arrayDifference, combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/EdgeState.ts';
@@ -7,6 +7,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 // @ts-ignore
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { Bounds2 } from 'phet-lib/dot';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
@@ -30,18 +31,27 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     const edgeContainer = new Node();
 
     const facesShape = new Shape();
+    const puzzleBounds = Bounds2.NOTHING.copy();
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
 
       facesShape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
+      face.vertices.forEach( vertex => {
+        puzzleBounds.addPoint( vertex.viewCoordinates );
+      } );
     } );
 
-    const simplifiedFacesShape = facesShape.getSimplifiedAreaShape();
-
-    const expandedShape = facesShape.getStrokedShape( new LineStyles( {
-      lineWidth: 1
-    } ) ).shapeUnion( simplifiedFacesShape );
+    let expandedShape: Shape;
+    if ( ( puzzle.board as TSquareBoard ).isSquare ) {
+      expandedShape = Shape.bounds( puzzleBounds.dilated( 0.5 ) );
+    }
+    else {
+      const puzzleShape = facesShape.getSimplifiedAreaShape();
+      expandedShape = facesShape.getStrokedShape( new LineStyles( {
+        lineWidth: 1
+      } ) ).shapeUnion( puzzleShape );
+    }
 
     backgroundContainer.children = [
       new Path( expandedShape, {
@@ -50,6 +60,8 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
         lineWidth: 0.05
       } )
     ];
+
+    // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
       vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, options ) );
