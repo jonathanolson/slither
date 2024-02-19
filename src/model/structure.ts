@@ -259,6 +259,20 @@ export class CompositeAction<State> implements TAction<State> {
   }
 }
 
+export class NoOpAction<Data> implements TAction<Data> {
+  public apply( state: Data ): void {
+    // DO NOTHING
+  }
+
+  public getUndo( state: Data ): TAction<Data> {
+    return this;
+  }
+
+  public isEmpty(): boolean {
+    return true;
+  }
+}
+
 export class FaceStateSetAction implements TAction<TFaceData> {
 
   public constructor(

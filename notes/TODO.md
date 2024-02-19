@@ -313,6 +313,7 @@
     - Redo all
     - (allow pressing and holding some of the buttons...)
     - (font-awesome with SIL license https://github.com/jalmeydaa/portfolio/blob/master/fonts/fontawesome-webfont.svg%3Fv%3D4.7.0)
+  - Error indicator?
   - Keyboard shortcuts
     - "Undo" (Ctrl-Z)
     - "Redo" (Ctrl-Y)
@@ -332,7 +333,6 @@
     - RED EDGES essentially CHANGES the topology
       - Make rules that can be applied to ANY cases 
     - Going off the side of the board is "all x" - Use a way of pattern matching those
-  - Reapply auto-solve if it gets changed
   - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
     - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
   - Check when solved - we only have one chain + all numbers satisfied
