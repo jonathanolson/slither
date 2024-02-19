@@ -247,6 +247,16 @@
   - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
   - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
     - Actually, can factor out to "boolean" sets of edges (black OR red)
+  - KwonTomLoop threads for ideas:
+    - Especially this one: https://kwontomloop.com/forum.php?a=topic&topic_id=404
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=464
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=94
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=424
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=404
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=419
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=400
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=358
+    - https://kwontomloop.com/forum.php?a=topic&topic_id=308
 
 - Puzzle generation
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
