@@ -303,8 +303,9 @@
 - Current code TODOs
   - Buttons 
     - Load text puzzle
-    - Solve button
+    - Solve button (solve one action, or solve steps)
       - Will apply "history" state for EACH solve step
+      - OR WILL APPLY IT AS ONE THING ---- we might want each
     - Restart button (wipes the state, and reloads the puzzle)
       - Useful for those "I loaded a puzzle with some solved state" bits
     - Mark/save (for backtracking)

@@ -180,6 +180,8 @@ export type TDelta<Data> = {
   // Refine the clone from a TState => TDelta
   clone(): TDelta<Data>;
 
+  // TODO: we need a way of creating state here
+
   // TODO: do we really need anything here? createConsolidatedAction?
 } & TState<Data> & TAction<Data>;
 

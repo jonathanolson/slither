@@ -1,5 +1,5 @@
 // Each solver is specifically hooked to a state
-import { TAction, TState } from '../structure.ts';
+import { TAction, TBoard, TState, TStructure } from '../structure.ts';
 
 export interface TSolver<Data, Action extends TAction<Data>> {
   // If there is a chance nextAction will return an action
@@ -16,4 +16,55 @@ export interface TSolver<Data, Action extends TAction<Data>> {
   clone( equivalentState: TState<Data> ): TSolver<Data, Action>;
 
   dispose(): void;
+}
+
+export type SolverFactory<Structure extends TStructure, Data> = (
+  board: TBoard<Structure>,
+  state: TState<Data>,
+  dirty?: boolean
+) => TSolver<Data, TAction<Data>>;
+
+export const iterateSolver = <Data, Action extends TAction<Data>>(
+  solver: TSolver<Data, Action>,
+  state: TState<Data>
+): void => {
+  while ( solver.dirty ) {
+    const action = solver.nextAction();
+    if ( action ) {
+      action.apply( state );
+    }
+  }
+}
+
+export const iterateSolverAndDispose = <Data, Action extends TAction<Data>>(
+  solver: TSolver<Data, Action>,
+  state: TState<Data>
+): void => {
+  try {
+    iterateSolver( solver, state );
+  }
+  finally {
+    solver.dispose();
+  }
+}
+
+export const withSolverFactory = <Structure extends TStructure, Data>(
+  solverFactory: SolverFactory<TStructure, Data>,
+  board: TBoard<Structure>,
+  state: TState<Data>,
+  callback: () => void,
+  dirty?: boolean
+): void => {
+  const solver = solverFactory( board, state, dirty );
+  callback();
+  iterateSolverAndDispose( solver, state );
+}
+
+export const iterateSolverFactory = <Structure extends TStructure, Data>(
+  solverFactory: SolverFactory<TStructure, Data>,
+  board: TBoard<Structure>,
+  state: TState<Data>,
+  dirty?: boolean
+): void => {
+  withSolverFactory( solverFactory, board, state, () => {}, dirty );
 }

@@ -1,8 +1,9 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../config';
-import { EdgeStateSetAction, TAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
+import { EdgeStateSetAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
 import { InvalidStateError } from './solver/InvalidStateError.ts';
 import { autoSolverFactoryProperty, safeSolverFactory } from './solver/autoSolver.ts';
+import { iterateSolverFactory, withSolverFactory } from './solver/TSolver.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -21,13 +22,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
     // auto-solve some things on load
     const newState = puzzle.stateProperty.value.clone() as State;
-    const safeSolver = safeSolverFactory( puzzle.board, newState );
-    while ( safeSolver.dirty ) {
-      const action = safeSolver.nextAction();
-      if ( action ) {
-        action.apply( newState );
-      }
-    }
+
+    iterateSolverFactory( safeSolverFactory, puzzle.board, newState, true );
     puzzle.stateProperty.value = newState;
 
     this.stack = [ new StateTransition( null, puzzle.stateProperty.value ) ];
@@ -90,54 +86,35 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
 
-      // TODO: omg this is a wreck. Create deltas lol .... oh no, are nested deltas... going to be broken?
+      // TODO: have a way of creating a "solid" state from a delta?
+      // TODO: we need to better figure this out(!)
 
-      // TODO: how do we handle solvers? (this works well for auto-solvers, no?)
-      // TODO: ... we can't interface things for TState, so ThisType<this> isn't available... how can we fix this?
-      let newState = this.puzzle.stateProperty.value.clone() as State;
-      const safeActions: TAction<TCompleteData>[] = [];
-      const applySafeAction = ( action: TAction<TCompleteData> | null ) => {
-        if ( action ) {
-          safeActions.push( action );
-          action.apply( newState );
-        }
-      };
-
-      const autoSolver = autoSolverFactoryProperty.value( this.puzzle.board, newState );
-      applySafeAction( userAction );
-
-      const safeSolver = safeSolverFactory( this.puzzle.board, newState );
-      // TODO: get a method on CompositeSolver for this? Or... somewhere else
-      while ( safeSolver.dirty ) {
-        applySafeAction( safeSolver.nextAction() );
-      }
-      safeSolver.dispose();
-
+      let delta = this.puzzle.stateProperty.value.createDelta();
       try {
-        while ( autoSolver.dirty ) {
-          const action = autoSolver.nextAction();
-          if ( action ) {
-            action.apply( newState );
-          }
-        }
+        withSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
+          userAction.apply( delta );
+        } );
 
         // Hah, if we try to white out something, don't immediately solve it back!
-        if ( newState.getEdgeState( edge ) !== newEdgeState ) {
+        if ( delta.getEdgeState( edge ) !== newEdgeState ) {
           throw new InvalidStateError( 'Auto-solver did not respect user action' );
         }
       }
       catch ( e ) {
         if ( e instanceof InvalidStateError ) {
-          newState = this.puzzle.stateProperty.value.clone() as State;
-          safeActions.forEach( action => action.apply( newState ) );
+          console.log( 'error' );
+          delta = this.puzzle.stateProperty.value.createDelta();
+          withSolverFactory( safeSolverFactory, this.puzzle.board, delta, () => {
+            userAction.apply( delta );
+          } );
         }
         else {
           throw e;
         }
       }
-      finally {
-        autoSolver.dispose();
-      }
+
+      const newState = this.puzzle.stateProperty.value.clone() as State;
+      delta.apply( newState );
 
       this.stack.push( new StateTransition( userAction, newState ) );
       this.stackLengthProperty.value = this.stack.length;
