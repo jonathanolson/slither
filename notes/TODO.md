@@ -297,8 +297,11 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - The "compute simplified faces" step is performance killing us (for BasicPuzzleNode) - detect square and do it differently 
+    - Are we... not stripping assertions! EEK we're running with them enabled!
   - LIGHT/DARK color themes / night mode
     - Have things be backed by Color Properties (and use... culori nicely?)
+  - Actually.... SAVE PUZZLE STATE in localStorage?
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
   - Night mode (staring at stuff isn't great)
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
