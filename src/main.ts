@@ -11,6 +11,7 @@ import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { Net } from './model/region.ts';
+import { BasicSquarePuzzle } from './model/structure.ts';
 
 // @ts-ignore
 window.assertions.enableAssert();
@@ -42,8 +43,12 @@ const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth,
 
 const puzzleContainerNode = new PuzzleContainerNode();
 
-const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( null );
-puzzleModelProperty.lazyLink( puzzleModel => {
+const startingPuzzleModel = new PuzzleModel( BasicSquarePuzzle.loadFromSimpleString(
+  '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
+) );
+
+const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
+puzzleModelProperty.link( puzzleModel => {
   if ( puzzleModel ) {
     puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzleModel ) );
   }
@@ -114,5 +119,3 @@ display.updateOnRequestAnimationFrame( dt => {
 
   puzzleContainerNode.step( dt );
 } );
-
-window.test = Net.test;

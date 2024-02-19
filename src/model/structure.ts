@@ -1730,4 +1730,31 @@ export class BasicSquarePuzzle<Data> {
   ) {
     this.stateProperty = new TinyProperty( initialState );
   }
+
+  /**
+   * The format is:
+   *
+   * `${width}x${height} ${faceValues}`
+   *
+   * where faceValues is a string of length width * height, with 0/1/2/3 for numbers, or `.` for blank faces (for null).
+   */
+  public static loadFromSimpleString( str: string ): BasicSquarePuzzle<TCompleteData> {
+    const [ size, faceValues ] = str.split( ' ' );
+    const [ width, height ] = size.split( 'x' ).map( x => parseInt( x ) );
+
+    const board = new SquareBoard( width, height );
+
+    const state = CompleteData.fromFaces( board, face => {
+      const index = face.logicalCoordinates.y * width + face.logicalCoordinates.x;
+      const value = faceValues[ index ];
+      if ( value === '.' ) {
+        return null;
+      }
+      else {
+        return parseInt( value );
+      }
+    } );
+
+    return new BasicSquarePuzzle( board, state );
+  }
 }

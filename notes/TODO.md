@@ -297,7 +297,6 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Load demo puzzle on start(!) 
   - LIGHT/DARK color themes / night mode
     - Have things be backed by Color Properties (and use... culori nicely?)
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
