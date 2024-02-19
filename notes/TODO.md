@@ -305,7 +305,8 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?) 
+  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
+  - Night mode (staring at stuff isn't great)
   - Config dialog (adjust properties, see if Dialog is usable with Popupable)
     - OMG, in the "SOLVER CONFIG"... describe the rule there? Possibly animate it?
   - LINE/CHAIN COLORING!!! <--- figure out model
