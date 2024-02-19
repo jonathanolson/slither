@@ -1,7 +1,9 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Font, HBox } from 'phet-lib/scenery';
+import { Font, HBox, Node } from 'phet-lib/scenery';
 import PuzzleModel from '../model/PuzzleModel';
 import { RectangularButton, TextPushButton } from 'phet-lib/sun';
+import { Bounds2 } from 'phet-lib/dot';
+import { SettingsNode } from './SettingsNode.ts';
 
 const font = new Font( {
   family: 'sans-serif',
@@ -14,6 +16,8 @@ const buttonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearan
 
 export type ControlBarNodeOptions = {
   userActionLoadPuzzle: () => void;
+  glassPane: Node;
+  layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };
 
 // TODO: support a background node with more complexity in the future?
@@ -35,6 +39,8 @@ export default class ControlBarNode extends HBox {
         return puzzleModel ? puzzleModel.redoPossibleProperty : falseProperty;
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
+
+    let settingsNode: SettingsNode | null = null;
 
     super( {
       spacing: 10,
@@ -63,6 +69,15 @@ export default class ControlBarNode extends HBox {
             }
           },
           enabledProperty: redoEnabledProperty
+        } ),
+        new TextPushButton( 'Settings', {
+          font: font,
+          buttonAppearanceStrategy: buttonAppearanceStrategy,
+          listener: () => {
+            settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
+
+            settingsNode.show();
+          }
         } )
       ]
     } );

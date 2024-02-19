@@ -43,6 +43,8 @@ display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 
 window.oncontextmenu = e => e.preventDefault();
 
+const glassPane = new Node();
+
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
 const puzzleContainerNode = new PuzzleContainerNode();
@@ -66,6 +68,8 @@ window.loadDeprecated = ( puzzleString: string ) => {
 const mainBox = new VBox( {
   children: [
     new ControlBarNode( puzzleModelProperty, {
+      glassPane: glassPane,
+      layoutBoundsProperty: layoutBoundsProperty,
       userActionLoadPuzzle: () => {
         const input = document.createElement( 'input' );
         input.type = 'file';
@@ -98,6 +102,7 @@ layoutBoundsProperty.lazyLink( bounds => {
   mainBox.y = bounds.top;
 } );
 scene.addChild( mainBox );
+scene.addChild( glassPane );
 
 display.initializeEvents();
 
