@@ -7,7 +7,7 @@ import { SafeEdgeToSimpleRegionSolver } from "./SafeEdgeToSimpleRegionSolver";
 import { SimpleVertexSolver } from "./SimpleVertexSolver";
 import { SimpleFaceSolver } from "./SimpleFaceSolver";
 
-export type SolverFactory<Structure extends TStructure, Data> = ( board: TBoard<TStructure>, state: TState<Data> ) => TSolver<Data, TAction<Data>>;
+export type SolverFactory<Structure extends TStructure, Data> = ( board: TBoard<TStructure>, state: TState<Data>, dirty?: boolean ) => TSolver<Data, TAction<Data>>;
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new BooleanProperty( true );
@@ -29,23 +29,23 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleFaceToRed,
   simpleFaceToBlack
 ) => {
-  return ( board: TBoard, state: TState<TCompleteData> ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver( [
       new SimpleVertexSolver( board, state, {
         solveJointToRed: simpleVertexJointToRed,
         solveOnlyOptionToBlack: simpleVertexOnlyOptionToBlack,
         solveAlmostEmptyToRed: simpleVertexAlmostEmptyToRed
-      } ),
+      }, dirty ? undefined : [] ),
       new SimpleFaceSolver( board, state, {
         solveToRed: simpleFaceToRed,
         solveToBlack: simpleFaceToBlack,
-      }, [] ),
+      }, dirty ? undefined : [] ),
       new SafeEdgeToSimpleRegionSolver( board, state )
     ] );
   };
 } );
 
-export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData> ) => {
+export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver( [
     new SafeEdgeToSimpleRegionSolver( board, state )
   ] );
