@@ -357,12 +357,13 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     );
   } );
 
-  const startingData = new CompleteData(
-    new GeneralFaceData( board, face => {
+  const startingData = CompleteData.fromFacesEdges(
+    board,
+    face => {
       const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
       return location ? location.value : null;
-    } ),
-    new GeneralEdgeData( board, edge => {
+    },
+    edge => {
       // TODO: don't require cast, probably make GeneralEdgeData generic
       // TODO: or change the logical coordinates?
       const squareEdge = edge as TSquareEdge;
@@ -382,8 +383,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
           return EdgeState.WHITE;
         }
       }
-    } ),
-    new GeneralSimpleRegionData( board )
+    }
   );
 
   return new BasicSquarePuzzle( board, startingData );

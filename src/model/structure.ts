@@ -6,6 +6,7 @@ import FaceState from "./FaceState.ts";
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import _ from '../workarounds/_';
 import { TEmitter, TProperty, TReadOnlyProperty, TinyEmitter, TinyProperty } from "phet-lib/axon";
+import { GeneralSimpleRegionData } from './region.ts';
 
 export interface TVertex {
   logicalCoordinates: Vector2;
@@ -1512,6 +1513,25 @@ export class CompleteData implements TState<TCompleteData> {
     public readonly edgeData: TState<TEdgeData>,
     public readonly simpleRegionData: TState<TSimpleRegionData>
   ) {}
+
+  public static fromFacesEdges(
+    board: TBoard,
+    getInitialFaceState: ( face: TFace ) => FaceState,
+    getInitialEdgeState: ( edge: TEdge ) => EdgeState
+  ): CompleteData {
+    return new CompleteData(
+      new GeneralFaceData( board, getInitialFaceState ),
+      new GeneralEdgeData( board, getInitialEdgeState ),
+      new GeneralSimpleRegionData( board )
+    );
+  }
+
+  public static fromFaces(
+    board: TBoard,
+    getInitialFaceState: ( face: TFace ) => FaceState
+  ): CompleteData {
+    return CompleteData.fromFacesEdges( board, getInitialFaceState, () => EdgeState.WHITE );
+  }
 
   public getFaceState( face: TFace ): FaceState {
     return this.faceData.getFaceState( face );
