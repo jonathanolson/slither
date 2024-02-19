@@ -271,6 +271,7 @@
   - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
   - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
   - Grab rules from my discord paster
+  - Show the "next rule" that can be applied (and why) - consider TAnnotatedAction?
 
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 

@@ -1,8 +1,11 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../config';
 import { EdgeStateSetAction, TAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
-import { CompositeSolver, InvalidStateError, SimpleFaceSolver, SimpleVertexSolver } from './solver';
-import { SafeEdgeToSimpleRegionSolver } from './region';
+import { SimpleVertexSolver } from './solver/SimpleVertexSolver';
+import { SimpleFaceSolver } from './solver/SimpleFaceSolver';
+import { InvalidStateError } from './solver/InvalidStateError.ts';
+import { CompositeSolver } from './solver/CompositeSolver.ts';
+import { SafeEdgeToSimpleRegionSolver } from './solver/SafeEdgeToSimpleRegionSolver.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
