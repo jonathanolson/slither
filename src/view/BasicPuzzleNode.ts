@@ -34,6 +34,15 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     const facesShape = new Shape();
     const puzzleBounds = Bounds2.NOTHING.copy();
 
+    const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
+      if ( state.getWeirdEdges().length ) {
+        return false;
+      }
+
+      const regions = state.getSimpleRegions();
+      return regions.length === 1 && regions[ 0 ].isSolved;
+    } );
+
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
 
@@ -65,11 +74,11 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, options ) );
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, options ) );
     } );
 
     puzzle.board.edges.forEach( edge => {
-      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, options ) );
+      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, options ) );
     } );
 
     if ( options?.useSimpleRegionForBlack ) {
@@ -91,6 +100,7 @@ class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
     stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    isSolvedProperty: TReadOnlyProperty<boolean>,
     options?: BasicPuzzleNodeOptions
   ) {
     super();
@@ -106,6 +116,11 @@ class VertexNode extends Node {
       fill: vertexColorProperty,
       visibleProperty: visibleProperty
     } ) );
+
+    // Apply effects when solved
+    isSolvedProperty.link( isSolved => {
+      this.visible = !isSolved;
+    } );
   }
 }
 
@@ -182,6 +197,7 @@ class EdgeNode extends Node {
   public constructor(
     public readonly edge: TEdge,
     stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    isSolvedProperty: TReadOnlyProperty<boolean>,
     options?: BasicPuzzleNodeOptions
   ) {
     super( {} );
@@ -210,6 +226,11 @@ class EdgeNode extends Node {
       stroke: xColorProperty,
       lineWidth: 0.02,
       center: centerPoint
+    } );
+
+    // Apply effects when solved
+    isSolvedProperty.link( isSolved => {
+      x.visible = !isSolved;
     } );
 
     // TODO: ALLOW DRAGGING TO SET LINES

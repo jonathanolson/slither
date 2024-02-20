@@ -21,6 +21,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
   public readonly currentSnapshotProperty: TReadOnlyProperty<PuzzleSnapshot<Structure, State>>;
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
+  public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
   public constructor(
     public readonly puzzle: TPuzzle<Structure, State>
@@ -48,7 +49,16 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     ], snapshot => {
       return snapshot.errorDetected;
     } );
-    this.hasErrorProperty.link( error => console.log( 'error', error ) );
+    this.isSolvedProperty = new DerivedProperty( [
+      this.currentSnapshotProperty
+    ], snapshot => {
+      if ( snapshot.state.getWeirdEdges().length ) {
+        return false;
+      }
+
+      const regions = snapshot.state.getSimpleRegions();
+      return regions.length === 1 && regions[ 0 ].isSolved;
+    } );
 
     // Try auto-solve on startup (and if it works and creates a delta, we'll push it onto the stack)
     // This allows the user to "undo" the auto-solve if they don't like it.
