@@ -1,5 +1,5 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Color, PaintColorProperty } from 'phet-lib/scenery';
+import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 
 // @ts-ignore
@@ -215,3 +215,8 @@ export const uiButtonDisabledColorProperty = new DynamicProperty( themeProperty,
 export const barrierColorProperty = new DynamicProperty( themeProperty, {
   derive: 'barrierColorProperty'
 } ) as TReadOnlyProperty<Color>;
+
+export const popupFont = new Font( {
+  family: 'sans-serif',
+  size: 16
+} );

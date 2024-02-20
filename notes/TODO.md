@@ -299,6 +299,10 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - "New" button
+    - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
+    - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
+  - Hex: https://www.redblobgames.com/grids/hexagons/
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript
@@ -309,6 +313,14 @@
   - Theme options:
     - Simple Region based edges, OR prefer the raw edges (uncolored)? 
     - "dashed lines" for "white" / "blank" lines for "red"
+  - Buttons 
+    - RAINBOW COLORS on the buttons
+    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
+      - Will apply "history" state for EACH solve step
+      - OR WILL APPLY IT AS ONE THING ---- we might want each
+    - Mark/save (for backtracking)
+      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
+    - (allow pressing and holding some of the buttons...)
   - Actually.... SAVE PUZZLE STATE in localStorage?
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - THIS IS ANNOYING ON MOBILE 
@@ -328,24 +340,12 @@
     - Most of these would be pattern based. Maybe get pattern solver working first (it's noted above)
   - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
-  - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
   - Audio for actions?
-  - Buttons 
-    - RAINBOW COLORS on the buttons
-    - "New" button 
-      - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
-      - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
-    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
-      - Will apply "history" state for EACH solve step
-      - OR WILL APPLY IT AS ONE THING ---- we might want each
-    - Mark/save (for backtracking)
-      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
-    - (allow pressing and holding some of the buttons...)
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
@@ -429,6 +429,7 @@
   - Use seedRandom setup so we can get reproducibility.
 
 - Performance
+  - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - Assertion removal with unassert isn't... applying much so far. TODO check
     - unassert isn't stripping our assertions!
     - See https://github.com/unassert-js/rollup-plugin-unassert and https://github.com/unassert-js/unassert
