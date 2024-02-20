@@ -2,15 +2,14 @@ import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { BooleanProperty, DynamicProperty, Multilink, Property, TReadOnlyProperty, TinyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DynamicProperty, Multilink, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
-import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { BasicSquarePuzzle } from './model/structure.ts';
+import { BasicSquarePuzzle, TCompleteData, TPuzzle, TState, TStructure } from './model/structure.ts';
 import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 
 // @ts-ignore
@@ -87,35 +86,10 @@ const mainBox = new VBox( {
     new AlignBox( new ControlBarNode( puzzleModelProperty, {
       glassPane: glassPane,
       layoutBoundsProperty: layoutBoundsProperty,
-      userActionLoadPuzzleFromImage: () => {
-        const input = document.createElement( 'input' );
-        input.type = 'file';
-        input.onchange = event => {
-          // @ts-ignore
-          const file = event.target!.files[ 0 ];
 
-          var reader = new FileReader();
-          reader.readAsDataURL( file );
-
-          reader.onloadend = async () => {
-            const url = reader.result as string;
-
-            // TODO: UI change while working?
-            const puzzle = await scanURL( url );
-
-            puzzleModelProperty.value = new PuzzleModel( puzzle );
-          }
-        }
-        input.click();
-      },
-      userActionLoadPuzzleFromString: () => {
-        // TODO: try/catch
-        const string = prompt( 'Enter puzzle string' );
-
-        if ( string ) {
-          puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadDeprecatedScalaString( string ) );
-          // puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadFromSimpleString( string ) );
-        }
+      // Require the complete data for now
+      loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ): void => {
+        puzzleModelProperty.value = new PuzzleModel( puzzle );
       }
     } ), {
       margin: 5

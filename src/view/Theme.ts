@@ -4,6 +4,7 @@ import { LocalStorageProperty } from '../util/localStorage.ts';
 
 // @ts-ignore
 import { formatHex, toGamut } from 'culori';
+import { RectangularButton } from 'phet-lib/sun';
 
 const toRGB = toGamut( 'rgb' );
 
@@ -215,6 +216,15 @@ export const uiButtonDisabledColorProperty = new DynamicProperty( themeProperty,
 export const barrierColorProperty = new DynamicProperty( themeProperty, {
   derive: 'barrierColorProperty'
 } ) as TReadOnlyProperty<Color>;
+
+const useFlatButtons = true;
+export const rectangularButtonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
+
+export const controlBarFont = new Font( {
+  family: 'sans-serif',
+  // weight: 'bold',
+  size: 12
+} );
 
 export const popupFont = new Font( {
   family: 'sans-serif',

@@ -303,6 +303,7 @@
     - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
     - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
   - Hex: https://www.redblobgames.com/grids/hexagons/
+  - Smooth animations between things ... instead of "New", have a main menu?
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript

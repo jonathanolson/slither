@@ -1,25 +1,18 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Font, HBox, Node, Path } from 'phet-lib/scenery';
+import { HBox, Node, Path } from 'phet-lib/scenery';
 import PuzzleModel from '../model/PuzzleModel';
-import { RectangularButton, RectangularPushButton, RectangularPushButtonOptions, TextPushButton } from 'phet-lib/sun';
+import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-
-const font = new Font( {
-  family: 'sans-serif',
-  size: 12
-} );
-
-const useFlatButtons = true;
-
-const buttonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
+import { controlBarFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
+import { NewNode } from './NewNode.ts';
+import { TCompleteData, TPuzzle, TState, TStructure } from '../model/structure.ts';
 
 export type ControlBarNodeOptions = {
-  userActionLoadPuzzleFromString: () => void;
-  userActionLoadPuzzleFromImage: () => void;
+  // TODO: better forwarding of this option
+  loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
   glassPane: Node;
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };
@@ -45,10 +38,11 @@ export default class ControlBarNode extends HBox {
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
 
+    let newNode: NewNode | null = null;
     let settingsNode: SettingsNode | null = null;
 
     const commonButtonOptions = {
-      buttonAppearanceStrategy: buttonAppearanceStrategy,
+      buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
       baseColor: uiButtonBaseColorProperty,
       disabledColor: uiButtonDisabledColorProperty,
 
@@ -62,22 +56,23 @@ export default class ControlBarNode extends HBox {
       spacing: 10,
       stretch: true,
       children: [
-        new TextPushButton( 'Load String', {
+        // TODO: iconify this instead of the text?
+        new TextPushButton( 'New', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'New',
+          listener: () => {
+            newNode = newNode || new NewNode( options.glassPane, options.layoutBoundsProperty, {
+              loadPuzzle: options.loadPuzzle
+            } );
+
+            newNode.show();
+          },
           textFill: uiButtonForegroundProperty,
           baseColor: uiButtonBaseColorProperty,
           xMargin: 5,
           yMargin: 5,
-          font: font,
-          buttonAppearanceStrategy: buttonAppearanceStrategy,
-          listener: options.userActionLoadPuzzleFromString
-        } ),
-        new TextPushButton( 'Load Image', {
-          textFill: uiButtonForegroundProperty,
-          baseColor: uiButtonBaseColorProperty,
-          font: font,
-          buttonAppearanceStrategy: buttonAppearanceStrategy,
-          listener: options.userActionLoadPuzzleFromImage
-        } ),
+          font: controlBarFont,
+          buttonAppearanceStrategy: rectangularButtonAppearanceStrategy
+        } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Undo All',
           content: toFontAwesomePath( fontAwesomeBackwardShape ),
