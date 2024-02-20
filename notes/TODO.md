@@ -299,6 +299,16 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
+  - Handle the "completed" state for SimpleRegionData, and solve "don't close loops"
+    - Add "solved" flag to TSimpleRegion / GeneralSimpleRegion
+      - NOTE: We'll want to ONLY provide this when we have ONE region, and NO weird edges. Likely need to recompute this when we remove things
+      - NOTE: For a given face value bit, we can quickly compute a minimum number of edges (if it's lower than that... no)
+      - Close the path in the UI (since it will have all the halfedges)
+    - Our "don't close regions prematurely" solver needs SimpleRegion and Edge data.
+      - Throw fail if ANY weird edges are present
+      - run it AFTER the SimpleRegion solver (so we have good state)
+      - See if any closings run into a full solve: if adjacent vertices, we'll either make them BLACK (yay win) or RED
+      - If there are other spurious edges.... eeek right? "only full solve if we have one region?" 
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
   - "simple region simple crossing" solver ->>> perhaps we need to solve whether it would be complete with that?
     - Why don't we get code to say "hey would this region solve the puzzle?"
@@ -334,6 +344,7 @@
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
+  - Audio for actions?
   - Buttons 
     - RAINBOW COLORS on the buttons
     - "New" button 
