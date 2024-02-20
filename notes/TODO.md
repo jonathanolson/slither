@@ -299,11 +299,10 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - "New" button
-    - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
-    - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
+  - SAVE the current puzzle state in local storage!!! (... but probably not all of the history?) 
+  - SHOW the vision working on the image(!)
+  - Improve the "new" popup
   - Hex: https://www.redblobgames.com/grids/hexagons/
-  - Smooth animations between things ... instead of "New", have a main menu?
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript
@@ -314,6 +313,7 @@
   - Theme options:
     - Simple Region based edges, OR prefer the raw edges (uncolored)? 
     - "dashed lines" for "white" / "blank" lines for "red"
+  - Smooth animations between things ... instead of "New", have a main menu?
   - Buttons 
     - RAINBOW COLORS on the buttons
     - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
@@ -342,7 +342,6 @@
   - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
-  - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile

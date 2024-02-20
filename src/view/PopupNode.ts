@@ -55,7 +55,9 @@ export class PopupNode extends Node {
     } );
 
     this.addChild( new AlignBox( panel, {
-      alignBoundsProperty: layoutBoundsProperty
+      alignBoundsProperty: layoutBoundsProperty,
+      yAlign: 'top',
+      margin: 50
     } ) );
   }
 
