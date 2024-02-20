@@ -25,7 +25,7 @@ const isOSDarkModeProperty = new BooleanProperty( mediaQueryList.matches );
 mediaQueryList.addEventListener( 'change', e => {
   isOSDarkModeProperty.value = e.matches
 } );
-isOSDarkModeProperty.link( isDark => console.log( 'OS dark mode:', isDark ) );
+// isOSDarkModeProperty.link( isDark => console.log( 'OS dark mode:', isDark ) );
 
 export interface TTheme {
   name: string;

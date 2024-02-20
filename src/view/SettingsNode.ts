@@ -2,7 +2,7 @@ import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Font, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { Checkbox, Panel, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
-import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
+import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
 import { availableThemes, barrierColorProperty, themeProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
 
 // TODO: solidify font stuff (maybe have Font properties based on a theme?)
@@ -54,7 +54,9 @@ export class SettingsNode extends Node {
         getBooleanCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
         getBooleanCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
         getBooleanCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
-        getBooleanCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty )
+        getBooleanCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
+        getBooleanCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
+        getBooleanCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
       ]
     } );
 

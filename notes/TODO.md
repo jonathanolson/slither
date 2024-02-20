@@ -299,13 +299,16 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Our "don't close regions prematurely" solver needs SimpleRegion and Edge data.
-    - Throw fail if ANY weird edges are present
-    - run it AFTER the SimpleRegion solver (so we have good state)
-    - See if any closings run into a full solve: if adjacent vertices, we'll either make them BLACK (yay win) or RED
-    - If there are other spurious edges.... eeek right? "only full solve if we have one region?"
-  - "simple region simple crossing" solver ->>> perhaps we need to solve whether it would be complete with that?
-    - Why don't we get code to say "hey would this region solve the puzzle?"
+  - Error indicator?
+    - THIS IS FOR AUTO-SOLVER NOTICED ERRORS! Should be flagged immediately 
+    - In PuzzleModel, create lastTransitionProperty() - DerivedProperty. Add a "failed auto-solve" field?
+      - Would we do similar things for annotations?
+      - Add a delay? .... HOW?
+  - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
+    - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
+    - TODO: I need to read up more on TypeScript
+    - Just... use top level methods for now...?
+      - HEY! Put each interface into a file, and then PUT FUNCTIONS THAT USE IT in the same file 
   - FIX puzzle loading, especially on phone (or get some other way of getting puzzles in)
     - Soon we'll be able to... generate puzzles? Get backtracker?
   - Theme options:
@@ -315,10 +318,6 @@
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - THIS IS ANNOYING ON MOBILE 
     - Or at least have a delay 
-  - Error indicator?
-    - In PuzzleModel, create lastTransitionProperty() - DerivedProperty. Add a "failed auto-solve" field?
-      - Would we do similar things for annotations?
-      - Add a delay? .... HOW?
   - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)

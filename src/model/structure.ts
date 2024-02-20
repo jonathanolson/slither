@@ -211,7 +211,7 @@ export interface TSimpleRegion {
   // visual continuity (so that the largest region of combined regions will NOT experience a change of this, and
   // it can be used for coloring.
   id: number;
-  
+
   a: TVertex;
   b: TVertex;
   halfEdges: THalfEdge[]; // for simple regions, these are ordered from a to b
@@ -243,7 +243,12 @@ export interface TSimpleRegionData {
   ]>;
 }
 
-export type TSimpleRegionDataListener = ( simpleRegions: Iterable<TSimpleRegion> ) => void;
+export type TSimpleRegionDataListener = (
+  addedRegions: Iterable<TSimpleRegion>,
+  removedRegions: Iterable<TSimpleRegion>,
+  addedWeirdEdges: Iterable<TEdge>,
+  removedWeirdEdges: Iterable<TEdge>
+) => void;
 
 export class CompositeAction<State> implements TAction<State> {
 
