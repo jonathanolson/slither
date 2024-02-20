@@ -142,3 +142,18 @@ display.updateOnRequestAnimationFrame( dt => {
 
   puzzleContainerNode.step( dt );
 } );
+
+document.addEventListener( 'keydown', event => {
+  if ( event.ctrlKey || event.metaKey ) {
+    if ( event.key === 'z' ) {
+      if ( event.shiftKey ) {
+        // meta-shift-z REDO
+        puzzleModelProperty.value?.onUserRedo();
+      }
+      else {
+        // meta-z UNDO
+        puzzleModelProperty.value?.onUserUndo();
+      }
+    }
+  }
+} );

@@ -157,14 +157,18 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
   // TODO: go to marked points once we have that
   public onUserUndoAll(): void {
-    this.stackPositionProperty.value = 0;
-    this.updateState();
+    if ( this.stackPositionProperty.value > 0 ) {
+      this.stackPositionProperty.value = 0;
+      this.updateState();
+    }
   }
 
   // TODO: go to marked points once we have that
   public onUserRedoAll(): void {
-    this.stackPositionProperty.value = this.stackLengthProperty.value - 1;
-    this.updateState();
+    if ( this.stackPositionProperty.value < this.stackLengthProperty.value - 1 ) {
+      this.stackPositionProperty.value = this.stackLengthProperty.value - 1;
+      this.updateState();
+    }
   }
 
   public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
