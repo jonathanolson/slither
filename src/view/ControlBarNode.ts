@@ -10,7 +10,7 @@ import { uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForeg
 
 const font = new Font( {
   family: 'sans-serif',
-  size: 20
+  size: 12
 } );
 
 const useFlatButtons = true;
@@ -59,15 +59,18 @@ export default class ControlBarNode extends HBox {
 
     super( {
       spacing: 10,
+      stretch: true,
       children: [
-        new TextPushButton( 'Load string', {
+        new TextPushButton( 'Load String', {
           textFill: uiButtonForegroundProperty,
           baseColor: uiButtonBaseColorProperty,
+          xMargin: 5,
+          yMargin: 5,
           font: font,
           buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: options.userActionLoadPuzzleFromString
         } ),
-        new TextPushButton( 'Load image', {
+        new TextPushButton( 'Load Image', {
           textFill: uiButtonForegroundProperty,
           baseColor: uiButtonBaseColorProperty,
           font: font,

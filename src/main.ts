@@ -3,7 +3,7 @@ import './main.css';
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
 import { Property, TinyProperty } from 'phet-lib/axon';
-import { Display, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
@@ -72,7 +72,7 @@ window.loadDeprecated = ( puzzleString: string ) => {
 
 const mainBox = new VBox( {
   children: [
-    new ControlBarNode( puzzleModelProperty, {
+    new AlignBox( new ControlBarNode( puzzleModelProperty, {
       glassPane: glassPane,
       layoutBoundsProperty: layoutBoundsProperty,
       userActionLoadPuzzleFromImage: () => {
@@ -105,6 +105,8 @@ const mainBox = new VBox( {
           // puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadFromSimpleString( string ) );
         }
       }
+    } ), {
+      margin: 5
     } ),
     puzzleContainerNode
   ]

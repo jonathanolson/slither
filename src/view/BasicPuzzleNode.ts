@@ -58,7 +58,7 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
       new Path( expandedShape, {
         fill: puzzleBackgroundColorProperty,
         stroke: puzzleBackgroundStrokeColorProperty,
-        lineWidth: 0.05
+        lineWidth: 0.03
       } )
     ];
 

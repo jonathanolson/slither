@@ -333,6 +333,9 @@
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
   - Buttons 
+    - "New" button 
+      - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
+      - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
     - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
       - Will apply "history" state for EACH solve step
       - OR WILL APPLY IT AS ONE THING ---- we might want each
