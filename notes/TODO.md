@@ -299,14 +299,20 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Error indicator?
-  - Try theme with "dashed lines"
-  - "simple region simple crossing" solver
+  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
+  - "simple region simple crossing" solver ->>> perhaps we need to solve whether it would be complete with that?
+    - Why don't we get code to say "hey would this region solve the puzzle?"
+  - Theme options:
+    - Simple Region based edges, OR prefer the raw edges (uncolored)? 
+    - "dashed lines" for "white" / "blank" lines for "red"
   - Actually.... SAVE PUZZLE STATE in localStorage?
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - THIS IS ANNOYING ON MOBILE 
     - Or at least have a delay 
-  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
+  - Error indicator?
+    - In PuzzleModel, create lastTransitionProperty() - DerivedProperty. Add a "failed auto-solve" field?
+      - Would we do similar things for annotations?
+      - Add a delay? .... HOW?
   - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
