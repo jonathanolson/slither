@@ -303,7 +303,6 @@
 - Current code TODOs
   - Error indicator?
   - LIGHT/DARK color themes / night mode
-    - Have things be backed by Color Properties (and use... culori nicely?)
     - FOLLOW SYSTEM DEFAULT by default
   - Try theme with "dashed lines"
   - "simple region simple crossing" solver
@@ -331,7 +330,6 @@
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
   - Add initial puzzles / puzzle states, so we don't have to image-load all the time
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
-  - Work on solver "clone" ease, for the main PuzzleModel loop
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
   - Buttons 

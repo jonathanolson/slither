@@ -1,7 +1,6 @@
-
-import { Enumeration, EnumerationValue } from "phet-lib/phet-core";
-import EdgeState from "./model/EdgeState";
-import { EnumerationProperty } from "phet-lib/axon";
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
+import EdgeState from './model/EdgeState';
+import { LocalStorageEnumerationProperty } from './util/localStorage.ts';
 
 export default class EdgePressStyle extends EnumerationValue {
 
@@ -36,35 +35,14 @@ export default class EdgePressStyle extends EnumerationValue {
   public static readonly enumeration = new Enumeration( EdgePressStyle );
 }
 
-const DEFAULTS = {
-  pressStyle0: EdgePressStyle.CYCLE,
-  pressStyle1: EdgePressStyle.WHITE_SET,
-  pressStyle2: EdgePressStyle.REVERSE_CYCLE
-} as const;
-
 // Button 0 (left)
-export const pressStyle0Property = new EnumerationProperty(
-  localStorage.getItem( 'pressStyle0' )
-    ? EdgePressStyle.enumeration.getValue( localStorage.getItem( 'pressStyle0' )! ) || DEFAULTS.pressStyle0
-    : DEFAULTS.pressStyle0
-);
-pressStyle0Property.link( value => localStorage.setItem( 'pressStyle0', value.name ) );
+export const pressStyle0Property = new LocalStorageEnumerationProperty( 'pressStyle0', EdgePressStyle.CYCLE );
 
 // Button 1 (middle)
-export const pressStyle1Property = new EnumerationProperty(
-  localStorage.getItem( 'pressStyle1' )
-    ? EdgePressStyle.enumeration.getValue( localStorage.getItem( 'pressStyle1' )! ) || DEFAULTS.pressStyle1
-    : DEFAULTS.pressStyle1
-);
-pressStyle1Property.link( value => localStorage.setItem( 'pressStyle1', value.name ) );
+export const pressStyle1Property = new LocalStorageEnumerationProperty( 'pressStyle1', EdgePressStyle.WHITE_SET );
 
 // Button 2 (right)
-export const pressStyle2Property = new EnumerationProperty(
-  localStorage.getItem( 'pressStyle2' )
-    ? EdgePressStyle.enumeration.getValue( localStorage.getItem( 'pressStyle2' )! ) || DEFAULTS.pressStyle2
-    : DEFAULTS.pressStyle2
-);
-pressStyle2Property.link( value => localStorage.setItem( 'pressStyle2', value.name ) );
+export const pressStyle2Property = new LocalStorageEnumerationProperty( 'pressStyle2', EdgePressStyle.REVERSE_CYCLE );
 
 export const getPressStyle = ( button: 0 | 1 | 2 ) => {
   switch ( button ) {
@@ -76,3 +54,4 @@ export const getPressStyle = ( button: 0 | 1 | 2 ) => {
       return pressStyle2Property.value;
   }
 };
+

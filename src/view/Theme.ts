@@ -1,5 +1,6 @@
-import { DerivedProperty, DynamicProperty, Property, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, PaintColorProperty } from 'phet-lib/scenery';
+import { LocalStorageProperty } from '../util/localStorage.ts';
 
 export interface TTheme {
   name: string;
@@ -7,6 +8,8 @@ export interface TTheme {
   playAreaBackgroundColorProperty: PaintColorProperty;
   puzzleBackgroundColorProperty: PaintColorProperty;
   puzzleBackgroundStrokeColorProperty: PaintColorProperty;
+
+  // TODO: uiForeground / uiBackground / uiButtonColor (use in buttons and settings)
 }
 
 export const lightTheme = {
@@ -33,7 +36,10 @@ export const availableThemes: TTheme[] = [
 
 // TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
 
-export const themeProperty = new Property<TTheme>( lightTheme );
+export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
+  serialize: theme => theme.name,
+  deserialize: name => availableThemes.find( theme => theme.name === name ) || lightTheme
+} );
 
 export const themeWithPropertiesProperty = new DerivedProperty( [ themeProperty ], theme => {
 
