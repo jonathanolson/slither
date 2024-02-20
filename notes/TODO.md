@@ -301,21 +301,16 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Buttons 
-    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
-      - Will apply "history" state for EACH solve step
-      - OR WILL APPLY IT AS ONE THING ---- we might want each
-    - Mark/save (for backtracking)
-      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
-    - (allow pressing and holding some of the buttons...)
   - Error indicator?
-  - LIGHT/DARK color themes / night mode <______ BUT FIRST do options dialogs ____>
+  - LIGHT/DARK color themes / night mode
     - Have things be backed by Color Properties (and use... culori nicely?)
     - FOLLOW SYSTEM DEFAULT by default
+  - Try theme with "dashed lines"
+  - "simple region simple crossing" solver
   - Actually.... SAVE PUZZLE STATE in localStorage?
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
   - Night mode (staring at stuff isn't great)
-  - FACE COLORING!!!! <--- figure out model   + make solvers to solve the color state + ones that integrate color into other things
+  - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
     - Each pattern needs to specify the required topology/structure for the area (what is important)
@@ -339,6 +334,13 @@
   - Work on solver "clone" ease, for the main PuzzleModel loop
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
+  - Buttons 
+    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
+      - Will apply "history" state for EACH solve step
+      - OR WILL APPLY IT AS ONE THING ---- we might want each
+    - Mark/save (for backtracking)
+      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
+    - (allow pressing and holding some of the buttons...)
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
