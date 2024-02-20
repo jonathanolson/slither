@@ -1,4 +1,4 @@
-import { DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, DynamicProperty, Property, TReadOnlyProperty, isTReadOnlyProperty } from 'phet-lib/axon';
 import { Color, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 
@@ -16,7 +16,16 @@ const hslToRGB = ( h: number, s: number, l: number ): string => formatHex( toRGB
 // @ts-ignore - Allow this globally
 window.hslToRGB = hslToRGB;
 
+// e.g. to test colors:
 // themeProperty.value.uiButtonBaseColorProperty.paint = hslToRGB( 20, 0.7, 0.5 );
+
+// Listen to the OS default light/dark mode
+const mediaQueryList = window.matchMedia( '(prefers-color-scheme: dark)' );
+const isOSDarkModeProperty = new BooleanProperty( mediaQueryList.matches );
+mediaQueryList.addEventListener( 'change', e => {
+  isOSDarkModeProperty.value = e.matches
+} );
+isOSDarkModeProperty.link( isDark => console.log( 'OS dark mode:', isDark ) );
 
 export interface TTheme {
   name: string;
@@ -87,10 +96,40 @@ export const darkTheme = {
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' )
 };
 
+export const autoTheme = {
+  name: 'Auto'
+} as TTheme;
+Object.keys( lightTheme ).forEach( key => {
+  // @ts-ignore
+  if ( isTReadOnlyProperty( lightTheme[ key ] ) ) {
+    // @ts-ignore
+    autoTheme[ key ] = new DerivedProperty( [
+      isOSDarkModeProperty,
+      // @ts-ignore
+      lightTheme[ key ],
+      // @ts-ignore
+      darkTheme[ key ]
+    ], ( isDark: boolean, light: Color, dark: Color ) => isDark ? dark : light );
+
+    // TODO: this is somehow giving null.... sign of a bigger bug?
+    // autoTheme[ key ] = new DynamicProperty( isOSDarkModeProperty, {
+    //   // derive: ( isDark: boolean ) => isDark ? darkTheme[ key ] : lightTheme[ key ]
+    //   derive: ( isDark: boolean ) => {
+    //     const prop = isDark ? darkTheme[ key ] : lightTheme[ key ];
+    //     if ( !( prop instanceof Property ) ) {
+    //       debugger;
+    //     }
+    //     return prop;
+    //   }
+    // } );
+  }
+} );
+
 // Mostly so we get type checking
 export const availableThemes: TTheme[] = [
   lightTheme,
-  darkTheme
+  darkTheme,
+  autoTheme
 ];
 
 // TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
@@ -101,10 +140,6 @@ export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
 } );
 // @ts-ignore - Allow this globally
 window.themeProperty = themeProperty;
-
-export const themeWithPropertiesProperty = new DerivedProperty( [ themeProperty ], theme => {
-
-} );
 
 export const navbarBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'navbarBackgroundColorProperty'

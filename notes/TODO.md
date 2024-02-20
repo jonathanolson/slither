@@ -36,8 +36,6 @@
     - Themes INCLUDE the animation(!)
       - Show animated "previews/thumbnails" in theme picker
     - Possibly multiple views (one coloring, one vertex?)
-  - Themes
-    - Grid will have different options (since edges can be fully implicit), hex or more complicated might need to show
   - Puzzle import:
     - vision-based (from image) ==> show better feedback while loading
     - Generated (see generation section)
@@ -302,13 +300,13 @@
 
 - Current code TODOs
   - Error indicator?
-  - LIGHT/DARK color themes / night mode
-    - FOLLOW SYSTEM DEFAULT by default
   - Try theme with "dashed lines"
   - "simple region simple crossing" solver
   - Actually.... SAVE PUZZLE STATE in localStorage?
+  - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
+    - THIS IS ANNOYING ON MOBILE 
+    - Or at least have a delay 
   - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
-  - Night mode (staring at stuff isn't great)
   - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
@@ -323,8 +321,6 @@
   - NUMBER ONLY rules (at the start)
     - Most of these would be pattern based. Maybe get pattern solver working first (it's noted above)
   - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
-  - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
-    - Or at least have a delay 
   - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
@@ -333,6 +329,7 @@
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
   - Buttons 
+    - RAINBOW COLORS on the buttons
     - "New" button 
       - Replace "Load String" and "Load Image" with one load button, that displays a dialog for loading.
       - IT SHOWS THE VISION WORKING ON THE IMAGE(!)
