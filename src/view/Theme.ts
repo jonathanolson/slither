@@ -1,4 +1,4 @@
-import { BooleanProperty, DerivedProperty, DynamicProperty, Property, TReadOnlyProperty, isTReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 
