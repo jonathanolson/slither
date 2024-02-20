@@ -1,8 +1,9 @@
 import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Font, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
-import { Checkbox, Panel } from 'phet-lib/sun';
+import { Checkbox, Panel, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
+import { availableThemes, themeProperty } from './Theme.ts';
 
 // TODO: solidify font stuff (maybe have Font properties based on a theme?)
 const font = new Font( {
@@ -16,6 +17,8 @@ export class SettingsNode extends Node {
     public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>
   ) {
     super();
+
+    const topNode = new Node();
 
     // TODO: customize this color
     const barrier = new Rectangle( { fill: 'rgba(127,127,127,0.7)' } );
@@ -49,10 +52,51 @@ export class SettingsNode extends Node {
       ]
     } );
 
+    // // TODO: remove this hack, ComboBox and other files...
+    // window.phet.chipper = window.phet.chipper || {};
+    // window.phet.chipper.queryParameters = window.phet.chipper.queryParameters || {};
+    // window.phet.chipper.queryParameters.stringTest = null;
+    // window.phet.chipper.isFuzzEnabled = () => false;
+    //
+    // const themeSelector = new ComboBox( themeProperty, availableThemes.map( theme => {
+    //   return {
+    //     value: theme,
+    //     createNode: () => new Text( theme.name, { font: font } ),
+    //     a11yName: theme.name
+    //   };
+    // } ), topNode, {
+    //
+    // } );
+
+    const themeSelector = new VerticalAquaRadioButtonGroup( themeProperty, availableThemes.map( theme => {
+      return {
+        value: theme,
+        createNode: () => new Text( theme.name, { font: font } ),
+        a11yName: theme.name
+      };
+    } ) );
+
+    const themeNode = new VBox( {
+      stretch: true,
+      align: 'left',
+      spacing: 8,
+      children: [
+        new Text( 'Theme', { font: font } ),
+        themeSelector
+      ]
+    } );
+
     // TODO: debug?
     // TODO: theme
 
-    const panel = new Panel( autoSolveNode, {
+    const panel = new Panel( new VBox( {
+      spacing: 20,
+      align: 'left',
+      children: [
+        autoSolveNode,
+        themeNode
+      ]
+    } ), {
       xMargin: 15,
       yMargin: 15
     } );
@@ -66,6 +110,8 @@ export class SettingsNode extends Node {
     this.addChild( new AlignBox( panel, {
       alignBoundsProperty: layoutBoundsProperty
     } ) );
+
+    this.addChild( topNode );
   }
 
   public show(): void {

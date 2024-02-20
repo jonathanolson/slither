@@ -11,6 +11,7 @@ import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { BasicSquarePuzzle } from './model/structure.ts';
+import { navbarBackgroundColorProperty } from './view/Theme.ts';
 
 // @ts-ignore
 if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {
@@ -38,6 +39,10 @@ const display = new Display( rootNode, {
   listenToOnlyElement: false
 } );
 document.body.appendChild( display.domElement );
+
+navbarBackgroundColorProperty.link( backgroundColor => {
+  display.backgroundColor = backgroundColor;
+} );
 
 display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 

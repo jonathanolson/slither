@@ -2,6 +2,7 @@ import { AnimatedPanZoomListener, Node, Rectangle, Sizable } from "phet-lib/scen
 import PuzzleNode from "./PuzzleNode";
 import { Bounds2, Vector2 } from "phet-lib/dot";
 import { Shape } from "phet-lib/kite";
+import { playAreaBackgroundColorProperty } from "./Theme";
 
 export default class PuzzleContainerNode extends Sizable( Node ) {
 
@@ -20,7 +21,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     } );
 
     this.backgroundRect = new Rectangle( {
-      fill: '#ccc'
+      fill: playAreaBackgroundColorProperty
     } );
 
     this.puzzleWrapper = new Node( {

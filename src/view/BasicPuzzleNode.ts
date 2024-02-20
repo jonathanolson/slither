@@ -8,6 +8,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
+import { puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty } from './Theme.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
@@ -55,8 +56,8 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
 
     backgroundContainer.children = [
       new Path( expandedShape, {
-        fill: 'white',
-        stroke: '#888',
+        fill: puzzleBackgroundColorProperty,
+        stroke: puzzleBackgroundStrokeColorProperty,
         lineWidth: 0.05
       } )
     ];
