@@ -6,13 +6,14 @@ import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
+import { uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 
 const font = new Font( {
   family: 'sans-serif',
   size: 20
 } );
 
-const useFlatButtons = false;
+const useFlatButtons = true;
 
 const buttonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
 
@@ -47,6 +48,8 @@ export default class ControlBarNode extends HBox {
 
     const commonButtonOptions = {
       buttonAppearanceStrategy: buttonAppearanceStrategy,
+      baseColor: uiButtonBaseColorProperty,
+      disabledColor: uiButtonDisabledColorProperty,
 
       mouseAreaXDilation: 5,
       mouseAreaYDilation: 5,
@@ -58,11 +61,15 @@ export default class ControlBarNode extends HBox {
       spacing: 10,
       children: [
         new TextPushButton( 'Load string', {
+          textFill: uiButtonForegroundProperty,
+          baseColor: uiButtonBaseColorProperty,
           font: font,
           buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: options.userActionLoadPuzzleFromString
         } ),
         new TextPushButton( 'Load image', {
+          textFill: uiButtonForegroundProperty,
+          baseColor: uiButtonBaseColorProperty,
           font: font,
           buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: options.userActionLoadPuzzleFromImage

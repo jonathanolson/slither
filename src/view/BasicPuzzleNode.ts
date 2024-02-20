@@ -8,7 +8,7 @@ import { LineStyles, Shape } from 'phet-lib/kite';
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
-import { puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty } from './Theme.ts';
+import { edgeWeirdColorProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, lineColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty, vertexColorProperty, xColorProperty } from './Theme.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
@@ -103,7 +103,7 @@ class VertexNode extends Node {
       rectWidth: 0.1,
       rectHeight: 0.1,
       center: vertex.viewCoordinates,
-      fill: 'black',
+      fill: vertexColorProperty,
       visibleProperty: visibleProperty
     } ) );
   }
@@ -131,17 +131,22 @@ class FaceNode extends Node {
     } );
 
     // TODO: disposal!!!
-    const fillProperty = new DerivedProperty( [ stateProperty ], state => {
+    const fillProperty = new DerivedProperty( [
+      stateProperty,
+      faceValueColorProperty,
+      faceValueCompletedColorProperty,
+      faceValueErrorColorProperty
+    ], ( state, color, completedColor, errorColor ) => {
       const faceState = state.getFaceState( face );
 
       if ( faceState === null ) {
-        return 'white';
+        return null;
       }
 
       const blackCount = face.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.BLACK ).length;
 
       if ( blackCount < faceState ) {
-        return 'black';
+        return color;
       }
       // else {
       //   return '#aaa';
@@ -149,10 +154,10 @@ class FaceNode extends Node {
       // TODO: consider the "red" highlight here? Is annoying when we have to double-tap to X
       // TODO: maybe simple auto-solving will obviate this need? YES
       else if ( blackCount === faceState ) {
-        return '#aaa';
+        return completedColor;
       }
       else {
-        return 'red';
+        return errorColor;
       }
     } );
 
@@ -189,7 +194,7 @@ class EdgeNode extends Node {
 
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: 'black',
+      stroke: lineColorProperty,
       lineCap: 'square' // TODO: still not ideal, the overlap shows up and is unpleasant. We'll either need to use Alpenglow, or use a different approach to drawing the lines.
     } );
 
@@ -202,7 +207,7 @@ class EdgeNode extends Node {
       .moveTo( -halfSize, halfSize )
       .lineTo( halfSize, -halfSize );
     const x = new Path( xShape, {
-      stroke: 'red',
+      stroke: xColorProperty,
       lineWidth: 0.02,
       center: centerPoint
     } );
@@ -353,7 +358,7 @@ class SimpleRegionViewNode extends Node {
     const endPoint = edge.end.viewCoordinates;
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: '#888',
+      stroke: edgeWeirdColorProperty,
       lineCap: 'square'
     } );
     this.weirdEdgeNodeMap.set( edge, line );

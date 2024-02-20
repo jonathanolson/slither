@@ -3,7 +3,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Font, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { Checkbox, Panel, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, themeProperty } from './Theme.ts';
+import { availableThemes, themeProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
 
 // TODO: solidify font stuff (maybe have Font properties based on a theme?)
 const font = new Font( {
@@ -33,8 +33,12 @@ export class SettingsNode extends Node {
     } );
 
     const getBooleanCheckbox = ( label: string, property: Property<boolean> ) => {
-      return new Checkbox( property, new Text( label, { font: font } ), {
-
+      return new Checkbox( property, new Text( label, {
+        font: font,
+        fill: uiForegroundProperty
+      } ), {
+        checkboxColor: uiForegroundProperty,
+        checkboxColorBackground: uiBackgroundProperty
       } );
     };
 
@@ -43,7 +47,10 @@ export class SettingsNode extends Node {
       align: 'left',
       spacing: 8,
       children: [
-        new Text( 'Solve After Every Move', { font: font } ),
+        new Text( 'Solve After Every Move', {
+          font: font,
+          fill: uiForegroundProperty
+        } ),
         getBooleanCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
         getBooleanCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
         getBooleanCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
@@ -71,7 +78,10 @@ export class SettingsNode extends Node {
     const themeSelector = new VerticalAquaRadioButtonGroup( themeProperty, availableThemes.map( theme => {
       return {
         value: theme,
-        createNode: () => new Text( theme.name, { font: font } ),
+        createNode: () => new Text( theme.name, {
+          font: font,
+          fill: uiForegroundProperty
+        } ),
         a11yName: theme.name
       };
     } ) );
@@ -81,7 +91,10 @@ export class SettingsNode extends Node {
       align: 'left',
       spacing: 8,
       children: [
-        new Text( 'Theme', { font: font } ),
+        new Text( 'Theme', {
+          font: font,
+          fill: uiForegroundProperty
+        } ),
         themeSelector
       ]
     } );
@@ -98,7 +111,9 @@ export class SettingsNode extends Node {
       ]
     } ), {
       xMargin: 15,
-      yMargin: 15
+      yMargin: 15,
+      fill: uiBackgroundProperty,
+      stroke: uiForegroundProperty
     } );
 
     // TODO: actually, we can probably have a much more responsive layout, right?
