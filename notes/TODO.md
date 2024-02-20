@@ -302,7 +302,6 @@
 
 - Current code TODOs
   - Buttons 
-    - Load text puzzle
     - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
       - Will apply "history" state for EACH solve step
       - OR WILL APPLY IT AS ONE THING ---- we might want each

@@ -70,7 +70,7 @@ const mainBox = new VBox( {
     new ControlBarNode( puzzleModelProperty, {
       glassPane: glassPane,
       layoutBoundsProperty: layoutBoundsProperty,
-      userActionLoadPuzzle: () => {
+      userActionLoadPuzzleFromImage: () => {
         const input = document.createElement( 'input' );
         input.type = 'file';
         input.onchange = event => {
@@ -90,6 +90,15 @@ const mainBox = new VBox( {
           }
         }
         input.click();
+      },
+      userActionLoadPuzzleFromString: () => {
+        // TODO: try/catch
+        const string = prompt( 'Enter puzzle string' );
+
+        if ( string ) {
+          puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadDeprecatedScalaString( string ) );
+          // puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadFromSimpleString( string ) );
+        }
       }
     } ),
     puzzleContainerNode

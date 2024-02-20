@@ -17,7 +17,8 @@ const useFlatButtons = false;
 const buttonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
 
 export type ControlBarNodeOptions = {
-  userActionLoadPuzzle: () => void;
+  userActionLoadPuzzleFromString: () => void;
+  userActionLoadPuzzleFromImage: () => void;
   glassPane: Node;
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };
@@ -56,10 +57,15 @@ export default class ControlBarNode extends HBox {
     super( {
       spacing: 10,
       children: [
+        new TextPushButton( 'Load string', {
+          font: font,
+          buttonAppearanceStrategy: buttonAppearanceStrategy,
+          listener: options.userActionLoadPuzzleFromString
+        } ),
         new TextPushButton( 'Load image', {
           font: font,
           buttonAppearanceStrategy: buttonAppearanceStrategy,
-          listener: options.userActionLoadPuzzle
+          listener: options.userActionLoadPuzzleFromImage
         } ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Undo All',
