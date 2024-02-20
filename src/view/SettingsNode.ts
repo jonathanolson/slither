@@ -3,7 +3,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Font, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { Checkbox, Panel, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, themeProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
+import { availableThemes, barrierColorProperty, themeProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
 
 // TODO: solidify font stuff (maybe have Font properties based on a theme?)
 const font = new Font( {
@@ -20,8 +20,7 @@ export class SettingsNode extends Node {
 
     const topNode = new Node();
 
-    // TODO: customize this color
-    const barrier = new Rectangle( { fill: 'rgba(127,127,127,0.7)' } );
+    const barrier = new Rectangle( { fill: barrierColorProperty } );
     this.addChild( barrier );
     layoutBoundsProperty.link( layoutBounds => {
       barrier.rectBounds = layoutBounds;

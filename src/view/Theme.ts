@@ -36,6 +36,7 @@ export interface TTheme {
   uiButtonForegroundProperty: PaintColorProperty;
   uiButtonBaseColorProperty: PaintColorProperty;
   uiButtonDisabledColorProperty: PaintColorProperty;
+  barrierColorProperty: PaintColorProperty;
 
   // TODO: can we actually use rainbow colors (culori-based) for the UI button colors?!? ZOMG
 
@@ -61,7 +62,8 @@ export const lightTheme = {
   uiBackgroundProperty: new PaintColorProperty( '#fff' ),
   uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
-  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' )
+  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
+  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.7)' )
 };
 
 export const darkTheme = {
@@ -78,10 +80,11 @@ export const darkTheme = {
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
   edgeWeirdColorProperty: new PaintColorProperty( '#888' ),
   uiForegroundProperty: new PaintColorProperty( '#ccc' ),
-  uiBackgroundProperty: new PaintColorProperty( '#333' ),
+  uiBackgroundProperty: new PaintColorProperty( '#222' ),
   uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
   uiButtonBaseColorProperty: new PaintColorProperty( hslToRGB( 50, 0.7, 0.6 ) ),
-  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' )
+  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
+  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' )
 };
 
 // Mostly so we get type checking
@@ -165,4 +168,8 @@ export const uiButtonBaseColorProperty = new DynamicProperty( themeProperty, {
 
 export const uiButtonDisabledColorProperty = new DynamicProperty( themeProperty, {
   derive: 'uiButtonDisabledColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const barrierColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'barrierColorProperty'
 } ) as TReadOnlyProperty<Color>;
