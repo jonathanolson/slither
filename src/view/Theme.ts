@@ -136,7 +136,7 @@ export const availableThemes: TTheme[] = [
 
 export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
   serialize: theme => theme.name,
-  deserialize: name => availableThemes.find( theme => theme.name === name ) || lightTheme
+  deserialize: name => availableThemes.find( theme => theme.name === name ) || autoTheme
 } );
 // @ts-ignore - Allow this globally
 window.themeProperty = themeProperty;

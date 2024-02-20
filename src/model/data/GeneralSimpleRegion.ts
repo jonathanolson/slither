@@ -11,7 +11,8 @@ export class GeneralSimpleRegion implements TSimpleRegion {
 
   public constructor(
     public readonly id: number,
-    public readonly halfEdges: THalfEdge[]
+    public readonly halfEdges: THalfEdge[],
+    public readonly isSolved: boolean = false
   ) {
     this.a = halfEdges[ 0 ].start;
     this.b = halfEdges[ halfEdges.length - 1 ].end;

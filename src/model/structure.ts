@@ -207,11 +207,18 @@ export type TEdgeDataListener = ( edge: TEdge, state: EdgeState ) => void;
 
 
 export interface TSimpleRegion {
-  id: number; // tracked across simple regions over time
+  // An identifier that is tracked across simple regions over time. Algorithms will try to keep this consistent, for
+  // visual continuity (so that the largest region of combined regions will NOT experience a change of this, and
+  // it can be used for coloring.
+  id: number;
+  
   a: TVertex;
   b: TVertex;
   halfEdges: THalfEdge[]; // for simple regions, these are ordered from a to b
   edges: TEdge[]; // for simple regions, these are ordered from a to b
+
+  // If this is true, this region is actually closed, and represents a solution for all of the faces.
+  isSolved: boolean;
 }
 
 export interface TSimpleRegionData {

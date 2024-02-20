@@ -299,19 +299,15 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Handle the "completed" state for SimpleRegionData, and solve "don't close loops"
-    - Add "solved" flag to TSimpleRegion / GeneralSimpleRegion
-      - NOTE: We'll want to ONLY provide this when we have ONE region, and NO weird edges. Likely need to recompute this when we remove things
-      - NOTE: For a given face value bit, we can quickly compute a minimum number of edges (if it's lower than that... no)
-      - Close the path in the UI (since it will have all the halfedges)
-    - Our "don't close regions prematurely" solver needs SimpleRegion and Edge data.
-      - Throw fail if ANY weird edges are present
-      - run it AFTER the SimpleRegion solver (so we have good state)
-      - See if any closings run into a full solve: if adjacent vertices, we'll either make them BLACK (yay win) or RED
-      - If there are other spurious edges.... eeek right? "only full solve if we have one region?" 
-  - How to handle the "completed" state for SimpleRegionData? (should we... mark regions as completed loops?)
+  - Our "don't close regions prematurely" solver needs SimpleRegion and Edge data.
+    - Throw fail if ANY weird edges are present
+    - run it AFTER the SimpleRegion solver (so we have good state)
+    - See if any closings run into a full solve: if adjacent vertices, we'll either make them BLACK (yay win) or RED
+    - If there are other spurious edges.... eeek right? "only full solve if we have one region?"
   - "simple region simple crossing" solver ->>> perhaps we need to solve whether it would be complete with that?
     - Why don't we get code to say "hey would this region solve the puzzle?"
+  - FIX puzzle loading, especially on phone (or get some other way of getting puzzles in)
+    - Soon we'll be able to... generate puzzles? Get backtracker?
   - Theme options:
     - Simple Region based edges, OR prefer the raw edges (uncolored)? 
     - "dashed lines" for "white" / "blank" lines for "red"

@@ -402,6 +402,10 @@ class SimpleRegionNode extends Path {
       shape.lineToPoint( halfEdge.end.viewCoordinates );
     }
 
+    if ( simpleRegion.isSolved ) {
+      shape.close();
+    }
+
     return shape.makeImmutable();
   }
 }

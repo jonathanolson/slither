@@ -1,12 +1,12 @@
 import { TSolver } from './TSolver.ts';
-import { TAction, TBoard, TEdge, TEdgeData, TEdgeDataListener, THalfEdge, TSimpleRegion, TSimpleRegionData, TState } from '../structure.ts';
+import { TAction, TBoard, TEdge, TEdgeData, TEdgeDataListener, TFaceData, THalfEdge, TSimpleRegion, TSimpleRegionData, TState } from '../structure.ts';
 import EdgeState from '../EdgeState.ts';
 import _ from '../../workarounds/_.ts';
 import { GeneralSimpleRegion, GeneralSimpleRegionAction } from '../data/GeneralSimpleRegion.ts';
 
 let simpleRegionGlobalId = 0;
 
-export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimpleRegionData, TAction<TEdgeData & TSimpleRegionData>> {
+export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAction<TFaceData & TEdgeData & TSimpleRegionData>> {
 
   private readonly dirtyEdges = new Set<TEdge>();
 
@@ -14,7 +14,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TEdgeData & TSimpleRegionData>
+    private readonly state: TState<TFaceData & TEdgeData & TSimpleRegionData>
   ) {
     board.edges.forEach( edge => {
       this.dirtyEdges.add( edge );
@@ -31,7 +31,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
     return this.dirtyEdges.size > 0;
   }
 
-  public nextAction(): TAction<TEdgeData & TSimpleRegionData> | null {
+  public nextAction(): TAction<TFaceData & TEdgeData & TSimpleRegionData> | null {
     if ( !this.dirty ) { return null; }
 
     const oldRegions = this.state.getSimpleRegions();
@@ -87,6 +87,8 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
         const halfEdgeRegions: THalfEdge[][] = [];
         let currentHalfEdgeRegion: THalfEdge[] = [];
 
+        // TODO: handle "solved" regions that are loops!
+
         for ( const halfEdge of region.halfEdges ) {
           if ( !nowClearedEdges.has( halfEdge.edge ) ) {
             currentHalfEdgeRegion.push( halfEdge );
@@ -104,6 +106,16 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
         regions.delete( region );
 
         if ( halfEdgeRegions.length ) {
+
+          // We might have the "start" and "end" regions of a solved loop still be attached, so we'll check for that
+          if ( region.isSolved && halfEdgeRegions.length > 1 ) {
+            const firstHalfEdge = halfEdgeRegions[ 0 ][ 0 ];
+            const lastHalfEdge = halfEdgeRegions[ halfEdgeRegions.length - 1 ][ halfEdgeRegions[ halfEdgeRegions.length - 1 ].length - 1 ];
+            if ( firstHalfEdge.start === lastHalfEdge.end ) {
+              halfEdgeRegions[ 0 ].unshift( ...halfEdgeRegions.pop()! );
+            }
+          }
+
           const largestHalfEdgeRegion = _.maxBy( halfEdgeRegions, halfEdgeRegion => halfEdgeRegion.length )!;
 
           for ( const halfEdgeRegion of halfEdgeRegions ) {
@@ -151,58 +163,18 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
         }
       };
 
-      const combineHalfEdgeArrays = ( ...arrays: THalfEdge[][] ): THalfEdge[] => {
-        if ( arrays.length === 0 ) {
-          return [];
-        }
-        let result = [
-          ...arrays[ 0 ]
-        ];
-        for ( let i = 1; i < arrays.length; i++ ) {
-          const arr = arrays[ i ];
-          if ( arr.length === 0 ) {
-            continue;
-          }
-
-          // TODO: could probably do things faster
-          if ( result[ 0 ].start === arr[ 0 ].start ) {
-            result = [
-              ...arr.map( halfEdge => halfEdge.reversed ).reverse(),
-              ...result
-            ];
-          }
-          else if ( result[ 0 ].start === arr[ arr.length - 1 ].end ) {
-            result = [
-              ...arr,
-              ...result
-            ];
-          }
-          else if ( result[ result.length - 1 ].end === arr[ 0 ].start ) {
-            // TODO: push instead?
-            result = [
-              ...result,
-              ...arr
-            ];
-          }
-          else if ( result[ result.length - 1 ].end === arr[ arr.length - 1 ].end ) {
-            // TODO: push instead?
-            result = [
-              ...result,
-              ...arr.map( halfEdge => halfEdge.reversed ).reverse()
-            ];
-          }
-          else {
-            throw new Error( 'Cannot combine half edge arrays' );
-          }
-        }
-        return result;
-      };
-
       if ( startRegion && endRegion ) {
         if ( startRegion === endRegion ) {
-          // TODO: how do we handle... completed loops? Do we check to see if it is solved?
-          // TODO: Do we... have a data type that checks these things?
-          return false; // TODO: hah, we just mark it as weird.... for now?
+          if ( SafeEdgeToSimpleRegionSolver.isSolvedWithAddedEdge( this.board, this.state, startRegion, edge ) ) {
+            removeRegion( startRegion );
+            addRegion( new GeneralSimpleRegion( startRegion.id, SafeEdgeToSimpleRegionSolver.combineHalfEdgeArrays(
+              startRegion.halfEdges,
+              [ edge.forwardHalf ]
+            ), true ) ); // NOTE: solved!
+          }
+          else {
+            return false;
+          }
         }
         else {
           // We are joining two regions(!)
@@ -210,7 +182,11 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
           const primaryRegion = startRegion.halfEdges.length >= endRegion.halfEdges.length ? startRegion : endRegion;
           const secondaryRegion = primaryRegion === startRegion ? endRegion : startRegion;
 
-          const newRegion = new GeneralSimpleRegion( primaryRegion.id, combineHalfEdgeArrays( primaryRegion.halfEdges, [ edge.forwardHalf ], secondaryRegion.halfEdges ) );
+          const newRegion = new GeneralSimpleRegion( primaryRegion.id, SafeEdgeToSimpleRegionSolver.combineHalfEdgeArrays(
+            primaryRegion.halfEdges,
+            [ edge.forwardHalf ],
+            secondaryRegion.halfEdges
+          ) );
 
           removeRegion( primaryRegion );
           removeRegion( secondaryRegion );
@@ -218,13 +194,19 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
         }
       }
       else if ( startRegion ) {
-        const newRegion = new GeneralSimpleRegion( startRegion.id, combineHalfEdgeArrays( startRegion.halfEdges, [ edge.forwardHalf ] ) );
+        const newRegion = new GeneralSimpleRegion( startRegion.id, SafeEdgeToSimpleRegionSolver.combineHalfEdgeArrays(
+          startRegion.halfEdges,
+          [ edge.forwardHalf ]
+        ) );
 
         removeRegion( startRegion );
         addRegion( newRegion );
       }
       else if ( endRegion ) {
-        const newRegion = new GeneralSimpleRegion( endRegion.id, combineHalfEdgeArrays( endRegion.halfEdges, [ edge.forwardHalf ] ) );
+        const newRegion = new GeneralSimpleRegion( endRegion.id, SafeEdgeToSimpleRegionSolver.combineHalfEdgeArrays(
+          endRegion.halfEdges,
+          [ edge.forwardHalf ]
+        ) );
 
         removeRegion( endRegion );
         addRegion( newRegion );
@@ -263,11 +245,85 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TEdgeData & TSimple
     return new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
   }
 
-  public clone( equivalentState: TState<TEdgeData & TSimpleRegionData> ): SafeEdgeToSimpleRegionSolver {
+  public clone( equivalentState: TState<TFaceData & TEdgeData & TSimpleRegionData> ): SafeEdgeToSimpleRegionSolver {
     return new SafeEdgeToSimpleRegionSolver( this.board, equivalentState );
   }
 
   public dispose(): void {
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
+  }
+
+  public static isSolvedWithAddedEdge( board: TBoard, data: TFaceData & TEdgeData, simpleRegion: TSimpleRegion, edge: TEdge ): boolean {
+    // Sanity checks
+    if ( edge.start !== simpleRegion.a && edge.start !== simpleRegion.b ) {
+      return false;
+    }
+    if ( edge.end !== simpleRegion.a && edge.end !== simpleRegion.b ) {
+      return false;
+    }
+
+    const edgeSet = new Set( simpleRegion.edges );
+    edgeSet.add( edge );
+
+    // NOTE: we can probably get a more efficient check in the future, but this is robust to cases where the user
+    // creates additional loops or bogus things. This only depends on THIS region.
+    for ( const face of board.faces ) {
+      const faceValue = data.getFaceState( face );
+      if ( faceValue !== null ) {
+        const count = face.edges.filter( faceEdge => edgeSet.has( faceEdge ) ).length;
+        if ( count !== faceValue ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  public static combineHalfEdgeArrays( ...arrays: THalfEdge[][] ): THalfEdge[] {
+    if ( arrays.length === 0 ) {
+      return [];
+    }
+    let result = [
+      ...arrays[ 0 ]
+    ];
+    for ( let i = 1; i < arrays.length; i++ ) {
+      const arr = arrays[ i ];
+      if ( arr.length === 0 ) {
+        continue;
+      }
+
+      // TODO: could probably do things faster
+      if ( result[ 0 ].start === arr[ 0 ].start ) {
+        result = [
+          ...arr.map( halfEdge => halfEdge.reversed ).reverse(),
+          ...result
+        ];
+      }
+      else if ( result[ 0 ].start === arr[ arr.length - 1 ].end ) {
+        result = [
+          ...arr,
+          ...result
+        ];
+      }
+      else if ( result[ result.length - 1 ].end === arr[ 0 ].start ) {
+        // TODO: push instead?
+        result = [
+          ...result,
+          ...arr
+        ];
+      }
+      else if ( result[ result.length - 1 ].end === arr[ arr.length - 1 ].end ) {
+        // TODO: push instead?
+        result = [
+          ...result,
+          ...arr.map( halfEdge => halfEdge.reversed ).reverse()
+        ];
+      }
+      else {
+        throw new Error( 'Cannot combine half edge arrays' );
+      }
+    }
+    return result;
   }
 }
