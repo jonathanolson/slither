@@ -2,7 +2,7 @@ import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { Property, TinyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DynamicProperty, Multilink, Property, TReadOnlyProperty, TinyProperty } from 'phet-lib/axon';
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import scanURL from './scan/scanURL.ts';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
@@ -11,7 +11,7 @@ import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { BasicSquarePuzzle } from './model/structure.ts';
-import { navbarBackgroundColorProperty } from './view/Theme.ts';
+import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 
 // @ts-ignore
 if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {
@@ -40,10 +40,6 @@ const display = new Display( rootNode, {
 } );
 document.body.appendChild( display.domElement );
 
-navbarBackgroundColorProperty.link( backgroundColor => {
-  display.backgroundColor = backgroundColor;
-} );
-
 display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 
 window.oncontextmenu = e => e.preventDefault();
@@ -63,6 +59,22 @@ puzzleModelProperty.link( puzzleModel => {
   if ( puzzleModel ) {
     puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzleModel ) );
   }
+} );
+
+const falseProperty = new BooleanProperty( false );
+const hasErrorProperty = new DynamicProperty( puzzleModelProperty, {
+  derive: ( puzzleModel: PuzzleModel | null ) => {
+    return puzzleModel ? puzzleModel.hasErrorProperty : falseProperty;
+  }
+} ) as TReadOnlyProperty<boolean>; // Why, TS?
+
+// TODO: better place to handle this type of logic...
+Multilink.multilink( [
+  hasErrorProperty,
+  navbarBackgroundColorProperty,
+  navbarErrorBackgroundColorProperty
+], ( hasError, color, errorColor ) => {
+  display.backgroundColor = hasError ? errorColor : color;
 } );
 
 // @ts-ignore

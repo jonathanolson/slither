@@ -299,11 +299,6 @@
   - Particularly for things that didn't scan correctly.
 
 - Current code TODOs
-  - Error indicator?
-    - THIS IS FOR AUTO-SOLVER NOTICED ERRORS! Should be flagged immediately 
-    - In PuzzleModel, create lastTransitionProperty() - DerivedProperty. Add a "failed auto-solve" field?
-      - Would we do similar things for annotations?
-      - Add a delay? .... HOW?
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript

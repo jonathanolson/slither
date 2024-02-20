@@ -30,6 +30,7 @@ mediaQueryList.addEventListener( 'change', e => {
 export interface TTheme {
   name: string;
   navbarBackgroundColorProperty: PaintColorProperty;
+  navbarErrorBackgroundColorProperty: PaintColorProperty;
   playAreaBackgroundColorProperty: PaintColorProperty;
   puzzleBackgroundColorProperty: PaintColorProperty;
   puzzleBackgroundStrokeColorProperty: PaintColorProperty;
@@ -57,6 +58,7 @@ export interface TTheme {
 export const lightTheme = {
   name: 'Light',
   navbarBackgroundColorProperty: new PaintColorProperty( '#eee' ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.6 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#ccc' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( '#fff' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#888' ),
@@ -78,6 +80,7 @@ export const lightTheme = {
 export const darkTheme = {
   name: 'Dark',
   navbarBackgroundColorProperty: new PaintColorProperty( '#111' ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.3 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#333' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( '#222' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#777' ),
@@ -144,6 +147,10 @@ window.themeProperty = themeProperty;
 export const navbarBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'navbarBackgroundColorProperty'
 } ) as TReadOnlyProperty<Color>; // TODO: why is this necessary?
+
+export const navbarErrorBackgroundColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'navbarErrorBackgroundColorProperty'
+} ) as TReadOnlyProperty<Color>;
 
 export const playAreaBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'playAreaBackgroundColorProperty'

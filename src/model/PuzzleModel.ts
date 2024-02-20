@@ -1,6 +1,6 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../config';
-import { EdgeStateSetAction, NoOpAction, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
+import { EdgeStateSetAction, NoOpAction, TBoard, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
 import { InvalidStateError } from './solver/InvalidStateError.ts';
 import { autoSolverFactoryProperty, safeSolverFactory } from './solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from './solver/TSolver.ts';
@@ -8,7 +8,7 @@ import { iterateSolverFactory, withSolverFactory } from './solver/TSolver.ts';
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
 
-  private readonly stack: StateTransition<State>[];
+  private readonly stack: PuzzleSnapshot<Structure, State>[];
 
   // Tracks how many transitions are in the stack
   private readonly stackLengthProperty = new NumberProperty( 0 );
@@ -18,6 +18,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
   public readonly undoPossibleProperty: TReadOnlyProperty<boolean>;
   public readonly redoPossibleProperty: TReadOnlyProperty<boolean>;
+
+  public readonly currentSnapshotProperty: TReadOnlyProperty<PuzzleSnapshot<Structure, State>>;
+  public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
 
   public constructor(
     public readonly puzzle: TPuzzle<Structure, State>
@@ -29,8 +32,23 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       puzzle.stateProperty.value = newState;
     }
 
-    this.stack = [ new StateTransition( null, puzzle.stateProperty.value ) ];
+    this.stack = [ new PuzzleSnapshot( this.puzzle.board, null, puzzle.stateProperty.value ) ];
     this.stackLengthProperty.value = 1;
+
+    // TODO: base more things on this property!
+    this.currentSnapshotProperty = new DerivedProperty( [
+      // TODO: this isn't an exact science... can we get something more guaranteed? Abstract out a stack?
+      this.stackLengthProperty,
+      this.stackPositionProperty
+    ], () => {
+      return this.stack[ this.stackPositionProperty.value ];
+    } );
+    this.hasErrorProperty = new DerivedProperty( [
+      this.currentSnapshotProperty
+    ], snapshot => {
+      return snapshot.errorDetected;
+    } );
+    this.hasErrorProperty.link( error => console.log( 'error', error ) );
 
     // Try auto-solve on startup (and if it works and creates a delta, we'll push it onto the stack)
     // This allows the user to "undo" the auto-solve if they don't like it.
@@ -63,7 +81,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     this.stackLengthProperty.value = this.stack.length;
   }
 
-  private pushTransitionAtCurrentPosition( transition: StateTransition<State> ): void {
+  private pushTransitionAtCurrentPosition( transition: PuzzleSnapshot<Structure, State> ): void {
     this.wipeStackTop();
     this.stack.push( transition );
     this.stackLengthProperty.value = this.stack.length;
@@ -80,6 +98,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     const lastTransition = this.stack[ this.stackPositionProperty.value ];
     const state = lastTransition.state;
 
+    let errorDetected = false;
+
     let delta = state.createDelta();
     try {
       withSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
@@ -93,6 +113,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       }
     }
     catch ( e ) {
+      errorDetected = true;
       if ( e instanceof InvalidStateError ) {
         console.log( 'error' );
         delta = state.createDelta();
@@ -108,7 +129,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     const newState = state.clone() as State;
     delta.apply( newState );
 
-    this.pushTransitionAtCurrentPosition( new StateTransition( userAction, newState ) );
+    this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, userAction, newState, errorDetected ) );
   }
 
   private addAutoSolveDelta(): void {
@@ -121,7 +142,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
         autoSolveDelta.apply( autoSolveState );
         // puzzle.stateProperty.value = autoSolveState;
 
-        this.pushTransitionAtCurrentPosition( new StateTransition( new UserLoadPuzzleAutoSolveAction(), autoSolveState ) );
+        this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserLoadPuzzleAutoSolveAction(), autoSolveState ) );
       }
     }
     catch ( e ) {
@@ -198,9 +219,11 @@ export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;
 }
 
-class StateTransition<State extends TState<TCompleteData>> {
+export class PuzzleSnapshot<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
   public constructor(
+    public readonly board: TBoard<Structure>,
     public readonly action: PuzzleModelUserAction | null,
-    public readonly state: State
+    public readonly state: State,
+    public readonly errorDetected: boolean = false
   ) {}
 }

@@ -38,6 +38,7 @@ export default class ControlBarNode extends HBox {
         return puzzleModel ? puzzleModel.undoPossibleProperty : falseProperty;
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
+
     const redoEnabledProperty = new DynamicProperty( puzzleModelProperty, {
       derive: ( puzzleModel: PuzzleModel | null ) => {
         return puzzleModel ? puzzleModel.redoPossibleProperty : falseProperty;
