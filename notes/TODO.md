@@ -303,16 +303,12 @@
 - Current code TODOs
   - Buttons 
     - Load text puzzle
-    - Solve button (solve one action, or solve steps)
+    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
       - Will apply "history" state for EACH solve step
       - OR WILL APPLY IT AS ONE THING ---- we might want each
-    - Restart button (wipes the state, and reloads the puzzle)
-      - Useful for those "I loaded a puzzle with some solved state" bits
     - Mark/save (for backtracking)
-    - Undo all (goes it go to the last ... marked point?)
-    - Redo all
+      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
     - (allow pressing and holding some of the buttons...)
-    - (font-awesome with SIL license https://github.com/jalmeydaa/portfolio/blob/master/fonts/fontawesome-webfont.svg%3Fv%3D4.7.0)
   - Error indicator?
   - Keyboard shortcuts
     - "Undo" (Ctrl-Z)

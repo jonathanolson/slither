@@ -1,9 +1,11 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Font, HBox, Node } from 'phet-lib/scenery';
+import { Font, HBox, Node, Path } from 'phet-lib/scenery';
 import PuzzleModel from '../model/PuzzleModel';
-import { RectangularButton, TextPushButton } from 'phet-lib/sun';
+import { RectangularButton, RectangularPushButton, RectangularPushButtonOptions, TextPushButton } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
+import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
+import { combineOptions } from 'phet-lib/phet-core';
 
 const font = new Font( {
   family: 'sans-serif',
@@ -42,6 +44,15 @@ export default class ControlBarNode extends HBox {
 
     let settingsNode: SettingsNode | null = null;
 
+    const commonButtonOptions = {
+      buttonAppearanceStrategy: buttonAppearanceStrategy,
+
+      mouseAreaXDilation: 5,
+      mouseAreaYDilation: 5,
+      touchAreaXDilation: 5,
+      touchAreaYDilation: 5
+    } as const;
+
     super( {
       spacing: 10,
       children: [
@@ -50,35 +61,59 @@ export default class ControlBarNode extends HBox {
           buttonAppearanceStrategy: buttonAppearanceStrategy,
           listener: options.userActionLoadPuzzle
         } ),
-        new TextPushButton( 'Undo', {
-          font: font,
-          buttonAppearanceStrategy: buttonAppearanceStrategy,
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Undo All',
+          content: toFontAwesomePath( fontAwesomeBackwardShape ),
+          listener: () => {
+            if ( puzzleModelProperty.value ) {
+              puzzleModelProperty.value.onUserUndoAll();
+            }
+          },
+          enabledProperty: undoEnabledProperty
+        } ) ),
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Undo',
+          content: toFontAwesomePath( fontAwesomeStepBackwardShape ),
           listener: () => {
             if ( puzzleModelProperty.value ) {
               puzzleModelProperty.value.onUserUndo();
             }
           },
           enabledProperty: undoEnabledProperty
-        } ),
-        new TextPushButton( 'Redo', {
-          font: font,
-          buttonAppearanceStrategy: buttonAppearanceStrategy,
+        } ) ),
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Redo',
+          content: toFontAwesomePath( fontAwesomeStepForwardShape ),
           listener: () => {
             if ( puzzleModelProperty.value ) {
               puzzleModelProperty.value.onUserRedo();
             }
           },
           enabledProperty: redoEnabledProperty
-        } ),
-        new TextPushButton( 'Settings', {
-          font: font,
-          buttonAppearanceStrategy: buttonAppearanceStrategy,
+        } ) ),
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Redo All',
+          content: toFontAwesomePath( fontAwesomeForwardShape ),
+          listener: () => {
+            if ( puzzleModelProperty.value ) {
+              puzzleModelProperty.value.onUserRedoAll();
+            }
+          },
+          enabledProperty: redoEnabledProperty
+        } ) ),
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Settings',
+          content: new Path( fontAwesomeGearShape, {
+            maxWidth: 15,
+            maxHeight: 15,
+            fill: 'black'
+          } ),
           listener: () => {
             settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
 
             settingsNode.show();
           }
-        } )
+        } ) )
       ]
     } );
   }

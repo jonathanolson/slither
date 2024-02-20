@@ -77,7 +77,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     // TODO: have a way of creating a "solid" state from a delta?
     // TODO: we need to better figure this out(!)
 
-    let delta = this.puzzle.stateProperty.value.createDelta();
+    const lastTransition = this.stack[ this.stackPositionProperty.value ];
+    const state = lastTransition.state;
+
+    let delta = state.createDelta();
     try {
       withSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
         userAction.apply( delta );
@@ -92,7 +95,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     catch ( e ) {
       if ( e instanceof InvalidStateError ) {
         console.log( 'error' );
-        delta = this.puzzle.stateProperty.value.createDelta();
+        delta = state.createDelta();
         withSolverFactory( safeSolverFactory, this.puzzle.board, delta, () => {
           userAction.apply( delta );
         }, userAction instanceof UserLoadPuzzleAutoSolveAction );
@@ -102,7 +105,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       }
     }
 
-    const newState = this.puzzle.stateProperty.value.clone() as State;
+    const newState = state.clone() as State;
     delta.apply( newState );
 
     this.pushTransitionAtCurrentPosition( new StateTransition( userAction, newState ) );
@@ -131,7 +134,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
     if ( lastTransition.action ) {
       this.stackPositionProperty.value--;
-      this.updateState(); // TODO: does this cause too many state transitions? We want to avoid that, right?
     }
 
     this.applyUserActionToStack( lastTransition.action || new UserLoadPuzzleAutoSolveAction() );
@@ -151,6 +153,18 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       this.stackPositionProperty.value++;
       this.updateState();
     }
+  }
+
+  // TODO: go to marked points once we have that
+  public onUserUndoAll(): void {
+    this.stackPositionProperty.value = 0;
+    this.updateState();
+  }
+
+  // TODO: go to marked points once we have that
+  public onUserRedoAll(): void {
+    this.stackPositionProperty.value = this.stackLengthProperty.value - 1;
+    this.updateState();
   }
 
   public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
