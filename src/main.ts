@@ -9,7 +9,7 @@ import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { BasicSquarePuzzle, TCompleteData, TPuzzle, TState, TStructure } from './model/structure.ts';
+import { BasicSquarePuzzle, HexagonalBoard, TCompleteData, TPuzzle, TState, TStructure } from './model/structure.ts';
 import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 
 // @ts-ignore
@@ -19,6 +19,8 @@ if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {
   // @ts-ignore
   window.assertions.enableAssert();
 }
+
+console.log( new HexagonalBoard( 1, 2, true ) );
 
 const scene = new Node();
 
