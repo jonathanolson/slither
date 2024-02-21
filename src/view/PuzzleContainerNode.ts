@@ -3,6 +3,8 @@ import PuzzleNode from './PuzzleNode';
 import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { playAreaBackgroundColorProperty } from './Theme';
+import { TReadOnlyProperty } from 'phet-lib/axon';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 
 export default class PuzzleContainerNode extends Sizable( Node ) {
 
@@ -11,7 +13,9 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
   private puzzleNode: PuzzleNode | null = null;
   private zoomListener: AnimatedPanZoomListener;
 
-  public constructor() {
+  public constructor(
+    public readonly puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null>
+  ) {
     // TODO: isolate out these options
     super( {
       layoutOptions: {
@@ -39,7 +43,21 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.localPreferredWidthProperty.lazyLink( layoutListener );
     this.localPreferredHeightProperty.lazyLink( layoutListener );
 
-    this.updateLayout();
+    puzzleModelProperty.link( puzzleModel => {
+      this.puzzleWrapper.removeAllChildren();
+
+      if ( puzzleModel ) {
+        this.puzzleNode = new PuzzleNode( puzzleModel );
+
+        // Update before children, so we don't mess with layout
+        this.updatePuzzleNodeLayout( this.puzzleNode );
+        this.puzzleWrapper.children = [ this.backgroundRect, this.puzzleNode ];
+      }
+
+      this.zoomListener.resetTransform();
+
+      this.updateLayout();
+    } );
   }
 
   public step( dt: number ): void {
@@ -92,12 +110,5 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
       puzzleNode.setScaleMagnitude( scale );
       puzzleNode.center = new Vector2( width / 2, height / 2 );
     }
-  }
-
-  public setPuzzleNode( puzzleNode: PuzzleNode ): void {
-    this.puzzleNode = puzzleNode;
-    // Update before children, so we don't mess with layout
-    this.updatePuzzleNodeLayout( puzzleNode );
-    this.puzzleWrapper.children = [ this.backgroundRect, puzzleNode ];
   }
 }

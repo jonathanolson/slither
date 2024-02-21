@@ -5,7 +5,6 @@ import { Bounds2 } from 'phet-lib/dot';
 import { BooleanProperty, DynamicProperty, Multilink, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
-import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
@@ -51,18 +50,13 @@ const glassPane = new Node();
 
 const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
-const puzzleContainerNode = new PuzzleContainerNode();
-
 const startingPuzzleModel = new PuzzleModel( BasicSquarePuzzle.loadFromSimpleString(
   '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
 ) );
 
 const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
-puzzleModelProperty.link( puzzleModel => {
-  if ( puzzleModel ) {
-    puzzleContainerNode.setPuzzleNode( new PuzzleNode( puzzleModel ) );
-  }
-} );
+
+const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty );
 
 const falseProperty = new BooleanProperty( false );
 const hasErrorProperty = new DynamicProperty( puzzleModelProperty, {
@@ -79,11 +73,6 @@ Multilink.multilink( [
 ], ( hasError, color, errorColor ) => {
   display.backgroundColor = hasError ? errorColor : color;
 } );
-
-// @ts-ignore
-window.loadDeprecated = ( puzzleString: string ) => {
-  puzzleModelProperty.value = new PuzzleModel( BasicSquarePuzzle.loadDeprecatedScalaString( puzzleString ) );
-};
 
 const mainBox = new VBox( {
   children: [
