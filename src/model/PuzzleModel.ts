@@ -156,7 +156,12 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       }
     }
     catch ( e ) {
-      // DO NOTHING
+      if ( e instanceof InvalidStateError ) {
+        // DO NOTHING
+      }
+      else {
+        throw e;
+      }
     }
   }
 

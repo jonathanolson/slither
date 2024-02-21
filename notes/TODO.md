@@ -369,7 +369,6 @@
 
 - Current code TODOs
   - Upload initial version to website (and a way to update it)
-  - !!! Fix try/catches so they don't eat all errors! (at least for development?)
   - Move things out of structure.ts.... it is ridiculous
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
