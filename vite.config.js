@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import unassert from 'rollup-plugin-unassert';
 import { defineConfig } from 'vite';
 
@@ -24,8 +23,8 @@ export default defineConfig( {
   build: {
     rollupOptions: {
       input: {
-        main: resolve( __dirname, 'index.html' ),
-        'scan-test': resolve( __dirname, 'scan-test.html' )
+        main: '/index.html',
+        'scan-test': '/scan-test.html'
       },
       plugins: [
         unassert( {

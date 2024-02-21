@@ -4,12 +4,11 @@ import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import scanURL from '../scan/scanURL.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import FaceState from '../model/data/face/FaceState.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-
+import scanURL from '../scan/scanURL.ts';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
@@ -71,6 +70,7 @@ export class NewNode extends PopupNode {
                 const url = reader.result as string;
 
                 // TODO: UI change while working?
+                // const scanURL = ( await import ( '../scan/scanURL.ts' ) ).default;
                 const puzzle = await scanURL( url );
 
                 options.loadPuzzle( puzzle );
