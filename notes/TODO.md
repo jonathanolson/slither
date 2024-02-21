@@ -319,6 +319,10 @@
   - Particularly for things that didn't scan correctly.
 
 - COLOR SHIFTING (for maintaining good color separation)
+  - PLAN:
+    - FIRST check performance with single-edge setups (gradient and no gradient)
+      - OOO the no-gradient approach could look neat
+    - Start with organic
   - Edges AND Faces animate (shift) hue to maintain good separation
   - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
   - Color Model - defines target/current color for each region (can swap whatever of these)
@@ -349,6 +353,7 @@
     - Subregions same color (until they join)
       - Once a subregion matches color (enough), it gets combined 
     - Each edge different
+      - Ooo this could potentially look neat!
     - Each edge different + gradient color for each
       - Model each vertex with a color separately 
       - SO COOL to see the gradient "pulse through"? 
@@ -364,16 +369,32 @@
 
 - Current code TODOs
   - Upload initial version to website (and a way to update it)
+  - !!! Fix try/catches so they don't eat all errors! (at least for development?)
+  - Move things out of structure.ts.... it is ridiculous
+  - Backtrack
+    - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
+    - Simplify solver stuff after
+  - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
+  - Should we rule-scan soon so that our solver architecture works for it?
+  - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
+    - Board serialization (and use for creating boards in easier ways!!!)
+      - Specify vertex logical/view coordinates in a list
+      - Specify faces with CCW vertex indices, and logical/view coordinates
+      - THAT's ALL, reconstruct from that!
+    - State serialization
+      - Face/Edge: map of logicalCoordinates => state
+      - SimpleRegions - it's derivative from Edge, don't store it
+    - ALTERNATIVE: how to handle the entire history?
+      - Serialize ALL of the actions, and the PuzzleSnapshots
+      - Serialize the DELTAS!!!!!! This allows us to say "here is an action" and "here is the delta between states"
+      - SAVE THE DELTAS in the PuzzleSnapshot
   - Hex: https://www.redblobgames.com/grids/hexagons/
     - The "square" line cap makes things confusing, looks off-centered in hexagonal
     - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
     - Look into https://www.youtube.com/watch?v=piWIPZ_13E8
-  - Move things out of structure.ts.... it is ridiculous
-  - SAVE the current puzzle state in local storage!!! (... but probably not all of the history?)
-    - HEY BOARD AGNOSTIC!!!! We can save THE ENTIRE BOARD SETUP, so it will be possible to store drawing-shape slitherlinks! Voronoi tiling? YOU NAME IT
-    - [[FIRST]] - can we get hex puzzles going?
-    - A good way to serialize a puzzle state?
-    - HEY, what if we serialize the actions (in order, with gaps for action steps) that got to it?
+  - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
+    - Presumably after a delay, replace the current stack state (with action and simple change) with an autosolved change
+    - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
   - SHOW the vision working on the image(!)
   - Improve the "new" popup
   - AutoSolve rule presets - WHAT IS RELAXING / fun
@@ -394,6 +415,7 @@
     - What about "quick double press" for x?
   - Buttons 
     - RAINBOW COLORS on the buttons
+    - Zoom (in/out) for help on desktop (e.g. with mouse)
     - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
       - Will apply "history" state for EACH solve step
       - OR WILL APPLY IT AS ONE THING ---- we might want each
@@ -405,6 +427,10 @@
       - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
     - (allow pressing and holding some of the buttons...)
   - Actually.... SAVE PUZZLE STATE in localStorage?
+  - Mobile vs Desktop
+    - Settings presets for each?
+    - OR detect fingers/mouse and apply different rules for them?
+    - BASICALLY just try out both a bunch (phone, touch-pad, mouse)
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - THIS IS ANNOYING ON MOBILE 
     - Or at least have a delay 
@@ -524,4 +550,5 @@
   - Prettier/eslint
   - At a certain point, cut features and clean clean 
   - Separate out structure.ts into a structure directory
-  - Make clean! Document things! 
+  - Make clean! Document things!
+  - Add copyright statement to files at some point
