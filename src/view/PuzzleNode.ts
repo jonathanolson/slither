@@ -1,7 +1,9 @@
 import { Font, Node } from 'phet-lib/scenery';
-import { TCompleteData, TState, TStructure } from '../model/structure';
 import BasicPuzzleNode from './BasicPuzzleNode.ts';
-import PuzzleModel from '../model/PuzzleModel.ts';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 
 // TODO: pass options through
 const font = new Font( {

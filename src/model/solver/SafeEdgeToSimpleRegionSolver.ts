@@ -1,8 +1,15 @@
 import { TSolver } from './TSolver.ts';
-import { TAction, TBoard, TEdge, TEdgeData, TEdgeDataListener, TFaceData, THalfEdge, TSimpleRegion, TSimpleRegionData, TState } from '../structure.ts';
-import EdgeState from '../EdgeState.ts';
+import EdgeState from '../data/edge/EdgeState.ts';
 import _ from '../../workarounds/_.ts';
-import { GeneralSimpleRegion, GeneralSimpleRegionAction } from '../data/GeneralSimpleRegion.ts';
+import { GeneralSimpleRegion, GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegion.ts';
+import { THalfEdge } from '../board/core/THalfEdge.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
+import { TFaceData } from '../data/face/TFaceData.ts';
+import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 let simpleRegionGlobalId = 0;
 

@@ -1,8 +1,16 @@
-import { CompositeAction, EdgeStateSetAction, TAction, TBoard, TEdge, TEdgeData, TEdgeDataListener, TFace, TFaceData, TFaceDataListener, TState } from '../structure';
-import EdgeState from '../EdgeState.ts';
-import FaceState from '../FaceState.ts';
+import EdgeState from '../data/edge/EdgeState.ts';
+import FaceState from '../data/face/FaceState.ts';
 import { InvalidStateError } from './InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
+import { TFaceData, TFaceDataListener } from '../data/face/TFaceData.ts';
+import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 export type SimpleFaceSolverOptions = {
   solveToRed: boolean;

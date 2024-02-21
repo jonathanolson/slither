@@ -1,6 +1,13 @@
-import { TAction, TBoard, TDelta, TEdge, THalfEdge, TSimpleRegion, TSimpleRegionData, TState, TVertex } from '../structure.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TinyEmitter } from 'phet-lib/axon';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { THalfEdge } from '../../board/core/THalfEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TState } from '../core/TState.ts';
+import { TAction } from '../core/TAction.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 // TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
 export class GeneralSimpleRegion implements TSimpleRegion {

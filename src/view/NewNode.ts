@@ -4,10 +4,18 @@ import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { BasicPuzzle, BasicSquarePuzzle, CompleteData, HexagonalBoard, TCompleteData, TPuzzle, TState, TStructure } from '../model/structure.ts';
 import scanURL from '../scan/scanURL.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import FaceState from '../model/FaceState.ts';
+import FaceState from '../model/data/face/FaceState.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+
+import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import { CompleteData } from '../model/data/combined/CompleteData.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;

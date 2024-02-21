@@ -1,14 +1,23 @@
 import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptions, TPaint } from 'phet-lib/scenery';
-import { TEdge, TEdgeData, TFace, TFaceData, TReadOnlyPuzzle, TSimpleRegion, TSimpleRegionData, TSquareBoard, TState, TStructure, TVertex } from '../model/structure.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { arrayDifference, combineOptions } from 'phet-lib/phet-core';
-import EdgeState from '../model/EdgeState.ts';
+import EdgeState from '../model/data/edge/EdgeState.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
 // @ts-ignore
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { edgeWeirdColorProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, lineColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty, vertexColorProperty, xColorProperty } from './Theme.ts';
+import { TVertex } from '../model/board/core/TVertex.ts';
+import { TEdge } from '../model/board/core/TEdge.ts';
+import { TFace } from '../model/board/core/TFace.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { TFaceData } from '../model/data/face/TFaceData.ts';
+import { TEdgeData } from '../model/data/edge/TEdgeData.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../model/data/simple-region/TSimpleRegionData.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { TSquareBoard } from '../model/board/square/TSquareBoard.ts';
+import { TReadOnlyPuzzle } from '../model/puzzle/TReadOnlyPuzzle.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;

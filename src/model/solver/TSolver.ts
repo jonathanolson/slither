@@ -1,5 +1,8 @@
 // Each solver is specifically hooked to a state
-import { TAction, TBoard, TState, TStructure } from '../structure.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 export interface TSolver<Data, Action extends TAction<Data>> {
   // If there is a chance nextAction will return an action

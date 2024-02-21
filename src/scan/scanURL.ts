@@ -5,10 +5,17 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { BasicSquarePuzzle, CompleteData, SquareBoard, TCompleteData, TSquareEdge, TSquarePuzzle, TSquareStructure, TState } from '../model/structure.ts';
-import EdgeState from '../model/EdgeState.ts';
+import EdgeState from '../model/data/edge/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { TSquareEdge } from '../model/board/square/TSquareEdge.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { TSquareStructure } from '../model/board/square/TSquareStructure.ts';
+import { TSquarePuzzle } from '../model/puzzle/TSquarePuzzle.ts';
+import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import { CompleteData } from '../model/data/combined/CompleteData.ts';
+import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html

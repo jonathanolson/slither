@@ -7,10 +7,15 @@ import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleNode from './view/PuzzleNode.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
-import PuzzleModel from './model/PuzzleModel.ts';
+import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { BasicSquarePuzzle, TCompleteData, TPuzzle, TState, TStructure } from './model/structure.ts';
 import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
+import { TState } from './model/data/core/TState.ts';
+import { TStructure } from './model/board/core/TStructure.ts';
+
+import { TPuzzle } from './model/puzzle/TPuzzle.ts';
+import { TCompleteData } from './model/data/combined/TCompleteData.ts';
+import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 
 // @ts-ignore
 if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {

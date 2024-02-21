@@ -1,6 +1,6 @@
-import { TAction, TState } from '../structure.ts';
-
 import { TSolver } from './TSolver.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
 
 export class CompositeSolver<Data> implements TSolver<Data, TAction<Data>> {
 

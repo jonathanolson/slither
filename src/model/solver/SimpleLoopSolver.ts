@@ -1,7 +1,16 @@
 import { TSolver } from './TSolver.ts';
-import { CompositeAction, EdgeStateSetAction, TAction, TBoard, TEdge, TEdgeData, TFaceData, TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener, TState, TVertex } from '../structure.ts';
 import { InvalidStateError } from './InvalidStateError.ts';
-import EdgeState from '../EdgeState.ts';
+import EdgeState from '../data/edge/EdgeState.ts';
+import { TVertex } from '../board/core/TVertex.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
+import { TFaceData } from '../data/face/TFaceData.ts';
+import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener } from '../data/simple-region/TSimpleRegionData.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 export type SimpleLoopSolverOptions = {
   solveToRed: boolean;

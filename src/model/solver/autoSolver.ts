@@ -1,11 +1,13 @@
 import { DerivedProperty } from 'phet-lib/axon';
-import { TBoard, TCompleteData, TState } from '../structure';
 import { CompositeSolver } from './CompositeSolver';
 import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver';
 import { SimpleVertexSolver } from './SimpleVertexSolver';
 import { SimpleFaceSolver } from './SimpleFaceSolver';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
 import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
+import { TState } from '../data/core/TState.ts';
+import { TBoard } from '../board/core/TBoard.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );

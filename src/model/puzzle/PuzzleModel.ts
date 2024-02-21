@@ -1,9 +1,17 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { getPressStyle } from '../config';
-import { EdgeStateSetAction, NoOpAction, TBoard, TCompleteData, TEdge, TPuzzle, TState, TStructure } from './structure';
-import { InvalidStateError } from './solver/InvalidStateError.ts';
-import { autoSolverFactoryProperty, safeSolverFactory } from './solver/autoSolver.ts';
-import { iterateSolverFactory, withSolverFactory } from './solver/TSolver.ts';
+import { getPressStyle } from '../../config.ts';
+import { InvalidStateError } from '../solver/InvalidStateError.ts';
+import { autoSolverFactoryProperty, safeSolverFactory } from '../solver/autoSolver.ts';
+import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TState } from '../data/core/TState.ts';
+import { NoOpAction } from '../data/core/NoOpAction.ts';
+import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { TBoard } from '../board/core/TBoard.ts';
+
+import { TPuzzle } from './TPuzzle.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {

@@ -1,6 +1,6 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { HBox, Node, Path } from 'phet-lib/scenery';
-import PuzzleModel from '../model/PuzzleModel';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
@@ -8,7 +8,11 @@ import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape
 import { combineOptions } from 'phet-lib/phet-core';
 import { controlBarFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 import { NewNode } from './NewNode.ts';
-import { TCompleteData, TPuzzle, TState, TStructure } from '../model/structure.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+
+import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
