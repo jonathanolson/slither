@@ -1332,6 +1332,18 @@ export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
 
     assertEnabled() && validateBoard( this );
   }
+
+  public static enumeratePointyFaceCoordinates( radius: number ): Vector2[] {
+    const result: Vector2[] = [];
+
+    for ( let r = -radius; r <= radius; r++ ) {
+      for ( let q = Math.max( -radius, -r - radius ); q <= Math.min( radius, -r + radius ); q++ ) {
+        result.push( new Vector2( q, r ) );
+      }
+    }
+
+    return result;
+  }
 }
 
 export const validateBoard = ( board: TBoard ): void => {
@@ -1989,6 +2001,32 @@ export class BasicPuzzle<Data> {
     initialState: TState<Data>
   ) {
     this.stateProperty = new TinyProperty( initialState );
+  }
+
+  public static loadPointyTopHexagonalString( str: string ): BasicPuzzle<TCompleteData> {
+    assertEnabled() && assert( str.startsWith( 'h' ) || str.startsWith( 'H' ) );
+    const [ radiusString, faceValues ] = str.slice( 1 ).split( ' ' );
+    const radius = parseInt( radiusString );
+
+    const board = new HexagonalBoard( radius, Math.sqrt( 3 ) / 2, str.startsWith( 'h' ) );
+
+    const faceLocations = HexagonalBoard.enumeratePointyFaceCoordinates( radius );
+
+    // TODO: just be able to read it out?
+    const faceMap = new Map<Vector2, FaceState>();
+
+    for ( let i = 0; i < faceValues.length; i++ ) {
+      const value = faceValues[ i ];
+      if ( value === '.' ) {
+        continue;
+      }
+      const face = faceLocations[ i ];
+      faceMap.set( face, parseInt( value ) );
+    }
+
+    const state = CompleteData.fromFaces( board, CompleteData.faceMapLookup( faceMap ) );
+
+    return new BasicPuzzle( board, state );
   }
 }
 

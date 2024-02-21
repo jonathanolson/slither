@@ -140,27 +140,35 @@ export class NewNode extends PopupNode {
 
             faceMap.set( new Vector2( 3, -4 ), 4 );
 
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-            // faceMap.set( new Vector2( 0, 0 ), 0 );
-
             const state = CompleteData.fromFaces( board, CompleteData.faceMapLookup( faceMap ) );
 
             options.loadPuzzle( new BasicPuzzle( board, state ) );
+          }
+        } ) ),
+        new TextPushButton( 'Hexagonal Medium', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            options.loadPuzzle( BasicPuzzle.loadPointyTopHexagonalString(
+              'H8 ' +
+              '002......' +
+              '2.3443344.' +
+              '44.........' +
+              '4..544......' +
+              '435.....3..34' +
+              '.223...1.4.4.4' +
+              '532..5.3.54..4.' +
+              '..4.4...543..5..' +
+              '5.4.533.5.4.4..3.' +
+              '.3423.5.3.......' +
+              '.4.....52.23.3.' +
+              '43.213.3..544.' +
+              '4.53433.4.5..' +
+              '...35423....' +
+              '..43...53.4' +
+              '..5.......' +
+              '...2.....'
+            ) );
           }
         } ) ),
         new TextPushButton( '10x10 random', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
