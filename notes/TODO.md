@@ -6,7 +6,25 @@
 
 - Shapes
   - Get topological handling for any shape, but specialize for 4x4 grid
-  - Hex! And other planar tilings
+  - What planar tilings are easy to generate? (How can we... make things easier to generate?)
+    - OMG get a library that has done these tilings before(!) 
+      - https://en.wikipedia.org/wiki/Cairo_pentagonal_tiling 
+      - https://en.wikipedia.org/wiki/Truncated_square_tiling
+      - https://en.wikipedia.org/wiki/Rhombille_tiling
+      - https://en.wikipedia.org/wiki/Truncated_hexagonal_tiling
+      - https://en.wikipedia.org/wiki/Rhombitrihexagonal_tiling <--- pretty promising
+      - https://en.wikipedia.org/wiki/Deltoidal_trihexagonal_tiling
+      - https://en.wikipedia.org/wiki/Truncated_trihexagonal_tiling
+      - https://en.wikipedia.org/wiki/Snub_trihexagonal_tiling
+      - https://en.wikipedia.org/wiki/Floret_pentagonal_tiling
+    - Lazy way: we scan something and process it (fixed-size)
+    - If we can generate tilings, perhaps we can "cut out" faces that are outside of a particular shape?
+      - Then if we have a set of .... faces, then generate all of the other horrible horrible metadata?
+      - https://github.com/isohedral/tactile-js (isohedral, but we can subdivide the prototiles, no?)
+        - https://cs.uwaterloo.ca/~csk/other/phd/
+          - OMG https://observablehq.com/@mattdzugan/dithering-on-non-square-pixels 
+        - Yes it should work, see: https://observablehq.com/@mattdzugan/hello-tactile-js-a-library-for-eascher-esque-isohedron-tess?collection=@mattdzugan/tilings
+    - Or be lazy: generate voroni things, or figure out subdivisions
   - NO sphere, easier for the graphics/model to not make that generalization right now
 
 - UI
@@ -347,9 +365,8 @@
 - Current code TODOs
   - Hex: https://www.redblobgames.com/grids/hexagons/
     - The "square" line cap makes things confusing, looks off-centered in hexagonal
-    - We can rotate boards as desired
-    - Do... just an expanded hex grid (one number for size)? 
     - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
+    - Look into https://www.youtube.com/watch?v=piWIPZ_13E8
   - Move things out of structure.ts.... it is ridiculous
   - SAVE the current puzzle state in local storage!!! (... but probably not all of the history?)
     - HEY BOARD AGNOSTIC!!!! We can save THE ENTIRE BOARD SETUP, so it will be possible to store drawing-shape slitherlinks! Voronoi tiling? YOU NAME IT
