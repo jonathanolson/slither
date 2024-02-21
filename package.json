@@ -12,7 +12,8 @@
     "phet-lib": "~0.0.4",
     "@techstark/opencv-js": "4.9.0-release.2",
     "tesseract.js": "~5.0.4",
-    "culori": "~4.0.1"
+    "culori": "~4.0.1",
+    "pako": "~2.1.0"
   },
   "devDependencies": {
     "vite": "^5.1.0",
@@ -22,6 +23,7 @@
     "rollup-plugin-unassert": "~0.6.0",
 
     "@types/culori": "~2.1.0",
+    "@types/pako": "~2.0.3",
     "@types/jquery": "~3.5.13",
     "@types/lodash": "~4.14.172",
     "@types/p2": "~0.7.39",
