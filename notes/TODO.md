@@ -363,6 +363,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Upload initial version to website (and a way to update it)
   - Hex: https://www.redblobgames.com/grids/hexagons/
     - The "square" line cap makes things confusing, looks off-centered in hexagonal
     - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
