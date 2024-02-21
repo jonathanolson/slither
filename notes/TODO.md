@@ -368,10 +368,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Set up different build targets (one for WITH opencv/tesseract, one for WITHOUT)
-    - Or... can we dynamically load things?
-    - rollup tutorial says:
-      - import('./foo.js').then(({ default: foo }) => console.log(foo)); 
   - Upload initial version to website (and a way to update it)
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
