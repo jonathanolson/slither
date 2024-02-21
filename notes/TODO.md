@@ -368,7 +368,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Open as separate Intellij project? (still easy to browse normal files?)
   - Set up different build targets (one for WITH opencv/tesseract, one for WITHOUT)
     - Or... can we dynamically load things?
     - rollup tutorial says:
