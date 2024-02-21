@@ -298,11 +298,57 @@
 - Puzzle editor
   - Particularly for things that didn't scan correctly.
 
+- COLOR SHIFTING (for maintaining good color separation)
+  - Edges AND Faces animate (shift) hue to maintain good separation
+  - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
+  - Color Model - defines target/current color for each region (can swap whatever of these)
+    - Per-change computation (then animated to)
+      - Simple!
+      - Large changes might not look great... hmmm
+    - Organic (step-driven, recompute targets each frame)
+      - Might be simpler to get "good" behavior
+      - Might have cool shifts - one thing changes, which then triggers another thing to change, biological-looking
+      - Risk of oscillation
+      - Worse performance?
+    - Quality metrics
+      - Global color variation (spread out, and not just all e.g. green/red)
+        - Slight pressure away from others? (this is probably particularly helpful for isolated regions)
+      - Spatial color variation (don't just ignore far away regions - look at what are the closest FOR it)
+        - But allow "far away" ones to shift so we get better "closer" behavior 
+      - Avoid "bad" colors for large regions (and especially at the end)
+        - Can have global hue shifts/rotations
+      - Don't change large regions too much (or too quickly) (inertia/weight)
+      - Don't change hues too quickly (limit velocity)
+      - NO fast oscillations? Increase "damping" if something seems to be "bouncing" between targets, so that it slows down
+      - "Close" regions should have different BUT NOT TOO DIFFERENT colors (we don't want to create a bunch of inverses)
+        - Ideal "distance" in hue space? 
+        - Hue pressure is CIRCULAR
+      - Face hues are... different? similar? from the edge hues
+  - Region Model - takes the Color Model, and can animate either:
+    - Full region color <---- START WITH THIS
+    - Subregions same color (until they join)
+      - Once a subregion matches color (enough), it gets combined 
+    - Each edge different
+    - Each edge different + gradient color for each
+      - Model each vertex with a color separately 
+      - SO COOL to see the gradient "pulse through"? 
+      - Gradient should go UP TO the join, NOT INCLUDING the join (so that the entire join is the same color)
+      - Would create a node for each edge, position the gradient (and adjust shape/visibility/endpoint color based on connections/etc)
+      - (possible, each SVG stop gets updated in SVG without recreating - give it a Property)
+    - NOTE: anything other than full-region might want to get "mitered joints" at joints, however is desired
+      - That... seems like a pain. Especially for nicely rounded stroked corners. Probably do it without other support?
+  - Metric for "separation between two regions" - not dependent on other regions, does not need to be recomputed
+    - TODO: how to compute?
+  - Weird edges:
+    - Shorten them somewhat, so they don't connect? LEAVE GRAY
+
 - Current code TODOs
   - SAVE the current puzzle state in local storage!!! (... but probably not all of the history?) 
   - SHOW the vision working on the image(!)
   - Improve the "new" popup
   - Hex: https://www.redblobgames.com/grids/hexagons/
+  - AutoSolve rule presets - WHAT IS RELAXING / fun
+    - "rules that only set red edges" might be relaxing
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript
@@ -312,13 +358,20 @@
     - Soon we'll be able to... generate puzzles? Get backtracker?
   - Theme options:
     - Simple Region based edges, OR prefer the raw edges (uncolored)? 
-    - "dashed lines" for "white" / "blank" lines for "red"
+    - "dashed lines" for "white" / "blank" lines for "red" <--- this could really be helpful!
   - Smooth animations between things ... instead of "New", have a main menu?
+  - Add config for press styles (but also figure out other input methods - e.g. dragging multiple lines)
+    - Hey, how would dragging multiple lines work with pan? EXCLUSIVE SETTING
+    - What about "quick double press" for x?
   - Buttons 
     - RAINBOW COLORS on the buttons
     - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
       - Will apply "history" state for EACH solve step
       - OR WILL APPLY IT AS ONE THING ---- we might want each
+    - Share/export button
+      - Puzzle text (faces, faces/edges, in different formats)
+      - URL (eventually)
+      - Image (hey... can we use Alpenglow for the high-quality bits?)
     - Mark/save (for backtracking)
       - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
     - (allow pressing and holding some of the buttons...)
@@ -328,6 +381,7 @@
     - Or at least have a delay 
   - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
     - Have a "minimum number of colors before showing"? 
+    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
     - Each pattern needs to specify the required topology/structure for the area (what is important)
     - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
@@ -429,6 +483,7 @@
   - Use seedRandom setup so we can get reproducibility.
 
 - Performance
+  - Avoid animating anything outside-of-viewport?
   - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
   - Assertion removal with unassert isn't... applying much so far. TODO check
     - unassert isn't stripping our assertions!
