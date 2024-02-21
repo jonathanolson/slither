@@ -1,5 +1,5 @@
-import { Vector2 } from "phet-lib/dot";
-import { Enumeration, EnumerationValue } from "phet-lib/phet-core";
+import { Vector2 } from 'phet-lib/dot';
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export class CardinalDirection extends EnumerationValue {
 

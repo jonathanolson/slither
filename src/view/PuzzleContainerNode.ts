@@ -1,8 +1,8 @@
-import { AnimatedPanZoomListener, Node, Rectangle, Sizable } from "phet-lib/scenery";
-import PuzzleNode from "./PuzzleNode";
-import { Bounds2, Vector2 } from "phet-lib/dot";
-import { Shape } from "phet-lib/kite";
-import { playAreaBackgroundColorProperty } from "./Theme";
+import { AnimatedPanZoomListener, Node, Rectangle, Sizable } from 'phet-lib/scenery';
+import PuzzleNode from './PuzzleNode';
+import { Bounds2, Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { playAreaBackgroundColorProperty } from './Theme';
 
 export default class PuzzleContainerNode extends Sizable( Node ) {
 

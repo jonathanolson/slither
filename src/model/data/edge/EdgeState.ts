@@ -1,4 +1,4 @@
-import { Enumeration, EnumerationValue } from "phet-lib/phet-core";
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export default class EdgeState extends EnumerationValue {
   public static readonly WHITE = new EdgeState();

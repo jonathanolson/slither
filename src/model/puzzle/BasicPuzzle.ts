@@ -5,7 +5,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
 import FaceState from '../data/face/FaceState.ts';
 import { CompleteData } from '../data/combined/CompleteData.ts';
-import { TProperty, TinyProperty } from 'phet-lib/axon';
+import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
 
 export class BasicPuzzle<Data> {

@@ -1,5 +1,5 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2, Vector2, dotRandom } from 'phet-lib/dot';
+import { Bounds2, dotRandom, Vector2 } from 'phet-lib/dot';
 import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';

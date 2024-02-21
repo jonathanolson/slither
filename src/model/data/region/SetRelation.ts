@@ -1,4 +1,4 @@
-import { Enumeration, EnumerationValue } from "phet-lib/phet-core";
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export default class SetRelation extends EnumerationValue {
   // x in A IFF x in B

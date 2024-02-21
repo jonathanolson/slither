@@ -1,5 +1,5 @@
-import { Property } from "phet-lib/axon";
-import { EnumerationValue } from "phet-lib/phet-core";
+import { Property } from 'phet-lib/axon';
+import { EnumerationValue } from 'phet-lib/phet-core';
 
 export type LocalStoragePropertyOptions<T> = {
   serialize: ( value: T ) => string;

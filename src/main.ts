@@ -12,7 +12,6 @@ import ControlBarNode from './view/ControlBarNode.ts';
 import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 import { TState } from './model/data/core/TState.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
-
 import { TPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';

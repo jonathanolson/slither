@@ -1,10 +1,9 @@
-
 import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { Property, NumberProperty, PatternStringProperty, StringProperty } from 'phet-lib/axon';
-import { Node, Display, Text, VBox, Font, AlignBox, AnimatedPanZoomListener } from 'phet-lib/scenery';
+import { NumberProperty, PatternStringProperty, Property, StringProperty } from 'phet-lib/axon';
+import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, Text, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL';
 // import scanFaceValues from './scan/scanFaceValues';

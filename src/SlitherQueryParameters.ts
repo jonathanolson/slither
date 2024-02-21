@@ -1,4 +1,3 @@
-
 import 'phet-lib';
 
 // @ts-ignore

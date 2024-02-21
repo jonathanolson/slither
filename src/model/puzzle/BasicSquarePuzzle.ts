@@ -6,7 +6,7 @@ import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TFace } from '../board/core/TFace.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TSquareEdge } from '../board/square/TSquareEdge.ts';
-import { TProperty, TinyProperty } from 'phet-lib/axon';
+import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Orientation } from 'phet-lib/phet-core';
 
 export class BasicSquarePuzzle<Data> {
