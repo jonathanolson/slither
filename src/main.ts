@@ -17,7 +17,7 @@ import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 
 // @ts-ignore
-if ( window.assertions && import.meta?.env?.MODE !== 'production' ) {
+if ( window.assertions && !( import.meta.env.PROD ) ) {
   // TODO: We should actually... have stripped these, something is going wrong
   console.log( 'enabling assertions' );
   // @ts-ignore
