@@ -243,9 +243,12 @@ class EdgeNode extends Node {
         .lineTo( centerPoint.x, centerPoint.y + 0.5 )
         .close();
       this.mouseArea = this.touchArea = pointerArea;
+
+      // TODO: config setting for shift-click reversal?
       this.addInputListener( new FireListener( {
         mouseButton: 0,
-        fire: event => edgePressListener( edge, 0 )
+        // @ts-ignore
+        fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 2 : 0 )
       } ) );
       this.addInputListener( new FireListener( {
         mouseButton: 1,
@@ -253,7 +256,8 @@ class EdgeNode extends Node {
       } ) );
       this.addInputListener( new FireListener( {
         mouseButton: 2,
-        fire: event => edgePressListener( edge, 2 )
+        // @ts-ignore
+        fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 0 : 2 )
       } ) );
       this.cursor = 'pointer';
     }

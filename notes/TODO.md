@@ -363,7 +363,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - SHIFT CLICK TO INVERSE THE CLICK (great on macbook)
   - Upload initial version to website (and a way to update it)
   - Hex: https://www.redblobgames.com/grids/hexagons/
     - The "square" line cap makes things confusing, looks off-centered in hexagonal
