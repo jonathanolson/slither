@@ -407,7 +407,10 @@
     - Presumably after a delay, replace the current stack state (with action and simple change) with an autosolved change
     - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
   - SHOW the vision working on the image(!)
-  - Improve the "new" popup
+  - Exterior UI (improved "new" popup, etc.)
+    - We have the puzzle/solver Node
+    - TRANSITION swipe animation, like game screens
+    - Have tutorial, rules, options, etc.? Better scaffolding
   - AutoSolve rule presets - WHAT IS RELAXING / fun
     - "rules that only set red edges" might be relaxing
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
