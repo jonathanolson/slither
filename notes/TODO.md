@@ -395,6 +395,16 @@
     - The "square" line cap makes things confusing, looks off-centered in hexagonal
     - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
     - Look into https://www.youtube.com/watch?v=piWIPZ_13E8
+  - FILE SIZE improvements:
+    - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
+    - If we attempt to do a dynamic import (in NewNode):
+          TypeError [PLUGIN_ERROR]: [vite:load-fallback] Could not load vite/preload-helper (imported by src/view/NewNode.ts): The argument 'path' must be a string or Uint8Array without null bytes. Received '\x00vite/preload-helper'
+              at open (node:internal/fs/promises:586:10)
+              at Object.readFile (node:internal/fs/promises:1037:20)
+              at Object.load (file:///Users/jon/phet/git/slither/node_modules/vite/dist/node/chunks/dep-jDlpJiMN.js:66605:43)
+              at async PluginDriver.hookFirstAndGetPlugin (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19479:28)
+              at async file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:18650:33
+              at async Queue.work (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19689:32)
   - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
     - Presumably after a delay, replace the current stack state (with action and simple change) with an autosolved change
     - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
