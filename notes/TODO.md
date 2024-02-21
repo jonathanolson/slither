@@ -368,9 +368,13 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Share URLs:
+    - Query parameter to load a puzzle string!
+    - Query parameter to... load a compressed puzzle serialization?
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
     - Simplify solver stuff after
+    - Can we... have a button to "mark" a backtrack edge change?
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
   - Should we rule-scan soon so that our solver architecture works for it?
   - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
