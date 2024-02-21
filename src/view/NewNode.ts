@@ -1,12 +1,13 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2, dotRandom } from 'phet-lib/dot';
+import { Bounds2, Vector2, dotRandom } from 'phet-lib/dot';
 import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { BasicSquarePuzzle, TCompleteData, TPuzzle, TState, TStructure } from '../model/structure.ts';
+import { BasicPuzzle, BasicSquarePuzzle, CompleteData, HexagonalBoard, TCompleteData, TPuzzle, TState, TStructure } from '../model/structure.ts';
 import scanURL from '../scan/scanURL.ts';
 import { combineOptions } from 'phet-lib/phet-core';
+import FaceState from '../model/FaceState.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -86,6 +87,80 @@ export class NewNode extends PopupNode {
             options.loadPuzzle( BasicSquarePuzzle.loadFromSimpleString(
           '17x5 322132..3122312......22.22...2...20.2...22.22.2.2.0.0..23.3.3.3..2....022.12.21.2200.'
             ) );
+          }
+        } ) ),
+        new TextPushButton( 'Hexagonal Easy', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            const board = new HexagonalBoard( 4, 1, true );
+
+            const faceMap = new Map<Vector2, FaceState>();
+
+            // TODO: create a format depending on pointy-first rows, or flat-first rows?
+
+            faceMap.set( new Vector2( -2, 3 ), 3 );
+            faceMap.set( new Vector2( -1, 3 ), 3 );
+            faceMap.set( new Vector2( 1, 3 ), 2 );
+
+            faceMap.set( new Vector2( -4, 2 ), 3 );
+            faceMap.set( new Vector2( -3, 2 ), 4 );
+            faceMap.set( new Vector2( 0, 2 ), 4 );
+            faceMap.set( new Vector2( 1, 2 ), 3 );
+
+            faceMap.set( new Vector2( -2, 1 ), 4 );
+            faceMap.set( new Vector2( -1, 1 ), 3 );
+            faceMap.set( new Vector2( 0, 1 ), 4 );
+            faceMap.set( new Vector2( 3, 1 ), 2 );
+
+            faceMap.set( new Vector2( -3, 0 ), 4 );
+            faceMap.set( new Vector2( -2, 0 ), 3 );
+            faceMap.set( new Vector2( -1, 0 ), 5 );
+            faceMap.set( new Vector2( 0, 0 ), 4 );
+            faceMap.set( new Vector2( 1, 0 ), 2 );
+            faceMap.set( new Vector2( 4, 0 ), 0 );
+
+            faceMap.set( new Vector2( -2, -1 ), 3 );
+            faceMap.set( new Vector2( 0, -1 ), 3 );
+            faceMap.set( new Vector2( 1, -1 ), 3 );
+            faceMap.set( new Vector2( 2, -1 ), 3 );
+            faceMap.set( new Vector2( 3, -1 ), 3 );
+            faceMap.set( new Vector2( 4, -1 ), 2 );
+
+            faceMap.set( new Vector2( -2, -2 ), 3 );
+            faceMap.set( new Vector2( -1, -2 ), 5 );
+            faceMap.set( new Vector2( 0, -2 ), 4 );
+            faceMap.set( new Vector2( 1, -2 ), 4 );
+            faceMap.set( new Vector2( 3, -2 ), 3 );
+            faceMap.set( new Vector2( 4, -2 ), 3 );
+
+            faceMap.set( new Vector2( 0, -3 ), 4 );
+            faceMap.set( new Vector2( 1, -3 ), 4 );
+            faceMap.set( new Vector2( 3, -3 ), 5 );
+
+            faceMap.set( new Vector2( 3, -4 ), 4 );
+
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+            // faceMap.set( new Vector2( 0, 0 ), 0 );
+
+            const state = CompleteData.fromFaces( board, CompleteData.faceMapLookup( faceMap ) );
+
+            options.loadPuzzle( new BasicPuzzle( board, state ) );
           }
         } ) ),
         new TextPushButton( '10x10 random', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

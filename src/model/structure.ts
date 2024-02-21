@@ -1797,6 +1797,14 @@ export class CompleteData implements TState<TCompleteData> {
     return CompleteData.fromFacesEdges( board, getInitialFaceState, () => EdgeState.WHITE );
   }
 
+  public static faceMapLookup( faceMap: Map<Vector2, FaceState> ): ( ( face: TFace ) => FaceState ) {
+    const stringMap = new Map( Array.from( faceMap.entries() ).map( ( [ key, value ] ) => [ `${key.x},${key.y}`, value ] ) );
+    return ( face: TFace ) => {
+      const value = stringMap.get( `${face.logicalCoordinates.x},${face.logicalCoordinates.y}` );
+      return value !== undefined ? value : null;
+    };
+  }
+
   public getFaceState( face: TFace ): FaceState {
     return this.faceData.getFaceState( face );
   }

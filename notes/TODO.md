@@ -345,6 +345,12 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Hex: https://www.redblobgames.com/grids/hexagons/
+    - The "square" line cap makes things confusing, looks off-centered in hexagonal
+    - We can rotate boards as desired
+    - Do... just an expanded hex grid (one number for size)? 
+    - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
+  - Move things out of structure.ts.... it is ridiculous
   - SAVE the current puzzle state in local storage!!! (... but probably not all of the history?)
     - HEY BOARD AGNOSTIC!!!! We can save THE ENTIRE BOARD SETUP, so it will be possible to store drawing-shape slitherlinks! Voronoi tiling? YOU NAME IT
     - [[FIRST]] - can we get hex puzzles going?
@@ -352,10 +358,6 @@
     - HEY, what if we serialize the actions (in order, with gaps for action steps) that got to it?
   - SHOW the vision working on the image(!)
   - Improve the "new" popup
-  - Hex: https://www.redblobgames.com/grids/hexagons/
-    - We can rotate boards as desired
-    - Do... just an expanded hex grid (one number for size)? 
-    - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
   - AutoSolve rule presets - WHAT IS RELAXING / fun
     - "rules that only set red edges" might be relaxing
   - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
