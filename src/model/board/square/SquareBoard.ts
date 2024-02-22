@@ -169,13 +169,23 @@ export class SquareBoard extends BaseBoard<TSquareStructure> implements TSquareB
       ...verticalEdges
     ];
 
-    // TODO: use createBoardDescriptor!!!!
+    const halfEdges = edges.flatMap( edge => [ edge.forwardHalf, edge.reversedHalf ] );
+
+    const firstBoundaryHalfEdge = halfEdges.find( halfEdge => halfEdge.face === null )!;
+    const outerBoundary: TSquareHalfEdge[] = [ firstBoundaryHalfEdge ];
+    let nextBoundaryEdge = firstBoundaryHalfEdge.next;
+    while ( nextBoundaryEdge !== firstBoundaryHalfEdge ) {
+      outerBoundary.push( nextBoundaryEdge );
+      nextBoundaryEdge = nextBoundaryEdge.next;
+    }
+
+    // TODO: use createBoardDescriptor instead, if we can skip the square-specific info.
     super( {
       edges,
       vertices,
       faces,
-      halfEdges: edges.flatMap( edge => [ edge.forwardHalf, edge.reversedHalf ] ),
-      outerBoundary: [], // TODO: get our outerBoundary from createBoardDescriptor!!!
+      halfEdges,
+      outerBoundary: outerBoundary,
       innerBoundaries: []
     } );
 
