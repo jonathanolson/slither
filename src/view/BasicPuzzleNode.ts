@@ -18,11 +18,14 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TReadOnlyPuzzle } from '../model/puzzle/TReadOnlyPuzzle.ts';
 import _ from '../workarounds/_.ts';
 import { getSignedArea } from '../model/board/core/createBoardDescriptor.ts';
+import { THalfEdge } from '../model/board/core/THalfEdge.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   useSimpleRegionForBlack?: boolean;
+  useBackgroundOffsetStroke?: boolean;
+  backgroundOffsetDistance?: number;
 } & NodeOptions;
 
 const toRGB = toGamut( 'rgb' );
@@ -35,7 +38,6 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
     options?: BasicPuzzleNodeOptions
   ) {
-    const backgroundContainer = new Node();
     const faceContainer = new Node();
     const vertexContainer = new Node();
     const edgeContainer = new Node();
@@ -53,11 +55,53 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
     } );
 
-    const outerBoundaryPoints = puzzle.board.outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
+    const backgroundNode = new BackgroundNode(
+      puzzle.board.outerBoundary,
+      puzzle.board.innerBoundaries,
+      options
+    );
+
+    // TODO: for performance, can we reduce the number of nodes here?
+
+    puzzle.board.vertices.forEach( vertex => {
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, options ) );
+    } );
+
+    puzzle.board.edges.forEach( edge => {
+      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, options ) );
+    } );
+
+    if ( options?.useSimpleRegionForBlack ) {
+      edgeContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty, options ) );
+    }
+
+    super( combineOptions<BasicPuzzleNodeOptions>( {
+      children: [
+        backgroundNode,
+        faceContainer,
+        vertexContainer,
+        edgeContainer
+      ]
+    }, options ) );
+  }
+}
+
+class BackgroundNode extends Node {
+  public constructor(
+    public readonly outerBoundary: THalfEdge[],
+    public readonly innerBoundaries: THalfEdge[][],
+    options?: BasicPuzzleNodeOptions
+  ) {
+    super();
+
+    const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
     const outerBoundaryShape = Shape.polygon( outerBoundaryPoints );
 
-    const useOffset = true;
-    const backgroundDistance = 0.3;
+    const useOffset = !!options?.useBackgroundOffsetStroke;
+    const backgroundDistance = options?.backgroundOffsetDistance ?? 0.3;
+
+    const isNormalOrientation = getSignedArea( outerBoundaryPoints ) > 0;
+    const offsetShapeOffset = isNormalOrientation ? -backgroundDistance : backgroundDistance;
 
     // TODO: simpler way of hooking in here ---- we want to simplify the shape where we only include specific winding numbers
     const testSimplify = ( shape: Shape ) => {
@@ -77,9 +121,7 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
 
     let backgroundShape: Shape;
     if ( useOffset ) {
-      backgroundShape = outerBoundaryShape.getOffsetShape(
-        getSignedArea( outerBoundaryPoints ) > 0 ? -backgroundDistance : backgroundDistance
-      )!.getSimplifiedAreaShape();
+      backgroundShape = outerBoundaryShape.getOffsetShape( offsetShapeOffset )!.getSimplifiedAreaShape();
     }
     else {
       const strokedOuterBoundaryShape = outerBoundaryShape.getStrokedShape( new LineStyles( {
@@ -90,14 +132,12 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     }
 
     // TODO: refactor to be more general --- WE CAN JUST INCLUDE THE HOLES IN THE MAIN SHAPE right?
-    const innerBoundaryShapes: Shape[] = puzzle.board.innerBoundaries.map( innerBoundary => {
+    const innerBoundaryShapes: Shape[] = innerBoundaries.map( innerBoundary => {
       const innerBoundaryPoints = innerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
       const innerBoundaryShape = Shape.polygon( innerBoundaryPoints );
 
       if ( useOffset ) {
-        return testSimplify( innerBoundaryShape.getOffsetShape(
-          getSignedArea( innerBoundaryPoints ) > 0 ? backgroundDistance : -backgroundDistance
-        )! );
+        return testSimplify( innerBoundaryShape.getOffsetShape( offsetShapeOffset )! );
       }
       else {
         const strokedInnerBoundaryShape = innerBoundaryShape.getStrokedShape( new LineStyles( {
@@ -108,7 +148,7 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
       }
     } );
 
-    backgroundContainer.children = [
+    this.children = [
       new Path( backgroundShape, {
         fill: puzzleBackgroundColorProperty,
         stroke: puzzleBackgroundStrokeColorProperty,
@@ -120,29 +160,6 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
         lineWidth: 0.03
       } ) )
     ];
-
-    // TODO: for performance, can we reduce the number of nodes here?
-
-    puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, options ) );
-    } );
-
-    puzzle.board.edges.forEach( edge => {
-      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, options ) );
-    } );
-
-    if ( options?.useSimpleRegionForBlack ) {
-      edgeContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty, options ) );
-    }
-
-    super( combineOptions<BasicPuzzleNodeOptions>( {
-      children: [
-        backgroundContainer,
-        faceContainer,
-        vertexContainer,
-        edgeContainer
-      ]
-    }, options ) );
   }
 }
 

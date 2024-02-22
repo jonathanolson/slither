@@ -368,17 +368,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - ... the outer-boundary-fixing stuff (start with the hex case for existing board info)
-    - Do we support "bridge edges" that are not part of any face?
-      - Nah!
-    - For consistent mathematical CCW, we'll want to write that base layer first...?
-      - Also given that we're doing that, have it compute the OUTER boundary and any holes in it
-        - NOTE: only a single outer boundary (connected puzzle to be solvable), and holes can't have holes (similar)
-    - compute info from view coordinates
-      - compute face centroids
-      - reverse face vertex order if needed (for consistent CCW)
-      - HEY can we switch to a mathematical... representation for CCW? Keep positive signed area in coordinates?
-  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
     - Simplify solver stuff after
@@ -387,6 +376,9 @@
       - Should all solvers give the difficulty?
       - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
       - Should all solve actions - have a "difficulty" rating?
+  - Add demo/testing ACTUAL puzzles [NEEDS backtracking]
+    - Hexagon-with-hole, radial (with hole), etc.
+  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - ... get rid of structure and square specializations?
     - TODO: should we first verify that we can do the "pattern" stuff nicely?
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?

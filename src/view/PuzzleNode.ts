@@ -28,7 +28,9 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       edgePressListener: ( edge, button ) => {
         puzzleModel.onUserEdgePress( edge, button );
       },
-      useSimpleRegionForBlack: true
+      useSimpleRegionForBlack: true,
+      useBackgroundOffsetStroke: false,
+      backgroundOffsetDistance: 0.3
     } ) );
   }
 }
