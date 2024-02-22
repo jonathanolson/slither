@@ -2,12 +2,11 @@ import { FireListener, Line, Node, NodeOptions, Path, Rectangle, Text, TextOptio
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { arrayDifference, combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/data/edge/EdgeState.ts';
-import { LineStyles, Shape } from 'phet-lib/kite';
+import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { Bounds2 } from 'phet-lib/dot';
-import { edgeWeirdColorProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, lineColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty, vertexColorProperty, xColorProperty } from './Theme.ts';
+import { edgeWeirdColorProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, lineColorProperty, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty, vertexColorProperty, xColorProperty } from './Theme.ts';
 import { TVertex } from '../model/board/core/TVertex.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { TFace } from '../model/board/core/TFace.ts';
@@ -16,8 +15,9 @@ import { TFaceData } from '../model/data/face/TFaceData.ts';
 import { TEdgeData } from '../model/data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../model/data/simple-region/TSimpleRegionData.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { TSquareBoard } from '../model/board/square/TSquareBoard.ts';
 import { TReadOnlyPuzzle } from '../model/puzzle/TReadOnlyPuzzle.ts';
+import _ from '../workarounds/_.ts';
+import { getSignedArea } from '../model/board/core/createBoardDescriptor.ts';
 
 export type BasicPuzzleNodeOptions = {
   textOptions?: TextOptions;
@@ -40,9 +40,6 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
     const vertexContainer = new Node();
     const edgeContainer = new Node();
 
-    const facesShape = new Shape();
-    const puzzleBounds = Bounds2.NOTHING.copy();
-
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
       if ( state.getWeirdEdges().length ) {
         return false;
@@ -54,30 +51,74 @@ export default class BasicPuzzleNode<Structure extends TStructure = TStructure, 
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
-
-      facesShape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
-      face.vertices.forEach( vertex => {
-        puzzleBounds.addPoint( vertex.viewCoordinates );
-      } );
     } );
 
-    let expandedShape: Shape;
-    if ( ( puzzle.board as TSquareBoard ).isSquare ) {
-      expandedShape = Shape.bounds( puzzleBounds.dilated( 0.5 ) );
+    const outerBoundaryPoints = puzzle.board.outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
+    const outerBoundaryShape = Shape.polygon( outerBoundaryPoints );
+
+    const useOffset = true;
+    const backgroundDistance = 0.3;
+
+    // TODO: simpler way of hooking in here ---- we want to simplify the shape where we only include specific winding numbers
+    const testSimplify = ( shape: Shape ) => {
+      const graph = new Graph();
+      graph.addShape( 0, shape );
+
+      graph.computeSimplifiedFaces();
+      graph.computeFaceInclusion( ( map : any ) => map[ '0' ] > 0 );
+      const subgraph = graph.createFilledSubGraph();
+      const resultShape = subgraph.facesToShape();
+
+      graph.dispose();
+      subgraph.dispose();
+
+      return resultShape;
+    };
+
+    let backgroundShape: Shape;
+    if ( useOffset ) {
+      backgroundShape = outerBoundaryShape.getOffsetShape(
+        getSignedArea( outerBoundaryPoints ) > 0 ? -backgroundDistance : backgroundDistance
+      )!.getSimplifiedAreaShape();
     }
     else {
-      const puzzleShape = facesShape.getSimplifiedAreaShape();
-      expandedShape = facesShape.getStrokedShape( new LineStyles( {
-        lineWidth: 1
-      } ) ).shapeUnion( puzzleShape );
+      const strokedOuterBoundaryShape = outerBoundaryShape.getStrokedShape( new LineStyles( {
+        lineWidth: 2 * backgroundDistance
+      } ) );
+      const subpathShapes = strokedOuterBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
+      backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
     }
 
+    // TODO: refactor to be more general --- WE CAN JUST INCLUDE THE HOLES IN THE MAIN SHAPE right?
+    const innerBoundaryShapes: Shape[] = puzzle.board.innerBoundaries.map( innerBoundary => {
+      const innerBoundaryPoints = innerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
+      const innerBoundaryShape = Shape.polygon( innerBoundaryPoints );
+
+      if ( useOffset ) {
+        return testSimplify( innerBoundaryShape.getOffsetShape(
+          getSignedArea( innerBoundaryPoints ) > 0 ? backgroundDistance : -backgroundDistance
+        )! );
+      }
+      else {
+        const strokedInnerBoundaryShape = innerBoundaryShape.getStrokedShape( new LineStyles( {
+          lineWidth: 2 * backgroundDistance
+        } ) );
+        const subpathShapes = strokedInnerBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
+        return testSimplify( _.minBy( subpathShapes, shape => shape.getArea() )! );
+      }
+    } );
+
     backgroundContainer.children = [
-      new Path( expandedShape, {
+      new Path( backgroundShape, {
         fill: puzzleBackgroundColorProperty,
         stroke: puzzleBackgroundStrokeColorProperty,
         lineWidth: 0.03
-      } )
+      } ),
+      ...innerBoundaryShapes.map( shape => new Path( shape, {
+        fill: playAreaBackgroundColorProperty,
+        stroke: puzzleBackgroundStrokeColorProperty,
+        lineWidth: 0.03
+      } ) )
     ];
 
     // TODO: for performance, can we reduce the number of nodes here?

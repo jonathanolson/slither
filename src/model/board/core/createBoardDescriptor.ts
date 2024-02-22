@@ -30,7 +30,7 @@ export type TBoardDescriptor<Structure extends TStructure = TStructure> = {
 };
 
 // TODO: dedup and use from Alpenglow PolygonalFace
-const getSignedArea = ( points: Vector2[] ) => {
+export const getSignedArea = ( points: Vector2[] ) => {
   let area = 0;
 
   for ( let j = 0; j < points.length; j++ ) {
@@ -45,7 +45,7 @@ const getSignedArea = ( points: Vector2[] ) => {
 };
 
 // TODO: dedup and use from Alpenglow PolygonalFace
-const getCentroid = ( points: Vector2[] ) => {
+export const getCentroid = ( points: Vector2[] ) => {
   const area = getSignedArea( points );
 
   let x = 0;

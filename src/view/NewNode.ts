@@ -153,6 +153,62 @@ export class NewNode extends PopupNode {
             options.loadPuzzle( new BasicPuzzle( board, state ) );
           }
         } ) ),
+        new TextPushButton( 'Hexagonal (hole) bad', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            const board = new HexagonalBoard( 4, 1, true, 2 );
+
+            const faceMap = new Map<Vector2, FaceState>();
+
+            // TODO: create a format depending on pointy-first rows, or flat-first rows?
+
+            faceMap.set( new Vector2( -2, 3 ), 3 );
+            faceMap.set( new Vector2( -1, 3 ), 3 );
+            faceMap.set( new Vector2( 1, 3 ), 2 );
+
+            faceMap.set( new Vector2( -4, 2 ), 3 );
+            faceMap.set( new Vector2( -3, 2 ), 4 );
+            faceMap.set( new Vector2( 0, 2 ), 4 );
+            faceMap.set( new Vector2( 1, 2 ), 3 );
+
+            faceMap.set( new Vector2( -2, 1 ), 4 );
+            faceMap.set( new Vector2( -1, 1 ), 3 );
+            faceMap.set( new Vector2( 0, 1 ), 4 );
+            faceMap.set( new Vector2( 3, 1 ), 2 );
+
+            faceMap.set( new Vector2( -3, 0 ), 4 );
+            faceMap.set( new Vector2( -2, 0 ), 3 );
+            faceMap.set( new Vector2( -1, 0 ), 5 );
+            faceMap.set( new Vector2( 0, 0 ), 4 );
+            faceMap.set( new Vector2( 1, 0 ), 2 );
+            faceMap.set( new Vector2( 4, 0 ), 0 );
+
+            faceMap.set( new Vector2( -2, -1 ), 3 );
+            faceMap.set( new Vector2( 0, -1 ), 3 );
+            faceMap.set( new Vector2( 1, -1 ), 3 );
+            faceMap.set( new Vector2( 2, -1 ), 3 );
+            faceMap.set( new Vector2( 3, -1 ), 3 );
+            faceMap.set( new Vector2( 4, -1 ), 2 );
+
+            faceMap.set( new Vector2( -2, -2 ), 3 );
+            faceMap.set( new Vector2( -1, -2 ), 5 );
+            faceMap.set( new Vector2( 0, -2 ), 4 );
+            faceMap.set( new Vector2( 1, -2 ), 4 );
+            faceMap.set( new Vector2( 3, -2 ), 3 );
+            faceMap.set( new Vector2( 4, -2 ), 3 );
+
+            faceMap.set( new Vector2( 0, -3 ), 4 );
+            faceMap.set( new Vector2( 1, -3 ), 4 );
+            faceMap.set( new Vector2( 3, -3 ), 5 );
+
+            faceMap.set( new Vector2( 3, -4 ), 4 );
+
+            const state = CompleteData.fromFaces( board, CompleteData.faceMapLookup( faceMap ) );
+
+            options.loadPuzzle( new BasicPuzzle( board, state ) );
+          }
+        } ) ),
         new TextPushButton( 'Hexagonal Medium', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           listener: () => {
             this.hide();

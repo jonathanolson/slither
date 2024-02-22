@@ -14,7 +14,8 @@ export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
   public constructor(
     public readonly radius: number,
     public readonly scale: number,
-    public readonly isPointyTop: boolean
+    public readonly isPointyTop: boolean,
+    public readonly holeRadius: number = 0
   ) {
 
     // axial convention with https://www.redblobgames.com/grids/hexagons/
@@ -50,15 +51,18 @@ export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
     // adjacent face coordinates can be determined from a vertex
     // const getFaceLocationsFromVertex = ( v: Vector2 ): Vector2[] => vertexNeighborDeltas.map( delta => v.minus( delta ) ).filter( f => f.x % 3 === 0 && f.y % 3 === 0 ).map( f => f.dividedScalar( 3 ) );
 
-    // const getDistance = ( a: Vector2, b: Vector2 ) => {
-    //   return ( Math.abs( a.x - b.x ) + Math.abs( a.x + a.y - b.x - b.y ) + Math.abs( a.y - b.y ) ) / 2;
-    // };
+    const getDistance = ( a: Vector2, b: Vector2 ) => {
+      return ( Math.abs( a.x - b.x ) + Math.abs( a.x + a.y - b.x - b.y ) + Math.abs( a.y - b.y ) ) / 2;
+    };
 
     // Faces in the puzzle
     const faceLocations: Vector2[] = [];
     for ( let q = -radius; q <= radius; q++ ) {
       for ( let r = Math.max( -radius, -q - radius ); r <= Math.min( radius, -q + radius ); r++ ) {
-        faceLocations.push( new Vector2( q, r ) );
+        const point = new Vector2( q, r );
+        if ( getDistance( point, new Vector2( 0, 0 ) ) >= holeRadius ) {
+          faceLocations.push( point );
+        }
       }
     }
 
