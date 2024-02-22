@@ -8,6 +8,7 @@ import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
@@ -70,3 +71,32 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
     ] );
   };
 } );
+
+export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+  return new CompositeSolver( [
+    new SimpleVertexSolver( board, state, {
+      solveJointToRed: true,
+      solveOnlyOptionToBlack: true,
+      solveAlmostEmptyToRed: true
+    } ),
+    new SimpleFaceSolver( board, state, {
+      solveToRed: true,
+      solveToBlack: true,
+    } ),
+    new SafeEdgeToSimpleRegionSolver( board, state ),
+
+    // We rely on the Simple Regions being accurate here, so they are lower down
+    new SimpleLoopSolver( board, state, {
+      solveToRed: true,
+      solveToBlack: true,
+      resolveAllRegions: false // NOTE: this will be faster
+    } )
+  ] );
+};
+
+export const backtrackerSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+  return new EdgeBacktrackerSolver( board, state, {
+    solverFactory: standardSolverFactory,
+    depth: 1
+  } );
+};

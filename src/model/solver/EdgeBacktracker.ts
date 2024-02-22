@@ -6,17 +6,13 @@ import { iterateSolver, SolverFactory, TSolver } from './TSolver.ts';
 import { TAction } from '../data/core/TAction.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { InvalidStateError } from './InvalidStateError.ts';
-import { CompositeSolver } from './CompositeSolver.ts';
-import { SimpleVertexSolver } from './SimpleVertexSolver.ts';
-import { SimpleFaceSolver } from './SimpleFaceSolver.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
-import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 import { TAnyData, TAnyDataListener } from '../data/combined/TAnyData.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TDelta } from '../data/core/TDelta.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { backtrackerSolverFactory, standardSolverFactory } from './autoSolver.ts';
 
 export type EdgeBacktrackData = TEdgeData & TSimpleRegionData;
 
@@ -68,6 +64,7 @@ export const edgeBacktrack = <Data extends EdgeBacktrackData>(
 
 export type GetBacktrackedSolutionsOptions = {
   failOnMultiple: boolean;
+  useEdgeBacktrackerSolver: boolean;
 };
 
 export class MultipleSolutionsError extends Error {
@@ -83,25 +80,8 @@ export const getBacktrackedSolutions = <Data extends TCompleteData>(
 ): TState<Data>[] => {
   const initialState = state.clone();
 
-  const initialSolver = new CompositeSolver( [
-    new SimpleVertexSolver( board, initialState, {
-      solveJointToRed: true,
-      solveOnlyOptionToBlack: true,
-      solveAlmostEmptyToRed: true
-    } ),
-    new SimpleFaceSolver( board, initialState, {
-      solveToRed: true,
-      solveToBlack: true,
-    } ),
-    new SafeEdgeToSimpleRegionSolver( board, initialState ),
-
-    // We rely on the Simple Regions being accurate here, so they are lower down
-    new SimpleLoopSolver( board, initialState, {
-      solveToRed: true,
-      solveToBlack: true,
-      resolveAllRegions: false // NOTE: this will be faster
-    } )
-  ] );
+  const solverFactory = options.useEdgeBacktrackerSolver ? backtrackerSolverFactory : standardSolverFactory;
+  const initialSolver = solverFactory( board, state, true );
 
   const solutions: TState<Data>[] = [];
 
@@ -202,6 +182,8 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
       const states: TDelta<Data>[] = [];
 
       for ( const edgeState of [ EdgeState.BLACK, EdgeState.RED ] ) {
+        console.log( whiteEdges.indexOf( whiteEdge ), edgeState );
+
         const delta = this.state.createDelta();
         const subSolver = this.solver.clone( delta );
 
