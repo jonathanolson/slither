@@ -369,10 +369,16 @@
 
 - Current code TODOs
   - ... the outer-boundary-fixing stuff (start with the hex case for existing board info)
+    - Do we support "bridge edges" that are not part of any face?
+      - Nah!
+    - For consistent mathematical CCW, we'll want to write that base layer first...?
+      - Also given that we're doing that, have it compute the OUTER boundary and any holes in it
+        - NOTE: only a single outer boundary (connected puzzle to be solvable), and holes can't have holes (similar)
     - compute info from view coordinates
       - compute face centroids
       - reverse face vertex order if needed (for consistent CCW)
       - HEY can we switch to a mathematical... representation for CCW? Keep positive signed area in coordinates?
+  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
     - Simplify solver stuff after
@@ -381,6 +387,8 @@
       - Should all solvers give the difficulty?
       - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
       - Should all solve actions - have a "difficulty" rating?
+  - ... get rid of structure and square specializations?
+    - TODO: should we first verify that we can do the "pattern" stuff nicely?
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
   - Should we rule-scan soon so that our solver architecture works for it?
   - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
@@ -595,3 +603,7 @@
   - Separate out structure.ts into a structure directory
   - Make clean! Document things!
   - Add copyright statement to files at some point
+
+- Scaffolding
+  - "Each number needs to have that many edges/lines around it, and no more"
+  - "Single loop, like a loop of string"

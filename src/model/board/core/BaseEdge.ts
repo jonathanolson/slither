@@ -16,7 +16,10 @@ export class BaseEdge<Structure extends TStructure> implements TEdge {
   public constructor(
     public readonly start: Structure[ 'Vertex' ],
     public readonly end: Structure[ 'Vertex' ]
-  ) {}
+  ) {
+    assertEnabled() && assert( start );
+    assertEnabled() && assert( end );
+  }
 
   public getOtherVertex( vertex: Structure[ 'Vertex' ] ): Structure[ 'Vertex' ] {
     assertEnabled() && assert( vertex === this.start || vertex === this.end, 'vertex must be one of the two vertices of this edge' );

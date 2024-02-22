@@ -1,5 +1,6 @@
 import { TStructure } from './TStructure.ts';
 import { THalfEdge } from './THalfEdge.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BaseHalfEdge<Structure extends TStructure> implements THalfEdge {
 
@@ -17,5 +18,8 @@ export class BaseHalfEdge<Structure extends TStructure> implements THalfEdge {
     public readonly start: Structure[ 'Vertex' ],
     public readonly end: Structure[ 'Vertex' ],
     public readonly isReversed: boolean
-  ) {}
+  ) {
+    assertEnabled() && assert( start );
+    assertEnabled() && assert( end );
+  }
 }
