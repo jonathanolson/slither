@@ -169,7 +169,15 @@ export class SquareBoard extends BaseBoard<TSquareStructure> implements TSquareB
       ...verticalEdges
     ];
 
-    super( edges, vertices, faces );
+    // TODO: use createBoardDescriptor!!!!
+    super( {
+      edges,
+      vertices,
+      faces,
+      halfEdges: edges.flatMap( edge => [ edge.forwardHalf, edge.reversedHalf ] ),
+      outerBoundary: [], // TODO: get our outerBoundary from createBoardDescriptor!!!
+      innerBoundaries: []
+    } );
 
     this.getVertex = init.getVertex;
     this.getEdge = init.getEdge;

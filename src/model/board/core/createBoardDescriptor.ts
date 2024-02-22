@@ -1,13 +1,10 @@
-import { Vector2 } from "phet-lib/dot";
-import { TBoard } from './TBoard.ts';
+import { Vector2 } from 'phet-lib/dot';
 import { BaseVertex } from './BaseVertex.ts';
 import { TStructure } from './TStructure.ts';
 import { BaseFace } from './BaseFace.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { BaseEdge } from './BaseEdge.ts';
 import { BaseHalfEdge } from './BaseHalfEdge.ts';
-import { BaseBoard } from './BaseBoard.ts';
-import { validateBoard } from './validateBoard.ts';
 
 export type VertexLocation = Vector2;
 export type FaceLocation = Vector2;
@@ -22,6 +19,15 @@ export interface TFaceDescriptor {
   logicalCoordinates: FaceLocation;
   vertices: TVertexDescriptor[];
 }
+
+export type TBoardDescriptor<Structure extends TStructure = TStructure> = {
+  edges: Structure[ 'Edge' ][];
+  vertices: Structure[ 'Vertex' ][];
+  faces: Structure[ 'Face' ][];
+  halfEdges: Structure[ 'HalfEdge' ][];
+  outerBoundary: Structure[ 'HalfEdge' ][];
+  innerBoundaries: Structure[ 'HalfEdge' ][][];
+};
 
 // TODO: dedup and use from Alpenglow PolygonalFace
 const getSignedArea = ( points: Vector2[] ) => {
@@ -133,7 +139,7 @@ type Edge = BaseEdge<TStructure>;
 type HalfEdge = BaseHalfEdge<TStructure>;
 
 // NOTE: We do NOT support edges that are not part of a face (no bridges)
-export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescriptors: TFaceDescriptor[] ): TBoard => {
+export const createBoardDescriptor = ( vertexDescriptors: TVertexDescriptor[], faceDescriptors: TFaceDescriptor[] ): TBoardDescriptor => {
 
   // FIX orientation of faces (so that they have positive signed area, and are in mathematical-CCW order).
   faceDescriptors = faceDescriptors.map( descriptor => getSignedArea( descriptor.vertices.map( v => v.viewCoordinates ) ) > 0 ? descriptor : {
@@ -145,8 +151,8 @@ export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescrip
   const edgeIdentifierLookup = new EdgeIdentifierLookup();
   faceDescriptors.forEach( face => {
     for ( let i = 0; i < face.vertices.length; i++ ) {
-      const a = face.vertices[ i ].viewCoordinates;
-      const b = face.vertices[ ( i + 1 ) % face.vertices.length ].viewCoordinates;
+      const a = face.vertices[ i ].logicalCoordinates;
+      const b = face.vertices[ ( i + 1 ) % face.vertices.length ].logicalCoordinates;
       edgeIdentifierLookup.add( a, b );
     }
   } );
@@ -198,7 +204,7 @@ export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescrip
     getVertex( identifier.end )!,
     !identifier.isCanonicalHalfEdge() // canonical is forward
   ) );
-  halfEdges.forEach( halfEdge => halfEdgeMap.set( new EdgeIdentifier( halfEdge.start.logicalCoordinates, halfEdge.end.logicalCoordinates ), halfEdge ) );
+  halfEdges.forEach( halfEdge => halfEdgeMap.set( edgeIdentifierLookup.lookup( halfEdge.start.logicalCoordinates, halfEdge.end.logicalCoordinates ), halfEdge ) );
 
   // Hook up some edge-only relationships
   edges.forEach( edge => {
@@ -286,6 +292,10 @@ export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescrip
 
     const boundary: HalfEdge[] = [ firstHalfEdge ];
     let next = getNext( firstHalfEdge );
+
+    firstHalfEdge.next = next;
+    next.previous = firstHalfEdge;
+
     while ( next !== firstHalfEdge ) {
       boundary.push( next );
       boundaryHalfEdges.delete( next );
@@ -297,7 +307,7 @@ export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescrip
       next.previous = previous;
     }
 
-    if ( getSignedArea( boundary.map( halfEdge => halfEdge.start.viewCoordinates ) ) > 0 ) {
+    if ( getSignedArea( boundary.map( halfEdge => halfEdge.start.viewCoordinates ) ) < 0 ) {
       outerBoundaries.push( boundary );
     }
     else {
@@ -331,17 +341,12 @@ export const createBoard = ( vertexDescriptors: TVertexDescriptor[], faceDescrip
     vertex.faces = incomingHalfEdges.map( halfEdge => halfEdge.face ).filter( face => face !== null ) as Face[];
   } );
 
-  // TODO: export the boundaries, make it part of TBoard
-  const board = new BaseBoard(
+  return {
     edges,
     vertices,
-    faces
-    // halfEdges,
-    // outerBoundaries,
-    // innerBoundaries
-  );
-
-  assertEnabled() && validateBoard( board );
-
-  return board;
+    faces,
+    halfEdges,
+    outerBoundary: outerBoundaries[ 0 ],
+    innerBoundaries
+  };
 };
