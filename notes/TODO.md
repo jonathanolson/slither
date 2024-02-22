@@ -369,6 +369,10 @@
 
 - Current code TODOs
   - Emitter on "ANY" state change(!) - makes backtracker/etc. dirty 
+    - Because things like the backtracker will go dirty on ANYTHING
+  - ZOMG ZOMG BACKTRACKER VISUALIZATION ---- show this in the UI.
+    - Do we start pushing a SINGLE state on the stack, and pop/push as we go?
+      - OMG our region "colors" will actually be perfect for visualizing, so that changing regions will flicker?
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
     - Simplify solver stuff after

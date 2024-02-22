@@ -14,16 +14,24 @@ import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegion.ts
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { TEmitter } from 'phet-lib/axon';
+import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { CompleteDelta } from './CompleteDelta.ts';
 
 export class CompleteData implements TState<TCompleteData> {
+
+  public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
+
   // TODO: can we do trait/mixin stuff to support a better way of doing this? TS has been picky with traits before
   public constructor(
     public readonly faceData: TState<TFaceData>,
     public readonly edgeData: TState<TEdgeData>,
     public readonly simpleRegionData: TState<TSimpleRegionData>
-  ) {}
+  ) {
+    const anyChangeListener = () => this.anyStateChangedEmitter.emit();
+    faceData.faceStateChangedEmitter.addListener( anyChangeListener );
+    edgeData.edgeStateChangedEmitter.addListener( anyChangeListener );
+    simpleRegionData.simpleRegionsChangedEmitter.addListener( anyChangeListener );
+  }
 
   public static fromFacesEdges(
     board: TBoard,

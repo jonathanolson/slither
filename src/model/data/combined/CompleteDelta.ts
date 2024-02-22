@@ -9,15 +9,23 @@ import FaceState from '../face/FaceState.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { TEmitter } from 'phet-lib/axon';
+import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
+
+  public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
+
   public constructor(
     public readonly faceDelta: TDelta<TFaceData>,
     public readonly edgeDelta: TDelta<TEdgeData>,
     public readonly simpleRegionDelta: TDelta<TSimpleRegionData>
   ) {
     super( faceDelta, edgeDelta, simpleRegionDelta );
+
+    const anyChangeListener = () => this.anyStateChangedEmitter.emit();
+    faceDelta.faceStateChangedEmitter.addListener( anyChangeListener );
+    edgeDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
+    simpleRegionDelta.simpleRegionsChangedEmitter.addListener( anyChangeListener );
   }
 
   public getFaceState( face: TFace ): FaceState {
