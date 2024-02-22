@@ -368,6 +368,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Run "brute force" backtracker with 1-2 levels of depth of the Solver backtracker. 
   - Emitter on "ANY" state change(!) - makes backtracker/etc. dirty 
     - Because things like the backtracker will go dirty on ANYTHING
   - ZOMG ZOMG BACKTRACKER VISUALIZATION ---- show this in the UI.
