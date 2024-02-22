@@ -50,3 +50,9 @@ export type TSimpleRegionDataListener = (
   addedWeirdEdges: Iterable<TEdge>,
   removedWeirdEdges: Iterable<TEdge>
 ) => void;
+
+export const simpleRegionIsSolved = ( data: TSimpleRegionData ): boolean => {
+  const regions = data.getSimpleRegions();
+
+  return regions.length === 1 && regions[ 0 ].isSolved && data.getWeirdEdges().length === 0;
+};

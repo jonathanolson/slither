@@ -368,6 +368,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Emitter on "ANY" state change(!) - makes backtracker/etc. dirty 
   - Backtrack
     - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
     - Simplify solver stuff after

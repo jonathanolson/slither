@@ -12,6 +12,8 @@ import { TBoard } from '../board/core/TBoard.ts';
 
 import { TPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { getBacktrackedSolutions, MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
+import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -234,12 +236,46 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       this.updateState();
     }
   }
+
+  public onUserRequestSolve(): void {
+    const state = this.puzzle.stateProperty.value;
+
+    if ( !simpleRegionIsSolved( state ) ) {
+      try {
+        // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
+        const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
+          failOnMultiple: true
+        } );
+
+        // TODO: what to do if we have NO solution???
+        if ( solutions.length === 1 ) {
+
+          this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solutions[ 0 ], false ) );
+
+          this.updateState();
+        }
+      }
+      catch ( e ) {
+        if ( e instanceof MultipleSolutionsError ) {
+          // TODO: what should we do?
+          console.log( 'Multiple solutions found' );
+        }
+        else {
+          throw e;
+        }
+      }
+    }
+  }
 }
 
-export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolveAction;
+export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction;
 
 export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;
+}
+
+export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
+  public readonly isUserRequestSolveAction = true;
 }
 
 export class PuzzleSnapshot<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {

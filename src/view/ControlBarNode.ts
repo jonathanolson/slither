@@ -129,7 +129,25 @@ export default class ControlBarNode extends HBox {
 
             settingsNode.show();
           }
-        } ) )
+        } ) ),
+        new TextPushButton( 'Solve', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Solve',
+          listener: () => {
+            if ( puzzleModelProperty.value ) {
+              puzzleModelProperty.value.onUserRequestSolve();
+            }
+          },
+
+          // TODO: enabledProperty
+
+          // TODO: factor these out
+          textFill: uiButtonForegroundProperty,
+          baseColor: uiButtonBaseColorProperty,
+          xMargin: 5,
+          yMargin: 5,
+          font: controlBarFont,
+          buttonAppearanceStrategy: rectangularButtonAppearanceStrategy
+        } ) ),
       ]
     } );
   }
