@@ -3,7 +3,7 @@ import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { arrayDifference, combineOptions } from 'phet-lib/phet-core';
 import EdgeState from '../model/data/edge/EdgeState.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
-// @ts-ignore
+// @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
@@ -256,7 +256,7 @@ class EdgeNode extends Node {
       // TODO: config setting for shift-click reversal?
       this.addInputListener( new FireListener( {
         mouseButton: 0,
-        // @ts-ignore
+        // @ts-expect-error
         fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 2 : 0 )
       } ) );
       this.addInputListener( new FireListener( {
@@ -265,7 +265,7 @@ class EdgeNode extends Node {
       } ) );
       this.addInputListener( new FireListener( {
         mouseButton: 2,
-        // @ts-ignore
+        // @ts-expect-error
         fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 0 : 2 )
       } ) );
       this.cursor = 'pointer';

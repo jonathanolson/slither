@@ -19,7 +19,7 @@ export class GeneralEdgeAction implements TAction<TEdgeData> {
   public getUndo( state: TEdgeData ): TAction<TEdgeData> {
     const edgeStateMap = new Map<TEdge, EdgeState>();
 
-    for ( const [ edge, _edgeState ] of this.edgeStateMap ) {
+    for ( const edge of this.edgeStateMap.keys() ) {
       edgeStateMap.set( edge, state.getEdgeState( edge ) );
     }
 

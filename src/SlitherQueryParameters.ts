@@ -1,9 +1,9 @@
 import 'phet-lib';
 
-// @ts-ignore
+// @ts-expect-error
 export default QueryStringMachine.getAll( {
   debugScan: { type: 'flag' },
 
   // like PhET sims
   showPointerAreas: { type: 'flag' }
-} )
+} );

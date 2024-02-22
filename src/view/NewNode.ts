@@ -60,7 +60,7 @@ export class NewNode extends PopupNode {
             const input = document.createElement( 'input' );
             input.type = 'file';
             input.onchange = event => {
-              // @ts-ignore
+              // @ts-expect-error
               const file = event.target!.files[ 0 ];
 
               var reader = new FileReader();

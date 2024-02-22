@@ -5,7 +5,7 @@ import _ from '../workarounds/_';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 
 export const cvReady = new Promise( resolve => {
-  // @ts-ignore
+  // @ts-expect-error
   cv.onRuntimeInitialized = resolve;
 } );
 

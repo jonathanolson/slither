@@ -2,7 +2,7 @@ import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty,
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 
-// @ts-ignore
+// @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import { RectangularButton } from 'phet-lib/sun';
 
@@ -14,7 +14,7 @@ const hslToRGB = ( h: number, s: number, l: number ): string => formatHex( toRGB
   s: s,
   l: l
 } ) ) as unknown as string;
-// @ts-ignore - Allow this globally
+// @ts-expect-error - Allow this globally
 window.hslToRGB = hslToRGB;
 
 // e.g. to test colors:
@@ -104,14 +104,14 @@ export const autoTheme = {
   name: 'Auto'
 } as TTheme;
 Object.keys( lightTheme ).forEach( key => {
-  // @ts-ignore
+  // @ts-expect-error
   if ( isTReadOnlyProperty( lightTheme[ key ] ) ) {
-    // @ts-ignore
+    // @ts-expect-error
     autoTheme[ key ] = new DerivedProperty( [
       isOSDarkModeProperty,
-      // @ts-ignore
+      // @ts-expect-error
       lightTheme[ key ],
-      // @ts-ignore
+      // @ts-expect-error
       darkTheme[ key ]
     ], ( isDark: boolean, light: Color, dark: Color ) => isDark ? dark : light );
 
@@ -142,7 +142,7 @@ export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
   serialize: theme => theme.name,
   deserialize: name => availableThemes.find( theme => theme.name === name ) || autoTheme
 } );
-// @ts-ignore - Allow this globally
+// @ts-expect-error - Allow this globally
 window.themeProperty = themeProperty;
 
 export const navbarBackgroundColorProperty = new DynamicProperty( themeProperty, {

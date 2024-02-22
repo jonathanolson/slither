@@ -18,7 +18,7 @@ if ( opencvURL ) {
   // } )();
 }
 
-// @ts-ignore
+// @ts-expect-error
 window.assertions.enableAssert();
 
 const scene = new Node();
