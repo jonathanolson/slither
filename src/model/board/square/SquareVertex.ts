@@ -67,8 +67,8 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     this.faces = [ this.northwestFace, this.southwestFace, this.southeastFace, this.northeastFace ].filter( e => e !== null ) as TSquareFace[];
   }
 
-  getIncomingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
-    switch( direction ) {
+  public getIncomingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
+    switch ( direction ) {
       case CardinalDirection.NORTH:
         return this.northIncomingHalfEdge;
       case CardinalDirection.EAST:
@@ -82,8 +82,8 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getOutgoingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
-    switch( direction ) {
+  public getOutgoingHalfEdge( direction: CardinalDirection ): TSquareHalfEdge | null {
+    switch ( direction ) {
       case CardinalDirection.NORTH:
         return this.northOutgoingHalfEdge;
       case CardinalDirection.EAST:
@@ -97,8 +97,8 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getEdge( direction: CardinalDirection ): TSquareEdge | null {
-    switch( direction ) {
+  public getEdge( direction: CardinalDirection ): TSquareEdge | null {
+    switch ( direction ) {
       case CardinalDirection.NORTH:
         return this.northEdge;
       case CardinalDirection.EAST:
@@ -112,8 +112,8 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getFace( direction: OrdinalDirection ): TSquareFace | null {
-    switch( direction ) {
+  public getFace( direction: OrdinalDirection ): TSquareFace | null {
+    switch ( direction ) {
       case OrdinalDirection.NORTHEAST:
         return this.northeastFace;
       case OrdinalDirection.SOUTHEAST:
@@ -127,7 +127,7 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
+  public getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
     if ( halfEdge === this.northIncomingHalfEdge ) {
       return CardinalDirection.NORTH;
     }
@@ -145,7 +145,7 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
+  public getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
     if ( edge === this.northEdge ) {
       return CardinalDirection.NORTH;
     }
@@ -163,7 +163,7 @@ export class SquareVertex extends BaseVertex<TSquareStructure> implements TSquar
     }
   }
 
-  getDirectionOfFace( face: TSquareFace ): OrdinalDirection {
+  public getDirectionOfFace( face: TSquareFace ): OrdinalDirection {
     if ( face === this.northeastFace ) {
       return OrdinalDirection.NORTHEAST;
     }

@@ -82,25 +82,25 @@ CardinalDirection.NORTH.delta = new Vector2( 0, -1 );
 CardinalDirection.SOUTH.delta = new Vector2( 0, 1 );
 
 OrdinalDirection.NORTHEAST.ccw = OrdinalDirection.NORTHEAST.left = OrdinalDirection.NORTHWEST;
-OrdinalDirection.NORTHEAST.cw = OrdinalDirection.NORTHEAST.right =OrdinalDirection.SOUTHEAST;
-OrdinalDirection.NORTHEAST.opposite = OrdinalDirection.NORTHEAST.back =OrdinalDirection.SOUTHWEST;
+OrdinalDirection.NORTHEAST.cw = OrdinalDirection.NORTHEAST.right = OrdinalDirection.SOUTHEAST;
+OrdinalDirection.NORTHEAST.opposite = OrdinalDirection.NORTHEAST.back = OrdinalDirection.SOUTHWEST;
 OrdinalDirection.NORTHEAST.halfLeft = CardinalDirection.NORTH;
 OrdinalDirection.NORTHEAST.halfRight = CardinalDirection.EAST;
 
 OrdinalDirection.SOUTHEAST.ccw = OrdinalDirection.SOUTHEAST.left = OrdinalDirection.NORTHEAST;
-OrdinalDirection.SOUTHEAST.cw = OrdinalDirection.SOUTHEAST.right =OrdinalDirection.SOUTHWEST;
-OrdinalDirection.SOUTHEAST.opposite = OrdinalDirection.SOUTHEAST.back =OrdinalDirection.NORTHWEST;
+OrdinalDirection.SOUTHEAST.cw = OrdinalDirection.SOUTHEAST.right = OrdinalDirection.SOUTHWEST;
+OrdinalDirection.SOUTHEAST.opposite = OrdinalDirection.SOUTHEAST.back = OrdinalDirection.NORTHWEST;
 OrdinalDirection.SOUTHEAST.halfLeft = CardinalDirection.EAST;
 OrdinalDirection.SOUTHEAST.halfRight = CardinalDirection.SOUTH;
 
 OrdinalDirection.SOUTHWEST.ccw = OrdinalDirection.SOUTHWEST.left = OrdinalDirection.SOUTHEAST;
-OrdinalDirection.SOUTHWEST.cw = OrdinalDirection.SOUTHWEST.right =OrdinalDirection.NORTHWEST;
-OrdinalDirection.SOUTHWEST.opposite = OrdinalDirection.SOUTHWEST.back =OrdinalDirection.NORTHEAST;
+OrdinalDirection.SOUTHWEST.cw = OrdinalDirection.SOUTHWEST.right = OrdinalDirection.NORTHWEST;
+OrdinalDirection.SOUTHWEST.opposite = OrdinalDirection.SOUTHWEST.back = OrdinalDirection.NORTHEAST;
 OrdinalDirection.SOUTHWEST.halfLeft = CardinalDirection.SOUTH;
 OrdinalDirection.SOUTHWEST.halfRight = CardinalDirection.WEST;
 
 OrdinalDirection.NORTHWEST.ccw = OrdinalDirection.NORTHWEST.left = OrdinalDirection.SOUTHWEST;
-OrdinalDirection.NORTHWEST.cw = OrdinalDirection.NORTHWEST.right =OrdinalDirection.NORTHWEST;
-OrdinalDirection.NORTHWEST.opposite = OrdinalDirection.NORTHWEST.back =OrdinalDirection.NORTHEAST;
+OrdinalDirection.NORTHWEST.cw = OrdinalDirection.NORTHWEST.right = OrdinalDirection.NORTHWEST;
+OrdinalDirection.NORTHWEST.opposite = OrdinalDirection.NORTHWEST.back = OrdinalDirection.NORTHEAST;
 OrdinalDirection.NORTHWEST.halfLeft = CardinalDirection.WEST;
 OrdinalDirection.NORTHWEST.halfRight = CardinalDirection.NORTH;

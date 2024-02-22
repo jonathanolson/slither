@@ -174,7 +174,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
         const index = contourCollection.contours.indexOf( contour );
         drawContour( dst, contours, index, color );
       } );
-    }
+    };
     // TODO: culori!
     showWithColor( dotContours, new cv.Scalar( 128, 128, 128 ) );
     showWithColor( lineContours, new cv.Scalar( 255, 255, 255 ) );
@@ -320,7 +320,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
         const maxY = Math.max( aY, bY );
 
         for ( let y = minY; y < maxY; y++ ) {
-          locations.push( new LineLocation( new Vector2( aX, y ), Orientation.VERTICAL ) )
+          locations.push( new LineLocation( new Vector2( aX, y ), Orientation.VERTICAL ) );
         }
       }
       else {
@@ -328,12 +328,12 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
         const maxX = Math.max( aX, bX );
 
         for ( let x = minX; x < maxX; x++ ) {
-          locations.push( new LineLocation( new Vector2( x, aY ), Orientation.HORIZONTAL ) )
+          locations.push( new LineLocation( new Vector2( x, aY ), Orientation.HORIZONTAL ) );
         }
       }
     }
 
-    return locations
+    return locations;
   } );
 
   const xLocations = xPoints.map( point => {
@@ -366,7 +366,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
   const startingData = CompleteData.fromFacesEdges(
     board,
     face => {
-      const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) || null;
+      const location = snappedFaceLocations.find( location => location.point.equals( face.logicalCoordinates ) ) ?? null;
       return location ? location.value : null;
     },
     edge => {
@@ -374,13 +374,13 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
       // TODO: or change the logical coordinates?
       const squareEdge = edge as TSquareEdge;
 
-      const lineLocation = lineLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) || null;
+      const lineLocation = lineLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) ?? null;
 
       if ( lineLocation ) {
         return EdgeState.BLACK;
       }
       else {
-        const xLocation = xLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) || null;
+        const xLocation = xLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) ?? null;
 
         if ( xLocation ) {
           return EdgeState.RED;

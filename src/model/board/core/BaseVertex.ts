@@ -24,20 +24,20 @@ export class BaseVertex<Structure extends TStructure> implements TVertex {
   ) {}
 
   public getHalfEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
-    const halfEdge = this.outgoingHalfEdges.find( halfEdge => halfEdge.end === otherVertex );
+    const halfEdge = this.outgoingHalfEdges.find( halfEdge => halfEdge.end === otherVertex )!;
     assertEnabled() && assert( halfEdge );
-    return halfEdge!;
+    return halfEdge;
   }
 
   public getHalfEdgeFrom( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'HalfEdge' ] {
     const halfEdge = this.incomingHalfEdges.find( halfEdge => halfEdge.start === otherVertex )!;
     assertEnabled() && assert( halfEdge );
-    return halfEdge!;
+    return halfEdge;
   }
 
   public getEdgeTo( otherVertex: Structure[ 'Vertex' ] ): Structure[ 'Edge' ] {
     const edge = this.edges.find( edge => edge.start === otherVertex || edge.end === otherVertex )!;
     assertEnabled() && assert( edge );
-    return edge!;
+    return edge;
   }
 }

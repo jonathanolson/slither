@@ -44,7 +44,7 @@ export class SquareBoard extends BaseBoard<TSquareStructure> implements TSquareB
           f( x, y );
         }
       }
-    }
+    };
 
     const faces: SquareFace[] = [];
     const vertices: SquareVertex[] = [];

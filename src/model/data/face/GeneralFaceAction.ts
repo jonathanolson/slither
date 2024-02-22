@@ -19,7 +19,7 @@ export class GeneralFaceAction implements TAction<TFaceData> {
   public getUndo( state: TFaceData ): TAction<TFaceData> {
     const faceStateMap = new Map<TFace, FaceState>();
 
-    for ( const [ face, _faceState ] of this.faceStateMap ) {
+    for ( const face of this.faceStateMap.keys() ) {
       faceStateMap.set( face, state.getFaceState( face ) );
     }
 

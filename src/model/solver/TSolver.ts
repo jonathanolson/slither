@@ -37,7 +37,7 @@ export const iterateSolver = <Data, Action extends TAction<Data>>(
       action.apply( state );
     }
   }
-}
+};
 
 export const iterateSolverAndDispose = <Data, Action extends TAction<Data>>(
   solver: TSolver<Data, Action>,
@@ -49,7 +49,7 @@ export const iterateSolverAndDispose = <Data, Action extends TAction<Data>>(
   finally {
     solver.dispose();
   }
-}
+};
 
 export const withSolverFactory = <Structure extends TStructure, Data>(
   solverFactory: SolverFactory<TStructure, Data>,
@@ -61,7 +61,7 @@ export const withSolverFactory = <Structure extends TStructure, Data>(
   const solver = solverFactory( board, state, dirty );
   callback();
   iterateSolverAndDispose( solver, state );
-}
+};
 
 export const iterateSolverFactory = <Structure extends TStructure, Data>(
   solverFactory: SolverFactory<TStructure, Data>,
@@ -70,4 +70,4 @@ export const iterateSolverFactory = <Structure extends TStructure, Data>(
   dirty?: boolean
 ): void => {
   withSolverFactory( solverFactory, board, state, () => {}, dirty );
-}
+};

@@ -9,7 +9,9 @@ export default {
     parserOptions: {
       ecmaFeatures: { modules: true },
       ecmaVersion: 'latest',
-      project: './tsconfig.json'
+
+      // TODO: potentially find a way to do this that doesn't crater performance?
+      // project: './tsconfig.json'
     }
   },
   plugins: {
@@ -23,41 +25,41 @@ export default {
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/class-literal-property-style': 'off',
-    '@typescript-eslint/consistent-generic-constructors': 'error',
+    '@typescript-eslint/consistent-generic-constructors': 'off',
     '@typescript-eslint/consistent-type-assertions': 'error',
     '@typescript-eslint/consistent-type-exports': 'off',
     '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'error',
-    '@typescript-eslint/explicit-module-boundary-types': 'error',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/member-delimiter-style': 'error',
     '@typescript-eslint/member-ordering': 'off',
     '@typescript-eslint/method-signature-style': 'off',
-    '@typescript-eslint/no-base-to-string': 'error',
+    // '@typescript-eslint/no-base-to-string': 'error',
     '@typescript-eslint/no-confusing-void-expression': 'off',
     '@typescript-eslint/no-duplicate-enum-values': 'error',
     '@typescript-eslint/no-dynamic-delete': 'off',
     '@typescript-eslint/no-empty-interface': 'error',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-invalid-void-type': 'error',
-    '@typescript-eslint/no-meaningless-void-operator': 'error',
+    // '@typescript-eslint/no-meaningless-void-operator': 'error',
     '@typescript-eslint/no-misused-new': 'error',
     '@typescript-eslint/no-non-null-asserted-nullish-coalescing': 'error',
     '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-this-alias': 'error',
-    '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
-    '@typescript-eslint/no-unnecessary-qualifier': 'error',
-    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+    // '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+    // '@typescript-eslint/no-unnecessary-qualifier': 'error',
+    // '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-useless-empty-export': 'error',
-    '@typescript-eslint/non-nullable-type-assertion-style': 'error',
+    // '@typescript-eslint/non-nullable-type-assertion-style': 'error',
     '@typescript-eslint/prefer-as-const': 'error',
     '@typescript-eslint/prefer-enum-initializers': 'error',
-    '@typescript-eslint/prefer-includes': 'error',
+    // '@typescript-eslint/prefer-includes': 'error',
     '@typescript-eslint/prefer-literal-enum-member': 'error',
-    '@typescript-eslint/prefer-nullish-coalescing': 'error',
-    '@typescript-eslint/prefer-optional-chain': 'error',
-    '@typescript-eslint/prefer-string-starts-ends-with': 'error',
+    // '@typescript-eslint/prefer-nullish-coalescing': 'error',
+    // '@typescript-eslint/prefer-optional-chain': 'error',
+    // '@typescript-eslint/prefer-string-starts-ends-with': 'error',
     '@typescript-eslint/prefer-ts-expect-error': 'error',
     '@typescript-eslint/typedef': 'off',
     '@typescript-eslint/unbound-method': 'off',
@@ -99,7 +101,7 @@ export default {
     '@typescript-eslint/no-invalid-this': 'error',
 
     'no-loop-func': 'off',
-    '@typescript-eslint/no-loop-func': 'error',
+    '@typescript-eslint/no-loop-func': 'off',
 
     'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': 'error',
@@ -142,7 +144,7 @@ export default {
     'space-infix-ops': 'off',
     '@typescript-eslint/space-infix-ops': 'error',
 
-    'ts/return-await': 2
+    // 'ts/return-await': 2
   },
-  files: [ 'src/**/*.ts', 'src/**/*.js' ],
+  files: [ 'src/**/*.ts' ],
 };

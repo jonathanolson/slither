@@ -24,7 +24,7 @@ window.hslToRGB = hslToRGB;
 const mediaQueryList = window.matchMedia( '(prefers-color-scheme: dark)' );
 const isOSDarkModeProperty = new BooleanProperty( mediaQueryList.matches );
 mediaQueryList.addEventListener( 'change', e => {
-  isOSDarkModeProperty.value = e.matches
+  isOSDarkModeProperty.value = e.matches;
 } );
 // isOSDarkModeProperty.link( isDark => console.log( 'OS dark mode:', isDark ) );
 
@@ -140,7 +140,7 @@ export const availableThemes: TTheme[] = [
 
 export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
   serialize: theme => theme.name,
-  deserialize: name => availableThemes.find( theme => theme.name === name ) || autoTheme
+  deserialize: name => availableThemes.find( theme => theme.name === name ) ?? autoTheme
 } );
 // @ts-expect-error - Allow this globally
 window.themeProperty = themeProperty;

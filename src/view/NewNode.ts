@@ -74,8 +74,8 @@ export class NewNode extends PopupNode {
                 const puzzle = await scanURL( url );
 
                 options.loadPuzzle( puzzle );
-              }
-            }
+              };
+            };
             input.click();
           }
         } ) ),

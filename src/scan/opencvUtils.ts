@@ -27,7 +27,7 @@ export const arrayToMatVector = ( array: cv.Mat[] ): cv.MatVector => {
   const vec = new cv.MatVector();
   array.forEach( mat => vec.push_back( mat ) );
   return vec;
-}
+};
 
 export const drawContour = ( mat: cv.Mat, contours: cv.MatVector, index: number, color?: cv.Scalar | null ): void => {
   color = color || new cv.Scalar(

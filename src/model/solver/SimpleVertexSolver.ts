@@ -55,7 +55,6 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAction<TEdgeData>
 
       const edges = vertex.edges;
       let blackCount = 0;
-      let redCount = 0;
       let whiteCount = 0;
       // TODO: perhaps we create a map here? We're having to re-access state below
       edges.forEach( edge => {
@@ -63,10 +62,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAction<TEdgeData>
         if ( state === EdgeState.BLACK ) {
           blackCount++;
         }
-        else if ( state === EdgeState.RED ) {
-          redCount++;
-        }
-        else {
+        else if ( state === EdgeState.WHITE ) {
           whiteCount++;
         }
         return state;

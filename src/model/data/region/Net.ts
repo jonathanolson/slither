@@ -159,8 +159,8 @@ export class Net {
   }
 
   public getPossibleEdgesAndBridges(): {
-    possibleEdges: TEdge[],
-    bridges: TEdge[]
+    possibleEdges: TEdge[];
+    bridges: TEdge[];
   } {
     let time = 0;
     const disc = new Map<TVertex, number>();

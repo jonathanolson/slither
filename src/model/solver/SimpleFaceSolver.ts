@@ -91,12 +91,12 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAction<
           if ( this.options.solveToRed && blackCount === faceValue ) {
             return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
               return new EdgeStateSetAction( edge, EdgeState.RED );
-            } ) )
+            } ) );
           }
           else if ( this.options.solveToBlack && redCount === face.edges.length - faceValue ) {
             return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
               return new EdgeStateSetAction( edge, EdgeState.BLACK );
-            } ) )
+            } ) );
           }
         }
       }

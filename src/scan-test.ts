@@ -96,7 +96,7 @@ const resize = () => {
   zoomListener.setPanBounds( layoutBounds );
 };
 
-const resizeListener = () => { resizePending = true; }
+const resizeListener = () => { resizePending = true; };
 $( window ).resize( resizeListener );
 window.addEventListener( 'resize', resizeListener );
 window.addEventListener( 'orientationchange', resizeListener );

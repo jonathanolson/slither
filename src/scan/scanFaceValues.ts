@@ -14,7 +14,7 @@ let worker: any = null;
 
 export type scanFaceValuesOptions = {
   whitelistChars?: string;
-  segmentation?: 'sparse-text' | 'single-char'
+  segmentation?: 'sparse-text' | 'single-char';
 };
 
 const defaults = {

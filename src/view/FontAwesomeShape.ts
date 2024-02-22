@@ -18,4 +18,4 @@ export const toFontAwesomePath = ( shape: Shape, pathOptions?: PathOptions ): Pa
     maxHeight: 15,
     fill: 'black'
   }, pathOptions ) );
-}
+};

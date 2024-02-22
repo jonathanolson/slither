@@ -46,8 +46,8 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     this.vertices = [ this.northwestVertex, this.southwestVertex, this.southeastVertex, this.northeastVertex ];
   }
 
-  getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge {
-    switch( direction ) {
+  public getHalfEdge( direction: CardinalDirection ): TSquareHalfEdge {
+    switch ( direction ) {
       case CardinalDirection.NORTH:
         return this.northHalfEdge;
       case CardinalDirection.EAST:
@@ -62,8 +62,8 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     }
   }
 
-  getEdge( direction: CardinalDirection ): TSquareEdge {
-    switch( direction ) {
+  public getEdge( direction: CardinalDirection ): TSquareEdge {
+    switch ( direction ) {
       case CardinalDirection.NORTH:
         return this.northEdge;
       case CardinalDirection.EAST:
@@ -77,8 +77,8 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     }
   }
 
-  getVertex( direction: OrdinalDirection ): TSquareVertex {
-    switch( direction ) {
+  public getVertex( direction: OrdinalDirection ): TSquareVertex {
+    switch ( direction ) {
       case OrdinalDirection.NORTHEAST:
         return this.northeastVertex;
       case OrdinalDirection.SOUTHEAST:
@@ -92,7 +92,7 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     }
   }
 
-  getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
+  public getDirectionOfHalfEdge( halfEdge: TSquareHalfEdge ): CardinalDirection {
     if ( halfEdge === this.northHalfEdge ) {
       return CardinalDirection.NORTH;
     }
@@ -110,7 +110,7 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     }
   }
 
-  getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
+  public getDirectionOfEdge( edge: TSquareEdge ): CardinalDirection {
     if ( edge === this.northEdge ) {
       return CardinalDirection.NORTH;
     }
@@ -128,7 +128,7 @@ export class SquareFace extends BaseFace<TSquareStructure> implements TSquareFac
     }
   }
 
-  getDirectionOfVertex( vertex: TSquareVertex ): OrdinalDirection {
+  public getDirectionOfVertex( vertex: TSquareVertex ): OrdinalDirection {
     if ( vertex === this.northeastVertex ) {
       return OrdinalDirection.NORTHEAST;
     }
