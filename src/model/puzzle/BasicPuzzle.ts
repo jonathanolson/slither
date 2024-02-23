@@ -10,6 +10,8 @@ import { Vector2 } from 'phet-lib/dot';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+import { greedyFaceMinimize } from '../generator/greedyFaceMinimize.ts';
+import { generateFaceAdditive } from '../generator/generateFaceAdditive.ts';
 
 export class BasicPuzzle<Data> {
 
@@ -20,6 +22,10 @@ export class BasicPuzzle<Data> {
     initialState: TState<Data>
   ) {
     this.stateProperty = new TinyProperty( initialState );
+  }
+
+  public static generateHard<Structure extends TStructure>( board: TBoard<Structure> ): BasicPuzzle<TCompleteData> {
+    return BasicPuzzle.fromSolvedPuzzle( greedyFaceMinimize( generateFaceAdditive( board ) ) );
   }
 
   public static fromSolvedPuzzle<Structure extends TStructure, Data extends TFaceData>( puzzle: TSolvedPuzzle<Structure, Data> ): BasicPuzzle<Data> {

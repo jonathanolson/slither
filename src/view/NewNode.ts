@@ -16,9 +16,6 @@ import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
-import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
-import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
-import _ from '../workarounds/_.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -107,7 +104,7 @@ export class NewNode extends PopupNode {
 
                     const board = new SquareBoard( dimension.width, dimension.height );
 
-                    options.loadPuzzle( BasicPuzzle.fromSolvedPuzzle( greedyFaceMinimize( generateFaceAdditive( board ) ) ) );
+                    options.loadPuzzle( BasicPuzzle.generateHard( board ) );
                   }
                 } ) );
               } )
@@ -123,7 +120,7 @@ export class NewNode extends PopupNode {
 
                 const board = new HexagonalBoard( size, 1, true );
 
-                options.loadPuzzle( BasicPuzzle.fromSolvedPuzzle( greedyFaceMinimize( generateFaceAdditive( board ) ) ) );
+                options.loadPuzzle( BasicPuzzle.generateHard( board ) );
               }
             } ) );
           } )

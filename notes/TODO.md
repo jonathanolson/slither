@@ -366,7 +366,6 @@
   - USE SAT for image scanning (to see if it is a good puzzle)
   - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
     - Maybe just have a TPuzzleProperty? (hmmm) bleh
-  - generateFaceAdditive TODOs 
   - Generation:
     - Faster "filling" method, basically just set up something that creates windy patterns quickly?
   - STATE SAVE in localStorage

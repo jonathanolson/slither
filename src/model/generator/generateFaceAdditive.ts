@@ -13,13 +13,13 @@ import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
-// TODO: yes, explicit proportions!
+// TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)
 
 // TODO: we can... use this to generate a loop, but then actually minimize it using a different approach?
 export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure, TCompleteData> => {
 
-  // TODO: have a limit? Perhaps the board is impossible to generate a unique solution?
-  while ( true ) {
+  let iterations = 0;
+  while ( iterations++ < 100 ) {
     const state = CompleteData.fromFaces( board, () => null );
 
     const faceOrder: TFace[] = dotRandom.shuffle( board.faces );
@@ -30,7 +30,7 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
     // A simplified 0,1,2 count (2 means multiple)
     const getSolutionCount = ( state: TState<TCompleteData> ) => {
       try {
-        // TODO: try to invoke our normal solver first?
+        // TODO: try to invoke our normal solver first? (could increase or decrease performance)
         solutions = satSolve( board, state, {
           maxIterations: 10000,
           failOnMultipleSolutions: true
@@ -94,4 +94,6 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
       };
     }
   }
+
+  throw new Error( 'Failed to generate a puzzle, board might not be solvable' );
 };
