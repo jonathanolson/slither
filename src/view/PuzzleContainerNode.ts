@@ -1,5 +1,5 @@
 import { AnimatedPanZoomListener, Node, Rectangle, Sizable } from 'phet-lib/scenery';
-import PuzzleNode from './PuzzleNode';
+import PuzzleModelNode from './PuzzleModelNode.ts';
 import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { playAreaBackgroundColorProperty } from './Theme';
@@ -10,7 +10,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
   private backgroundRect: Rectangle;
   private puzzleWrapper: Node;
-  private puzzleNode: PuzzleNode | null = null;
+  private puzzleNode: PuzzleModelNode | null = null;
   private zoomListener: AnimatedPanZoomListener;
 
   public constructor(
@@ -47,7 +47,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
       this.puzzleWrapper.removeAllChildren();
 
       if ( puzzleModel ) {
-        this.puzzleNode = new PuzzleNode( puzzleModel );
+        this.puzzleNode = new PuzzleModelNode( puzzleModel );
 
         // Update before children, so we don't mess with layout
         this.updatePuzzleNodeLayout( this.puzzleNode );
@@ -92,7 +92,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     }
   }
 
-  private updatePuzzleNodeLayout( puzzleNode: PuzzleNode ): void {
+  private updatePuzzleNodeLayout( puzzleNode: PuzzleModelNode ): void {
     const width = this.localPreferredWidth;
     const height = this.localPreferredHeight;
 

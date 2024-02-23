@@ -384,6 +384,7 @@
       - Serialize ALL of the actions, and the PuzzleSnapshots
       - Serialize the DELTAS!!!!!! This allows us to say "here is an action" and "here is the delta between states"
       - SAVE THE DELTAS in the PuzzleSnapshot
+      - ----- each TAction would need to be serializable?
     - Share URLs:
       - Query parameter to load a puzzle string!
       - Query parameter to... load a compressed puzzle serialization?
