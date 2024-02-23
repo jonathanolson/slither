@@ -243,7 +243,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     if ( !simpleRegionIsSolved( state ) ) {
 
       const solutions = satSolve( this.puzzle.board, this.puzzle.stateProperty.value, {
-        maxIterations: 10000
+        maxIterations: 10000,
+        failOnMultiple: true
       } );
 
       if ( solutions.length === 1 ) {

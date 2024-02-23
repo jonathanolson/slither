@@ -15,6 +15,8 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
+import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -77,6 +79,28 @@ export class NewNode extends PopupNode {
               };
             };
             input.click();
+          }
+        } ) ),
+        new TextPushButton( 'generateFaceAdditive square', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            const board = new SquareBoard( 15, 15 );
+
+            const state = generateFaceAdditive( board );
+
+            options.loadPuzzle( new BasicPuzzle( board, state ) );
+          }
+        } ) ),
+        new TextPushButton( 'generateFaceAdditive hex', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            const board = new HexagonalBoard( 7, 1, true );
+
+            const state = generateFaceAdditive( board );
+
+            options.loadPuzzle( new BasicPuzzle( board, state ) );
           }
         } ) ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

@@ -9,9 +9,12 @@ import Logic from './logic-solver/logic-solver.js';
 import { TVertex } from '../board/core/TVertex.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TState } from '../data/core/TState.ts';
+import { MultipleSolutionsError } from './EdgeBacktracker.ts';
 
 export type SatSolveOptions = {
   maxIterations: number;
+  // TODO: consider global rename failOnMultipleSolutions
+  failOnMultiple: boolean;
 };
 
 // TODO: in the future, vertex state might help! anything that gives us more helpful clauses? maybe not
@@ -170,8 +173,10 @@ export const satSolve = (
   // TODO: see what happens when we give it something unsatisfiable
 
   const getBlackEdges = (): TEdge[] | null => {
-    // TODO: wrap in Logic.disablingAssertions(function () { ... }) for faster behavior!
-    const solution = solver.solve();
+    let solution: Logic.Solution | null = null;
+    Logic.disablingAssertions( () => {
+      solution = solver.solve();
+    } );
 
     if ( solution ) {
       const variables = solution.getTrueVars();
@@ -257,6 +262,10 @@ export const satSolve = (
 
     if ( loops.touchingValueLoops.length === 1 ) {
       solutions.push( loops.touchingValueLoops[ 0 ] );
+
+      if ( solutions.length > 1 && options.failOnMultiple ) {
+        throw new MultipleSolutionsError();
+      }
     }
 
     const allLoops = [

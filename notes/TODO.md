@@ -172,7 +172,6 @@
     - How can we order things with region/subregions?
     - 
     - How would we COLOR region visually?
-    - How can we detect the "don't close a region" cases efficiently? Backtracking?
     - 
     - NOTE: can assume the presence of a subregion (for all non-black face values), we can check their net too
       - This applies if all of their white edges are in our region (and at least one of those will be black, but isn't yet)
@@ -226,20 +225,6 @@
     - NOT IN GENERAL
   - If we run through a solver WITHOUT applying changes, we get a list of what it can figure out without going deeper.
   - Face values are fairly constant, can inspect up front to determine "WHERE" we can apply certain patterns.
-  - Backtrack:
-    - Generalize for any "binary toggle" that is feasible. "Edge", "Color", or vertex state might make sense. Maybe "connection" too?
-      - For instance, if an area connects 
-    - Take a state, pick a white edge, and solve both the red and black case for the edge (could extend to other things)
-      - If one fails due to invalid "state", the other is correct
-      - If not, optionally look at OTHER state that is the SAME in both versions
-        - (basically, look at the changed state for each case, and see if there is overlap) 
-    - Could... do other things than toggling an edge. Looking at combinations of edges for faces or vertices. Vertex state
-      - OOO or coloring? 
-    - Look for the most "fruitful" / changing edges/changes
-    - Don’t overfocus on backtrack performance. Don’t tune algo much. It is NP complete. 
-      - Focus on fast solutions to human solvable puzzles. Focus on improving “pattern base” to catch things that backtrackers would
-    - With backtracking, can apply “faster” solvers in both branches before “slower” ones. Maybe bad for memory, good for early exit?
-      - Does this mean we can report the "difficulty" of the next dirty solver? 
   - Pattern solving (GENERALIZE, see below in implementation)
   - "Finder" can find patterns, or use patterns/solvers/combination to solve everything (or to a point).
     - e.g. anything ending in backtrack will "work"
@@ -278,6 +263,15 @@
     - https://kwontomloop.com/forum.php?a=topic&topic_id=308
 
 - Puzzle generation
+  - Filler, but how to generate fairly isotropic?
+    - Have a constraint that we don't fill... more than half of the boundary squares?
+    - Fill with a solid "windy" approach to 50%-ish, but then see if we can add some more randomness in
+  - 
+  - What happens when we... just start ... adding numbers?
+    - Likely to run into a case where we have multiple solutions, but then adding a single other number removes all solutions?
+      - Actually... that is fundamentally FALSE. Pick a solution, each face has a "number".
+      - So... pick an order of faces to give numbers to (start with random?)
+  - 
   - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
   - A very fast puzzle generator would be needed for people (e.g. me) to play for free
   - Try to generate puzzles which have patterns that I should learn
@@ -285,6 +279,7 @@
     - Find puzzles that need technique A that can't be solved with technique B 
 
 - Rule generation / display
+  - SAT solver tweaked for the exact constraints(!!!!) 
   - Show a full explainer (with immutable views of puzzles)
     - !!! Not popular enough to NOT have an explainer. 
     - Link off to full databases of patterns 
@@ -306,7 +301,7 @@
     - Start at root. Check each child for how many it contains. Drill down until we have no child with more than the threshold.
     - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
   - Unit tests
-    - Much easier once we have a backtracker so that we can verify things are "uniquely solvable" and that the completion is correct. 
+    - Test with SAT solver 
     - !!! Make us compatible with Puppeteer/Playwright, so we can batch-handle scanning/solving (for unit tests)
   - Test with Android, and handle dashed line approach
   - Detect on paper - perspective correction
@@ -369,29 +364,9 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - WEB WORKER MINISAT!!!
-    - We could attack the problem both with a SAT solver, and with a solving backtracker at the same time?
-  - Backtracker:
-    - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
-    - What if we... slowly increase the depth until we get one reduction?
-    - Look for "more likely" cases, and chase things near to it? (Instead of searching all of them, including unlikely pairs?)
-  - Get the SAT solver in here? backtracker as written is insufficient for quick puzzle checks  
-  - How to.... async/await AND have synchronous paths for solvers? (really... just the backtracker)
-    - I mean... just implement both separately?
-  - ZOMG ZOMG BACKTRACKER VISUALIZATION ---- show this in the UI.
-    - Do we start pushing a SINGLE state on the stack, and pop/push as we go?
-      - OMG our region "colors" will actually be perfect for visualizing, so that changing regions will flicker?
-  - OMG - I want backtracker to find the "easiest" deduction (to show as a hint)
-    - Should all solvers give the difficulty?
-    - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
-    - Should all solve actions - have a "difficulty" rating?
-  - Add demo/testing ACTUAL puzzles [NEEDS backtracking]
-    - Hexagon-with-hole, radial (with hole), etc.
-  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
-  - ... get rid of structure and square specializations?
-    - TODO: should we first verify that we can do the "pattern" stuff nicely?
-  - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
-  - Should we rule-scan soon so that our solver architecture works for it?
+  - SATSolver / generateFaceAdditive TODOs 
+  - STATE SAVE in localStorage
+    - Hopefully very fast to set? 
   - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
     - Board serialization (and use for creating boards in easier ways!!!)
       - Specify vertex logical/view coordinates in a list
@@ -407,6 +382,13 @@
     - Share URLs:
       - Query parameter to load a puzzle string!
       - Query parameter to... load a compressed puzzle serialization?
+  - Add demo/testing ACTUAL puzzles
+    - Hexagon-with-hole, radial (with hole), etc.
+  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
+  - ... get rid of structure and square specializations?
+    - TODO: should we first verify that we can do the "pattern" stuff nicely?
+  - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
+  - Should we rule-scan soon so that our solver architecture works for it?
   - Mobile issues:
     - SAVE PUZZLE STATE in localStorage (see notes elsewhere), not fun to lose progress
       - try/catch loading (or maybe setTimeout it so that if it takes a bit...?) 
@@ -475,10 +457,9 @@
       - Puzzle text (faces, faces/edges, in different formats)
       - URL (eventually)
       - Image (hey... can we use Alpenglow for the high-quality bits?)
-    - Mark/save (for backtracking)
+    - Mark/save (for user "exploration")
       - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
     - (allow pressing and holding some of the buttons...)
-  - Actually.... SAVE PUZZLE STATE in localStorage?
   - Mobile vs Desktop
     - Settings presets for each?
     - OR detect fingers/mouse and apply different rules for them?
@@ -508,6 +489,14 @@
     - https://github.com/richardtallent/vite-plugin-singlefile
   - Audio for actions?
   - Make it translatable
+  - Difficulty estimation of puzzles:
+    - Should all solvers give the difficulty?
+    - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
+    - Should all solve actions - have a "difficulty" rating?
+    - Single-level backtrack for "what state can we combine" - if we can't find explicit rules?
+  - How to.... async/await AND have synchronous paths for solvers? (really... just the backtracker)
+    - I mean... just implement both separately?
+  - Minisat in web worker? web workers in general? (could work a solving backtracker at the same time to add constraints)
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
@@ -535,18 +524,6 @@
       - bools: allowEmpty, allowHorizontal, allowVertical, allowNorthwest, allowNortheast, allowSouthwest, allowSoutheast
       - allows( state: EdgeState red/black, dir: CardinalDirection ): bool
       - with/without/booleanops/rotated/etc., see source in Scala
-  - Utils:
-    - Spot (like an iterator, that basically holds a vertex/half-edge and provides a lot)
-      - PROVIDES ACCESS TO THE DATA/GRID?
-      - "open" or "closed" boundaries (whether it returns data that is valid or not outside of boundaries).
-      - nextLeft, nextRight, previousLeft, previousRight: Spot
-    - Spot4 --- allows "ghost" operations, where we are not on a real vertex/edge/face, but it knows the coordinates
-      - getEdge( dir: CardinalDirection ): Edge
-      - getVertex( dir: CardinalDirection ): Vertex
-      - getFace( dir: OrdinalDirection ): Face
-      - N/S/E/W edge, vertex
-      - NE/SE/SW/NW face
-      - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
   - Solver
     - canAssumeUnique?
     - Ability to "split" computation into awaits, with sleep(0)s, so we can keep our UI thread responsive
@@ -608,3 +585,40 @@
 - Scaffolding
   - "Each number needs to have that many edges/lines around it, and no more"
   - "Single loop, like a loop of string"
+
+[DEPRECATED]
+
+- Backtracker:
+  - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
+  - What if we... slowly increase the depth until we get one reduction?
+  - Look for "more likely" cases, and chase things near to it? (Instead of searching all of them, including unlikely pairs?)
+  - Backtrack:
+    - Generalize for any "binary toggle" that is feasible. "Edge", "Color", or vertex state might make sense. Maybe "connection" too?
+      - For instance, if an area connects 
+    - Take a state, pick a white edge, and solve both the red and black case for the edge (could extend to other things)
+      - If one fails due to invalid "state", the other is correct
+      - If not, optionally look at OTHER state that is the SAME in both versions
+        - (basically, look at the changed state for each case, and see if there is overlap) 
+    - Could... do other things than toggling an edge. Looking at combinations of edges for faces or vertices. Vertex state
+      - OOO or coloring? 
+    - Look for the most "fruitful" / changing edges/changes
+    - Don’t overfocus on backtrack performance. Don’t tune algo much. It is NP complete. 
+      - Focus on fast solutions to human solvable puzzles. Focus on improving “pattern base” to catch things that backtrackers would
+    - With backtracking, can apply “faster” solvers in both branches before “slower” ones. Maybe bad for memory, good for early exit?
+      - Does this mean we can report the "difficulty" of the next dirty solver? 
+  - BACKTRACKER VISUALIZATION ---- show this in the UI.
+    - Do we start pushing a SINGLE state on the stack, and pop/push as we go?
+      - OMG our region "colors" will actually be perfect for visualizing, so that changing regions will flicker?
+  - I want backtracker to find the "easiest" deduction (to show as a hint)
+- Utils:
+  - Spot (like an iterator, that basically holds a vertex/half-edge and provides a lot)
+    - PROVIDES ACCESS TO THE DATA/GRID?
+    - "open" or "closed" boundaries (whether it returns data that is valid or not outside of boundaries).
+    - nextLeft, nextRight, previousLeft, previousRight: Spot
+  - Spot4 --- allows "ghost" operations, where we are not on a real vertex/edge/face, but it knows the coordinates
+    - getEdge( dir: CardinalDirection ): Edge
+    - getVertex( dir: CardinalDirection ): Vertex
+    - getFace( dir: OrdinalDirection ): Face
+    - N/S/E/W edge, vertex
+    - NE/SE/SW/NW face
+    - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
