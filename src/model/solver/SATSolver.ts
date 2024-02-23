@@ -1,6 +1,3 @@
-
-// @ts-expect-error
-import minisat from './minisat.js';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
@@ -10,25 +7,8 @@ import { Combination } from 'phet-lib/dot';
 // @ts-expect-error
 import Logic from './logic-solver/logic-solver.js';
 
-var solver = new Logic.Solver();
-
-solver.require(Logic.atMostOne("Alice", "Bob"));
-solver.require(Logic.or("Bob", "Charlie"));
-
-var sol1 = solver.solve();
-console.log( sol1.getTrueVars() ) // => ["Bob"]
-
 // TODO: in the future, vertex state might help! anything that gives us more helpful clauses? maybe not
 export const minisatTest = ( board: TBoard, state: TEdgeData & TFaceData ) => {
-
-  // Vertex rule: 0 or 2, of N edges
-  //   negating all triples, e.g. (-a, -b, -c) for each triple --- caps "satisfied" at 2
-  //   ai => aj, for all i,j pairs, i != j:  (-ai, aj)    ---- seems sufficient for now, could introduce auxiliary variables?
-  // face rules (for N edges, value is K):
-  //   combine:
-  //   at least K true: for each combination of K edges, specify that, e.g. K=3 have (a,b,c), (a,b,d), (a,c,d), (b,c,d), etc.
-  //   at most K true: for each combination of K+1 edges, specify that, e.g. K=3 have (-a,-b,-c,-d), (-a,-b,-c,-e), (-a,-b,-d,-e), (-a,-c,-d,-e), (-b,-c,-d,-e), etc.
-  // to negate a loop that the solver has found, just have (-a, -b, ..., -z) for all of the edges in the loop
 
   // also, we might as well apply a "normal" solver first, to reduce the number of variables/clauses needed?
   // for instance, this should immediately outlaw 0s
@@ -39,45 +19,45 @@ export const minisatTest = ( board: TBoard, state: TEdgeData & TFaceData ) => {
 
   const whiteEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
 
-  const edgeToVariable = new Map( whiteEdges.map( ( edge, i ) => [ edge, i + 1 ] ) );
-  const variableToEdge = new Map( whiteEdges.map( ( edge, i ) => [ i + 1, edge ] ) );
+  const edgeToVariable = new Map( whiteEdges.map( ( edge, i ) => [ edge, `edge${i + 1}` ] ) );
+  const variableToEdge = new Map( whiteEdges.map( ( edge, i ) => [ `edge${i + 1}`, edge ] ) );
 
-  // for now, no Tseitin Transformation
-  const mainClauses: string[] = [];
+  const solver = new Logic.Solver();
+
+  const name = ( edge: TEdge ) => edgeToVariable.get( edge );
+  const notName = ( edge: TEdge ) => `-${name( edge )}`;
 
   const none = ( edges: TEdge[] ) => {
     for ( const edge of edges ) {
-      mainClauses.push( `${edgeToVariable.get( edge )} 0` );
+      solver.require( Logic.not( name( edge ) ) );
     }
   };
 
   const some = ( edges: TEdge[] ) => {
-    mainClauses.push( edges.map( edge => `${edgeToVariable.get( edge )}` ).join( ' ' ) + ' 0' );
+    solver.require( Logic.or( ...edges.map( name ) ) );
   };
 
   const atLeastN = ( edges: TEdge[], n: number ) => {
-    Combination.forEachCombination( edges, ( combination: readonly TEdge[] ) => {
-      if ( combination.length === edges.length - n + 1 ) {
-        mainClauses.push( combination.map( edge => `-${edgeToVariable.get( edge )}` ).join( ' ' ) + ' 0' );
-      }
-    } );
+    if ( n > 0 ) {
+      some( edges );
+      Combination.forEachCombination( edges, ( combination: readonly TEdge[] ) => {
+        if ( combination.length === edges.length - n + 1 ) {
+          solver.require( Logic.or( ...combination.map( notName ) ) );
+        }
+      } );
+    }
   };
 
   const atMostN = ( edges: TEdge[], n: number ) => {
     Combination.forEachCombination( edges, ( combination: readonly TEdge[] ) => {
       if ( combination.length === n + 1 ) {
-        mainClauses.push( combination.map( edge => `-${edgeToVariable.get( edge )}` ).join( ' ' ) + ' 0' );
+        solver.require( Logic.or( ...combination.map( notName ) ) );
       }
     } );
   };
 
   const not1 = ( edges: TEdge[] ) => {
-    for ( let i = 0; i < edges.length; i++ ) {
-      for ( let j = i + 1; j < edges.length; j++ ) {
-        mainClauses.push( `-${edgeToVariable.get( edges[ i ] )} ${edgeToVariable.get( edges[ j ] )} 0` );
-        mainClauses.push( `-${edgeToVariable.get( edges[ j ] )} ${edgeToVariable.get( edges[ i ] )} 0` );
-      }
-    }
+    solver.require( Logic.not( Logic.exactlyOne( ...edges.map( name ) ) ) );
   };
 
   const zeroOrTwo = ( edges: TEdge[] ) => {
@@ -118,8 +98,6 @@ export const minisatTest = ( board: TBoard, state: TEdgeData & TFaceData ) => {
     if ( whiteCount === 0 ) {
       continue;
     }
-
-    console.log( blackCount );
 
     if ( blackCount === 0 ) {
       zeroOrTwo( edges );
@@ -166,18 +144,18 @@ export const minisatTest = ( board: TBoard, state: TEdgeData & TFaceData ) => {
 
   // TODO: see what happens when we give it something unsatisfiable
 
-  const initialString = clausesToString( mainClauses, whiteEdges.length );
+  const getBlackEdges = (): TEdge[] | null => {
+    const solution = solver.solve();
+    if ( solution ) {
+      const variables = solution.getTrueVars();
+      return variables.map( ( variable: string ) => variableToEdge.get( variable ) );
+    }
+    else {
+      return null;
+    }
+  };
 
-  console.log( initialString );
-  console.log( minisat( initialString ) );
+  console.log( getBlackEdges() );
 
-//   console.log( minisat( `p cnf 403 2029
-// c Factors encoded in variables 1-11 and 12-22
-// 2 3 4 5 6 7 8 9 10 11 0
-//
-//   ` ) );
-};
-
-const clausesToString = ( clauses: string[], numVariables: number ) => {
-  return `p cnf ${numVariables} ${clauses.length}\n${clauses.join( '\n' )}`;
+  // wrap in Logic.disablingAssertions(function () { ... }) for faster behavior!
 };
