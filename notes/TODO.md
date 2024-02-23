@@ -262,6 +262,7 @@
     - How... do we express the loop (only one) constraint? Not easy.
     - Hey this is being done!!! https://www.dougandjean.com/slither/
       - https://www.dougandjean.com/slither/howitsolves.html 
+    - Also check https://www.comp.nus.edu.sg/~gregory/sat/ <---- oops listed above?
   - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
   - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
     - Actually, can factor out to "boolean" sets of edges (black OR red)
