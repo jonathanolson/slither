@@ -368,20 +368,20 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Run "brute force" backtracker with 1-2 levels of depth of the Solver backtracker. 
-  - Emitter on "ANY" state change(!) - makes backtracker/etc. dirty 
-    - Because things like the backtracker will go dirty on ANYTHING
+  - Backtracker:
+    - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
+    - What if we... slowly increase the depth until we get one reduction?
+    - Look for "more likely" cases, and chase things near to it? (Instead of searching all of them, including unlikely pairs?)
+  - Get the SAT solver in here? backtracker as written is insufficient for quick puzzle checks  
+  - How to.... async/await AND have synchronous paths for solvers? (really... just the backtracker)
+    - I mean... just implement both separately?
   - ZOMG ZOMG BACKTRACKER VISUALIZATION ---- show this in the UI.
     - Do we start pushing a SINGLE state on the stack, and pop/push as we go?
       - OMG our region "colors" will actually be perfect for visualizing, so that changing regions will flicker?
-  - Backtrack
-    - EdgeBacktracker - with the loop detection and simple rules is probably actually decent.
-    - Simplify solver stuff after
-    - Can we... have a button to "mark" a backtrack edge change?
-    - OMG - I want backtracker to find the "easiest" deduction (to show as a hint)
-      - Should all solvers give the difficulty?
-      - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
-      - Should all solve actions - have a "difficulty" rating?
+  - OMG - I want backtracker to find the "easiest" deduction (to show as a hint)
+    - Should all solvers give the difficulty?
+    - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
+    - Should all solve actions - have a "difficulty" rating?
   - Add demo/testing ACTUAL puzzles [NEEDS backtracking]
     - Hexagon-with-hole, radial (with hole), etc.
   - Have TEdge mimic BaseEdge's API, etc. (they define the interface)

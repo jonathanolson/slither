@@ -182,7 +182,7 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
       const states: TDelta<Data>[] = [];
 
       for ( const edgeState of [ EdgeState.BLACK, EdgeState.RED ] ) {
-        console.log( whiteEdges.indexOf( whiteEdge ), edgeState );
+        // console.log( whiteEdges.indexOf( whiteEdge ), edgeState );
 
         const delta = this.state.createDelta();
         const subSolver = this.solver.clone( delta );

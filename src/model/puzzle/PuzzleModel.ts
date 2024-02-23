@@ -14,6 +14,7 @@ import { TPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { getBacktrackedSolutions, MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { minisatTest } from '../solver/SATSolver.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -74,6 +75,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     // This allows the user to "undo" the auto-solve if they don't like it.
     this.addAutoSolveDelta();
     this.updateState();
+
+    minisatTest( puzzle.board, puzzle.stateProperty.value );
 
     this.undoPossibleProperty = new DerivedProperty( [
       this.stackPositionProperty
@@ -244,7 +247,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       try {
         // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
         const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
-          failOnMultiple: true
+          failOnMultiple: true,
+          useEdgeBacktrackerSolver: true
         } );
 
         // TODO: what to do if we have NO solution???
