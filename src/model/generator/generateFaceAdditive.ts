@@ -13,6 +13,7 @@ import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
+// TODO: yes, explicit proportions!
 
 // TODO: we can... use this to generate a loop, but then actually minimize it using a different approach?
 export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure, TCompleteData> => {
@@ -49,7 +50,14 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for ( const face of faceOrder ) {
       console.log( faceOrder.indexOf( face ) );
-      const possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length + 1 ) );
+
+      // Don't allow the "fully full" state, e.g. 4 in square.
+      let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
+
+      // TODO: get rid of this probability shift! Should hopefully fill things in more?
+      if ( possibleStates[ 0 ] === 0 ) {
+        possibleStates = dotRandom.shuffle( possibleStates );
+      }
 
       let appliedEdge = false;
 
