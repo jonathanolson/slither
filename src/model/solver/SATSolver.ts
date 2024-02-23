@@ -157,5 +157,8 @@ export const minisatTest = ( board: TBoard, state: TEdgeData & TFaceData ) => {
 
   console.log( getBlackEdges() );
 
+  // TODO: detect loops. detect solutions in those. negate all loops, try again (until UNSAT null)
+  // TODO: only use the edges that are "white edges"
+
   // wrap in Logic.disablingAssertions(function () { ... }) for faster behavior!
 };
