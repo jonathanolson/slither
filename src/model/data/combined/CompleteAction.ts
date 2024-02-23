@@ -35,7 +35,7 @@ export class CompleteAction implements TAction<TCompleteData> {
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): CompleteAction<TCompleteData> {
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): CompleteAction {
     return new CompleteAction(
       deserializeAction( board, serializedAction.faceAction ),
       deserializeAction( board, serializedAction.edgeAction ),
