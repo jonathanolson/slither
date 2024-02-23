@@ -1,6 +1,6 @@
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { THalfEdge } from '../../board/core/THalfEdge.ts';
+import { serializeHalfEdge, THalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 import { TEmitter } from 'phet-lib/axon';
 
 export interface TSimpleRegion {
@@ -17,6 +17,20 @@ export interface TSimpleRegion {
   // If this is true, this region is actually closed, and represents a solution for all of the faces.
   isSolved: boolean;
 }
+
+export interface TSerializedSimpleRegion {
+  id: number;
+  halfEdges: TSerializedHalfEdge[];
+  isSolved: boolean;
+}
+
+export const serializedSimpleRegion = ( simpleRegion: TSimpleRegion ): TSerializedSimpleRegion => {
+  return {
+    id: simpleRegion.id,
+    halfEdges: simpleRegion.halfEdges.map( serializeHalfEdge ),
+    isSolved: simpleRegion.isSolved
+  };
+};
 
 export interface TSimpleRegionData {
   getSimpleRegions(): TSimpleRegion[];

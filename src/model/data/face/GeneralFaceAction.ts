@@ -1,7 +1,7 @@
-import { TAction } from '../core/TAction.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceData } from './TFaceData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TFace } from '../../board/core/TFace.ts';
+import { deserializeFace, serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
 import FaceState from './FaceState.ts';
 
 export class GeneralFaceAction implements TAction<TFaceData> {
@@ -28,5 +28,25 @@ export class GeneralFaceAction implements TAction<TFaceData> {
 
   public isEmpty(): boolean {
     return this.faceStateMap.size === 0;
+  }
+
+  public serializeAction(): TSerializedAction {
+    return {
+      type: 'GeneralFaceAction',
+      faces: Array.from( this.faceStateMap.entries() ).map( ( [ face, faceState ] ) => ( {
+        face: serializeFace( face ),
+        state: faceState
+      } ) )
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralFaceAction {
+    return new GeneralFaceAction(
+      board,
+      new Map( serializedAction.faces.map( ( serializedFaceState: { face: TSerializedFace; state: FaceState } ) => [
+        deserializeFace( board, serializedFaceState.face ),
+        serializedFaceState.state
+      ] ) )
+    );
   }
 }

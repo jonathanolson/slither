@@ -1,9 +1,10 @@
 // TODO: immediate user repeat of "toggle" should undo auto-solve (that is probably out of the scope of these simple actions)
 // TODO: Potentially a UserEdgeStateToggleAction that does this and other things?
-import { TAction } from '../core/TAction.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TEdgeData } from './TEdgeData.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
+import { deserializeEdge, serializeEdge, TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class EdgeStateCycleAction implements TAction<TEdgeData> {
 
@@ -31,5 +32,17 @@ export class EdgeStateCycleAction implements TAction<TEdgeData> {
 
   public isEmpty(): boolean {
     return false;
+  }
+
+  public serializeAction(): TSerializedAction {
+    return {
+      type: 'EdgeStateCycleAction',
+      edge: serializeEdge( this.edge ),
+      forward: this.forward
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): EdgeStateCycleAction {
+    return new EdgeStateCycleAction( deserializeEdge( board, serializedAction.edge ), serializedAction.forward );
   }
 }

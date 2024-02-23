@@ -1,4 +1,5 @@
-import { TAction } from './TAction.ts';
+import { TAction, TSerializedAction } from './TAction.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class NoOpAction<Data> implements TAction<Data> {
   public apply( state: Data ): void {
@@ -11,5 +12,15 @@ export class NoOpAction<Data> implements TAction<Data> {
 
   public isEmpty(): boolean {
     return true;
+  }
+
+  public serializeAction(): TSerializedAction {
+    return {
+      type: 'NoOpAction'
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): NoOpAction<any> {
+    return new NoOpAction();
   }
 }

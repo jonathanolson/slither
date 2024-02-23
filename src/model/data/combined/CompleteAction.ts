@@ -1,8 +1,9 @@
-import { TAction } from '../core/TAction.ts';
+import { deserializeAction, TAction, TSerializedAction } from '../core/TAction.ts';
 import { TCompleteData } from './TCompleteData.ts';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(
@@ -23,5 +24,22 @@ export class CompleteAction implements TAction<TCompleteData> {
 
   public isEmpty(): boolean {
     return this.faceAction.isEmpty() && this.edgeAction.isEmpty() && this.simpleRegionAction.isEmpty();
+  }
+
+  public serializeAction(): TSerializedAction {
+    return {
+      type: 'CompleteAction',
+      faceAction: this.faceAction.serializeAction(),
+      edgeAction: this.edgeAction.serializeAction(),
+      simpleRegionAction: this.simpleRegionAction.serializeAction()
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): CompleteAction<TCompleteData> {
+    return new CompleteAction(
+      deserializeAction( board, serializedAction.faceAction ),
+      deserializeAction( board, serializedAction.edgeAction ),
+      deserializeAction( board, serializedAction.simpleRegionAction
+    ) );
   }
 }

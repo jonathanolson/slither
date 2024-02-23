@@ -367,7 +367,15 @@
   - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
     - Maybe just have a TPuzzleProperty? (hmmm) bleh
   - Generation:
+    - Faster "face minimization": 
+      - start by removing a good number at once. have a heuristic where this eventually goes down to removing 1 at a time
+      - any time a removal doesn't work, apply a multiplier to our "fresh from next time" amount to remove, and ... split the removal amount in half?
     - Faster "filling" method, basically just set up something that creates windy patterns quickly?
+      - Sprout off area-filling "winding" attempts, where it keeps walking
+        - Repeatedly do this until we have a good amount of "fill"
+        - Start in "less filled" regions
+        - If we have a region without transitions, apply fixes
+        - Ensure we have approximately half of the boundary filled
   - STATE SAVE in localStorage
     - Hopefully very fast to set? 
   - Hint

@@ -1,7 +1,8 @@
-import { TAction } from '../core/TAction.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TEdgeData } from './TEdgeData.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
+import { deserializeEdge, serializeEdge, TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class EdgeStateSetAction implements TAction<TEdgeData> {
 
@@ -21,5 +22,20 @@ export class EdgeStateSetAction implements TAction<TEdgeData> {
 
   public isEmpty(): boolean {
     return false;
+  }
+
+  public serializeAction(): TSerializedAction {
+    return {
+      type: 'EdgeStateSetAction',
+      edge: serializeEdge( this.edge ),
+      state: this.state.name
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): EdgeStateSetAction {
+    return new EdgeStateSetAction(
+      deserializeEdge( board, serializedAction.edge ),
+      EdgeState.enumeration.getValue( serializedAction.state )
+    );
   }
 }

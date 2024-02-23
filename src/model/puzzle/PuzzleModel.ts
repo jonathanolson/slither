@@ -14,6 +14,7 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
+import { TSerializedAction } from '../data/core/TAction.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -307,10 +308,30 @@ export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolve
 
 export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;
+
+  public override serializeAction(): TSerializedAction {
+    return {
+      type: 'UserLoadPuzzleAutoSolveAction'
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserLoadPuzzleAutoSolveAction {
+    return new UserLoadPuzzleAutoSolveAction();
+  }
 }
 
 export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserRequestSolveAction = true;
+
+  public override serializeAction(): TSerializedAction {
+    return {
+      type: 'UserRequestSolveAction'
+    };
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserRequestSolveAction {
+    return new UserRequestSolveAction();
+  }
 }
 
 export class PuzzleSnapshot<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
