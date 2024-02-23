@@ -364,6 +364,8 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
+    - Maybe just have a TPuzzleProperty? (hmmm) bleh
   - SATSolver / generateFaceAdditive TODOs 
   - STATE SAVE in localStorage
     - Hopefully very fast to set? 

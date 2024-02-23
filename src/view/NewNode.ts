@@ -87,9 +87,7 @@ export class NewNode extends PopupNode {
 
             const board = new SquareBoard( 15, 15 );
 
-            const state = generateFaceAdditive( board );
-
-            options.loadPuzzle( new BasicPuzzle( board, state ) );
+            options.loadPuzzle( BasicPuzzle.fromSolvedPuzzle( generateFaceAdditive( board ) ) );
           }
         } ) ),
         new TextPushButton( 'generateFaceAdditive hex', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
@@ -98,9 +96,7 @@ export class NewNode extends PopupNode {
 
             const board = new HexagonalBoard( 7, 1, true );
 
-            const state = generateFaceAdditive( board );
-
-            options.loadPuzzle( new BasicPuzzle( board, state ) );
+            options.loadPuzzle( BasicPuzzle.fromSolvedPuzzle( generateFaceAdditive( board ) ) );
           }
         } ) ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

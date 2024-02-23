@@ -59,10 +59,12 @@ export const satSolve = (
   };
 
   const notAll = ( edges: TEdge[] ) => {
+    // TODO: hotspot (6% of solving time)
     solver.require( Logic.or( ...edges.map( notName ) ) );
   };
 
   const atLeastN = ( edges: TEdge[], n: number ) => {
+    // TODO: hotspot (7% of solving time)
     if ( n > 0 ) {
       some( edges );
       Combination.forEachCombination( edges, ( combination: readonly TEdge[] ) => {
@@ -75,6 +77,7 @@ export const satSolve = (
   };
 
   const atMostN = ( edges: TEdge[], n: number ) => {
+    // TODO: hotspot (15% of solving time)
     Combination.forEachCombination( edges, ( combination: readonly TEdge[] ) => {
       if ( combination.length === n + 1 ) {
         solver.require( Logic.or( ...combination.map( notName ) ) );
@@ -83,6 +86,8 @@ export const satSolve = (
   };
 
   const not1 = ( edges: TEdge[] ) => {
+    // TODO: hotspot (27% of solving time)
+    // TODO: see if it's better if we manually add the implications (e.g. for every permutation of 2, ( A or NOT B ))
     solver.require( Logic.not( Logic.exactlyOne( ...edges.map( name ) ) ) );
   };
 

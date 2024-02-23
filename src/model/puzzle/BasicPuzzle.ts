@@ -7,6 +7,9 @@ import FaceState from '../data/face/FaceState.ts';
 import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
+import { TStructure } from '../board/core/TStructure.ts';
+import { TFaceData } from '../data/face/TFaceData.ts';
+import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
 
 export class BasicPuzzle<Data> {
 
@@ -17,6 +20,10 @@ export class BasicPuzzle<Data> {
     initialState: TState<Data>
   ) {
     this.stateProperty = new TinyProperty( initialState );
+  }
+
+  public static fromSolvedPuzzle<Structure extends TStructure, Data extends TFaceData>( puzzle: TSolvedPuzzle<Structure, Data> ): BasicPuzzle<Data> {
+    return new BasicPuzzle( puzzle.board, puzzle.faceState );
   }
 
   public static loadPointyTopHexagonalString( str: string ): BasicPuzzle<TCompleteData> {
