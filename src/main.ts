@@ -14,6 +14,8 @@ import { TStructure } from './model/board/core/TStructure.ts';
 import { TPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
+import { scene } from './view/scene.ts';
+import { glassPane } from './view/glassPane.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -23,12 +25,14 @@ if ( window.assertions && !( import.meta.env.PROD ) ) {
   window.assertions.enableAssert();
 }
 
-const scene = new Node();
-
 const rootNode = new Node( {
   renderer: 'svg',
   children: [ scene ]
 } );
+
+// Isolated for ease of refactoring
+// TODO: We could move this to a single outside export, so things can add debugging popups
+export const getRootNode = () => rootNode;
 
 const display = new Display( rootNode, {
   allowWebGL: true,
@@ -46,9 +50,7 @@ display.setPointerAreaDisplayVisible( SlitherQueryParameters.showPointerAreas );
 
 window.oncontextmenu = e => e.preventDefault();
 
-const glassPane = new Node();
-
-const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
+export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
 const startingPuzzle = BasicSquarePuzzle.loadFromSimpleString(
   '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'

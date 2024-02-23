@@ -369,6 +369,8 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - WEB WORKER MINISAT!!!
+    - We could attack the problem both with a SAT solver, and with a solving backtracker at the same time?
   - Backtracker:
     - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
     - What if we... slowly increase the depth until we get one reduction?

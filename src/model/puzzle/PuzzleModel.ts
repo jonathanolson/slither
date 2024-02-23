@@ -9,12 +9,11 @@ import { NoOpAction } from '../data/core/NoOpAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-
 import { TPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { getBacktrackedSolutions, MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
-import { minisatTest } from '../solver/SATSolver.ts';
+import { satSolve } from '../solver/SATSolver.ts';
+import EdgeState from '../data/edge/EdgeState.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
@@ -75,8 +74,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     // This allows the user to "undo" the auto-solve if they don't like it.
     this.addAutoSolveDelta();
     this.updateState();
-
-    minisatTest( puzzle.board, puzzle.stateProperty.value );
 
     this.undoPossibleProperty = new DerivedProperty( [
       this.stackPositionProperty
@@ -244,30 +241,63 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     const state = this.puzzle.stateProperty.value;
 
     if ( !simpleRegionIsSolved( state ) ) {
-      try {
-        // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
-        const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
-          failOnMultiple: true,
-          useEdgeBacktrackerSolver: true
+
+      const solutions = satSolve( this.puzzle.board, this.puzzle.stateProperty.value, {
+        maxIterations: 10000
+      } );
+
+      if ( solutions.length === 1 ) {
+        const solvedState = this.puzzle.stateProperty.value.clone() as State;
+
+        solutions[ 0 ].forEach( edge => {
+          solvedState.setEdgeState( edge, EdgeState.BLACK );
         } );
+        iterateSolverFactory( safeSolverFactory, this.puzzle.board, solvedState, true );
 
-        // TODO: what to do if we have NO solution???
-        if ( solutions.length === 1 ) {
-
-          this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solutions[ 0 ], false ) );
-
-          this.updateState();
-        }
+        this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solvedState, false ) );
+        this.updateState();
       }
-      catch ( e ) {
-        if ( e instanceof MultipleSolutionsError ) {
-          // TODO: what should we do?
-          console.log( 'Multiple solutions found' );
-        }
-        else {
-          throw e;
-        }
+      else if ( solutions.length === 0 ) {
+        // TODO: what to do?
+        console.log( 'No solution found' );
       }
+      else {
+        // TODO: what to do?
+        console.log( 'Multiple solution found?!?' );
+
+        // debugBoardState( this.puzzle.board, solvedState, {
+        //   scale: 15,
+        //   left: 10,
+        //   top: 10
+        // } );
+      }
+
+      // Should we remove the old backtracker approach?
+
+      // try {
+      //   // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
+      //   const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
+      //     failOnMultiple: true,
+      //     useEdgeBacktrackerSolver: true
+      //   } );
+      //
+      //   // TODO: what to do if we have NO solution???
+      //   if ( solutions.length === 1 ) {
+      //
+      //     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solutions[ 0 ], false ) );
+      //
+      //     this.updateState();
+      //   }
+      // }
+      // catch ( e ) {
+      //   if ( e instanceof MultipleSolutionsError ) {
+      //     // TODO: what should we do?
+      //     console.log( 'Multiple solutions found' );
+      //   }
+      //   else {
+      //     throw e;
+      //   }
+      // }
     }
   }
 }
