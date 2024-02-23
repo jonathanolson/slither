@@ -244,7 +244,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
       const solutions = satSolve( this.puzzle.board, this.puzzle.stateProperty.value, {
         maxIterations: 10000,
-        failOnMultiple: true
+        failOnMultipleSolutions: true
       } );
 
       if ( solutions.length === 1 ) {
@@ -278,7 +278,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       // try {
       //   // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
       //   const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
-      //     failOnMultiple: true,
+      //     failOnMultipleSolutions: true,
       //     useEdgeBacktrackerSolver: true
       //   } );
       //

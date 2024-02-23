@@ -63,7 +63,7 @@ export const edgeBacktrack = <Data extends EdgeBacktrackData>(
 };
 
 export type GetBacktrackedSolutionsOptions = {
-  failOnMultiple: boolean;
+  failOnMultipleSolutions: boolean;
   useEdgeBacktrackerSolver: boolean;
 };
 
@@ -92,7 +92,7 @@ export const getBacktrackedSolutions = <Data extends TCompleteData>(
       initialSolver,
       {
         solutionCallback: solutionState => {
-          if ( solutions.length === 1 && options.failOnMultiple ) {
+          if ( solutions.length === 1 && options.failOnMultipleSolutions ) {
             throw new MultipleSolutionsError();
           }
           else {

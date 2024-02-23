@@ -33,7 +33,7 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
         // TODO: try to invoke our normal solver first?
         solutions = satSolve( board, state, {
           maxIterations: 10000,
-          failOnMultiple: true
+          failOnMultipleSolutions: true
         } );
         return solutions.length;
       }

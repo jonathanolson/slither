@@ -242,12 +242,6 @@
     - "How to solve the Jordan curve walked a turn around white. Only one can get out through vertices" - think of curves that turn at verties.
   - Jordan curve "corners" that only permit one through (and a closed area that needs 2+)
   - Do have a solver have pseudo-edges and pseudo-faces (marked "outside") around the border?
-  - Boolean SAT, https://www.comp.nus.edu.sg/~gregory/sat/, https://www.comp.nus.edu.sg/~gregory/sat/sat.js, https://jgalenson.github.io/research.js/demos/minisat.html
-    - miniSAT looks... nice. Embrace the NP-completeness!
-    - How... do we express the loop (only one) constraint? Not easy.
-    - Hey this is being done!!! https://www.dougandjean.com/slither/
-      - https://www.dougandjean.com/slither/howitsolves.html 
-    - Also check https://www.comp.nus.edu.sg/~gregory/sat/ <---- oops listed above?
   - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
   - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
     - Actually, can factor out to "boolean" sets of edges (black OR red)
@@ -372,7 +366,7 @@
   - USE SAT for image scanning (to see if it is a good puzzle)
   - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
     - Maybe just have a TPuzzleProperty? (hmmm) bleh
-  - SATSolver / generateFaceAdditive TODOs 
+  - generateFaceAdditive TODOs 
   - Generation:
     - Faster "filling" method, basically just set up something that creates windy patterns quickly?
   - STATE SAVE in localStorage
@@ -531,7 +525,7 @@
     - FaceColor: Inside / Outside / ...others? <--- how do we handle collections of faces and coloring?
       - opposite: FaceColor --- display with opposite hues?
     - Jordan curve around face (possibilities and rules)
-    - SAT formats
+    - SAT formats? CNF for edges?
     - VertexState4:
       - bools: allowEmpty, allowHorizontal, allowVertical, allowNorthwest, allowNortheast, allowSouthwest, allowSoutheast
       - allows( state: EdgeState red/black, dir: CardinalDirection ): bool

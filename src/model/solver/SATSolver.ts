@@ -1,3 +1,13 @@
+/**
+ * Solves the puzzle using a SAT solver, providing all solutions if helpful.
+ *
+ * Patterned after the algorithm noted in https://www.dougandjean.com/slither/howitsolves.html (thanks!).
+ *
+ * Uses https://www.npmjs.com/package/logic-solver (MIT), located under the logic-solver directory (made compatible with ES6 modules).
+ *
+ * Could in the future consider https://www.comp.nus.edu.sg/~gregory/sat/.
+ */
+
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
@@ -13,8 +23,7 @@ import { MultipleSolutionsError } from './EdgeBacktracker.ts';
 
 export type SatSolveOptions = {
   maxIterations: number;
-  // TODO: consider global rename failOnMultipleSolutions
-  failOnMultiple: boolean;
+  failOnMultipleSolutions: boolean;
 };
 
 // TODO: in the future, vertex state might help! anything that gives us more helpful clauses? maybe not
@@ -141,12 +150,14 @@ export const satSolve = (
     }
   }
 
-  // TODO: IF WE TRACK which clauses are from what faces, we might be able to remove them faster and do puzzle generation faster? (probably not worth it)
+  let hasFaceWithValue = false;
   for ( const face of board.faces ) {
     const faceValue = state.getFaceState( face );
     if ( faceValue === null ) {
       continue;
     }
+
+    hasFaceWithValue = true;
 
     let blackCount = 0;
     let whiteCount = 0;
@@ -172,10 +183,7 @@ export const satSolve = (
 
     exactlyN( edges, openCount );
   }
-
-  // TODO: if there are no faces, throw an error!
-
-  // TODO: see what happens when we give it something unsatisfiable
+  assertEnabled() && assert( hasFaceWithValue, 'No faces with values!' );
 
   const getBlackEdges = (): TEdge[] | null => {
     let solution: Logic.Solution | null = null;
@@ -193,8 +201,6 @@ export const satSolve = (
   };
 
   let iterationNumber = 0;
-
-  // TODO: detect if it is already solved
 
   // TODO: can we add async/await into minisat somehow? (or web-worker it?)
   const findLoops = (): {
@@ -251,12 +257,9 @@ export const satSolve = (
     };
   };
 
-  // TODO: the ability to fail out on multiple solutions?
-
   const solutions: TEdge[][] = [];
 
   // https://www.dougandjean.com/slither/howitsolves.html describes this partial approach well, thank you!!!
-  // TODO: limit iterations
 
   while ( true ) {
     const loops = findLoops();
@@ -268,7 +271,7 @@ export const satSolve = (
     if ( loops.touchingValueLoops.length === 1 ) {
       solutions.push( loops.touchingValueLoops[ 0 ] );
 
-      if ( solutions.length > 1 && options.failOnMultiple ) {
+      if ( solutions.length > 1 && options.failOnMultipleSolutions ) {
         throw new MultipleSolutionsError();
       }
     }
@@ -288,9 +291,6 @@ export const satSolve = (
       throw new MaximumSolverIterationsError();
     }
   }
-
-  // TODO: detect loops. detect solutions in those. negate all loops, try again (until UNSAT null)
-  // TODO: only use the edges that are "white edges"
 
   return solutions;
 };

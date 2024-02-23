@@ -25,7 +25,7 @@ export const greedyFaceMinimize = <Structure extends TStructure, Data extends TF
       // TODO: try to invoke our normal solver first?
       satSolve( board, state, {
         maxIterations: 10000,
-        failOnMultiple: true
+        failOnMultipleSolutions: true
       } );
       return false;
     }
