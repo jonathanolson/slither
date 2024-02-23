@@ -364,11 +364,21 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Async/await on generation FOR SURE 
+    - GeneratingNode --- shows progress?
+    - ABILITY TO ABORT THE GENERATE!!!!
+    - Get the status of it on frame generation (so we can update the display)
+    - --- should we create the ability to create an "on deck" puzzle in the background?
+  - USE SAT for image scanning (to see if it is a good puzzle)
   - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
     - Maybe just have a TPuzzleProperty? (hmmm) bleh
   - SATSolver / generateFaceAdditive TODOs 
+  - Generation:
+    - Faster "filling" method, basically just set up something that creates windy patterns quickly?
   - STATE SAVE in localStorage
     - Hopefully very fast to set? 
+  - Hint
+    - Could ... "add a face value"?
   - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
     - Board serialization (and use for creating boards in easier ways!!!)
       - Specify vertex logical/view coordinates in a list

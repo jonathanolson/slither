@@ -285,8 +285,7 @@ export const satSolve = (
     iterationNumber++;
 
     if ( iterationNumber > options.maxIterations ) {
-      // TODO: better way of handling
-      throw new Error( 'Too many iterations!' );
+      throw new MaximumSolverIterationsError();
     }
   }
 
@@ -295,3 +294,9 @@ export const satSolve = (
 
   return solutions;
 };
+
+export class MaximumSolverIterationsError extends Error {
+  public constructor() {
+    super( 'Too many iterations!' );
+  }
+}

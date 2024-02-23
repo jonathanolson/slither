@@ -5,7 +5,7 @@ import { CompleteData } from '../data/combined/CompleteData.ts';
 import { dotRandom } from 'phet-lib/dot';
 import { TFace } from '../board/core/TFace.ts';
 import _ from '../../workarounds/_.ts';
-import { satSolve } from '../solver/SATSolver.ts';
+import { MaximumSolverIterationsError, satSolve } from '../solver/SATSolver.ts';
 import { MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TEdge } from '../board/core/TEdge.ts';
@@ -41,6 +41,10 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
         if ( e instanceof MultipleSolutionsError ) {
           return 2;
         }
+        else if ( e instanceof MaximumSolverIterationsError ) {
+          // TODO: is this overly safe? If we max out on iterations, don't add it. Hmm.
+          return 0;
+        }
         else {
           throw e;
         }
@@ -49,7 +53,7 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
 
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for ( const face of faceOrder ) {
-      console.log( faceOrder.indexOf( face ) );
+      console.log( 'add face', faceOrder.indexOf( face ) );
 
       // Don't allow the "fully full" state, e.g. 4 in square.
       let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
