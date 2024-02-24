@@ -350,6 +350,13 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - logic-solver leaking memory like crazy, use something more modern
+    - https://www.npmjs.com/package/z3-solver actually this might be better?
+      - OMG YES use z3-solver... this looks way better
+      - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/
+      - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/#solve-sudoku
+    - DO we need to minisat-WASM? see https://github.com/niklasso/minisat
+      - NONO, use something like a derivative, like https://github.com/audemard/glucose
   - Remove the TStructure stuff, we don't need it for square edges?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
