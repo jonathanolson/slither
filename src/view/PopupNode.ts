@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
 import { Panel, PanelOptions } from 'phet-lib/sun';
-import { barrierColorProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
+import { barrierColorProperty, uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 
 export type PopupNodeOptions = {
@@ -23,8 +23,8 @@ export class PopupNode extends Node {
       panelOptions: {
         xMargin: 15,
         yMargin: 15,
-        fill: uiBackgroundProperty,
-        stroke: uiForegroundProperty
+        fill: uiBackgroundColorProperty,
+        stroke: uiForegroundColorProperty
       }
     }, providedOptions );
 

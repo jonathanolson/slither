@@ -193,11 +193,11 @@ export const edgeWeirdColorProperty = new DynamicProperty( themeProperty, {
   derive: 'edgeWeirdColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
-export const uiForegroundProperty = new DynamicProperty( themeProperty, {
+export const uiForegroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'uiForegroundProperty'
 } ) as TReadOnlyProperty<Color>;
 
-export const uiBackgroundProperty = new DynamicProperty( themeProperty, {
+export const uiBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'uiBackgroundProperty'
 } ) as TReadOnlyProperty<Color>;
 

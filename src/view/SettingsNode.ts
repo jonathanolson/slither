@@ -3,7 +3,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { Node, Text, VBox } from 'phet-lib/scenery';
 import { VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, popupFont, themeProperty, uiForegroundProperty } from './Theme.ts';
+import { availableThemes, popupFont, themeProperty, uiForegroundColorProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 
@@ -20,7 +20,7 @@ export class SettingsNode extends PopupNode {
       children: [
         new Text( 'Solve After Every Move', {
           font: popupFont,
-          fill: uiForegroundProperty
+          fill: uiForegroundColorProperty
         } ),
         getSettingsCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
         getSettingsCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
@@ -53,7 +53,7 @@ export class SettingsNode extends PopupNode {
         value: theme,
         createNode: () => new Text( theme.name, {
           font: popupFont,
-          fill: uiForegroundProperty
+          fill: uiForegroundColorProperty
         } ),
         a11yName: theme.name
       };
@@ -66,7 +66,7 @@ export class SettingsNode extends PopupNode {
       children: [
         new Text( 'Theme', {
           font: popupFont,
-          fill: uiForegroundProperty
+          fill: uiForegroundColorProperty
         } ),
         themeSelector
       ]
