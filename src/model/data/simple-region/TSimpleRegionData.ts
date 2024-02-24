@@ -1,7 +1,8 @@
-import { TEdge } from '../../board/core/TEdge.ts';
+import { serializeEdge, TEdge, TSerializedEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { serializeHalfEdge, THalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 import { TEmitter } from 'phet-lib/axon';
+import { TSerializedState } from '../core/TState.ts';
 
 export interface TSimpleRegion {
   // An identifier that is tracked across simple regions over time. Algorithms will try to keep this consistent, for
@@ -70,3 +71,15 @@ export const simpleRegionIsSolved = ( data: TSimpleRegionData ): boolean => {
 
   return regions.length === 1 && regions[ 0 ].isSolved && data.getWeirdEdges().length === 0;
 };
+
+export interface TSerializedSimpleRegionData extends TSerializedState {
+  type: 'SimpleRegionData';
+  simpleRegions: TSerializedSimpleRegion[];
+  weirdEdges: TSerializedEdge[];
+}
+
+export const serializeSimpleRegionData = ( faceData: TSimpleRegionData ): TSerializedSimpleRegionData => ( {
+  type: 'SimpleRegionData',
+  simpleRegions: faceData.getSimpleRegions().map( serializedSimpleRegion ),
+  weirdEdges: faceData.getWeirdEdges().map( serializeEdge )
+} );

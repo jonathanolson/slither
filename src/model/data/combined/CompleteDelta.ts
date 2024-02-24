@@ -1,6 +1,6 @@
 import { CompleteAction } from './CompleteAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { TCompleteData } from './TCompleteData.ts';
+import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
@@ -10,6 +10,7 @@ import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
@@ -96,5 +97,9 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
 
   public createDelta(): TDelta<TCompleteData> {
     return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta() );
+  }
+
+  public serializeState( board: TBoard ): TSerializedCompleteData {
+    return serializeCompleteData( board, this );
   }
 }

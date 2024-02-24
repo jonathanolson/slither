@@ -358,6 +358,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Remove the TStructure stuff, we don't need it for square edges. 
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
     - ABILITY TO ABORT THE GENERATE!!!!
@@ -381,13 +382,6 @@
   - Hint
     - Could ... "add a face value"?
   - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
-    - Board serialization (and use for creating boards in easier ways!!!)
-      - Specify vertex logical/view coordinates in a list
-      - Specify faces with CCW vertex indices, and logical/view coordinates
-      - THAT's ALL, reconstruct from that!
-    - State serialization
-      - Face/Edge: map of logicalCoordinates => state
-      - SimpleRegions - it's derivative from Edge, don't store it
     - ALTERNATIVE: how to handle the entire history?
       - Serialize ALL of the actions, and the PuzzleSnapshots
       - Serialize the DELTAS!!!!!! This allows us to say "here is an action" and "here is the delta between states"

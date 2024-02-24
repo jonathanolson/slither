@@ -1,6 +1,6 @@
 import { TState } from '../core/TState.ts';
-import { TEdgeData } from './TEdgeData.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
+import { serializeEdgeData, TEdgeData, TSerializedEdgeData } from './TEdgeData.ts';
+import { deserializeEdge, TEdge, TSerializedEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -50,5 +50,21 @@ export class GeneralEdgeData implements TState<TEdgeData> {
 
   public createDelta(): TDelta<TEdgeData> {
     return new GeneralEdgeDelta( this.board, this );
+  }
+
+  public serializeState( board: TBoard ): TSerializedEdgeData {
+    return serializeEdgeData( board, this );
+  }
+
+  public static deserializeState( board: TBoard, serializedEdgeData: TSerializedEdgeData ): GeneralEdgeData {
+    const map: Map<TEdge, EdgeState> = new Map( serializedEdgeData.edges.map( ( serializedEdgeState: { edge: TSerializedEdge; state: string } ) => [
+      deserializeEdge( board, serializedEdgeState.edge ),
+      EdgeState.enumeration.getValue( serializedEdgeState.state )
+    ] ) );
+
+    return new GeneralEdgeData(
+      board,
+      edge => map.get( edge ) ?? EdgeState.WHITE
+    );
   }
 }

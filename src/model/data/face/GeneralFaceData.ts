@@ -1,8 +1,6 @@
-// TODO: faster forms for Square in particular
-// TODO: abstract out structure here
 import { TState } from '../core/TState.ts';
-import { TFaceData } from './TFaceData.ts';
-import { TFace } from '../../board/core/TFace.ts';
+import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
+import { deserializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
 import FaceState from './FaceState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -49,5 +47,21 @@ export class GeneralFaceData implements TState<TFaceData> {
 
   public createDelta(): TDelta<TFaceData> {
     return new GeneralFaceDelta( this.board, this );
+  }
+
+  public serializeState( board: TBoard ): TSerializedFaceData {
+    return serializeFaceData( board, this );
+  }
+
+  public static deserializeState( board: TBoard, serializedFaceData: TSerializedFaceData ): GeneralFaceData {
+    const map: Map<TFace, FaceState> = new Map( serializedFaceData.faces.map( ( serializedFaceState: { face: TSerializedFace; state: FaceState } ) => [
+      deserializeFace( board, serializedFaceState.face ),
+      serializedFaceState.state
+    ] ) );
+
+    return new GeneralFaceData(
+      board,
+      face => map.get( face ) ?? null
+    );
   }
 }

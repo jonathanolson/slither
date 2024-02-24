@@ -1,5 +1,5 @@
 import { TState } from '../core/TState.ts';
-import { TCompleteData } from './TCompleteData.ts';
+import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
@@ -131,6 +131,18 @@ export class CompleteData implements TState<TCompleteData> {
       this.faceData.createDelta(),
       this.edgeData.createDelta(),
       this.simpleRegionData.createDelta()
+    );
+  }
+
+  public serializeState( board: TBoard ): TSerializedCompleteData {
+    return serializeCompleteData( board, this );
+  }
+
+  public static deserializeState( board: TBoard, serializedCompleteData: TSerializedCompleteData ): CompleteData {
+    return new CompleteData(
+      GeneralFaceData.deserializeState( board, serializedCompleteData.faceData ),
+      GeneralEdgeData.deserializeState( board, serializedCompleteData.edgeData ),
+      GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData )
     );
   }
 }

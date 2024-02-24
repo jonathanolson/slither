@@ -1,6 +1,6 @@
 import { GeneralSimpleRegionAction } from './GeneralSimpleRegionAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
+import { serializeSimpleRegionData, TSerializedSimpleRegionData, TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
@@ -101,5 +101,9 @@ export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implemen
 
   public createDelta(): TDelta<TSimpleRegionData> {
     return new GeneralSimpleRegionDelta( this.board, this );
+  }
+
+  public serializeState( board: TBoard ): TSerializedSimpleRegionData {
+    return serializeSimpleRegionData( this );
   }
 }

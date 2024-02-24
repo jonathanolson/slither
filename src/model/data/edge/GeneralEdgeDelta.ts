@@ -1,6 +1,6 @@
 import { GeneralEdgeAction } from './GeneralEdgeAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { TEdgeData } from './TEdgeData.ts';
+import { serializeEdgeData, TEdgeData, TSerializedEdgeData } from './TEdgeData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
@@ -44,5 +44,9 @@ export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeD
 
   public createDelta(): TDelta<TEdgeData> {
     return new GeneralEdgeDelta( this.board, this, new Map() );
+  }
+
+  public serializeState( board: TBoard ): TSerializedEdgeData {
+    return serializeEdgeData( board, this );
   }
 }

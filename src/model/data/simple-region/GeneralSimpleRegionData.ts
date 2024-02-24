@@ -1,12 +1,13 @@
 import { TState } from '../core/TState.ts';
-import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
+import { serializeSimpleRegionData, TSerializedSimpleRegionData, TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { TEdge } from '../../board/core/TEdge.ts';
+import { deserializeEdge, TEdge } from '../../board/core/TEdge.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
 
 import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
+import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
 
 export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
 
@@ -86,5 +87,17 @@ export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
 
   public createDelta(): TDelta<TSimpleRegionData> {
     return new GeneralSimpleRegionDelta( this.board, this );
+  }
+
+  public serializeState( board: TBoard ): TSerializedSimpleRegionData {
+    return serializeSimpleRegionData( this );
+  }
+
+  public static deserializeState( board: TBoard, serializedSimpleRegionData: TSerializedSimpleRegionData ): GeneralSimpleRegionData {
+    return new GeneralSimpleRegionData(
+      board,
+      serializedSimpleRegionData.simpleRegions.map( serializedSimpleRegion => GeneralSimpleRegion.deserializeSimpleRegion( board, serializedSimpleRegion ) ),
+      serializedSimpleRegionData.weirdEdges.map( serializedEdge => deserializeEdge( board, serializedEdge ) )
+    );
   }
 }

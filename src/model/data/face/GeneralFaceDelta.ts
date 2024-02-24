@@ -1,6 +1,6 @@
 import { GeneralFaceAction } from './GeneralFaceAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { TFaceData } from './TFaceData.ts';
+import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import FaceState from './FaceState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
@@ -44,5 +44,9 @@ export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceD
 
   public createDelta(): TDelta<TFaceData> {
     return new GeneralFaceDelta( this.board, this, new Map() );
+  }
+
+  public serializeState( board: TBoard ): TSerializedFaceData {
+    return serializeFaceData( board, this );
   }
 }
