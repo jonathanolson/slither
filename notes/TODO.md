@@ -46,7 +46,6 @@
       - !!! This looks really nice
     - Optional: themes(!) control how things are displayed. Not too hard to do. Neon on black is neat
       - For other shapes, displaying the "potential" line looks really helpful
-      - Potentially use localStorage for themes?
     - Optional: red x's look ... not great on triangular potentially?
     - SLICK animation(!)
       - Can we make it more intuitive by having the line animate?
@@ -391,8 +390,6 @@
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
   - Should we rule-scan soon so that our solver architecture works for it?
   - Mobile issues:
-    - SAVE PUZZLE STATE in localStorage (see notes elsewhere), not fun to lose progress
-      - try/catch loading (or maybe setTimeout it so that if it takes a bit...?) 
     - Autosolve annoyance on mobile:
       - Prevent user from changing auto-solved edges immediately (?)
       - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
@@ -551,8 +548,6 @@
     - Have PatternExplainers that we can display to show what we can deduce next
     - Have a "hint" button
     - Have a "solve a single bit" button
-  - Configuration
-    - Save in localStorage
   - Immutable views
     - Would be great for an "explainer" page (this would be fun to write up)
 
