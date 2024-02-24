@@ -20,6 +20,12 @@ export class BasicSquarePuzzle<Data> {
     this.stateProperty = new TinyProperty( initialState );
   }
 
+  public static loadDefaultPuzzle(): BasicSquarePuzzle<TCompleteData> {
+    return BasicSquarePuzzle.loadFromSimpleString(
+      '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
+    );
+  }
+
   /**
    * The format is:
    *

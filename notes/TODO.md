@@ -377,19 +377,12 @@
         - Start in "less filled" regions
         - If we have a region without transitions, apply fixes
         - Ensure we have approximately half of the boundary filled
-  - STATE SAVE in localStorage
-    - Hopefully very fast to set? 
   - Hint
     - Could ... "add a face value"?
-  - Serialization (for puzzle creation, saving puzzles in localStorage, etc.)
-    - ALTERNATIVE: how to handle the entire history?
-      - Serialize ALL of the actions, and the PuzzleSnapshots
-      - Serialize the DELTAS!!!!!! This allows us to say "here is an action" and "here is the delta between states"
-      - SAVE THE DELTAS in the PuzzleSnapshot
-      - ----- each TAction would need to be serializable?
-    - Share URLs:
-      - Query parameter to load a puzzle string!
-      - Query parameter to... load a compressed puzzle serialization?
+  - Save full PuzzleModel state (serialize actions and stack)
+  - Share URLs:
+    - Query parameter to load a puzzle string!
+    - Query parameter to... load a compressed puzzle serialization?
   - Add demo/testing ACTUAL puzzles
     - Hexagon-with-hole, radial (with hole), etc.
   - Have TEdge mimic BaseEdge's API, etc. (they define the interface)

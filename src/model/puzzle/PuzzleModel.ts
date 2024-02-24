@@ -9,7 +9,7 @@ import { NoOpAction } from '../data/core/NoOpAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TPuzzle } from './TPuzzle.ts';
+import { puzzleToCompressedString, TPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
@@ -93,6 +93,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
   private updateState(): void {
     this.puzzle.stateProperty.value = this.stack[ this.stackPositionProperty.value ].state;
+
+    setTimeout( () => {
+      localStorage.setItem( 'puzzleString', puzzleToCompressedString( this.puzzle ) );
+    }, 0 );
   }
 
   private wipeStackTop(): void {
