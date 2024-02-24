@@ -63,6 +63,7 @@ export class PopupNode extends Node {
 
   public show(): void {
     if ( !this.glassPane.hasChild( this ) ) {
+      this.reset();
       this.glassPane.addChild( this );
     }
   }
@@ -71,5 +72,9 @@ export class PopupNode extends Node {
     if ( this.glassPane.hasChild( this ) ) {
       this.glassPane.removeChild( this );
     }
+  }
+
+  public reset(): void {
+
   }
 }

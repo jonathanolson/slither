@@ -52,7 +52,7 @@ window.oncontextmenu = e => e.preventDefault();
 
 export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
-const puzzleString = localStorage.getItem( 'puzzleString' );
+const puzzleString = SlitherQueryParameters.p || localStorage.getItem( 'puzzleString' );
 const startingPuzzle = puzzleString ? puzzleFromCompressedString( puzzleString ) ?? BasicSquarePuzzle.loadDefaultPuzzle() : BasicSquarePuzzle.loadDefaultPuzzle();
 const startingPuzzleModel = new PuzzleModel( startingPuzzle );
 

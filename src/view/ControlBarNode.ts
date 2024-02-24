@@ -4,7 +4,7 @@ import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
-import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
+import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { controlBarFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 import { NewNode } from './NewNode.ts';
@@ -13,6 +13,7 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import { ShareNode } from './ShareNode.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
@@ -43,6 +44,7 @@ export default class ControlBarNode extends HBox {
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
 
     let newNode: NewNode | null = null;
+    let shareNode: ShareNode | null = null;
     let settingsNode: SettingsNode | null = null;
 
     const commonButtonOptions = {
@@ -128,6 +130,24 @@ export default class ControlBarNode extends HBox {
             settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
 
             settingsNode.show();
+          }
+        } ) ),
+        new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Share',
+          content: new Path( fontAwesomeShareShape, {
+            maxWidth: 15,
+            maxHeight: 15,
+            fill: 'black'
+          } ),
+          listener: () => {
+            const puzzleModel = puzzleModelProperty.value;
+            if ( puzzleModel ) {
+              shareNode = shareNode || new ShareNode( options.glassPane, options.layoutBoundsProperty );
+
+              shareNode.setPuzzle( puzzleModel.puzzle );
+
+              shareNode.show();
+            }
           }
         } ) ),
         new TextPushButton( 'Solve', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

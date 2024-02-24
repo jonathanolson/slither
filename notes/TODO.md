@@ -55,14 +55,7 @@
     - Possibly multiple views (one coloring, one vertex?)
   - Puzzle import:
     - vision-based (from image) ==> show better feedback while loading
-    - Generated (see generation section)
     - Manual input (also helpful if vision-based doesn't work)
-  - Allow puzzle export
-    - Image
-    - JSON?
-    - String
-    - URL <--- especially eventually this, so multiple people can play
-      - Like YouTube share, have checkbox for "save the puzzle state" - off by default
   - Interaction
     - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
     - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
@@ -357,6 +350,9 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Allow puzzle export
+    - Image
+    - String
   - Remove the TStructure stuff, we don't need it for square edges. 
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?

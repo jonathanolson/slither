@@ -1,26 +1,17 @@
-import { Property, TReadOnlyProperty } from 'phet-lib/axon';
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { Node, Text, VBox } from 'phet-lib/scenery';
-import { Checkbox, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
+import { VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, popupFont, themeProperty, uiBackgroundProperty, uiForegroundProperty } from './Theme.ts';
+import { availableThemes, popupFont, themeProperty, uiForegroundProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
+import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 
 export class SettingsNode extends PopupNode {
   public constructor(
     public readonly glassPane: Node,
     public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>
   ) {
-
-    const getBooleanCheckbox = ( label: string, property: Property<boolean> ) => {
-      return new Checkbox( property, new Text( label, {
-        font: popupFont,
-        fill: uiForegroundProperty
-      } ), {
-        checkboxColor: uiForegroundProperty,
-        checkboxColorBackground: uiBackgroundProperty
-      } );
-    };
 
     const autoSolveNode = new VBox( {
       stretch: true,
@@ -31,13 +22,13 @@ export class SettingsNode extends PopupNode {
           font: popupFont,
           fill: uiForegroundProperty
         } ),
-        getBooleanCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
-        getBooleanCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
-        getBooleanCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
-        getBooleanCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
-        getBooleanCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
-        getBooleanCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
-        getBooleanCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
+        getSettingsCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
+        getSettingsCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
+        getSettingsCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
+        getSettingsCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
+        getSettingsCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
+        getSettingsCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
+        getSettingsCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
       ]
     } );
 
