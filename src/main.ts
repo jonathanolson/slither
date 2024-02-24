@@ -11,11 +11,12 @@ import ControlBarNode from './view/ControlBarNode.ts';
 import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 import { TState } from './model/data/core/TState.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
-import { TPuzzle } from './model/puzzle/TPuzzle.ts';
+import { deserializePuzzle, serializePuzzle, TPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
+import { compressString } from './util/compression.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -52,9 +53,19 @@ window.oncontextmenu = e => e.preventDefault();
 
 export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
-const startingPuzzle = BasicSquarePuzzle.loadFromSimpleString(
+const startingPuzzleCopy = BasicSquarePuzzle.loadFromSimpleString(
   '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
 );
+
+// TODO: remove demo serialization
+const serializedPuzzle = serializePuzzle( startingPuzzleCopy );
+
+const puzzleString = compressString( JSON.stringify( serializedPuzzle ) );
+console.log( JSON.stringify( serializedPuzzle, null, 2 ) );
+console.log( puzzleString );
+
+const startingPuzzle = deserializePuzzle( serializedPuzzle );
+
 const startingPuzzleModel = new PuzzleModel( startingPuzzle );
 
 const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
