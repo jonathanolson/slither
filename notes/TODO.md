@@ -350,10 +350,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Allow puzzle export
-    - Image
-    - String
-  - Remove the TStructure stuff, we don't need it for square edges. 
+  - Remove the TStructure stuff, we don't need it for square edges?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
     - ABILITY TO ABORT THE GENERATE!!!!
@@ -374,10 +371,6 @@
         - Ensure we have approximately half of the boundary filled
   - Hint
     - Could ... "add a face value"?
-  - Save full PuzzleModel state (serialize actions and stack)
-  - Share URLs:
-    - Query parameter to load a puzzle string!
-    - Query parameter to... load a compressed puzzle serialization?
   - Add demo/testing ACTUAL puzzles
     - Hexagon-with-hole, radial (with hole), etc.
   - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
@@ -405,10 +398,7 @@
   - Autosolver JUST to check for simple errors (or in general)
     - [NEEDS] annotated errors 
     - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
-  - Hex: https://www.redblobgames.com/grids/hexagons/
-    - The "square" line cap makes things confusing, looks off-centered in hexagonal
-    - OMG we can use the graph structure to identify outside edges (hey, no face on one side!) and get the outer boundary, so we can offset/stroke it much easier
-    - Look into https://www.youtube.com/watch?v=piWIPZ_13E8
+  - Hex "square" line cap makes things confusing, looks off-centered in hexagonal
   - FILE SIZE improvements:
     - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
     - If we attempt to do a dynamic import (in NewNode):
@@ -491,6 +481,10 @@
   - How to.... async/await AND have synchronous paths for solvers? (really... just the backtracker)
     - I mean... just implement both separately?
   - Minisat in web worker? web workers in general? (could work a solving backtracker at the same time to add constraints)
+  - Allow puzzle export
+    - navigator.share(), can share images, https://stackoverflow.com/questions/68362603/share-image-via-social-media-from-pwa
+    - String formats?
+  - [DEFER] Save full PuzzleModel state (serialize actions and stack)
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
