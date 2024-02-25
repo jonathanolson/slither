@@ -1,5 +1,5 @@
 import { Node, NodeOptions } from 'phet-lib/scenery';
-import PuzzleNode from './PuzzleNode.ts';
+import PuzzleNode from './puzzle/PuzzleNode.ts';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';

@@ -11,8 +11,10 @@ import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegionAction.ts';
+import { dotRandom } from 'phet-lib/dot';
 
-let simpleRegionGlobalId = 0;
+// Oops, because on app restart, region IDs are persistent
+const getSimpleRegionGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
 export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAction<TFaceData & TEdgeData & TSimpleRegionData>> {
 
@@ -128,7 +130,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeDa
 
           for ( const halfEdgeRegion of halfEdgeRegions ) {
             const newRegion = new GeneralSimpleRegion(
-              halfEdgeRegion === largestHalfEdgeRegion ? region.id : simpleRegionGlobalId++,
+              halfEdgeRegion === largestHalfEdgeRegion ? region.id : getSimpleRegionGlobalId(),
               halfEdgeRegion
             );
             addedRegions.add( newRegion );
@@ -220,7 +222,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeDa
         addRegion( newRegion );
       }
       else {
-        const newRegion = new GeneralSimpleRegion( simpleRegionGlobalId++, [ edge.forwardHalf ] );
+        const newRegion = new GeneralSimpleRegion( getSimpleRegionGlobalId(), [ edge.forwardHalf ] );
 
         addRegion( newRegion );
       }

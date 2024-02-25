@@ -350,6 +350,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - BUG with... regions disappearing?!? 
   - I seem to be leaking a decent amount of memory ---
     - Handle PuzzleNode disposal(!) - it might not be the SAT solver issue
     - Make sure global shapes are immutable.
