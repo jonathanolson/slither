@@ -141,7 +141,7 @@ export class NewNode extends PopupNode {
         } ),
         new HBox( {
           spacing: 10,
-          children: [ 19, 25, 26, 28, 31 ].map( index => {
+          children: [ 19, 25, 28, 31 ].map( index => {
             return new TextPushButton( `Tiling Test ${index}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
               listener: () => {
                 this.hide();
