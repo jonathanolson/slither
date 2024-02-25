@@ -1,6 +1,5 @@
-
 // @ts-expect-error
-import { EdgeShape, tilingTypes, IsohedralTiling } from 'tactile-js';
+import { EdgeShape, IsohedralTiling, tilingTypes } from 'tactile-js';
 import { scene } from '../../../view/scene.ts';
 import { Node, Path } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
@@ -12,18 +11,17 @@ import { createBoardDescriptor, getCentroid, TFaceDescriptor, TVertexDescriptor 
 import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
-console.log( EdgeShape );
+// console.log( EdgeShape );
 
 // see https://observablehq.com/@mattdzugan/dithering-on-non-square-pixels for ideas
 
 // 19, 25, 26, 28, 31
 
 // http://localhost/tactile-js/demo/interactivedemo.html
-
-console.log( 'J', EdgeShape.J );
 console.log( 'U', EdgeShape.U );
 console.log( 'S', EdgeShape.S );
 console.log( 'I', EdgeShape.I );
+console.log( 'J', EdgeShape.J );
 
 const matrixFromT = ( T: number[] ) => Matrix3.rowMajor(
   T[ 0 ], T[ 1 ], T[ 2 ],
@@ -37,7 +35,7 @@ export const tilingTest = () => {
   const tiling = new IsohedralTiling( tilingTypes[ 19 ] );
 
   const parameters = tiling.getParameters();
-  console.log( 'parameters', parameters );
+  // console.log( 'parameters', parameters );
   // TODO: adjust parameters!!! Look into it?
   tiling.setParameters( parameters );
 
@@ -77,7 +75,7 @@ export const tilingTest = () => {
     }
   }
 
-  const showTest = true;
+  const showTest = false;
 
   if ( showTest ) {
     scene.addChild( container );
