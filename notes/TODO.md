@@ -350,7 +350,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - OMG, pointer areas are A MESS WTF
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Tiling:
@@ -360,6 +359,7 @@
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
   - Have a way of notifying me when I make a mistake... should it store the full solution?
   - Remove the TStructure stuff, we don't need it for square edges?
+    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
     - ABILITY TO ABORT THE GENERATE!!!!

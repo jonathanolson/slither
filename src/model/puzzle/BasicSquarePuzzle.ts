@@ -1,20 +1,19 @@
 import { TState } from '../data/core/TState.ts';
-import { TSquareBoard } from '../board/square/TSquareBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { SquareBoard } from '../board/square/SquareBoard.ts';
 import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TFace } from '../board/core/TFace.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
-import { TSquareEdge } from '../board/square/TSquareEdge.ts';
 import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Orientation } from 'phet-lib/phet-core';
+import { TBoard } from '../board/core/TBoard.ts';
 
 export class BasicSquarePuzzle<Data> {
 
   public readonly stateProperty: TProperty<TState<Data>>;
 
   public constructor(
-    public readonly board: TSquareBoard,
+    public readonly board: TBoard,
     initialState: TState<Data>
   ) {
     this.stateProperty = new TinyProperty( initialState );
@@ -98,22 +97,29 @@ export class BasicSquarePuzzle<Data> {
         return parseInt( value );
       }
     }, edge => {
-      const squareEdge = edge as TSquareEdge;
+      // TODO: factor out this code?
+      const edgeOrientation = edge.start.logicalCoordinates.x === edge.end.logicalCoordinates.x ? Orientation.VERTICAL : Orientation.HORIZONTAL;
 
-      if ( squareEdge.orientation === Orientation.HORIZONTAL ) {
-        if ( squareEdge.southFace ) {
-          return getEdgeState( squareEdge.southFace, NORTH );
+      if ( edgeOrientation === Orientation.HORIZONTAL ) {
+        const southFace = edge.start.logicalCoordinates.x < edge.end.logicalCoordinates.x ? edge.forwardFace : edge.reversedFace;
+        const northFace = edge.start.logicalCoordinates.x < edge.end.logicalCoordinates.x ? edge.reversedFace : edge.forwardFace;
+
+        if ( southFace ) {
+          return getEdgeState( southFace, NORTH );
         }
         else {
-          return getEdgeState( squareEdge.northFace!, SOUTH );
+          return getEdgeState( northFace!, SOUTH );
         }
       }
       else {
-        if ( squareEdge.westFace ) {
-          return getEdgeState( squareEdge.westFace, EAST );
+        const westFace = edge.start.logicalCoordinates.y < edge.end.logicalCoordinates.y ? edge.reversedFace : edge.forwardFace;
+        const eastFace = edge.start.logicalCoordinates.y < edge.end.logicalCoordinates.y ? edge.forwardFace : edge.reversedFace;
+
+        if ( westFace ) {
+          return getEdgeState( westFace, EAST );
         }
         else {
-          return getEdgeState( squareEdge.eastFace!, WEST );
+          return getEdgeState( eastFace!, WEST );
         }
       }
     } );

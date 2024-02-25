@@ -8,15 +8,14 @@ import { Vector2 } from 'phet-lib/dot';
 import EdgeState from '../model/data/edge/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { TSquareEdge } from '../model/board/square/TSquareEdge.ts';
 import { TState } from '../model/data/core/TState.ts';
-import { TSquareStructure } from '../model/board/square/TSquareStructure.ts';
-import { TSquarePuzzle } from '../model/puzzle/TSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
-import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -37,7 +36,7 @@ import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
 // note-- we'll want to remove small lines(!)
 // Then try to determine vertices along the lines
 
-const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSquarePuzzle<TSquareStructure, TState<TCompleteData>>> => {
+const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -371,17 +370,19 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
       return location ? location.value : null;
     },
     edge => {
-      // TODO: don't require cast, probably make GeneralEdgeData generic
-      // TODO: or change the logical coordinates?
-      const squareEdge = edge as TSquareEdge;
+      const edgeOrientation = edge.start.logicalCoordinates.x === edge.end.logicalCoordinates.x ? Orientation.VERTICAL : Orientation.HORIZONTAL;
 
-      const lineLocation = lineLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) ?? null;
+      const minX = Math.min( edge.start.logicalCoordinates.x, edge.end.logicalCoordinates.x );
+      const minY = Math.min( edge.start.logicalCoordinates.y, edge.end.logicalCoordinates.y );
+      const minPoint = new Vector2( minX, minY );
+
+      const lineLocation = lineLocations.find( location => location.point.equals( minPoint ) && location.orientation === edgeOrientation ) ?? null;
 
       if ( lineLocation ) {
         return EdgeState.BLACK;
       }
       else {
-        const xLocation = xLocations.find( location => location.point.equals( squareEdge.start.logicalCoordinates ) && location.orientation === squareEdge.orientation ) ?? null;
+        const xLocation = xLocations.find( location => location.point.equals( minPoint ) && location.orientation === edgeOrientation ) ?? null;
 
         if ( xLocation ) {
           return EdgeState.RED;
@@ -393,7 +394,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
     }
   );
 
-  return new BasicSquarePuzzle( board, startingData );
+  return new BasicPuzzle( board, startingData );
 };
 
 class FaceLocation {
@@ -410,7 +411,7 @@ class LineLocation {
   ) {}
 }
 
-export default async ( url: string ): Promise<TSquarePuzzle<TSquareStructure, TState<TCompleteData>>> => {
+export default async ( url: string ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();
