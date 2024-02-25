@@ -6,11 +6,14 @@ import { blackLineColorProperty, whiteLineColorProperty, xColorProperty } from '
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { DotUtils, Vector2 } from 'phet-lib/dot';
 
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
   useSimpleRegionForBlack?: boolean;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  backgroundOffsetDistance: number;
   redXsVisibleProperty: TReadOnlyProperty<boolean>;
   whiteDottedVisibleProperty: TReadOnlyProperty<boolean>;
 };
@@ -80,12 +83,67 @@ export class EdgeNode extends Node {
     // TODO: ALLOW DRAGGING TO SET LINES
     const edgePressListener = options?.edgePressListener;
     if ( edgePressListener ) {
-      const pointerArea = new Shape()
-        .moveTo( centerPoint.x - 0.5, centerPoint.y )
-        .lineTo( centerPoint.x, centerPoint.y - 0.5 )
-        .lineTo( centerPoint.x + 0.5, centerPoint.y )
-        .lineTo( centerPoint.x, centerPoint.y + 0.5 )
-        .close();
+      const pointerArea = new Shape();
+
+      if ( edge.faces.length === 2 ) {
+        pointerArea.polygon( [
+          startPoint,
+          edge.faces[ 0 ].viewCoordinates,
+          endPoint,
+          edge.faces[ 1 ].viewCoordinates
+        ] );
+      }
+      else {
+        assertEnabled() && assert( edge.faces.length === 1, 'EdgeNode only supports edges with 1 or 2 faces' );
+
+        const outsideHalf = edge.forwardHalf.face === null ? edge.forwardHalf : edge.reversedHalf;
+        assertEnabled() && assert( outsideHalf.previous.face === null );
+        assertEnabled() && assert( outsideHalf.next.face === null );
+        const halfStartPoint = outsideHalf.start.viewCoordinates;
+        const halfEndPoint = outsideHalf.end.viewCoordinates;
+        const beforeStartPoint = outsideHalf.previous.start.viewCoordinates;
+        const afterEndPoint = outsideHalf.next.end.viewCoordinates;
+
+        const getThreePointDirection = ( a: Vector2, b: Vector2, c: Vector2 ): Vector2 => {
+          const ab = b.minus( a ).normalized();
+          const bc = c.minus( b ).normalized();
+
+          let diff = ab.minus( bc );
+
+          if ( diff.getMagnitude() < 1e-6 ) {
+            diff = ab.getPerpendicular();
+          }
+          else {
+            diff = diff.normalized();
+          }
+
+          if ( DotUtils.triangleAreaSigned( a, b, b.plus( diff ) ) < 0 ) {
+            diff = diff.negated();
+          }
+
+          return diff;
+        };
+
+        const startDirection = getThreePointDirection( beforeStartPoint, halfStartPoint, halfEndPoint );
+        const endDirection = getThreePointDirection( halfStartPoint, halfEndPoint, afterEndPoint );
+
+        pointerArea.polygon( [
+          halfStartPoint,
+          edge.faces[ 0 ].viewCoordinates,
+          halfEndPoint,
+          halfEndPoint.plus( endDirection.times( options.backgroundOffsetDistance ) ),
+          halfStartPoint.plus( startDirection.times( options.backgroundOffsetDistance ) )
+          // edge.faces[ 1 ].viewCoordinates
+        ] );
+      }
+
+      //
+      // const pointerArea = new Shape()
+      //   .moveTo( centerPoint.x - 0.5, centerPoint.y )
+      //   .lineTo( centerPoint.x, centerPoint.y - 0.5 )
+      //   .lineTo( centerPoint.x + 0.5, centerPoint.y )
+      //   .lineTo( centerPoint.x, centerPoint.y + 0.5 )
+      //   .close();
       this.mouseArea = this.touchArea = pointerArea;
 
       // TODO: config setting for shift-click reversal?

@@ -350,6 +350,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - OMG, pointer areas are A MESS WTF
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Tiling:
