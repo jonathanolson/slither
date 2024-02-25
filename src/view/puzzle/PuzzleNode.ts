@@ -1,5 +1,5 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty } from 'phet-lib/axon';
+import { DerivedProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
@@ -21,6 +21,9 @@ type SelfOptions = {
   useSimpleRegionForBlack?: boolean;
   useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
+  verticesVisibleProperty?: TReadOnlyProperty<boolean>;
+  redXsVisibleProperty?: TReadOnlyProperty<boolean>;
+  whiteDottedVisibleProperty?: TReadOnlyProperty<boolean>;
 };
 
 export type BasicPuzzleNodeOptions = SelfOptions & NodeOptions;
@@ -34,6 +37,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     providedOptions?: BasicPuzzleNodeOptions
   ) {
     const options = optionize<BasicPuzzleNodeOptions, SelfOptions, NodeOptions>()( {
+      // TODO: omg, have their own things do defaults, this is unclean
       textOptions: {
         font: puzzleFont,
         maxWidth: 0.9,
@@ -42,7 +46,10 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       edgePressListener: () => {},
       useSimpleRegionForBlack: true,
       useBackgroundOffsetStroke: false,
-      backgroundOffsetDistance: 0.3
+      backgroundOffsetDistance: 0.3,
+      verticesVisibleProperty: new TinyProperty( false ),
+      redXsVisibleProperty: new TinyProperty( true ),
+      whiteDottedVisibleProperty: new TinyProperty( true )
     }, providedOptions );
 
     const faceContainer = new Node();
@@ -71,7 +78,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, options ) );
     } );
 
     puzzle.board.edges.forEach( edge => {

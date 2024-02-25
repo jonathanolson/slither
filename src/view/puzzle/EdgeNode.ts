@@ -2,7 +2,7 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { FireListener, Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { lineColorProperty, xColorProperty } from '../Theme.ts';
+import { blackLineColorProperty, whiteLineColorProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
@@ -11,6 +11,8 @@ import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 export type EdgeNodeOptions = {
   useSimpleRegionForBlack?: boolean;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  redXsVisibleProperty: TReadOnlyProperty<boolean>;
+  whiteDottedVisibleProperty: TReadOnlyProperty<boolean>;
 };
 
 export class EdgeNode extends Node {
@@ -19,7 +21,7 @@ export class EdgeNode extends Node {
     public readonly edge: TEdge,
     stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
-    options?: EdgeNodeOptions
+    options: EdgeNodeOptions
   ) {
     super( {} );
 
@@ -30,9 +32,9 @@ export class EdgeNode extends Node {
     const endPoint = edge.end.viewCoordinates;
     const centerPoint = startPoint.average( endPoint );
 
-    const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
+    const blackLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: lineColorProperty,
+      stroke: blackLineColorProperty,
       lineCap: 'square' // TODO: still not ideal, the overlap shows up and is unpleasant. We'll either need to use Alpenglow, or use a different approach to drawing the lines.
     } );
 
@@ -44,18 +46,36 @@ export class EdgeNode extends Node {
       .lineTo( halfSize, halfSize )
       .moveTo( -halfSize, halfSize )
       .lineTo( halfSize, -halfSize );
+
+    const xVisibleProperty = new DerivedProperty( [
+      isSolvedProperty,
+      options.redXsVisibleProperty
+    ], ( isSolved, visible ) => {
+      return !isSolved && visible;
+    } );
+    this.disposeEmitter.addListener( () => xVisibleProperty.dispose() );
+
     const x = new Path( xShape, {
       stroke: xColorProperty,
       lineWidth: 0.02,
-      center: centerPoint
+      center: centerPoint,
+      visibleProperty: xVisibleProperty
     } );
 
-    // Apply effects when solved
-    const isSolvedListener = ( isSolved: boolean ) => {
-      x.visible = !isSolved;
-    };
-    isSolvedProperty.link( isSolvedListener );
-    this.disposeEmitter.addListener( () => isSolvedProperty.unlink( isSolvedListener ) );
+    const whiteLineVisibleProperty = new DerivedProperty( [
+      isSolvedProperty,
+      options.whiteDottedVisibleProperty
+    ], ( isSolved, visible ) => {
+      return !isSolved && visible;
+    } );
+    this.disposeEmitter.addListener( () => whiteLineVisibleProperty.dispose() );
+
+    const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
+      lineWidth: 0.03,
+      stroke: whiteLineColorProperty,
+      lineDash: [ 0.05, 0.05 ],
+      visibleProperty: whiteLineVisibleProperty
+    } );
 
     // TODO: ALLOW DRAGGING TO SET LINES
     const edgePressListener = options?.edgePressListener;
@@ -88,10 +108,10 @@ export class EdgeNode extends Node {
 
     edgeStateProperty.link( edgeState => {
       if ( edgeState === EdgeState.WHITE ) {
-        this.children = [];
+        this.children = [ whiteLine ];
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        this.children = options?.useSimpleRegionForBlack ? [] : [ line ];
+        this.children = options?.useSimpleRegionForBlack ? [] : [ blackLine ];
       }
       else {
         this.children = [ x ];

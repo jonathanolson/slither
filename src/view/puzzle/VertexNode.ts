@@ -6,16 +6,24 @@ import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { vertexColorProperty } from '../Theme.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 
+export type VertexNodeOptions = {
+  verticesVisibleProperty: TReadOnlyProperty<boolean>;
+};
+
 export class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
     stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
-    isSolvedProperty: TReadOnlyProperty<boolean>
+    isSolvedProperty: TReadOnlyProperty<boolean>,
+    options: VertexNodeOptions
   ) {
     super();
 
-    const visibleProperty = new DerivedProperty( [ stateProperty ], state => {
-      return vertex.edges.every( edge => state.getEdgeState( edge ) !== EdgeState.BLACK );
+    const visibleProperty = new DerivedProperty( [
+      stateProperty,
+      options.verticesVisibleProperty
+    ], ( state, visible ) => {
+      return visible && vertex.edges.every( edge => state.getEdgeState( edge ) !== EdgeState.BLACK );
     } );
     this.disposeEmitter.addListener( () => visibleProperty.dispose() );
 

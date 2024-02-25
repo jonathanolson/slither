@@ -37,7 +37,8 @@ export interface TTheme {
   puzzleBackgroundStrokeColorProperty: PaintColorProperty;
   vertexColorProperty: PaintColorProperty;
   xColorProperty: PaintColorProperty;
-  lineColorProperty: PaintColorProperty;
+  blackLineColorProperty: PaintColorProperty;
+  whiteLineColorProperty: PaintColorProperty;
   faceValueColorProperty: PaintColorProperty;
   faceValueCompletedColorProperty: PaintColorProperty;
   faceValueErrorColorProperty: PaintColorProperty;
@@ -65,7 +66,8 @@ export const lightTheme = {
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#888' ),
   vertexColorProperty: new PaintColorProperty( '#000' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
-  lineColorProperty: new PaintColorProperty( '#000' ),
+  blackLineColorProperty: new PaintColorProperty( '#000' ),
+  whiteLineColorProperty: new PaintColorProperty( '#888' ),
   faceValueColorProperty: new PaintColorProperty( '#000' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#aaa' ),
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
@@ -87,7 +89,8 @@ export const darkTheme = {
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#777' ),
   vertexColorProperty: new PaintColorProperty( '#888' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
-  lineColorProperty: new PaintColorProperty( '#aaa' ),
+  blackLineColorProperty: new PaintColorProperty( '#aaa' ),
+  whiteLineColorProperty: new PaintColorProperty( '#666' ),
   faceValueColorProperty: new PaintColorProperty( '#ccc' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#888' ),
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
@@ -173,8 +176,12 @@ export const xColorProperty = new DynamicProperty( themeProperty, {
   derive: 'xColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
-export const lineColorProperty = new DynamicProperty( themeProperty, {
-  derive: 'lineColorProperty'
+export const blackLineColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'blackLineColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const whiteLineColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'whiteLineColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const faceValueColorProperty = new DynamicProperty( themeProperty, {
