@@ -8,7 +8,7 @@ import { arrayDifference } from 'phet-lib/phet-core';
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { edgeWeirdColorProperty } from '../Theme.ts';
+import { edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, TLineCap, TLineJoin } from '../Theme.ts';
 
 const toRGB = toGamut( 'rgb' );
 
@@ -81,6 +81,12 @@ export class SimpleRegionViewNode extends Node {
     };
     stateProperty.lazyLink( stateListener );
     this.disposeEmitter.addListener( () => stateProperty.unlink( stateListener ) );
+
+    this.disposeEmitter.addListener( () => {
+      while ( this.simpleRegionNodeMap.size ) {
+        this.removeRegion( this.simpleRegionNodeMap.keys().next().value );
+      }
+    } );
   }
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
@@ -109,10 +115,11 @@ export class SimpleRegionViewNode extends Node {
   }
 
   private removeRegion( simpleRegion: TSimpleRegion ): void {
-    const simpleRegionNode = this.simpleRegionNodeMap.get( simpleRegion );
-    this.regionContainer.removeChild( simpleRegionNode! );
+    const simpleRegionNode = this.simpleRegionNodeMap.get( simpleRegion )!;
+    this.regionContainer.removeChild( simpleRegionNode );
     this.simpleRegionNodeMap.delete( simpleRegion );
     this.regionIdMap.delete( simpleRegion.id );
+    simpleRegionNode.dispose();
   }
 
   private addWeirdEdge( edge: TEdge ): void {
@@ -146,6 +153,19 @@ class SimpleRegionNode extends Path {
       lineCap: 'square',
       lineJoin: 'round'
     } );
+
+    const joinListener = ( join: TLineJoin ) => {
+      this.lineJoin = join;
+    };
+    joinedLinesJoinProperty.link( joinListener );
+    this.disposeEmitter.addListener( () => joinedLinesJoinProperty.unlink( joinListener ) );
+
+    const capListener = ( cap: TLineCap ) => {
+      // TODO: more cap styles
+      this.lineCap = cap;
+    };
+    joinedLinesCapProperty.link( capListener );
+    this.disposeEmitter.addListener( () => joinedLinesCapProperty.unlink( capListener ) );
   }
 
   public updateRegion( simpleRegion: TSimpleRegion ): void {

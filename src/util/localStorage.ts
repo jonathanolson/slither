@@ -39,3 +39,12 @@ export class LocalStorageEnumerationProperty<T extends EnumerationValue> extends
     } );
   }
 }
+
+export class LocalStorageStringProperty<T extends string> extends LocalStorageProperty<T> {
+  public constructor( key: string, defaultValue: T ) {
+    super( key, {
+      serialize: value => value,
+      deserialize: value => ( value as T ) || defaultValue
+    } );
+  }
+}

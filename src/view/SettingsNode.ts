@@ -1,9 +1,9 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
+import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
-import { Node, Text, VBox } from 'phet-lib/scenery';
-import { VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
+import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
+import { AquaRadioButtonGroupItem, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, popupFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 
@@ -48,29 +48,38 @@ export class SettingsNode extends PopupNode {
     //
     // } );
 
-    const themeSelector = new VerticalAquaRadioButtonGroup( themeProperty, availableThemes.map( theme => {
-      return {
-        value: theme,
-        createNode: () => new Text( theme.name, {
-          font: popupFont,
-          fill: uiForegroundColorProperty
-        } ),
-        a11yName: theme.name
-      };
-    } ) );
+    const createVerticalRadioButtonGroup = <T>( label: string, property: Property<T>, items: AquaRadioButtonGroupItem<T>[] ) => {
 
-    const themeNode = new VBox( {
-      stretch: true,
-      align: 'left',
-      spacing: 8,
-      children: [
-        new Text( 'Theme', {
-          font: popupFont,
-          fill: uiForegroundColorProperty
-        } ),
-        themeSelector
-      ]
-    } );
+      const radioButtonGroup = new VerticalAquaRadioButtonGroup( property, items );
+
+      return new VBox( {
+        stretch: true,
+        align: 'left',
+        spacing: 8,
+        children: [
+          new Text( label, {
+            font: popupFont,
+            fill: uiForegroundColorProperty
+          } ),
+          radioButtonGroup
+        ]
+      } );
+    };
+
+    const themeNode = createVerticalRadioButtonGroup(
+      'Theme',
+      themeProperty,
+      availableThemes.map( theme => {
+        return {
+          value: theme,
+          createNode: () => new Text( theme.name, {
+            font: popupFont,
+            fill: uiForegroundColorProperty
+          } ),
+          a11yName: theme.name
+        };
+      } )
+    );
 
     const displayNode = new VBox( {
       stretch: true,
@@ -83,7 +92,40 @@ export class SettingsNode extends PopupNode {
         } ),
         getSettingsCheckbox( 'Red X Visible', redXsVisibleProperty ),
         getSettingsCheckbox( 'Undecided Line Visible', whiteDottedVisibleProperty ),
-        getSettingsCheckbox( 'Vertices Visible', verticesVisibleProperty )
+        getSettingsCheckbox( 'Vertices Visible', verticesVisibleProperty ),
+        new HBox( {
+          spacing: 20,
+          children: [
+            createVerticalRadioButtonGroup(
+              'Line Join',
+              joinedLinesJoinProperty,
+              lineJoins.map( join => {
+                return {
+                  value: join,
+                  createNode: () => new Text( join, {
+                    font: popupFont,
+                    fill: uiForegroundColorProperty
+                  } ),
+                  a11yName: join
+                };
+              } )
+            ),
+            createVerticalRadioButtonGroup(
+              'Line Cap',
+              joinedLinesCapProperty,
+              lineCaps.map( cap => {
+                return {
+                  value: cap,
+                  createNode: () => new Text( cap, {
+                    font: popupFont,
+                    fill: uiForegroundColorProperty
+                  } ),
+                  a11yName: cap
+                };
+              } )
+            )
+          ]
+        } )
       ]
     } );
 

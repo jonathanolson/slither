@@ -1,6 +1,6 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
-import { LocalStorageBooleanProperty, LocalStorageProperty } from '../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
 
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
@@ -247,3 +247,15 @@ export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisib
 // TODO: rename
 export const whiteDottedVisibleProperty = new LocalStorageBooleanProperty( 'whiteDottedVisibleProperty', false );
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', true );
+
+export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;
+export const lineCaps = [ 'butt', 'round', 'square' ] as const;
+
+export type TLineJoin = typeof lineJoins[ number ];
+export type TLineCap = typeof lineCaps[ number ];
+
+export const joinedLinesJoinProperty = new LocalStorageStringProperty<TLineJoin>( 'joinedLinesJoinProperty', 'round' );
+// TODO: add a value for "cut out" (based on the other line segments going into it)
+// TODO: name "faceted"?
+// TODO: actually, we can have "faceted exclude" and "faceted include" (include has all the parts of a faceted vertex)
+export const joinedLinesCapProperty = new LocalStorageStringProperty<TLineCap>( 'joinedLinesCapProperty', 'round' );

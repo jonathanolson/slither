@@ -350,7 +350,14 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Improve "line segment ending" and vertex shapes! Give options
+    - include white edges and region edges?
+  - Tiling:
+    - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
+  - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
+    - Face coloring can override this later?
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
+  - Have a way of notifying me when I make a mistake... should it store the full solution?
   - Remove the TStructure stuff, we don't need it for square edges?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
