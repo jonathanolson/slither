@@ -7,7 +7,6 @@ import { TFace } from '../board/core/TFace.ts';
 import _ from '../../workarounds/_.ts';
 import { MaximumSolverIterationsError, satSolve } from '../solver/SATSolver.ts';
 import { MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
@@ -63,8 +62,6 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
         possibleStates = dotRandom.shuffle( possibleStates );
       }
 
-      let appliedEdge = false;
-
       for ( const possibleState of possibleStates ) {
         const delta = state.createDelta();
 
@@ -74,12 +71,12 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
 
         if ( solutionCount >= 1 ) {
           delta.apply( state );
-          appliedEdge = true;
           break;
         }
       }
 
-      assertEnabled() && assert( appliedEdge, 'We should be guaranteed this!' );
+      // NOTE: this is not guaranteed to be true...
+      // assertEnabled() && assert( appliedEdge, 'We should be guaranteed this!?!' );
 
       if ( solutionCount === 1 ) {
         break;

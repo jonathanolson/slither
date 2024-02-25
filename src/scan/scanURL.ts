@@ -16,6 +16,7 @@ import { SquareBoard } from '../model/board/square/SquareBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
+import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -277,8 +278,8 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TSqua
   const majorXCoordinates = [ ...dotPoints.map( point => point.x ), ...linePaths.flatMap( path => path.map( point => point.x ) ) ];
   const majorYCoordinates = [ ...dotPoints.map( point => point.y ), ...linePaths.flatMap( path => path.map( point => point.y ) ) ];
 
-  const xMap = Contour.getCoordinateClusteredMap( majorXCoordinates, clusterThreshold );
-  const yMap = Contour.getCoordinateClusteredMap( majorYCoordinates, clusterThreshold );
+  const xMap = getCoordinateClusteredMap( majorXCoordinates, clusterThreshold );
+  const yMap = getCoordinateClusteredMap( majorYCoordinates, clusterThreshold );
 
   const resultXCoordinates = _.sortBy( _.uniq( [ ...xMap.values() ] ) );
   const resultYCoordinates = _.sortBy( _.uniq( [ ...yMap.values() ] ) );

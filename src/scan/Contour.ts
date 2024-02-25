@@ -3,7 +3,7 @@ import { Shape } from 'phet-lib/kite';
 import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
 import assert from '../workarounds/assert';
 import { Bounds2, ConvexHull2, Vector2 } from 'phet-lib/dot';
-import _ from '../workarounds/_';
+import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
 
 export class Contour {
 
@@ -87,8 +87,8 @@ export class Contour {
   // Also deduplicates
   public getClusteredXYPoints( threshold: number ): Vector2[] {
 
-    const xMap = Contour.getCoordinateClusteredMap( this.points.map( point => point.x ), threshold );
-    const yMap = Contour.getCoordinateClusteredMap( this.points.map( point => point.y ), threshold );
+    const xMap = getCoordinateClusteredMap( this.points.map( point => point.x ), threshold );
+    const yMap = getCoordinateClusteredMap( this.points.map( point => point.y ), threshold );
 
     const clusteredPoints: Vector2[] = [];
 
@@ -104,34 +104,6 @@ export class Contour {
     }
 
     return clusteredPoints;
-  }
-
-  public static getCoordinateClusteredMap( values: number[], threshold: number ): Map<number, number> {
-    const sortedValues = _.sortBy( values );
-    const clusters: number[][] = [];
-    let currentCluster: number[] = [];
-
-    for ( let i = 0; i < sortedValues.length; i++ ) {
-      const value = sortedValues[ i ];
-
-      if ( currentCluster.length === 0 || Math.abs( currentCluster[ currentCluster.length - 1 ] - value ) <= threshold ) {
-        currentCluster.push( value );
-      }
-      else {
-        clusters.push( currentCluster );
-        currentCluster = [ value ];
-      }
-    }
-    if ( currentCluster.length > 0 ) {
-      clusters.push( currentCluster );
-    }
-
-    const clusterMap = new Map<number, number>();
-    clusters.forEach( cluster => {
-      const average = _.sum( cluster ) / cluster.length;
-      cluster.forEach( value => clusterMap.set( value, average ) );
-    } );
-    return clusterMap;
   }
 
   public static unoverlapLoop( points: Vector2[] ): Vector2[] {

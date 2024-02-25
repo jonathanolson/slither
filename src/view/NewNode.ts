@@ -14,6 +14,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { TiledBoard } from '../model/board/core/TiledBoard.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -137,6 +138,15 @@ export class NewNode extends PopupNode {
             } ) );
           } )
         } ),
+        new TextPushButton( 'Tiling Test', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          listener: () => {
+            this.hide();
+
+            const board = new TiledBoard( 19, new Bounds2( 0, 0, 10, 7 ), 1.25 );
+
+            options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+          }
+        } ) ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           listener: () => {
             this.hide();

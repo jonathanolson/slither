@@ -14,7 +14,8 @@
     "@techstark/opencv-js": "4.9.0-release.2",
     "tesseract.js": "~5.0.4",
     "culori": "~4.0.1",
-    "pako": "~2.1.0"
+    "pako": "~2.1.0",
+    "tactile-js": "~1.0.0"
   },
   "devDependencies": {
     "vite": "^5.1.4",
