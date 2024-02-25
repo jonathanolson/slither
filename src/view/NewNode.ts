@@ -15,6 +15,7 @@ import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
 import { TiledBoard } from '../model/board/core/TiledBoard.ts';
+import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 
 export type NewNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -138,15 +139,23 @@ export class NewNode extends PopupNode {
             } ) );
           } )
         } ),
-        new TextPushButton( 'Tiling Test', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
-          listener: () => {
-            this.hide();
+        new HBox( {
+          spacing: 10,
+          children: [ 19, 25, 26, 28, 31 ].map( index => {
+            return new TextPushButton( `Tiling Test ${index}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+              listener: () => {
+                this.hide();
 
-            const board = new TiledBoard( 19, new Bounds2( 0, 0, 10, 7 ), 1.25 );
+                // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
+                const board = new TiledBoard( index, new Bounds2( -4, -4, 4, 4 ), 1.25, polygon => {
+                  return getCentroid( polygon ).getMagnitude() < 4;
+                } );
 
-            options.loadPuzzle( BasicPuzzle.generateHard( board ) );
-          }
-        } ) ),
+                options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+              }
+            } ) );
+          } )
+        } ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           listener: () => {
             this.hide();

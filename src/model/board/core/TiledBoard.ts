@@ -8,7 +8,7 @@ import { Bounds2, Matrix3, Vector2 } from 'phet-lib/dot';
 import { TBoard } from './TBoard.ts';
 import { TStructure } from './TStructure.ts';
 import { BaseBoard } from './BaseBoard.ts';
-import { createBoardDescriptor, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
+import { createBoardDescriptor, getCentroid, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
 import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
@@ -52,30 +52,32 @@ export const tilingTest = () => {
 
   const container = new Node( {
     scale: 20,
-    x: 50,
-    y: 50
+    x: 150,
+    y: 150
   } );
 
   // for ( const shape of tiling.shape() ) {
   //   console.log( shape.id, shape.T, shape.shape, shape.rev );
   // }
 
+  const prototilePolygon: Vector2[] = tiling.vertices().map( vertexFromV );
   const prototileShape = Shape.polygon( tiling.vertices().map( vertexFromV ) );
 
-  const bounds = new Bounds2( 0, 0, 10, 7 );
-  const epsilonBounds = bounds.dilated( 0.0002 );
+  const bounds = new Bounds2( -5, -5, 5, 5 );
 
   for ( const instance of tiling.fillRegionBounds( bounds.minX, bounds.minY, bounds.maxX, bounds.maxY ) ) {
+    const tilePolygon = prototilePolygon.map( vertex => matrixFromT( instance.T ).timesVector2( vertex ) );
     const tileShape = prototileShape.transformed( matrixFromT( instance.T ) );
 
-    if ( epsilonBounds.containsBounds( tileShape.bounds ) ) {
+    // if ( epsilonBounds.containsBounds( tileShape.bounds ) ) {
+    if ( getCentroid( tilePolygon ).getMagnitude() < 5 ) {
       container.addChild( new Path( tileShape, {
         fill: [ 'red', 'green', 'blue' ][ tiling.getColour( instance.t1, instance.t2, instance.aspect ) ]
       } ) );
     }
   }
 
-  const showTest = false;
+  const showTest = true;
 
   if ( showTest ) {
     scene.addChild( container );
@@ -86,7 +88,8 @@ export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
   public constructor(
     public readonly tilingIndex: number,
     public readonly bounds: Bounds2,
-    public readonly scale: number
+    public readonly scale: number,
+    acceptCondition: ( polygon: Vector2[] ) => boolean
   ) {
     const tiling = new IsohedralTiling( tilingTypes[ tilingIndex ] );
 
@@ -112,8 +115,6 @@ export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
     // TODO: Also, SUBDIVIDE our prototile in some cases!!!
     const prototilePolygon: Vector2[] = tiling.vertices().map( vertexFromV );
 
-    const epsilonBounds = bounds.dilated( 0.0002 );
-
     const polygons: Vector2[][] = [];
 
     for ( const instance of tiling.fillRegionBounds( bounds.minX, bounds.minY, bounds.maxX, bounds.maxY ) ) {
@@ -121,10 +122,7 @@ export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
       // TODO: make @types/tactile-js?
       const tilePolygon = prototilePolygon.map( vertex => matrix.timesVector2( vertex ) );
 
-      const tileBounds = Bounds2.NOTHING.copy();
-      tilePolygon.forEach( vertex => tileBounds.addPoint( vertex ) );
-
-      if ( epsilonBounds.containsBounds( tileBounds ) ) {
+      if ( acceptCondition( tilePolygon ) ) {
         polygons.push( tilePolygon );
       }
     }
