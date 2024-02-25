@@ -1,18 +1,16 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2, Dimension2, dotRandom, DotUtils, Vector2 } from 'phet-lib/dot';
+import { Bounds2, Dimension2, dotRandom, DotUtils } from 'phet-lib/dot';
 import { HBox, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import FaceState from '../model/data/face/FaceState.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import scanURL from '../scan/scanURL.ts';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
@@ -125,6 +123,20 @@ export class NewNode extends PopupNode {
             } ) );
           } )
         } ),
+        new HBox( {
+          spacing: 10,
+          children: [ 4, 5, 6, 7, 8 ].map( size => {
+            return new TextPushButton( `Hex Donut ${size}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+              listener: () => {
+                this.hide();
+
+                const board = new HexagonalBoard( size, 1, true, Math.ceil( size / 2 ) );
+
+                options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+              }
+            } ) );
+          } )
+        } ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           listener: () => {
             this.hide();
@@ -132,62 +144,6 @@ export class NewNode extends PopupNode {
             options.loadPuzzle( BasicSquarePuzzle.loadFromSimpleString(
           '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
             ) );
-          }
-        } ) ),
-        new TextPushButton( 'Hexagonal (hole) bad', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
-          listener: () => {
-            this.hide();
-
-            const board = new HexagonalBoard( 4, 1, true, 2 );
-
-            const faceMap = new Map<Vector2, FaceState>();
-
-            // TODO: create a format depending on pointy-first rows, or flat-first rows?
-
-            faceMap.set( new Vector2( -2, 3 ), 3 );
-            faceMap.set( new Vector2( -1, 3 ), 3 );
-            faceMap.set( new Vector2( 1, 3 ), 2 );
-
-            faceMap.set( new Vector2( -4, 2 ), 3 );
-            faceMap.set( new Vector2( -3, 2 ), 4 );
-            faceMap.set( new Vector2( 0, 2 ), 4 );
-            faceMap.set( new Vector2( 1, 2 ), 3 );
-
-            faceMap.set( new Vector2( -2, 1 ), 4 );
-            faceMap.set( new Vector2( -1, 1 ), 3 );
-            faceMap.set( new Vector2( 0, 1 ), 4 );
-            faceMap.set( new Vector2( 3, 1 ), 2 );
-
-            faceMap.set( new Vector2( -3, 0 ), 4 );
-            faceMap.set( new Vector2( -2, 0 ), 3 );
-            faceMap.set( new Vector2( -1, 0 ), 5 );
-            faceMap.set( new Vector2( 0, 0 ), 4 );
-            faceMap.set( new Vector2( 1, 0 ), 2 );
-            faceMap.set( new Vector2( 4, 0 ), 0 );
-
-            faceMap.set( new Vector2( -2, -1 ), 3 );
-            faceMap.set( new Vector2( 0, -1 ), 3 );
-            faceMap.set( new Vector2( 1, -1 ), 3 );
-            faceMap.set( new Vector2( 2, -1 ), 3 );
-            faceMap.set( new Vector2( 3, -1 ), 3 );
-            faceMap.set( new Vector2( 4, -1 ), 2 );
-
-            faceMap.set( new Vector2( -2, -2 ), 3 );
-            faceMap.set( new Vector2( -1, -2 ), 5 );
-            faceMap.set( new Vector2( 0, -2 ), 4 );
-            faceMap.set( new Vector2( 1, -2 ), 4 );
-            faceMap.set( new Vector2( 3, -2 ), 3 );
-            faceMap.set( new Vector2( 4, -2 ), 3 );
-
-            faceMap.set( new Vector2( 0, -3 ), 4 );
-            faceMap.set( new Vector2( 1, -3 ), 4 );
-            faceMap.set( new Vector2( 3, -3 ), 5 );
-
-            faceMap.set( new Vector2( 3, -4 ), 4 );
-
-            const state = CompleteData.fromFaces( board, CompleteData.faceMapLookup( faceMap ) );
-
-            options.loadPuzzle( new BasicPuzzle( board, state ) );
           }
         } ) ),
         new TextPushButton( '40x30 random', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

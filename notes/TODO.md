@@ -350,20 +350,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - logic-solver leaking memory like crazy, use something more modern
-    - https://www.npmjs.com/package/z3-solver actually this might be better?
-      - It doesn't play well with vite: https://github.com/Z3Prover/z3/issues/6768
-      - It needs special headers or tricks
-        - noted from https://www.npmjs.com/package/z3-solver?activeTab=readme
-        - Can probably use https://github.com/gzuidhof/coi-serviceworker with GH Pages
-        - Seems... like a pain
-      - OMG YES use z3-solver... this looks way better
-      - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/
-      - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/#solve-sudoku
-    - DO we need to minisat-WASM? see https://github.com/niklasso/minisat
-      - NONO, use something like a derivative, like https://github.com/audemard/glucose
-      - or https://github.com/arminbiere/lingeling?tab=readme-ov-file
-    - GPL: https://github.com/GJDuck/SAT.js
   - Remove the TStructure stuff, we don't need it for square edges?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
@@ -622,3 +608,17 @@
     - N/S/E/W edge, vertex
     - NE/SE/SW/NW face
     - turnLeft, turnRight, turnBack, forward(), shiftLeft, shiftRight, shiftBack
+- (Does not seem to be the case!!!!!) logic-solver leaking memory like crazy, use something more modern
+  - https://www.npmjs.com/package/z3-solver actually this might be better?
+    - It doesn't play well with vite: https://github.com/Z3Prover/z3/issues/6768
+    - It needs special headers or tricks
+      - noted from https://www.npmjs.com/package/z3-solver?activeTab=readme
+      - Can probably use https://github.com/gzuidhof/coi-serviceworker with GH Pages
+      - Seems... like a pain
+    - OMG YES use z3-solver... this looks way better
+    - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/
+    - https://microsoft.github.io/z3guide/programming/Z3%20JavaScript%20Examples/#solve-sudoku
+  - DO we need to minisat-WASM? see https://github.com/niklasso/minisat
+    - NONO, use something like a derivative, like https://github.com/audemard/glucose
+    - or https://github.com/arminbiere/lingeling?tab=readme-ov-file
+  - GPL: https://github.com/GJDuck/SAT.js
