@@ -13,14 +13,18 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
     public readonly puzzleModel: PuzzleModel<Structure, State>,
     options?: NodeOptions
   ) {
+    const puzzleNode = new PuzzleNode( puzzleModel.puzzle, {
+      edgePressListener: ( edge, button ) => {
+        puzzleModel.onUserEdgePress( edge, button );
+      }
+    } );
+
     super( combineOptions<NodeOptions>( {
       children: [
-        new PuzzleNode( puzzleModel.puzzle, {
-          edgePressListener: ( edge, button ) => {
-            puzzleModel.onUserEdgePress( edge, button );
-          }
-        } )
+        puzzleNode
       ]
     }, options ) );
+
+    this.disposeEmitter.addListener( () => puzzleNode.dispose() );
   }
 }

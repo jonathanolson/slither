@@ -350,10 +350,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - BUG with... regions disappearing?!? 
-  - I seem to be leaking a decent amount of memory ---
-    - Handle PuzzleNode disposal(!) - it might not be the SAT solver issue
-    - Make sure global shapes are immutable.
   - logic-solver leaking memory like crazy, use something more modern
     - https://www.npmjs.com/package/z3-solver actually this might be better?
       - It doesn't play well with vite: https://github.com/Z3Prover/z3/issues/6768

@@ -4,12 +4,12 @@ import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { vertexColorProperty } from '../Theme.ts';
-import { BasicPuzzleNodeData } from './PuzzleNode.ts';
+import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 
 export class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
-    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
     super();
@@ -17,6 +17,7 @@ export class VertexNode extends Node {
     const visibleProperty = new DerivedProperty( [ stateProperty ], state => {
       return vertex.edges.every( edge => state.getEdgeState( edge ) !== EdgeState.BLACK );
     } );
+    this.disposeEmitter.addListener( () => visibleProperty.dispose() );
 
     this.addChild( new Rectangle( {
       rectWidth: 0.1,
@@ -27,8 +28,10 @@ export class VertexNode extends Node {
     } ) );
 
     // Apply effects when solved
-    isSolvedProperty.link( isSolved => {
+    const isSolvedListener = ( isSolved: boolean ) => {
       this.visible = !isSolved;
-    } );
+    };
+    isSolvedProperty.link( isSolvedListener );
+    this.disposeEmitter.addListener( () => isSolvedProperty.unlink( isSolvedListener ) );
   }
 }

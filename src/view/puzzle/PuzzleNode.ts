@@ -90,6 +90,13 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
         edgeContainer
       ]
     }, options ) );
+
+    this.disposeEmitter.addListener( () => {
+      faceContainer.children.forEach( child => child.dispose() );
+      vertexContainer.children.forEach( child => child.dispose() );
+      edgeContainer.children.forEach( child => child.dispose() );
+      isSolvedProperty.dispose();
+    } );
   }
 }
 

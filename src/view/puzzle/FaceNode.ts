@@ -5,7 +5,8 @@ import { TState } from '../../model/data/core/TState.ts';
 import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, puzzleFont } from '../Theme.ts';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { BasicPuzzleNodeData } from './PuzzleNode.ts';
+import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import { TFaceData } from '../../model/data/face/TFaceData.ts';
 
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
@@ -15,7 +16,7 @@ export class FaceNode extends Node {
 
   public constructor(
     public readonly face: TFace,
-    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeData & TFaceData>>,
     providedOptions?: FaceNodeOptions
   ) {
 
@@ -40,8 +41,8 @@ export class FaceNode extends Node {
         return `${faceState}`;
       }
     } );
+    this.disposeEmitter.addListener( () => faceStringProperty.dispose() );
 
-    // TODO: disposal!!!
     const fillProperty = new DerivedProperty( [
       stateProperty,
       faceValueColorProperty,
@@ -71,6 +72,7 @@ export class FaceNode extends Node {
         return errorColor;
       }
     } );
+    this.disposeEmitter.addListener( () => fillProperty.dispose() );
 
     const text = new Text( faceStringProperty, combineOptions<TextOptions>( {
       fill: fillProperty

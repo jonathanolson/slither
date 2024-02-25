@@ -44,7 +44,9 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.localPreferredHeightProperty.lazyLink( layoutListener );
 
     puzzleModelProperty.link( puzzleModel => {
-      this.puzzleWrapper.removeAllChildren();
+      if ( this.puzzleNode ) {
+        this.puzzleNode.dispose();
+      }
 
       if ( puzzleModel ) {
         this.puzzleNode = new PuzzleModelNode( puzzleModel );

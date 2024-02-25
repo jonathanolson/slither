@@ -5,7 +5,7 @@ import { TState } from '../../model/data/core/TState.ts';
 import { lineColorProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
-import { BasicPuzzleNodeData } from './PuzzleNode.ts';
+import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
@@ -17,13 +17,14 @@ export class EdgeNode extends Node {
 
   public constructor(
     public readonly edge: TEdge,
-    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
     options?: EdgeNodeOptions
   ) {
     super( {} );
 
     const edgeStateProperty = new DerivedProperty( [ stateProperty ], state => state.getEdgeState( edge ) );
+    this.disposeEmitter.addListener( () => edgeStateProperty.dispose() );
 
     const startPoint = edge.start.viewCoordinates;
     const endPoint = edge.end.viewCoordinates;
@@ -50,9 +51,11 @@ export class EdgeNode extends Node {
     } );
 
     // Apply effects when solved
-    isSolvedProperty.link( isSolved => {
+    const isSolvedListener = ( isSolved: boolean ) => {
       x.visible = !isSolved;
-    } );
+    };
+    isSolvedProperty.link( isSolvedListener );
+    this.disposeEmitter.addListener( () => isSolvedProperty.unlink( isSolvedListener ) );
 
     // TODO: ALLOW DRAGGING TO SET LINES
     const edgePressListener = options?.edgePressListener;

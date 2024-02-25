@@ -1,5 +1,5 @@
 import { Line, Node, Path, TPaint } from 'phet-lib/scenery';
-import { TSimpleRegion } from '../../model/data/simple-region/TSimpleRegionData.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { Shape } from 'phet-lib/kite';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TReadOnlyProperty } from 'phet-lib/axon';
@@ -9,7 +9,6 @@ import { arrayDifference } from 'phet-lib/phet-core';
 import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { edgeWeirdColorProperty } from '../Theme.ts';
-import { BasicPuzzleNodeData } from './PuzzleNode.ts';
 
 const toRGB = toGamut( 'rgb' );
 
@@ -23,7 +22,7 @@ export class SimpleRegionViewNode extends Node {
   private readonly weirdEdgeContainer = new Node();
 
   public constructor(
-    stateProperty: TReadOnlyProperty<TState<BasicPuzzleNodeData>>
+    stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>
   ) {
     super( {
       pickable: false
@@ -36,7 +35,7 @@ export class SimpleRegionViewNode extends Node {
     stateProperty.value.getSimpleRegions().forEach( simpleRegion => this.addRegion( simpleRegion ) );
     stateProperty.value.getWeirdEdges().forEach( edge => this.addWeirdEdge( edge ) );
 
-    stateProperty.lazyLink( ( state, oldState ) => {
+    const stateListener = ( state: TState<TSimpleRegionData>, oldState: TState<TSimpleRegionData> ) => {
 
       const oldSimpleRegions = oldState.getSimpleRegions();
       const newSimpleRegions = state.getSimpleRegions();
@@ -79,7 +78,9 @@ export class SimpleRegionViewNode extends Node {
           this.addWeirdEdge( edge );
         }
       }
-    } );
+    };
+    stateProperty.lazyLink( stateListener );
+    this.disposeEmitter.addListener( () => stateProperty.unlink( stateListener ) );
   }
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
