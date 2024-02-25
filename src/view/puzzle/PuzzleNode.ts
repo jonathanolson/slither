@@ -1,7 +1,7 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { puzzleFont } from '../Theme.ts';
+import { puzzleFont, redXsVisibleProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import { TFaceData } from '../../model/data/face/TFaceData.ts';
@@ -47,9 +47,9 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       useSimpleRegionForBlack: true,
       useBackgroundOffsetStroke: false,
       backgroundOffsetDistance: 0.3,
-      verticesVisibleProperty: new TinyProperty( false ),
-      redXsVisibleProperty: new TinyProperty( true ),
-      whiteDottedVisibleProperty: new TinyProperty( true )
+      verticesVisibleProperty: verticesVisibleProperty,
+      redXsVisibleProperty: redXsVisibleProperty,
+      whiteDottedVisibleProperty: whiteDottedVisibleProperty
     }, providedOptions );
 
     const faceContainer = new Node();

@@ -73,7 +73,7 @@ export class EdgeNode extends Node {
     const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.03,
       stroke: whiteLineColorProperty,
-      lineDash: [ 0.05, 0.05 ],
+      // lineDash: [ 0.05, 0.05 ],
       visibleProperty: whiteLineVisibleProperty
     } );
 

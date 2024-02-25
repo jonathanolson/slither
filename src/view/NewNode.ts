@@ -147,8 +147,8 @@ export class NewNode extends PopupNode {
                 this.hide();
 
                 // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
-                const board = new TiledBoard( index, new Bounds2( -4, -4, 4, 4 ), 1.25, polygon => {
-                  return getCentroid( polygon ).getMagnitude() < 4;
+                const board = new TiledBoard( index, new Bounds2( -5, -5, 5, 5 ), 1.25, polygon => {
+                  return getCentroid( polygon ).getMagnitude() < 5;
                 } );
 
                 options.loadPuzzle( BasicPuzzle.generateHard( board ) );

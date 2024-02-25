@@ -3,7 +3,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { Node, Text, VBox } from 'phet-lib/scenery';
 import { VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, popupFont, themeProperty, uiForegroundColorProperty } from './Theme.ts';
+import { availableThemes, popupFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 
@@ -72,6 +72,21 @@ export class SettingsNode extends PopupNode {
       ]
     } );
 
+    const displayNode = new VBox( {
+      stretch: true,
+      align: 'left',
+      spacing: 8,
+      children: [
+        new Text( 'Puzzle Display', {
+          font: popupFont,
+          fill: uiForegroundColorProperty
+        } ),
+        getSettingsCheckbox( 'Red X Visible', redXsVisibleProperty ),
+        getSettingsCheckbox( 'Undecided Line Visible', whiteDottedVisibleProperty ),
+        getSettingsCheckbox( 'Vertices Visible', verticesVisibleProperty )
+      ]
+    } );
+
     // TODO: debug?
 
     super( new VBox( {
@@ -79,7 +94,8 @@ export class SettingsNode extends PopupNode {
       align: 'left',
       children: [
         autoSolveNode,
-        themeNode
+        themeNode,
+        displayNode
       ]
     } ), glassPane, layoutBoundsProperty );
   }

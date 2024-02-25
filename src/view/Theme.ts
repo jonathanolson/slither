@@ -1,6 +1,6 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
-import { LocalStorageProperty } from '../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageProperty } from '../util/localStorage.ts';
 
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
@@ -90,7 +90,7 @@ export const darkTheme = {
   vertexColorProperty: new PaintColorProperty( '#888' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#aaa' ),
-  whiteLineColorProperty: new PaintColorProperty( '#666' ),
+  whiteLineColorProperty: new PaintColorProperty( '#444' ),
   faceValueColorProperty: new PaintColorProperty( '#ccc' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#888' ),
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
@@ -242,3 +242,8 @@ export const puzzleFont = new Font( {
   family: 'sans-serif',
   size: 25
 } );
+
+export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', true );
+// TODO: rename
+export const whiteDottedVisibleProperty = new LocalStorageBooleanProperty( 'whiteDottedVisibleProperty', false );
+export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', true );
