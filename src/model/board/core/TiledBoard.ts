@@ -7,7 +7,7 @@ import { Bounds2, Matrix3, Vector2 } from 'phet-lib/dot';
 import { TBoard } from './TBoard.ts';
 import { TStructure } from './TStructure.ts';
 import { BaseBoard } from './BaseBoard.ts';
-import { createBoardDescriptor, getCentroid, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
+import { createBoardDescriptor, getCentroid, rescaleProtoDescriptorMinimum, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
 import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
@@ -164,6 +164,9 @@ export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
       };
     } );
 
-    super( createBoardDescriptor( vertexDescriptors, faceDescriptors ) );
+    super( createBoardDescriptor( rescaleProtoDescriptorMinimum( {
+      vertices: vertexDescriptors,
+      faces: faceDescriptors
+    }, scale ) ) );
   }
 }

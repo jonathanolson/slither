@@ -147,7 +147,7 @@ export class NewNode extends PopupNode {
                 this.hide();
 
                 // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
-                const board = new TiledBoard( index, new Bounds2( -5, -5, 5, 5 ), 1.25, polygon => {
+                const board = new TiledBoard( index, new Bounds2( -5, -5, 5, 5 ), 1, polygon => {
                   return getCentroid( polygon ).getMagnitude() < 5;
                 } );
 

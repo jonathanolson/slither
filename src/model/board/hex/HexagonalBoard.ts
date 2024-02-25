@@ -5,7 +5,7 @@ import _ from '../../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { validateBoard } from '../core/validateBoard.ts';
-import { createBoardDescriptor, TFaceDescriptor, TVertexDescriptor } from '../core/createBoardDescriptor.ts';
+import { createBoardDescriptor, rescaleProtoDescriptorAverage, TFaceDescriptor, TVertexDescriptor } from '../core/createBoardDescriptor.ts';
 
 export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
 
@@ -86,7 +86,11 @@ export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
       };
     } );
 
-    super( createBoardDescriptor( vertexDescriptors, faceDescriptors ) );
+    // TODO: DO NOT handle the scale in the rest of this?
+    super( createBoardDescriptor( rescaleProtoDescriptorAverage( {
+      vertices: vertexDescriptors,
+      faces: faceDescriptors
+    }, scale ) ) );
 
     assertEnabled() && validateBoard( this );
   }

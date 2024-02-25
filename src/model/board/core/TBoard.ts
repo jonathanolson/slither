@@ -96,7 +96,7 @@ export const deserializeBoard = ( serializedBoard: TSerializedBoard ): TBoard =>
       };
     } );
 
-    return new BaseBoard( createBoardDescriptor( vertexDescriptors, faceDescriptors ) );
+    return new BaseBoard( createBoardDescriptor( { vertices: vertexDescriptors, faces: faceDescriptors } ) );
   }
   else if ( serializedBoard.type === 'SquareBoard' ) {
     return new SquareBoard( serializedBoard.width, serializedBoard.height );

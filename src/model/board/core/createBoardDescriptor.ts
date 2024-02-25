@@ -5,6 +5,7 @@ import { BaseFace } from './BaseFace.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { BaseEdge } from './BaseEdge.ts';
 import { BaseHalfEdge } from './BaseHalfEdge.ts';
+import _ from '../../../workarounds/_.ts';
 
 export type VertexLocation = Vector2;
 export type FaceLocation = Vector2;
@@ -18,6 +19,11 @@ export interface TVertexDescriptor {
 export interface TFaceDescriptor {
   logicalCoordinates: FaceLocation;
   vertices: TVertexDescriptor[];
+}
+
+export interface TProtoBoardDescriptor {
+  vertices: TVertexDescriptor[];
+  faces: TFaceDescriptor[];
 }
 
 export type TBoardDescriptor<Structure extends TStructure = TStructure> = {
@@ -44,6 +50,10 @@ export const getSignedArea = ( points: Vector2[] ) => {
   return 0.5 * area;
 };
 
+export const getArea = ( points: Vector2[] ) => {
+  return Math.abs( getSignedArea( points ) );
+};
+
 // TODO: dedup and use from Alpenglow PolygonalFace
 export const getCentroid = ( points: Vector2[] ) => {
   const area = getSignedArea( points );
@@ -62,6 +72,50 @@ export const getCentroid = ( points: Vector2[] ) => {
   }
 
   return new Vector2( x, y ).timesScalar( 1 / ( 6 * area ) );
+};
+
+export const rescaleProtoDescriptor = (
+  protoDescriptor: TProtoBoardDescriptor,
+  getScaleAdjustment: ( polygonalAreas: number[] ) => number
+): TProtoBoardDescriptor => {
+  const polygonAreas = protoDescriptor.faces.map( descriptor => getArea( descriptor.vertices.map( v => v.viewCoordinates ) ) );
+  const scaleAdjustment = getScaleAdjustment( polygonAreas );
+
+  const vertexDescriptors = protoDescriptor.vertices.map( descriptor => ( {
+    logicalCoordinates: descriptor.logicalCoordinates,
+    viewCoordinates: descriptor.viewCoordinates.timesScalar( scaleAdjustment )
+  } ) );
+  const vertexDescriptorMap = new Map( vertexDescriptors.map( ( descriptor, i ) => [ protoDescriptor.vertices[ i ], descriptor ] ) );
+
+  return {
+    vertices: vertexDescriptors,
+    faces: protoDescriptor.faces.map( descriptor => ( {
+      logicalCoordinates: descriptor.logicalCoordinates,
+      vertices: descriptor.vertices.map( vertexDescriptor => vertexDescriptorMap.get( vertexDescriptor )! )
+    } ) )
+  };
+};
+
+// Rescales so that the average area of the faces is the given value
+export const rescaleProtoDescriptorAverage = (
+  protoDescriptor: TProtoBoardDescriptor,
+  averageOutputArea: number
+): TProtoBoardDescriptor => {
+  return rescaleProtoDescriptor(
+    protoDescriptor,
+    polygonalAreas => Math.sqrt( averageOutputArea / ( _.sum( polygonalAreas ) / polygonalAreas.length ) )
+  );
+};
+
+// Rescales so that the area of the smallest face is the given value
+export const rescaleProtoDescriptorMinimum = (
+  protoDescriptor: TProtoBoardDescriptor,
+  minimumOutputArea: number
+): TProtoBoardDescriptor => {
+  return rescaleProtoDescriptor(
+    protoDescriptor,
+    polygonalAreas => Math.sqrt( minimumOutputArea / Math.min( ...polygonalAreas ) )
+  );
 };
 
 class EdgeIdentifier {
@@ -139,7 +193,10 @@ type Edge = BaseEdge<TStructure>;
 type HalfEdge = BaseHalfEdge<TStructure>;
 
 // NOTE: We do NOT support edges that are not part of a face (no bridges)
-export const createBoardDescriptor = ( vertexDescriptors: TVertexDescriptor[], faceDescriptors: TFaceDescriptor[] ): TBoardDescriptor => {
+export const createBoardDescriptor = ( protoDescriptor: TProtoBoardDescriptor ): TBoardDescriptor => {
+
+  const vertexDescriptors = protoDescriptor.vertices;
+  let faceDescriptors = protoDescriptor.faces;
 
   // FIX orientation of faces (so that they have positive signed area, and are in mathematical-CCW order).
   faceDescriptors = faceDescriptors.map( descriptor => getSignedArea( descriptor.vertices.map( v => v.viewCoordinates ) ) > 0 ? descriptor : {

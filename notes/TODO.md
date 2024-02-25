@@ -350,6 +350,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
   - Remove the TStructure stuff, we don't need it for square edges?
   - Async/await on generation FOR SURE 
     - GeneratingNode --- shows progress?
