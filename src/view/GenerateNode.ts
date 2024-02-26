@@ -13,10 +13,11 @@ import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
+import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, penrose10, penrose11, penrose13, penrose14, penrose20, penrose6, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -247,6 +248,96 @@ export const hexagonalPolygonGenerator: PolygonGenerator = {
   }
 };
 
+/*
+
+export type PolygonGeneratorParameter = {
+  label: string;
+  advanced?: boolean;
+} & ( {
+  type: 'integer';
+  range: Range;
+} | {
+  type: 'float';
+  range: Range;
+} | {
+  type: 'boolean';
+} | {
+  type: 'choice';
+  choices: {
+    value: string;
+    label: string;
+  }[];
+} );
+
+export type PolygonGenerator = {
+  name: string;
+  parameters: Record<string, PolygonGeneratorParameter>;
+  defaultParameterValues: Record<string, any>; // TODO: maybe sometime do the typing work for this?
+  generate: ( parameters: Record<string, any> ) => Vector2[][];
+  scale?: number;
+};
+
+ */
+export const penroseTilingGenerator: PolygonGenerator = {
+  name: 'Penrose',
+  parameters: {
+    // TODO: support all radii, and handle prescale
+    radius: {
+      label: 'Radius',
+      type: 'choice',
+      choices: [
+        {
+          value: '6',
+          label: '6'
+        },
+        {
+          value: '10',
+          label: '10'
+        },
+        {
+          value: '11',
+          label: '11'
+        },
+        {
+          value: '13',
+          label: '13'
+        },
+        {
+          value: '14',
+          label: '14'
+        },
+        {
+          value: '20',
+          label: '20'
+        }
+      ]
+    }
+  },
+  defaultParameterValues: {
+    radius: '6'
+  },
+  generate: ( ( parameters: { radius: string } ): Vector2[][] => {
+    const penroseTiling = {
+      '6': penrose6,
+      '10': penrose10,
+      '11': penrose11,
+      '13': penrose13,
+      '14': penrose14,
+      '20': penrose20
+    }[ parameters.radius ]!;
+
+    assertEnabled() && assert( penroseTiling );
+
+    const prescale = 0.01;
+
+    // They are closed, we ignore the last point
+    const thinPolygons = penroseTiling.thinShape.subpaths.filter( subpath => subpath.segments.length ).map( subpath => subpath.points.slice( 0, -1 ).map( v => v.timesScalar( prescale ) ) );
+    const thickPolygons = penroseTiling.thickShape.subpaths.filter( subpath => subpath.segments.length ).map( subpath => subpath.points.slice( 0, -1 ).map( v => v.timesScalar( prescale ) ) );
+
+    return [ ...thickPolygons, ...thinPolygons ];
+  } ) as ( parameters: Record<string, any> ) => Vector2[][]
+};
+
 export const polygonGenerators: PolygonGenerator[] = [
   getPeriodicTilingGenerator( rhombilleTiling, {
     width: 8,
@@ -310,7 +401,8 @@ export const polygonGenerators: PolygonGenerator[] = [
     height: 9
   } ),
   getPeriodicTilingGenerator( squareTiling ),
-  getPeriodicTilingGenerator( hexagonalTiling )
+  getPeriodicTilingGenerator( hexagonalTiling ),
+  penroseTilingGenerator
 ];
 
 // TODO: place it in such a way where we set preferred size?
