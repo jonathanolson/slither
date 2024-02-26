@@ -91,6 +91,7 @@ export interface PeriodicBoardTiling {
   basisB: Vector2;
   polygons: Vector2[][];
   translation: Vector2;
+  scale?: number;
 }
 
 export const squareTiling: PeriodicBoardTiling = {
@@ -884,6 +885,43 @@ export const periodicTilings: PeriodicBoardTiling[] = [
   falseCubicTiling,
   trihexAndHexTiling
 ];
+
+export class PeriodicBoard extends PolygonalBoard implements TBoard {
+  public constructor(
+    public readonly periodicTiling: PeriodicBoardTiling,
+    public readonly bounds: Bounds2,
+    scale: number,
+    acceptCondition: ( polygon: Vector2[] ) => boolean
+  ) {
+
+    const unitPolygons = periodicTiling.polygons;
+    const basisA = periodicTiling.basisA;
+    const basisB = periodicTiling.basisB;
+
+    const polygons: Vector2[][] = [];
+
+    const size = Math.max(
+      Math.abs( bounds.minX ),
+      Math.abs( bounds.maxX ),
+      Math.abs( bounds.minY ),
+      Math.abs( bounds.maxY )
+    ) * 20; // TODO ... overkill?
+
+    _.range( -size, size ).forEach( a => {
+      _.range( -size, size ).forEach( b => {
+        unitPolygons.forEach( unitPolygon => {
+          const tilePolygon = unitPolygon.map( v => v.plus( basisA.timesScalar( a ) ).plus( basisB.timesScalar( b ) ) );
+
+          if ( acceptCondition( tilePolygon ) ) {
+            polygons.push( tilePolygon );
+          }
+        } );
+      } );
+    } );
+
+    super( polygons, scale );
+  }
+}
 
 export interface PenroseTiling {
   name: string;

@@ -14,7 +14,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
-import { isohedralTilings, PenroseBoard, penroseTilings, TiledBoard } from '../model/board/core/TiledBoard.ts';
+import { isohedralTilings, PenroseBoard, penroseTilings, PeriodicBoard, periodicTilings, TiledBoard } from '../model/board/core/TiledBoard.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 
 export type NewNodeOptions = {
@@ -161,6 +161,36 @@ export class NewNode extends PopupNode {
                       return getCentroid( polygon ).getMagnitude() < size;
                       // return bounds.containsPoint( getCentroid( polygon ) );
                     }, isohedralBoardTiling.parameters );
+
+                    options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+                  }
+                } ) );
+              } )
+            } );
+          } )
+        } ),
+        // TODO: a GridBox...
+        new VBox( {
+          spacing: 10,
+          stretch: true,
+          grow: 1,
+          children: periodicTilings.map( periodicTiling => {
+            return new HBox( {
+              spacing: 10,
+              grow: 1,
+              stretch: true,
+              children: [ 3, 5, 7, 10 ].map( size => {
+                return new TextPushButton( `${periodicTiling.name} ${size}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+                  listener: () => {
+                    this.hide();
+
+                    const bounds = new Bounds2( -size, -size, size, size );
+
+                    // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
+                    const board = new PeriodicBoard( periodicTiling, bounds, periodicTiling.scale ?? 1, polygon => {
+                      return getCentroid( polygon ).getMagnitude() < size;
+                      // return bounds.containsPoint( getCentroid( polygon ) );
+                    } );
 
                     options.loadPuzzle( BasicPuzzle.generateHard( board ) );
                   }

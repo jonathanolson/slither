@@ -327,6 +327,9 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Carousel.... for the tilings? 
+  - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
+    - Could even show ... e.g. 4/7?
   - Lazy initialization of all of the tiling data? 
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
@@ -336,11 +339,9 @@
     - Click-and-drag-create vertices and connections?
     - Puzzle builder mode (use generator, etc/) 
   - Tiling:
-    - https://p5js.org/examples/simulate-penrose-tiles.html --- penrose!!!
     - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
       - Either "within grid", "by centermost vertex", "by centermost face"
     - Show "preview" of the tiling type
-    - Penrose?
     - --- or just import from image, and we can get it close enough?
     - VORONOI random!!!
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
