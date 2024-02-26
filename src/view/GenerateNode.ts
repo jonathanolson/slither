@@ -1,15 +1,16 @@
-import { Range, Vector2 } from 'phet-lib/dot';
+import { Dimension2, Range, Vector2 } from 'phet-lib/dot';
 import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox, VSeparator } from 'phet-lib/scenery';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
-import { Multilink, Property } from 'phet-lib/axon';
+import { Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, popupHeaderFont, puzzleBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
+import NumberControl from './to-port/SunNumberControl.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -188,7 +189,42 @@ export class GenerateNode extends HBox {
     } );
 
     const propertiesControlsContainer = new VBox( {
-      spacing: 10
+      spacing: 10,
+      children: [
+        new NumberControl( 'A Control!', new NumberProperty( 0 ), new Range( 0, 5 ), {
+          layoutFunction: NumberControl.createLayoutFunction4(),
+          sliderOptions : {
+            trackSize: new Dimension2( 100, 5 ),
+          }
+          // TODO: delta
+          // delta: 0.25,
+          // titleNodeOptions: {
+          //   maxWidth: 45
+          // } ),
+          // numberDisplayOptions: {
+          //   decimalPlaces: 2,
+          //   valuePattern: voiceVariablesPatternStringProperty,
+          //   textOptions: merge( {}, PreferencesDialog.PANEL_SECTION_CONTENT_OPTIONS, {
+          //     maxWidth: 45
+          //   } )
+          // },
+          // sliderOptions: {
+          //   thumbSize: THUMB_SIZE,
+          //   trackSize: TRACK_SIZE,
+          //   keyboardStep: 0.25,
+          //   minorTickSpacing: 0.25,
+          //
+          //   // pdom
+          //   labelTagName: 'label',
+          //   labelContent: a11yNameString,
+          //
+          //   // voicing
+          //   voicingOnEndResponseOptions: {
+          //     withNameResponse: true
+          //   }
+          // },
+        } )
+      ]
     } );
 
     const propertiesBox = new VBox( {
