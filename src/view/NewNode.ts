@@ -14,7 +14,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
-import { isohedralTilings, TiledBoard } from '../model/board/core/TiledBoard.ts';
+import { isohedralTilings, PenroseBoard, penroseTilings, TiledBoard } from '../model/board/core/TiledBoard.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 
 export type NewNodeOptions = {
@@ -167,6 +167,20 @@ export class NewNode extends PopupNode {
                 } ) );
               } )
             } );
+          } )
+        } ),
+        new HBox( {
+          spacing: 10,
+          children: penroseTilings.map( penroseTiling => {
+            return new TextPushButton( penroseTiling.name, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+              listener: () => {
+                this.hide();
+
+                const board = new PenroseBoard( penroseTiling, 2 );
+
+                options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+              }
+            } ) );
           } )
         } ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {

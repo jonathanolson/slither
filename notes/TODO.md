@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Lazy initialization of all of the tiling data? 
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Board builder (separate buildable entry point)
