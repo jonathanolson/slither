@@ -4,29 +4,6 @@
 - Try out on phone?
   - Seems to load!! 
 
-- Shapes
-  - Get topological handling for any shape, but specialize for 4x4 grid
-  - What planar tilings are easy to generate? (How can we... make things easier to generate?)
-    - OMG get a library that has done these tilings before(!) 
-      - https://en.wikipedia.org/wiki/Cairo_pentagonal_tiling - 25
-      - https://en.wikipedia.org/wiki/Truncated_square_tiling
-      - https://en.wikipedia.org/wiki/Rhombille_tiling - 31
-      - https://en.wikipedia.org/wiki/Truncated_hexagonal_tiling
-      - https://en.wikipedia.org/wiki/Rhombitrihexagonal_tiling <--- pretty promising
-      - https://en.wikipedia.org/wiki/Deltoidal_trihexagonal_tiling - 28
-      - https://en.wikipedia.org/wiki/Truncated_trihexagonal_tiling
-      - https://en.wikipedia.org/wiki/Snub_trihexagonal_tiling
-      - https://en.wikipedia.org/wiki/Floret_pentagonal_tiling - 19
-    - Lazy way: we scan something and process it (fixed-size)
-    - If we can generate tilings, perhaps we can "cut out" faces that are outside of a particular shape?
-      - Then if we have a set of .... faces, then generate all of the other horrible horrible metadata?
-      - https://github.com/isohedral/tactile-js (isohedral, but we can subdivide the prototiles, no?)
-        - https://cs.uwaterloo.ca/~csk/other/phd/
-          - OMG https://observablehq.com/@mattdzugan/dithering-on-non-square-pixels 
-        - Yes it should work, see: https://observablehq.com/@mattdzugan/hello-tactile-js-a-library-for-eascher-esque-isohedron-tess?collection=@mattdzugan/tilings
-    - Or be lazy: generate voroni things, or figure out subdivisions
-  - NO sphere, easier for the graphics/model to not make that generalization right now
-
 - UI
   - Phone interface works nicely (iOS/Android) 
   - Keyboard is first-class? (Could be fast for input on a computer)
@@ -352,8 +329,25 @@
 - Current code TODOs
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
+  - Board builder (separate buildable entry point)
+    - Get tiling, and DRAG over faces to include them
+    - Rotation
+    - Click-and-drag-create vertices and connections?
+    - Puzzle builder mode (use generator, etc/) 
   - Tiling:
+    - Get k-uniform tilings, e.g.:
+      - https://en.wikipedia.org/wiki/Rhombitrihexagonal_tiling <--- pretty promising
+      - https://en.wikipedia.org/wiki/Truncated_square_tiling
+      - https://en.wikipedia.org/wiki/Truncated_hexagonal_tiling
+      - https://en.wikipedia.org/wiki/Truncated_trihexagonal_tiling
+      - https://en.wikipedia.org/wiki/Snub_trihexagonal_tiling
+      - see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#k-uniform_tilings
     - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
+      - Either "within grid", "by centermost vertex", "by centermost face"
+    - Show "preview" of the tiling type
+    - Penrose?
+    - --- or just import from image, and we can get it close enough?
+    - VORONOI random!!!
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
     - Face coloring can override this later?
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
@@ -631,3 +625,4 @@
     - NONO, use something like a derivative, like https://github.com/audemard/glucose
     - or https://github.com/arminbiere/lingeling?tab=readme-ov-file
   - GPL: https://github.com/GJDuck/SAT.js
+- NO sphere, easier for the graphics/model to not make that generalization right now

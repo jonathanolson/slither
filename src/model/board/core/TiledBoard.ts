@@ -82,17 +82,106 @@ export const tilingTest = () => {
   }
 };
 
+// TODO: more general tiling, that we can region-fill with(!)
+
+export interface IsohedralBoardTiling {
+  tilingType: number;
+  name: string;
+  scale?: number;
+  parameters?: number[];
+}
+
+// TODO: see pages like https://www.jaapsch.net/tilings/mclean/html/ih27.html
+export const isohedralTilings: IsohedralBoardTiling[] = [
+  {
+    tilingType: 20,
+    name: 'Hexagonal'
+  },
+  {
+    tilingType: 21,
+    name: 'Floret Pentagonal'
+  },
+  {
+    tilingType: 27,
+    name: 'Cairo Pentagonal'
+  },
+  {
+    tilingType: 30,
+    name: 'Deltoidal Trihexagonal'
+  },
+  {
+    tilingType: 33,
+    name: 'Rhombille'
+  },
+  {
+    tilingType: 30,
+    name: 'Cairo B',
+    parameters: [ 0.3162393162393163 ],
+    scale: 2
+  },
+  {
+    tilingType: 77,
+    name: 'Kisrhombille',
+    scale: 2
+  },
+  {
+    tilingType: 82,
+    name: 'Sq. Triangular',
+    scale: 1.3
+  },
+  {
+    tilingType: 93,
+    name: 'Triangular',
+    scale: 1.3
+  },
+  {
+    tilingType: 76,
+    name: 'Square'
+  },
+  {
+    tilingType: 74,
+    name: 'Diamond',
+    scale: 1.5
+  },
+  // {
+  //   tilingType: 16,
+  //   name: 'Hexagonal B',
+  //   parameters: [ 0 ],
+  //   scale: 5
+  // },
+  // {
+  //   tilingType: 40,
+  //   name: 'Triakis Triangular',
+  //   scale: 2
+  // },
+  // {
+  //   tilingType: 46,
+  //   name: 'Skew Square A',
+  //   parameters: [ 0.5, 0.2308, 0.5, 0.75 ]
+  // },
+  // {
+  //   tilingType: 56,
+  //   name: 'Skew Square B',
+  //   parameters: [ 0.75 ]
+  // },
+];
+
 export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
   public constructor(
-    public readonly tilingIndex: number,
+    public readonly tilingType: number,
     public readonly bounds: Bounds2,
     public readonly scale: number,
-    acceptCondition: ( polygon: Vector2[] ) => boolean
+    acceptCondition: ( polygon: Vector2[] ) => boolean,
+    parameters?: number[]
   ) {
-    const tiling = new IsohedralTiling( tilingTypes[ tilingIndex ] );
+    assertEnabled() && assert( tilingTypes.includes( tilingType ) );
 
-    const parameters = tiling.getParameters();
-    console.log( 'parameters', parameters );
+    const tiling = new IsohedralTiling( tilingType );
+
+    console.log( `params IH${tilingType}`, tiling.getParameters() );
+
+    parameters = parameters || tiling.getParameters();
+    // const parameters = tiling.getParameters();
     // TODO: adjust parameters!!! Look into it?
     tiling.setParameters( parameters );
 
@@ -100,14 +189,20 @@ export class TiledBoard extends BaseBoard<TStructure> implements TBoard {
     // tiling.numEdgeShapes();
     // tiling.getEdgeShape( idx );
     // tiling.numVertices();
-    // tiling.vertices;
+    // tiling.vertices();
     // tiling.getVertex( idx )
     // tiling.numAspects();
     // tiling.getAspectTransform( idx );
 
     // for ( const shape of tiling.shape() ) {
-    //   console.log( shape.id, shape.T, shape.shape, shape.rev );
+    //   // console.log( shape.id, shape.T, shape.shape, shape.rev );
+    //   console.log( shape.T[ 2 ], shape.T[ 5 ] );
+    //   console.log( shape.T[ 0 ] + shape.T[ 2 ], shape.T[3] + shape.T[ 5 ] );
     // }
+    console.log( tiling.getVertex( 0 ) );
+    console.log( tiling.getVertex( 1 ) );
+    console.log( tiling.getVertex( 2 ) );
+    console.log( tiling.getVertex( 3 ) );
 
     // TODO: Look at the edge shape (J/U/S/I) and index, and try creating various mappings!!!
     // TODO: Also, SUBDIVIDE our prototile in some cases!!!

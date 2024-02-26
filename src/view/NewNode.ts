@@ -14,7 +14,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
-import { TiledBoard } from '../model/board/core/TiledBoard.ts';
+import { isohedralTilings, TiledBoard } from '../model/board/core/TiledBoard.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 
 export type NewNodeOptions = {
@@ -139,21 +139,34 @@ export class NewNode extends PopupNode {
             } ) );
           } )
         } ),
-        new HBox( {
+        // TODO: a GridBox...
+        new VBox( {
           spacing: 10,
-          children: [ 19, 25, 28, 31 ].map( index => {
-            return new TextPushButton( `Tiling Test ${index}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
-              listener: () => {
-                this.hide();
+          stretch: true,
+          grow: 1,
+          children: isohedralTilings.map( isohedralBoardTiling => {
+            return new HBox( {
+              spacing: 10,
+              grow: 1,
+              stretch: true,
+              children: [ 3, 5, 7, 10 ].map( size => {
+                return new TextPushButton( `${isohedralBoardTiling.name} ${size}`, combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+                  listener: () => {
+                    this.hide();
 
-                // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
-                const board = new TiledBoard( index, new Bounds2( -5, -5, 5, 5 ), 1, polygon => {
-                  return getCentroid( polygon ).getMagnitude() < 5;
-                } );
+                    const bounds = new Bounds2( -size, -size, size, size );
 
-                options.loadPuzzle( BasicPuzzle.generateHard( board ) );
-              }
-            } ) );
+                    // TODO: compute the scale based on... the average polygon size? (no, more the "minimum" polygon size?)
+                    const board = new TiledBoard( isohedralBoardTiling.tilingType, bounds, isohedralBoardTiling.scale ?? 1, polygon => {
+                      return getCentroid( polygon ).getMagnitude() < size;
+                      // return bounds.containsPoint( getCentroid( polygon ) );
+                    }, isohedralBoardTiling.parameters );
+
+                    options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+                  }
+                } ) );
+              } )
+            } );
           } )
         } ),
         new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
