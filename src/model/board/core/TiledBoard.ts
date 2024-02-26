@@ -12,6 +12,8 @@ import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMa
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import _ from '../../../workarounds/_.ts';
 
+// TODO: consider penrose rhomb tiling, lancon-billiard rhombs tiling, penrose triangle tiling
+
 // console.log( EdgeShape );
 
 // see https://observablehq.com/@mattdzugan/dithering-on-non-square-pixels for ideas
