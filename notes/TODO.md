@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - USE TILING + BOARD EDITOR TOOL TO CREATE TILINGS - add/remove candidate faces!!! 
   - Carousel.... for the tilings? 
   - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
     - Could even show ... e.g. 4/7?
