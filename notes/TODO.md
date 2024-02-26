@@ -335,6 +335,28 @@
     - Click-and-drag-create vertices and connections?
     - Puzzle builder mode (use generator, etc/) 
   - Tiling:
+    - ... OMG just use Mathematica to generate tilings?
+      - periodicTilings = "PeriodicTiling" // EntityList
+        - 4: trihexagonal
+        - 5: small rhombitrihexagonal (!)
+        - 6: truncated square
+        - 7: snug square
+        - 8: truncated hexagonal
+        - 10: great rhombitrihexagonal (!)
+        - 11: snub hexagonal
+        - (12): rhombille
+        - (13): deltoidal trihexagonal
+        - (14): tetrakis square
+        - (15): cairo
+        - (16): tetrakis triangular
+        - (19): floret pentagonal
+        - 21: portugal
+        - 25: persian hexagonal weave
+        - (43): false cubic
+        - 44: trihex and hex
+      - periodicTilings[[4]]["Diagram"]
+      - periodicTilings[[4]]["PrimitiveUnit"]
+      - 
     - Get k-uniform tilings, e.g.:
       - https://en.wikipedia.org/wiki/Rhombitrihexagonal_tiling <--- pretty promising
       - https://en.wikipedia.org/wiki/Truncated_square_tiling

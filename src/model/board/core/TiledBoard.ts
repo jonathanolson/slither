@@ -10,6 +10,7 @@ import { BaseBoard } from './BaseBoard.ts';
 import { createBoardDescriptor, getCentroid, rescaleProtoDescriptorMinimum, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
 import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import _ from '../../../workarounds/_.ts';
 
 // console.log( EdgeShape );
 
@@ -30,7 +31,87 @@ const matrixFromT = ( T: number[] ) => Matrix3.rowMajor(
 );
 const vertexFromV = ( V: { x: number; y: number } ) => new Vector2( V.x, V.y );
 
+export interface PeriodicBoardTiling {
+  name: string;
+  basisA: Vector2;
+  basisB: Vector2;
+  polygons: Vector2[][];
+}
+
+export const rhombitrihexagonalTiling: PeriodicBoardTiling = {
+  name: 'Rhombitrihexagonal',
+  basisA: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( 1 + Math.sqrt( 3 ) ) ),
+  basisB: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
+  polygons: [
+    [
+      new Vector2( 0.5, Math.sqrt( 3 ) / 2 ),
+      new Vector2( 1, 0 ),
+      new Vector2( 0.5, -( Math.sqrt( 3 ) / 2 ) ),
+      new Vector2( -0.5, -( Math.sqrt( 3 ) / 2 ) ),
+      new Vector2( -1, 0 ),
+      new Vector2( -0.5, Math.sqrt( 3 ) / 2 )
+    ],
+    [
+      new Vector2( 0.5 * ( 1 + Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
+      new Vector2( 0.5, -( Math.sqrt( 3 ) / 2 ) ),
+      new Vector2( 1, 0 ),
+      new Vector2( 0.5 * ( 2 + Math.sqrt( 3 ) ), -0.5 )
+    ],
+    [
+      new Vector2( 1 + Math.sqrt( 3 ) / 2, 0.5 ),
+      new Vector2( 1, 0 ),
+      new Vector2( 1 + Math.sqrt( 3 ) / 2, -0.5 )
+    ],
+    [
+      new Vector2( 1 + Math.sqrt( 3 ) / 2, 0.5 ),
+      new Vector2( 1, 0 ),
+      new Vector2( 0.5, Math.sqrt( 3 ) / 2 ),
+      new Vector2( 0.5 * ( 1 + Math.sqrt( 3 ) ), 0.5 * ( 1 + Math.sqrt( 3 ) ) )
+    ],
+    [
+      new Vector2( 0.5, 0.5 * ( 2 + Math.sqrt( 3 ) ) ),
+      new Vector2( 0.5, Math.sqrt( 3 ) / 2 ),
+      new Vector2( 0.5 * ( 1 + Math.sqrt( 3 ) ), 0.5 * ( 1 + Math.sqrt( 3 ) ) )
+    ],
+    [
+      new Vector2( 0.5, 0.5 * ( 2 + Math.sqrt( 3 ) ) ),
+      new Vector2( 0.5, Math.sqrt( 3 ) / 2 ),
+      new Vector2( -0.5, Math.sqrt( 3 ) / 2 ),
+      new Vector2( -0.5, 0.5 * ( 2 + Math.sqrt( 3 ) ) )
+    ],
+  ]
+};
+
 export const tilingTest = () => {
+  const container = new Node( {
+    scale: 20,
+    x: 150,
+    y: 150
+  } );
+
+  const unitPolygons = rhombitrihexagonalTiling.polygons;
+  const basisA = rhombitrihexagonalTiling.basisA;
+  const basisB = rhombitrihexagonalTiling.basisB;
+
+  _.range( -2, 3 ).forEach( a => {
+    _.range( -2, 3 ).forEach( b => {
+      unitPolygons.forEach( ( polygon, i ) => {
+        const mappedPolygon = polygon.map( v => v.plus( basisA.timesScalar( a ) ).plus( basisB.timesScalar( b ) ) );
+        container.addChild( new Path( Shape.polygon( mappedPolygon ), {
+          fill: [ 'red', 'green', 'blue', 'yellow', 'purple', 'orange' ][ i ]
+        } ) );
+      } );
+    } );
+  } );
+
+  const showTest = false;
+
+  if ( showTest ) {
+    scene.addChild( container );
+  }
+};
+
+export const tilingTest2 = () => {
   // const tiling = new IsohedralTiling( tilingTypes[ 31 ] );
   const tiling = new IsohedralTiling( tilingTypes[ 19 ] );
 
