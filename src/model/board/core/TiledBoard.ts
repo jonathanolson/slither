@@ -827,7 +827,8 @@ export const falseCubicTiling: PeriodicBoardTiling = {
       new Vector2( -0.5, -1 / ( 2 * Math.sqrt( 3 ) ) )
     ]
   ],
-  translation: new Vector2( 1.5, 1.5 * Math.sqrt( 3 ) )
+  translation: new Vector2( 1.5, 1.5 * Math.sqrt( 3 ) ),
+  scale: 2
 };
 
 export const trihexAndHexTiling: PeriodicBoardTiling = {

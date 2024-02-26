@@ -353,6 +353,10 @@ export const polygonGenerators: PolygonGenerator[] = [
     width: 9,
     height: 9
   } ),
+  getPeriodicTilingGenerator( falseCubicTiling, {
+    width: 9,
+    height: 10
+  } ),
   getPeriodicTilingGenerator( smallRhombitrihexagonalTiling, {
     width: 9,
     height: 9
@@ -362,11 +366,10 @@ export const polygonGenerators: PolygonGenerator[] = [
     width: 6,
     height: 8
   } ),
-  getPeriodicTilingGenerator( truncatedHexagonalTiling ),
-  getPeriodicTilingGenerator( elongatedTriangularTiling, {
-    width: 6,
-    height: 8,
-    squareRegion: true
+  getPeriodicTilingGenerator( floretPentagonalTiling, {
+    // TODO: more aesthetic!
+    width: 7,
+    height: 8
   } ),
   getPeriodicTilingGenerator( greatRhombitrihexagonalTiling ),
   getPeriodicTilingGenerator( snubHexagonalTiling, {
@@ -386,20 +389,17 @@ export const polygonGenerators: PolygonGenerator[] = [
   getPeriodicTilingGenerator( triakisTriangularTiling ),
   getPeriodicTilingGenerator( prismaticPentagonalTiling ),
   getPeriodicTilingGenerator( bisectedHexagonalTiling ),
-  getPeriodicTilingGenerator( floretPentagonalTiling, {
-    // TODO: more aesthetic!
-    width: 7,
-    height: 8
-  } ),
   getPeriodicTilingGenerator( portugalTiling ),
-  getPeriodicTilingGenerator( falseCubicTiling, {
-    width: 9,
-    height: 10
-  } ),
   getPeriodicTilingGenerator( trihexAndHexTiling, {
     width: 9,
     height: 9
   } ),
+  getPeriodicTilingGenerator( elongatedTriangularTiling, {
+    width: 6,
+    height: 8,
+    squareRegion: true
+  } ),
+  getPeriodicTilingGenerator( truncatedHexagonalTiling ),
   getPeriodicTilingGenerator( squareTiling ),
   getPeriodicTilingGenerator( hexagonalTiling ),
   penroseTilingGenerator
