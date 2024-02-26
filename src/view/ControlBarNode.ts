@@ -7,7 +7,6 @@ import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { controlBarFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { NewNode } from './NewNode.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 
@@ -44,8 +43,7 @@ export default class ControlBarNode extends HBox {
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
 
-    let newNode: NewNode | null = null;
-    let genNode: NewNode | null = null;
+    let genNode: GenNode | null = null;
     let shareNode: ShareNode | null = null;
     let settingsNode: SettingsNode | null = null;
 
@@ -67,23 +65,6 @@ export default class ControlBarNode extends HBox {
         // TODO: iconify this instead of the text?
         new TextPushButton( 'New', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'New',
-          listener: () => {
-            newNode = newNode || new NewNode( options.glassPane, options.layoutBoundsProperty, {
-              loadPuzzle: options.loadPuzzle
-            } );
-
-            newNode.show();
-          },
-          textFill: uiButtonForegroundProperty,
-          baseColor: uiButtonBaseColorProperty,
-          xMargin: 5,
-          yMargin: 5,
-          font: controlBarFont,
-          buttonAppearanceStrategy: rectangularButtonAppearanceStrategy
-        } ) ),
-        // TODO: iconify this instead of the text?
-        new TextPushButton( 'Gen', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
-          accessibleName: 'Gen',
           listener: () => {
             genNode = genNode || new GenNode( options.glassPane, options.layoutBoundsProperty, {
               loadPuzzle: options.loadPuzzle
