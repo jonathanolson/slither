@@ -328,6 +328,11 @@
 
 - Current code TODOs
   - Rhombille 5 (!)
+  - Generation:
+    - ABILITY TO DELETE FACES --- just click on them, and they disappear?
+      - Have a polygonsProperty?
+    - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
+    - Tick marks on sliders?
   - Lazy initialization of all of the tiling data?
     - Each tiling can be instantiated
     - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
