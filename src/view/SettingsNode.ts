@@ -1,11 +1,11 @@
-import { Property, TReadOnlyProperty } from 'phet-lib/axon';
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { AquaRadioButtonGroupItem, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupFont, popupHeaderFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
+import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 
 export class SettingsNode extends PopupNode {
   public constructor(
@@ -19,7 +19,7 @@ export class SettingsNode extends PopupNode {
       spacing: 8,
       children: [
         new Text( 'Solve After Every Move', {
-          font: popupFont,
+          font: popupHeaderFont,
           fill: uiForegroundColorProperty
         } ),
         getSettingsCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
@@ -48,25 +48,7 @@ export class SettingsNode extends PopupNode {
     //
     // } );
 
-    const createVerticalRadioButtonGroup = <T>( label: string, property: Property<T>, items: AquaRadioButtonGroupItem<T>[] ) => {
-
-      const radioButtonGroup = new VerticalAquaRadioButtonGroup( property, items );
-
-      return new VBox( {
-        stretch: true,
-        align: 'left',
-        spacing: 8,
-        children: [
-          new Text( label, {
-            font: popupFont,
-            fill: uiForegroundColorProperty
-          } ),
-          radioButtonGroup
-        ]
-      } );
-    };
-
-    const themeNode = createVerticalRadioButtonGroup(
+    const themeNode = getVerticalRadioButtonGroup(
       'Theme',
       themeProperty,
       availableThemes.map( theme => {
@@ -87,7 +69,7 @@ export class SettingsNode extends PopupNode {
       spacing: 8,
       children: [
         new Text( 'Puzzle Display', {
-          font: popupFont,
+          font: popupHeaderFont,
           fill: uiForegroundColorProperty
         } ),
         getSettingsCheckbox( 'Red X Visible', redXsVisibleProperty ),
@@ -96,7 +78,7 @@ export class SettingsNode extends PopupNode {
         new HBox( {
           spacing: 20,
           children: [
-            createVerticalRadioButtonGroup(
+            getVerticalRadioButtonGroup(
               'Line Join',
               joinedLinesJoinProperty,
               lineJoins.map( join => {
@@ -110,7 +92,7 @@ export class SettingsNode extends PopupNode {
                 };
               } )
             ),
-            createVerticalRadioButtonGroup(
+            getVerticalRadioButtonGroup(
               'Line Cap',
               joinedLinesCapProperty,
               lineCaps.map( cap => {

@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Rhombille 5 (!)
   - Lazy initialization of all of the tiling data?
     - Each tiling can be instantiated
     - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds

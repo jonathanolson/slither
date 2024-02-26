@@ -238,6 +238,12 @@ export const popupFont = new Font( {
   size: 16
 } );
 
+export const popupHeaderFont = new Font( {
+  family: 'sans-serif',
+  size: 16,
+  weight: 'bold'
+} );
+
 export const puzzleFont = new Font( {
   family: 'sans-serif',
   size: 25

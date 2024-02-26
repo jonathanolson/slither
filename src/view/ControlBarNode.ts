@@ -14,6 +14,7 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { ShareNode } from './ShareNode.ts';
+import { GenNode } from './GenNode.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
@@ -44,6 +45,7 @@ export default class ControlBarNode extends HBox {
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
 
     let newNode: NewNode | null = null;
+    let genNode: NewNode | null = null;
     let shareNode: ShareNode | null = null;
     let settingsNode: SettingsNode | null = null;
 
@@ -71,6 +73,23 @@ export default class ControlBarNode extends HBox {
             } );
 
             newNode.show();
+          },
+          textFill: uiButtonForegroundProperty,
+          baseColor: uiButtonBaseColorProperty,
+          xMargin: 5,
+          yMargin: 5,
+          font: controlBarFont,
+          buttonAppearanceStrategy: rectangularButtonAppearanceStrategy
+        } ) ),
+        // TODO: iconify this instead of the text?
+        new TextPushButton( 'Gen', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+          accessibleName: 'Gen',
+          listener: () => {
+            genNode = genNode || new GenNode( options.glassPane, options.layoutBoundsProperty, {
+              loadPuzzle: options.loadPuzzle
+            } );
+
+            genNode.show();
           },
           textFill: uiButtonForegroundProperty,
           baseColor: uiButtonBaseColorProperty,
