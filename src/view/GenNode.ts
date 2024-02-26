@@ -79,7 +79,11 @@ export class GenNode extends PopupNode {
         new Node( {
           children: [
             new GenerateNode( glassPane, {
-              loadPuzzle: options.loadPuzzle,
+              loadPuzzle: puzzle => {
+                this.hide();
+
+                options.loadPuzzle( puzzle );
+              },
               preferredWidth: 700,
               preferredHeight: 300 // TODO: change this once we have... more generators?
             } ),

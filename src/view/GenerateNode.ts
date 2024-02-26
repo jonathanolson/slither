@@ -7,11 +7,14 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, popupHeaderFont, puzzleBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
-import { optionize } from 'phet-lib/phet-core';
+import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, popupHeaderFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
+import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
+import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
+import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -40,6 +43,7 @@ export type PolygonGenerator = {
   parameters: Record<string, PolygonGeneratorParameter>;
   defaultParameterValues: Record<string, any>; // TODO: maybe sometime do the typing work for this?
   generate: ( parameters: Record<string, any> ) => Vector2[][];
+  scale?: number;
 };
 
 export const polygonGenerators: PolygonGenerator[] = [
@@ -268,6 +272,30 @@ export class GenerateNode extends HBox {
             delta: 1
           } ) );
         }
+        else if ( parameter.type === 'float' ) {
+          const property = new NumberProperty( generator.defaultParameterValues[ key ] );
+          property.link( value => {
+            parameters[ key ] = value;
+            update();
+          } );
+          propertiesControlsContainer.addChild( new NumberControl( parameter.label, property, parameter.range, {
+            layoutFunction: NumberControl.createLayoutFunction4(),
+            titleNodeOptions: {
+              font: popupFont,
+              fill: uiForegroundColorProperty
+            },
+            sliderOptions : {
+              trackSize: new Dimension2( 100, 5 ),
+              labelTagName: 'label',
+              keyboardStep: 0.1,
+              labelContent: parameter.label
+            },
+            numberDisplayOptions: {
+              decimalPlaces: 2
+            },
+            delta: 0.01
+          } ) );
+        }
         else if ( parameter.type === 'boolean' ) {
           const property = new BooleanProperty( generator.defaultParameterValues[ key ] );
           property.link( value => {
@@ -276,10 +304,50 @@ export class GenerateNode extends HBox {
           } );
           propertiesControlsContainer.addChild( getSettingsCheckbox( parameter.label, property ) );
         }
+        else if ( parameter.type === 'choice' ) {
+          const property = new Property<string>( parameter.choices[ 0 ].value );
+          property.link( value => {
+            parameters[ key ] = value;
+            update();
+          } );
+          propertiesControlsContainer.addChild( getVerticalRadioButtonGroup( parameter.label, property, parameter.choices.map( choice => {
+            return {
+              value: choice.value,
+              createNode: () => new Text( choice.label, {
+                font: popupFont,
+                fill: uiForegroundColorProperty
+              } ),
+              a11yName: choice.label
+            };
+          } ) ) );
+        }
         else {
           // TODO::: more!!!
         }
       }
+
+      // TODO: factor out with the panels/etc.
+      const commonButtonOptions = {
+        textFill: uiButtonForegroundProperty,
+        baseColor: uiButtonBaseColorProperty,
+        xMargin: 5,
+        yMargin: 5,
+        font: popupFont,
+        buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
+      };
+
+      propertiesControlsContainer.addChild( new TextPushButton( 'Generate', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+        layoutOptions: {
+          align: 'center'
+        },
+        listener: () => {
+          const polygons = generator.generate( parameters );
+
+          const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
+
+          options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+        }
+      } ) ) );
     } );
 
     const previewRectangle = new Rectangle( {
