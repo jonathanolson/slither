@@ -4,8 +4,11 @@ import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
 import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupFont, popupHeaderFont, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
-import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
+import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
+import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
+
+export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
 export class SettingsNode extends PopupNode {
   public constructor(
@@ -22,13 +25,13 @@ export class SettingsNode extends PopupNode {
           font: popupHeaderFont,
           fill: uiForegroundColorProperty
         } ),
-        getSettingsCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
-        getSettingsCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
-        getSettingsCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
-        getSettingsCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
-        getSettingsCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
-        getSettingsCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
-        getSettingsCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
+        new UITextCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
+        new UITextCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexOnlyOptionToBlackProperty ),
+        new UITextCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
+        new UITextCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
+        new UITextCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
+        new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
+        new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
       ]
     } );
 
@@ -72,11 +75,12 @@ export class SettingsNode extends PopupNode {
           font: popupHeaderFont,
           fill: uiForegroundColorProperty
         } ),
-        getSettingsCheckbox( 'Red X Visible', redXsVisibleProperty ),
-        getSettingsCheckbox( 'Undecided Line Visible', whiteDottedVisibleProperty ),
-        getSettingsCheckbox( 'Vertices Visible', verticesVisibleProperty ),
+        new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
+        new UITextCheckbox( 'Undecided Line Visible', whiteDottedVisibleProperty ),
+        new UITextCheckbox( 'Vertices Visible', verticesVisibleProperty ),
         new HBox( {
           spacing: 20,
+          visibleProperty: advancedSettingsVisibleProperty,
           children: [
             getVerticalRadioButtonGroup(
               'Line Join',
@@ -119,7 +123,8 @@ export class SettingsNode extends PopupNode {
       children: [
         autoSolveNode,
         themeNode,
-        displayNode
+        displayNode,
+        new UITextCheckbox( 'Advanced Settings Visible', advancedSettingsVisibleProperty )
       ]
     } ), glassPane, layoutBoundsProperty );
   }

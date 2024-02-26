@@ -11,7 +11,7 @@ import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, pop
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
-import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
+import { UITextCheckbox } from './UITextCheckbox.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
@@ -400,7 +400,7 @@ export class GenerateNode extends HBox {
             parameters[ key ] = value;
             update();
           } );
-          propertiesControlsContainer.addChild( getSettingsCheckbox( parameter.label, property ) );
+          propertiesControlsContainer.addChild( new UITextCheckbox( parameter.label, property ) );
         }
         else if ( parameter.type === 'choice' ) {
           const property = new Property<string>( parameter.choices[ 0 ].value );

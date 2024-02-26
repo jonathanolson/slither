@@ -9,7 +9,7 @@ import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { puzzleToCompressedString, TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
+import { UITextCheckbox } from './UITextCheckbox.ts';
 import { copyToClipboard } from '../util/copyToClipboard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
@@ -58,7 +58,7 @@ export class ShareNode extends PopupNode {
             }
           }
         } ) ),
-        getSettingsCheckbox( 'Include edge state', includeStateProperty )
+        new UITextCheckbox( 'Include edge state', includeStateProperty )
       ]
     } ), glassPane, layoutBoundsProperty );
 
