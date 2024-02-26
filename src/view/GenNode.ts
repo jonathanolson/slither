@@ -84,7 +84,7 @@ export class GenNode extends PopupNode {
 
                 options.loadPuzzle( puzzle );
               },
-              preferredWidth: 700,
+              preferredWidth: 800,
               preferredHeight: 300 // TODO: change this once we have... more generators?
             } ),
           ]

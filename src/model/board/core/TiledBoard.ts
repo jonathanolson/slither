@@ -95,7 +95,7 @@ export interface PeriodicBoardTiling {
 }
 
 export const squareTiling: PeriodicBoardTiling = {
-  name: 'Square',
+  name: 'Square Tiling',
   basisA: new Vector2( 1, 0 ),
   basisB: new Vector2( 0, 1 ),
   polygons: [
@@ -110,7 +110,7 @@ export const squareTiling: PeriodicBoardTiling = {
 };
 
 export const hexagonalTiling: PeriodicBoardTiling = {
-  name: 'Hexagonal',
+  name: 'Hexagonal Tiling',
   basisA: new Vector2( 1, 0 ),
   basisB: new Vector2( 0.5, Math.sqrt( 3 ) / 2 ),
   polygons: [
@@ -173,7 +173,7 @@ export const trihexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const smallRhombitrihexagonalTiling: PeriodicBoardTiling = {
-  name: 'SmallRhombitrihexagonal',
+  name: 'Rhombitrihexagonal',
   basisA: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( 1 + Math.sqrt( 3 ) ) ),
   basisB: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
   polygons: [
@@ -218,7 +218,7 @@ export const smallRhombitrihexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const truncatedSquareTiling: PeriodicBoardTiling = {
-  name: 'TruncatedSquare',
+  name: 'Truncated Square',
   basisA: new Vector2( 2 + Math.sqrt( 2 ), 0 ),
   basisB: new Vector2( 0.5 * ( 2 + Math.sqrt( 2 ) ), 1 + 1 / Math.sqrt( 2 ) ),
   polygons: [
@@ -243,7 +243,7 @@ export const truncatedSquareTiling: PeriodicBoardTiling = {
 };
 
 export const snubSquareTiling: PeriodicBoardTiling = {
-  name: 'SnubSquare',
+  name: 'Snub Square',
   basisA: new Vector2( 1 / 2 * ( 1 + Math.sqrt( 3 ) ), 1 / 2 * ( -1 - Math.sqrt( 3 ) ) ),
   basisB: new Vector2( 1 / 2 * ( -1 - Math.sqrt( 3 ) ), 1 / 2 * ( -1 - Math.sqrt( 3 ) ) ),
   polygons: [
@@ -284,7 +284,7 @@ export const snubSquareTiling: PeriodicBoardTiling = {
 };
 
 export const truncatedHexagonalTiling: PeriodicBoardTiling = {
-  name: 'TruncatedHexagonal',
+  name: 'Truncated Hexagonal',
   basisA: new Vector2( 2 + Math.sqrt( 3 ), 0 ),
   basisB: new Vector2( 0.5 * ( 2 + Math.sqrt( 3 ) ), 3 / 2 + Math.sqrt( 3 ) ),
   polygons: [
@@ -317,7 +317,7 @@ export const truncatedHexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const elongatedTriangularTiling: PeriodicBoardTiling = {
-  name: 'ElongatedTriangular',
+  name: 'Elongated Triangular',
   basisA: new Vector2( 1, 0 ),
   basisB: new Vector2( 0.5, 0.5 * ( 2 + Math.sqrt( 3 ) ) ),
   polygons: [
@@ -342,7 +342,7 @@ export const elongatedTriangularTiling: PeriodicBoardTiling = {
 };
 
 export const greatRhombitrihexagonalTiling: PeriodicBoardTiling = {
-  name: 'GreatRhombitrihexagonal',
+  name: 'Great Rhombitrihexagonal',
   basisA: new Vector2( 3 + Math.sqrt( 3 ), 0 ),
   basisB: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 1.5 * ( 1 + Math.sqrt( 3 ) ) ),
   polygons: [
@@ -399,7 +399,7 @@ export const greatRhombitrihexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const snubHexagonalTiling: PeriodicBoardTiling = {
-  name: 'SnubHexagonal',
+  name: 'Snub Hexagonal',
   basisA: new Vector2( 5 / 2, -Math.sqrt( 3 ) / 2 ),
   basisB: new Vector2( -1 / 2, 3 * Math.sqrt( 3 ) / 2 ),
   polygons: [
@@ -483,7 +483,7 @@ export const rhombilleTiling: PeriodicBoardTiling = {
 };
 
 export const deltoidalTrihexagonalTiling: PeriodicBoardTiling = {
-  name: 'DeltoidalTrihexagonal',
+  name: 'Deltoidal Trihexagonal',
   basisA: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( 1 + Math.sqrt( 3 ) ) ),
   basisB: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
   polygons: [
@@ -528,7 +528,7 @@ export const deltoidalTrihexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const tetrakisSquareTiling: PeriodicBoardTiling = {
-  name: 'TetrakisSquare',
+  name: 'Tetrakis Square',
   basisA: new Vector2( 2 + Math.sqrt( 2 ), 0 ),
   basisB: new Vector2( 0.5 * ( 2 + Math.sqrt( 2 ) ), 1 + 1 / Math.sqrt( 2 ) ),
   polygons: [
@@ -557,7 +557,7 @@ export const tetrakisSquareTiling: PeriodicBoardTiling = {
 };
 
 export const cairoPentagonalTiling: PeriodicBoardTiling = {
-  name: 'CairoPentagonal',
+  name: 'Cairo Pentagonal',
   basisA: new Vector2( 0.5 * ( 1 + Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
   basisB: new Vector2( 0.5 * ( -1 - Math.sqrt( 3 ) ), 0.5 * ( -1 - Math.sqrt( 3 ) ) ),
   polygons: [
@@ -594,7 +594,7 @@ export const cairoPentagonalTiling: PeriodicBoardTiling = {
 };
 
 export const triakisTriangularTiling: PeriodicBoardTiling = {
-  name: 'TriakisTriangular',
+  name: 'Triakis Triangular',
   basisA: new Vector2( 2 + Math.sqrt( 3 ), 0 ),
   basisB: new Vector2( 0.5 * ( 2 + Math.sqrt( 3 ) ), 1.5 + Math.sqrt( 3 ) ),
   polygons: [
@@ -634,7 +634,7 @@ export const triakisTriangularTiling: PeriodicBoardTiling = {
 };
 
 export const prismaticPentagonalTiling: PeriodicBoardTiling = {
-  name: 'PrismaticPentagonal',
+  name: 'Prismatic Pentagonal',
   basisA: new Vector2( 1, 0 ),
   basisB: new Vector2( 0.5, 0.5 * ( 2 + Math.sqrt( 3 ) ) ),
   polygons: [
@@ -657,7 +657,7 @@ export const prismaticPentagonalTiling: PeriodicBoardTiling = {
 };
 
 export const bisectedHexagonalTiling: PeriodicBoardTiling = {
-  name: 'BisectedHexagonal',
+  name: 'Bisected Hexagonal',
   basisA: new Vector2( 3 + Math.sqrt( 3 ), 0 ),
   basisB: new Vector2( 0.5 * ( 3 + Math.sqrt( 3 ) ), 1.5 * ( 1 + Math.sqrt( 3 ) ) ),
   polygons: [
@@ -726,7 +726,7 @@ export const bisectedHexagonalTiling: PeriodicBoardTiling = {
 };
 
 export const floretPentagonalTiling: PeriodicBoardTiling = {
-  name: 'FloretPentagonal',
+  name: 'Floret Pentagonal',
   basisA: new Vector2( 2.5, -Math.sqrt( 3 ) / 2 ),
   basisB: new Vector2( -0.5, 3 * Math.sqrt( 3 ) / 2 ),
   polygons: [
@@ -808,7 +808,7 @@ export const portugalTiling: PeriodicBoardTiling = {
 };
 
 export const falseCubicTiling: PeriodicBoardTiling = {
-  name: 'FalseCubic',
+  name: 'False Cubic',
   basisA: new Vector2( 1.5, Math.sqrt( 3 ) / 2 ),
   basisB: new Vector2( 0, Math.sqrt( 3 ) ),
   polygons: [
@@ -831,7 +831,7 @@ export const falseCubicTiling: PeriodicBoardTiling = {
 };
 
 export const trihexAndHexTiling: PeriodicBoardTiling = {
-  name: 'TrihexAndHex',
+  name: 'Trihex and Hex',
   basisA: new Vector2( 2, 0 ),
   basisB: new Vector2( 1, Math.sqrt( 3 ) ),
   polygons: [

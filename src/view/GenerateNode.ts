@@ -1,4 +1,4 @@
-import { Dimension2, Range, Vector2 } from 'phet-lib/dot';
+import { Bounds2, Dimension2, Range, Vector2 } from 'phet-lib/dot';
 import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox, VSeparator } from 'phet-lib/scenery';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
@@ -13,8 +13,9 @@ import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
 import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
+import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -44,6 +45,81 @@ export type PolygonGenerator = {
   defaultParameterValues: Record<string, any>; // TODO: maybe sometime do the typing work for this?
   generate: ( parameters: Record<string, any> ) => Vector2[][];
   scale?: number;
+};
+
+export const getPeriodicTilingGenerator = (
+  periodicTiling: PeriodicBoardTiling
+): PolygonGenerator => {
+  return {
+    name: periodicTiling.name,
+    parameters: {
+      width: {
+        label: 'Width',
+        type: 'integer',
+        range: new Range( 2, 50 )
+      },
+      height: {
+        label: 'Height',
+        type: 'integer',
+        range: new Range( 2, 50 )
+      },
+      squareRegion: {
+        label: 'Square Region',
+        type: 'boolean'
+      }
+    },
+    defaultParameterValues: {
+      width: 10,
+      height: 10,
+      squareRegion: false
+    },
+    scale: periodicTiling.scale,
+    generate: ( ( parameters: { width: number; height: number; squareRegion: boolean } ) => {
+
+      const unitPolygons = periodicTiling.polygons;
+      const basisA = periodicTiling.basisA;
+      const basisB = periodicTiling.basisB;
+
+      const polygons: Vector2[][] = [];
+
+      const bounds = new Bounds2( -parameters.width / 2, -parameters.height / 2, parameters.width / 2, parameters.height / 2 );
+
+      const size = Math.max(
+        Math.abs( bounds.minX ),
+        Math.abs( bounds.maxX ),
+        Math.abs( bounds.minY ),
+        Math.abs( bounds.maxY )
+      ) * 20; // TODO ... overkill?
+
+      _.range( -size, size ).forEach( a => {
+        _.range( -size, size ).forEach( b => {
+          unitPolygons.forEach( unitPolygon => {
+            const tilePolygon = unitPolygon.map( v => v.plus( basisA.timesScalar( a ) ).plus( basisB.timesScalar( b ) ) );
+
+            // TODO: do determination based on vertices instead of centroid!!!
+            const centroid = getCentroid( tilePolygon );
+            const scaledX = centroid.x * 2 / parameters.width;
+            const scaledY = centroid.y * 2 / parameters.height;
+
+            if ( parameters.squareRegion ) {
+              if ( Math.abs( scaledX ) >= 1 || Math.abs( scaledY ) >= 1 - 1e-6 ) {
+                return;
+              }
+            }
+            else {
+              if ( Math.sqrt( scaledX * scaledX + scaledY * scaledY ) >= 1 - 1e-6 ) {
+                return;
+              }
+            }
+
+            polygons.push( tilePolygon );
+          } );
+        } );
+      } );
+
+      return polygons;
+    } ) as ( parameters: Record<string, any> ) => Vector2[][]
+  };
 };
 
 export const polygonGenerators: PolygonGenerator[] = [
@@ -157,7 +233,29 @@ export const polygonGenerators: PolygonGenerator[] = [
 
       return polygons;
     }
-  }
+  },
+  getPeriodicTilingGenerator( rhombilleTiling ),
+  getPeriodicTilingGenerator( triangularTiling ),
+  getPeriodicTilingGenerator( trihexagonalTiling ),
+  getPeriodicTilingGenerator( smallRhombitrihexagonalTiling ),
+  getPeriodicTilingGenerator( truncatedSquareTiling ),
+  getPeriodicTilingGenerator( snubSquareTiling ),
+  getPeriodicTilingGenerator( truncatedHexagonalTiling ),
+  getPeriodicTilingGenerator( elongatedTriangularTiling ),
+  getPeriodicTilingGenerator( greatRhombitrihexagonalTiling ),
+  getPeriodicTilingGenerator( snubHexagonalTiling ),
+  getPeriodicTilingGenerator( deltoidalTrihexagonalTiling ),
+  getPeriodicTilingGenerator( tetrakisSquareTiling ),
+  getPeriodicTilingGenerator( cairoPentagonalTiling ),
+  getPeriodicTilingGenerator( triakisTriangularTiling ),
+  getPeriodicTilingGenerator( prismaticPentagonalTiling ),
+  getPeriodicTilingGenerator( bisectedHexagonalTiling ),
+  getPeriodicTilingGenerator( floretPentagonalTiling ),
+  getPeriodicTilingGenerator( portugalTiling ),
+  getPeriodicTilingGenerator( falseCubicTiling ),
+  getPeriodicTilingGenerator( trihexAndHexTiling ),
+  getPeriodicTilingGenerator( squareTiling ),
+  getPeriodicTilingGenerator( hexagonalTiling )
 ];
 
 // TODO: place it in such a way where we set preferred size?
