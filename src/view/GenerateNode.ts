@@ -16,6 +16,7 @@ import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
+import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -23,7 +24,10 @@ type SelfOptions = {
 
 export type GenerateNodeOptions = SelfOptions & HBoxOptions;
 
-export type PolygonGeneratorParameter = { label: string } & ( {
+export type PolygonGeneratorParameter = {
+  label: string;
+  advanced?: boolean;
+} & ( {
   type: 'integer';
   range: Range;
 } | {
@@ -47,8 +51,15 @@ export type PolygonGenerator = {
   scale?: number;
 };
 
+type PeriodicTilingParameterOverrides = {
+  width?: number;
+  height?: number;
+  squareRegion?: boolean;
+};
+
 export const getPeriodicTilingGenerator = (
-  periodicTiling: PeriodicBoardTiling
+  periodicTiling: PeriodicBoardTiling,
+  overrides?: PeriodicTilingParameterOverrides
 ): PolygonGenerator => {
   return {
     name: periodicTiling.name,
@@ -69,9 +80,9 @@ export const getPeriodicTilingGenerator = (
       }
     },
     defaultParameterValues: {
-      width: 10,
-      height: 10,
-      squareRegion: false
+      width: overrides?.width ?? 10,
+      height: overrides?.height ?? 10,
+      squareRegion: overrides?.squareRegion ?? false
     },
     scale: periodicTiling.scale,
     generate: ( ( parameters: { width: number; height: number; squareRegion: boolean } ) => {
@@ -122,138 +133,182 @@ export const getPeriodicTilingGenerator = (
   };
 };
 
-export const polygonGenerators: PolygonGenerator[] = [
-  {
-    name: 'Square',
-    parameters: {
-      width: {
-        label: 'Width',
-        type: 'integer',
-        range: new Range( 2, 50 )
-      },
-      height: {
-        label: 'Height',
-        type: 'integer',
-        range: new Range( 2, 50 )
-      }
+export const squarePolygonGenerator: PolygonGenerator = {
+  name: 'Square',
+  parameters: {
+    width: {
+      label: 'Width',
+      type: 'integer',
+      range: new Range( 2, 50 )
     },
-    defaultParameterValues: {
-      width: 5,
-      height: 5
-    },
-    generate: ( parameters ) => {
-      const width = parameters.width as number;
-      const height = parameters.height as number;
-
-      return _.range( 0, height ).flatMap( y => _.range( 0, width ).map( x => {
-        return [
-          new Vector2( x, y ),
-          new Vector2( x + 1, y ),
-          new Vector2( x + 1, y + 1 ),
-          new Vector2( x, y + 1 )
-        ];
-      } ) );
+    height: {
+      label: 'Height',
+      type: 'integer',
+      range: new Range( 2, 50 )
     }
   },
-  {
-    name: 'Hexagonal',
-    parameters: {
-      radius: {
-        label: 'Radius',
-        type: 'integer',
-        range: new Range( 1, 30 )
-      },
-      isPointyTop: {
-        label: 'Pointy Top',
-        type: 'boolean'
-      },
-      holeRadius: {
-        label: 'Hole Radius',
-        type: 'integer',
-        range: new Range( 0, 25 )
-      }
-    },
-    defaultParameterValues: {
-      radius: 5,
-      isPointyTop: true,
-      holeRadius: 0
-    },
-    generate: ( parameters ) => {
-      const radius = parameters.radius as number;
-      const isPointyTop = parameters.isPointyTop as boolean;
-      const holeRadius = parameters.holeRadius as number;
+  defaultParameterValues: {
+    width: 5,
+    height: 8
+  },
+  generate: ( parameters ) => {
+    const width = parameters.width as number;
+    const height = parameters.height as number;
 
-      // axial convention with https://www.redblobgames.com/grids/hexagons/
-      let qBasis: Vector2;
-      let rBasis: Vector2;
-
-      // boo, no Matrix2
-      if ( isPointyTop ) {
-        qBasis = new Vector2( Math.sqrt( 3 ), 0 );
-        rBasis = new Vector2( Math.sqrt( 3 ) / 2, 3 / 2 );
-      }
-      else {
-        qBasis = new Vector2( 3 / 2, Math.sqrt( 3 ) / 2 );
-        rBasis = new Vector2( 0, Math.sqrt( 3 ) );
-      }
-
-      // The six axial directions in QR coordinates to move from one face to the next (in CCW direction)
-      const axialNeighborDeltas = [
-        new Vector2( 1, 0 ),
-        new Vector2( 1, -1 ),
-        new Vector2( 0, -1 ),
-        new Vector2( -1, 0 ),
-        new Vector2( -1, 1 ),
-        new Vector2( 0, 1 )
+    return _.range( 0, height ).flatMap( y => _.range( 0, width ).map( x => {
+      return [
+        new Vector2( x, y ),
+        new Vector2( x + 1, y ),
+        new Vector2( x + 1, y + 1 ),
+        new Vector2( x, y + 1 )
       ];
+    } ) );
+  }
+};
 
-      // The sum of adjacent axial directions, which when added to a face coordinate give the 1/3 of moving to its vertex.
-      const vertexNeighborDeltas = _.range( 0, 6 ).map( i => axialNeighborDeltas[ i ].plus( axialNeighborDeltas[ ( i + 1 ) % 6 ] ) );
+export const hexagonalPolygonGenerator: PolygonGenerator = {
+  name: 'Hexagonal',
+  parameters: {
+    radius: {
+      label: 'Radius',
+      type: 'integer',
+      range: new Range( 1, 30 )
+    },
+    isPointyTop: {
+      label: 'Pointy Top',
+      type: 'boolean'
+    },
+    holeRadius: {
+      label: 'Hole Radius',
+      type: 'integer',
+      range: new Range( 0, 25 ),
+      advanced: true
+    }
+  },
+  defaultParameterValues: {
+    radius: 4,
+    isPointyTop: true,
+    holeRadius: 0
+  },
+  generate: ( parameters ) => {
+    const radius = parameters.radius as number;
+    const isPointyTop = parameters.isPointyTop as boolean;
+    const holeRadius = parameters.holeRadius as number;
 
-      // vertex coordinates will be the sum of all three adjacent faces
-      const getVertexLocationsFromFace = ( f: Vector2 ): Vector2[] => vertexNeighborDeltas.map( delta => delta.plus( f.timesScalar( 3 ) ) );
+    // axial convention with https://www.redblobgames.com/grids/hexagons/
+    let qBasis: Vector2;
+    let rBasis: Vector2;
 
-      const getDistance = ( a: Vector2, b: Vector2 ) => {
-        return ( Math.abs( a.x - b.x ) + Math.abs( a.x + a.y - b.x - b.y ) + Math.abs( a.y - b.y ) ) / 2;
-      };
+    // boo, no Matrix2
+    if ( isPointyTop ) {
+      qBasis = new Vector2( Math.sqrt( 3 ), 0 );
+      rBasis = new Vector2( Math.sqrt( 3 ) / 2, 3 / 2 );
+    }
+    else {
+      qBasis = new Vector2( 3 / 2, Math.sqrt( 3 ) / 2 );
+      rBasis = new Vector2( 0, Math.sqrt( 3 ) );
+    }
 
-      const polygons: Vector2[][] = [];
+    // The six axial directions in QR coordinates to move from one face to the next (in CCW direction)
+    const axialNeighborDeltas = [
+      new Vector2( 1, 0 ),
+      new Vector2( 1, -1 ),
+      new Vector2( 0, -1 ),
+      new Vector2( -1, 0 ),
+      new Vector2( -1, 1 ),
+      new Vector2( 0, 1 )
+    ];
 
-      // Faces in the puzzle
-      for ( let q = -radius; q <= radius; q++ ) {
-        for ( let r = Math.max( -radius, -q - radius ); r <= Math.min( radius, -q + radius ); r++ ) {
-          const point = new Vector2( q, r );
-          if ( getDistance( point, new Vector2( 0, 0 ) ) >= holeRadius ) {
-            polygons.push( getVertexLocationsFromFace( point ).map( p => {
-              return qBasis.timesScalar( p.x ).plus( rBasis.timesScalar( p.y ) ).timesScalar( 1 / 3 );
-            } ) );
-          }
+    // The sum of adjacent axial directions, which when added to a face coordinate give the 1/3 of moving to its vertex.
+    const vertexNeighborDeltas = _.range( 0, 6 ).map( i => axialNeighborDeltas[ i ].plus( axialNeighborDeltas[ ( i + 1 ) % 6 ] ) );
+
+    // vertex coordinates will be the sum of all three adjacent faces
+    const getVertexLocationsFromFace = ( f: Vector2 ): Vector2[] => vertexNeighborDeltas.map( delta => delta.plus( f.timesScalar( 3 ) ) );
+
+    const getDistance = ( a: Vector2, b: Vector2 ) => {
+      return ( Math.abs( a.x - b.x ) + Math.abs( a.x + a.y - b.x - b.y ) + Math.abs( a.y - b.y ) ) / 2;
+    };
+
+    const polygons: Vector2[][] = [];
+
+    // Faces in the puzzle
+    for ( let q = -radius; q <= radius; q++ ) {
+      for ( let r = Math.max( -radius, -q - radius ); r <= Math.min( radius, -q + radius ); r++ ) {
+        const point = new Vector2( q, r );
+        if ( getDistance( point, new Vector2( 0, 0 ) ) >= holeRadius ) {
+          polygons.push( getVertexLocationsFromFace( point ).map( p => {
+            return qBasis.timesScalar( p.x ).plus( rBasis.timesScalar( p.y ) ).timesScalar( 1 / 3 );
+          } ) );
         }
       }
-
-      return polygons;
     }
-  },
-  getPeriodicTilingGenerator( rhombilleTiling ),
-  getPeriodicTilingGenerator( triangularTiling ),
-  getPeriodicTilingGenerator( trihexagonalTiling ),
-  getPeriodicTilingGenerator( smallRhombitrihexagonalTiling ),
+
+    return polygons;
+  }
+};
+
+export const polygonGenerators: PolygonGenerator[] = [
+  getPeriodicTilingGenerator( rhombilleTiling, {
+    width: 8,
+    height: 8
+  } ),
+  squarePolygonGenerator,
+  hexagonalPolygonGenerator,
+  getPeriodicTilingGenerator( triangularTiling, {
+    width: 6,
+    height: 5
+  } ),
+  getPeriodicTilingGenerator( trihexagonalTiling, {
+    width: 9,
+    height: 9
+  } ),
+  getPeriodicTilingGenerator( smallRhombitrihexagonalTiling, {
+    width: 9,
+    height: 9
+  } ),
   getPeriodicTilingGenerator( truncatedSquareTiling ),
-  getPeriodicTilingGenerator( snubSquareTiling ),
+  getPeriodicTilingGenerator( snubSquareTiling, {
+    width: 6,
+    height: 8
+  } ),
   getPeriodicTilingGenerator( truncatedHexagonalTiling ),
-  getPeriodicTilingGenerator( elongatedTriangularTiling ),
+  getPeriodicTilingGenerator( elongatedTriangularTiling, {
+    width: 6,
+    height: 8,
+    squareRegion: true
+  } ),
   getPeriodicTilingGenerator( greatRhombitrihexagonalTiling ),
-  getPeriodicTilingGenerator( snubHexagonalTiling ),
+  getPeriodicTilingGenerator( snubHexagonalTiling, {
+    width: 9,
+    height: 9
+  } ),
   getPeriodicTilingGenerator( deltoidalTrihexagonalTiling ),
-  getPeriodicTilingGenerator( tetrakisSquareTiling ),
-  getPeriodicTilingGenerator( cairoPentagonalTiling ),
+  getPeriodicTilingGenerator( tetrakisSquareTiling, {
+    squareRegion: true
+  } ),
+  getPeriodicTilingGenerator( cairoPentagonalTiling, {
+    // TODO: get more aesthetic options!
+    width: 8,
+    height: 8,
+    squareRegion: true
+  } ),
   getPeriodicTilingGenerator( triakisTriangularTiling ),
   getPeriodicTilingGenerator( prismaticPentagonalTiling ),
   getPeriodicTilingGenerator( bisectedHexagonalTiling ),
-  getPeriodicTilingGenerator( floretPentagonalTiling ),
+  getPeriodicTilingGenerator( floretPentagonalTiling, {
+    // TODO: more aesthetic!
+    width: 7,
+    height: 8
+  } ),
   getPeriodicTilingGenerator( portugalTiling ),
-  getPeriodicTilingGenerator( falseCubicTiling ),
-  getPeriodicTilingGenerator( trihexAndHexTiling ),
+  getPeriodicTilingGenerator( falseCubicTiling, {
+    width: 9,
+    height: 10
+  } ),
+  getPeriodicTilingGenerator( trihexAndHexTiling, {
+    width: 9,
+    height: 9
+  } ),
   getPeriodicTilingGenerator( squareTiling ),
   getPeriodicTilingGenerator( hexagonalTiling )
 ];
@@ -367,7 +422,8 @@ export class GenerateNode extends HBox {
             numberDisplayOptions: {
               decimalPlaces: 0
             },
-            delta: 1
+            delta: 1,
+            visibleProperty: parameter.advanced ? advancedSettingsVisibleProperty : null
           } ) );
         }
         else if ( parameter.type === 'float' ) {
@@ -391,7 +447,8 @@ export class GenerateNode extends HBox {
             numberDisplayOptions: {
               decimalPlaces: 2
             },
-            delta: 0.01
+            delta: 0.01,
+            visibleProperty: parameter.advanced ? advancedSettingsVisibleProperty : null
           } ) );
         }
         else if ( parameter.type === 'boolean' ) {
@@ -400,7 +457,9 @@ export class GenerateNode extends HBox {
             parameters[ key ] = value;
             update();
           } );
-          propertiesControlsContainer.addChild( new UITextCheckbox( parameter.label, property ) );
+          propertiesControlsContainer.addChild( new UITextCheckbox( parameter.label, property, {
+            advanced: parameter.advanced
+          } ) );
         }
         else if ( parameter.type === 'choice' ) {
           const property = new Property<string>( parameter.choices[ 0 ].value );
@@ -408,6 +467,8 @@ export class GenerateNode extends HBox {
             parameters[ key ] = value;
             update();
           } );
+
+          // TODO: refactor getVerticalRadioButtonGroup to UIVerticalRadioButtonGroup? (and add advanced pass-through handling)
           propertiesControlsContainer.addChild( getVerticalRadioButtonGroup( parameter.label, property, parameter.choices.map( choice => {
             return {
               value: choice.value,
