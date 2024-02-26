@@ -5,12 +5,13 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
-import { Multilink, NumberProperty, Property } from 'phet-lib/axon';
+import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, popupHeaderFont, puzzleBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
+import { getSettingsCheckbox } from './getSettingsCheckbox.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -48,12 +49,12 @@ export const polygonGenerators: PolygonGenerator[] = [
       width: {
         label: 'Width',
         type: 'integer',
-        range: new Range( 2, 100 )
+        range: new Range( 2, 50 )
       },
       height: {
         label: 'Height',
         type: 'integer',
-        range: new Range( 2, 100 )
+        range: new Range( 2, 50 )
       }
     },
     defaultParameterValues: {
@@ -80,7 +81,7 @@ export const polygonGenerators: PolygonGenerator[] = [
       radius: {
         label: 'Radius',
         type: 'integer',
-        range: new Range( 1, 100 )
+        range: new Range( 1, 30 )
       },
       isPointyTop: {
         label: 'Pointy Top',
@@ -89,7 +90,7 @@ export const polygonGenerators: PolygonGenerator[] = [
       holeRadius: {
         label: 'Hole Radius',
         type: 'integer',
-        range: new Range( 0, 5 )
+        range: new Range( 0, 25 )
       }
     },
     defaultParameterValues: {
@@ -190,41 +191,7 @@ export class GenerateNode extends HBox {
 
     const propertiesControlsContainer = new VBox( {
       spacing: 10,
-      children: [
-        new NumberControl( 'A Control!', new NumberProperty( 0 ), new Range( 0, 5 ), {
-          layoutFunction: NumberControl.createLayoutFunction4(),
-          sliderOptions : {
-            trackSize: new Dimension2( 100, 5 ),
-          }
-          // TODO: delta
-          // delta: 0.25,
-          // titleNodeOptions: {
-          //   maxWidth: 45
-          // } ),
-          // numberDisplayOptions: {
-          //   decimalPlaces: 2,
-          //   valuePattern: voiceVariablesPatternStringProperty,
-          //   textOptions: merge( {}, PreferencesDialog.PANEL_SECTION_CONTENT_OPTIONS, {
-          //     maxWidth: 45
-          //   } )
-          // },
-          // sliderOptions: {
-          //   thumbSize: THUMB_SIZE,
-          //   trackSize: TRACK_SIZE,
-          //   keyboardStep: 0.25,
-          //   minorTickSpacing: 0.25,
-          //
-          //   // pdom
-          //   labelTagName: 'label',
-          //   labelContent: a11yNameString,
-          //
-          //   // voicing
-          //   voicingOnEndResponseOptions: {
-          //     withNameResponse: true
-          //   }
-          // },
-        } )
-      ]
+      align: 'left'
     } );
 
     const propertiesBox = new VBox( {
@@ -267,6 +234,54 @@ export class GenerateNode extends HBox {
       height: 5
     } );
 
+    polygonGeneratorProperty.link( generator => {
+      propertiesControlsContainer.children.forEach( child => child.dispose() );
+
+      const parameters: Record<string, any> = {};
+
+      const update = () => {
+        setPreview( generator, parameters );
+      };
+
+      for ( const [ key, parameter ] of Object.entries( generator.parameters ) ) {
+        if ( parameter.type === 'integer' ) {
+          const property = new NumberProperty( generator.defaultParameterValues[ key ] );
+          property.link( value => {
+            parameters[ key ] = value;
+            update();
+          } );
+          propertiesControlsContainer.addChild( new NumberControl( parameter.label, property, parameter.range, {
+            layoutFunction: NumberControl.createLayoutFunction4(),
+            titleNodeOptions: {
+              font: popupFont,
+              fill: uiForegroundColorProperty
+            },
+            sliderOptions : {
+              trackSize: new Dimension2( 100, 5 ),
+              labelTagName: 'label',
+              keyboardStep: 1,
+              labelContent: parameter.label
+            },
+            numberDisplayOptions: {
+              decimalPlaces: 0
+            },
+            delta: 1
+          } ) );
+        }
+        else if ( parameter.type === 'boolean' ) {
+          const property = new BooleanProperty( generator.defaultParameterValues[ key ] );
+          property.link( value => {
+            parameters[ key ] = value;
+            update();
+          } );
+          propertiesControlsContainer.addChild( getSettingsCheckbox( parameter.label, property ) );
+        }
+        else {
+          // TODO::: more!!!
+        }
+      }
+    } );
+
     const previewRectangle = new Rectangle( {
       fill: playAreaBackgroundColorProperty,
       sizable: true,
@@ -283,7 +298,7 @@ export class GenerateNode extends HBox {
       previewRectangle.localPreferredHeightProperty,
       previewForeground.localBoundsProperty
     ], ( width, height, localBounds ) => {
-      if ( width !== null && height !== null ) {
+      if ( width !== null && height !== null && localBounds.isFinite() ) {
         const padding = 15;
         const availableWidth = width - 2 * padding;
         const availableHeight = height - 2 * padding;
