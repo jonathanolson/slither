@@ -346,7 +346,6 @@
       - Either "within grid", "by centermost vertex", "by centermost face"
     - Show "preview" of the tiling type
     - --- or just import from image, and we can get it close enough?
-    - VORONOI random!!!
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
     - Face coloring can override this later?
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
@@ -625,3 +624,4 @@
     - or https://github.com/arminbiere/lingeling?tab=readme-ov-file
   - GPL: https://github.com/GJDuck/SAT.js
 - NO sphere, easier for the graphics/model to not make that generalization right now
+- Voronoi boards - no, they have short edges and meh shaesp for this
