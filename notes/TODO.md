@@ -327,11 +327,13 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Lazy initialization of all of the tiling data?
+    - Each tiling can be instantiated
+    - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
   - USE TILING + BOARD EDITOR TOOL TO CREATE TILINGS - add/remove candidate faces!!! 
   - Carousel.... for the tilings? 
   - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
     - Could even show ... e.g. 4/7?
-  - Lazy initialization of all of the tiling data? 
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Board builder (separate buildable entry point)
