@@ -1,12 +1,12 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { HBox, Node, Path } from 'phet-lib/scenery';
+import { HBox, Node } from 'phet-lib/scenery';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { controlBarFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
+import { controlBarFont, controlBarMargin, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 
@@ -51,6 +51,8 @@ export default class ControlBarNode extends HBox {
       buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
       baseColor: uiButtonBaseColorProperty,
       disabledColor: uiButtonDisabledColorProperty,
+      xMargin: 8 * 1.3,
+      yMargin: 5 * 1.3,
 
       mouseAreaXDilation: 5,
       mouseAreaYDilation: 5,
@@ -123,11 +125,7 @@ export default class ControlBarNode extends HBox {
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Settings',
-          content: new Path( fontAwesomeGearShape, {
-            maxWidth: 15,
-            maxHeight: 15,
-            fill: 'black'
-          } ),
+          content: toFontAwesomePath( fontAwesomeGearShape ),
           listener: () => {
             settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
 
@@ -136,11 +134,7 @@ export default class ControlBarNode extends HBox {
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Share',
-          content: new Path( fontAwesomeShareShape, {
-            maxWidth: 15,
-            maxHeight: 15,
-            fill: 'black'
-          } ),
+          content: toFontAwesomePath( fontAwesomeShareShape ),
           listener: () => {
             const puzzleModel = puzzleModelProperty.value;
             if ( puzzleModel ) {
@@ -171,6 +165,10 @@ export default class ControlBarNode extends HBox {
           buttonAppearanceStrategy: rectangularButtonAppearanceStrategy
         } ) ),
       ]
+    } );
+
+    options.layoutBoundsProperty.link( bounds => {
+      this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
     } );
   }
 }

@@ -237,7 +237,7 @@ export const rectangularButtonAppearanceStrategy = useFlatButtons ? RectangularB
 export const controlBarFont = new Font( {
   family: 'sans-serif',
   // weight: 'bold',
-  size: 12
+  size: 15
 } );
 
 export const uiFont = new Font( {
@@ -288,3 +288,5 @@ export type TRedLineStyle = typeof redLineStyles[ number ];
 export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'middle' );
 
 export const smallVertexProperty = new LocalStorageBooleanProperty( 'smallVertexProperty', true );
+
+export const controlBarMargin = 5;

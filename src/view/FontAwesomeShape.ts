@@ -15,8 +15,8 @@ export const fontAwesomeShareShape = new Shape( 'M503.691 189.836L327.687 37.851
 
 export const toFontAwesomePath = ( shape: Shape, pathOptions?: PathOptions ): Path => {
   return new Path( shape, combineOptions<PathOptions>( {
-    maxWidth: 15,
-    maxHeight: 15,
+    maxWidth: 20,
+    maxHeight: 20,
     fill: 'black'
   }, pathOptions ) );
 };

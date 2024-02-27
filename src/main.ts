@@ -8,7 +8,7 @@ import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
+import { controlBarMargin, navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 import { TState } from './model/data/core/TState.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
 import { puzzleFromCompressedString, TPuzzle } from './model/puzzle/TPuzzle.ts';
@@ -89,7 +89,7 @@ const mainBox = new VBox( {
         puzzleModelProperty.value = new PuzzleModel( puzzle );
       }
     } ), {
-      margin: 5
+      margin: controlBarMargin
     } ),
     puzzleContainerNode
   ]
