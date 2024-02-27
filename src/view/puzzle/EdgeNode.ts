@@ -87,7 +87,8 @@ export class EdgeNode extends Node {
       isSolvedProperty,
       redLineVisibleProperty
     ], ( isSolved, visible ) => {
-      return !isSolved && visible;
+      // return !isSolved && visible;
+      return visible; // TODO: see how this looks, with it displayed during the finish
     } );
     this.disposeEmitter.addListener( () => redVisibleProperty.dispose() );
 

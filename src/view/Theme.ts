@@ -268,13 +268,18 @@ export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisib
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
 
 export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;
-export const lineCaps = [ 'butt', 'round', 'square' ] as const;
-
 export type TLineJoin = typeof lineJoins[ number ];
-export type TLineCap = typeof lineCaps[ number ];
-
 export const joinedLinesJoinProperty = new LocalStorageStringProperty<TLineJoin>( 'joinedLinesJoinProperty', 'round' );
+
 // TODO: add a value for "cut out" (based on the other line segments going into it)
 // TODO: name "faceted"?
 // TODO: actually, we can have "faceted exclude" and "faceted include" (include has all the parts of a faceted vertex)
+export const lineCaps = [ 'butt', 'round', 'square' ] as const;
+export type TLineCap = typeof lineCaps[ number ];
 export const joinedLinesCapProperty = new LocalStorageStringProperty<TLineCap>( 'joinedLinesCapProperty', 'round' );
+
+// TODO: add a "faceted" option (which will be... SQUARE for square puzzles)
+export const vertexStyles = [ 'round', 'square' ] as const;
+export type TVertexStyle = typeof vertexStyles[ number ];
+export const vertexStyleProperty = new LocalStorageStringProperty<TVertexStyle>( 'vertexStyleProperty', 'round' );
+

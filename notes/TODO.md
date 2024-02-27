@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - Only put setting in localStorage if... IT IS NOT THE DEFAULT!!!!!!!
   - Coloring!!!
   - Tether to phone for debugging code generation failures
   - Lazy initialization of all of the tiling data?
