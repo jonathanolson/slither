@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, smallVertexProperty } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, smallVertexProperty, faceValueStyleProperty, faceValueStyles } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -139,6 +139,20 @@ export class SettingsNode extends PopupNode {
                     fill: uiForegroundColorProperty
                   } ),
                   a11yName: redLineStyle
+                };
+              } )
+            ),
+            getVerticalRadioButtonGroup(
+              'Face Value Style',
+              faceValueStyleProperty,
+              faceValueStyles.map( faceValueStyle => {
+                return {
+                  value: faceValueStyle,
+                  createNode: () => new Text( faceValueStyle, {
+                    font: uiFont,
+                    fill: uiForegroundColorProperty
+                  } ),
+                  a11yName: faceValueStyle
                 };
               } )
             )

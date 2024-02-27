@@ -287,6 +287,10 @@ export const redLineStyles = [ 'full', 'gap', 'middle' ] as const;
 export type TRedLineStyle = typeof redLineStyles[ number ];
 export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'middle' );
 
+export const faceValueStyles = [ 'static', 'remaining', 'ratio' ] as const;
+export type TFaceValueStyle = typeof faceValueStyles[ number ];
+export const faceValueStyleProperty = new LocalStorageStringProperty<TFaceValueStyle>( 'faceValueStyleProperty', 'static' );
+
 export const smallVertexProperty = new LocalStorageBooleanProperty( 'smallVertexProperty', true );
 
 export const controlBarMargin = 5;

@@ -1,8 +1,8 @@
-import { Node, Text, TextOptions } from 'phet-lib/scenery';
+import { Node, RichText, RichTextOptions, TColor, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, puzzleFont } from '../Theme.ts';
+import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont } from '../Theme.ts';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
@@ -30,62 +30,92 @@ export class FaceNode extends Node {
 
     super( {} );
 
-    // TODO: disposal>!>
-    const faceStringProperty = new DerivedProperty( [ stateProperty ], state => {
-      const faceState = state.getFaceState( face );
+    const text = new RichText( '', combineOptions<RichTextOptions>( {
+      subScale: 0.5
+    }, options?.textOptions ) );
 
-      if ( faceState === null ) {
-        return '';
-      }
-      else {
-        return `${faceState}`;
-      }
-    } );
-    this.disposeEmitter.addListener( () => faceStringProperty.dispose() );
-
-    const fillProperty = new DerivedProperty( [
+    const multilink = Multilink.multilink( [
       stateProperty,
+      faceValueStyleProperty,
       faceValueColorProperty,
       faceValueCompletedColorProperty,
       faceValueErrorColorProperty
-    ], ( state, color, completedColor, errorColor ) => {
+    ], (
+      state,
+      faceValueStyle,
+      color,
+      completedColor,
+      errorColor
+    ) => {
       const faceState = state.getFaceState( face );
 
+      let string: string;
+      let fill: TColor;
+
+      let usingRemaining = false;
+      let usingRatio = false;
+
       if ( faceState === null ) {
-        return null;
-      }
-
-      const blackCount = face.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.BLACK ).length;
-
-      if ( blackCount < faceState ) {
-        return color;
-      }
-      // else {
-      //   return '#aaa';
-      // }
-      // TODO: consider the "red" highlight here? Is annoying when we have to double-tap to X
-      // TODO: maybe simple auto-solving will obviate this need? YES
-      else if ( blackCount === faceState ) {
-        return completedColor;
+        string = '';
+        fill = null;
       }
       else {
-        return errorColor;
-      }
-    } );
-    this.disposeEmitter.addListener( () => fillProperty.dispose() );
+        let blackCount = 0;
+        let whiteCount = 0;
+        for ( const edge of face.edges ) {
+          const edgeState = state.getEdgeState( edge );
+          if ( edgeState === EdgeState.BLACK ) {
+            blackCount++;
+          }
+          else if ( edgeState === EdgeState.WHITE ) {
+            whiteCount++;
+          }
+        }
 
-    const text = new Text( faceStringProperty, combineOptions<TextOptions>( {
-      fill: fillProperty
-    }, options?.textOptions ) );
 
-    text.localBoundsProperty.link( localBounds => {
-      if ( localBounds.isValid() ) {
-        this.children = [ text ];
-        text.center = face.viewCoordinates;
+        if ( faceValueStyle === 'static' || faceState === 0 ) {
+          string = `${faceState}`;
+        }
+        else if ( faceValueStyle === 'remaining' ) {
+          string = `${faceState - blackCount}`;
+          usingRemaining = blackCount > 0;
+        }
+        else if ( faceValueStyle === 'ratio' ) {
+          // TODO: optimize?
+          const numerator = faceState - blackCount;
+          if ( numerator === 0 ) {
+            string = '0';
+          }
+          else {
+            string = `${faceState - blackCount}<sub>/${whiteCount}</sub>`;
+            usingRatio = true;
+          }
+          usingRemaining = blackCount > 0;
+        }
+        else {
+          throw new Error( `unhandled faceValueStyle: ${faceValueStyle}` );
+        }
+
+        if ( blackCount < faceState ) {
+          fill = usingRemaining ? color : color; // TODO figure out a better color... for this? Try a color difference?
+        }
+        else if ( blackCount === faceState ) {
+          fill = completedColor;
+        }
+        else {
+          fill = errorColor;
+        }
       }
-      else {
-        this.children = [];
-      }
+
+      text.string = string;
+
+      text.fill = fill;
+
+      text.maxWidth = usingRatio ? 0.8 : 0.9;
+      text.maxHeight = usingRatio ? 0.8 : 0.9;
+      text.center = face.viewCoordinates;
+      this.children = [ text ];
     } );
+    this.disposeEmitter.addListener( () => multilink.dispose() );
   }
 }
