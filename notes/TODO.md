@@ -58,6 +58,7 @@
         - RAINBOW COLORS on the buttons
         - Hint button (maybe "add a face value")
         - Zoom (in/out) for help on desktop (e.g. with mouse)
+          - Show these only if the control bar is large enough!!
         - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
           - Will apply "history" state for EACH solve step
           - OR WILL APPLY IT AS ONE THING ---- we might want each
@@ -495,14 +496,7 @@
     - "structure" is the topology, faces/vertices/edges/face values - doesn't change while solving
     - "data" is the edge-state, coloring, vertex-state, etc. - changes while solving
   - 
-  - Structure
-    - Grid
-      - "parent" - a grid with fewer "things done" (... why not save that info elsewhere?) 
-      - allowsInvalid?
-      - "openBorders" - whether the "outside" is treated as white or red
   - Data:
-    - Data should be... getters (so we can wrap with thin "if we change this" during backtracking)
-      - Thin wrapper checks if our data OVERRIDES data on the "parent" 
     - SimplifiedVertexState: note if it is incident/spiked --- how does this extend to other grid types (don't try?)?
     - VertexState: (can pretend to be SimplifiedVertexState)
       - Allow empty or every combination of 2 edges
@@ -510,10 +504,6 @@
       - opposite: FaceColor --- display with opposite hues?
     - Jordan curve around face (possibilities and rules)
     - SAT formats? CNF for edges?
-    - VertexState4:
-      - bools: allowEmpty, allowHorizontal, allowVertical, allowNorthwest, allowNortheast, allowSouthwest, allowSoutheast
-      - allows( state: EdgeState red/black, dir: CardinalDirection ): bool
-      - with/without/booleanops/rotated/etc., see source in Scala
   - Solver
     - canAssumeUnique?
   - Pattern (GridPattern?) -- less general than "solver"
@@ -521,15 +511,6 @@
     - apply( spot: Spot, reversed: bool ): Action[] - what to do
     - !!! data for the ability to explain the pattern to the user (in a specific case too?)
     - bounds: ???PatternBounds? <---- maybe don't have this?
-    - shift( rowShift, colShift ): Pattern
-    - flipHorizontal/flipVertical/rotate90/rotate180/rotate270: Pattern
-    - Have types of patterns:
-      - ( FaceValue + EdgeState )
-      - ( FaceValue + EdgeState + SimplifiedVertexState )
-      - ( FaceValue + EdgeState + VertexState )
-      - ( FaceValue + EdgeState + LineColor )
-      - ( FaceValue + EdgeState + FaceColor )
-      - ( FaceValue + EdgeState + JordanState )
     - NOTE: can be "extended" patterns, e.g. like extended-2-spike (doesn't need to be fixed and have bounds?)
       - e.g. while vertexstate handles spike 3-2-2-3, we can have a pattern that handles this with just EdgeState
     - NOTE: can be "mechanical/recorded" patterns too (e.g. have a database of these)
