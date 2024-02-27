@@ -27,7 +27,6 @@
   - Bugs
     - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
   - Generation:
-    - Save the current "generator" and its settings in localStorage
     - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD
       - Use numeric difficulty instead of easy/medium/hard
       - Difficulty also relates to "solving style", maybe ratings for different approaches?

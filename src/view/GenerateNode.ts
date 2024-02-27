@@ -23,6 +23,7 @@ import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
 import FaceState from '../model/data/face/FaceState.ts';
 import { InterruptedError } from '../model/solver/EdgeBacktracker.ts';
 import { interruptableSleep } from '../util/interruptableSleep.ts';
+import { LocalStorageProperty } from '../util/localStorage.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -436,7 +437,14 @@ export class GenerateNode extends HBox {
     // TODO: board storage / board JSON (custom) import --- ability to "name" a board
 
     // TODO: should we remember the user's last selection?
-    const polygonGeneratorProperty = new Property<PolygonGenerator>( polygonGenerators[ 0 ] );
+    const polygonGeneratorProperty = new LocalStorageProperty<PolygonGenerator>( 'polygonGeneratorProperty', {
+      serialize: generator => generator.name,
+      deserialize: value => polygonGenerators.find( generator => generator.name === value ) ?? polygonGenerators[ 0 ]
+    } );
+    // TODO: simplify this a bit
+
+    const initialParameters = localStorage.getItem( 'polygonGeneratorParameters' ) ? JSON.parse( localStorage.getItem( 'polygonGeneratorParameters' )! ) : null;
+    let usedInitialParameters = false;
 
     const polygonGeneratorButtonGroup = getVerticalRadioButtonGroup( 'Patterns', polygonGeneratorProperty, polygonGenerators.map( generator => {
       return {
@@ -516,13 +524,24 @@ export class GenerateNode extends HBox {
 
       const parameters: Record<string, any> = {};
 
+      // TODO: simplify this a bit
+      const getInitialParameterValue = ( key: string ) => {
+        if ( initialParameters && !usedInitialParameters && key in initialParameters ) {
+          return initialParameters[ key ]; // TODO: hopefully this is... in range?  eeek
+        }
+        else {
+          return generator.defaultParameterValues[ key ];
+        }
+      };
+
       const update = () => {
+        localStorage.setItem( 'polygonGeneratorParameters', JSON.stringify( parameters ) );
         setPreview( generator, parameters );
       };
 
       for ( const [ key, parameter ] of Object.entries( generator.parameters ) ) {
         if ( parameter.type === 'integer' ) {
-          const property = new NumberProperty( generator.defaultParameterValues[ key ] );
+          const property = new NumberProperty( getInitialParameterValue( key ) );
           property.link( value => {
             parameters[ key ] = value;
             update();
@@ -551,7 +570,7 @@ export class GenerateNode extends HBox {
           } ) );
         }
         else if ( parameter.type === 'float' ) {
-          const property = new NumberProperty( generator.defaultParameterValues[ key ] );
+          const property = new NumberProperty( getInitialParameterValue( key ) );
           property.link( value => {
             parameters[ key ] = value;
             update();
@@ -576,7 +595,7 @@ export class GenerateNode extends HBox {
           } ) );
         }
         else if ( parameter.type === 'boolean' ) {
-          const property = new BooleanProperty( generator.defaultParameterValues[ key ] );
+          const property = new BooleanProperty( getInitialParameterValue( key ) );
           property.link( value => {
             parameters[ key ] = value;
             update();
@@ -586,7 +605,7 @@ export class GenerateNode extends HBox {
           } ) );
         }
         else if ( parameter.type === 'choice' ) {
-          const property = new Property<string>( parameter.choices[ 0 ].value );
+          const property = new Property<string>( getInitialParameterValue( key ) );
           property.link( value => {
             parameters[ key ] = value;
             update();
@@ -608,6 +627,8 @@ export class GenerateNode extends HBox {
           // TODO::: more!!!
         }
       }
+
+      usedInitialParameters = true;
 
       generateButtonContainer.addChild( new UITextPushButton( 'Generate', {
         font: generateButtonFont,
