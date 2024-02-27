@@ -436,7 +436,6 @@
       - Image (hey... can we use Alpenglow for the high-quality bits?)
     - Mark/save (for user "exploration")
       - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
-    - (allow pressing and holding some of the buttons...)
   - Mobile vs Desktop
     - Settings presets for each?
     - OR detect fingers/mouse and apply different rules for them?

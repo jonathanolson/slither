@@ -97,7 +97,8 @@ export default class ControlBarNode extends HBox {
               puzzleModelProperty.value.onUserUndo();
             }
           },
-          enabledProperty: undoEnabledProperty
+          enabledProperty: undoEnabledProperty,
+          fireOnHold: true
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo',
@@ -107,7 +108,8 @@ export default class ControlBarNode extends HBox {
               puzzleModelProperty.value.onUserRedo();
             }
           },
-          enabledProperty: redoEnabledProperty
+          enabledProperty: redoEnabledProperty,
+          fireOnHold: true
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo All',
