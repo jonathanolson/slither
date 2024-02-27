@@ -1,4 +1,4 @@
-import { Node, RichText, RichTextOptions, TColor, TextOptions } from 'phet-lib/scenery';
+import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
@@ -30,8 +30,8 @@ export class FaceNode extends Node {
 
     super( {} );
 
-    const text = new RichText( '', combineOptions<RichTextOptions>( {
-      subScale: 0.5
+    const text = new Text( '', combineOptions<TextOptions>( {
+
     }, options?.textOptions ) );
 
     const multilink = Multilink.multilink( [
@@ -87,7 +87,8 @@ export class FaceNode extends Node {
             string = '0';
           }
           else {
-            string = `${faceState - blackCount}<sub>/${whiteCount}</sub>`;
+            // TODO: rich text broken, testing this instead
+            string = `${faceState - blackCount}/${whiteCount}`;
             usingRatio = true;
           }
           usingRemaining = blackCount > 0;

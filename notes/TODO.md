@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - RichText broken somehow... with rollup? 
   - Face coloring will help visualization of solving
   - Tether to phone for debugging code generation failures
   - Settings "preview" of style
