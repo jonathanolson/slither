@@ -13,6 +13,7 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import FaceState from '../data/face/FaceState.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
+import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
 // TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)
@@ -60,9 +61,9 @@ export const generateFaceAdditive = async (
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for ( const face of faceOrder ) {
 
-      console.log( 'going to sleep' );
+      SlitherQueryParameters.debugSleep && console.log( 'going to sleep' );
       interruptedProperty && await interruptableSleep( 0, interruptedProperty );
-      console.log( 'finished sleep, generating next!' );
+      SlitherQueryParameters.debugSleep && console.log( 'finished sleep, generating next!' );
 
       // Don't allow the "fully full" state, e.g. 4 in square.
       let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
