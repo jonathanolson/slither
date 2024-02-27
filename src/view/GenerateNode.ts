@@ -629,6 +629,8 @@ export class GenerateNode extends HBox {
           align: 'center'
         },
         listener: async () => {
+          interruptGenerateEmitter.emit();
+
           const polygons = generator.generate( parameters );
 
           const board = new PolygonalBoard( polygons, generator.scale ?? 1 );

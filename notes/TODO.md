@@ -327,32 +327,26 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - "Interrupt" on Generate button press (... or... don't allow the press due to disabling?)  
   - RichText broken somehow... with rollup? 
   - Face coloring will help visualization of solving
+  - Have a way of notifying me when I make a mistake... should it store the full solution?
+  - TStructure cleanup
+    - Remove TStructure, don't need it for square
+    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
+    - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
+      - Maybe just have a TPuzzleProperty? (hmmm) bleh
+    - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - Tether to phone for debugging code generation failures
   - Settings "preview" of style
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
-  - Board builder (separate buildable entry point)
-    - Get tiling, and DRAG over faces to include them
-    - Rotation
-    - Click-and-drag-create vertices and connections?
-    - Puzzle builder mode (use generator, etc/)
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
     - Face coloring can override this later?
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
-  - Have a way of notifying me when I make a mistake... should it store the full solution?
-  - Remove the TStructure stuff, we don't need it for square edges?
-    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
-  - Async/await on generation FOR SURE 
-    - GeneratingNode --- shows progress?
-    - ABILITY TO ABORT THE GENERATE!!!!
-    - Get the status of it on frame generation (so we can update the display)
-    - --- should we create the ability to create an "on deck" puzzle in the background?
   - USE SAT for image scanning (to see if it is a good puzzle)
-  - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
-    - Maybe just have a TPuzzleProperty? (hmmm) bleh
   - Generation:
+    - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD 
     - Faster "face minimization": 
       - start by removing a good number at once. have a heuristic where this eventually goes down to removing 1 at a time
       - any time a removal doesn't work, apply a multiplier to our "fresh from next time" amount to remove, and ... split the removal amount in half?
@@ -364,13 +358,7 @@
         - Ensure we have approximately half of the boundary filled
   - Hint
     - Could ... "add a face value"?
-  - Add demo/testing ACTUAL puzzles
-    - Hexagon-with-hole, radial (with hole), etc.
-  - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
-  - ... get rid of structure and square specializations?
-    - TODO: should we first verify that we can do the "pattern" stuff nicely?
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
-  - Should we rule-scan soon so that our solver architecture works for it?
   - Mobile issues:
     - Autosolve annoyance on mobile:
       - Prevent user from changing auto-solved edges immediately (?)
