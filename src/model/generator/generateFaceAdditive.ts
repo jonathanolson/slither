@@ -10,12 +10,19 @@ import { MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
+import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
+import FaceState from '../data/face/FaceState.ts';
+import { interruptableSleep } from '../../util/interruptableSleep.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
 // TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)
 
 // TODO: we can... use this to generate a loop, but then actually minimize it using a different approach?
-export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure, TCompleteData> => {
+export const generateFaceAdditive = async (
+  board: TBoard,
+  interruptedProperty?: TReadOnlyProperty<boolean>,
+  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceState ]>
+): Promise<TSolvedPuzzle<TStructure, TCompleteData>> => {
 
   let iterations = 0;
   while ( iterations++ < 100 ) {
@@ -52,7 +59,8 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
 
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for ( const face of faceOrder ) {
-      console.log( 'add face', faceOrder.indexOf( face ) );
+
+      interruptedProperty && await interruptableSleep( 0, interruptedProperty );
 
       // Don't allow the "fully full" state, e.g. 4 in square.
       let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
@@ -71,6 +79,9 @@ export const generateFaceAdditive = ( board: TBoard ): TSolvedPuzzle<TStructure,
 
         if ( solutionCount >= 1 ) {
           delta.apply( state );
+
+          faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), possibleState );
+
           break;
         }
       }

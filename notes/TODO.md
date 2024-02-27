@@ -327,7 +327,6 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - PROGRESS on puzzle generation (will look cool)
   - Face coloring will help visualization of solving
   - Tether to phone for debugging code generation failures
   - Settings "preview" of style

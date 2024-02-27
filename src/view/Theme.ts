@@ -50,6 +50,8 @@ export interface TTheme {
   uiButtonBaseColorProperty: PaintColorProperty;
   uiButtonDisabledColorProperty: PaintColorProperty;
   barrierColorProperty: PaintColorProperty;
+  generateAddedFaceColorProperty: PaintColorProperty;
+  generateMinimizedFaceColorProperty: PaintColorProperty;
 
   // TODO: can we actually use rainbow colors (culori-based) for the UI button colors?!? ZOMG
 
@@ -79,7 +81,9 @@ export const lightTheme = {
   uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.7)' )
+  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.7)' ),
+  generateAddedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 50, 0.7, 0.8 ) ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 100, 0.7, 0.8 ) )
 };
 
 export const darkTheme = {
@@ -103,7 +107,9 @@ export const darkTheme = {
   uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
   uiButtonBaseColorProperty: new PaintColorProperty( hslToRGB( 50, 0.7, 0.6 ) ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' )
+  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' ),
+  generateAddedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 50, 0.7, 0.3 ) ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 100, 0.7, 0.3 ) )
 };
 
 export const autoTheme = {
@@ -229,6 +235,14 @@ export const uiButtonDisabledColorProperty = new DynamicProperty( themeProperty,
 
 export const barrierColorProperty = new DynamicProperty( themeProperty, {
   derive: 'barrierColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const generateAddedFaceColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'generateAddedFaceColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const generateMinimizedFaceColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'generateMinimizedFaceColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 const useFlatButtons = true;

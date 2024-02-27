@@ -5,9 +5,9 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
-import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
+import { BooleanProperty, Multilink, NumberProperty, Property, TinyEmitter, TinyProperty } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, uiFont, uiForegroundColorProperty } from './Theme.ts';
+import { blackLineColorProperty, faceValueColorProperty, generateAddedFaceColorProperty, generateButtonFont, generateMinimizedFaceColorProperty, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, uiFont, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
@@ -18,6 +18,11 @@ import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
+import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
+import FaceState from '../model/data/face/FaceState.ts';
+import { InterruptedError } from '../model/solver/EdgeBacktracker.ts';
+import { interruptableSleep } from '../util/interruptableSleep.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -482,11 +487,19 @@ export class GenerateNode extends HBox {
       }
     } );
 
-    const previewForeground = new Node( {
+    const previewBoardNode = new Node();
+    const previewGeneratedNode = new Node();
+
+    const interruptGenerateEmitter = new TinyEmitter();
+
+    interruptGenerateEmitter.addListener( () => {
+      previewGeneratedNode.children = [];
+    } );
+
+    const previewContainer = new Node( {
       children: [
-        new Rectangle( 0, 0, 100, 50, {
-          fill: 'red'
-        } )
+        previewBoardNode,
+        previewGeneratedNode
       ]
     } );
 
@@ -496,13 +509,14 @@ export class GenerateNode extends HBox {
 
       const shape = new Shape();
       polygons.forEach( polygon => shape.polygon( polygon ) );
-      previewForeground.children = [
+      previewBoardNode.children = [
         new Path( shape, {
           fill: puzzleBackgroundColorProperty,
           stroke: blackLineColorProperty,
           lineWidth: 0.05
         } )
       ];
+      interruptGenerateEmitter.emit();
     };
 
     setPreview( polygonGenerators[ 0 ], {
@@ -614,12 +628,76 @@ export class GenerateNode extends HBox {
         layoutOptions: {
           align: 'center'
         },
-        listener: () => {
+        listener: async () => {
           const polygons = generator.generate( parameters );
 
           const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
 
-          options.loadPuzzle( BasicPuzzle.generateHard( board ) );
+          const interruptedProperty = new TinyProperty( false );
+
+          const interruptListener = () => {
+            interruptedProperty.value = true;
+          };
+          interruptGenerateEmitter.addListener( interruptListener );
+
+          const faceDefineEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
+          const faceMinimizeEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
+
+          faceDefineEmitter.addListener( ( index, state ) => {
+            previewGeneratedNode.addChild( new Path( Shape.polygon( polygons[ index ] ), {
+              fill: generateAddedFaceColorProperty,
+              stroke: blackLineColorProperty,
+              lineWidth: 0.05
+            } ) );
+            if ( state !== null ) {
+              previewGeneratedNode.addChild( new Text( `${state}`, {
+                font: generateButtonFont,
+                fill: faceValueColorProperty,
+                maxWidth: 0.9,
+                maxHeight: 0.9,
+                center: getCentroid( polygons[ index ] )
+              } ) );
+            }
+          } );
+
+          faceMinimizeEmitter.addListener( ( index, state ) => {
+            previewGeneratedNode.addChild( new Path( Shape.polygon( polygons[ index ] ), {
+              fill: generateMinimizedFaceColorProperty,
+              stroke: blackLineColorProperty,
+              lineWidth: 0.05
+            } ) );
+            if ( state !== null ) {
+              previewGeneratedNode.addChild( new Text( `${state}`, {
+                font: generateButtonFont,
+                fill: faceValueColorProperty,
+                maxWidth: 0.9,
+                maxHeight: 0.9,
+                center: getCentroid( polygons[ index ] )
+              } ) );
+            }
+          } );
+
+          try {
+            const definedPuzzle = await generateFaceAdditive( board, interruptedProperty, faceDefineEmitter );
+            const minimizedPuzzle = await greedyFaceMinimize( definedPuzzle, interruptedProperty, faceMinimizeEmitter );
+
+            // Maybe... let it complete on the screen before we do complicated time consuming things
+            interruptableSleep( 17, interruptedProperty );
+            
+            if ( !interruptedProperty.value ) {
+              previewGeneratedNode.children = [];
+              options.loadPuzzle( BasicPuzzle.fromSolvedPuzzle( minimizedPuzzle ) );
+            }
+          }
+          catch ( e ) {
+            if ( e instanceof InterruptedError ) {
+              // do nothing, we got interrupted and that's fine. Handled elsewhere
+            }
+          }
+
+          if ( interruptGenerateEmitter.hasListener( interruptListener ) ) {
+            interruptGenerateEmitter.removeListener( interruptListener );
+          }
         }
       } ) );
     } );
@@ -631,23 +709,23 @@ export class GenerateNode extends HBox {
         grow: 1
       },
       children: [
-        previewForeground
+        previewContainer
       ]
     } );
 
     Multilink.multilink( [
       previewRectangle.localPreferredWidthProperty,
       previewRectangle.localPreferredHeightProperty,
-      previewForeground.localBoundsProperty
+      previewContainer.localBoundsProperty
     ], ( width, height, localBounds ) => {
       if ( width !== null && height !== null && localBounds.isFinite() ) {
         const padding = 15;
         const availableWidth = width - 2 * padding;
         const availableHeight = height - 2 * padding;
         const scale = Math.min( availableWidth / localBounds.width, availableHeight / localBounds.height );
-        previewForeground.setScaleMagnitude( scale );
-        previewForeground.centerX = width / 2;
-        previewForeground.centerY = height / 2;
+        previewContainer.setScaleMagnitude( scale );
+        previewContainer.centerX = width / 2;
+        previewContainer.centerY = height / 2;
       }
     } );
 

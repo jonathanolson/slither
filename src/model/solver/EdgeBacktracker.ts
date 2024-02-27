@@ -73,6 +73,12 @@ export class MultipleSolutionsError extends Error {
   }
 }
 
+export class InterruptedError extends Error {
+  public constructor() {
+    super( 'Interrupted' );
+  }
+}
+
 export const getBacktrackedSolutions = <Data extends TCompleteData>(
   board: TBoard,
   state: TState<Data>,
