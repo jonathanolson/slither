@@ -1,5 +1,5 @@
 // @ts-expect-error
-import { EdgeShape, IsohedralTiling, tilingTypes } from 'tactile-js';
+import { IsohedralTiling, tilingTypes } from 'tactile-js'; // Note: EdgeShape from here
 import { scene } from '../../../view/scene.ts';
 import { Node, Path } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
