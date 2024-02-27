@@ -326,17 +326,18 @@
   - Weird edges:
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
+- PhET bugginess:
+  - RichText broken somehow... with rollup?
+
 - Current code TODOs
-  - "Interrupt" on Generate button press (... or... don't allow the press due to disabling?)  
-  - RichText broken somehow... with rollup? 
-  - Face coloring will help visualization of solving
-  - Have a way of notifying me when I make a mistake... should it store the full solution?
   - TStructure cleanup
     - Remove TStructure, don't need it for square
     - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
     - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
       - Maybe just have a TPuzzleProperty? (hmmm) bleh
     - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
+  - Face coloring will help visualization of solving
+  - Have a way of notifying me when I make a mistake... should it store the full solution?
   - Tether to phone for debugging code generation failures
   - Settings "preview" of style
   - Improve "line segment ending" and vertex shapes! Give options
