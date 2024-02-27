@@ -336,10 +336,12 @@
     - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
       - Maybe just have a TPuzzleProperty? (hmmm) bleh
     - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
+  - Settings
+    - Style preview (demo puzzle)
+    - Tabs? (from joist? eek)
   - Face coloring will help visualization of solving
   - Have a way of notifying me when I make a mistake... should it store the full solution?
   - Tether to phone for debugging code generation failures
-  - Settings "preview" of style
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?

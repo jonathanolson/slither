@@ -18,6 +18,7 @@ export class UITextCheckbox extends Checkbox {
     property: Property<boolean>,
     providedOptions?: UITextCheckboxOptions
   ) {
+
     const options = optionize<UITextCheckboxOptions, SelfOptions, CheckboxOptions>()( {
       advanced: false,
       accessibleName: label,
@@ -25,14 +26,18 @@ export class UITextCheckbox extends Checkbox {
       checkboxColorBackground: uiBackgroundColorProperty
     }, providedOptions );
 
+    const labelNode = new Text( label, {
+      font: uiFont,
+      fill: uiForegroundColorProperty
+    } );
+
     // TODO: we'll need to dispose of this...
     if ( options.advanced ) {
       options.visibleProperty = advancedSettingsVisibleProperty;
     }
 
-    super( property, new Text( label, {
-      font: uiFont,
-      fill: uiForegroundColorProperty
-    } ), options );
+    options.boxWidth = labelNode.height;
+
+    super( property, labelNode, options );
   }
 }
