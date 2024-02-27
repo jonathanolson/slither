@@ -95,7 +95,7 @@ export class SimpleRegionViewNode extends Node {
       mode: 'okhsl',
       h: Math.random() * 360,
       s: 0.7,
-      l: 0.5
+      l: 0.55
     } ) ) as unknown as string;
     const simpleRegionNode = new SimpleRegionNode( simpleRegion, paint );
     this.simpleRegionNodeMap.set( simpleRegion, simpleRegionNode );
