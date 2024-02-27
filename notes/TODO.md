@@ -1,54 +1,295 @@
 
-- Reorganize TODOs
+- PhET bugginess:
+  - How to get text entry (DOM node?) - can we focus it on detecting a click? NO we NEED to pass events through
+  - RichText broken somehow... with rollup?
 
-- Try out on phone?
-  - Seems to load!! 
-
-- UI
-  - Phone interface works nicely (iOS/Android) 
-  - Keyboard is first-class? (Could be fast for input on a computer)
-  - Display
-    - Vertex coloring (e.g. spikes/incident, but also "all of the cases")
-    - Loop (around square parity), but also maybe a "loop tool" where if you draw it, it will count automatically.
-    - Area coloring (with specific known-inside or known-outside coloring, but also color other multiple-square areas)
-      - blue/yellow (from the path tracing demo) for inside/outside default? 
-      - ACTUALLY shades of gray? if we are coloring lines. we don't want too much color overload
-      - DO MOUSE OVER?
-      - Would it... be REALLY pretty to average colors out?
-    - Line coloring: highlight endpoints/line when over it? (like make the endpoints NOTABLE in case of color similarity)
-    - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
-    - Optional BLACK: solid line WHITE: dashed line, RED: no line
-      - IF we have this, potentially remove the vertices appearance if they won't have lines through them?
-      - DASHES seem like a good appearance for hex
-      - !!! This looks really nice
-    - Optional: themes(!) control how things are displayed. Not too hard to do. Neon on black is neat
-      - For other shapes, displaying the "potential" line looks really helpful
-    - Optional: red x's look ... not great on triangular potentially?
-    - SLICK animation(!)
-      - Can we make it more intuitive by having the line animate?
-      - Option for no animation, or animation speed
-    - Themes INCLUDE the animation(!)
-      - Show animated "previews/thumbnails" in theme picker
-    - Possibly multiple views (one coloring, one vertex?)
-  - Puzzle import:
-    - vision-based (from image) ==> show better feedback while loading
-    - Manual input (also helpful if vision-based doesn't work)
-  - Interaction
-    - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
-    - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
-      - An "inverse" or "X" sticky button at the top? 
-    - Vertex interaction (note incident or spike? - or any of possible vertex states?) 
-    - "Safety net" - Mistake detection (but only after you've "stabilized"?)
-      - Slightly delayed "error" popup, option to turn off 
-      - Button to rewind + show error
-    - [defer] Chess-like history, with branching?
-      - Undo/redo (as a tree ideally)
-        - Can show "candidates" explored, that can be clicked on?
-      - Allow a "mark save point" (that can be jumped back to)
+- Current code TODOs
+  - TStructure cleanup
+    - Remove TStructure, don't need it for square
+    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
+    - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
+      - Maybe just have a TPuzzleProperty? (hmmm) bleh
+    - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
+  - Settings
+    - Separate appearance from auto-solver settings 
+      - Tabs? (from joist? eek)
+    - Style preview (demo puzzle)
+      - Include animation previews(!) 
+  - Face coloring will help visualization of solving
+  - Scan:
+    - USE SAT for image scanning (to see if it is a good puzzle)
+    - Show 'progress' / debug of scan (just like generation)
+  - Tether to phone for debugging code generation failures
+  - Improve "line segment ending" and vertex shapes! Give options
+    - include white edges and region edges?
+  - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
+    - Face coloring can override this later?
+  - Bugs
+    - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
+  - Generation:
+    - Save the current "generator" and its settings in localStorage
+    - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD
+      - Use numeric difficulty instead of easy/medium/hard
+      - Difficulty also relates to "solving style", maybe ratings for different approaches?
+        - e.g. "easier with face coloring" vs "easier with backtracking" or "easier with vertex state"
+    - Faster "face minimization": 
+      - start by removing a good number at once. have a heuristic where this eventually goes down to removing 1 at a time
+      - any time a removal doesn't work, apply a multiplier to our "fresh from next time" amount to remove, and ... split the removal amount in half?
+    - Faster "filling" method, basically just set up something that creates windy patterns quickly?
+      - Sprout off area-filling "winding" attempts, where it keeps walking
+        - Repeatedly do this until we have a good amount of "fill" - 50%? also windiness?
+        - Start in "less filled" regions
+        - If we have a region without transitions, apply fixes
+        - Ensure we have approximately half of the boundary faces filled
+    - Try to generate puzzles which have patterns that I should learn
+    - Generate different "themes" of puzzles (i.e. we solve uniqueness with different techniques)
+      - Find puzzles that need technique A that can't be solved with technique B
+  - Aesthetics:
+    - Finished appearance: improve somehow?
+  - Interface:
+    - Error/mistake detection ("safety net")
+      - Compute the full solution, NOTE when we go off of it. Potential delay. Unrelated to the auto-solver
+        - Don't allow use of the auto-solver for this? 
+        - Button to rewind + show error
+    - Possibilities
+      - SLICK animation(!)
+        - Can we make it more intuitive by having the line animate?
+        - Option for no animation, or animation speed
+      - Buttons 
+        - RAINBOW COLORS on the buttons
+        - Hint button (maybe "add a face value")
+        - Zoom (in/out) for help on desktop (e.g. with mouse)
+        - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
+          - Will apply "history" state for EACH solve step
+          - OR WILL APPLY IT AS ONE THING ---- we might want each
+        - Share/export button
+          - Puzzle text (faces, faces/edges, in different formats)
+          - Image (hey... can we use Alpenglow for the high-quality bits?)
+        - Mark/save (for user "exploration")
+          - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark
+      - Possibly multiple views (one coloring, one vertex?)
+        - Or keypress to "view how many remaining" on a face? --- have a momentary button for this in interface?
+      - Vertex coloring (e.g. spikes/incident, but also "all of the cases")
+      - Loop (around square parity), but also maybe a "loop tool" where if you draw it, it will count automatically.
+      - Area coloring (with specific known-inside or known-outside coloring, but also color other multiple-square areas)
+        - blue/yellow (from the path tracing demo) for inside/outside default? 
+        - ACTUALLY shades of gray? if we are coloring lines. we don't want too much color overload
+        - DO MOUSE OVER?
+        - Would it... be REALLY pretty to average colors out?
+      - Color face values by the number of edges on the face? (a 2-of-3 is different than 2-of-4) - only relevant for certain patterns
+      - Line coloring: highlight endpoints/line when over it? (like make the endpoints NOTABLE in case of color similarity)
+      - Add config for press styles (but also figure out other input methods - e.g. dragging multiple lines)
+        - Hey, how would dragging multiple lines work with pan? EXCLUSIVE SETTING
+        - What about "quick double press" for x?
+      - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
+      - Have PatternExplainers that we can display to show what we can deduce next
+      - Have a "solve a single bit" button
+      - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
+      - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
+        - An "inverse" or "X" sticky button at the top? 
+      - Vertex interaction (note incident or spike? - or any of possible vertex states?)
+        - Allow a "mark save point" (that can be jumped back to)
+  - Share URL size:
+    - Store "board generation string" on a TBoard
+      - Consists generally of "which generator" + "which parameters", but also our scanner will need to output (e.g. square?)
+      - Have a specification for this!
+    - When we have that, store faces as a simple string (and compress)
+      - Also, edges in order, can specify edge state IN A SIMILAR MANNER
+    - MINIMIZE the format of boards (so we can stuff custom-boards into fairly short URLs) 
+  - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
+  - Google Analytics (and fix for site? GA4?)
+  - Mobile issues:
+    - Autosolve annoyance on mobile:
+      - Prevent user from changing auto-solved edges immediately (?)
+      - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
+        - Presumably after a delay, replace the current stack state (with action and simple change) with an autosolved change
+        - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
+    - On victory, animate to zoom out fully (how to do that)?
+    - AnimatedPanZoomListener seems a bit clunky at the start. Faster hook?
+  - General issues:
+    - Need better face coloring visualization (or ways to find those "loops")
+      - "Connected component" visualization? (e.g. all faces that are connected by a black/red)
+        - If we stroke/fill this, we'd need to write that "tracing" of outside boundaries (that we'll use for hex)
+      - "Seam" visualization? (e.g. lines between connected components)
+  - Annotated actions
+    - Possibly with the "difficulty" if auto-solve involved
+  - Annotated errors
+    - Subtype InvalidStateError - for simple ones especially, we can visually report on the issue
+  - Autosolver JUST to check for simple errors (or in general)
+    - [NEEDS] annotated errors 
+    - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
+  - Hex "square" line cap makes things confusing, looks off-centered in hexagonal
+  - FILE SIZE improvements:
+    - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
+    - If we attempt to do a dynamic import (in NewNode):
+          TypeError [PLUGIN_ERROR]: [vite:load-fallback] Could not load vite/preload-helper (imported by src/view/NewNode.ts): The argument 'path' must be a string or Uint8Array without null bytes. Received '\x00vite/preload-helper'
+              at open (node:internal/fs/promises:586:10)
+              at Object.readFile (node:internal/fs/promises:1037:20)
+              at Object.load (file:///Users/jon/phet/git/slither/node_modules/vite/dist/node/chunks/dep-jDlpJiMN.js:66605:43)
+              at async PluginDriver.hookFirstAndGetPlugin (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19479:28)
+              at async file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:18650:33
+              at async Queue.work (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19689:32)
+  - SHOW the vision working on the image(!)
+  - Exterior UI (improved "new" popup, etc.)
+    - We have the puzzle/solver Node
+    - TRANSITION swipe animation, like game screens
+    - Have tutorial, rules, options, etc.? Better scaffolding
+  - AutoSolve rule presets - WHAT IS RELAXING / fun
+    - "rules that only set red edges" might be relaxing
+  - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
+    - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
+    - TODO: I need to read up more on TypeScript
+    - Just... use top level methods for now...?
+      - HEY! Put each interface into a file, and then PUT FUNCTIONS THAT USE IT in the same file 
+  - FIX puzzle loading, especially on phone (or get some other way of getting puzzles in)
+    - Soon we'll be able to... generate puzzles? Get backtracker?
+  - Simple Region based edges, OR prefer the raw edges (uncolored)? 
+  - Smooth animations between things ... instead of "New", have a main menu?
+  - Try VSCode
+  - Mobile vs Desktop
+    - Settings presets for each?
+    - OR detect fingers/mouse and apply different rules for them?
+    - BASICALLY just try out both a bunch (phone, touch-pad, mouse)
   - Accessibility
+    - Let's get accessibility highlights a bit more refined-acceptable looking? 
+    - Keyboard
+      - Keyboard + Accessibility is first-class? (Could be fast for input on a computer) 
     - Allow selecting a square. Hear its number/sides, manipulate its sides ("space blank, lines on top and left, blank on bottom, x on right")
+    - Allow going through a vertical check list box easily?
+  - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
+    - THIS IS ANNOYING ON MOBILE 
+    - Or at least have a delay 
+  - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
+    - Have a "minimum number of colors before showing"? 
+    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+  - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
+    - Each pattern needs to specify the required topology/structure for the area (what is important)
+    - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
+    - RED EDGES essentially CHANGES the topology
+      - Make rules that can be applied to ANY cases 
+    - Going off the side of the board is "all x" - Use a way of pattern matching those
+  - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
+    - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
+  - Check when solved - we only have one chain + all numbers satisfied
+  - NUMBER ONLY rules (at the start)
+    - Most of these would be pattern based. Maybe get pattern solver working first (it's noted above)
+  - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
+  - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
+  - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
+  - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
+  - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
+    - https://github.com/richardtallent/vite-plugin-singlefile
+  - Audio for actions
+    - Might help cue on unintended actions
+  - Localization / Internationalization
+  - Difficulty estimation of puzzles:
+    - Should all solvers give the difficulty?
+    - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
+    - Should all solve actions - have a "difficulty" rating?
+    - Single-level backtrack for "what state can we combine" - if we can't find explicit rules?
+  - Allow puzzle export
+    - navigator.share(), can share images, https://stackoverflow.com/questions/68362603/share-image-via-social-media-from-pwa
+    - String formats?
+  - [DEFER] Save full PuzzleModel state (serialize actions and stack)
+  - Puzzle editor
+    - HOW does this integrate with the current board generator? 
+    - Delete or manipulate faces from the board (e.g. from board generation)
+    - Set values of faces manually
+    - Feature to "add in other numbers" based on solver?
+  - Board Generation:
+    - Consider NumberSpinner instead of NumberControl? 
+    - Import from SVG string? 
+    - Hide some boards behind "show experimental"? 
+    - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
+    - Tick marks on sliders?
+    - Consistent preview stroke size (prescale?)
+    - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
+      - Either "within grid", "by centermost vertex", "by centermost face"
+    - Allow the user to "save" boards (and name them - see text entry?)
+  - Lazy initialization of all of the tiling data?
+    - Each tiling can be instantiated
+    - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
 
-- TODO: combine this with the section below
+- Rule generation / display
+  - SAT solver tweaked for the exact constraints(!!!!) 
+  - Show a full explainer (with immutable views of puzzles)
+    - !!! Not popular enough to NOT have an explainer. 
+    - Link off to full databases of patterns 
+  - How can we detect/visualize highlander rules?
+  - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
+  - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
+  - Grab rules from my discord paster
+  - Show the "next rule" that can be applied (and why) - consider TAnnotatedAction?
+  - In Rule Description (auto-solver) describe the rule there with images? Possibly animate it?
+
+- Read
+  - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
+  - check r/slitherlink for more cases that were explained well!
+
+- Scan / Vision
+  - Use the locations of text-detected numbers to "vote" on what contours to use as a container
+    - Start at root. Check each child for how many it contains. Drill down until we have no child with more than the threshold.
+    - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
+  - Unit tests
+    - Test with SAT solver 
+    - !!! Make us compatible with Puppeteer/Playwright, so we can batch-handle scanning/solving (for unit tests)
+  - Test with Android, and handle dashed line approach
+  - Detect on paper - perspective correction
+    - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
+  - Could use size of numbers to inform "scale" of things
+  - Could use FFT for finding scale/grid
+  - !!! Get Scenery working with embedding DOM components, like the file input
+  - Note "draw interior of large region in background color" to filter out
+
+- COLOR SHIFTING (for maintaining good color separation)
+  - PLAN:
+    - FIRST check performance with single-edge setups (gradient and no gradient)
+      - OOO the no-gradient approach could look neat
+    - Start with organic
+  - Edges AND Faces animate (shift) hue to maintain good separation
+  - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
+  - Color Model - defines target/current color for each region (can swap whatever of these)
+    - Per-change computation (then animated to)
+      - Simple!
+      - Large changes might not look great... hmmm
+    - Organic (step-driven, recompute targets each frame)
+      - Might be simpler to get "good" behavior
+      - Might have cool shifts - one thing changes, which then triggers another thing to change, biological-looking
+      - Risk of oscillation
+      - Worse performance?
+    - Quality metrics
+      - Global color variation (spread out, and not just all e.g. green/red)
+        - Slight pressure away from others? (this is probably particularly helpful for isolated regions)
+      - Spatial color variation (don't just ignore far away regions - look at what are the closest FOR it)
+        - But allow "far away" ones to shift so we get better "closer" behavior 
+      - Avoid "bad" colors for large regions (and especially at the end)
+        - Can have global hue shifts/rotations
+      - Don't change large regions too much (or too quickly) (inertia/weight)
+      - Don't change hues too quickly (limit velocity)
+      - NO fast oscillations? Increase "damping" if something seems to be "bouncing" between targets, so that it slows down
+      - "Close" regions should have different BUT NOT TOO DIFFERENT colors (we don't want to create a bunch of inverses)
+        - Ideal "distance" in hue space? 
+        - Hue pressure is CIRCULAR
+      - Face hues are... different? similar? from the edge hues
+  - Region Model - takes the Color Model, and can animate either:
+    - Full region color <---- START WITH THIS
+    - Subregions same color (until they join)
+      - Once a subregion matches color (enough), it gets combined 
+    - Each edge different
+      - Ooo this could potentially look neat!
+    - Each edge different + gradient color for each
+      - Model each vertex with a color separately 
+      - SO COOL to see the gradient "pulse through"? 
+      - Gradient should go UP TO the join, NOT INCLUDING the join (so that the entire join is the same color)
+      - Would create a node for each edge, position the gradient (and adjust shape/visibility/endpoint color based on connections/etc)
+      - (possible, each SVG stop gets updated in SVG without recreating - give it a Property)
+    - NOTE: anything other than full-region might want to get "mitered joints" at joints, however is desired
+      - That... seems like a pain. Especially for nicely rounded stroked corners. Probably do it without other support?
+  - Metric for "separation between two regions" - not dependent on other regions, does not need to be recomputed
+    - TODO: how to compute?
+  - Weird edges:
+    - Shorten them somewhat, so they don't connect? LEAVE GRAY
+
 - Solving
   - Regions:
     - Ok.... to detect the non-trivial regions...
@@ -225,264 +466,28 @@
     - https://kwontomloop.com/forum.php?a=topic&topic_id=358
     - https://kwontomloop.com/forum.php?a=topic&topic_id=308
 
-- Puzzle generation
-  - Filler, but how to generate fairly isotropic?
-    - Have a constraint that we don't fill... more than half of the boundary squares?
-    - Fill with a solid "windy" approach to 50%-ish, but then see if we can add some more randomness in
-  - 
-  - What happens when we... just start ... adding numbers?
-    - Likely to run into a case where we have multiple solutions, but then adding a single other number removes all solutions?
-      - Actually... that is fundamentally FALSE. Pick a solution, each face has a "number".
-      - So... pick an order of faces to give numbers to (start with random?)
-  - 
-  - How to... rate? (Make it free obviously) - Give it numeric difficulties instead of just "easy/medium/hard"
-  - A very fast puzzle generator would be needed for people (e.g. me) to play for free
-  - Try to generate puzzles which have patterns that I should learn
-  - Generate different "themes" of puzzles (i.e. we solve uniqueness with different techniques)
-    - Find puzzles that need technique A that can't be solved with technique B 
+- Testing
+  - Use seedRandom setup so we can get reproducibility.
 
-- Rule generation / display
-  - SAT solver tweaked for the exact constraints(!!!!) 
-  - Show a full explainer (with immutable views of puzzles)
-    - !!! Not popular enough to NOT have an explainer. 
-    - Link off to full databases of patterns 
-  - How can we detect/visualize highlander rules?
-  - Show rules with a nice before/after(!) - have the ability to generate that into a Scenery node. Use Display in write-up
-  - For many rules, showing the "candiate test-add", "consequences", "thus we can assume this" as the three stages is nice.
-  - Grab rules from my discord paster
-  - Show the "next rule" that can be applied (and why) - consider TAnnotatedAction?
-  - In Rule Description (auto-solver) describe the rule there with images? Possibly animate it?
-
-- Read
-  - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
-  - check r/slitherlink for more cases that were explained well!
-
-- Unassert: https://github.com/unassert-js/rollup-plugin-unassert
-
-- Scan / Vision
-  - Use the locations of text-detected numbers to "vote" on what contours to use as a container
-    - Start at root. Check each child for how many it contains. Drill down until we have no child with more than the threshold.
-    - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
-  - Unit tests
-    - Test with SAT solver 
-    - !!! Make us compatible with Puppeteer/Playwright, so we can batch-handle scanning/solving (for unit tests)
-  - Test with Android, and handle dashed line approach
-  - Detect on paper - perspective correction
-    - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
-  - Could use size of numbers to inform "scale" of things
-  - Could use FFT for finding scale/grid
-  - !!! Get Scenery working with embedding DOM components, like the file input
-  - Note "draw interior of large region in background color" to filter out
-
-- Puzzle editor
-  - Particularly for things that didn't scan correctly.
-
-- COLOR SHIFTING (for maintaining good color separation)
-  - PLAN:
-    - FIRST check performance with single-edge setups (gradient and no gradient)
-      - OOO the no-gradient approach could look neat
-    - Start with organic
-  - Edges AND Faces animate (shift) hue to maintain good separation
-  - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
-  - Color Model - defines target/current color for each region (can swap whatever of these)
-    - Per-change computation (then animated to)
-      - Simple!
-      - Large changes might not look great... hmmm
-    - Organic (step-driven, recompute targets each frame)
-      - Might be simpler to get "good" behavior
-      - Might have cool shifts - one thing changes, which then triggers another thing to change, biological-looking
-      - Risk of oscillation
-      - Worse performance?
-    - Quality metrics
-      - Global color variation (spread out, and not just all e.g. green/red)
-        - Slight pressure away from others? (this is probably particularly helpful for isolated regions)
-      - Spatial color variation (don't just ignore far away regions - look at what are the closest FOR it)
-        - But allow "far away" ones to shift so we get better "closer" behavior 
-      - Avoid "bad" colors for large regions (and especially at the end)
-        - Can have global hue shifts/rotations
-      - Don't change large regions too much (or too quickly) (inertia/weight)
-      - Don't change hues too quickly (limit velocity)
-      - NO fast oscillations? Increase "damping" if something seems to be "bouncing" between targets, so that it slows down
-      - "Close" regions should have different BUT NOT TOO DIFFERENT colors (we don't want to create a bunch of inverses)
-        - Ideal "distance" in hue space? 
-        - Hue pressure is CIRCULAR
-      - Face hues are... different? similar? from the edge hues
-  - Region Model - takes the Color Model, and can animate either:
-    - Full region color <---- START WITH THIS
-    - Subregions same color (until they join)
-      - Once a subregion matches color (enough), it gets combined 
-    - Each edge different
-      - Ooo this could potentially look neat!
-    - Each edge different + gradient color for each
-      - Model each vertex with a color separately 
-      - SO COOL to see the gradient "pulse through"? 
-      - Gradient should go UP TO the join, NOT INCLUDING the join (so that the entire join is the same color)
-      - Would create a node for each edge, position the gradient (and adjust shape/visibility/endpoint color based on connections/etc)
-      - (possible, each SVG stop gets updated in SVG without recreating - give it a Property)
-    - NOTE: anything other than full-region might want to get "mitered joints" at joints, however is desired
-      - That... seems like a pain. Especially for nicely rounded stroked corners. Probably do it without other support?
-  - Metric for "separation between two regions" - not dependent on other regions, does not need to be recomputed
-    - TODO: how to compute?
-  - Weird edges:
-    - Shorten them somewhat, so they don't connect? LEAVE GRAY
-
-- PhET bugginess:
-  - RichText broken somehow... with rollup?
-
-- Current code TODOs
-  - TStructure cleanup
-    - Remove TStructure, don't need it for square
-    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
-    - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
-      - Maybe just have a TPuzzleProperty? (hmmm) bleh
-    - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
-  - Settings
-    - Style preview (demo puzzle)
-    - Tabs? (from joist? eek)
-  - Face coloring will help visualization of solving
-  - Have a way of notifying me when I make a mistake... should it store the full solution?
-  - Tether to phone for debugging code generation failures
-  - Improve "line segment ending" and vertex shapes! Give options
-    - include white edges and region edges?
-  - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
-    - Face coloring can override this later?
-  - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
-  - USE SAT for image scanning (to see if it is a good puzzle)
-  - Generation:
-    - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD 
-    - Faster "face minimization": 
-      - start by removing a good number at once. have a heuristic where this eventually goes down to removing 1 at a time
-      - any time a removal doesn't work, apply a multiplier to our "fresh from next time" amount to remove, and ... split the removal amount in half?
-    - Faster "filling" method, basically just set up something that creates windy patterns quickly?
-      - Sprout off area-filling "winding" attempts, where it keeps walking
-        - Repeatedly do this until we have a good amount of "fill"
-        - Start in "less filled" regions
-        - If we have a region without transitions, apply fixes
-        - Ensure we have approximately half of the boundary filled
-  - Hint
-    - Could ... "add a face value"?
-  - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
-  - Mobile issues:
-    - Autosolve annoyance on mobile:
-      - Prevent user from changing auto-solved edges immediately (?)
-      - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
-        - Presumably after a delay, replace the current stack state (with action and simple change) with an autosolved change
-        - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
-    - On victory, animate to zoom out fully (how to do that)?
-    - AnimatedPanZoomListener seems a bit clunky at the start. Faster hook?
-  - General issues:
-    - Need better face coloring visualization (or ways to find those "loops")
-      - "Connected component" visualization? (e.g. all faces that are connected by a black/red)
-        - If we stroke/fill this, we'd need to write that "tracing" of outside boundaries (that we'll use for hex)
-      - "Seam" visualization? (e.g. lines between connected components)
-  - Annotated actions
-    - Possibly with the "difficulty" if auto-solve involved
-  - Annotated errors
-    - Subtype InvalidStateError - for simple ones especially, we can visually report on the issue
-  - Autosolver JUST to check for simple errors (or in general)
-    - [NEEDS] annotated errors 
-    - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
-  - Hex "square" line cap makes things confusing, looks off-centered in hexagonal
-  - FILE SIZE improvements:
-    - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
-    - If we attempt to do a dynamic import (in NewNode):
-          TypeError [PLUGIN_ERROR]: [vite:load-fallback] Could not load vite/preload-helper (imported by src/view/NewNode.ts): The argument 'path' must be a string or Uint8Array without null bytes. Received '\x00vite/preload-helper'
-              at open (node:internal/fs/promises:586:10)
-              at Object.readFile (node:internal/fs/promises:1037:20)
-              at Object.load (file:///Users/jon/phet/git/slither/node_modules/vite/dist/node/chunks/dep-jDlpJiMN.js:66605:43)
-              at async PluginDriver.hookFirstAndGetPlugin (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19479:28)
-              at async file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:18650:33
-              at async Queue.work (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19689:32)
-  - SHOW the vision working on the image(!)
-  - Exterior UI (improved "new" popup, etc.)
-    - We have the puzzle/solver Node
-    - TRANSITION swipe animation, like game screens
-    - Have tutorial, rules, options, etc.? Better scaffolding
-  - AutoSolve rule presets - WHAT IS RELAXING / fun
-    - "rules that only set red edges" might be relaxing
-  - Create "helper" methods for things with interfaces. (Can we add implementation to an interface?)
-    - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
-    - TODO: I need to read up more on TypeScript
-    - Just... use top level methods for now...?
-      - HEY! Put each interface into a file, and then PUT FUNCTIONS THAT USE IT in the same file 
-  - FIX puzzle loading, especially on phone (or get some other way of getting puzzles in)
-    - Soon we'll be able to... generate puzzles? Get backtracker?
-  - Theme options:
-    - Simple Region based edges, OR prefer the raw edges (uncolored)? 
-    - "dashed lines" for "white" / "blank" lines for "red" <--- this could really be helpful!
-  - Smooth animations between things ... instead of "New", have a main menu?
-  - Add config for press styles (but also figure out other input methods - e.g. dragging multiple lines)
-    - Hey, how would dragging multiple lines work with pan? EXCLUSIVE SETTING
-    - What about "quick double press" for x?
-  - Try VSCode
-  - Buttons 
-    - RAINBOW COLORS on the buttons
-    - Zoom (in/out) for help on desktop (e.g. with mouse)
-    - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
-      - Will apply "history" state for EACH solve step
-      - OR WILL APPLY IT AS ONE THING ---- we might want each
-    - Share/export button
-      - Puzzle text (faces, faces/edges, in different formats)
-      - Image (hey... can we use Alpenglow for the high-quality bits?)
-    - Mark/save (for user "exploration")
-      - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
-  - Mobile vs Desktop
-    - Settings presets for each?
-    - OR detect fingers/mouse and apply different rules for them?
-    - BASICALLY just try out both a bunch (phone, touch-pad, mouse)
-  - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
-    - THIS IS ANNOYING ON MOBILE 
-    - Or at least have a delay 
-  - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
-    - Have a "minimum number of colors before showing"? 
-    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
-  - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
-    - Each pattern needs to specify the required topology/structure for the area (what is important)
-    - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
-    - RED EDGES essentially CHANGES the topology
-      - Make rules that can be applied to ANY cases 
-    - Going off the side of the board is "all x" - Use a way of pattern matching those
-  - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
-    - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
-  - Check when solved - we only have one chain + all numbers satisfied
-  - NUMBER ONLY rules (at the start)
-    - Most of these would be pattern based. Maybe get pattern solver working first (it's noted above)
-  - FAST FAST solver setup for computer backtracking (to determine if a puzzle is valid/unique, useful for scanner)
-  - Show puzzle loading progress (and speed it up), mobile is annoyed. Do error detection
-  - USE ALPENGLOW??? --- and specify font (we can embed the glyphs no?)
-  - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
-  - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
-    - https://github.com/richardtallent/vite-plugin-singlefile
-  - Audio for actions
-    - Might help cue on unintended actions
-  - Make it translatable
-  - Difficulty estimation of puzzles:
-    - Should all solvers give the difficulty?
-    - Should all solvers be designed to work so they can be re-run without applying the action? YES, right?
-    - Should all solve actions - have a "difficulty" rating?
-    - Single-level backtrack for "what state can we combine" - if we can't find explicit rules?
-  - How to.... async/await AND have synchronous paths for solvers? (really... just the backtracker)
-    - I mean... just implement both separately?
-  - Minisat in web worker? web workers in general? (could work a solving backtracker at the same time to add constraints)
-  - Allow puzzle export
-    - navigator.share(), can share images, https://stackoverflow.com/questions/68362603/share-image-via-social-media-from-pwa
-    - String formats?
-  - [DEFER] Save full PuzzleModel state (serialize actions and stack)
-  - Board Generation:
-    - Save the "generation" options last available options?
-    - ABILITY TO DELETE FACES --- just click on them, and they disappear?
-      - Have a polygonsProperty?
-      - Allow saving boards
-    - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
-    - Tick marks on sliders?
-    - Consistent preview stroke size (prescale?)
-    - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
-      - Either "within grid", "by centermost vertex", "by centermost face"
-  - Lazy initialization of all of the tiling data?
-    - Each tiling can be instantiated
-    - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
-
-
+- Performance
+  - Web workers(!) - particularly for minisat
+  - Unassert: https://github.com/unassert-js/rollup-plugin-unassert
+  - Avoid animating anything outside-of-viewport?
+  - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
+  - Assertion removal with unassert isn't... applying much so far. TODO check
+    - unassert isn't stripping our assertions!
+    - See https://github.com/unassert-js/rollup-plugin-unassert and https://github.com/unassert-js/unassert
+  - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
+  - Not great performance on: 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
+- Maintainability
+  - Prettier
+  - At a certain point, cut features and clean clean 
+  - Separate out structure.ts into a structure directory
+  - Make clean! Document things!
+  - Add copyright statement to files at some point
+- Scaffolding
+  - "Each number needs to have that many edges/lines around it, and no more"
+  - "Single loop, like a loop of string"
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?
@@ -512,8 +517,6 @@
       - with/without/booleanops/rotated/etc., see source in Scala
   - Solver
     - canAssumeUnique?
-    - Ability to "split" computation into awaits, with sleep(0)s, so we can keep our UI thread responsive
-      - Can we use... web workers? ---- WEB WORKERS!!!!!!!!!!!!!!!!
   - Pattern (GridPattern?) -- less general than "solver"
     - check( spot: Spot, reversed: bool ): bool - whether it matches and can be applied
     - apply( spot: Spot, reversed: bool ): Action[] - what to do
@@ -532,10 +535,6 @@
       - e.g. while vertexstate handles spike 3-2-2-3, we can have a pattern that handles this with just EdgeState
     - NOTE: can be "mechanical/recorded" patterns too (e.g. have a database of these)
     - NOTE: PATTERNS CAN APPLY ACROSS TOPOLOGIES IN MANY CASES
-  - Interaction
-    - Have PatternExplainers that we can display to show what we can deduce next
-    - Have a "hint" button
-    - Have a "solve a single bit" button
   - Immutable views
     - Would be great for an "explainer" page (this would be fun to write up)
 
@@ -546,29 +545,6 @@
   - Board = structure of vertices/edges/faces
   - Puzzle = board + FaceState
   - Delta = action + previous state
-
-- Testing
-  - Use seedRandom setup so we can get reproducibility.
-
-- Performance
-  - Avoid animating anything outside-of-viewport?
-  - Puzzles are SLOW on mobile, and scrolling is ugly. Perhaps we could use a separate Scenery display for the puzzle, and a separate one for the UI?
-  - Assertion removal with unassert isn't... applying much so far. TODO check
-    - unassert isn't stripping our assertions!
-    - See https://github.com/unassert-js/rollup-plugin-unassert and https://github.com/unassert-js/unassert
-  - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
-  - Not great performance on: 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
-
-- Maintainability
-  - Prettier
-  - At a certain point, cut features and clean clean 
-  - Separate out structure.ts into a structure directory
-  - Make clean! Document things!
-  - Add copyright statement to files at some point
-
-- Scaffolding
-  - "Each number needs to have that many edges/lines around it, and no more"
-  - "Single loop, like a loop of string"
 
 [DEPRECATED]
 
@@ -622,3 +598,6 @@
   - GPL: https://github.com/GJDuck/SAT.js
 - NO sphere, easier for the graphics/model to not make that generalization right now
 - Voronoi boards - no, they have short edges and meh shaesp for this
+- [defer] Chess-like history, with branching?
+  - Undo/redo (as a tree ideally)
+    - Can show "candidates" explored, that can be clicked on?
