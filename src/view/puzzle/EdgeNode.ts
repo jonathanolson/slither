@@ -2,7 +2,7 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { FireListener, Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { blackLineColorProperty, redLineColorProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
+import { blackLineColorProperty, redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
@@ -93,17 +93,49 @@ export class EdgeNode extends Node {
     this.disposeEmitter.addListener( () => redVisibleProperty.dispose() );
 
     // TODO: layer these, or get the "join" correct
-
-    // TODO: adjust shortening
-    const redLineProportion = 0.5;
-    const redLineStart = centerPoint.blend( startPoint, redLineProportion );
-    const redLineEnd = centerPoint.blend( endPoint, redLineProportion );
-    const redLine = new Line( redLineStart.x, redLineStart.y, redLineEnd.x, redLineEnd.y, {
+    const redLine = new Path( null, {
       lineWidth: 0.02,
       stroke: redLineColorProperty,
       lineDash: [ 0.03, 0.05 ],
       visibleProperty: redVisibleProperty
     } );
+
+    const redLineStyleListener = ( style: TRedLineStyle ) => {
+      // TODO: adjust shortening
+      const redLineProportion = 0.5;
+
+      if ( style === 'middle' ) {
+        redLine.shape = new Shape().moveToPoint(
+          centerPoint.blend( startPoint, redLineProportion )
+        ).lineToPoint(
+          centerPoint.blend( endPoint, redLineProportion )
+        ).makeImmutable();
+      }
+      else if ( style === 'gap' ) {
+        redLine.shape = new Shape().moveToPoint(
+          startPoint
+        ).lineToPoint(
+          startPoint.blend( centerPoint, redLineProportion )
+        ).moveToPoint(
+          endPoint.blend( centerPoint, redLineProportion )
+        ).lineToPoint(
+          endPoint
+        ).makeImmutable();
+      }
+      else if ( style === 'full' ) {
+        redLine.shape = new Shape().moveToPoint(
+          startPoint
+        ).lineToPoint(
+          endPoint
+        ).makeImmutable();
+      }
+      else {
+        assertEnabled() && assert( false, `Unknown red line style: ${style}` );
+      }
+    };
+    redLineStyleProperty.link( redLineStyleListener );
+    this.disposeEmitter.addListener( () => redLineStyleProperty.unlink( redLineStyleListener ) );
+
 
     // TODO: ALLOW DRAGGING TO SET LINES
     const edgePressListener = options?.edgePressListener;

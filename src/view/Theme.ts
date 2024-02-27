@@ -283,3 +283,7 @@ export const vertexStyles = [ 'round', 'square' ] as const;
 export type TVertexStyle = typeof vertexStyles[ number ];
 export const vertexStyleProperty = new LocalStorageStringProperty<TVertexStyle>( 'vertexStyleProperty', 'round' );
 
+export const redLineStyles = [ 'full', 'gap', 'middle' ] as const;
+export type TRedLineStyle = typeof redLineStyles[ number ];
+export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'gap' );
+
