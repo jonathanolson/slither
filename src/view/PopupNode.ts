@@ -50,14 +50,14 @@ export class PopupNode extends Node {
 
     // TODO: actually, we can probably have a much more responsive layout, right?
     layoutBoundsProperty.link( layoutBounds => {
-      panel.maxWidth = layoutBounds.width * 0.8;
+      panel.maxWidth = layoutBounds.width * 0.9;
       panel.maxHeight = layoutBounds.height * 0.8;
     } );
 
     this.addChild( new AlignBox( panel, {
       alignBoundsProperty: layoutBoundsProperty,
       yAlign: 'top',
-      margin: 50
+      topMargin: 50
     } ) );
   }
 

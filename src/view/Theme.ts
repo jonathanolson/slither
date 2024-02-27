@@ -38,6 +38,7 @@ export interface TTheme {
   vertexColorProperty: PaintColorProperty;
   xColorProperty: PaintColorProperty;
   blackLineColorProperty: PaintColorProperty;
+  redLineColorProperty: PaintColorProperty;
   whiteLineColorProperty: PaintColorProperty;
   faceValueColorProperty: PaintColorProperty;
   faceValueCompletedColorProperty: PaintColorProperty;
@@ -67,6 +68,7 @@ export const lightTheme = {
   vertexColorProperty: new PaintColorProperty( '#000' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#000' ),
+  redLineColorProperty: new PaintColorProperty( '#aaa' ),
   whiteLineColorProperty: new PaintColorProperty( '#888' ),
   faceValueColorProperty: new PaintColorProperty( '#000' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#aaa' ),
@@ -90,6 +92,7 @@ export const darkTheme = {
   vertexColorProperty: new PaintColorProperty( '#888' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#aaa' ),
+  redLineColorProperty: new PaintColorProperty( '#444' ),
   whiteLineColorProperty: new PaintColorProperty( '#444' ),
   faceValueColorProperty: new PaintColorProperty( '#ccc' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#888' ),
@@ -180,6 +183,10 @@ export const blackLineColorProperty = new DynamicProperty( themeProperty, {
   derive: 'blackLineColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
+export const redLineColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'redLineColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
 export const whiteLineColorProperty = new DynamicProperty( themeProperty, {
   derive: 'whiteLineColorProperty'
 } ) as TReadOnlyProperty<Color>;
@@ -249,10 +256,16 @@ export const puzzleFont = new Font( {
   size: 25
 } );
 
+export const generateButtonFont = new Font( {
+  family: 'sans-serif',
+  size: 25
+} );
+
+export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', true );
+export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
+export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
 export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', true );
-// TODO: rename
-export const whiteDottedVisibleProperty = new LocalStorageBooleanProperty( 'whiteDottedVisibleProperty', false );
-export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', true );
+export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
 
 export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;
 export const lineCaps = [ 'butt', 'round', 'square' ] as const;

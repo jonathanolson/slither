@@ -2,7 +2,7 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { FireListener, Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { blackLineColorProperty, whiteLineColorProperty, xColorProperty } from '../Theme.ts';
+import { blackLineColorProperty, redLineColorProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
@@ -14,8 +14,6 @@ export type EdgeNodeOptions = {
   useSimpleRegionForBlack?: boolean;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   backgroundOffsetDistance: number;
-  redXsVisibleProperty: TReadOnlyProperty<boolean>;
-  whiteDottedVisibleProperty: TReadOnlyProperty<boolean>;
 };
 
 export class EdgeNode extends Node {
@@ -52,7 +50,7 @@ export class EdgeNode extends Node {
 
     const xVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
-      options.redXsVisibleProperty
+      redXsVisibleProperty
     ], ( isSolved, visible ) => {
       return !isSolved && visible;
     } );
@@ -60,24 +58,50 @@ export class EdgeNode extends Node {
 
     const x = new Path( xShape, {
       stroke: xColorProperty,
-      lineWidth: 0.02,
+      lineWidth: 0.03,
       center: centerPoint,
       visibleProperty: xVisibleProperty
     } );
+    const alignListener = ( aligned: boolean ) => {
+      x.rotation = aligned ? endPoint.minus( startPoint ).getAngle() : 0;
+    };
+    redXsAlignedProperty.link( alignListener );
+    this.disposeEmitter.addListener( () => redXsAlignedProperty.unlink( alignListener ) );
 
-    const whiteLineVisibleProperty = new DerivedProperty( [
+    const whiteVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
-      options.whiteDottedVisibleProperty
+      whiteLineVisibleProperty
     ], ( isSolved, visible ) => {
       return !isSolved && visible;
     } );
-    this.disposeEmitter.addListener( () => whiteLineVisibleProperty.dispose() );
+    this.disposeEmitter.addListener( () => whiteVisibleProperty.dispose() );
 
     const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.03,
       stroke: whiteLineColorProperty,
       // lineDash: [ 0.05, 0.05 ],
-      visibleProperty: whiteLineVisibleProperty
+      visibleProperty: whiteVisibleProperty
+    } );
+
+    const redVisibleProperty = new DerivedProperty( [
+      isSolvedProperty,
+      redLineVisibleProperty
+    ], ( isSolved, visible ) => {
+      return !isSolved && visible;
+    } );
+    this.disposeEmitter.addListener( () => redVisibleProperty.dispose() );
+
+    // TODO: layer these, or get the "join" correct
+
+    // TODO: adjust shortening
+    const redLineProportion = 0.5;
+    const redLineStart = centerPoint.blend( startPoint, redLineProportion );
+    const redLineEnd = centerPoint.blend( endPoint, redLineProportion );
+    const redLine = new Line( redLineStart.x, redLineStart.y, redLineEnd.x, redLineEnd.y, {
+      lineWidth: 0.02,
+      stroke: redLineColorProperty,
+      lineDash: [ 0.03, 0.05 ],
+      visibleProperty: redVisibleProperty
     } );
 
     // TODO: ALLOW DRAGGING TO SET LINES
@@ -172,7 +196,7 @@ export class EdgeNode extends Node {
         this.children = options?.useSimpleRegionForBlack ? [] : [ blackLine ];
       }
       else {
-        this.children = [ x ];
+        this.children = [ redLine, x ];
       }
     } );
   }

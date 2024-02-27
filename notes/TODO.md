@@ -327,12 +327,8 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Rhombille 5 (!)
-  - Generation:
-    - ABILITY TO DELETE FACES --- just click on them, and they disappear?
-      - Have a polygonsProperty?
-    - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
-    - Tick marks on sliders?
+  - Coloring!!!
+  - Tether to phone for debugging code generation failures
   - Lazy initialization of all of the tiling data?
     - Each tiling can be instantiated
     - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
@@ -478,7 +474,8 @@
   - Try hex boards (or other shapes) -- actually, this will be useful for testing any "general" solvers, and making sure I've abstracted enough logic?
   - https://vite-pwa-org.netlify.app/ - PWA this so I can have it on my phone
     - https://github.com/richardtallent/vite-plugin-singlefile
-  - Audio for actions?
+  - Audio for actions
+    - Might help cue on unintended actions
   - Make it translatable
   - Difficulty estimation of puzzles:
     - Should all solvers give the difficulty?
@@ -492,6 +489,13 @@
     - navigator.share(), can share images, https://stackoverflow.com/questions/68362603/share-image-via-social-media-from-pwa
     - String formats?
   - [DEFER] Save full PuzzleModel state (serialize actions and stack)
+  - Board Generation:
+    - ABILITY TO DELETE FACES --- just click on them, and they disappear?
+      - Have a polygonsProperty?
+      - Allow saving boards
+    - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
+    - Tick marks on sliders?
+    - Consistent preview stroke size (prescale?)
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?

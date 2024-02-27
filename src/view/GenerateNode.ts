@@ -7,7 +7,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
+import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, popupFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
@@ -96,6 +96,13 @@ export const getPeriodicTilingGenerator = (
 
       const bounds = new Bounds2( -parameters.width / 2, -parameters.height / 2, parameters.width / 2, parameters.height / 2 );
 
+      const unitPolygonsBounds = Bounds2.NOTHING.copy();
+      unitPolygons.forEach( polygon => {
+        polygon.forEach( vertex => {
+          unitPolygonsBounds.addPoint( vertex );
+        } );
+      } );
+
       const size = Math.max(
         Math.abs( bounds.minX ),
         Math.abs( bounds.maxX ),
@@ -103,10 +110,29 @@ export const getPeriodicTilingGenerator = (
         Math.abs( bounds.maxY )
       ) * 20; // TODO ... overkill?
 
+      // Using mutable forms for performance
+      const polygonBounds = Bounds2.NOTHING.copy();
+      const aDelta = new Vector2( 0, 0 );
+      const bDelta = new Vector2( 0, 0 );
+      const delta = new Vector2( 0, 0 );
+
       _.range( -size, size ).forEach( a => {
+        aDelta.set( basisA ).multiplyScalar( a );
+
         _.range( -size, size ).forEach( b => {
+          bDelta.set( basisB ).multiplyScalar( b );
+
+          delta.set( aDelta ).add( bDelta );
+
+          polygonBounds.set( unitPolygonsBounds ).shift( delta );
+
+          if ( !bounds.intersectsBounds( polygonBounds ) ) {
+            return;
+          }
+
+          // TODO: we COULD do the centroid for each one?
           unitPolygons.forEach( unitPolygon => {
-            const tilePolygon = unitPolygon.map( v => v.plus( basisA.timesScalar( a ) ).plus( basisB.timesScalar( b ) ) );
+            const tilePolygon = unitPolygon.map( v => v.plus( delta ) );
 
             // TODO: do determination based on vertices instead of centroid!!!
             const centroid = getCentroid( tilePolygon );
@@ -465,14 +491,18 @@ export class GenerateNode extends HBox {
     } );
 
     const setPreview = ( generator: PolygonGenerator, parameters: Record<string, any> ) => {
+      // TODO: switch to a Property<Vector2[][]>, so we can remove them. We'll display them efficiently here
       const polygons = generator.generate( parameters );
-      previewForeground.children = polygons.map( polygon => {
-        return new Path( Shape.polygon( polygon ), {
+
+      const shape = new Shape();
+      polygons.forEach( polygon => shape.polygon( polygon ) );
+      previewForeground.children = [
+        new Path( shape, {
           fill: puzzleBackgroundColorProperty,
           stroke: blackLineColorProperty,
           lineWidth: 0.05
-        } );
-      } );
+        } )
+      ];
     };
 
     setPreview( polygonGenerators[ 0 ], {
@@ -590,6 +620,7 @@ export class GenerateNode extends HBox {
       };
 
       generateButtonContainer.addChild( new TextPushButton( 'Generate', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+        font: generateButtonFont,
         layoutOptions: {
           align: 'center'
         },
@@ -642,8 +673,8 @@ export class GenerateNode extends HBox {
             grow: 1
           },
           children: [
-            generateButtonContainer,
             previewRectangle,
+            generateButtonContainer,
             propertiesControlsContainer,
           ]
         } ),

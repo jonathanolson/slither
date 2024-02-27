@@ -3,25 +3,20 @@ import { TVertex } from '../../model/board/core/TVertex.ts';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
-import { vertexColorProperty } from '../Theme.ts';
+import { vertexColorProperty, verticesVisibleProperty } from '../Theme.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
-
-export type VertexNodeOptions = {
-  verticesVisibleProperty: TReadOnlyProperty<boolean>;
-};
 
 export class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
     stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
-    isSolvedProperty: TReadOnlyProperty<boolean>,
-    options: VertexNodeOptions
+    isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
     super();
 
     const visibleProperty = new DerivedProperty( [
       stateProperty,
-      options.verticesVisibleProperty
+      verticesVisibleProperty
     ], ( state, visible ) => {
       return visible && vertex.edges.every( edge => state.getEdgeState( edge ) !== EdgeState.BLACK );
     } );

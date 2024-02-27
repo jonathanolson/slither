@@ -1,7 +1,7 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { puzzleFont, redXsVisibleProperty, verticesVisibleProperty, whiteDottedVisibleProperty } from '../Theme.ts';
+import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import { TFaceData } from '../../model/data/face/TFaceData.ts';
@@ -21,9 +21,6 @@ type SelfOptions = {
   useSimpleRegionForBlack?: boolean;
   useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
-  verticesVisibleProperty?: TReadOnlyProperty<boolean>;
-  redXsVisibleProperty?: TReadOnlyProperty<boolean>;
-  whiteDottedVisibleProperty?: TReadOnlyProperty<boolean>;
 };
 
 export type BasicPuzzleNodeOptions = SelfOptions & NodeOptions;
@@ -46,15 +43,13 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       edgePressListener: () => {},
       useSimpleRegionForBlack: true,
       useBackgroundOffsetStroke: false,
-      backgroundOffsetDistance: 0.3,
-      verticesVisibleProperty: verticesVisibleProperty,
-      redXsVisibleProperty: redXsVisibleProperty,
-      whiteDottedVisibleProperty: whiteDottedVisibleProperty
+      backgroundOffsetDistance: 0.3
     }, providedOptions );
 
     const faceContainer = new Node();
-    const vertexContainer = new Node();
     const edgeContainer = new Node();
+    const vertexContainer = new Node();
+    const simpleRegionContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
       if ( state.getWeirdEdges().length ) {
@@ -78,7 +73,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, options ) );
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
     } );
 
     puzzle.board.edges.forEach( edge => {
@@ -86,22 +81,24 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     } );
 
     if ( options?.useSimpleRegionForBlack ) {
-      edgeContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty ) );
+      simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty ) );
     }
 
     super( combineOptions<BasicPuzzleNodeOptions>( {
       children: [
         backgroundNode,
         faceContainer,
+        edgeContainer,
         vertexContainer,
-        edgeContainer
+        simpleRegionContainer
       ]
     }, options ) );
 
     this.disposeEmitter.addListener( () => {
       faceContainer.children.forEach( child => child.dispose() );
-      vertexContainer.children.forEach( child => child.dispose() );
       edgeContainer.children.forEach( child => child.dispose() );
+      vertexContainer.children.forEach( child => child.dispose() );
+      simpleRegionContainer.children.forEach( child => child.dispose() );
       isSolvedProperty.dispose();
     } );
   }
