@@ -16,6 +16,7 @@ import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
+import { workaroundResolveStep } from './util/sleep.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -125,6 +126,9 @@ window.visualViewport && window.visualViewport.addEventListener( 'resize', resiz
 resize();
 
 display.updateOnRequestAnimationFrame( dt => {
+  // Work around iOS Safari... just not really calling setTimeout. Fun times. Hook into the animation frame if it hasn't yet.
+  workaroundResolveStep();
+
   if ( resizePending ) {
     resize();
   }

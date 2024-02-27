@@ -60,7 +60,9 @@ export const generateFaceAdditive = async (
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for ( const face of faceOrder ) {
 
+      console.log( 'going to sleep' );
       interruptedProperty && await interruptableSleep( 0, interruptedProperty );
+      console.log( 'finished sleep, generating next!' );
 
       // Don't allow the "fully full" state, e.g. 4 in square.
       let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
