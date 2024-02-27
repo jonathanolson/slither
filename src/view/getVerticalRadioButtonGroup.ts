@@ -6,12 +6,14 @@ import { optionize } from 'phet-lib/phet-core';
 
 export const getVerticalRadioButtonGroup = <T>( label: string, property: Property<T>, items: AquaRadioButtonGroupItem<T>[], providedOptions?: VBoxOptions ) => {
 
-  const radioButtonGroup = new VerticalAquaRadioButtonGroup( property, items );
+  const radioButtonGroup = new VerticalAquaRadioButtonGroup( property, items, {
+    spacing: 8
+  } );
 
   const options = optionize<VBoxOptions, unknown>()( {
     stretch: true,
     align: 'left',
-    spacing: 8,
+    spacing: 10,
     children: [
       new Text( label, {
         font: uiHeaderFont,
