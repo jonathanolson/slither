@@ -327,11 +327,12 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
+    - Green "how many left" number?
+    - or... "how many left" / "how many white"
   - PROGRESS on puzzle generation (will look cool)
   - Face coloring will help visualization of solving
   - Tether to phone for debugging code generation failures
-  - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
-    - Could even show ... e.g. 4/7?
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Board builder (separate buildable entry point)

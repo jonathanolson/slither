@@ -1,9 +1,9 @@
 import { Node, Path } from 'phet-lib/scenery';
 import { TVertex } from '../../model/board/core/TVertex.ts';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import EdgeState from '../../model/data/edge/EdgeState.ts';
-import { TVertexStyle, vertexColorProperty, vertexStyleProperty, verticesVisibleProperty } from '../Theme.ts';
+import { smallVertexProperty, vertexColorProperty, vertexStyleProperty, verticesVisibleProperty } from '../Theme.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { Shape } from 'phet-lib/kite';
@@ -31,19 +31,23 @@ export class VertexNode extends Node {
     } );
     this.addChild( path );
 
-    const vertexStyleListener = ( style: TVertexStyle ) => {
+    const multilink = Multilink.multilink( [
+      vertexStyleProperty,
+      smallVertexProperty
+    ], ( style, isSmall ) => {
+      const radius = isSmall ? 0.03 : 0.05;
+
       if ( style === 'round' ) {
-        path.shape = Shape.circle( 0.05 );
+        path.shape = Shape.circle( radius );
       }
       else if ( style === 'square' ) {
-        path.shape = Shape.rect( -0.05, -0.05, 0.1, 0.1 );
+        path.shape = Shape.rect( -radius, -radius, 2 * radius, 2 * radius );
       }
       else {
         assertEnabled() && assert( false, `unhandled vertex style: ${style}` );
       }
-    };
-    vertexStyleProperty.link( vertexStyleListener );
-    this.disposeEmitter.addListener( () => vertexStyleProperty.unlink( vertexStyleListener ) );
+    } );
+    this.disposeEmitter.addListener( () => multilink.dispose() );
 
     // Apply effects when solved
     const isSolvedListener = ( isSolved: boolean ) => {

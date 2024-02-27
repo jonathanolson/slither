@@ -102,7 +102,7 @@ export class EdgeNode extends Node {
 
     const redLineStyleListener = ( style: TRedLineStyle ) => {
       // TODO: adjust shortening
-      const redLineProportion = 0.5;
+      const redLineProportion = 0.35;
 
       if ( style === 'middle' ) {
         redLine.shape = new Shape().moveToPoint(

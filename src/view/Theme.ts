@@ -89,7 +89,7 @@ export const darkTheme = {
   playAreaBackgroundColorProperty: new PaintColorProperty( '#333' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( '#222' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#777' ),
-  vertexColorProperty: new PaintColorProperty( '#888' ),
+  vertexColorProperty: new PaintColorProperty( '#777' ),
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#aaa' ),
   redLineColorProperty: new PaintColorProperty( '#444' ),
@@ -287,3 +287,4 @@ export const redLineStyles = [ 'full', 'gap', 'middle' ] as const;
 export type TRedLineStyle = typeof redLineStyles[ number ];
 export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'middle' );
 
+export const smallVertexProperty = new LocalStorageBooleanProperty( 'smallVertexProperty', true );
