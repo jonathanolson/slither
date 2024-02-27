@@ -1,5 +1,5 @@
 import { Bounds2, Dimension2, Range, Vector2 } from 'phet-lib/dot';
-import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox, VSeparator } from 'phet-lib/scenery';
+import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TState } from '../model/data/core/TState.ts';
@@ -7,7 +7,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, popupHeaderFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
+import { blackLineColorProperty, playAreaBackgroundColorProperty, popupFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
@@ -76,7 +76,7 @@ export const getPeriodicTilingGenerator = (
         range: new Range( 2, 50 )
       },
       squareRegion: {
-        label: 'Square Region',
+        label: 'Square',
         type: 'boolean'
       }
     },
@@ -421,7 +421,7 @@ export class GenerateNode extends HBox {
     // TODO: should we remember the user's last selection?
     const polygonGeneratorProperty = new Property<PolygonGenerator>( polygonGenerators[ 0 ] );
 
-    const polygonGeneratorButtonGroup = getVerticalRadioButtonGroup( 'Generators', polygonGeneratorProperty, polygonGenerators.map( generator => {
+    const polygonGeneratorButtonGroup = getVerticalRadioButtonGroup( 'Patterns', polygonGeneratorProperty, polygonGenerators.map( generator => {
       return {
         value: generator,
         createNode: () => new Text( generator.name, {
@@ -438,25 +438,22 @@ export class GenerateNode extends HBox {
       justify: 'top'
     } );
 
-    const propertiesControlsContainer = new VBox( {
+    const generateButtonContainer = new HBox( {
       spacing: 10,
-      align: 'left'
+      align: 'center',
+      layoutOptions: {
+        grow: 0,
+      },
+      grow: 1
     } );
 
-    const propertiesBox = new VBox( {
-      spacing: 20,
+    const propertiesControlsContainer = new HBox( {
+      spacing: 10,
+      align: 'center',
+      justify: 'spaceEvenly',
       layoutOptions: {
-        align: 'top',
         grow: 0
-      },
-      justify: 'top',
-      children: [
-        new Text( 'Properties', {
-          font: popupHeaderFont,
-          fill: uiForegroundColorProperty
-        } ),
-        propertiesControlsContainer
-      ]
+      }
     } );
 
     const previewForeground = new Node( {
@@ -485,6 +482,7 @@ export class GenerateNode extends HBox {
 
     polygonGeneratorProperty.link( generator => {
       propertiesControlsContainer.children.forEach( child => child.dispose() );
+      generateButtonContainer.children.forEach( child => child.dispose() );
 
       const parameters: Record<string, any> = {};
 
@@ -510,6 +508,10 @@ export class GenerateNode extends HBox {
               labelTagName: 'label',
               keyboardStep: 1,
               labelContent: parameter.label
+            },
+            arrowButtonOptions: {
+              touchAreaXDilation: 5,
+              touchAreaYDilation: 25,
             },
             numberDisplayOptions: {
               decimalPlaces: 0
@@ -587,7 +589,7 @@ export class GenerateNode extends HBox {
         buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
       };
 
-      propertiesControlsContainer.addChild( new TextPushButton( 'Generate', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+      generateButtonContainer.addChild( new TextPushButton( 'Generate', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
         layoutOptions: {
           align: 'center'
         },
@@ -633,9 +635,18 @@ export class GenerateNode extends HBox {
       stretch: true,
       children: [
         polygonGeneratorButtonGroup,
-        new VSeparator(),
-        propertiesBox,
-        previewRectangle
+        new VBox( {
+          spacing: 10,
+          stretch: true,
+          layoutOptions: {
+            grow: 1
+          },
+          children: [
+            generateButtonContainer,
+            previewRectangle,
+            propertiesControlsContainer,
+          ]
+        } ),
       ]
     }, providedOptions );
 

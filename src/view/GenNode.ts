@@ -1,6 +1,6 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2, dotRandom } from 'phet-lib/dot';
-import { HBox, Node, VBox } from 'phet-lib/scenery';
+import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
@@ -12,6 +12,7 @@ import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { GenerateNode } from './GenerateNode.ts';
+import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 
 export type GenNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -38,6 +39,20 @@ export class GenNode extends PopupNode {
       align: 'left',
       stretch: true,
       children: [
+        new Node( {
+          children: [
+            new GenerateNode( glassPane, {
+              loadPuzzle: puzzle => {
+                this.hide();
+
+                options.loadPuzzle( puzzle );
+              },
+              preferredWidth: 700,
+              preferredHeight: 300 // TODO: change this once we have... more generators?
+            } ),
+          ]
+        } ),
+        new HSeparator(),
         new HBox( {
           spacing: 15,
           grow: 1,
@@ -80,14 +95,15 @@ export class GenNode extends PopupNode {
                 input.click();
               }
             } ) ),
-            new TextPushButton( 'Simple', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+            new TextPushButton( 'Debug Square', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
               listener: () => {
                 this.hide();
 
                 options.loadPuzzle( BasicSquarePuzzle.loadFromSimpleString(
               '10x18 .3.1....1..032....0......3.1....02.3...02....3.1...........2011.01..01.......3...2302..........1102...3.......22..03.0322...........3.2....13...2.30....2.2......1....103..2....1.3.'
                 ) );
-              }
+              },
+              visibleProperty: advancedSettingsVisibleProperty
             } ) ),
             new TextPushButton( '40x30 random', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
               listener: () => {
@@ -161,21 +177,9 @@ export class GenNode extends PopupNode {
                     '40x30 33.3...3.22232.2...23...1.31122.3...3.22..1.231..3.2..2..2.22.2..1..0.2..122.2...3.2...3..1.1....0.12.2....1.2..2...2.1..122.3123.1.2.3123....2213.1.2.2221.112.3..2.1.2112..1.21.1312.10.3..1230.2.2..2.1.221..2.1.1.0.2......2.1.1.2.2..032.2.111..2.2....13..2..31..3..21....3.2..121...3.2..32.2.....1....1.....3.11..2.3...30.102.2..2.211.21311213.111.1..2.120.12.33..2.2.3.2................2.3.1.2..22....22012.12.23.3.332222.2.13.23.01101....22..2.2....2..1...12...2..3....0.0..32.....012.21.2..3.2.3211.1.2..3.11.333....3.02.......1.32.2......3.32.2.......33.31.1.31..2..21..1.2.22.1.1..13..2..22.2.22.1.10..1..23..2.3.13.3.1..23..0..13.3.11.12.......2.03.1......1.32.3.......12.3....222.01.1..2.2.1200.3.1..1.22.323.....11..2.1....3..3...31...1..3....1.2..12....02232.32.22.2.222202.2.23.32.31311....12..0.1.2.2................2.2.2.3..12.31.112.1..3.222.21102221.211.3..2.223.12...3.1..32.1.....1....1.....2.23..3.2...012..1.1....21..3..22..2..31....1.0..112.1.110..2.1.3.1.1......1.2.1.3.1..000.1.3..1.1.2221..3.02.1222.12.2..0323.2.2..3.233.1111.3.3.1121....3132.2.1.0203.313..1.1...2..1.2....0.22.1....2.2..3...2.2...3.132..3.2..1..2.13.2..3..2.2..310.1..22.1...2.22202.3...32...1.32321.1...3.33'
                   ] )
                 ) );
-              }
-            } ) )
-          ]
-        } ),
-        new Node( {
-          children: [
-            new GenerateNode( glassPane, {
-              loadPuzzle: puzzle => {
-                this.hide();
-
-                options.loadPuzzle( puzzle );
               },
-              preferredWidth: 800,
-              preferredHeight: 300 // TODO: change this once we have... more generators?
-            } ),
+              visibleProperty: advancedSettingsVisibleProperty
+            } ) )
           ]
         } )
       ]
