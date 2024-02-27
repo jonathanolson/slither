@@ -327,14 +327,8 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
-  - Only put setting in localStorage if... IT IS NOT THE DEFAULT!!!!!!!
-  - Coloring!!!
+  - Face coloring will help visualization of solving
   - Tether to phone for debugging code generation failures
-  - Lazy initialization of all of the tiling data?
-    - Each tiling can be instantiated
-    - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
-  - USE TILING + BOARD EDITOR TOOL TO CREATE TILINGS - add/remove candidate faces!!! 
-  - Carousel.... for the tilings? 
   - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
     - Could even show ... e.g. 4/7?
   - Improve "line segment ending" and vertex shapes! Give options
@@ -497,6 +491,9 @@
     - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
     - Tick marks on sliders?
     - Consistent preview stroke size (prescale?)
+  - Lazy initialization of all of the tiling data?
+    - Each tiling can be instantiated
+    - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?

@@ -12,7 +12,17 @@ export class LocalStorageProperty<T> extends Property<T> {
 
     this.link( value => {
       const serialization = options.serialize( value );
-      if ( localStorage.getItem( key ) !== serialization ) {
+
+      const isDefaultValue = value === options.deserialize( null );
+
+      const storedValue = localStorage.getItem( key );
+
+      if ( isDefaultValue ) {
+        if ( storedValue !== null ) {
+          localStorage.removeItem( key );
+        }
+      }
+      else if ( storedValue !== serialization ) {
         localStorage.setItem( key, options.serialize( value ) );
       }
     } );

@@ -93,9 +93,9 @@ export const darkTheme = {
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#aaa' ),
   redLineColorProperty: new PaintColorProperty( '#444' ),
-  whiteLineColorProperty: new PaintColorProperty( '#444' ),
+  whiteLineColorProperty: new PaintColorProperty( '#555' ),
   faceValueColorProperty: new PaintColorProperty( '#ccc' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( '#888' ),
+  faceValueCompletedColorProperty: new PaintColorProperty( '#555' ),
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
   edgeWeirdColorProperty: new PaintColorProperty( '#888' ),
   uiForegroundProperty: new PaintColorProperty( '#ccc' ),
@@ -285,5 +285,5 @@ export const vertexStyleProperty = new LocalStorageStringProperty<TVertexStyle>(
 
 export const redLineStyles = [ 'full', 'gap', 'middle' ] as const;
 export type TRedLineStyle = typeof redLineStyles[ number ];
-export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'gap' );
+export const redLineStyleProperty = new LocalStorageStringProperty<TRedLineStyle>( 'redLineStyleProperty', 'middle' );
 

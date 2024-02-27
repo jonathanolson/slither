@@ -41,7 +41,7 @@ export class EdgeNode extends Node {
 
     // TODO: We will want to display the actual CHAIN instead of just the link?
 
-    const halfSize = 0.07;
+    const halfSize = 0.06;
     const xShape = new Shape()
       .moveTo( -halfSize, -halfSize )
       .lineTo( halfSize, halfSize )
@@ -58,7 +58,7 @@ export class EdgeNode extends Node {
 
     const x = new Path( xShape, {
       stroke: xColorProperty,
-      lineWidth: 0.03,
+      lineWidth: 0.02,
       center: centerPoint,
       visibleProperty: xVisibleProperty
     } );
@@ -77,7 +77,7 @@ export class EdgeNode extends Node {
     this.disposeEmitter.addListener( () => whiteVisibleProperty.dispose() );
 
     const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
-      lineWidth: 0.03,
+      lineWidth: 0.02,
       stroke: whiteLineColorProperty,
       // lineDash: [ 0.05, 0.05 ],
       visibleProperty: whiteVisibleProperty
