@@ -21,10 +21,10 @@ import _ from '../../../workarounds/_.ts';
 // 19, 25, 26, 28, 31
 
 // http://localhost/tactile-js/demo/interactivedemo.html
-console.log( 'U', EdgeShape.U );
-console.log( 'S', EdgeShape.S );
-console.log( 'I', EdgeShape.I );
-console.log( 'J', EdgeShape.J );
+// console.log( 'U', EdgeShape.U );
+// console.log( 'S', EdgeShape.S );
+// console.log( 'I', EdgeShape.I );
+// console.log( 'J', EdgeShape.J );
 
 export class PolygonalBoard extends BaseBoard<TStructure> implements TBoard {
   public constructor(
