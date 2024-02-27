@@ -2,9 +2,6 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2, dotRandom } from 'phet-lib/dot';
 import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
-import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { uiFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { combineOptions } from 'phet-lib/phet-core';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import scanURL from '../scan/scanURL.ts';
@@ -13,6 +10,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { GenerateNode } from './GenerateNode.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
 
 export type GenNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -24,16 +22,6 @@ export class GenNode extends PopupNode {
     public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>,
     options: GenNodeOptions
   ) {
-
-    const commonButtonOptions = {
-      textFill: uiButtonForegroundProperty,
-      baseColor: uiButtonBaseColorProperty,
-      xMargin: 5,
-      yMargin: 5,
-      font: uiFont,
-      buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-    };
-
     super( new VBox( {
       spacing: 20,
       align: 'left',
@@ -57,7 +45,7 @@ export class GenNode extends PopupNode {
           spacing: 15,
           grow: 1,
           children: [
-            new TextPushButton( 'Load String', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+            new UITextPushButton( 'Load String', {
               listener: () => {
                 this.hide();
 
@@ -68,8 +56,8 @@ export class GenNode extends PopupNode {
                   options.loadPuzzle( BasicSquarePuzzle.loadDeprecatedScalaString( string ) );
                 }
               }
-            } ) ),
-            new TextPushButton( 'Load Image', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+            } ),
+            new UITextPushButton( 'Load Image', {
               listener: () => {
                 this.hide();
 
@@ -94,8 +82,8 @@ export class GenNode extends PopupNode {
                 };
                 input.click();
               }
-            } ) ),
-            new TextPushButton( 'Debug Square', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+            } ),
+            new UITextPushButton( 'Debug Square', {
               listener: () => {
                 this.hide();
 
@@ -104,8 +92,8 @@ export class GenNode extends PopupNode {
                 ) );
               },
               visibleProperty: advancedSettingsVisibleProperty
-            } ) ),
-            new TextPushButton( '40x30 random', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+            } ),
+            new UITextPushButton( '40x30 random', {
               listener: () => {
                 this.hide();
 
@@ -179,7 +167,7 @@ export class GenNode extends PopupNode {
                 ) );
               },
               visibleProperty: advancedSettingsVisibleProperty
-            } ) )
+            } )
           ]
         } )
       ]

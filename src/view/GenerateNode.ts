@@ -7,17 +7,17 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, uiFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
-import { combineOptions, optionize } from 'phet-lib/phet-core';
+import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, uiFont, uiForegroundColorProperty } from './Theme.ts';
+import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
-import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, penrose10, penrose11, penrose13, penrose14, penrose20, penrose6, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -609,17 +609,7 @@ export class GenerateNode extends HBox {
         }
       }
 
-      // TODO: factor out with the panels/etc.
-      const commonButtonOptions = {
-        textFill: uiButtonForegroundProperty,
-        baseColor: uiButtonBaseColorProperty,
-        xMargin: 5,
-        yMargin: 5,
-        font: uiFont,
-        buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-      };
-
-      generateButtonContainer.addChild( new TextPushButton( 'Generate', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+      generateButtonContainer.addChild( new UITextPushButton( 'Generate', {
         font: generateButtonFont,
         layoutOptions: {
           align: 'center'
@@ -631,7 +621,7 @@ export class GenerateNode extends HBox {
 
           options.loadPuzzle( BasicPuzzle.generateHard( board ) );
         }
-      } ) ) );
+      } ) );
     } );
 
     const previewRectangle = new Rectangle( {

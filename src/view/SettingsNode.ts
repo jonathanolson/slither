@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, popupHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -23,7 +23,7 @@ export class SettingsNode extends PopupNode {
       spacing: 8,
       children: [
         new Text( 'Solve After Every Move', {
-          font: popupHeaderFont,
+          font: uiHeaderFont,
           fill: uiForegroundColorProperty
         } ),
         new UITextCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
@@ -73,7 +73,7 @@ export class SettingsNode extends PopupNode {
       spacing: 8,
       children: [
         new Text( 'Puzzle Display', {
-          font: popupHeaderFont,
+          font: uiHeaderFont,
           fill: uiForegroundColorProperty
         } ),
         new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),

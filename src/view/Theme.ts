@@ -245,7 +245,7 @@ export const uiFont = new Font( {
   size: 16
 } );
 
-export const popupHeaderFont = new Font( {
+export const uiHeaderFont = new Font( {
   family: 'sans-serif',
   size: 16,
   weight: 'bold'

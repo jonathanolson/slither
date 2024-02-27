@@ -2,9 +2,6 @@ import { BooleanProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
-import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { uiFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { combineOptions } from 'phet-lib/phet-core';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { puzzleToCompressedString, TPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -13,6 +10,7 @@ import { UITextCheckbox } from './UITextCheckbox.ts';
 import { copyToClipboard } from '../util/copyToClipboard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
 
 export class ShareNode extends PopupNode {
 
@@ -24,15 +22,6 @@ export class ShareNode extends PopupNode {
     public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>
   ) {
 
-    const commonButtonOptions = {
-      textFill: uiButtonForegroundProperty,
-      baseColor: uiButtonBaseColorProperty,
-      xMargin: 5,
-      yMargin: 5,
-      font: uiFont,
-      buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-    };
-
     const includeStateProperty = new BooleanProperty( false );
 
     super( new VBox( {
@@ -40,7 +29,7 @@ export class ShareNode extends PopupNode {
       align: 'left',
       stretch: true,
       children: [
-        new TextPushButton( 'Copy URL', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
+        new UITextPushButton( 'Copy URL', {
           listener: () => {
             if ( this.puzzle ) {
               const baseURL = location.protocol + '//' + location.host + location.pathname;
@@ -57,7 +46,7 @@ export class ShareNode extends PopupNode {
               // TODO: replace button with "copied" text?
             }
           }
-        } ) ),
+        } ),
         new UITextCheckbox( 'Include edge state', includeStateProperty )
       ]
     } ), glassPane, layoutBoundsProperty );
