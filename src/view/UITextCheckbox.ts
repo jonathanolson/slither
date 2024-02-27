@@ -1,7 +1,7 @@
 import { Property } from 'phet-lib/axon';
 import { Checkbox, CheckboxOptions } from 'phet-lib/sun';
 import { Text } from 'phet-lib/scenery';
-import { popupFont, uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
+import { uiFont, uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 
@@ -31,7 +31,7 @@ export class UITextCheckbox extends Checkbox {
     }
 
     super( property, new Text( label, {
-      font: popupFont,
+      font: uiFont,
       fill: uiForegroundColorProperty
     } ), options );
   }

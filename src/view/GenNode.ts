@@ -3,7 +3,7 @@ import { Bounds2, dotRandom } from 'phet-lib/dot';
 import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { popupFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
+import { uiFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
@@ -30,7 +30,7 @@ export class GenNode extends PopupNode {
       baseColor: uiButtonBaseColorProperty,
       xMargin: 5,
       yMargin: 5,
-      font: popupFont,
+      font: uiFont,
       buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
     };
 

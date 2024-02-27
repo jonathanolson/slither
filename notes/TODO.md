@@ -327,6 +327,7 @@
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Current code TODOs
+  - PROGRESS on puzzle generation (will look cool)
   - Face coloring will help visualization of solving
   - Tether to phone for debugging code generation failures
   - DEFINITELY an option for "show the remaining number"!!!! (useful for.... the large-numbered ones)
@@ -337,12 +338,7 @@
     - Get tiling, and DRAG over faces to include them
     - Rotation
     - Click-and-drag-create vertices and connections?
-    - Puzzle builder mode (use generator, etc/) 
-  - Tiling:
-    - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
-      - Either "within grid", "by centermost vertex", "by centermost face"
-    - Show "preview" of the tiling type
-    - --- or just import from image, and we can get it close enough?
+    - Puzzle builder mode (use generator, etc/)
   - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
     - Face coloring can override this later?
   - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
@@ -437,7 +433,6 @@
       - OR WILL APPLY IT AS ONE THING ---- we might want each
     - Share/export button
       - Puzzle text (faces, faces/edges, in different formats)
-      - URL (eventually)
       - Image (hey... can we use Alpenglow for the high-quality bits?)
     - Mark/save (for user "exploration")
       - Show "history display" so the forward/backward/ undo/redo/etc. make sense, ESPECIALLY once we have mark 
@@ -485,15 +480,20 @@
     - String formats?
   - [DEFER] Save full PuzzleModel state (serialize actions and stack)
   - Board Generation:
+    - Save the "generation" options last available options?
     - ABILITY TO DELETE FACES --- just click on them, and they disappear?
       - Have a polygonsProperty?
       - Allow saving boards
     - Add in rotation for tilings/others? integer prop, 0-360 (because people are used to degrees?)
     - Tick marks on sliders?
     - Consistent preview stroke size (prescale?)
+    - Instead of our current "radius cutoff", perhaps find a central vertex or face, and measure "adjacency distance" from it!!!
+      - Either "within grid", "by centermost vertex", "by centermost face"
   - Lazy initialization of all of the tiling data?
     - Each tiling can be instantiated
     - Each tiling can just be used to either (a) create all of its polygons, or (b) create polygons to fill bounds
+
+
 
 - Concepts
   - "ethereal/fake/ghost" edges/faces/vertices for iterators?

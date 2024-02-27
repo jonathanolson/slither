@@ -2,11 +2,12 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupFont, popupHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, popupHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -58,7 +59,7 @@ export class SettingsNode extends PopupNode {
         return {
           value: theme,
           createNode: () => new Text( theme.name, {
-            font: popupFont,
+            font: uiFont,
             fill: uiForegroundColorProperty
           } ),
           a11yName: theme.name
@@ -91,7 +92,7 @@ export class SettingsNode extends PopupNode {
                 return {
                   value: join,
                   createNode: () => new Text( join, {
-                    font: popupFont,
+                    font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
                   a11yName: join
@@ -105,7 +106,7 @@ export class SettingsNode extends PopupNode {
                 return {
                   value: cap,
                   createNode: () => new Text( cap, {
-                    font: popupFont,
+                    font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
                   a11yName: cap
@@ -119,7 +120,7 @@ export class SettingsNode extends PopupNode {
                 return {
                   value: vertexStyle,
                   createNode: () => new Text( vertexStyle, {
-                    font: popupFont,
+                    font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
                   a11yName: vertexStyle
@@ -133,7 +134,7 @@ export class SettingsNode extends PopupNode {
                 return {
                   value: redLineStyle,
                   createNode: () => new Text( redLineStyle, {
-                    font: popupFont,
+                    font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
                   a11yName: redLineStyle
@@ -141,6 +142,13 @@ export class SettingsNode extends PopupNode {
               } )
             )
           ]
+        } ),
+        new UITextPushButton( 'Reload to Defaults', {
+          listener: () => {
+            localStorage.clear();
+
+            window.location.reload();
+          }
         } )
       ]
     } );

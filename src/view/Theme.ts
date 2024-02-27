@@ -69,7 +69,7 @@ export const lightTheme = {
   xColorProperty: new PaintColorProperty( '#f00' ),
   blackLineColorProperty: new PaintColorProperty( '#000' ),
   redLineColorProperty: new PaintColorProperty( '#aaa' ),
-  whiteLineColorProperty: new PaintColorProperty( '#888' ),
+  whiteLineColorProperty: new PaintColorProperty( '#999' ),
   faceValueColorProperty: new PaintColorProperty( '#000' ),
   faceValueCompletedColorProperty: new PaintColorProperty( '#aaa' ),
   faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
@@ -240,7 +240,7 @@ export const controlBarFont = new Font( {
   size: 12
 } );
 
-export const popupFont = new Font( {
+export const uiFont = new Font( {
   family: 'sans-serif',
   size: 16
 } );
@@ -261,10 +261,10 @@ export const generateButtonFont = new Font( {
   size: 25
 } );
 
-export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', true );
+export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', false );
 export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
-export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', true );
+export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', false );
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
 
 export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;

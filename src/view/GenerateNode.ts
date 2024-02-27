@@ -7,7 +7,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, popupFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
+import { blackLineColorProperty, generateButtonFont, playAreaBackgroundColorProperty, uiFont, puzzleBackgroundColorProperty, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty, uiForegroundColorProperty } from './Theme.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import NumberControl from './to-port/SunNumberControl.ts';
@@ -451,7 +451,7 @@ export class GenerateNode extends HBox {
       return {
         value: generator,
         createNode: () => new Text( generator.name, {
-          font: popupFont,
+          font: uiFont,
           fill: uiForegroundColorProperty
         } ),
         a11yName: generator.name
@@ -530,7 +530,7 @@ export class GenerateNode extends HBox {
           propertiesControlsContainer.addChild( new NumberControl( parameter.label, property, parameter.range, {
             layoutFunction: NumberControl.createLayoutFunction4(),
             titleNodeOptions: {
-              font: popupFont,
+              font: uiFont,
               fill: uiForegroundColorProperty
             },
             sliderOptions : {
@@ -559,7 +559,7 @@ export class GenerateNode extends HBox {
           propertiesControlsContainer.addChild( new NumberControl( parameter.label, property, parameter.range, {
             layoutFunction: NumberControl.createLayoutFunction4(),
             titleNodeOptions: {
-              font: popupFont,
+              font: uiFont,
               fill: uiForegroundColorProperty
             },
             sliderOptions : {
@@ -597,7 +597,7 @@ export class GenerateNode extends HBox {
             return {
               value: choice.value,
               createNode: () => new Text( choice.label, {
-                font: popupFont,
+                font: uiFont,
                 fill: uiForegroundColorProperty
               } ),
               a11yName: choice.label
@@ -615,7 +615,7 @@ export class GenerateNode extends HBox {
         baseColor: uiButtonBaseColorProperty,
         xMargin: 5,
         yMargin: 5,
-        font: popupFont,
+        font: uiFont,
         buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
       };
 
