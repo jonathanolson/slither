@@ -16,7 +16,6 @@ import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
-import { tilingTest } from './model/board/core/TiledBoard.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -147,5 +146,3 @@ document.addEventListener( 'keydown', event => {
     }
   }
 } );
-
-tilingTest();
