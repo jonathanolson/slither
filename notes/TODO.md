@@ -4,6 +4,10 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - Look up things under puzzling.stackexchange.com?
+  - (OMG face-coloring (hue OR value) will make it look so much cooler)
+    - slight light/dark will look really nice (for inside/outside)... colors for others?
+      - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
   - TStructure cleanup
     - Remove TStructure, don't need it for square
     - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
@@ -242,11 +246,54 @@
   - Note "draw interior of large region in background color" to filter out
 
 - COLOR SHIFTING (for maintaining good color separation)
+  - Per-edge region view
+    - SimpleRegionView
+      - Transfers edge nodes between regions!!
+      - Has a (stepped) target hue as a whole
+      - Has a collection of edge nodes
+      - Has a collection of edges
+      - Has an ordered list of half-edges (helpful)
+      - Has an (ordered) array of "hue points" - connect them with the edge points.
+      - !!!!!!
+      -   convert to complex numbers, compute mean there, convert to polar again
+      -   see https://rosettacode.org/wiki/Averages/Mean_angle, is atan2( 1/N * sum(sin(x)), 1/N * sum(cos(x)) )
+      - !!!!!!
+      - MEASURE DISTANCE STATICALLY - estimate if far (e.g. bounding box?) - if bounding box close then give a better approximation
+        - FOR ANY GIVEN SET, just figure out what its "N closest regions" are
+          - Consider making this "N closest for any", so some regions might have "more"? (reflexive satisfied)
+        - ... if things have long regions of "close"...?
+          - Mark a distance to all reasonable faces (within M hops of an edge), should be a quick scan
+            - Each region has subset<face, distance> (to a threshold).
+            - Find the intersection set of faces, and compute something with the "distance"
+            - IF NONE, we use the bounding box setup (and it will be treated as "far" distance, with less (but slight) pressure).
+              - OR JUST IGNORE IT?
+              - IGNORE THOSE FAR THINGS, and rely maybe on the "global" distribution for these
+        - Oscillation should effectively have "no" effect (be careful about orientation switches)
+    - RegionEdgeNode: - pool
+      - Node with a Path (shape gets mutated) - fill 
+        - Slightly over-step to avoid conflation (thanks SVG)
+      - edge / startPoint / endPoint 
+      - startColorProperty: Property<string> <-- linked to gradient, BUT could also link to an "average" for the fill color
+      - endColorProperty: Property<string>
+      - startHue: number -- or unit Vector2 for polar/complex representation
+      - endHue: number -- or unit Vector2 for polar/complex representation
+      - startNextPoint: Vector2 | null - for handling shape
+      - endNextPoint: Vector2 | null - for handling shape
+    - RegionView:
+      - hue: number
+      - halfEdges: HalfEdge[] (ordered)
+      - regionEdgeNodes: RegionEdgeNode[] (ordered, but complicated)
+      - hueArray: number[] (E+1) -- or unit Vector2 for polar/complex representation
+        - NOTE: magnitude can be the number of edges, no?
+    - Edge nodes (poolable?) --- pool yes
+      - Per step "goes to target color faster" if one point is closer to target and other is further (creates the pulse)
   - PLAN:
     - FIRST check performance with single-edge setups (gradient and no gradient)
       - OOO the no-gradient approach could look neat
     - Start with organic
   - Edges AND Faces animate (shift) hue to maintain good separation
+    - FACES::: could actually shift to have "shade" variation?
+      - Imagine a subtle shift!!
   - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
   - Color Model - defines target/current color for each region (can swap whatever of these)
     - Per-change computation (then animated to)
@@ -271,6 +318,8 @@
         - Ideal "distance" in hue space? 
         - Hue pressure is CIRCULAR
       - Face hues are... different? similar? from the edge hues
+    - When we "spawn" a completely new region (no edges from before)... pick the colors nicely based on the metrics?
+      - Could check points around hue curve to see?
   - Region Model - takes the Color Model, and can animate either:
     - Full region color <---- START WITH THIS
     - Subregions same color (until they join)
