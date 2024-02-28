@@ -275,15 +275,15 @@
       - edge / startPoint / endPoint 
       - startColorProperty: Property<string> <-- linked to gradient, BUT could also link to an "average" for the fill color
       - endColorProperty: Property<string>
-      - startHue: number -- or unit Vector2 for polar/complex representation
-      - endHue: number -- or unit Vector2 for polar/complex representation
+      - startHue: Vector2 (polar)
+      - endHue: Vector2 (polar)
       - startNextPoint: Vector2 | null - for handling shape
       - endNextPoint: Vector2 | null - for handling shape
     - RegionView:
-      - hue: number
+      - hue: Vector2 (polar)
       - halfEdges: HalfEdge[] (ordered)
       - regionEdgeNodes: RegionEdgeNode[] (ordered, but complicated)
-      - hueArray: number[] (E+1) -- or unit Vector2 for polar/complex representation
+      - hueArray: Vector2[] (E+1) -- or unit Vector2 for polar/complex representation
         - NOTE: magnitude can be the number of edges, no?
     - Edge nodes (poolable?) --- pool yes
       - Per step "goes to target color faster" if one point is closer to target and other is further (creates the pulse)
