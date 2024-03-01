@@ -241,7 +241,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     validateBoard( this );
   }
 
-  public simplify(): void {
+  private clearSatisfiedFaces(): void {
     this.faces.forEach( face => {
 
       const faceValue = this.faceValueMap.get( face );
@@ -268,6 +268,10 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     } );
   }
 
+  public simplify(): void {
+    this.clearSatisfiedFaces();
+  }
+
   // TODO: getCompleteState / getPuzzle / etc.
 
   public layout(): void {
@@ -289,8 +293,26 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         }
       } ) ),
       ...this.faces.flatMap( face => {
-        // TODO cross-face connections
-        return [];
+        const subElements: any[] = [];
+        // For all non-adjacent vertices
+        for ( let i = 0; i < face.edges.length; i++ ) {
+          for ( let j = i + 2; j < face.edges.length; j++ ) {
+            if ( i === 0 && j === face.edges.length - 1 ) {
+              continue;
+            }
+
+            const start = face.edges[ i ].end;
+            const end = face.edges[ j ].end;
+            subElements.push( {
+              data: {
+                id: `${vertexTagMap.get( start )}-${vertexTagMap.get( end )}`,
+                source: vertexTagMap.get( start ),
+                target: vertexTagMap.get( end )
+              }
+            } );
+          }
+        }
+        return subElements;
       } )
     ];
 
