@@ -4,6 +4,7 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - TOPOLOGICAL SIMPLIFICATION!!!! 
   - Look up things under puzzling.stackexchange.com?
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
     - slight light/dark will look really nice (for inside/outside)... colors for others?

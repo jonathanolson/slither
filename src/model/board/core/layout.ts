@@ -23,114 +23,88 @@ cytoscape.use( coseBilkent );
 
 export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData>> ) => {
 
-  const board = puzzle.board;
-  const state = puzzle.stateProperty.value;
-
-  const nonRedEdges = board.edges.filter( edge => state.getEdgeState( edge ) !== EdgeState.RED );
-  const nonRedVertices = board.vertices.filter( vertex => nonRedEdges.some( edge => edge.vertices.includes( vertex ) ) );
-
-  const vertexTagMap: Map<TVertex, string> = new Map();
-  const edgeTagMap: Map<TEdge, string> = new Map();
-
-  nonRedVertices.forEach( ( vertex, index ) => {
-    vertexTagMap.set( vertex, `v${index}` );
-  } );
-  nonRedEdges.forEach( ( edge, index ) => {
-    edgeTagMap.set( edge, `e${index}` );
-  } );
-
-  const elements = [
-    ...nonRedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
-    ...nonRedEdges.map( edge => ( {
-      data: {
-        id: edgeTagMap.get( edge ),
-        source: vertexTagMap.get( edge.vertices[ 0 ] ),
-        target: vertexTagMap.get( edge.vertices[ 1 ] )
-      }
-    } ) )
-  ];
-
-  const cy = cytoscape( {
-    headless: true,
-    elements: elements
-  } );
-
-  // cy.add( element );
-  // cy.destroy() <--- to clean up memory!
-
-  const vertexScale = 20;
-  nonRedVertices.forEach( vertex => {
-    cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
-  } );
-
-  // TODO: reproducible!!!
-  // {
-  //   const layout = cy.layout( {
-  //     name: 'circle',
-  //     radius: 50,
-  //     animate: false
-  //   } );
-  //   layout.run();
-  // }
-
-  // coseCytoLayout( cy, { randomize: false } );
-  // coseBilkentCytoLayout( cy, { randomize: true } );
-  fcoseCytoLayout( cy, { randomize: false } );
-
   const debugNode = new Node( {
     scale: 0.4
   } );
-
-  nonRedVertices.forEach( vertex => {
-    const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
-    console.log( vertex, position );
-
-    debugNode.addChild( new Circle( 4, {
-      x: position.x,
-      y: position.y,
-      fill: 'black'
-    } ) );
-  } );
-  // const nodeIDs = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
-  // nodeIDs.forEach( id => {
-  //   const position = cy.getElementById( id ).position();
-  //   console.log( id, position );
-  //
-  //   debugNode.addChild( new Circle( 4, {
-  //     x: position.x,
-  //     y: position.y,
-  //     fill: 'black'
-  //   } ) );
-  // } );
-  nonRedEdges.forEach( edge => {
-    const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
-    const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
-    console.log( edge, source, target );
-
-    const start = new Vector2( source.x, source.y );
-    const end = new Vector2( target.x, target.y );
-
-    debugNode.addChild( new Line( start, end, {
-      stroke: 'black'
-    } ) );
-  } );
-  // const nodePairs = [ [ 'a', 'b' ], [ 'c', 'd' ], [ 'e', 'f' ], [ 'a', 'c' ], [ 'b', 'e' ] ];
-  // nodePairs.forEach( pair => {
-  //   const source = cy.getElementById( pair[ 0 ] ).position();
-  //   const target = cy.getElementById( pair[ 1 ] ).position();
-  //   console.log( pair, source, target );
-  //
-  //   const start = new Vector2( source.x, source.y );
-  //   const end = new Vector2( target.x, target.y );
-  //
-  //   debugNode.addChild( new Line( start, end, {
-  //     stroke: 'black'
-  //   } ) );
-  // } );
-
-  debugNode.left = 10;
-  debugNode.top = 100;
   scene.addChild( debugNode );
+
+
+  puzzle.stateProperty.link( state => {
+    debugNode.children = [];
+
+    const board = puzzle.board;
+    // const state = puzzle.stateProperty.value;
+
+    // TODO: is cytoscape trying to keep the same edge distances?
+
+    const nonRedEdges = board.edges.filter( edge => state.getEdgeState( edge ) !== EdgeState.RED );
+    const nonRedVertices = board.vertices.filter( vertex => nonRedEdges.some( edge => edge.vertices.includes( vertex ) ) );
+
+    const vertexTagMap: Map<TVertex, string> = new Map();
+    const edgeTagMap: Map<TEdge, string> = new Map();
+
+    nonRedVertices.forEach( ( vertex, index ) => {
+      vertexTagMap.set( vertex, `v${index}` );
+    } );
+    nonRedEdges.forEach( ( edge, index ) => {
+      edgeTagMap.set( edge, `e${index}` );
+    } );
+
+    const elements = [
+      ...nonRedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
+      ...nonRedEdges.map( edge => ( {
+        data: {
+          id: edgeTagMap.get( edge ),
+          source: vertexTagMap.get( edge.vertices[ 0 ] ),
+          target: vertexTagMap.get( edge.vertices[ 1 ] )
+        }
+      } ) )
+    ];
+
+    const cy = cytoscape( {
+      headless: true,
+      elements: elements
+    } );
+
+    // cy.add( element );
+    // cy.destroy() <--- to clean up memory!
+
+    const vertexScale = 20;
+    nonRedVertices.forEach( vertex => {
+      cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
+    } );
+
+    // coseCytoLayout( cy, { randomize: false } );
+    // coseBilkentCytoLayout( cy, { randomize: true } );
+    fcoseCytoLayout( cy, { randomize: false } );
+
+    nonRedVertices.forEach( vertex => {
+      const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
+      console.log( vertex, position );
+
+      debugNode.addChild( new Circle( 4, {
+        x: position.x,
+        y: position.y,
+        fill: 'black'
+      } ) );
+    } );
+
+    nonRedEdges.forEach( edge => {
+      const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
+      const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
+      console.log( edge, source, target );
+
+      const start = new Vector2( source.x, source.y );
+      const end = new Vector2( target.x, target.y );
+
+      debugNode.addChild( new Line( start, end, {
+        stroke: 'black'
+      } ) );
+    } );
+
+    debugNode.left = 10;
+    debugNode.top = 100;
+  } );
 
   /*
   for (var i = 0; i < 10; i++) {
