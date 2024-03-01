@@ -1,4 +1,4 @@
-import { Circle, Line, Node, TColor, Text } from 'phet-lib/scenery';
+import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
 // @ts-expect-error
 import cytoscape from '../../../lib/cytoscape/cytoscape.js';
 // @ts-expect-error
@@ -7,7 +7,7 @@ import fcose from '../../../lib/cytoscape/cytoscape-fcose/src/index.js';
 import coseBilkent from '../../../lib/cytoscape/cytoscape-cose-bilkent/index.js';
 import { scene } from '../../../view/scene.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { merge } from 'phet-lib/phet-core';
+import { arrayRemove, merge } from 'phet-lib/phet-core';
 import { TState } from '../../data/core/TState.ts';
 import { TFaceData } from '../../data/face/TFaceData.ts';
 import { TEdgeData } from '../../data/edge/TEdgeData.ts';
@@ -30,6 +30,12 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import FaceState from '../../data/face/FaceState.ts';
 import { validateBoard } from './validateBoard.ts';
 import { getCentroid } from './createBoardDescriptor.ts';
+// @ts-expect-error
+import { formatHex, toGamut } from 'culori';
+import { Shape } from 'phet-lib/kite';
+
+// TODO: factor this color stuff out
+const toRGB = toGamut( 'rgb' );
 
 cytoscape.use( fcose );
 cytoscape.use( coseBilkent );
@@ -241,10 +247,22 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     validateBoard( this );
   }
 
+  private getFaceValue( face: LayoutFace ): FaceState {
+    const state = this.faceValueMap.get( face );
+    assertEnabled() && assert( state !== undefined );
+    return state!;
+  }
+
+  private getEdgeState( edge: LayoutEdge ): EdgeState {
+    const state = this.edgeStateMap.get( edge );
+    assertEnabled() && assert( state !== undefined );
+    return state!;
+  }
+
   private clearSatisfiedFaces(): void {
     this.faces.forEach( face => {
 
-      const faceValue = this.faceValueMap.get( face );
+      const faceValue = this.getFaceValue( face );
       if ( faceValue === null ) {
         return;
       }
@@ -253,7 +271,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       let blackCount = 0;
 
       face.edges.forEach( edge => {
-        const edgeState = this.edgeStateMap.get( edge );
+        const edgeState = this.getEdgeState( edge );
         if ( edgeState === EdgeState.WHITE ) {
           whiteCount++;
         }
@@ -268,8 +286,232 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     } );
   }
 
+  private removeDeadRedEdges(): void {
+    const deadEdges = new Set( this.edges.filter( edge => {
+      return this.getEdgeState( edge ) === EdgeState.RED && edge.faces.every( face => {
+        return face === null || this.getFaceValue( face ) === null;
+      } );
+    } ) );
+    const deadVertices = new Set( this.vertices.filter( vertex => {
+      return vertex.edges.every( edge => deadEdges.has( edge ) );
+    } ) );
+    const deadFaces = new Set( this.faces.filter( face => {
+      return face.edges.some( edge => deadEdges.has( edge ) );
+    } ) );
+
+    // Handle adjacently-grouped faces in groups
+    const deadFacesRemaining = new Set( deadFaces );
+    while ( deadFacesRemaining.size ) {
+      const initialFace: LayoutFace = deadFacesRemaining.values().next().value;
+      deadFacesRemaining.delete( initialFace );
+
+      const faces = [ initialFace ];
+      let isExterior = false;
+      for ( let i = 0; i < faces.length; i++ ) {
+        const face = faces[ i ];
+        face.edges.forEach( edge => {
+          if ( deadEdges.has( edge ) ) {
+            [ edge.forwardFace, edge.reversedFace ].forEach( adjacentFace => {
+              if ( adjacentFace === face ) {
+                return;
+              }
+              if ( adjacentFace === null ) {
+                isExterior = true;
+                return;
+              }
+              if ( deadFacesRemaining.has( adjacentFace ) ) {
+                deadFacesRemaining.delete( adjacentFace );
+                faces.push( adjacentFace );
+              }
+            } );
+          }
+        } );
+      }
+
+      const allHalfEdges = new Set( faces.flatMap( face => face.halfEdges ) );
+      const allReversedHalfEdges = new Set( faces.flatMap( face => face.halfEdges.map( halfEdge => halfEdge.reversed ) ) );
+      const boundaryHalfEdgesSet = new Set( [ ...allHalfEdges ].filter( halfEdge => !allReversedHalfEdges.has( halfEdge ) ) );
+
+      const getNextHalfEdge = ( halfEdge: LayoutHalfEdge ) => {
+        let nextHalfEdge = halfEdge.next;
+        while ( nextHalfEdge !== halfEdge && !boundaryHalfEdgesSet.has( nextHalfEdge ) ) {
+          nextHalfEdge = nextHalfEdge.reversed.next;
+        }
+        assertEnabled() && assert( nextHalfEdge !== halfEdge );
+        return nextHalfEdge;
+      };
+
+      const initialHalfEdge: LayoutHalfEdge = boundaryHalfEdgesSet.values().next().value;
+      const boundaryHalfEdges: LayoutHalfEdge[] = [ initialHalfEdge ];
+      let currentHalfEdge = getNextHalfEdge( initialHalfEdge );
+      while ( currentHalfEdge !== initialHalfEdge ) {
+        boundaryHalfEdges.push( currentHalfEdge );
+        currentHalfEdge = getNextHalfEdge( currentHalfEdge );
+      }
+      assertEnabled() && assert( boundaryHalfEdges.length === boundaryHalfEdgesSet.size );
+
+      // TODO: do we actually FIX up the boundaries? maybe recompute them later
+
+      console.log( 'group', `faces: ${faces.length}`, isExterior ? 'exterior' : 'interior', `boundary length: ${boundaryHalfEdges.length}` );
+
+      if ( isExterior ) {
+        // Find half edges that "start" the boundary (previous edge is removed)
+        const startingHalfEdges: LayoutHalfEdge[] = [];
+        const boundarySegments: LayoutHalfEdge[][] = [];
+        for ( let i = 0; i < boundaryHalfEdges.length; i++ ) {
+          const halfEdge = boundaryHalfEdges[ i ];
+          const previousHalfEdge = boundaryHalfEdges[ ( i + boundaryHalfEdges.length - 1 ) % boundaryHalfEdges.length ];
+
+          assertEnabled() && assert( previousHalfEdge.end === halfEdge.start );
+
+          if ( !deadEdges.has( halfEdge.edge ) && deadEdges.has( previousHalfEdge.edge ) ) {
+            startingHalfEdges.push( halfEdge );
+
+            const boundarySegment = [ halfEdge ];
+            for ( let j = i + 1;; j++ ) {
+              const nextHalfEdge = boundaryHalfEdges[ j % boundaryHalfEdges.length ];
+
+              if ( deadEdges.has( nextHalfEdge.edge ) ) {
+                break;
+              }
+              else {
+                boundarySegment.push( nextHalfEdge );
+              }
+            }
+            boundarySegments.push( boundarySegment );
+
+            boundarySegment.forEach( halfEdge => {
+              const oldFace = halfEdge.face;
+              if ( oldFace ) {
+                halfEdge.face = null;
+
+                const edge = halfEdge.edge;
+                if ( halfEdge.isReversed ) {
+                  edge.reversedFace = null;
+                }
+                else {
+                  edge.forwardFace = null;
+                }
+
+                arrayRemove( edge.faces, oldFace );
+              }
+            } );
+
+            const startingHalfEdge = halfEdge;
+            const endingHalfEdge = boundarySegment[ boundarySegment.length - 1 ];
+
+            let previousHalfEdge = startingHalfEdge.previous;
+            while ( boundaryHalfEdgesSet.has( previousHalfEdge ) ) {
+              previousHalfEdge = previousHalfEdge.reversed.previous;
+            }
+
+            let nextHalfEdge = endingHalfEdge.next;
+            while ( boundaryHalfEdgesSet.has( nextHalfEdge ) ) {
+              nextHalfEdge = nextHalfEdge.reversed.next;
+            }
+
+            const moreHalfEdges: LayoutHalfEdge[] = [
+              previousHalfEdge,
+              ...boundarySegment,
+              nextHalfEdge
+            ];
+
+            for ( let i = 0; i < moreHalfEdges.length - 1; i++ ) {
+              const halfEdge = moreHalfEdges[ i ];
+              const nextHalfEdge = moreHalfEdges[ i + 1 ];
+
+              halfEdge.next = nextHalfEdge;
+              nextHalfEdge.previous = halfEdge;
+            }
+
+            console.log( 'segment', boundarySegment.length );
+          }
+        }
+      }
+      else {
+        const vertices = boundaryHalfEdges.map( halfEdge => halfEdge.start );
+        const edges = boundaryHalfEdges.map( halfEdge => halfEdge.edge );
+
+        // TODO: can we do a better job with logical coordinates here? incremental?
+        const newFace = new LayoutFace( getCentroid( vertices.map( vertex => vertex.viewCoordinates ) ), getCentroid( vertices.map( vertex => vertex.logicalCoordinates ) ) );
+        this.faces.push( newFace );
+
+        newFace.halfEdges = boundaryHalfEdges;
+        newFace.edges = edges;
+        newFace.vertices = vertices;
+
+        // Rewrite the boundary half-edges
+        for ( let i = 0; i < boundaryHalfEdges.length; i++ ) {
+          const halfEdge = boundaryHalfEdges[ i ];
+          const nextHalfEdge = boundaryHalfEdges[ ( i + 1 ) % boundaryHalfEdges.length ];
+
+          const oldFace = halfEdge.face;
+
+          halfEdge.face = newFace;
+          halfEdge.next = nextHalfEdge;
+          nextHalfEdge.previous = halfEdge;
+
+          const edge = halfEdge.edge;
+          if ( halfEdge.isReversed ) {
+            edge.reversedFace = newFace;
+          }
+          else {
+            edge.forwardFace = newFace;
+          }
+
+          assertEnabled() && assert( oldFace );
+          if ( oldFace ) {
+            arrayRemove( edge.faces, oldFace );
+          }
+          edge.faces.push( newFace );
+        }
+      }
+    }
+
+    /*
+    const deadEdges = new Set( this.edges.filter( edge => {
+      return this.getEdgeState( edge ) === EdgeState.RED && edge.faces.every( face => {
+        return face === null || this.getFaceValue( face ) === null;
+      } );
+    } ) );
+    const deadVertices = new Set( this.vertices.filter( vertex => {
+      return vertex.edges.every( edge => deadEdges.has( edge ) );
+    } ) );
+    const deadFaces = new Set( this.faces.filter( face => {
+      return face.edges.some( edge => deadEdges.has( edge ) );
+    } ) );
+     */
+
+    deadEdges.forEach( deadEdge => {
+      // TODO: have a better way of doing this?
+      arrayRemove( this.edges, deadEdge );
+      arrayRemove( this.halfEdges, deadEdge.forwardHalf );
+      arrayRemove( this.halfEdges, deadEdge.reversedHalf );
+    } );
+
+    deadVertices.forEach( deadVertex => {
+      arrayRemove( this.vertices, deadVertex );
+    } );
+
+    deadFaces.forEach( deadFace => {
+      arrayRemove( this.faces, deadFace );
+    } );
+
+    this.vertices.forEach( vertex => {
+      vertex.edges = vertex.edges.filter( edge => !deadEdges.has( edge ) );
+      vertex.incomingHalfEdges = vertex.incomingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
+      vertex.outgoingHalfEdges = vertex.outgoingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
+      vertex.faces = vertex.incomingHalfEdges.map( halfEdge => halfEdge.face ).filter( face => face !== null ) as LayoutFace[];
+    } );
+
+    // TODO: validate, but give it an option to ignore the boundary bits
+    // TODO: validate existence in our arrays too
+  }
+
   public simplify(): void {
+    console.log( 'simplify' );
     this.clearSatisfiedFaces();
+    this.removeDeadRedEdges();
   }
 
   // TODO: getCompleteState / getPuzzle / etc.
@@ -378,6 +620,18 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       } ) );
     } );
 
+    this.faces.forEach( face => {
+      const backgroundColor = new Color( formatHex( toRGB( {
+        mode: 'okhsl',
+        h: Math.random() * 360,
+        s: 0.7,
+        l: 0.6
+      } ) ) as unknown as string ).withAlpha( 0.5 );
+      debugNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
+        fill: backgroundColor
+      } ) );
+    } );
+
     this.vertices.forEach( vertex => {
       debugNode.addChild( new Circle( 0.1, {
         x: vertex.viewCoordinates.x,
@@ -388,6 +642,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
     this.faces.forEach( face => {
       const faceValue = this.faceValueMap.get( face ) ?? null;
+
       if ( faceValue !== null ) {
         debugNode.addChild( new Text( faceValue, {
           maxWidth: 0.9,
@@ -413,7 +668,7 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const layoutPuzzle = new LayoutPuzzle( board, state );
 
     layoutPuzzle.simplify();
-    layoutPuzzle.layout();
+    // layoutPuzzle.layout();
 
     const debugNode = layoutPuzzle.getDebugNode();
 
