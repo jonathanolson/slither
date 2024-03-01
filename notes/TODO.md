@@ -15,6 +15,8 @@
     - Each result white/black edge maps to a set of white/black edges in the original
     - Each result valued face maps to a single valued face in the original
     - 
+    - Map half-edges nicely, so we can maintain boundaries? hmmm
+    - 
     - TRY the "re-layout" for existing boards?
     - Steps (for simplification to another VALID same-type puzzle? - how to represent red edges - red edges might not map, right?)
       - Get a copy that has everything with Base* types (so we can apply adjustments/mutation?) 

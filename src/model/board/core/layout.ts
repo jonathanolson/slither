@@ -1,4 +1,4 @@
-import { Circle, Line, Node } from 'phet-lib/scenery';
+import { Circle, Line, Node, TColor, Text } from 'phet-lib/scenery';
 // @ts-expect-error
 import cytoscape from '../../../lib/cytoscape/cytoscape.js';
 // @ts-expect-error
@@ -14,69 +14,284 @@ import { TEdgeData } from '../../data/edge/TEdgeData.ts';
 import { TVertex } from './TVertex.ts';
 import { TEdge } from './TEdge.ts';
 import EdgeState from '../../data/edge/EdgeState.ts';
-import { TSimpleRegion, TSimpleRegionData } from '../../data/simple-region/TSimpleRegionData.ts';
+import { TSimpleRegionData } from '../../data/simple-region/TSimpleRegionData.ts';
 import { LocalStorageBooleanProperty } from '../../../util/localStorage.ts';
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import PuzzleModel from '../../puzzle/PuzzleModel.ts';
 import { TBoard } from './TBoard.ts';
+import { BaseHalfEdge } from './BaseHalfEdge.ts';
+import { BaseEdge } from './BaseEdge.ts';
+import { BaseFace } from './BaseFace.ts';
+import { BaseVertex } from './BaseVertex.ts';
+import { THalfEdge } from './THalfEdge.ts';
+import { TFace } from './TFace.ts';
+import { BaseBoard } from './BaseBoard.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import FaceState from '../../data/face/FaceState.ts';
+import { validateBoard } from './validateBoard.ts';
+import { getCentroid } from './createBoardDescriptor.ts';
 
 cytoscape.use( fcose );
 cytoscape.use( coseBilkent );
 
 export const showLayoutTestProperty = new LocalStorageBooleanProperty( 'showLayoutTestProperty', false );
 
-export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null> ) => {
+export type LayoutStructure = {
+  HalfEdge: LayoutHalfEdge;
+  Edge: LayoutEdge;
+  Face: LayoutFace;
+  Vertex: LayoutVertex;
+};
 
-  const layoutTestNode = new Node( {
-    scale: 0.4
-  } );
-  scene.addChild( layoutTestNode );
+export class LayoutHalfEdge extends BaseHalfEdge<LayoutStructure> {
+  public constructor(
+    layoutStart: LayoutVertex,
+    layoutEnd: LayoutVertex,
+    isReversed: boolean
+  ) {
+    super( layoutStart, layoutEnd, isReversed );
+  }
+}
 
-  const showPuzzleLayout = ( board: TBoard, state: TState<TFaceData & TEdgeData & TSimpleRegionData> ) => {
-    // const state = puzzle.stateProperty.value;
+export class LayoutEdge extends BaseEdge<LayoutStructure> {
 
-    // TODO: is cytoscape trying to keep the same edge distances?
+  public originalEdges: Set<TEdge> = new Set();
 
-    // simplified (somewhat?)
-    const whiteEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
-    const simpleRegions = state.getSimpleRegions();
-    const simplifiedVertices = board.vertices.filter( vertex => {
-      return whiteEdges.some( edge => edge.vertices.includes( vertex ) ) ||
-             simpleRegions.some( simpleRegion => simpleRegion.a === vertex || simpleRegion.b === vertex );
+  public constructor(
+    layoutStart: LayoutVertex,
+    layoutEnd: LayoutVertex
+  ) {
+    super( layoutStart, layoutEnd );
+  }
+}
+
+export class LayoutFace extends BaseFace<LayoutStructure> {
+
+  public originalFace: TFace | null = null;
+
+  public constructor(
+    logicalCoordinates: Vector2,
+    viewCoordinates: Vector2
+  ) {
+    super( logicalCoordinates.copy(), viewCoordinates.copy() );
+  }
+}
+
+export class LayoutVertex extends BaseVertex<LayoutStructure> {
+  public constructor(
+    logicalCoordinates: Vector2,
+    viewCoordinates: Vector2
+  ) {
+    super( logicalCoordinates.copy(), viewCoordinates.copy() );
+  }
+}
+
+export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
+
+  public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();
+  public faceValueMap: Map<LayoutFace, FaceState> = new Map();
+
+  public constructor(
+    public readonly originalBoard: TBoard,
+    public readonly originalState: TState<TFaceData & TEdgeData>
+  ) {
+    const vertexMap = new Map<TVertex, LayoutVertex>();
+    const faceMap = new Map<TFace, LayoutFace>();
+    const edgeMap = new Map<TEdge, LayoutEdge>();
+    const halfEdgeMap = new Map<THalfEdge, LayoutHalfEdge>();
+
+    const vertexReverseMap = new Map<LayoutVertex, TVertex>();
+    const faceReverseMap = new Map<LayoutFace, TFace>();
+    const edgeReverseMap = new Map<LayoutEdge, TEdge>();
+    const halfEdgeReverseMap = new Map<LayoutHalfEdge, THalfEdge>();
+
+    const getLayoutVertex = ( vertex: TVertex ) => {
+      const layoutVertex = vertexMap.get( vertex );
+      assertEnabled() && assert( layoutVertex );
+      return layoutVertex!;
+    };
+    const getLayoutFace = ( face: TFace ) => {
+      const layoutFace = faceMap.get( face );
+      assertEnabled() && assert( layoutFace );
+      return layoutFace!;
+    };
+    const getLayoutEdge = ( edge: TEdge ) => {
+      const layoutEdge = edgeMap.get( edge );
+      assertEnabled() && assert( layoutEdge );
+      return layoutEdge!;
+    };
+    const getLayoutHalfEdge = ( halfEdge: THalfEdge ) => {
+      const layoutHalfEdge = halfEdgeMap.get( halfEdge );
+      assertEnabled() && assert( layoutHalfEdge );
+      return layoutHalfEdge!;
+    };
+
+    const getOriginalVertex = ( layoutVertex: LayoutVertex ) => {
+      const vertex = vertexReverseMap.get( layoutVertex );
+      assertEnabled() && assert( vertex );
+      return vertex!;
+    };
+    const getOriginalFace = ( layoutFace: LayoutFace ) => {
+      const face = faceReverseMap.get( layoutFace );
+      assertEnabled() && assert( face );
+      return face!;
+    };
+    const getOriginalEdge = ( layoutEdge: LayoutEdge ) => {
+      const edge = edgeReverseMap.get( layoutEdge );
+      assertEnabled() && assert( edge );
+      return edge!;
+    };
+    const getOriginalHalfEdge = ( layoutHalfEdge: LayoutHalfEdge ) => {
+      const halfEdge = halfEdgeReverseMap.get( layoutHalfEdge );
+      assertEnabled() && assert( halfEdge );
+      return halfEdge!;
+    };
+
+    const vertices = originalBoard.vertices.map( vertex => {
+      const layoutVertex = new LayoutVertex( vertex.logicalCoordinates, vertex.viewCoordinates );
+      vertexMap.set( vertex, layoutVertex );
+      vertexReverseMap.set( layoutVertex, vertex );
+      return layoutVertex;
+    } );
+    const faces = originalBoard.faces.map( face => {
+      const layoutFace = new LayoutFace( face.logicalCoordinates, face.viewCoordinates );
+      faceMap.set( face, layoutFace );
+      faceReverseMap.set( layoutFace, face );
+      layoutFace.originalFace = face;
+      return layoutFace;
+    } );
+    const halfEdges: LayoutHalfEdge[] = [];
+    const edges = originalBoard.edges.map( edge => {
+      const start = vertexMap.get( edge.start )!;
+      const end = vertexMap.get( edge.end )!;
+      assertEnabled() && assert( start );
+      assertEnabled() && assert( end );
+
+      const layoutEdge = new LayoutEdge( start, end );
+      layoutEdge.originalEdges.add( edge );
+      edgeMap.set( edge, layoutEdge );
+      edgeReverseMap.set( layoutEdge, edge );
+
+      const forwardHalf = new LayoutHalfEdge( start, end, false );
+      halfEdgeMap.set( edge.forwardHalf, forwardHalf );
+      halfEdgeReverseMap.set( forwardHalf, edge.forwardHalf );
+      halfEdges.push( forwardHalf );
+
+      const reversedHalf = new LayoutHalfEdge( end, start, true );
+      halfEdgeMap.set( edge.reversedHalf, reversedHalf );
+      halfEdgeReverseMap.set( reversedHalf, edge.reversedHalf );
+      halfEdges.push( reversedHalf );
+
+      return layoutEdge;
     } );
 
-    const vertexTagMap: Map<TVertex, string> = new Map();
-    const edgeTagMap: Map<TEdge, string> = new Map();
-    const regionTagMap: Map<TSimpleRegion, string> = new Map();
+    vertices.forEach( layoutVertex => {
+      const vertex = getOriginalVertex( layoutVertex );
+      layoutVertex.incomingHalfEdges = vertex.incomingHalfEdges.map( getLayoutHalfEdge );
+      layoutVertex.outgoingHalfEdges = vertex.outgoingHalfEdges.map( getLayoutHalfEdge );
+      layoutVertex.edges = vertex.edges.map( getLayoutEdge );
+      layoutVertex.faces = vertex.faces.map( getLayoutFace );
+    } );
 
-    simplifiedVertices.forEach( ( vertex, index ) => {
+    faces.forEach( layoutFace => {
+      const face = getOriginalFace( layoutFace );
+      layoutFace.halfEdges = face.halfEdges.map( getLayoutHalfEdge );
+      layoutFace.edges = face.edges.map( getLayoutEdge );
+      layoutFace.vertices = face.vertices.map( getLayoutVertex );
+    } );
+
+    edges.forEach( layoutEdge => {
+      const edge = getOriginalEdge( layoutEdge );
+      layoutEdge.forwardHalf = getLayoutHalfEdge( edge.forwardHalf );
+      layoutEdge.reversedHalf = getLayoutHalfEdge( edge.reversedHalf );
+      layoutEdge.forwardFace = edge.forwardFace ? getLayoutFace( edge.forwardFace ) : null;
+      layoutEdge.reversedFace = edge.reversedFace ? getLayoutFace( edge.reversedFace ) : null;
+      layoutEdge.vertices = edge.vertices.map( getLayoutVertex );
+      layoutEdge.faces = edge.faces.map( getLayoutFace );
+    } );
+
+    halfEdges.forEach( layoutHalfEdge => {
+      const halfEdge = getOriginalHalfEdge( layoutHalfEdge );
+      layoutHalfEdge.edge = getLayoutEdge( halfEdge.edge );
+      layoutHalfEdge.reversed = getLayoutHalfEdge( halfEdge.reversed );
+      layoutHalfEdge.next = getLayoutHalfEdge( halfEdge.next );
+      layoutHalfEdge.previous = getLayoutHalfEdge( halfEdge.previous );
+      layoutHalfEdge.face = halfEdge.face ? getLayoutFace( halfEdge.face ) : null;
+    } );
+
+    super( {
+      edges: edges,
+      vertices: vertices,
+      faces: faces,
+      halfEdges: halfEdges,
+
+      // TODO: how to handle? We can just recompute after everything?
+      outerBoundary: originalBoard.outerBoundary.map( getLayoutHalfEdge ),
+      innerBoundaries: originalBoard.innerBoundaries.map( innerBoundary => innerBoundary.map( getLayoutHalfEdge ) )
+    } );
+
+    edges.forEach( layoutEdge => {
+      this.edgeStateMap.set( layoutEdge, originalState.getEdgeState( getOriginalEdge( layoutEdge ) ) );
+    } );
+
+    faces.forEach( layoutFace => {
+      this.faceValueMap.set( layoutFace, originalState.getFaceState( getOriginalFace( layoutFace ) ) );
+    } );
+
+    validateBoard( this );
+  }
+
+  public simplify(): void {
+    this.faces.forEach( face => {
+
+      const faceValue = this.faceValueMap.get( face );
+      if ( faceValue === null ) {
+        return;
+      }
+
+      let whiteCount = 0;
+      let blackCount = 0;
+
+      face.edges.forEach( edge => {
+        const edgeState = this.edgeStateMap.get( edge );
+        if ( edgeState === EdgeState.WHITE ) {
+          whiteCount++;
+        }
+        else if ( edgeState === EdgeState.BLACK ) {
+          blackCount++;
+        }
+      } );
+
+      if ( whiteCount === 0 && blackCount === faceValue ) {
+        this.faceValueMap.set( face, null );
+      }
+    } );
+  }
+
+  // TODO: getCompleteState / getPuzzle / etc.
+
+  public layout(): void {
+    const vertexTagMap: Map<LayoutVertex, string> = new Map();
+
+    this.vertices.forEach( ( vertex, index ) => {
       vertexTagMap.set( vertex, `v${index}` );
-    } );
-    whiteEdges.forEach( ( edge, index ) => {
-      edgeTagMap.set( edge, `e${index}` );
-    } );
-    simpleRegions.forEach( ( simpleRegion, index ) => {
-      regionTagMap.set( simpleRegion, `r${index}` );
     } );
 
     // NOTE: could use cy.add, e.g.
     // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
     const elements = [
-      ...simplifiedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
-      ...whiteEdges.map( edge => ( {
+      ...this.vertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
+      ...this.edges.map( edge => ( {
         data: {
-          id: edgeTagMap.get( edge ),
+          id: `${vertexTagMap.get( edge.start )}-${vertexTagMap.get( edge.end )}`,
           source: vertexTagMap.get( edge.vertices[ 0 ] ),
           target: vertexTagMap.get( edge.vertices[ 1 ] )
         }
       } ) ),
-      ...simpleRegions.map( simpleRegion => ( {
-        data: {
-          id: regionTagMap.get( simpleRegion ),
-          source: vertexTagMap.get( simpleRegion.a ),
-          target: vertexTagMap.get( simpleRegion.b )
-        }
-      } ) )
+      ...this.faces.flatMap( face => {
+        // TODO cross-face connections
+        return [];
+      } )
     ];
 
     const cy = cytoscape( {
@@ -87,8 +302,8 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     // cy.add( element );
     // cy.destroy() <--- to clean up memory!
 
-    const vertexScale = 20;
-    simplifiedVertices.forEach( vertex => {
+    const vertexScale = 50;
+    this.vertices.forEach( vertex => {
       cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
     } );
 
@@ -99,57 +314,220 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
       nestingFactor: 5.5,
       tile: false
     } );
-    /*
-      nodeRepulsion: node => 4500,
-      // Ideal edge (non nested) length
-      idealEdgeLength: edge => 50,
-      // Divisor to compute edge forces
-      edgeElasticity: edge => 0.45,
-      // Nesting factor (multiplier) to compute ideal edge length for nested edges
-      nestingFactor: 0.1,
-      // Maximum number of iterations to perform - this is a suggested value and might be adjusted by the algorithm as required
-      numIter: 2500,
-      // For enabling tiling
-      tile: true,
-     */
 
-    whiteEdges.forEach( edge => {
-      const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
-      const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
-
-      const start = new Vector2( source.x, source.y );
-      const end = new Vector2( target.x, target.y );
-
-      layoutTestNode.addChild( new Line( start, end, {
-        stroke: 'black'
-      } ) );
-    } );
-
-    simpleRegions.forEach( simpleRegion => {
-      const source = cy.getElementById( vertexTagMap.get( simpleRegion.a ) ).position();
-      const target = cy.getElementById( vertexTagMap.get( simpleRegion.b ) ).position();
-
-      const start = new Vector2( source.x, source.y );
-      const end = new Vector2( target.x, target.y );
-
-      layoutTestNode.addChild( new Line( start, end, {
-        lineWidth: 5,
-        stroke: 'black'
-      } ) );
-    } );
-
-    simplifiedVertices.forEach( vertex => {
+    this.vertices.forEach( vertex => {
       const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
 
-      layoutTestNode.addChild( new Circle( 4, {
-        x: position.x,
-        y: position.y,
+      vertex.viewCoordinates.setXY( position.x / vertexScale, position.y / vertexScale );
+    } );
+
+    this.faces.forEach( face => {
+      face.viewCoordinates.set( getCentroid( face.halfEdges.map( halfEdge => halfEdge.start.viewCoordinates ) ) );
+    } );
+  }
+
+  public getDebugNode(): Node {
+    // TODO: if we are still a planar-embedding, use a PuzzleNode?
+    const debugNode = new Node();
+
+    this.edges.forEach( edge => {
+      const start = edge.start.viewCoordinates;
+      const end = edge.end.viewCoordinates;
+
+      let stroke: TColor;
+      let lineWidth: number;
+      const edgeState = this.edgeStateMap.get( edge );
+      if ( edgeState === EdgeState.WHITE ) {
+        stroke = 'black';
+        lineWidth = 0.02;
+      }
+      else if ( edgeState === EdgeState.BLACK ) {
+        stroke = 'black';
+        lineWidth = 0.1;
+      }
+      else {
+        stroke = 'red';
+        lineWidth = 0.02;
+      }
+
+      debugNode.addChild( new Line( start, end, {
+        stroke: stroke,
+        lineWidth: lineWidth
+      } ) );
+    } );
+
+    this.vertices.forEach( vertex => {
+      debugNode.addChild( new Circle( 0.1, {
+        x: vertex.viewCoordinates.x,
+        y: vertex.viewCoordinates.y,
         fill: 'black'
       } ) );
     } );
 
-    layoutTestNode.left = 10;
-    layoutTestNode.top = 100;
+    this.faces.forEach( face => {
+      const faceValue = this.faceValueMap.get( face ) ?? null;
+      if ( faceValue !== null ) {
+        debugNode.addChild( new Text( faceValue, {
+          maxWidth: 0.9,
+          maxHeight: 0.9,
+          center: face.viewCoordinates,
+        } ) );
+      }
+    } );
+
+    return debugNode;
+  };
+}
+
+export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null> ) => {
+
+  const layoutTestNode = new Node( {
+    scale: 0.4
+  } );
+  scene.addChild( layoutTestNode );
+
+  const showPuzzleLayout = ( board: TBoard, state: TState<TFaceData & TEdgeData & TSimpleRegionData> ) => {
+
+    const layoutPuzzle = new LayoutPuzzle( board, state );
+
+    layoutPuzzle.simplify();
+    layoutPuzzle.layout();
+
+    const debugNode = layoutPuzzle.getDebugNode();
+
+    const size = 600;
+
+    debugNode.scale( Math.min( size / debugNode.width, size / debugNode.height ) );
+
+    debugNode.left = 20;
+    debugNode.top = 130;
+
+    layoutTestNode.children = [ debugNode ];
+    return;
+
+
+
+
+
+
+    //
+    // // const state = puzzle.stateProperty.value;
+    //
+    // // TODO: is cytoscape trying to keep the same edge distances?
+    //
+    // // simplified (somewhat?)
+    // const whiteEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
+    // const simpleRegions = state.getSimpleRegions();
+    // const simplifiedVertices = board.vertices.filter( vertex => {
+    //   return whiteEdges.some( edge => edge.vertices.includes( vertex ) ) ||
+    //          simpleRegions.some( simpleRegion => simpleRegion.a === vertex || simpleRegion.b === vertex );
+    // } );
+    //
+    // const vertexTagMap: Map<TVertex, string> = new Map();
+    // const edgeTagMap: Map<TEdge, string> = new Map();
+    // const regionTagMap: Map<TSimpleRegion, string> = new Map();
+    //
+    // simplifiedVertices.forEach( ( vertex, index ) => {
+    //   vertexTagMap.set( vertex, `v${index}` );
+    // } );
+    // whiteEdges.forEach( ( edge, index ) => {
+    //   edgeTagMap.set( edge, `e${index}` );
+    // } );
+    // simpleRegions.forEach( ( simpleRegion, index ) => {
+    //   regionTagMap.set( simpleRegion, `r${index}` );
+    // } );
+    //
+    // // NOTE: could use cy.add, e.g.
+    // // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
+    // const elements = [
+    //   ...simplifiedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
+    //   ...whiteEdges.map( edge => ( {
+    //     data: {
+    //       id: edgeTagMap.get( edge ),
+    //       source: vertexTagMap.get( edge.vertices[ 0 ] ),
+    //       target: vertexTagMap.get( edge.vertices[ 1 ] )
+    //     }
+    //   } ) ),
+    //   ...simpleRegions.map( simpleRegion => ( {
+    //     data: {
+    //       id: regionTagMap.get( simpleRegion ),
+    //       source: vertexTagMap.get( simpleRegion.a ),
+    //       target: vertexTagMap.get( simpleRegion.b )
+    //     }
+    //   } ) )
+    // ];
+    //
+    // const cy = cytoscape( {
+    //   headless: true,
+    //   elements: elements
+    // } );
+    //
+    // // cy.add( element );
+    // // cy.destroy() <--- to clean up memory!
+    //
+    // const vertexScale = 20;
+    // simplifiedVertices.forEach( vertex => {
+    //   cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
+    // } );
+    //
+    // // coseCytoLayout( cy, { randomize: false } );
+    // // coseBilkentCytoLayout( cy, { randomize: true } );
+    // fcoseCytoLayout( cy, {
+    //   randomize: false,
+    //   nestingFactor: 5.5,
+    //   tile: false
+    // } );
+    // /*
+    //   nodeRepulsion: node => 4500,
+    //   // Ideal edge (non nested) length
+    //   idealEdgeLength: edge => 50,
+    //   // Divisor to compute edge forces
+    //   edgeElasticity: edge => 0.45,
+    //   // Nesting factor (multiplier) to compute ideal edge length for nested edges
+    //   nestingFactor: 0.1,
+    //   // Maximum number of iterations to perform - this is a suggested value and might be adjusted by the algorithm as required
+    //   numIter: 2500,
+    //   // For enabling tiling
+    //   tile: true,
+    //  */
+    //
+    // whiteEdges.forEach( edge => {
+    //   const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
+    //   const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
+    //
+    //   const start = new Vector2( source.x, source.y );
+    //   const end = new Vector2( target.x, target.y );
+    //
+    //   layoutTestNode.addChild( new Line( start, end, {
+    //     stroke: 'black'
+    //   } ) );
+    // } );
+    //
+    // simpleRegions.forEach( simpleRegion => {
+    //   const source = cy.getElementById( vertexTagMap.get( simpleRegion.a ) ).position();
+    //   const target = cy.getElementById( vertexTagMap.get( simpleRegion.b ) ).position();
+    //
+    //   const start = new Vector2( source.x, source.y );
+    //   const end = new Vector2( target.x, target.y );
+    //
+    //   layoutTestNode.addChild( new Line( start, end, {
+    //     lineWidth: 5,
+    //     stroke: 'black'
+    //   } ) );
+    // } );
+    //
+    // simplifiedVertices.forEach( vertex => {
+    //   const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
+    //
+    //   layoutTestNode.addChild( new Circle( 4, {
+    //     x: position.x,
+    //     y: position.y,
+    //     fill: 'black'
+    //   } ) );
+    // } );
+    //
+    // layoutTestNode.left = 10;
+    // layoutTestNode.top = 100;
   };
 
   const puzzleStateListener = () => {
