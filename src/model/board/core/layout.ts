@@ -17,11 +17,12 @@ import { TEdgeData } from '../../data/edge/TEdgeData.ts';
 import { TVertex } from './TVertex.ts';
 import { TEdge } from './TEdge.ts';
 import EdgeState from '../../data/edge/EdgeState.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../../data/simple-region/TSimpleRegionData.ts';
 
 cytoscape.use( fcose );
 cytoscape.use( coseBilkent );
 
-export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData>> ) => {
+export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData & TSimpleRegionData>> ) => {
 
   const debugNode = new Node( {
     scale: 0.4
@@ -37,26 +38,42 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
 
     // TODO: is cytoscape trying to keep the same edge distances?
 
-    const nonRedEdges = board.edges.filter( edge => state.getEdgeState( edge ) !== EdgeState.RED );
-    const nonRedVertices = board.vertices.filter( vertex => nonRedEdges.some( edge => edge.vertices.includes( vertex ) ) );
+    // simplified (somewhat?)
+    const whiteEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
+    const simpleRegions = state.getSimpleRegions();
+    const simplifiedVertices = board.vertices.filter( vertex => {
+      return whiteEdges.some( edge => edge.vertices.includes( vertex ) ) ||
+             simpleRegions.some( simpleRegion => simpleRegion.a === vertex || simpleRegion.b === vertex );
+    } );
 
     const vertexTagMap: Map<TVertex, string> = new Map();
     const edgeTagMap: Map<TEdge, string> = new Map();
+    const regionTagMap: Map<TSimpleRegion, string> = new Map();
 
-    nonRedVertices.forEach( ( vertex, index ) => {
+    simplifiedVertices.forEach( ( vertex, index ) => {
       vertexTagMap.set( vertex, `v${index}` );
     } );
-    nonRedEdges.forEach( ( edge, index ) => {
+    whiteEdges.forEach( ( edge, index ) => {
       edgeTagMap.set( edge, `e${index}` );
+    } );
+    simpleRegions.forEach( ( simpleRegion, index ) => {
+      regionTagMap.set( simpleRegion, `r${index}` );
     } );
 
     const elements = [
-      ...nonRedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
-      ...nonRedEdges.map( edge => ( {
+      ...simplifiedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
+      ...whiteEdges.map( edge => ( {
         data: {
           id: edgeTagMap.get( edge ),
           source: vertexTagMap.get( edge.vertices[ 0 ] ),
           target: vertexTagMap.get( edge.vertices[ 1 ] )
+        }
+      } ) ),
+      ...simpleRegions.map( simpleRegion => ( {
+        data: {
+          id: regionTagMap.get( simpleRegion ),
+          source: vertexTagMap.get( simpleRegion.a ),
+          target: vertexTagMap.get( simpleRegion.b )
         }
       } ) )
     ];
@@ -70,35 +87,63 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
     // cy.destroy() <--- to clean up memory!
 
     const vertexScale = 20;
-    nonRedVertices.forEach( vertex => {
+    simplifiedVertices.forEach( vertex => {
       cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
     } );
 
     // coseCytoLayout( cy, { randomize: false } );
     // coseBilkentCytoLayout( cy, { randomize: true } );
-    fcoseCytoLayout( cy, { randomize: false } );
-
-    nonRedVertices.forEach( vertex => {
-      const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
-      console.log( vertex, position );
-
-      debugNode.addChild( new Circle( 4, {
-        x: position.x,
-        y: position.y,
-        fill: 'black'
-      } ) );
+    fcoseCytoLayout( cy, {
+      randomize: false,
+      nestingFactor: 5.5,
+      tile: false
     } );
+    /*
+      nodeRepulsion: node => 4500,
+      // Ideal edge (non nested) length
+      idealEdgeLength: edge => 50,
+      // Divisor to compute edge forces
+      edgeElasticity: edge => 0.45,
+      // Nesting factor (multiplier) to compute ideal edge length for nested edges
+      nestingFactor: 0.1,
+      // Maximum number of iterations to perform - this is a suggested value and might be adjusted by the algorithm as required
+      numIter: 2500,
+      // For enabling tiling
+      tile: true,
+     */
 
-    nonRedEdges.forEach( edge => {
+    whiteEdges.forEach( edge => {
       const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
       const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
-      console.log( edge, source, target );
 
       const start = new Vector2( source.x, source.y );
       const end = new Vector2( target.x, target.y );
 
       debugNode.addChild( new Line( start, end, {
         stroke: 'black'
+      } ) );
+    } );
+
+    simpleRegions.forEach( simpleRegion => {
+      const source = cy.getElementById( vertexTagMap.get( simpleRegion.a ) ).position();
+      const target = cy.getElementById( vertexTagMap.get( simpleRegion.b ) ).position();
+
+      const start = new Vector2( source.x, source.y );
+      const end = new Vector2( target.x, target.y );
+
+      debugNode.addChild( new Line( start, end, {
+        lineWidth: 5,
+        stroke: 'black'
+      } ) );
+    } );
+
+    simplifiedVertices.forEach( vertex => {
+      const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
+
+      debugNode.addChild( new Circle( 4, {
+        x: position.x,
+        y: position.y,
+        fill: 'black'
       } ) );
     } );
 
