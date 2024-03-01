@@ -14,71 +14,54 @@ import { TStructure } from './TStructure.ts';
 import { TState } from '../../data/core/TState.ts';
 import { TFaceData } from '../../data/face/TFaceData.ts';
 import { TEdgeData } from '../../data/edge/TEdgeData.ts';
+import { TVertex } from './TVertex.ts';
+import { TEdge } from './TEdge.ts';
+import EdgeState from '../../data/edge/EdgeState.ts';
 
 cytoscape.use( fcose );
 cytoscape.use( coseBilkent );
 
-export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData>>) => {
+export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData>> ) => {
+
+  const board = puzzle.board;
+  const state = puzzle.stateProperty.value;
+
+  const nonRedEdges = board.edges.filter( edge => state.getEdgeState( edge ) !== EdgeState.RED );
+  const nonRedVertices = board.vertices.filter( vertex => nonRedEdges.some( edge => edge.vertices.includes( vertex ) ) );
+
+  const vertexTagMap: Map<TVertex, string> = new Map();
+  const edgeTagMap: Map<TEdge, string> = new Map();
+
+  nonRedVertices.forEach( ( vertex, index ) => {
+    vertexTagMap.set( vertex, `v${index}` );
+  } );
+  nonRedEdges.forEach( ( edge, index ) => {
+    edgeTagMap.set( edge, `e${index}` );
+  } );
+
+  const elements = [
+    ...nonRedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
+    ...nonRedEdges.map( edge => ( {
+      data: {
+        id: edgeTagMap.get( edge ),
+        source: vertexTagMap.get( edge.vertices[ 0 ] ),
+        target: vertexTagMap.get( edge.vertices[ 1 ] )
+      }
+    } ) )
+  ];
 
   const cy = cytoscape( {
     headless: true,
-    elements: [
-      // nodes
-      { data: { id: 'a' } },
-      { data: { id: 'b' } },
-      { data: { id: 'c' } },
-      { data: { id: 'd' } },
-      { data: { id: 'e' } },
-      { data: { id: 'f' } },
-      // edges
-      {
-        data: {
-          id: 'ab',
-          source: 'a',
-          target: 'b'
-        }
-      },
-      {
-        data: {
-          id: 'cd',
-          source: 'c',
-          target: 'd'
-        }
-      },
-      {
-        data: {
-          id: 'ef',
-          source: 'e',
-          target: 'f'
-        }
-      },
-      {
-        data: {
-          id: 'ac',
-          source: 'a',
-          target: 'c'
-        }
-      },
-      {
-        data: {
-          id: 'be',
-          source: 'b',
-          target: 'e'
-        }
-      }
-    ]
+    elements: elements
   } );
 
   // cy.add( element );
   // cy.destroy() <--- to clean up memory!
 
-  cy.getElementById( 'a' ).position( { x: 0, y: 0 } );
-  cy.getElementById( 'b' ).position( { x: 50, y: 0 } );
-  cy.getElementById( 'c' ).position( { x: 50, y: 50 } );
-  cy.getElementById( 'd' ).position( { x: 100, y: 50 } );
-  cy.getElementById( 'e' ).position( { x: 100, y: 100 } );
-  cy.getElementById( 'f' ).position( { x: 150, y: 100 } );
-
+  const vertexScale = 20;
+  nonRedVertices.forEach( vertex => {
+    cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
+  } );
 
   // TODO: reproducible!!!
   // {
@@ -90,16 +73,17 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
   //   layout.run();
   // }
 
-  coseCytoLayout( cy, { randomize: false } );
-  coseBilkentCytoLayout( cy, { randomize: true } );
-  fcoseCytoLayout( cy, { randomize: true } );
+  // coseCytoLayout( cy, { randomize: false } );
+  // coseBilkentCytoLayout( cy, { randomize: true } );
+  fcoseCytoLayout( cy, { randomize: false } );
 
-  const debugNode = new Node();
+  const debugNode = new Node( {
+    scale: 0.4
+  } );
 
-  const nodeIDs = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
-  nodeIDs.forEach( id => {
-    const position = cy.getElementById( id ).position();
-    console.log( id, position );
+  nonRedVertices.forEach( vertex => {
+    const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
+    console.log( vertex, position );
 
     debugNode.addChild( new Circle( 4, {
       x: position.x,
@@ -107,11 +91,21 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
       fill: 'black'
     } ) );
   } );
-  const nodePairs = [ [ 'a', 'b' ], [ 'c', 'd' ], [ 'e', 'f' ], [ 'a', 'c' ], [ 'b', 'e' ] ];
-  nodePairs.forEach( pair => {
-    const source = cy.getElementById( pair[ 0 ] ).position();
-    const target = cy.getElementById( pair[ 1 ] ).position();
-    console.log( pair, source, target );
+  // const nodeIDs = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
+  // nodeIDs.forEach( id => {
+  //   const position = cy.getElementById( id ).position();
+  //   console.log( id, position );
+  //
+  //   debugNode.addChild( new Circle( 4, {
+  //     x: position.x,
+  //     y: position.y,
+  //     fill: 'black'
+  //   } ) );
+  // } );
+  nonRedEdges.forEach( edge => {
+    const source = cy.getElementById( vertexTagMap.get( edge.start ) ).position();
+    const target = cy.getElementById( vertexTagMap.get( edge.end ) ).position();
+    console.log( edge, source, target );
 
     const start = new Vector2( source.x, source.y );
     const end = new Vector2( target.x, target.y );
@@ -120,6 +114,19 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
       stroke: 'black'
     } ) );
   } );
+  // const nodePairs = [ [ 'a', 'b' ], [ 'c', 'd' ], [ 'e', 'f' ], [ 'a', 'c' ], [ 'b', 'e' ] ];
+  // nodePairs.forEach( pair => {
+  //   const source = cy.getElementById( pair[ 0 ] ).position();
+  //   const target = cy.getElementById( pair[ 1 ] ).position();
+  //   console.log( pair, source, target );
+  //
+  //   const start = new Vector2( source.x, source.y );
+  //   const end = new Vector2( target.x, target.y );
+  //
+  //   debugNode.addChild( new Line( start, end, {
+  //     stroke: 'black'
+  //   } ) );
+  // } );
 
   debugNode.left = 10;
   debugNode.top = 100;
