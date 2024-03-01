@@ -1,4 +1,3 @@
-
 import { Circle, Line, Node } from 'phet-lib/scenery';
 // @ts-expect-error
 import cytoscape from '../../../lib/cytoscape/cytoscape.js';
@@ -9,8 +8,6 @@ import coseBilkent from '../../../lib/cytoscape/cytoscape-cose-bilkent/index.js'
 import { scene } from '../../../view/scene.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { merge } from 'phet-lib/phet-core';
-import { TPuzzle } from '../../puzzle/TPuzzle.ts';
-import { TStructure } from './TStructure.ts';
 import { TState } from '../../data/core/TState.ts';
 import { TFaceData } from '../../data/face/TFaceData.ts';
 import { TEdgeData } from '../../data/edge/TEdgeData.ts';
@@ -18,22 +15,24 @@ import { TVertex } from './TVertex.ts';
 import { TEdge } from './TEdge.ts';
 import EdgeState from '../../data/edge/EdgeState.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../../data/simple-region/TSimpleRegionData.ts';
+import { LocalStorageBooleanProperty } from '../../../util/localStorage.ts';
+import { TReadOnlyProperty } from 'phet-lib/axon';
+import PuzzleModel from '../../puzzle/PuzzleModel.ts';
+import { TBoard } from './TBoard.ts';
 
 cytoscape.use( fcose );
 cytoscape.use( coseBilkent );
 
-export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdgeData & TSimpleRegionData>> ) => {
+export const showLayoutTestProperty = new LocalStorageBooleanProperty( 'showLayoutTestProperty', false );
 
-  const debugNode = new Node( {
+export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null> ) => {
+
+  const layoutTestNode = new Node( {
     scale: 0.4
   } );
-  scene.addChild( debugNode );
+  scene.addChild( layoutTestNode );
 
-
-  puzzle.stateProperty.link( state => {
-    debugNode.children = [];
-
-    const board = puzzle.board;
+  const showPuzzleLayout = ( board: TBoard, state: TState<TFaceData & TEdgeData & TSimpleRegionData> ) => {
     // const state = puzzle.stateProperty.value;
 
     // TODO: is cytoscape trying to keep the same edge distances?
@@ -60,6 +59,8 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
       regionTagMap.set( simpleRegion, `r${index}` );
     } );
 
+    // NOTE: could use cy.add, e.g.
+    // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
     const elements = [
       ...simplifiedVertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
       ...whiteEdges.map( edge => ( {
@@ -119,7 +120,7 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
       const start = new Vector2( source.x, source.y );
       const end = new Vector2( target.x, target.y );
 
-      debugNode.addChild( new Line( start, end, {
+      layoutTestNode.addChild( new Line( start, end, {
         stroke: 'black'
       } ) );
     } );
@@ -131,7 +132,7 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
       const start = new Vector2( source.x, source.y );
       const end = new Vector2( target.x, target.y );
 
-      debugNode.addChild( new Line( start, end, {
+      layoutTestNode.addChild( new Line( start, end, {
         lineWidth: 5,
         stroke: 'black'
       } ) );
@@ -140,34 +141,36 @@ export const layoutTest = ( puzzle: TPuzzle<TStructure, TState<TFaceData & TEdge
     simplifiedVertices.forEach( vertex => {
       const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
 
-      debugNode.addChild( new Circle( 4, {
+      layoutTestNode.addChild( new Circle( 4, {
         x: position.x,
         y: position.y,
         fill: 'black'
       } ) );
     } );
 
-    debugNode.left = 10;
-    debugNode.top = 100;
+    layoutTestNode.left = 10;
+    layoutTestNode.top = 100;
+  };
+
+  const puzzleStateListener = () => {
+    layoutTestNode.children = [];
+
+    if ( showLayoutTestProperty.value && puzzleModelProperty.value ) {
+      showPuzzleLayout( puzzleModelProperty.value.puzzle.board, puzzleModelProperty.value.puzzle.stateProperty.value );
+    }
+  };
+  puzzleModelProperty.lazyLink( puzzleStateListener );
+  showLayoutTestProperty.lazyLink( puzzleStateListener );
+  puzzleStateListener();
+
+  puzzleModelProperty.link( ( newPuzzleModel, oldPuzzleModel ) => {
+    if ( oldPuzzleModel ) {
+      oldPuzzleModel.puzzle.stateProperty.unlink( puzzleStateListener );
+    }
+    if ( newPuzzleModel ) {
+      newPuzzleModel.puzzle.stateProperty.link( puzzleStateListener );
+    }
   } );
-
-  /*
-  for (var i = 0; i < 10; i++) {
-      cy.add({
-          data: { id: 'node' + i }
-          }
-      );
-      var source = 'node' + i;
-      cy.add({
-          data: {
-              id: 'edge' + i,
-              source: source,
-              target: (i % 2 == 0 ? 'a' : 'b')
-          }
-      });
-  }
-   */
-
 };
 
 /*

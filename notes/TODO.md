@@ -6,6 +6,41 @@
 - Current code TODOs
   - TOPOLOGICAL SIMPLIFICATION!!!!
     - Cytoscape edges don't have to be visible
+    - Make faces with numbers... potentially bigger?
+    - red-black-red transitions can be detached
+    - white-black and black-white transitions CANNOT
+    - 
+    - Just... have the ability to have the alternate view? or side-by-side
+    - 
+    - Each result white/black edge maps to a set of white/black edges in the original
+    - Each result valued face maps to a single valued face in the original
+    - 
+    - TRY the "re-layout" for existing boards?
+    - Steps (for simplification to another VALID same-type puzzle? - how to represent red edges - red edges might not map, right?)
+      - Get a copy that has everything with Base* types (so we can apply adjustments/mutation?) 
+      - Remove "fully satisfied" face values (if over-satisfied, in error state, leave it) -- any white, or any incorrect black, leave it
+      - Vertex w/ 2 black, 0 white:
+        - IF it doesn't have a triangular face on either side WITH a value still (because... omg)
+          - OR if the triangular face has a non-red edge (we would cause a logical collapse) -- don't close the final loop too
+        - New black edge going between the two vertices
+        - Add two (pseudo) vertices on each side of the black edge (have the one on the side stay in the same location)
+          - Add (pseudo) faces on each side
+          - NOTE: If there were NO red edges connecting, DO NOT bother creating the pseudo vertex/face
+            - IF this is the case, connect the single face with the new edge, and increase the face value by 1 (since it will get subtracted later)
+        - Replace each red edge with a black edge going to the relevant pseudo-vertex
+        - Remove the vertex and two black edges
+          - Subtract -1 for every face value that touched one of the black edges
+      - Vertex w/ 2 white, 0 black:
+        - Do something similar to the above (with the triangular constraint), BUT WITH:
+        - IF at least one of the white edges has NO valued faces
+      - Vertex (all red) -- do after steps above (they can be created)
+        - For each triangular face with a number.... (what about when they are adjacent?)
+        - TODO
+      - Edge (red, no faces)
+        - REMOVE IT, combine faces
+    - FOR LAYOUT we'll create "K_n" style edges for each face (extra edges for layout)
+      - Perhaps give "edges" that combine a bunch --- a potentially longer ideal length?
+      - CHECK signed area of each face, to see if we are still a planar embedding
   - Look up things under puzzling.stackexchange.com?
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
     - slight light/dark will look really nice (for inside/outside)... colors for others?

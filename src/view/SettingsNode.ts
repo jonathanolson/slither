@@ -8,6 +8,7 @@ import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { showLayoutTestProperty } from '../model/board/core/layout.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -82,6 +83,9 @@ export class SettingsNode extends PopupNode {
         new UITextCheckbox( 'Vertices Small', smallVertexProperty ),
         new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
         new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
+        new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
+          advanced: true
+        } ),
         new HBox( {
           spacing: 20,
           visibleProperty: advancedSettingsVisibleProperty,

@@ -152,4 +152,4 @@ document.addEventListener( 'keydown', event => {
   }
 } );
 
-layoutTest( puzzleModelProperty.value!.puzzle );
+layoutTest( puzzleModelProperty );
