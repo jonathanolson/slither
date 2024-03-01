@@ -244,7 +244,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       this.faceValueMap.set( layoutFace, originalState.getFaceState( getOriginalFace( layoutFace ) ) );
     } );
 
-    validateBoard( this );
+    assertEnabled() && validateBoard( this );
   }
 
   private getFaceValue( face: LayoutFace ): FaceState {
@@ -468,20 +468,6 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       }
     }
 
-    /*
-    const deadEdges = new Set( this.edges.filter( edge => {
-      return this.getEdgeState( edge ) === EdgeState.RED && edge.faces.every( face => {
-        return face === null || this.getFaceValue( face ) === null;
-      } );
-    } ) );
-    const deadVertices = new Set( this.vertices.filter( vertex => {
-      return vertex.edges.every( edge => deadEdges.has( edge ) );
-    } ) );
-    const deadFaces = new Set( this.faces.filter( face => {
-      return face.edges.some( edge => deadEdges.has( edge ) );
-    } ) );
-     */
-
     deadEdges.forEach( deadEdge => {
       // TODO: have a better way of doing this?
       arrayRemove( this.edges, deadEdge );
@@ -504,6 +490,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       vertex.faces = vertex.incomingHalfEdges.map( halfEdge => halfEdge.face ).filter( face => face !== null ) as LayoutFace[];
     } );
 
+    assertEnabled() && validateBoard( this );
+
     // TODO: validate, but give it an option to ignore the boundary bits
     // TODO: validate existence in our arrays too
   }
@@ -518,43 +506,73 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public layout(): void {
     const vertexTagMap: Map<LayoutVertex, string> = new Map();
+    const vertexReverseTagMap: Map<string, LayoutVertex> = new Map();
 
     this.vertices.forEach( ( vertex, index ) => {
       vertexTagMap.set( vertex, `v${index}` );
+      vertexReverseTagMap.set( `v${index}`, vertex );
     } );
+
+    const idealEdgeLengthMap = new Map<string, number>();
+    const edgeElasticityMap = new Map<string, number>();
+
+    const vertexScale = 50;
 
     // NOTE: could use cy.add, e.g.
     // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
     const elements = [
       ...this.vertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
-      ...this.edges.map( edge => ( {
-        data: {
-          id: `${vertexTagMap.get( edge.start )}-${vertexTagMap.get( edge.end )}`,
-          source: vertexTagMap.get( edge.vertices[ 0 ] ),
-          target: vertexTagMap.get( edge.vertices[ 1 ] )
-        }
-      } ) ),
+      ...this.edges.map( edge => {
+        const edgeId = `${vertexTagMap.get( edge.start )}-${vertexTagMap.get( edge.end )}`;
+        idealEdgeLengthMap.set( edgeId, vertexScale );
+        edgeElasticityMap.set( edgeId, 0.45 );
+
+        return {
+          data: {
+            id: edgeId,
+            source: vertexTagMap.get( edge.vertices[ 0 ] ),
+            target: vertexTagMap.get( edge.vertices[ 1 ] )
+          }
+        };
+      } ),
       ...this.faces.flatMap( face => {
+        const numEdges = face.edges.length;
+
+        const circleCircumference = numEdges * vertexScale;
+        const circleRadius = circleCircumference / ( 2 * Math.PI );
+
         const subElements: any[] = [];
         // For all non-adjacent vertices
-        for ( let i = 0; i < face.edges.length; i++ ) {
-          for ( let j = i + 2; j < face.edges.length; j++ ) {
-            if ( i === 0 && j === face.edges.length - 1 ) {
+        for ( let i = 0; i < numEdges; i++ ) {
+          for ( let j = i + 2; j < numEdges; j++ ) {
+            if ( i === 0 && j === numEdges - 1 ) {
               continue;
             }
 
             const start = face.edges[ i ].end;
             const end = face.edges[ j ].end;
+
+            const edgeId = `${vertexTagMap.get( start )}-${vertexTagMap.get( end )}`;
+
+            const radialA = Vector2.createPolar( circleRadius, i * 2 * Math.PI / numEdges );
+            const radialB = Vector2.createPolar( circleRadius, j * 2 * Math.PI / numEdges );
+            const circleDistance = radialA.distance( radialB );
+
+            idealEdgeLengthMap.set( edgeId, circleDistance );
+            edgeElasticityMap.set( edgeId, 0.001 );
+
             subElements.push( {
               data: {
-                id: `${vertexTagMap.get( start )}-${vertexTagMap.get( end )}`,
+                id: edgeId,
                 source: vertexTagMap.get( start ),
                 target: vertexTagMap.get( end )
               }
             } );
           }
         }
-        return subElements;
+
+        return []; // TODO: enable this again? experiment?
+        // return subElements;
       } )
     ];
 
@@ -564,9 +582,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     } );
 
     // cy.add( element );
-    // cy.destroy() <--- to clean up memory!
 
-    const vertexScale = 50;
     this.vertices.forEach( vertex => {
       cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
     } );
@@ -576,7 +592,23 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     fcoseCytoLayout( cy, {
       randomize: false,
       nestingFactor: 5.5,
-      tile: false
+      tile: false,
+
+      nodeRepulsion: ( node: any ) => {
+        const vertex = vertexReverseTagMap.get( node.id() )!;
+        assertEnabled() && assert( vertex );
+        return 4500;
+      },
+      idealEdgeLength: ( edge: any ) => {
+        const idealEdgeLength = idealEdgeLengthMap.get( edge.id() );
+        assertEnabled() && assert( idealEdgeLength !== undefined );
+        return idealEdgeLength;
+      },
+      edgeElasticity: ( edge: any ) => {
+        const edgeElasticity = edgeElasticityMap.get( edge.id() );
+        assertEnabled() && assert( edgeElasticity !== undefined );
+        return edgeElasticity;
+      },
     } );
 
     this.vertices.forEach( vertex => {
@@ -588,6 +620,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     this.faces.forEach( face => {
       face.viewCoordinates.set( getCentroid( face.halfEdges.map( halfEdge => halfEdge.start.viewCoordinates ) ) );
     } );
+
+    cy.destroy();
   }
 
   public getDebugNode(): Node {
@@ -668,7 +702,7 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const layoutPuzzle = new LayoutPuzzle( board, state );
 
     layoutPuzzle.simplify();
-    // layoutPuzzle.layout();
+    layoutPuzzle.layout();
 
     const debugNode = layoutPuzzle.getDebugNode();
 
