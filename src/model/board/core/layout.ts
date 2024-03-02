@@ -93,6 +93,21 @@ export class LayoutVertex extends BaseVertex<LayoutStructure> {
   }
 }
 
+export class LayoutInternalZone {
+  public constructor(
+    public readonly faces: LayoutFace[],
+    public readonly boundaryHalfEdges: LayoutHalfEdge[]
+  ) {}
+}
+
+export class LayoutExternalZone {
+  public constructor(
+    public readonly faces: LayoutFace[],
+    public readonly boundaryHalfEdges: LayoutHalfEdge[],
+    public readonly boundarySegments: LayoutHalfEdge[][]
+  ) {}
+}
+
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();
@@ -300,6 +315,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       return face.edges.some( edge => deadEdges.has( edge ) );
     } ) );
 
+    const deadZones: ( LayoutInternalZone | LayoutExternalZone )[] = [];
+
     // Handle adjacently-grouped faces in groups
     const deadFacesRemaining = new Set( deadFaces );
     while ( deadFacesRemaining.size ) {
@@ -357,7 +374,6 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
       if ( isExterior ) {
         // Find half edges that "start" the boundary (previous edge is removed)
-        const startingHalfEdges: LayoutHalfEdge[] = [];
         const boundarySegments: LayoutHalfEdge[][] = [];
         for ( let i = 0; i < boundaryHalfEdges.length; i++ ) {
           const halfEdge = boundaryHalfEdges[ i ];
@@ -366,7 +382,6 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
           assertEnabled() && assert( previousHalfEdge.end === halfEdge.start );
 
           if ( !deadEdges.has( halfEdge.edge ) && deadEdges.has( previousHalfEdge.edge ) ) {
-            startingHalfEdges.push( halfEdge );
 
             const boundarySegment = [ halfEdge ];
             for ( let j = i + 1;; j++ ) {
@@ -381,75 +396,36 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
             }
             boundarySegments.push( boundarySegment );
 
-            boundarySegment.forEach( halfEdge => {
-              const edge = halfEdge.edge;
-              const oldFace = halfEdge.face;
-              if ( oldFace ) {
-                halfEdge.face = null;
-                arrayRemove( edge.faces, oldFace );
-              }
-              if ( halfEdge.isReversed ) {
-                edge.reversedFace = null;
-              }
-              else {
-                edge.forwardFace = null;
-              }
-            } );
-
-            const startingHalfEdge = halfEdge;
-            const endingHalfEdge = boundarySegment[ boundarySegment.length - 1 ];
-
-            let previousHalfEdge = startingHalfEdge.previous;
-            while ( deadEdges.has( previousHalfEdge.edge ) ) {
-              previousHalfEdge = previousHalfEdge.reversed.previous;
-            }
-
-            let nextHalfEdge = endingHalfEdge.next;
-            while ( deadEdges.has( nextHalfEdge.edge ) ) {
-              nextHalfEdge = nextHalfEdge.reversed.next;
-            }
-
-            const moreHalfEdges: LayoutHalfEdge[] = [
-              previousHalfEdge,
-              ...boundarySegment,
-              nextHalfEdge
-            ];
-
-            for ( let i = 0; i < moreHalfEdges.length - 1; i++ ) {
-              const halfEdge = moreHalfEdges[ i ];
-              const nextHalfEdge = moreHalfEdges[ i + 1 ];
-
-              halfEdge.next = nextHalfEdge;
-              nextHalfEdge.previous = halfEdge;
-            }
-
             console.log( 'segment', boundarySegment.length );
           }
         }
+        deadZones.push( new LayoutExternalZone( faces, boundaryHalfEdges, boundarySegments ) );
       }
       else {
-        const vertices = boundaryHalfEdges.map( halfEdge => halfEdge.start );
-        const edges = boundaryHalfEdges.map( halfEdge => halfEdge.edge );
+        deadZones.push( new LayoutInternalZone( faces, boundaryHalfEdges ) );
+      }
+    }
+
+    deadZones.forEach( zone => {
+      if ( zone instanceof LayoutInternalZone ) {
+        const vertices = zone.boundaryHalfEdges.map( halfEdge => halfEdge.start );
+        const edges = zone.boundaryHalfEdges.map( halfEdge => halfEdge.edge );
 
         // TODO: can we do a better job with logical coordinates here? incremental?
         const newFace = new LayoutFace( getCentroid( vertices.map( vertex => vertex.viewCoordinates ) ), getCentroid( vertices.map( vertex => vertex.logicalCoordinates ) ) );
         this.faces.push( newFace );
         this.faceValueMap.set( newFace, null );
 
-        newFace.halfEdges = boundaryHalfEdges;
+        newFace.halfEdges = zone.boundaryHalfEdges;
         newFace.edges = edges;
         newFace.vertices = vertices;
 
         // Rewrite the boundary half-edges
-        for ( let i = 0; i < boundaryHalfEdges.length; i++ ) {
-          const halfEdge = boundaryHalfEdges[ i ];
-          const nextHalfEdge = boundaryHalfEdges[ ( i + 1 ) % boundaryHalfEdges.length ];
-
+        for ( let i = 0; i < zone.boundaryHalfEdges.length; i++ ) {
+          const halfEdge = zone.boundaryHalfEdges[ i ];
           const oldFace = halfEdge.face;
 
           halfEdge.face = newFace;
-          halfEdge.next = nextHalfEdge;
-          nextHalfEdge.previous = halfEdge;
 
           const edge = halfEdge.edge;
           if ( halfEdge.isReversed ) {
@@ -466,7 +442,25 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
           edge.faces.push( newFace );
         }
       }
-    }
+      else {
+        zone.boundarySegments.forEach( boundarySegment => {
+          boundarySegment.forEach( halfEdge => {
+            const edge = halfEdge.edge;
+            const oldFace = halfEdge.face;
+            if ( oldFace ) {
+              halfEdge.face = null;
+              arrayRemove( edge.faces, oldFace );
+            }
+            if ( halfEdge.isReversed ) {
+              edge.reversedFace = null;
+            }
+            else {
+              edge.forwardFace = null;
+            }
+          } );
+        } );
+      }
+    } );
 
     deadEdges.forEach( deadEdge => {
       // TODO: have a better way of doing this?
@@ -488,6 +482,18 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       vertex.incomingHalfEdges = vertex.incomingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
       vertex.outgoingHalfEdges = vertex.outgoingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
       vertex.faces = vertex.incomingHalfEdges.map( halfEdge => halfEdge.face ).filter( face => face !== null ) as LayoutFace[];
+
+      // fix up next/previous (easier to wait for here)
+      for ( let i = 0; i < vertex.incomingHalfEdges.length; i++ ) {
+        // const firstIncomingHalfEdge = vertex.incomingHalfEdges[ i ];
+        const firstOutgoingHalfEdge = vertex.outgoingHalfEdges[ i ];
+
+        const secondIncomingHalfEdge = vertex.incomingHalfEdges[ ( i + 1 ) % vertex.incomingHalfEdges.length ];
+        // const secondOutgoingHalfEdge = vertex.outgoingHalfEdges[ ( i + 1 ) % vertex.incomingHalfEdges.length ];
+
+        secondIncomingHalfEdge.next = firstOutgoingHalfEdge;
+        firstOutgoingHalfEdge.previous = secondIncomingHalfEdge;
+      }
     } );
 
     assertEnabled() && validateBoard( this );
