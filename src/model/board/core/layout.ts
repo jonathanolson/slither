@@ -34,6 +34,7 @@ import { getCentroid } from './createBoardDescriptor.ts';
 import { formatHex, toGamut } from 'culori';
 import { Shape } from 'phet-lib/kite';
 import _ from '../../../workarounds/_.ts';
+import { blackLineColorProperty, faceValueColorProperty } from '../../../view/Theme.ts';
 
 // TODO: factor this color stuff out
 const toRGB = toGamut( 'rgb' );
@@ -803,11 +804,11 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       let lineWidth: number;
       const edgeState = this.edgeStateMap.get( edge );
       if ( edgeState === EdgeState.WHITE ) {
-        stroke = 'black';
+        stroke = blackLineColorProperty;
         lineWidth = 0.02;
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        stroke = 'black';
+        stroke = blackLineColorProperty;
         lineWidth = 0.1;
       }
       else {
@@ -839,7 +840,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       debugNode.addChild( new Circle( 0.1, {
         x: vertex.viewCoordinates.x,
         y: vertex.viewCoordinates.y,
-        fill: 'black'
+        fill: blackLineColorProperty
       } ) );
     } );
 
@@ -851,6 +852,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
           maxWidth: 0.9,
           maxHeight: 0.9,
           center: face.viewCoordinates,
+          fill: faceValueColorProperty
         } ) );
       }
     } );
