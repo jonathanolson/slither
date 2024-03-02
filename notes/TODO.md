@@ -10,6 +10,11 @@
     - red-black-red transitions can be detached
     - white-black and black-white transitions CANNOT
     - 
+    - LAYOUT ISSUES (do we write a graph layout algorithm???):
+      - Apply forces/pressure to keep faces "simple" (non-overlapping) !!!!!
+      - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
+      - Apply forces/pressure for number value faces to have them be a bit more convex
+    - 
     - Just... have the ability to have the alternate view? or side-by-side
     - 
     - Each result white/black edge maps to a set of white/black edges in the original
