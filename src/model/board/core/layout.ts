@@ -382,19 +382,17 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
             boundarySegments.push( boundarySegment );
 
             boundarySegment.forEach( halfEdge => {
+              const edge = halfEdge.edge;
               const oldFace = halfEdge.face;
               if ( oldFace ) {
                 halfEdge.face = null;
-
-                const edge = halfEdge.edge;
-                if ( halfEdge.isReversed ) {
-                  edge.reversedFace = null;
-                }
-                else {
-                  edge.forwardFace = null;
-                }
-
                 arrayRemove( edge.faces, oldFace );
+              }
+              if ( halfEdge.isReversed ) {
+                edge.reversedFace = null;
+              }
+              else {
+                edge.forwardFace = null;
               }
             } );
 
@@ -402,12 +400,12 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
             const endingHalfEdge = boundarySegment[ boundarySegment.length - 1 ];
 
             let previousHalfEdge = startingHalfEdge.previous;
-            while ( boundaryHalfEdgesSet.has( previousHalfEdge ) ) {
+            while ( deadEdges.has( previousHalfEdge.edge ) ) {
               previousHalfEdge = previousHalfEdge.reversed.previous;
             }
 
             let nextHalfEdge = endingHalfEdge.next;
-            while ( boundaryHalfEdgesSet.has( nextHalfEdge ) ) {
+            while ( deadEdges.has( nextHalfEdge.edge ) ) {
               nextHalfEdge = nextHalfEdge.reversed.next;
             }
 
