@@ -33,6 +33,7 @@ import { getCentroid } from './createBoardDescriptor.ts';
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import { Shape } from 'phet-lib/kite';
+import _ from '../../../workarounds/_.ts';
 
 // TODO: factor this color stuff out
 const toRGB = toGamut( 'rgb' );
@@ -435,6 +436,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         // TODO: can we do a better job with logical coordinates here? incremental?
         const newFace = new LayoutFace( getCentroid( vertices.map( vertex => vertex.viewCoordinates ) ), getCentroid( vertices.map( vertex => vertex.logicalCoordinates ) ) );
         this.faces.push( newFace );
+        this.faceValueMap.set( newFace, null );
 
         newFace.halfEdges = boundaryHalfEdges;
         newFace.edges = edges;
@@ -496,10 +498,167 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     // TODO: validate existence in our arrays too
   }
 
+  public removeSimpleForced(): void {
+    // changing during iteration
+    this.vertices.slice().forEach( vertex => {
+      // Only 2 edges
+      if ( vertex.edges.length !== 2 ) {
+        return;
+      }
+
+      // Only null-ish faces
+      const faces = _.uniq( vertex.edges.flatMap( edge => edge.faces ) );
+      if ( faces.some( face => this.getFaceValue( face ) !== null ) ) {
+        return;
+      }
+
+      const firstEdge = vertex.edges[ 0 ];
+      const secondEdge = vertex.edges[ 1 ];
+
+      const edgeStateA = this.getEdgeState( firstEdge );
+      const edgeStateB = this.getEdgeState( secondEdge );
+
+      // Same edge state
+      if ( edgeStateA !== edgeStateB ) {
+        return;
+      }
+
+      const startVertex = firstEdge.getOtherVertex( vertex );
+      const endVertex = secondEdge.getOtherVertex( vertex );
+
+      // Different vertices (not a triangle)
+      if ( startVertex === endVertex ) {
+        return;
+      }
+
+      // "forward" and "reversed" in our new ordering (from startVertex to vertex to endVertex)
+      const firstForwardHalf = firstEdge.forwardHalf.end === vertex ? firstEdge.forwardHalf : firstEdge.reversedHalf;
+      const firstReversedHalf = firstEdge.forwardHalf.end === vertex ? firstEdge.reversedHalf : firstEdge.forwardHalf;
+      const secondForwardHalf = secondEdge.forwardHalf.start === vertex ? secondEdge.forwardHalf : secondEdge.reversedHalf;
+      const secondReversedHalf = secondEdge.forwardHalf.start === vertex ? secondEdge.reversedHalf : secondEdge.forwardHalf;
+
+      const forwardFace = firstForwardHalf.face;
+      const reversedFace = firstReversedHalf.face;
+
+      // TODO: preserve originalEdges(!)
+
+      const newEdge = new LayoutEdge( startVertex, endVertex );
+      this.edgeStateMap.set( newEdge, edgeStateA );
+      this.edges.push( newEdge );
+
+      const newForwardHalfEdge = new LayoutHalfEdge( startVertex, endVertex, false );
+      this.halfEdges.push( newForwardHalfEdge );
+
+      const newReversedHalfEdge = new LayoutHalfEdge( endVertex, startVertex, true );
+      this.halfEdges.push( newReversedHalfEdge );
+
+      // TODO: factor out the code to replace this two-edge vertex with a single edge (we'll use it elsewhere)
+      // TODO: e.g. when we replace simple cases with faces(!)
+
+      newEdge.forwardHalf = newForwardHalfEdge;
+      newEdge.reversedHalf = newReversedHalfEdge;
+      newEdge.forwardFace = forwardFace;
+      newEdge.reversedFace = reversedFace;
+      newEdge.vertices = [ startVertex, endVertex ];
+      newEdge.faces = [ forwardFace, reversedFace ].filter( face => face !== null ) as LayoutFace[];
+
+      newForwardHalfEdge.edge = newEdge;
+      newForwardHalfEdge.reversed = newReversedHalfEdge;
+      newForwardHalfEdge.next = secondForwardHalf.next;
+      newForwardHalfEdge.previous = firstForwardHalf.previous;
+      newForwardHalfEdge.face = forwardFace;
+
+      newReversedHalfEdge.edge = newEdge;
+      newReversedHalfEdge.reversed = newForwardHalfEdge;
+      newReversedHalfEdge.next = firstReversedHalf.next;
+      newReversedHalfEdge.previous = secondReversedHalf.previous;
+      newReversedHalfEdge.face = reversedFace;
+
+      if ( forwardFace ) {
+        const halfIndex = forwardFace.halfEdges.indexOf( firstForwardHalf );
+        const index = forwardFace.edges.indexOf( firstEdge );
+
+        assertEnabled() && assert( halfIndex !== -1 );
+        assertEnabled() && assert( index !== -1 );
+
+        forwardFace.halfEdges[ halfIndex ] = newForwardHalfEdge;
+        arrayRemove( forwardFace.halfEdges, secondForwardHalf );
+
+        forwardFace.edges[ index ] = newEdge;
+        arrayRemove( forwardFace.edges, secondEdge );
+
+        arrayRemove( forwardFace.vertices, vertex );
+      }
+
+      if ( reversedFace ) {
+        const halfIndex = reversedFace.halfEdges.indexOf( secondReversedHalf );
+        const index = reversedFace.edges.indexOf( secondEdge );
+
+        assertEnabled() && assert( halfIndex !== -1 );
+        assertEnabled() && assert( index !== -1 );
+
+        reversedFace.halfEdges[ halfIndex ] = newReversedHalfEdge;
+        arrayRemove( reversedFace.halfEdges, firstReversedHalf );
+
+        reversedFace.edges[ index ] = newEdge;
+        arrayRemove( reversedFace.edges, firstEdge );
+
+        arrayRemove( reversedFace.vertices, vertex );
+      }
+
+      // startVertex
+      {
+        const incomingIndex = startVertex.incomingHalfEdges.indexOf( firstReversedHalf );
+        const outgoingIndex = startVertex.outgoingHalfEdges.indexOf( firstForwardHalf );
+        const edgeIndex = startVertex.edges.indexOf( firstEdge );
+
+        assertEnabled() && assert( incomingIndex !== -1 );
+        assertEnabled() && assert( outgoingIndex !== -1 );
+        assertEnabled() && assert( edgeIndex !== -1 );
+
+        startVertex.incomingHalfEdges[ incomingIndex ] = newReversedHalfEdge;
+        startVertex.outgoingHalfEdges[ outgoingIndex ] = newForwardHalfEdge;
+        startVertex.edges[ edgeIndex ] = newEdge;
+      }
+
+      // endVertex
+      {
+        const incomingIndex = endVertex.incomingHalfEdges.indexOf( secondForwardHalf );
+        const outgoingIndex = endVertex.outgoingHalfEdges.indexOf( secondReversedHalf );
+        const edgeIndex = endVertex.edges.indexOf( secondEdge );
+
+        assertEnabled() && assert( incomingIndex !== -1 );
+        assertEnabled() && assert( outgoingIndex !== -1 );
+        assertEnabled() && assert( edgeIndex !== -1 );
+
+        endVertex.incomingHalfEdges[ incomingIndex ] = newForwardHalfEdge;
+        endVertex.outgoingHalfEdges[ outgoingIndex ] = newReversedHalfEdge;
+        endVertex.edges[ edgeIndex ] = newEdge;
+      }
+
+      newForwardHalfEdge.previous.next = newForwardHalfEdge;
+      newForwardHalfEdge.next.previous = newForwardHalfEdge;
+      newReversedHalfEdge.previous.next = newReversedHalfEdge;
+      newReversedHalfEdge.next.previous = newReversedHalfEdge;
+
+      arrayRemove( this.edges, firstEdge );
+      arrayRemove( this.edges, secondEdge );
+      arrayRemove( this.halfEdges, firstEdge.forwardHalf );
+      arrayRemove( this.halfEdges, firstEdge.reversedHalf );
+      arrayRemove( this.halfEdges, secondEdge.forwardHalf );
+      arrayRemove( this.halfEdges, secondEdge.reversedHalf );
+      arrayRemove( this.vertices, vertex );
+    } );
+
+    assertEnabled() && validateBoard( this );
+  }
+
   public simplify(): void {
+    // TODO: show how things progress(!)
     console.log( 'simplify' );
     this.clearSatisfiedFaces();
     this.removeDeadRedEdges();
+    this.removeSimpleForced();
   }
 
   // TODO: getCompleteState / getPuzzle / etc.
@@ -517,6 +676,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     const edgeElasticityMap = new Map<string, number>();
 
     const vertexScale = 50;
+    const elasticityBase = 0.45;
 
     // NOTE: could use cy.add, e.g.
     // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
@@ -525,7 +685,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       ...this.edges.map( edge => {
         const edgeId = `${vertexTagMap.get( edge.start )}-${vertexTagMap.get( edge.end )}`;
         idealEdgeLengthMap.set( edgeId, vertexScale );
-        edgeElasticityMap.set( edgeId, 0.45 );
+        edgeElasticityMap.set( edgeId, elasticityBase );
 
         return {
           data: {
@@ -559,7 +719,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
             const circleDistance = radialA.distance( radialB );
 
             idealEdgeLengthMap.set( edgeId, circleDistance );
-            edgeElasticityMap.set( edgeId, 0.001 );
+            edgeElasticityMap.set( edgeId, elasticityBase / numEdges );
 
             subElements.push( {
               data: {
@@ -571,8 +731,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
           }
         }
 
-        return []; // TODO: enable this again? experiment?
-        // return subElements;
+        // return []; // TODO: enable this again? experiment?
+        return subElements;
       } )
     ];
 
@@ -591,8 +751,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     // coseBilkentCytoLayout( cy, { randomize: true } );
     fcoseCytoLayout( cy, {
       randomize: false,
-      nestingFactor: 5.5,
-      tile: false,
+      // nestingFactor: 5.5,
+      // tile: true,
 
       nodeRepulsion: ( node: any ) => {
         const vertex = vertexReverseTagMap.get( node.id() )!;
@@ -628,6 +788,9 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     // TODO: if we are still a planar-embedding, use a PuzzleNode?
     const debugNode = new Node();
 
+    const showBackgrounds = false;
+    const showRedEdges = true;
+
     this.edges.forEach( edge => {
       const start = edge.start.viewCoordinates;
       const end = edge.end.viewCoordinates;
@@ -644,7 +807,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         lineWidth = 0.1;
       }
       else {
-        stroke = 'red';
+        stroke = showRedEdges ? 'red' : null;
         lineWidth = 0.02;
       }
 
@@ -654,17 +817,19 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       } ) );
     } );
 
-    this.faces.forEach( face => {
-      const backgroundColor = new Color( formatHex( toRGB( {
-        mode: 'okhsl',
-        h: Math.random() * 360,
-        s: 0.7,
-        l: 0.6
-      } ) ) as unknown as string ).withAlpha( 0.5 );
-      debugNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
-        fill: backgroundColor
-      } ) );
-    } );
+    if ( showBackgrounds ) {
+      this.faces.forEach( face => {
+        const backgroundColor = new Color( formatHex( toRGB( {
+          mode: 'okhsl',
+          h: Math.random() * 360,
+          s: 0.7,
+          l: 0.6
+        } ) ) as unknown as string ).withAlpha( 0.5 );
+        debugNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
+          fill: backgroundColor
+        } ) );
+      } );
+    }
 
     this.vertices.forEach( vertex => {
       debugNode.addChild( new Circle( 0.1, {
@@ -702,7 +867,7 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const layoutPuzzle = new LayoutPuzzle( board, state );
 
     layoutPuzzle.simplify();
-    layoutPuzzle.layout();
+    // layoutPuzzle.layout();
 
     const debugNode = layoutPuzzle.getDebugNode();
 
