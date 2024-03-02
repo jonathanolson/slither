@@ -873,7 +873,7 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const layoutPuzzle = new LayoutPuzzle( board, state );
 
     layoutPuzzle.simplify();
-    // layoutPuzzle.layout();
+    layoutPuzzle.layout();
 
     const debugNode = layoutPuzzle.getDebugNode();
 

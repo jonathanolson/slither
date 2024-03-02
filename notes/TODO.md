@@ -11,6 +11,7 @@
     - white-black and black-white transitions CANNOT
     - 
     - LAYOUT ISSUES (do we write a graph layout algorithm???):
+      - Can this be a step to minorly tweak the output of cytoscape? 
       - Apply forces/pressure to keep faces "simple" (non-overlapping) !!!!!
       - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
       - Apply forces/pressure for number value faces to have them be a bit more convex
