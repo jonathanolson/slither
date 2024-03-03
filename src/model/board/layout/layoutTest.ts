@@ -23,20 +23,24 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const layoutPuzzle = new LayoutPuzzle( board, state );
 
     layoutPuzzle.simplify();
-    layoutPuzzle.layout();
+    // layoutPuzzle.layout();
 
     console.log( 'signed area', layoutPuzzle.getSignedArea() );
 
-    const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle );
-    const correctedDerivative = barycentricDerivative.getAreaCorrectedDerivative();
+    const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
 
     console.log( barycentricDerivative.getAreaDerivative() );
-    console.log( correctedDerivative.getAreaDerivative() );
+
+    // TODO: show multiple generations worth?
+
+    for ( let i = 0; i < 0; i++ ) {
+      layoutPuzzle.applyDerivative( LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
+    }
 
     const debugNode = new Node( {
       children: [
         layoutPuzzle.getDebugNode(),
-        correctedDerivative.getDebugNode()
+        barycentricDerivative.getDebugNode()
       ]
     } );
 

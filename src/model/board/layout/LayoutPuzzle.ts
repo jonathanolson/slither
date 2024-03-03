@@ -631,8 +631,12 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       // TODO: consider "partials" in the future?
       assertEnabled() && assert( delta );
 
+      assertEnabled() && assert( delta.isFinite() );
+
       vertex.viewCoordinates.add( delta );
     } );
+
+    this.fixFaceCoordinates();
   }
 
   public layout(): void {
@@ -749,11 +753,15 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       vertex.viewCoordinates.setXY( position.x / vertexScale, position.y / vertexScale );
     } );
 
+    this.fixFaceCoordinates();
+
+    cy.destroy();
+  }
+
+  public fixFaceCoordinates(): void {
     this.faces.forEach( face => {
       face.viewCoordinates.set( getCentroid( face.halfEdges.map( halfEdge => halfEdge.start.viewCoordinates ) ) );
     } );
-
-    cy.destroy();
   }
 
   public getDebugNode(): Node {
