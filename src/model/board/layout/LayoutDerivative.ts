@@ -1,9 +1,10 @@
-import { Vector2 } from 'phet-lib/dot';
+import { Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
 import { getSignedAreaDerivative } from '../core/createBoardDescriptor.ts';
 import { Node } from 'phet-lib/scenery';
 import { ArrowNode } from '../../../view/to-port/ArrowNode.ts';
 import { LayoutVertex } from './layout.ts';
 import { LayoutPuzzle } from './LayoutPuzzle.ts';
+import _ from '../../../workarounds/_.ts';
 
 export class LayoutDerivative {
   public constructor(
@@ -103,5 +104,44 @@ export class LayoutDerivative {
       map.set( vertex, delta );
     } );
     return new LayoutDerivative( layoutPuzzle, map );
+  }
+
+  public static getVertexUnitLeastSquares( vertex: LayoutVertex ): Vector2[] {
+    return LayoutDerivative.getUnitLeastSquares( vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() ) );
+  }
+
+  // Unit vectors for each neighboring vertex
+  public static getUnitLeastSquares( inputNormals: Vector2[] ): Vector2[] {
+    const n = inputNormals.length;
+    const idealNormals = _.range( 0, n ).map( i => {
+      return Vector2.createPolar( 1, 2 * Math.PI * i / n );
+    } );
+
+    // for least squares, X = ideals, Y = inputs
+    const matX = new Matrix( 2, n, [
+      ...idealNormals.map( v => v.x ),
+      ...idealNormals.map( v => v.y )
+    ] );
+    const matY = new Matrix( 2, n, [
+      ...inputNormals.map( v => v.x ),
+      ...inputNormals.map( v => v.y )
+    ] );
+
+    const matM = matX.times( matY.transpose() );
+
+    const svd = new SingularValueDecomposition( matM );
+
+    let rotation = svd.getV().times( svd.getU().transpose() );
+    if ( rotation.det() < 0 ) {
+      rotation = svd.getV().times( Matrix.diagonalMatrix( [ 1, -1 ] ) ).times( svd.getU().transpose() );
+    }
+
+    const rotation3 = new Matrix3().rowMajor(
+      rotation.get( 0, 0 ), rotation.get( 0, 1 ), 0,
+      rotation.get( 1, 0 ), rotation.get( 1, 1 ), 0,
+      0, 0, 1
+    );
+
+    return idealNormals.map( normal => rotation3.timesVector2( normal ) );
   }
 }
