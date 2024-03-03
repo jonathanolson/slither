@@ -17,7 +17,7 @@ import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
 import { workaroundResolveStep } from './util/sleep.ts';
-import { layoutTest } from './model/board/core/layout.ts';
+import { layoutTest } from './model/board/layout/layout.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {

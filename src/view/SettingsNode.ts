@@ -8,7 +8,7 @@ import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
-import { showLayoutTestProperty } from '../model/board/core/layout.ts';
+import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
