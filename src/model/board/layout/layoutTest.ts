@@ -27,20 +27,26 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
 
     console.log( 'signed area', layoutPuzzle.getSignedArea() );
 
-    const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
-
-    console.log( barycentricDerivative.getAreaDerivative() );
+    // const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
+    // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
+    // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle );
 
     // TODO: show multiple generations worth?
 
-    for ( let i = 0; i < 0; i++ ) {
-      layoutPuzzle.applyDerivative( LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
+    // for ( let i = 0; i < 0; i++ ) {
+    //   layoutPuzzle.applyDerivative( LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
+    // }
+    for ( let i = 0; i < 15; i++ ) {
+      layoutPuzzle.applyDerivative( LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
     }
+
+    const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
 
     const debugNode = new Node( {
       children: [
         layoutPuzzle.getDebugNode(),
-        barycentricDerivative.getDebugNode()
+        angularDerivative.getDebugNode(),
+        // barycentricDerivative.getDebugNode(),
       ]
     } );
 

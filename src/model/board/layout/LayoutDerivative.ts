@@ -1,4 +1,4 @@
-import { Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
+import { DotUtils, Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
 import { getSignedAreaDerivative } from '../core/createBoardDescriptor.ts';
 import { Node } from 'phet-lib/scenery';
 import { ArrowNode } from '../../../view/to-port/ArrowNode.ts';
@@ -106,8 +106,98 @@ export class LayoutDerivative {
     return new LayoutDerivative( layoutPuzzle, map );
   }
 
-  public static getVertexUnitLeastSquares( vertex: LayoutVertex ): Vector2[] {
-    return LayoutDerivative.getUnitLeastSquares( vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() ) );
+  public static getAngularDeltas( layoutPuzzle: LayoutPuzzle ): LayoutDerivative {
+    // create zero forces
+    const map = new Map<LayoutVertex, Vector2>();
+    layoutPuzzle.vertices.forEach( vertex => {
+      map.set( vertex, Vector2.ZERO.copy() );
+    } );
+
+    console.log( 'angular' );
+
+    layoutPuzzle.vertices.forEach( vertex => {
+      const neighbors = vertex.edges.map( edge => edge.getOtherVertex( vertex ) );
+
+      // // TODO
+      // if ( neighbors.length < 3 ) {
+      //   return;
+      // }
+
+      // Get the current order of neighbors (and remap so it has the same start neighbor)
+      let currentlyOrderedNeighbors = _.sortBy( neighbors, neighbor => neighbor.viewCoordinates.minus( vertex.viewCoordinates ).getAngle() );
+      if ( currentlyOrderedNeighbors[ 0 ] !== neighbors[ 0 ] ) {
+        const index = currentlyOrderedNeighbors.indexOf( neighbors[ 0 ] );
+        currentlyOrderedNeighbors = [
+          ...currentlyOrderedNeighbors.slice( index ),
+          ...currentlyOrderedNeighbors.slice( 0, index )
+        ];
+      }
+
+      const orderedCorrectly = _.range( 0, neighbors.length ).every( i => currentlyOrderedNeighbors[ i ] === neighbors[ i ] );
+
+      if ( !orderedCorrectly ) {
+        console.log( 'bad order' );
+      }
+
+      const neighborDirections = neighbors.map( neighbor => neighbor.viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
+      const idealDirections = LayoutDerivative.getUnitLeastSquares( neighborDirections );
+
+      // Find the minimized dot product we can hope for TODO: any one should work, they should be equal?
+      const minimizedDotProduct = Math.max( ..._.range( 0, neighbors.length ).map( i => {
+        return idealDirections[ i ].dot( idealDirections[ ( i + 1 ) % neighbors.length ] );
+      } ) );
+
+
+      const currentMaxDotProduct = Math.max( ..._.range( 0, neighbors.length ).map( i => {
+        return neighborDirections[ i ].dot( neighborDirections[ ( i + 1 ) % neighbors.length ] );
+      } ) );
+
+      // TODO: make twixt available!
+      const ease = ( n: number, t: number ): number => {
+        if ( t <= 0.5 ) {
+          return 0.5 * Math.pow( 2 * t, n );
+        }
+        else {
+          return 1 - ease( n, 1 - t );
+        }
+      };
+
+      const ratio = orderedCorrectly ? DotUtils.linear( minimizedDotProduct, 1, 0, 1, currentMaxDotProduct ) : 1;
+
+      const minThreshold = 0.75;
+
+      if ( ratio > minThreshold ) {
+        const modRatio = ( ratio - minThreshold ) / ( 1 - minThreshold );
+        const magnitude = ease( 2, modRatio );
+
+        const netForce = new Vector2( 0, 0 );
+
+        for ( let i = 0; i < neighbors.length; i++ ) {
+          const neighbor = neighbors[ i ];
+
+          const direction = neighborDirections[ i ];
+          const ideal = idealDirections[ i ];
+
+          // TODO: try dividing by length? also... make perpendicular?
+          const force = ideal.minus( direction.timesScalar( ideal.dot( direction ) ) ).timesScalar( magnitude );
+          netForce.add( force );
+          // const force = ideal.minus( direction ).timesScalar( magnitude );
+          // const force = ideal.minus( direction ).normalized().timesScalar( magnitude );
+
+          map.get( neighbor )!.add( force );
+        }
+
+        // Even things out.. somewhat?
+        // map.get( vertex )!.subtract( netForce.timesScalar( 0.5 ) );
+        // map.get( vertex )!.subtract( netForce );
+        netForce.multiplyScalar( 1 / neighbors.length );
+        for ( const neighbor of neighbors ) {
+          map.get( neighbor )!.subtract( netForce );
+        }
+      }
+    } );
+
+    return new LayoutDerivative( layoutPuzzle, map );
   }
 
   // Unit vectors for each neighboring vertex

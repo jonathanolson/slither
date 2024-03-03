@@ -16,6 +16,15 @@
       - Apply forces/pressure to keep faces "simple" (non-overlapping) !!!!!
       - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
       - Apply forces/pressure for number value faces to have them be a bit more convex
+      - 
+      - Every (supposed to be adjacent) pair can push/pull to its ideal angle? (to the least squares)
+      - Every (supposed to be adjacent) triple SHOULD enforce orientation, and once correct should still "push" a bit to ensure it stays
+        - HEY what happens if we... try to maximize the signed area of the "face made by the unit vectors"?
+      - force = torque / length (for us), apply torque potentially at center of edge (rotate vertices perpendicularly?)
+        - For the planarity forces... no,
+      - Around each face, detect the "orientation" we should push in order to get it towards a simple polygon
+        - (this MIGHT be "attractive" temporarily if we need to switch it to be planar, then once past that it will be repulsive)
+      - CONTINUOUS handling of forces, so we don't force oscillations
     - 
     - Just... have the ability to have the alternate view? or side-by-side
     - 
