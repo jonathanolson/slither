@@ -29,12 +29,13 @@ import { BaseBoard } from './BaseBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import FaceState from '../../data/face/FaceState.ts';
 import { validateBoard } from './validateBoard.ts';
-import { getCentroid } from './createBoardDescriptor.ts';
+import { getCentroid, getSignedArea, getSignedAreaDerivative } from './createBoardDescriptor.ts';
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
 import { Shape } from 'phet-lib/kite';
 import _ from '../../../workarounds/_.ts';
 import { blackLineColorProperty, faceValueColorProperty } from '../../../view/Theme.ts';
+import { ArrowNode } from '../../../view/to-port/ArrowNode.ts';
 
 // TODO: factor this color stuff out
 const toRGB = toGamut( 'rgb' );
@@ -107,6 +108,107 @@ export class LayoutExternalZone {
     public readonly boundaryHalfEdges: LayoutHalfEdge[],
     public readonly boundarySegments: LayoutHalfEdge[][]
   ) {}
+}
+
+export class LayoutDerivative {
+  public constructor(
+    public readonly layoutPuzzle: LayoutPuzzle,
+    public readonly derivatives: Map<LayoutVertex, Vector2>
+  ) {}
+
+  public plus( other: LayoutDerivative ): LayoutDerivative {
+    const map = new Map<LayoutVertex, Vector2>();
+    this.derivatives.forEach( ( derivative, vertex ) => {
+      map.set( vertex, derivative.plus( other.derivatives.get( vertex )! ) );
+    } );
+    return new LayoutDerivative( this.layoutPuzzle, map );
+  }
+
+  public minus( other: LayoutDerivative ): LayoutDerivative {
+    const map = new Map<LayoutVertex, Vector2>();
+    this.derivatives.forEach( ( derivative, vertex ) => {
+      map.set( vertex, derivative.minus( other.derivatives.get( vertex )! ) );
+    } );
+    return new LayoutDerivative( this.layoutPuzzle, map );
+  }
+
+  public timesScalar( scalar: number ): LayoutDerivative {
+    const map = new Map<LayoutVertex, Vector2>();
+    this.derivatives.forEach( ( derivative, vertex ) => {
+      map.set( vertex, derivative.timesScalar( scalar ) );
+    } );
+    return new LayoutDerivative( this.layoutPuzzle, map );
+  }
+
+  public getAreaCorrectedDerivative(): LayoutDerivative {
+    let derivative: LayoutDerivative = this;
+    for ( let i = 0; i < 5; i++ ) {
+      derivative = derivative.getAreaCorrectedDerivativeOnce();
+    }
+    return derivative;
+  }
+
+  public getAreaCorrectedDerivativeOnce(): LayoutDerivative {
+    return this.plus( LayoutDerivative.getAreaScaledDeltas( this.layoutPuzzle, -this.getAreaDerivative() / this.layoutPuzzle.getSignedArea() ) );
+  }
+
+  public getAreaDerivative(): number {
+    let areaDerivative = 0;
+    this.layoutPuzzle.faces.forEach( face => {
+      areaDerivative += getSignedAreaDerivative(
+        face.vertices.map( vertex => vertex.viewCoordinates ),
+        face.vertices.map( vertex => this.derivatives.get( vertex )! )
+      );
+    } );
+    return areaDerivative;
+  }
+
+  public getDebugNode(): Node {
+    const node = new Node();
+
+    this.layoutPuzzle.vertices.forEach( vertex => {
+      const derivative = this.derivatives.get( vertex )!;
+      const point = vertex.viewCoordinates;
+
+      const arrow = new ArrowNode( point.x, point.y, point.x + derivative.x, point.y + derivative.y, {
+        lineWidth: 0.01,
+        headHeight: 0.05,
+        headWidth: 0.05,
+        tailWidth: 0.005,
+      } );
+
+      node.addChild( arrow );
+    } );
+
+    return node;
+  }
+
+  public static getAreaScaledDeltas( layoutPuzzle: LayoutPuzzle, scale: number ): LayoutDerivative {
+    const centroid = layoutPuzzle.getCentroid();
+
+    const map = new Map<LayoutVertex, Vector2>();
+    layoutPuzzle.vertices.forEach( vertex => {
+      map.set( vertex, vertex.viewCoordinates.minus( centroid ).timesScalar( scale ) );
+    } );
+    return new LayoutDerivative( layoutPuzzle, map );
+  }
+
+  public static getBarycentricDeltas( layoutPuzzle: LayoutPuzzle ): LayoutDerivative {
+    const map = new Map<LayoutVertex, Vector2>();
+    layoutPuzzle.vertices.forEach( vertex => {
+      const neighbors = vertex.edges.map( edge => edge.getOtherVertex( vertex ) );
+
+      // TODO: average is the original spec... what happens when we do the centroid?
+      const average = new Vector2( 0, 0 );
+      neighbors.forEach( neighbor => average.add( neighbor.viewCoordinates ) );
+      average.multiplyScalar( 1 / neighbors.length );
+
+      const delta = average.subtract( vertex.viewCoordinates );
+
+      map.set( vertex, delta );
+    } );
+    return new LayoutDerivative( layoutPuzzle, map );
+  }
 }
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
@@ -668,6 +770,42 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   // TODO: getCompleteState / getPuzzle / etc.
 
+  public getSignedArea(): number {
+    let area = 0;
+    this.faces.forEach( face => {
+      area += getSignedArea( face.vertices.map( vertex => vertex.viewCoordinates ) );
+    } );
+    return area;
+  }
+
+  public getCentroid(): Vector2 {
+    // Optimized here, since we can find the external half edges
+
+    let area = 0;
+    let centroidX = 0;
+    let centroidY = 0;
+
+    this.halfEdges.forEach( halfEdge => {
+      if ( halfEdge.face === null ) {
+        // Reversal for correct sign
+        const p0 = halfEdge.end.viewCoordinates;
+        const p1 = halfEdge.start.viewCoordinates;
+
+        // Shoelace formula for the area
+        area += ( p1.x + p0.x ) * ( p1.y - p0.y );
+
+        // Partial centroid evaluation. NOTE: using the compound version here, for performance/stability tradeoffs
+        const base = ( p0.x * ( 2 * p0.y + p1.y ) + p1.x * ( p0.y + 2 * p1.y ) );
+        centroidX += ( p0.x - p1.x ) * base;
+        centroidY += ( p1.y - p0.y ) * base;
+      }
+    } );
+
+    area *= 0.5;
+
+    return new Vector2( centroidX, centroidY ).timesScalar( 1 / ( 6 * area ) );
+  }
+
   public layout(): void {
     const vertexTagMap: Map<LayoutVertex, string> = new Map();
     const vertexReverseTagMap: Map<string, LayoutVertex> = new Map();
@@ -875,7 +1013,20 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     layoutPuzzle.simplify();
     layoutPuzzle.layout();
 
-    const debugNode = layoutPuzzle.getDebugNode();
+    console.log( 'signed area', layoutPuzzle.getSignedArea() );
+
+    const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle );
+    const correctedDerivative = barycentricDerivative.getAreaCorrectedDerivative();
+
+    console.log( barycentricDerivative.getAreaDerivative() );
+    console.log( correctedDerivative.getAreaDerivative() );
+
+    const debugNode = new Node( {
+      children: [
+        layoutPuzzle.getDebugNode(),
+        correctedDerivative.getDebugNode()
+      ]
+    } );
 
     const size = 600;
 
@@ -884,7 +1035,9 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     debugNode.left = 20;
     debugNode.top = 130;
 
-    layoutTestNode.children = [ debugNode ];
+    layoutTestNode.children = [
+      debugNode
+    ];
   };
 
   const puzzleStateListener = () => {

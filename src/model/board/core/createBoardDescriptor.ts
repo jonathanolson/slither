@@ -74,6 +74,21 @@ export const getCentroid = ( points: Vector2[] ) => {
   return new Vector2( x, y ).timesScalar( 1 / ( 6 * area ) );
 };
 
+export const getSignedAreaDerivative = ( points: Vector2[], derivatives: Vector2[] ) => {
+  let areaDerivative = 0;
+
+  for ( let j = 0; j < points.length; j++ ) {
+    const p0 = points[ j ];
+    const p1 = points[ ( j + 1 ) % points.length ];
+    const d0 = derivatives[ j ];
+    const d1 = derivatives[ ( j + 1 ) % points.length ];
+
+    areaDerivative += ( p1.x + p0.x ) * ( d1.y - d0.y ) + ( d1.x - d0.x ) * ( p1.y - p0.y );
+  }
+
+  return 0.5 * areaDerivative;
+};
+
 export const rescaleProtoDescriptor = (
   protoDescriptor: TProtoBoardDescriptor,
   getScaleAdjustment: ( polygonalAreas: number[] ) => number

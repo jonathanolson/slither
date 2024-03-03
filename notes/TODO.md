@@ -4,6 +4,7 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - Get scenery-phet and other libs in phet-lib imports(!) 
   - TOPOLOGICAL SIMPLIFICATION!!!!
     - Cytoscape edges don't have to be visible
     - Make faces with numbers... potentially bigger?
