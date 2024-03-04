@@ -17,8 +17,9 @@
       - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
       - Apply forces/pressure for number value faces to have them be a bit more convex
       - 
-      - 
-      - CONVEXITY FOR NUMBER SQUARES
+      - Force the "not close to edge overlap / vertex overlap" --- and correct signed area
+        - Our "signed area preservation" is bugging us when we have a negative-signed invalid area at the start
+      - Repulsion for close vertices
       - 
       - Every (supposed to be adjacent) pair can push/pull to its ideal angle? (to the least squares)
       - Every (supposed to be adjacent) triple SHOULD enforce orientation, and once correct should still "push" a bit to ensure it stays

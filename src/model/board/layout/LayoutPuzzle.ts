@@ -184,13 +184,13 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     assertEnabled() && validateBoard( this );
   }
 
-  private getFaceValue( face: LayoutFace ): FaceState {
+  public getFaceValue( face: LayoutFace ): FaceState {
     const state = this.faceValueMap.get( face );
     assertEnabled() && assert( state !== undefined );
     return state!;
   }
 
-  private getEdgeState( edge: LayoutEdge ): EdgeState {
+  public getEdgeState( edge: LayoutEdge ): EdgeState {
     const state = this.edgeStateMap.get( edge );
     assertEnabled() && assert( state !== undefined );
     return state!;
