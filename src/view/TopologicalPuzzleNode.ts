@@ -18,12 +18,7 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
   ) {
     const layoutTestNode = new Node();
 
-    // TODO: create a full PuzzleNode
-    // const puzzleNode = new PuzzleNode( puzzleModel.puzzle, {
-    //   edgePressListener: ( edge, button ) => {
-    //     puzzleModel.onUserEdgePress( edge, button );
-    //   }
-    // } );
+    let lastPuzzleNode: PuzzleNode | null = null;
 
     const showPuzzleLayout = () => {
       const board = puzzleModel.puzzle.board;
@@ -107,6 +102,10 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
 
       const puzzle = layoutPuzzle.getCompletePuzzle();
 
+      if ( lastPuzzleNode ) {
+        lastPuzzleNode.dispose();
+      }
+
       const puzzleNode = new PuzzleNode( puzzle, {
         edgePressListener: ( edge, button ) => {
           const originalEdges = ( edge as LayoutEdge ).originalEdges;
@@ -116,6 +115,7 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
           }
         }
       } );
+      lastPuzzleNode = puzzleNode;
 
       // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
       // const hookesDerivative = LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.2 ).getAreaCorrectedDerivative();
@@ -157,5 +157,6 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
 
     this.disposeEmitter.addListener( () => puzzleModel.puzzle.stateProperty.unlink( puzzleStateListener ) );
     this.disposeEmitter.addListener( () => layoutTestNode.dispose() );
+    this.disposeEmitter.addListener( () => lastPuzzleNode && lastPuzzleNode.dispose() );
   }
 }

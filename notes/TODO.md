@@ -4,7 +4,8 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - Get scenery-phet and other libs in phet-lib imports(!) 
+  - Get scenery-phet and other libs in phet-lib imports(!)
+  - Record topological demo?
   - Nicer background.... fade to gradient?
   - Look up things under puzzling.stackexchange.com?
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
