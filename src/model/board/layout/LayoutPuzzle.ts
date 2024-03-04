@@ -784,7 +784,12 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         lineWidth = 0.02;
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        stroke = blackLineColorProperty;
+        stroke = formatHex( toRGB( {
+          mode: 'okhsl',
+          h: Math.random() * 360,
+          s: 0.7,
+          l: 0.55
+        } ) ) as unknown as string;
         lineWidth = 0.1;
       }
       else {
@@ -794,7 +799,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
       debugNode.addChild( new Line( start, end, {
         stroke: stroke,
-        lineWidth: lineWidth
+        lineWidth: lineWidth,
+        lineCap: 'round'
       } ) );
     } );
 

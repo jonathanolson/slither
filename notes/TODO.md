@@ -6,8 +6,8 @@
 - Current code TODOs
   - Get scenery-phet and other libs in phet-lib imports(!) 
   - TOPOLOGICAL SIMPLIFICATION!!!!
-    - Cytoscape edges don't have to be visible
-    - Make faces with numbers... potentially bigger?
+    - Handle dual view, match up region color???
+    - 
     - red-black-red transitions can be detached
     - white-black and black-white transitions CANNOT
     - 
@@ -17,7 +17,7 @@
       - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
       - Apply forces/pressure for number value faces to have them be a bit more convex
       - 
-      - Handle zero area
+      - Handle zero area fully
       - 
       - Force the "not close to edge overlap / vertex overlap" --- and correct signed area
         - Our "signed area preservation" is bugging us when we have a negative-signed invalid area at the start
