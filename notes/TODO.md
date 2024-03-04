@@ -19,6 +19,12 @@
       - 
       - Force the "not close to edge overlap / vertex overlap" --- and correct signed area
         - Our "signed area preservation" is bugging us when we have a negative-signed invalid area at the start
+        - NOTE NOTE: actually, some cases where a new face becomes the "outside" might... be desirable if it is null-valued?
+          - !!!!!!!!!!!
+          - !!!!!!!!!!!
+          - Can we create a "face" for the outside? Instead of face=null?
+          - note:
+          - FOR NOW, just prevent this. But yes, it seems ideal long-term to allow that swap
       - Repulsion for close vertices
       - 
       - Every (supposed to be adjacent) pair can push/pull to its ideal angle? (to the least squares)

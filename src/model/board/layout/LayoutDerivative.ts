@@ -71,7 +71,9 @@ export class LayoutDerivative {
         lineWidth: 0.01,
         headHeight: 0.05,
         headWidth: 0.05,
-        tailWidth: 0.005
+        tailWidth: 0.005,
+        fill: 'green',
+        stroke: 'green'
       } );
 
       node.addChild( arrow );

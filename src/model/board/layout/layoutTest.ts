@@ -47,8 +47,8 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     const getDerivative = () => {
       return LayoutDerivative.getAngularDeltas( layoutPuzzle )
         .plus( LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.25 ) )
-        .plus( LayoutDerivative.getRegularPolygonDeltas( layoutPuzzle, 1, true ).timesScalar( 0.5 ) )
-        .getAreaCorrectedDerivative();
+        .plus( LayoutDerivative.getRegularPolygonDeltas( layoutPuzzle, 1, true ).timesScalar( 0.5 ) );
+        // .getAreaCorrectedDerivative();
     };
 
     let amount = 0.2;
