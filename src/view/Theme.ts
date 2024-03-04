@@ -10,7 +10,6 @@ const isOSDarkModeProperty = new BooleanProperty( mediaQueryList.matches );
 mediaQueryList.addEventListener( 'change', e => {
   isOSDarkModeProperty.value = e.matches;
 } );
-// isOSDarkModeProperty.link( isDark => console.log( 'OS dark mode:', isDark ) );
 
 export interface TTheme {
   name: string;
@@ -18,6 +17,8 @@ export interface TTheme {
   navbarBackgroundColorProperty: PaintColorProperty;
   navbarErrorBackgroundColorProperty: PaintColorProperty;
   playAreaBackgroundColorProperty: PaintColorProperty;
+  playAreaRadialInsideColorProperty: PaintColorProperty;
+  playAreaRadialOutsideColorProperty: PaintColorProperty;
   puzzleBackgroundColorProperty: PaintColorProperty;
   puzzleBackgroundStrokeColorProperty: PaintColorProperty;
   vertexColorProperty: PaintColorProperty;
@@ -51,6 +52,8 @@ export const lightTheme = {
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(218,107,91)' ),
   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.4000000000000000222)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
@@ -78,8 +81,10 @@ export const darkTheme = {
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(17,17,17)' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.4000000000000000222)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(110,110,110)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
@@ -253,6 +258,14 @@ export const navbarErrorBackgroundColorProperty = new DynamicProperty( themeProp
 
 export const playAreaBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'playAreaBackgroundColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const playAreaRadialInsideColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'playAreaRadialInsideColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const playAreaRadialOutsideColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'playAreaRadialOutsideColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const puzzleBackgroundColorProperty = new DynamicProperty( themeProperty, {
