@@ -6,6 +6,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
 import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
+import PuzzleNode from './puzzle/PuzzleNode.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> extends Node {
@@ -102,12 +103,22 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
         // layoutPuzzle.applyDerivative( LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
       }
 
+      const puzzle = layoutPuzzle.getCompletePuzzle();
+
+      const puzzleNode = new PuzzleNode( puzzle, {
+        edgePressListener: ( edge, button ) => {
+          // TODO: OMG OMG do our proper edge lookup(!)(!)
+          puzzleModel.onUserEdgePress( edge, button );
+        }
+      } );
+
       // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
       // const hookesDerivative = LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.2 ).getAreaCorrectedDerivative();
 
       const debugNode = new Node( {
         children: [
-          layoutPuzzle.getDebugNode(),
+          puzzleNode,
+          // layoutPuzzle.getDebugNode(),
           // getDerivative().getDebugNode(),
           // angularDerivative.getDebugNode(),
           // barycentricDerivative.getDebugNode(),

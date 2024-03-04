@@ -345,7 +345,7 @@ export const createBoardDescriptor = ( protoDescriptor: TProtoBoardDescriptor ):
   } );
 
   const boundaryHalfEdges = new Set( halfEdges.filter( halfEdge => halfEdge.face === null ) );
-  const outerBoundaries: HalfEdge[][] = []; // TODO: make sure we only have one?
+  const outerBoundaries: HalfEdge[][] = [];
   const innerBoundaries: HalfEdge[][] = [];
 
   while ( boundaryHalfEdges.size ) {

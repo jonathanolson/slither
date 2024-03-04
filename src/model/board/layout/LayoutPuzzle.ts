@@ -25,6 +25,12 @@ import { LayoutEdge, LayoutExternalZone, LayoutFace, LayoutHalfEdge, LayoutInter
 import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
 // @ts-expect-error
 import { formatHex, toGamut } from 'culori';
+import { TCompleteData } from '../../data/combined/TCompleteData.ts';
+import { CompleteData } from '../../data/combined/CompleteData.ts';
+import { TPuzzle } from '../../puzzle/TPuzzle.ts';
+import { Property } from 'phet-lib/axon';
+import { iterateSolverFactory } from '../../solver/TSolver.ts';
+import { safeSolverFactory } from '../../solver/autoSolver.ts';
 
 // TODO: factor this color stuff out
 const toRGB = toGamut( 'rgb' );
@@ -584,6 +590,63 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     this.clearSatisfiedFaces();
     this.removeDeadRedEdges();
     this.removeSimpleForced();
+  }
+
+  public fixOuterBoundary(): void {
+    const boundaryHalfEdges = new Set( this.halfEdges.filter( halfEdge => halfEdge.face === null ) );
+    const outerBoundaries: LayoutHalfEdge[][] = [];
+    const innerBoundaries: LayoutHalfEdge[][] = [];
+
+    while ( boundaryHalfEdges.size ) {
+      const firstHalfEdge = boundaryHalfEdges.values().next().value;
+      boundaryHalfEdges.delete( firstHalfEdge );
+
+      const boundary: LayoutHalfEdge[] = [ firstHalfEdge ];
+      let next = firstHalfEdge.next;
+
+      while ( next !== firstHalfEdge ) {
+        boundary.push( next );
+        boundaryHalfEdges.delete( next );
+        next = next.next;
+      }
+
+      if ( getSignedArea( boundary.map( halfEdge => halfEdge.start.viewCoordinates ) ) < 0 ) {
+        outerBoundaries.push( boundary );
+      }
+      else {
+        innerBoundaries.push( boundary );
+      }
+    }
+
+    assertEnabled() && assert( outerBoundaries.length === 1 );
+
+    this.outerBoundary.length = 0;
+    this.outerBoundary.push( ...outerBoundaries[ 0 ] );
+
+    this.innerBoundaries.length = 0;
+    this.innerBoundaries.push( ...innerBoundaries );
+  }
+
+  public getCompleteState(): TState<TCompleteData> {
+    this.fixOuterBoundary();
+
+    const state = CompleteData.fromFacesEdges(
+      this,
+      face => this.getFaceValue( face as LayoutFace ),
+      edge => this.getEdgeState( edge as LayoutEdge )
+    );
+
+    // Clean up state for viewing
+    iterateSolverFactory( safeSolverFactory, this, state, true );
+
+    return state;
+  }
+
+  public getCompletePuzzle(): TPuzzle<LayoutStructure, TState<TCompleteData>> {
+    return {
+      board: this,
+      stateProperty: new Property( this.getCompleteState() )
+    };
   }
 
   // TODO: getCompleteState / getPuzzle / etc.
