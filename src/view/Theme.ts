@@ -2,7 +2,7 @@ import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty,
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageBooleanProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
 import { RectangularButton } from 'phet-lib/sun';
-import { okhslToRGBString } from '../util/color.ts';
+import { copyToClipboard } from '../util/copyToClipboard.ts';
 
 // Listen to the OS default light/dark mode
 const mediaQueryList = window.matchMedia( '(prefers-color-scheme: dark)' );
@@ -48,55 +48,55 @@ export interface TTheme {
 export const lightTheme = {
   name: 'Light',
   isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( '#eee' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( okhslToRGBString( 30, 0.7, 0.6 ) ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( '#ccc' ),
-  puzzleBackgroundColorProperty: new PaintColorProperty( '#fff' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#888' ),
-  vertexColorProperty: new PaintColorProperty( '#000' ),
-  xColorProperty: new PaintColorProperty( '#f00' ),
-  blackLineColorProperty: new PaintColorProperty( '#000' ),
-  redLineColorProperty: new PaintColorProperty( '#aaa' ),
-  whiteLineColorProperty: new PaintColorProperty( '#999' ),
-  faceValueColorProperty: new PaintColorProperty( '#000' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( '#aaa' ),
-  faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
-  edgeWeirdColorProperty: new PaintColorProperty( '#888' ),
-  uiForegroundProperty: new PaintColorProperty( '#000' ),
-  uiBackgroundProperty: new PaintColorProperty( '#fff' ),
-  uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(218,107,91)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
+  vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  blackLineColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+  whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
+  faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
+  uiForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiBackgroundProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.7)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 50, 0.7, 0.8 ) ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 100, 0.7, 0.8 ) )
+  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
+  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
 };
 
 export const darkTheme = {
   name: 'Dark',
   isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( '#111' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( okhslToRGBString( 30, 0.7, 0.3 ) ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( '#333' ),
-  puzzleBackgroundColorProperty: new PaintColorProperty( '#222' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#777' ),
-  vertexColorProperty: new PaintColorProperty( '#777' ),
-  xColorProperty: new PaintColorProperty( '#f00' ),
-  blackLineColorProperty: new PaintColorProperty( '#aaa' ),
-  redLineColorProperty: new PaintColorProperty( '#444' ),
-  whiteLineColorProperty: new PaintColorProperty( '#555' ),
-  faceValueColorProperty: new PaintColorProperty( '#ccc' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( '#555' ),
-  faceValueErrorColorProperty: new PaintColorProperty( '#f00' ),
-  edgeWeirdColorProperty: new PaintColorProperty( '#888' ),
-  uiForegroundProperty: new PaintColorProperty( '#ccc' ),
-  uiBackgroundProperty: new PaintColorProperty( '#222' ),
-  uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
-  uiButtonBaseColorProperty: new PaintColorProperty( okhslToRGBString( 50, 0.7, 0.6 ) ),
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(17,17,17)' ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
+  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
+  vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
+  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+  redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
+  whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
+  faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
+  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
+  uiForegroundProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  uiBackgroundProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(206,119,67)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 50, 0.7, 0.3 ) ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 100, 0.7, 0.3 ) )
+  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
+  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
 };
 
 export const autoTheme = {
@@ -145,6 +145,25 @@ export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
 // @ts-expect-error - Allow this globally
 window.themeProperty = themeProperty;
 
+export const themeToJS = ( theme: TTheme ) => {
+  const keyValueStringMap: Record<string, string> = {};
+  Object.keys( theme ).forEach( key => {
+    const prop = theme[ key as keyof TTheme ];
+    if ( prop instanceof PaintColorProperty ) {
+      keyValueStringMap[ key ] = `new PaintColorProperty( '${prop.value.toCSS()}' )`;
+    }
+    else if ( typeof prop === 'string' ) {
+      keyValueStringMap[ key ] = `'${prop}'`;
+    }
+    else {
+      // TODO: better support?
+      keyValueStringMap[ key ] = JSON.stringify( prop, null, 2 );
+    }
+  } );
+
+  return `{\n${Object.keys( keyValueStringMap ).map( key => `  ${key}: ${keyValueStringMap[ key ]}` ).join( ',\n' )}\n}`;
+};
+
 export const popupColorEditor = ( theme: TTheme ) => {
 
   const div = document.createElement( 'div' );
@@ -166,6 +185,14 @@ export const popupColorEditor = ( theme: TTheme ) => {
     colorContainer.style.display = colorContainer.style.display === 'none' ? 'block' : 'none';
   } );
   div.appendChild( toggleButton );
+
+  // Copy to clipboard
+  const copyToClipboardButton = document.createElement( 'button' );
+  copyToClipboardButton.textContent = 'Copy to Clipboard';
+  copyToClipboardButton.addEventListener( 'click', () => {
+    copyToClipboard( themeToJS( theme ) );
+  } );
+  div.appendChild( copyToClipboardButton );
 
   div.appendChild( colorContainer );
 
