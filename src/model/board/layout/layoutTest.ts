@@ -25,8 +25,6 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     layoutPuzzle.simplify();
     // layoutPuzzle.layout();
 
-    console.log( 'signed area', layoutPuzzle.getSignedArea() );
-
     // const barycentricDerivative = LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
     // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
     // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle );
@@ -36,16 +34,28 @@ export const layoutTest = ( puzzleModelProperty: TReadOnlyProperty<PuzzleModel |
     // for ( let i = 0; i < 0; i++ ) {
     //   layoutPuzzle.applyDerivative( LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
     // }
-    for ( let i = 0; i < 15; i++ ) {
-      layoutPuzzle.applyDerivative( LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
+
+    const getDerivative = () => {
+      return LayoutDerivative.getAngularDeltas( layoutPuzzle ).plus( LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.25 ) ).getAreaCorrectedDerivative();
+    };
+
+    let amount = 0.2;
+    for ( let i = 0; i < 200; i++ ) {
+      if ( i % 10 === 0 ) {
+        amount *= 0.90;
+      }
+      layoutPuzzle.applyDerivative( getDerivative().timesScalar( amount ) );
+      // layoutPuzzle.applyDerivative( LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
     }
 
-    const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
+    // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
+    // const hookesDerivative = LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.2 ).getAreaCorrectedDerivative();
 
     const debugNode = new Node( {
       children: [
         layoutPuzzle.getDebugNode(),
-        angularDerivative.getDebugNode(),
+        getDerivative().getDebugNode(),
+        // angularDerivative.getDebugNode(),
         // barycentricDerivative.getDebugNode(),
       ]
     } );

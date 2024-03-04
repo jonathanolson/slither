@@ -89,6 +89,26 @@ export class LayoutDerivative {
     return new LayoutDerivative( layoutPuzzle, map );
   }
 
+  public static getHookesAttraction( layoutPuzzle: LayoutPuzzle, idealLength: number, k: number ): LayoutDerivative {
+    const map = new Map<LayoutVertex, Vector2>();
+    layoutPuzzle.vertices.forEach( vertex => {
+      map.set( vertex, Vector2.ZERO.copy() );
+    } );
+    layoutPuzzle.edges.forEach( edge => {
+      const a = edge.start.viewCoordinates;
+      const b = edge.end.viewCoordinates;
+
+      const delta = b.minus( a );
+      const distance = delta.getMagnitude();
+
+      const force = delta.timesScalar( ( distance - idealLength ) * k / distance );
+
+      map.get( edge.start )!.add( force );
+      map.get( edge.end )!.subtract( force );
+    } );
+    return new LayoutDerivative( layoutPuzzle, map );
+  }
+
   public static getBarycentricDeltas( layoutPuzzle: LayoutPuzzle ): LayoutDerivative {
     const map = new Map<LayoutVertex, Vector2>();
     layoutPuzzle.vertices.forEach( vertex => {
@@ -113,8 +133,6 @@ export class LayoutDerivative {
       map.set( vertex, Vector2.ZERO.copy() );
     } );
 
-    console.log( 'angular' );
-
     layoutPuzzle.vertices.forEach( vertex => {
       const neighbors = vertex.edges.map( edge => edge.getOtherVertex( vertex ) );
 
@@ -134,10 +152,6 @@ export class LayoutDerivative {
       }
 
       const orderedCorrectly = _.range( 0, neighbors.length ).every( i => currentlyOrderedNeighbors[ i ] === neighbors[ i ] );
-
-      if ( !orderedCorrectly ) {
-        console.log( 'bad order' );
-      }
 
       const neighborDirections = neighbors.map( neighbor => neighbor.viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
       const idealDirections = LayoutDerivative.getUnitLeastSquares( neighborDirections );
