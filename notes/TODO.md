@@ -5,74 +5,7 @@
 
 - Current code TODOs
   - Get scenery-phet and other libs in phet-lib imports(!) 
-  - Ditch cytoscape? (we can always resurrect it)
   - Nicer background.... fade to gradient?
-  - TOPOLOGICAL SIMPLIFICATION!!!!
-    - Handle dual view, match up region color???
-    - 
-    - red-black-red transitions can be detached
-    - white-black and black-white transitions CANNOT
-    - 
-    - LAYOUT ISSUES (do we write a graph layout algorithm???):
-      - Can this be a step to minorly tweak the output of cytoscape? 
-      - Apply forces/pressure to keep faces "simple" (non-overlapping) !!!!!
-      - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
-      - Apply forces/pressure for number value faces to have them be a bit more convex
-      - 
-      - Handle zero area fully
-      - 
-      - Force the "not close to edge overlap / vertex overlap" --- and correct signed area
-        - Our "signed area preservation" is bugging us when we have a negative-signed invalid area at the start
-        - NOTE NOTE: actually, some cases where a new face becomes the "outside" might... be desirable if it is null-valued?
-          - !!!!!!!!!!!
-          - !!!!!!!!!!!
-          - Can we create a "face" for the outside? Instead of face=null?
-          - note:
-          - FOR NOW, just prevent this. But yes, it seems ideal long-term to allow that swap
-      - Repulsion for close vertices
-      - 
-      - Every (supposed to be adjacent) pair can push/pull to its ideal angle? (to the least squares)
-      - Every (supposed to be adjacent) triple SHOULD enforce orientation, and once correct should still "push" a bit to ensure it stays
-        - HEY what happens if we... try to maximize the signed area of the "face made by the unit vectors"?
-      - force = torque / length (for us), apply torque potentially at center of edge (rotate vertices perpendicularly?)
-        - For the planarity forces... no,
-      - Around each face, detect the "orientation" we should push in order to get it towards a simple polygon
-        - (this MIGHT be "attractive" temporarily if we need to switch it to be planar, then once past that it will be repulsive)
-      - CONTINUOUS handling of forces, so we don't force oscillations
-    - 
-    - Just... have the ability to have the alternate view? or side-by-side
-    - 
-    - Each result white/black edge maps to a set of white/black edges in the original
-    - Each result valued face maps to a single valued face in the original
-    - 
-    - Map half-edges nicely, so we can maintain boundaries? hmmm
-    - 
-    - TRY the "re-layout" for existing boards?
-    - Steps (for simplification to another VALID same-type puzzle? - how to represent red edges - red edges might not map, right?)
-      - Get a copy that has everything with Base* types (so we can apply adjustments/mutation?) 
-      - Remove "fully satisfied" face values (if over-satisfied, in error state, leave it) -- any white, or any incorrect black, leave it
-      - Vertex w/ 2 black, 0 white:
-        - IF it doesn't have a triangular face on either side WITH a value still (because... omg)
-          - OR if the triangular face has a non-red edge (we would cause a logical collapse) -- don't close the final loop too
-        - New black edge going between the two vertices
-        - Add two (pseudo) vertices on each side of the black edge (have the one on the side stay in the same location)
-          - Add (pseudo) faces on each side
-          - NOTE: If there were NO red edges connecting, DO NOT bother creating the pseudo vertex/face
-            - IF this is the case, connect the single face with the new edge, and increase the face value by 1 (since it will get subtracted later)
-        - Replace each red edge with a black edge going to the relevant pseudo-vertex
-        - Remove the vertex and two black edges
-          - Subtract -1 for every face value that touched one of the black edges
-      - Vertex w/ 2 white, 0 black:
-        - Do something similar to the above (with the triangular constraint), BUT WITH:
-        - IF at least one of the white edges has NO valued faces
-      - Vertex (all red) -- do after steps above (they can be created)
-        - For each triangular face with a number.... (what about when they are adjacent?)
-        - TODO
-      - Edge (red, no faces)
-        - REMOVE IT, combine faces
-    - FOR LAYOUT we'll create "K_n" style edges for each face (extra edges for layout)
-      - Perhaps give "edges" that combine a bunch --- a potentially longer ideal length?
-      - CHECK signed area of each face, to see if we are still a planar embedding
   - Look up things under puzzling.stackexchange.com?
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
     - slight light/dark will look really nice (for inside/outside)... colors for others?
@@ -699,3 +632,40 @@
 - [defer] Chess-like history, with branching?
   - Undo/redo (as a tree ideally)
     - Can show "candidates" explored, that can be clicked on?
+- Topological Simplification
+  - DECIDE whether we are keeping this. - note, an "outside" Face might be a generally good idea (would have made this easier)
+  - Fix the "empty loop handling" bugs, that cause things to overlap or... do something weird?
+  - Match region color
+  - Improve the force-directed graph layout?
+    - Add repulsion of close vertices
+    - Experiment with force = torque / length, we're ignoring the length right now
+  - red-black-red transitions can be detached
+  - white-black and black-white transitions CANNOT
+  - Each result white/black edge maps to a set of white/black edges in the original
+  - Each result valued face maps to a single valued face in the original
+  - 
+  - Steps (for simplification to another VALID same-type puzzle? - how to represent red edges - red edges might not map, right?)
+    - Get a copy that has everything with Base* types (so we can apply adjustments/mutation?) 
+    - Remove "fully satisfied" face values (if over-satisfied, in error state, leave it) -- any white, or any incorrect black, leave it
+    - Vertex w/ 2 black, 0 white:
+      - IF it doesn't have a triangular face on either side WITH a value still (because... omg)
+        - OR if the triangular face has a non-red edge (we would cause a logical collapse) -- don't close the final loop too
+      - New black edge going between the two vertices
+      - Add two (pseudo) vertices on each side of the black edge (have the one on the side stay in the same location)
+        - Add (pseudo) faces on each side
+        - NOTE: If there were NO red edges connecting, DO NOT bother creating the pseudo vertex/face
+          - IF this is the case, connect the single face with the new edge, and increase the face value by 1 (since it will get subtracted later)
+      - Replace each red edge with a black edge going to the relevant pseudo-vertex
+      - Remove the vertex and two black edges
+        - Subtract -1 for every face value that touched one of the black edges
+    - Vertex w/ 2 white, 0 black:
+      - Do something similar to the above (with the triangular constraint), BUT WITH:
+      - IF at least one of the white edges has NO valued faces
+    - Vertex (all red) -- do after steps above (they can be created)
+      - For each triangular face with a number.... (what about when they are adjacent?)
+      - TODO
+    - Edge (red, no faces)
+      - REMOVE IT, combine faces
+  - FOR LAYOUT we'll create "K_n" style edges for each face (extra edges for layout)
+    - Perhaps give "edges" that combine a bunch --- a potentially longer ideal length?
+    - CHECK signed area of each face, to see if we are still a planar embedding

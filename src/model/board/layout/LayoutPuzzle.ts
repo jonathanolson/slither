@@ -15,9 +15,6 @@ import { arrayRemove } from 'phet-lib/phet-core';
 import _ from '../../../workarounds/_.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { LayoutDerivative } from './LayoutDerivative.ts';
-// @ts-expect-error
-import cytoscape from '../../../lib/cytoscape/cytoscape.js';
-import { fcoseCytoLayout } from './cytoscape/fcoseCytoLayout.ts';
 import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
 import { blackLineColorProperty, faceValueColorProperty } from '../../../view/Theme.ts';
 import { Shape } from 'phet-lib/kite';
@@ -702,125 +699,6 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     } );
 
     this.fixFaceCoordinates();
-  }
-
-  public layout(): void {
-    const vertexTagMap: Map<LayoutVertex, string> = new Map();
-    const vertexReverseTagMap: Map<string, LayoutVertex> = new Map();
-
-    this.vertices.forEach( ( vertex, index ) => {
-      vertexTagMap.set( vertex, `v${index}` );
-      vertexReverseTagMap.set( `v${index}`, vertex );
-    } );
-
-    const idealEdgeLengthMap = new Map<string, number>();
-    const edgeElasticityMap = new Map<string, number>();
-
-    const vertexScale = 50;
-    const elasticityBase = 0.45;
-
-    // NOTE: could use cy.add, e.g.
-    // cy.add( { data: { id: 'edgeid', source: 'node1', target: 'node2' } }
-    const elements = [
-      ...this.vertices.map( vertex => ( { data: { id: vertexTagMap.get( vertex ) } } ) ),
-      ...this.edges.map( edge => {
-        const edgeId = `${vertexTagMap.get( edge.start )}-${vertexTagMap.get( edge.end )}`;
-        idealEdgeLengthMap.set( edgeId, vertexScale );
-        edgeElasticityMap.set( edgeId, elasticityBase );
-
-        return {
-          data: {
-            id: edgeId,
-            source: vertexTagMap.get( edge.vertices[ 0 ] ),
-            target: vertexTagMap.get( edge.vertices[ 1 ] )
-          }
-        };
-      } ),
-      ...this.faces.flatMap( face => {
-        const numEdges = face.edges.length;
-
-        const circleCircumference = numEdges * vertexScale;
-        const circleRadius = circleCircumference / ( 2 * Math.PI );
-
-        const subElements: any[] = [];
-        // For all non-adjacent vertices
-        for ( let i = 0; i < numEdges; i++ ) {
-          for ( let j = i + 2; j < numEdges; j++ ) {
-            if ( i === 0 && j === numEdges - 1 ) {
-              continue;
-            }
-
-            const start = face.edges[ i ].end;
-            const end = face.edges[ j ].end;
-
-            const edgeId = `${vertexTagMap.get( start )}-${vertexTagMap.get( end )}`;
-
-            const radialA = Vector2.createPolar( circleRadius, i * 2 * Math.PI / numEdges );
-            const radialB = Vector2.createPolar( circleRadius, j * 2 * Math.PI / numEdges );
-            const circleDistance = radialA.distance( radialB );
-
-            idealEdgeLengthMap.set( edgeId, circleDistance );
-            edgeElasticityMap.set( edgeId, elasticityBase / numEdges );
-
-            subElements.push( {
-              data: {
-                id: edgeId,
-                source: vertexTagMap.get( start ),
-                target: vertexTagMap.get( end )
-              }
-            } );
-          }
-        }
-
-        // return []; // TODO: enable this again? experiment?
-        return subElements;
-      } )
-    ];
-
-    const cy = cytoscape( {
-      headless: true,
-      elements: elements
-    } );
-
-    // cy.add( element );
-
-    this.vertices.forEach( vertex => {
-      cy.getElementById( vertexTagMap.get( vertex ) ).position( { x: vertexScale * vertex.viewCoordinates.x, y: vertexScale * vertex.viewCoordinates.y } );
-    } );
-
-    // coseCytoLayout( cy, { randomize: false } );
-    // coseBilkentCytoLayout( cy, { randomize: true } );
-    fcoseCytoLayout( cy, {
-      randomize: false,
-      // nestingFactor: 5.5,
-      // tile: true,
-
-      nodeRepulsion: ( node: any ) => {
-        const vertex = vertexReverseTagMap.get( node.id() )!;
-        assertEnabled() && assert( vertex );
-        return 4500;
-      },
-      idealEdgeLength: ( edge: any ) => {
-        const idealEdgeLength = idealEdgeLengthMap.get( edge.id() );
-        assertEnabled() && assert( idealEdgeLength !== undefined );
-        return idealEdgeLength;
-      },
-      edgeElasticity: ( edge: any ) => {
-        const edgeElasticity = edgeElasticityMap.get( edge.id() );
-        assertEnabled() && assert( edgeElasticity !== undefined );
-        return edgeElasticity;
-      }
-    } );
-
-    this.vertices.forEach( vertex => {
-      const position = cy.getElementById( vertexTagMap.get( vertex ) ).position();
-
-      vertex.viewCoordinates.setXY( position.x / vertexScale, position.y / vertexScale );
-    } );
-
-    this.fixFaceCoordinates();
-
-    cy.destroy();
   }
 
   public fixFaceCoordinates(): void {
