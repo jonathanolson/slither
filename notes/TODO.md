@@ -17,6 +17,8 @@
       - Apply forces/pressure to have adjacent angles "not straight", and "not super acute"
       - Apply forces/pressure for number value faces to have them be a bit more convex
       - 
+      - Handle zero area
+      - 
       - Force the "not close to edge overlap / vertex overlap" --- and correct signed area
         - Our "signed area preservation" is bugging us when we have a negative-signed invalid area at the start
         - NOTE NOTE: actually, some cases where a new face becomes the "outside" might... be desirable if it is null-valued?

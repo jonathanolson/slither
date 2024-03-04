@@ -769,7 +769,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     const debugNode = new Node();
 
     const showBackgrounds = false;
-    const showRedEdges = true;
+    const showRedEdges = false; // TODO: useful for debugging
+    const showVertices = false; // TODO: useful for debugging
 
     this.edges.forEach( edge => {
       const start = edge.start.viewCoordinates;
@@ -811,13 +812,15 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       } );
     }
 
-    this.vertices.forEach( vertex => {
-      debugNode.addChild( new Circle( 0.1, {
-        x: vertex.viewCoordinates.x,
-        y: vertex.viewCoordinates.y,
-        fill: blackLineColorProperty
-      } ) );
-    } );
+    if ( showVertices ) {
+      this.vertices.forEach( vertex => {
+        debugNode.addChild( new Circle( 0.1, {
+          x: vertex.viewCoordinates.x,
+          y: vertex.viewCoordinates.y,
+          fill: blackLineColorProperty
+        } ) );
+      } );
+    }
 
     this.faces.forEach( face => {
       const faceValue = this.faceValueMap.get( face ) ?? null;

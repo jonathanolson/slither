@@ -1,5 +1,5 @@
 import { DotUtils, Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
-import { getCentroid, getSignedAreaDerivative } from '../core/createBoardDescriptor.ts';
+import { getCentroid, getSignedArea, getSignedAreaDerivative } from '../core/createBoardDescriptor.ts';
 import { Node } from 'phet-lib/scenery';
 import { ArrowNode } from '../../../view/to-port/ArrowNode.ts';
 import { LayoutVertex } from './layout.ts';
@@ -35,6 +35,14 @@ export class LayoutDerivative {
       map.set( vertex, derivative.timesScalar( scalar ) );
     } );
     return new LayoutDerivative( this.layoutPuzzle, map );
+  }
+
+  public getMaxMagnitude(): number {
+    let maxMagnitude = 0;
+    this.derivatives.forEach( derivative => {
+      maxMagnitude = Math.max( maxMagnitude, derivative.getMagnitude() );
+    } );
+    return maxMagnitude;
   }
 
   public getAreaCorrectedDerivative(): LayoutDerivative {
@@ -116,7 +124,8 @@ export class LayoutDerivative {
     return new LayoutDerivative( layoutPuzzle, map );
   }
 
-  public static getRegularPolygonDeltas( layoutPuzzle: LayoutPuzzle, idealLength: number, onlyValuedFaces: boolean ): LayoutDerivative {
+  // TODO: note in description that we also handle the negative-signed-area constraint (and overlap/almost-overlap)
+  public static getRegularPolygonDeltas( layoutPuzzle: LayoutPuzzle, idealLength: number, onlyValuedFaces: boolean, normalStrength: number ): LayoutDerivative {
     const map = new Map<LayoutVertex, Vector2>();
     layoutPuzzle.vertices.forEach( vertex => {
       map.set( vertex, Vector2.ZERO.copy() );
@@ -126,20 +135,89 @@ export class LayoutDerivative {
       return idealLength / ( 2 * Math.sin( Math.PI / n ) );
     };
 
+    // console.log( 'regular' );
+
     layoutPuzzle.faces.forEach( face => {
-      if ( onlyValuedFaces && layoutPuzzle.getFaceValue( face ) === null ) {
+
+      // For now
+      if ( face.vertices.length < 3 ) {
         return;
       }
 
+      const minSignedArea = 0.2;
+      const minDistanceFromOther = 0.3;
+
       const points = face.vertices.map( vertex => vertex.viewCoordinates );
+
+      let additionalStrenthRatio = 0;
+
+      // If we have negative signed area, we need to fix our orientation STRONGLY
+      const signedArea = getSignedArea( points );
+      if ( signedArea < 0 ) {
+        additionalStrenthRatio = 1;
+      }
+      else if ( signedArea < minSignedArea ) {
+        additionalStrenthRatio = Math.max( additionalStrenthRatio, ( minSignedArea - signedArea ) / minSignedArea );
+      }
+
+      // For each line segment, ensure that each other non-adjacent line segment is at least minDistanceFromOther away
+      for ( let i = 0; i < points.length; i++ ) {
+        if ( additionalStrenthRatio >= 1 ) { break; }
+
+        const aIndex = i;
+        const bIndex = ( i + 1 ) % points.length;
+
+        const a = points[ aIndex ];
+        const b = points[ bIndex ];
+
+        for ( let j = i + 2; j < points.length - ( i === 0 ? 1 : 0 ); j++ ) {
+          if ( additionalStrenthRatio >= 1 ) { break; }
+
+          const cIndex = j % points.length;
+          const dIndex = ( j + 1 ) % points.length;
+
+          const c = points[ cIndex ];
+          const d = points[ dIndex ];
+
+          if ( DotUtils.lineSegmentIntersection( a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y ) ) {
+            assertEnabled() && assert( points.length >= 4 );
+
+            // console.log( 'INTERSECTION' );
+            additionalStrenthRatio = 1;
+          }
+          else {
+            const distance = Math.min(
+              DotUtils.distToSegment( a, c, d ),
+              DotUtils.distToSegment( b, c, d ),
+              DotUtils.distToSegment( c, a, b ),
+              DotUtils.distToSegment( d, a, b )
+            );
+
+            if ( distance < minDistanceFromOther ) {
+              additionalStrenthRatio = Math.max( additionalStrenthRatio, ( minDistanceFromOther - distance ) / minDistanceFromOther );
+            }
+          }
+        }
+      }
+
+      if ( additionalStrenthRatio === 0 && onlyValuedFaces && layoutPuzzle.getFaceValue( face ) === null ) {
+        return;
+      }
+
       const centroid = getCentroid( points );
+      assertEnabled() && assert( centroid.isFinite() );
+
       const radius = getCircumradiusFromSide( points.length );
 
       const currentDeltas = points.map( point => point.minus( centroid ) );
       const circleDeltas = points.map( ( point, i ) => Vector2.createPolar( radius, 2 * Math.PI * i / points.length ) );
       const idealDeltas = LayoutDerivative.getLeastSquares( currentDeltas, circleDeltas );
 
-      const forces = points.map( ( point, i ) => idealDeltas[ i ].minus( currentDeltas[ i ] ) );
+      // TODO: don't over-strength this?
+      const strength = normalStrength + ( 2 - normalStrength ) * additionalStrenthRatio;
+      // console.log( additionalStrenthRatio );
+
+      const forces = points.map( ( point, i ) => idealDeltas[ i ].minus( currentDeltas[ i ] ).timesScalar( strength ) );
       face.vertices.forEach( ( vertex, i ) => {
         const force = forces[ i ];
         assertEnabled() && assert( force.isFinite() );
@@ -169,7 +247,7 @@ export class LayoutDerivative {
     return new LayoutDerivative( layoutPuzzle, map );
   }
 
-  public static getAngularDeltas( layoutPuzzle: LayoutPuzzle ): LayoutDerivative {
+  public static getAngularDeltas( layoutPuzzle: LayoutPuzzle, multiplier: number ): LayoutDerivative {
     // create zero forces
     const map = new Map<LayoutVertex, Vector2>();
     layoutPuzzle.vertices.forEach( vertex => {
@@ -236,7 +314,7 @@ export class LayoutDerivative {
           const ideal = idealDirections[ i ];
 
           // TODO: try dividing by length? also... make perpendicular?
-          const force = ideal.minus( direction.timesScalar( ideal.dot( direction ) ) ).timesScalar( magnitude );
+          const force = ideal.minus( direction.timesScalar( ideal.dot( direction ) ) ).timesScalar( magnitude * multiplier );
           netForce.add( force );
           assertEnabled() && assert( force.isFinite() );
           // const force = ideal.minus( direction ).timesScalar( magnitude );
@@ -298,6 +376,11 @@ export class LayoutDerivative {
       0, 0, 1
     );
 
-    return idealPoints.map( normal => rotation3.timesVector2( normal ) );
+    return idealPoints.map( normal => {
+      const result = rotation3.timesVector2( normal );
+      assertEnabled() && assert( result.isFinite() );
+
+      return result;
+    } );
   }
 }

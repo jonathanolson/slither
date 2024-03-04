@@ -58,6 +58,10 @@ export const getArea = ( points: Vector2[] ) => {
 export const getCentroid = ( points: Vector2[] ) => {
   const area = getSignedArea( points );
 
+  if ( area === 0 ) {
+    return points.reduce( ( sum, p ) => sum.plus( p ), new Vector2( 0, 0 ) ).timesScalar( 1 / points.length );
+  }
+
   let x = 0;
   let y = 0;
 
