@@ -44,8 +44,7 @@ const display = new Display( rootNode, {
   backgroundColor: '#eee',
 
   assumeFullWindow: true,
-  // listenToOnlyElement: false // TODO doesn't allow the color editor?
-  listenToOnlyElement: true
+  listenToOnlyElement: SlitherQueryParameters.debugColors
 } );
 document.body.appendChild( display.domElement );
 

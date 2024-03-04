@@ -2,13 +2,14 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, smallVertexProperty, faceValueStyleProperty, faceValueStyles, popupColorEditor } from './Theme.ts';
+import { availableThemes, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
+import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -71,7 +72,7 @@ export class SettingsNode extends PopupNode {
     const themeEditButtons = new VBox( {
       spacing: 15,
       stretch: true,
-      visibleProperty: advancedSettingsVisibleProperty,
+      visible: SlitherQueryParameters.debugColors,
       children: availableThemes.filter( theme => theme.isEditable ).map( theme => new UITextPushButton( `Edit ${theme.name} Theme`, {
         listener: () => {
           popupColorEditor( theme );

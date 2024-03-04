@@ -12,6 +12,8 @@ export default QueryStringMachine.getAll( {
 
   debugSleep: { type: 'flag' },
 
+  debugColors: { type: 'flag' },
+
   // like PhET sims
   showPointerAreas: { type: 'flag' }
 } );

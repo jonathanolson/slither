@@ -4,6 +4,7 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - Background behind navbar? (so navbar can have its own transparency?) hmmm
   - Get scenery-phet and other libs in phet-lib imports(!)
   - Record topological demo?
   - Nicer background.... fade to gradient?

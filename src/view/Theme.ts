@@ -17,6 +17,9 @@ export interface TTheme {
   navbarBackgroundColorProperty: PaintColorProperty;
   navbarErrorBackgroundColorProperty: PaintColorProperty;
   playAreaBackgroundColorProperty: PaintColorProperty;
+  playAreaLinearTopColorProperty: PaintColorProperty;
+  playAreaLinearMiddleColorProperty: PaintColorProperty;
+  playAreaLinearBottomColorProperty: PaintColorProperty;
   playAreaRadialInsideColorProperty: PaintColorProperty;
   playAreaRadialOutsideColorProperty: PaintColorProperty;
   puzzleBackgroundColorProperty: PaintColorProperty;
@@ -52,10 +55,13 @@ export const lightTheme = {
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(218,107,91)' ),
   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.4000000000000000222)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgb(181,181,181)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(179,179,179)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
   blackLineColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
@@ -81,10 +87,13 @@ export const darkTheme = {
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(17,17,17)' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
+  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.4000000000000000222)' ),
   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(110,110,110)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(89,89,89)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
@@ -102,6 +111,33 @@ export const darkTheme = {
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
+};
+
+export const fadeLightTheme = {
+  ...lightTheme,
+  name: 'Fade Light',
+  isEditable: true,
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(64,64,64)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(255,102,0,0.36999999999999999556)' ),
+  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(255,0,200,0.3499999999999999778)' ),
+  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,17,255,0.34000000000000002442)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.91000000000000003109)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
+};
+
+export const fadeDarkTheme = {
+  ...darkTheme,
+  name: 'Fade Dark',
+  isEditable: true,
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(17,17,17)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(255,102,0,0.64000000000000001332)' ),
+  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(255,0,208,0.54000000000000003553)' ),
+  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(4,0,255,0.42999999999999999334)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.46999999999999997335)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(28,28,28)' ),
 };
 
 export const autoTheme = {
@@ -138,7 +174,9 @@ Object.keys( lightTheme ).forEach( key => {
 export const availableThemes: TTheme[] = [
   lightTheme,
   darkTheme,
-  autoTheme
+  autoTheme,
+  fadeLightTheme,
+  fadeDarkTheme
 ];
 
 // TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
@@ -172,6 +210,9 @@ export const themeToJS = ( theme: TTheme ) => {
 export const popupColorEditor = ( theme: TTheme ) => {
 
   const div = document.createElement( 'div' );
+  // @ts-expect-error
+  div.style.zoom = '0.8';
+  div.style.backgroundColor = 'rgba(127,127,127,0.3)';
 
   // Close button
   const closeButton = document.createElement( 'button' );
@@ -224,6 +265,7 @@ export const popupColorEditor = ( theme: TTheme ) => {
       alphaSlider.max = '1';
       alphaSlider.step = '0.01';
       alphaSlider.value = `${initialAlpha}`;
+      alphaSlider.style.marginRight = '10px';
       alphaSliderReadout.innerText = initialAlpha.toFixed( 2 );
 
       const updateColor = () => {
@@ -258,6 +300,18 @@ export const navbarErrorBackgroundColorProperty = new DynamicProperty( themeProp
 
 export const playAreaBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'playAreaBackgroundColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const playAreaLinearTopColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'playAreaLinearTopColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const playAreaLinearMiddleColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'playAreaLinearMiddleColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const playAreaLinearBottomColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'playAreaLinearBottomColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const playAreaRadialInsideColorProperty = new DynamicProperty( themeProperty, {

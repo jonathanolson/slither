@@ -1,8 +1,8 @@
-import { AnimatedPanZoomListener, Node, NodeOptions, RadialGradient, Rectangle, Sizable, SizableOptions } from 'phet-lib/scenery';
+import { AnimatedPanZoomListener, LinearGradient, Node, NodeOptions, RadialGradient, Rectangle, Sizable, SizableOptions } from 'phet-lib/scenery';
 import PuzzleModelNode from './PuzzleModelNode.ts';
 import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
-import { playAreaBackgroundColorProperty, playAreaRadialInsideColorProperty, playAreaRadialOutsideColorProperty } from './Theme';
+import { playAreaBackgroundColorProperty, playAreaLinearBottomColorProperty, playAreaLinearMiddleColorProperty, playAreaLinearTopColorProperty, playAreaRadialInsideColorProperty, playAreaRadialOutsideColorProperty } from './Theme';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { optionize } from 'phet-lib/phet-core';
@@ -20,6 +20,7 @@ export type PuzzleContainerNodeOptions = SelfOptions & ParentOptions;
 export default class PuzzleContainerNode extends Sizable( Node ) {
 
   private backgroundRect: Rectangle;
+  private rectangularGradientRect: Rectangle;
   private circularGradientRect: Rectangle;
   private puzzleWrapper: Node;
   private puzzleNode: PuzzleModelNode | null = null;
@@ -40,12 +41,15 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.backgroundRect = new Rectangle( {
       fill: playAreaBackgroundColorProperty
     } );
+    this.rectangularGradientRect = new Rectangle( {
+      // TODO: don't require this
+    } );
     this.circularGradientRect = new Rectangle( {
       // TODO: don't require this
     } );
 
     this.puzzleWrapper = new Node( {
-      children: [ this.backgroundRect, this.circularGradientRect ]
+      children: [ this.backgroundRect, this.rectangularGradientRect, this.circularGradientRect ]
     } );
     this.zoomListener = new AnimatedPanZoomListener( this.puzzleWrapper, {
       maxScale: 10
@@ -87,7 +91,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
         if ( this.puzzleNode ) {
           // Update before children, so we don't mess with layout
           this.updatePuzzleNodeLayout( this.puzzleNode );
-          this.puzzleWrapper.children = [ this.backgroundRect, this.circularGradientRect, this.puzzleNode ];
+          this.puzzleWrapper.children = [ this.backgroundRect, this.rectangularGradientRect, this.circularGradientRect, this.puzzleNode ];
         }
       }
 
@@ -107,10 +111,12 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
     if ( width !== null ) {
       this.backgroundRect.rectWidth = width;
+      this.rectangularGradientRect.rectWidth = width;
       this.circularGradientRect.rectWidth = width;
     }
     if ( height !== null ) {
       this.backgroundRect.rectHeight = height;
+      this.rectangularGradientRect.rectHeight = height;
       this.circularGradientRect.rectHeight = height;
     }
 
@@ -123,6 +129,11 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
       const center = bounds.center;
       const distanceToCorner = center.getMagnitude();
+
+      this.rectangularGradientRect.fill = new LinearGradient( 0, 0, 0, height )
+        .addColorStop( 0, playAreaLinearTopColorProperty )
+        .addColorStop( 0.5, playAreaLinearMiddleColorProperty )
+        .addColorStop( 1, playAreaLinearBottomColorProperty );
 
       this.circularGradientRect.fill = new RadialGradient(
         center.x, center.y, distanceToCorner,
