@@ -55,6 +55,11 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.localPreferredWidthProperty.lazyLink( layoutListener );
     this.localPreferredHeightProperty.lazyLink( layoutListener );
 
+    if ( options.topological ) {
+      // TODO: layout still not working great?
+      this.puzzleWrapper.localBoundsProperty.lazyLink( layoutListener );
+    }
+
     // TODO: generalize this just as a container node, without this specialization for creating the type?
     Multilink.multilink( [
       puzzleModelProperty,

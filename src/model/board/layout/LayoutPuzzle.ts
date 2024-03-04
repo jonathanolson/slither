@@ -474,6 +474,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       // TODO: preserve originalEdges(!)
 
       const newEdge = new LayoutEdge( startVertex, endVertex );
+      firstEdge.originalEdges.forEach( edge => newEdge.originalEdges.add( edge ) );
+      secondEdge.originalEdges.forEach( edge => newEdge.originalEdges.add( edge ) );
       this.edgeStateMap.set( newEdge, edgeStateA );
       this.edges.push( newEdge );
 
