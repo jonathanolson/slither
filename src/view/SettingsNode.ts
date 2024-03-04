@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, smallVertexProperty, faceValueStyleProperty, faceValueStyles } from './Theme.ts';
+import { availableThemes, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, uiFont, uiHeaderFont, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, themeProperty, uiForegroundColorProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, smallVertexProperty, faceValueStyleProperty, faceValueStyles, popupColorEditor } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -67,6 +67,17 @@ export class SettingsNode extends PopupNode {
         };
       } )
     );
+
+    const themeEditButtons = new VBox( {
+      spacing: 15,
+      stretch: true,
+      visibleProperty: advancedSettingsVisibleProperty,
+      children: availableThemes.filter( theme => theme.isEditable ).map( theme => new UITextPushButton( `Edit ${theme.name} Theme`, {
+        listener: () => {
+          popupColorEditor( theme );
+        }
+      } ) )
+    } );
 
     const displayNode = new VBox( {
       stretch: true,
@@ -179,7 +190,10 @@ export class SettingsNode extends PopupNode {
       align: 'left',
       children: [
         autoSolveNode,
-        themeNode,
+        new HBox( {
+          spacing: 30,
+          children: [ themeNode, themeEditButtons ]
+        } ),
         displayNode,
         new UITextCheckbox( 'Advanced Settings Visible', advancedSettingsVisibleProperty )
       ]

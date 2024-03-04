@@ -44,7 +44,8 @@ const display = new Display( rootNode, {
   backgroundColor: '#eee',
 
   assumeFullWindow: true,
-  listenToOnlyElement: false
+  // listenToOnlyElement: false // TODO doesn't allow the color editor?
+  listenToOnlyElement: true
 } );
 document.body.appendChild( display.domElement );
 

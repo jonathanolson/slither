@@ -9,7 +9,7 @@ import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TReadOnlyPuzzle } from '../../model/puzzle/TReadOnlyPuzzle.ts';
-import { PuzzleBackgroundNode } from './PuzzleBackgroundNode.ts';
+import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
 import { VertexNode } from './VertexNode.ts';
 import { FaceNode } from './FaceNode.ts';
 import { EdgeNode } from './EdgeNode.ts';
@@ -19,11 +19,12 @@ type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   useSimpleRegionForBlack?: boolean;
-  useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
 };
 
-export type BasicPuzzleNodeOptions = SelfOptions & NodeOptions;
+type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
+
+export type BasicPuzzleNodeOptions = SelfOptions & ParentOptions;
 
 export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData;
 
@@ -33,7 +34,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
     providedOptions?: BasicPuzzleNodeOptions
   ) {
-    const options = optionize<BasicPuzzleNodeOptions, SelfOptions, NodeOptions>()( {
+    const options = optionize<BasicPuzzleNodeOptions, SelfOptions, ParentOptions>()( {
       // TODO: omg, have their own things do defaults, this is unclean
       textOptions: {
         font: puzzleFont,
@@ -42,7 +43,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       },
       edgePressListener: () => {},
       useSimpleRegionForBlack: true,
-      useBackgroundOffsetStroke: false,
       backgroundOffsetDistance: 0.3
     }, providedOptions );
 

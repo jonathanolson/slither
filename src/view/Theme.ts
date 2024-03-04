@@ -30,6 +30,7 @@ mediaQueryList.addEventListener( 'change', e => {
 
 export interface TTheme {
   name: string;
+  isEditable: boolean;
   navbarBackgroundColorProperty: PaintColorProperty;
   navbarErrorBackgroundColorProperty: PaintColorProperty;
   playAreaBackgroundColorProperty: PaintColorProperty;
@@ -62,6 +63,7 @@ export interface TTheme {
 
 export const lightTheme = {
   name: 'Light',
+  isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( '#eee' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.6 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#ccc' ),
@@ -88,6 +90,7 @@ export const lightTheme = {
 
 export const darkTheme = {
   name: 'Dark',
+  isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( '#111' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.3 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#333' ),
@@ -113,7 +116,8 @@ export const darkTheme = {
 };
 
 export const autoTheme = {
-  name: 'Auto'
+  name: 'Auto',
+  isEditable: false
 } as TTheme;
 Object.keys( lightTheme ).forEach( key => {
   // @ts-expect-error
@@ -156,6 +160,77 @@ export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
 } );
 // @ts-expect-error - Allow this globally
 window.themeProperty = themeProperty;
+
+export const popupColorEditor = ( theme: TTheme ) => {
+
+  const div = document.createElement( 'div' );
+
+  // Close button
+  const closeButton = document.createElement( 'button' );
+  closeButton.textContent = 'Close';
+  closeButton.addEventListener( 'click', () => {
+    document.body.removeChild( div );
+  } );
+  div.appendChild( closeButton );
+
+  const colorContainer = document.createElement( 'div' );
+
+  // Toggle view button (toggles colorContainer)
+  const toggleButton = document.createElement( 'button' );
+  toggleButton.textContent = 'Toggle Visibility';
+  toggleButton.addEventListener( 'click', () => {
+    colorContainer.style.display = colorContainer.style.display === 'none' ? 'block' : 'none';
+  } );
+  div.appendChild( toggleButton );
+
+  div.appendChild( colorContainer );
+
+  Object.keys( theme ).forEach( key => {
+    const prop = theme[ key as keyof TTheme ];
+    if ( prop instanceof PaintColorProperty ) {
+      const section = document.createElement( 'div' );
+
+      const input = document.createElement( 'input' );
+      input.type = 'color';
+      input.value = prop.value.withAlpha( 1 ).toHexString();
+
+      input.style.margin = '1px';
+      input.style.marginRight = '10px';
+
+      const initialAlpha = prop.value.alpha;
+
+      const alphaSlider = document.createElement( 'input' );
+      const alphaSliderReadout = document.createElement( 'span' );
+
+      alphaSlider.style.width = '100px';
+      alphaSlider.type = 'range';
+      alphaSlider.min = '0';
+      alphaSlider.max = '1';
+      alphaSlider.step = '0.01';
+      alphaSlider.value = `${initialAlpha}`;
+      alphaSliderReadout.innerText = initialAlpha.toFixed( 2 );
+
+      const updateColor = () => {
+        const alpha = alphaSlider.valueAsNumber;
+        alphaSliderReadout.innerText = alpha.toFixed( 2 );
+        prop.value = new Color( input.value ).withAlpha( alpha );
+      };
+      input.addEventListener( 'input', updateColor );
+      alphaSlider.addEventListener( 'input', updateColor );
+
+      section.appendChild( input );
+      section.appendChild( alphaSliderReadout );
+      section.appendChild( alphaSlider );
+      section.appendChild( document.createTextNode( key ) );
+
+      colorContainer.appendChild( section );
+    }
+  } );
+
+  document.body.appendChild( div );
+  div.style.position = 'absolute';
+  div.style.zIndex = '100000';
+};
 
 export const navbarBackgroundColorProperty = new DynamicProperty( themeProperty, {
   derive: 'navbarBackgroundColorProperty'
