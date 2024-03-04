@@ -3,7 +3,7 @@ import './main.css';
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
 import { BooleanProperty, DynamicProperty, Multilink, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
@@ -17,8 +17,7 @@ import { BasicSquarePuzzle } from './model/puzzle/BasicSquarePuzzle.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
 import { workaroundResolveStep } from './util/sleep.ts';
-
-import { layoutTest } from './model/board/layout/layoutTest.ts';
+import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -62,7 +61,21 @@ const startingPuzzleModel = new PuzzleModel( startingPuzzle );
 // TODO: properly support null (it isn't right now)
 const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
 
-const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty );
+const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty, {
+  layoutOptions: {
+    stretch: true,
+    grow: 1
+  }
+} );
+
+const topologicalContainerNode = new PuzzleContainerNode( puzzleModelProperty, {
+  layoutOptions: {
+    stretch: true,
+    grow: 1
+  },
+  topological: true,
+  visibleProperty: showLayoutTestProperty
+} );
 
 const falseProperty = new BooleanProperty( false );
 const hasErrorProperty = new DynamicProperty( puzzleModelProperty, {
@@ -81,6 +94,7 @@ Multilink.multilink( [
 } );
 
 const mainBox = new VBox( {
+  stretch: true,
   children: [
     new AlignBox( new ControlBarNode( puzzleModelProperty, {
       glassPane: glassPane,
@@ -93,7 +107,17 @@ const mainBox = new VBox( {
     } ), {
       margin: controlBarMargin
     } ),
-    puzzleContainerNode
+    new HBox( {
+      grow: 1,
+      stretch: true,
+      layoutOptions: {
+        grow: 1
+      },
+      children: [
+        puzzleContainerNode,
+        topologicalContainerNode
+      ]
+    } )
   ]
 } );
 layoutBoundsProperty.lazyLink( bounds => {
@@ -135,7 +159,10 @@ display.updateOnRequestAnimationFrame( dt => {
     resize();
   }
 
+  mainBox.validateBounds();
+
   puzzleContainerNode.step( dt );
+  topologicalContainerNode.step( dt );
 } );
 
 document.addEventListener( 'keydown', event => {
@@ -152,5 +179,3 @@ document.addEventListener( 'keydown', event => {
     }
   }
 } );
-
-layoutTest( puzzleModelProperty );

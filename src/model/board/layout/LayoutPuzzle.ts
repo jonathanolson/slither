@@ -291,7 +291,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
       // TODO: do we actually FIX up the boundaries? maybe recompute them later
 
-      console.log( 'group', `faces: ${faces.length}`, isExterior ? 'exterior' : 'interior', `boundary length: ${boundaryHalfEdges.length}` );
+      // console.log( 'group', `faces: ${faces.length}`, isExterior ? 'exterior' : 'interior', `boundary length: ${boundaryHalfEdges.length}` );
 
       if ( isExterior ) {
         // Find half edges that "start" the boundary (previous edge is removed)
@@ -317,7 +317,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
             }
             boundarySegments.push( boundarySegment );
 
-            console.log( 'segment', boundarySegment.length );
+            // console.log( 'segment', boundarySegment.length );
           }
         }
         deadZones.push( new LayoutExternalZone( faces, boundaryHalfEdges, boundarySegments ) );
@@ -580,7 +580,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public simplify(): void {
     // TODO: show how things progress(!)
-    console.log( 'simplify' );
+    // console.log( 'simplify' );
     this.clearSatisfiedFaces();
     this.removeDeadRedEdges();
     this.removeSimpleForced();

@@ -5,6 +5,7 @@
 
 - Current code TODOs
   - Get scenery-phet and other libs in phet-lib imports(!) 
+  - Nicer background.... fade to gradient?
   - TOPOLOGICAL SIMPLIFICATION!!!!
     - Handle dual view, match up region color???
     - 
