@@ -7,12 +7,13 @@
   - Get scenery-phet and other libs in phet-lib imports(!)
   - Record topological demo?
   - Nicer background.... fade to gradient?
-  - Look up things under puzzling.stackexchange.com?
+  - Color shifting! 
+  - Face coloring will help visualization of solving
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
     - slight light/dark will look really nice (for inside/outside)... colors for others?
       - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
-  - TStructure cleanup
-    - Remove TStructure, don't need it for square
+  - SHOW the vision working on the image(!)
+  - Code cleanup
     - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
     - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
       - Maybe just have a TPuzzleProperty? (hmmm) bleh
@@ -22,7 +23,6 @@
       - Tabs? (from joist? eek)
     - Style preview (demo puzzle)
       - Include animation previews(!) 
-  - Face coloring will help visualization of solving
   - Scan:
     - USE SAT for image scanning (to see if it is a good puzzle)
     - Show 'progress' / debug of scan (just like generation)
@@ -103,6 +103,7 @@
     - When we have that, store faces as a simple string (and compress)
       - Also, edges in order, can specify edge state IN A SIMILAR MANNER
     - MINIMIZE the format of boards (so we can stuff custom-boards into fairly short URLs) 
+  - import format from https://www.kakuro-online.com/slitherlink/
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
   - Google Analytics (and fix for site? GA4?)
   - Mobile issues:
@@ -136,7 +137,6 @@
               at async PluginDriver.hookFirstAndGetPlugin (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19479:28)
               at async file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:18650:33
               at async Queue.work (file:///Users/jon/phet/git/slither/node_modules/rollup/dist/es/shared/node-entry.js:19689:32)
-  - SHOW the vision working on the image(!)
   - Exterior UI (improved "new" popup, etc.)
     - We have the puzzle/solver Node
     - TRANSITION swipe animation, like game screens
@@ -232,6 +232,7 @@
 - Read
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
   - check r/slitherlink for more cases that were explained well!
+  - Look up things under https://puzzling.stackexchange.com/search?q=slitherlink
 
 - Scan / Vision
   - Use the locations of text-detected numbers to "vote" on what contours to use as a container
