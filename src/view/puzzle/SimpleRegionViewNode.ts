@@ -5,12 +5,9 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
-// @ts-expect-error
-import { formatHex, toGamut } from 'culori';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, TLineCap, TLineJoin } from '../Theme.ts';
-
-const toRGB = toGamut( 'rgb' );
+import { okhslToRGBString } from '../../util/color.ts';
 
 export class SimpleRegionViewNode extends Node {
 
@@ -91,12 +88,7 @@ export class SimpleRegionViewNode extends Node {
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
     // TODO: improved paints
-    const paint = formatHex( toRGB( {
-      mode: 'okhsl',
-      h: Math.random() * 360,
-      s: 0.7,
-      l: 0.55
-    } ) ) as unknown as string;
+    const paint = okhslToRGBString( Math.random() * 360, 0.7, 0.55 );
     const simpleRegionNode = new SimpleRegionNode( simpleRegion, paint );
     this.simpleRegionNodeMap.set( simpleRegion, simpleRegionNode );
     this.regionIdMap.set( simpleRegion.id, simpleRegion );

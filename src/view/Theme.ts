@@ -1,24 +1,8 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageBooleanProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
-
-// @ts-expect-error
-import { formatHex, toGamut } from 'culori';
 import { RectangularButton } from 'phet-lib/sun';
-
-const toRGB = toGamut( 'rgb' );
-
-const hslToRGB = ( h: number, s: number, l: number ): string => formatHex( toRGB( {
-  mode: 'okhsl',
-  h: h,
-  s: s,
-  l: l
-} ) ) as unknown as string;
-// @ts-expect-error - Allow this globally
-window.hslToRGB = hslToRGB;
-
-// e.g. to test colors:
-// themeProperty.value.uiButtonBaseColorProperty.paint = hslToRGB( 20, 0.7, 0.5 );
+import { okhslToRGBString } from '../util/color.ts';
 
 // Listen to the OS default light/dark mode
 const mediaQueryList = window.matchMedia( '(prefers-color-scheme: dark)' );
@@ -65,7 +49,7 @@ export const lightTheme = {
   name: 'Light',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( '#eee' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.6 ) ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( okhslToRGBString( 30, 0.7, 0.6 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#ccc' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( '#fff' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#888' ),
@@ -84,15 +68,15 @@ export const lightTheme = {
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.7)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 50, 0.7, 0.8 ) ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 100, 0.7, 0.8 ) )
+  generateAddedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 50, 0.7, 0.8 ) ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 100, 0.7, 0.8 ) )
 };
 
 export const darkTheme = {
   name: 'Dark',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( '#111' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( hslToRGB( 30, 0.7, 0.3 ) ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( okhslToRGBString( 30, 0.7, 0.3 ) ),
   playAreaBackgroundColorProperty: new PaintColorProperty( '#333' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( '#222' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( '#777' ),
@@ -108,11 +92,11 @@ export const darkTheme = {
   uiForegroundProperty: new PaintColorProperty( '#ccc' ),
   uiBackgroundProperty: new PaintColorProperty( '#222' ),
   uiButtonForegroundProperty: new PaintColorProperty( '#000' ),
-  uiButtonBaseColorProperty: new PaintColorProperty( hslToRGB( 50, 0.7, 0.6 ) ),
+  uiButtonBaseColorProperty: new PaintColorProperty( okhslToRGBString( 50, 0.7, 0.6 ) ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.7)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 50, 0.7, 0.3 ) ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( hslToRGB( 360 - 100, 0.7, 0.3 ) )
+  generateAddedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 50, 0.7, 0.3 ) ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( okhslToRGBString( 360 - 100, 0.7, 0.3 ) )
 };
 
 export const autoTheme = {

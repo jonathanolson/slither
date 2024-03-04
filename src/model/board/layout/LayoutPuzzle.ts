@@ -20,17 +20,13 @@ import { blackLineColorProperty, faceValueColorProperty } from '../../../view/Th
 import { Shape } from 'phet-lib/kite';
 import { LayoutEdge, LayoutExternalZone, LayoutFace, LayoutHalfEdge, LayoutInternalZone, LayoutStructure, LayoutVertex } from './layout.ts';
 import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
-// @ts-expect-error
-import { formatHex, toGamut } from 'culori';
 import { TCompleteData } from '../../data/combined/TCompleteData.ts';
 import { CompleteData } from '../../data/combined/CompleteData.ts';
 import { TPuzzle } from '../../puzzle/TPuzzle.ts';
 import { Property } from 'phet-lib/axon';
 import { iterateSolverFactory } from '../../solver/TSolver.ts';
 import { safeSolverFactory } from '../../solver/autoSolver.ts';
-
-// TODO: factor this color stuff out
-const toRGB = toGamut( 'rgb' );
+import { okhslToRGBString } from '../../../util/color.ts';
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
@@ -727,12 +723,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         lineWidth = 0.02;
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        stroke = formatHex( toRGB( {
-          mode: 'okhsl',
-          h: Math.random() * 360,
-          s: 0.7,
-          l: 0.55
-        } ) ) as unknown as string;
+        stroke = okhslToRGBString( Math.random() * 360, 0.7, 0.55 );
         lineWidth = 0.1;
       }
       else {
@@ -749,12 +740,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
     if ( showBackgrounds ) {
       this.faces.forEach( face => {
-        const backgroundColor = new Color( formatHex( toRGB( {
-          mode: 'okhsl',
-          h: Math.random() * 360,
-          s: 0.7,
-          l: 0.6
-        } ) ) as unknown as string ).withAlpha( 0.5 );
+        const backgroundColor = new Color( okhslToRGBString( Math.random() * 360, 0.7, 0.6 ) ).withAlpha( 0.5 );
         debugNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
           fill: backgroundColor
         } ) );
