@@ -151,16 +151,20 @@ const scanHTMLImageElement = async (
     if ( contour.getConvexity() > 0.9 && contour.getBoundsSquarishness() > 0.5 ) {
       if ( contour.children.length ) {
         zeroOuterContours.push( contour );
+        options?.zeroOuterContourCallback && options?.zeroOuterContourCallback( contour );
         zeroInnerContours.push( contour.children[ 0 ] );
+        options?.zeroInnerContourCallback && options?.zeroInnerContourCallback( contour.children[ 0 ] );
       }
       else {
         // TODO: straight lines(!) we need to figure out those... maybe by size
         dotContours.push( contour );
+        options?.dotContourCallback && options?.dotContourCallback( contour );
       }
     }
     // TODO: could lower this cutoff
     else if ( contour.getDiagonality() < 0.1 ) {
       lineContours.push( contour );
+      options?.lineContourCallback && options?.lineContourCallback( contour );
     }
     else {
       const scannedFaceValue = await scanShapeFaceValue( contour.shape! );
@@ -168,23 +172,29 @@ const scanHTMLImageElement = async (
       if ( scannedFaceValue ) {
         if ( scannedFaceValue.value === '1' ) {
           oneContours.push( contour );
+          options?.oneContourCallback && options?.oneContourCallback( contour );
         }
         else if ( scannedFaceValue.value === '2' ) {
           twoContours.push( contour );
+          options?.twoContourCallback && options?.twoContourCallback( contour );
         }
         else if ( scannedFaceValue.value === '3' ) {
           threeContours.push( contour );
+          options?.threeContourCallback && options?.threeContourCallback( contour );
         }
         else if ( scannedFaceValue.value === 'x' ) {
           xContours.push( contour );
+          options?.xContourCallback && options?.xContourCallback( contour );
         }
         else {
           unknownContours.push( contour );
+          options?.unknownContourCallback && options?.unknownContourCallback( contour );
         }
       }
       else {
         // TODO: this... seems helpful as a fallback?
         lineContours.push( contour );
+        options?.lineContourCallback && options?.lineContourCallback( contour );
       }
     }
   }
