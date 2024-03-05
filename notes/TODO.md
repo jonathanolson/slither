@@ -5,9 +5,7 @@
 
 - Current code TODOs
   - Background behind navbar? (so navbar can have its own transparency?) hmmm
-  - Get scenery-phet and other libs in phet-lib imports(!)
   - Record topological demo?
-  - Nicer background.... fade to gradient?
   - Color shifting! 
   - Face coloring will help visualization of solving
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
@@ -24,9 +22,6 @@
       - Tabs? (from joist? eek)
     - Style preview (demo puzzle)
       - Include animation previews(!) 
-  - Scan:
-    - USE SAT for image scanning (to see if it is a good puzzle)
-    - Show 'progress' / debug of scan (just like generation)
   - Tether to phone for debugging code generation failures
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
@@ -105,6 +100,7 @@
       - Also, edges in order, can specify edge state IN A SIMILAR MANNER
     - MINIMIZE the format of boards (so we can stuff custom-boards into fairly short URLs) 
   - import format from https://www.kakuro-online.com/slitherlink/
+  - import allow paste of image, https://web.dev/patterns/clipboard/paste-images
   - Rule display (in UI), so we can have a good example of "just display some state" (without input), but potentially allowing animation?
   - Google Analytics (and fix for site? GA4?)
   - Mobile issues:
@@ -245,7 +241,7 @@
   - Test with Android, and handle dashed line approach
   - Detect on paper - perspective correction
     - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
-  - Could use size of numbers to inform "scale" of things
+  - Could use size of numbers to inform "scale" of things (we don't detect dots well if they are too large)
   - Could use FFT for finding scale/grid
   - !!! Get Scenery working with embedding DOM components, like the file input
   - Note "draw interior of large region in background color" to filter out

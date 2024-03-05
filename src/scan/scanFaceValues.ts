@@ -58,6 +58,10 @@ let scratchContext: CanvasRenderingContext2D | null = null;
 export const scanShapeFaceValue = async ( shape: Shape, options?: scanFaceValuesOptions ): Promise<ScannedFaceValue | null> => {
   const padding = 7;
 
+  if ( !shape.bounds.isValid() ) {
+    return null;
+  }
+
   if ( !scratchCanvas ) {
     scratchCanvas = document.createElement( 'canvas' );
   }

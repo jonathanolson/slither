@@ -167,34 +167,41 @@ const scanHTMLImageElement = async (
       options?.lineContourCallback && options?.lineContourCallback( contour );
     }
     else {
-      const scannedFaceValue = await scanShapeFaceValue( contour.shape! );
+      if ( contour.shape!.bounds.isValid() ) {
+        const scannedFaceValue = await scanShapeFaceValue( contour.shape! );
 
-      if ( scannedFaceValue ) {
-        if ( scannedFaceValue.value === '1' ) {
-          oneContours.push( contour );
-          options?.oneContourCallback && options?.oneContourCallback( contour );
-        }
-        else if ( scannedFaceValue.value === '2' ) {
-          twoContours.push( contour );
-          options?.twoContourCallback && options?.twoContourCallback( contour );
-        }
-        else if ( scannedFaceValue.value === '3' ) {
-          threeContours.push( contour );
-          options?.threeContourCallback && options?.threeContourCallback( contour );
-        }
-        else if ( scannedFaceValue.value === 'x' ) {
-          xContours.push( contour );
-          options?.xContourCallback && options?.xContourCallback( contour );
+        if ( scannedFaceValue ) {
+          if ( scannedFaceValue.value === '1' ) {
+            oneContours.push( contour );
+            options?.oneContourCallback && options?.oneContourCallback( contour );
+          }
+          else if ( scannedFaceValue.value === '2' ) {
+            twoContours.push( contour );
+            options?.twoContourCallback && options?.twoContourCallback( contour );
+          }
+          else if ( scannedFaceValue.value === '3' ) {
+            threeContours.push( contour );
+            options?.threeContourCallback && options?.threeContourCallback( contour );
+          }
+          else if ( scannedFaceValue.value === 'x' ) {
+            xContours.push( contour );
+            options?.xContourCallback && options?.xContourCallback( contour );
+          }
+          else {
+            unknownContours.push( contour );
+            options?.unknownContourCallback && options?.unknownContourCallback( contour );
+          }
         }
         else {
-          unknownContours.push( contour );
-          options?.unknownContourCallback && options?.unknownContourCallback( contour );
+          // TODO: this... seems helpful as a fallback?
+          lineContours.push( contour );
+          options?.lineContourCallback && options?.lineContourCallback( contour );
         }
       }
       else {
-        // TODO: this... seems helpful as a fallback?
-        lineContours.push( contour );
-        options?.lineContourCallback && options?.lineContourCallback( contour );
+        // Mark as unknown for now
+        unknownContours.push( contour );
+        options?.unknownContourCallback && options?.unknownContourCallback( contour );
       }
     }
   }
