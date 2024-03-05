@@ -10,7 +10,6 @@ import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import { blackLineColorProperty, faceValueColorProperty, generateAddedFaceColorProperty, generateButtonFont, generateMinimizedFaceColorProperty, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, uiFont, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
-import NumberControl from './to-port/SunNumberControl.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, penrose10, penrose11, penrose13, penrose14, penrose20, penrose6, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
@@ -24,6 +23,7 @@ import FaceState from '../model/data/face/FaceState.ts';
 import { InterruptedError } from '../model/solver/EdgeBacktracker.ts';
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
+import { NumberControl } from 'phet-lib/scenery-phet';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;

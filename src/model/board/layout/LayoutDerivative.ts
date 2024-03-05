@@ -1,11 +1,11 @@
 import { DotUtils, Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
 import { getCentroid, getSignedArea, getSignedAreaDerivative } from '../core/createBoardDescriptor.ts';
 import { Node } from 'phet-lib/scenery';
-import { ArrowNode } from '../../../view/to-port/ArrowNode.ts';
 import { LayoutVertex } from './layout.ts';
 import { LayoutPuzzle } from './LayoutPuzzle.ts';
 import _ from '../../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { ArrowNode } from 'phet-lib/scenery-phet';
 
 export class LayoutDerivative {
   public constructor(
