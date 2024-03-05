@@ -272,7 +272,7 @@ export const satSolve = (
       solutions.push( loops.touchingValueLoops[ 0 ] );
 
       if ( solutions.length > 1 && options.failOnMultipleSolutions ) {
-        throw new MultipleSolutionsError();
+        throw new MultipleSolutionsError( solutions );
       }
     }
 

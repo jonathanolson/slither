@@ -11,6 +11,7 @@ import { BasicSquarePuzzle } from '../model/puzzle/BasicSquarePuzzle.ts';
 import { GenerateNode } from './GenerateNode.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { ScanNode } from './ScanNode.ts';
 
 export type GenNodeOptions = {
   loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
@@ -73,9 +74,12 @@ export class GenNode extends PopupNode {
                   reader.onloadend = async () => {
                     const url = reader.result as string;
 
-                    // TODO: UI change while working?
                     // const scanURL = ( await import ( '../scan/scanURL.ts' ) ).default;
-                    const puzzle = await scanURL( url );
+
+                    const scanNode = new ScanNode( glassPane, layoutBoundsProperty );
+                    scanNode.show();
+
+                    const puzzle = await scanURL( url, scanNode.getScanOptions() );
 
                     options.loadPuzzle( puzzle );
                   };

@@ -13,6 +13,7 @@ import { TDelta } from '../data/core/TDelta.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { backtrackerSolverFactory, standardSolverFactory } from './autoSolver.ts';
+import { TEdge } from '../board/core/TEdge.ts';
 
 export type EdgeBacktrackData = TEdgeData & TSimpleRegionData;
 
@@ -68,7 +69,9 @@ export type GetBacktrackedSolutionsOptions = {
 };
 
 export class MultipleSolutionsError extends Error {
-  public constructor() {
+  public constructor(
+    public readonly solutionEdges: TEdge[][]
+  ) {
     super( 'Multiple solutions found' );
   }
 }
@@ -90,6 +93,7 @@ export const getBacktrackedSolutions = <Data extends TCompleteData>(
   const initialSolver = solverFactory( board, state, true );
 
   const solutions: TState<Data>[] = [];
+  const multipleSolutions: TEdge[][] = [];
 
   try {
     edgeBacktrack<Data>(
@@ -98,11 +102,11 @@ export const getBacktrackedSolutions = <Data extends TCompleteData>(
       initialSolver,
       {
         solutionCallback: solutionState => {
+          solutions.push( solutionState );
+          multipleSolutions.push( solutionState.getSimpleRegions()[ 0 ].edges );
+
           if ( solutions.length === 1 && options.failOnMultipleSolutions ) {
-            throw new MultipleSolutionsError();
-          }
-          else {
-            solutions.push( solutionState );
+            throw new MultipleSolutionsError( multipleSolutions );
           }
         },
         depth: null

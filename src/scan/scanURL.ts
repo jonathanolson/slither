@@ -1,6 +1,6 @@
 import cv from '@techstark/opencv-js';
 import { scanShapeFaceValue } from './scanFaceValues.ts';
-import { cvReady, drawContour, imshow, matToGrayscale, matWithZeros, withMat } from './opencvUtils.ts';
+import { cvReady, drawContour, imshow, matToCanvas, matToGrayscale, matWithZeros, withMat } from './opencvUtils.ts';
 import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
@@ -16,6 +16,10 @@ import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TEdge } from '../model/board/core/TEdge.ts';
+import { satSolve } from '../model/solver/SATSolver.ts';
+import { MultipleSolutionsError } from '../model/solver/EdgeBacktracker.ts';
+import { InvalidStateError } from '../model/solver/InvalidStateError.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html
@@ -36,7 +40,31 @@ import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
 // note-- we'll want to remove small lines(!)
 // Then try to determine vertices along the lines
 
-const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
+export type ScanOptions = {
+  originalImageCallback?: ( originalImage: HTMLCanvasElement ) => void;
+  thresholdedImageCallback?: ( originalImage: HTMLCanvasElement ) => void;
+  rootContourCallback?: ( rootContour: Contour ) => void;
+  widestSubtreeCallback?: ( widestSubtree: Contour ) => void;
+
+  dotContourCallback?: ( contour: Contour ) => void;
+  lineContourCallback?: ( contour: Contour ) => void;
+  zeroOuterContourCallback?: ( contour: Contour ) => void;
+  zeroInnerContourCallback?: ( contour: Contour ) => void;
+  oneContourCallback?: ( contour: Contour ) => void;
+  twoContourCallback?: ( contour: Contour ) => void;
+  threeContourCallback?: ( contour: Contour ) => void;
+  xContourCallback?: ( contour: Contour ) => void;
+  unknownContourCallback?: ( contour: Contour ) => void;
+
+  debugImageCallback?: ( debugImage: HTMLCanvasElement ) => void;
+  puzzleCallback?: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  solutionsCallback?: ( solutions: TEdge[][] ) => void;
+};
+
+const scanHTMLImageElement = async (
+  domImage: HTMLImageElement,
+  options?: ScanOptions
+): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -48,6 +76,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzz
 
   const img = cv.imread( domImage );
   imshow( img );
+  options?.originalImageCallback && options?.originalImageCallback( matToCanvas( img ) );
 
   const imageWidth = img.cols;
   const imageHeight = img.rows;
@@ -88,6 +117,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzz
   blurred.delete();
 
   const inverted = withMat( inverted => cv.bitwise_not( blurredThreshold, inverted ) );
+  options?.thresholdedImageCallback && options?.thresholdedImageCallback( matToCanvas( inverted ) );
 
   const contours = new cv.MatVector();
   const hierarchy = new cv.Mat();
@@ -98,8 +128,10 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzz
 
   const contourCollection = new ContourCollection( contours, hierarchy );
   const rootContour = contourCollection.rootContour;
+  options?.rootContourCallback && options?.rootContourCallback( rootContour );
 
   const widestSubtree = _.maxBy( [ rootContour, ...rootContour.getDescendantContours() ], contour => contour.children.length )!;
+  options?.widestSubtreeCallback && options?.widestSubtreeCallback( widestSubtree );
 
   const dotContours: Contour[] = [];
   const lineContours: Contour[] = [];
@@ -271,7 +303,7 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzz
       context.fill();
     } );
 
-    document.body.appendChild( canvas );
+    options?.debugImageCallback && options?.debugImageCallback( canvas );
   }
 
   const majorXCoordinates = [ ...dotPoints.map( point => point.x ), ...linePaths.flatMap( path => path.map( point => point.x ) ) ];
@@ -394,7 +426,37 @@ const scanHTMLImageElement = async ( domImage: HTMLImageElement ): Promise<TPuzz
     }
   );
 
-  return new BasicPuzzle( board, startingData );
+  const puzzle = new BasicPuzzle( board, startingData );
+  options?.puzzleCallback && options?.puzzleCallback( puzzle );
+
+  let solutions: TEdge[][] = [];
+  try {
+    solutions = satSolve( board, startingData, {
+      maxIterations: 1000,
+      failOnMultipleSolutions: true,
+    } );
+  }
+  catch ( e ) {
+    if ( e instanceof MultipleSolutionsError ) {
+      solutions = e.solutionEdges;
+    }
+    else {
+      throw e;
+    }
+  }
+
+  options?.solutionsCallback && options?.solutionsCallback( solutions );
+
+  if ( solutions.length !== 1 ) {
+    if ( solutions.length === 0 ) {
+      throw new InvalidStateError( 'No solutions' );
+    }
+    else {
+      throw new MultipleSolutionsError( solutions );
+    }
+  }
+
+  return puzzle;
 };
 
 class FaceLocation {
@@ -411,10 +473,10 @@ class LineLocation {
   ) {}
 }
 
-export default async ( url: string ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
+export default async ( url: string, options?: ScanOptions ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();
   await cvReady;
-  return scanHTMLImageElement( domImage );
+  return scanHTMLImageElement( domImage, options );
 };
