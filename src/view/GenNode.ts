@@ -58,7 +58,7 @@ export class GenNode extends PopupNode {
                 }
               }
             } ),
-            new UITextPushButton( 'Load Image', {
+            new UITextPushButton( 'Load Image (Rectangular Only)', {
               listener: () => {
                 this.hide();
 

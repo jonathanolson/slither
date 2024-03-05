@@ -1,6 +1,6 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
-import { HBox, Image, Node, Path, Rectangle, Text } from 'phet-lib/scenery';
+import { HBox, Image, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { uiFont, uiForegroundColorProperty } from './Theme.ts';
 import { ScanOptions } from '../scan/scanURL.ts';
@@ -10,6 +10,13 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
+import { iterateSolverFactory } from '../model/solver/TSolver.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { safeSolverFactory } from '../model/solver/autoSolver.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import EdgeState from '../model/data/edge/EdgeState.ts';
+import PuzzleNode from './puzzle/PuzzleNode.ts';
+import { UIText } from './UIText.ts';
 
 // TODO: culori?
 const undecidedStroke = '#444';
@@ -28,10 +35,13 @@ export class ScanNode extends PopupNode {
 
   private readonly scanContentNode: Node;
   private readonly imageContainer: Node;
+  private readonly solutionContainer: Node;
   private readonly blackImageLayer: Node;
   private readonly originalImageLayer: Node;
   private readonly thresholdImageLayer: Node;
   private readonly contourLayer: Node;
+
+  private puzzle: TPuzzle<TStructure, TState<TCompleteData>> | null = null;
 
   // @ts-expect-error
   private rootContour: Contour | null = null;
@@ -80,6 +90,7 @@ export class ScanNode extends PopupNode {
         this.contourLayer
       ]
     } );
+    this.solutionContainer = new Node();
   }
 
   public getScanOptions(): ScanOptions {
@@ -102,7 +113,7 @@ export class ScanNode extends PopupNode {
 
       debugImageCallback: debugImage => {},
 
-      puzzleCallback: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => {},
+      puzzleCallback: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => this.onPuzzle( puzzle ),
       solutionsCallback: ( solutions: TEdge[][] ) => this.onSolutions( solutions ),
     };
   }
@@ -113,7 +124,13 @@ export class ScanNode extends PopupNode {
       fill: 'black'
     } ) );
     this.scanContentNode.children = [
-      this.imageContainer
+      new VBox( {
+        spacing: 10,
+        children: [
+          this.imageContainer,
+          this.solutionContainer
+        ]
+      } )
     ];
   }
 
@@ -132,9 +149,93 @@ export class ScanNode extends PopupNode {
     }
   }
 
+  public onPuzzle( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ): void {
+    this.puzzle = puzzle;
+  }
+
   public onSolutions( solutions: TEdge[][] ): void {
     if ( solutions.length === 1 ) {
       this.hide();
+    }
+    else {
+      const puzzle = this.puzzle!;
+      assertEnabled() && assert( puzzle );
+
+      const board = puzzle.board;
+
+      if ( solutions.length === 0 ) {
+        iterateSolverFactory( safeSolverFactory, board, puzzle.stateProperty.value, true );
+
+        const puzzleNode = new PuzzleNode( puzzle, {
+          scale: 20
+        } );
+
+        this.solutionContainer.children = [
+          new VBox( {
+            spacing: 10,
+            children: [
+              new UIText( 'No Solutions Found' ),
+              puzzleNode
+            ]
+          } )
+        ];
+      }
+      else {
+        const puzzleA = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
+        const puzzleB = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
+        const puzzleC = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
+
+        solutions[ 0 ].forEach( edge => puzzleA.stateProperty.value.setEdgeState( edge, EdgeState.BLACK ) );
+        solutions[ 1 ].forEach( edge => puzzleB.stateProperty.value.setEdgeState( edge, EdgeState.BLACK ) );
+        board.edges.forEach( edge => {
+          if ( puzzleA.stateProperty.value.getEdgeState( edge ) !== puzzleB.stateProperty.value.getEdgeState( edge ) ) {
+            puzzleC.stateProperty.value.setEdgeState( edge, EdgeState.BLACK );
+          }
+        } );
+
+        iterateSolverFactory( safeSolverFactory, board, puzzleA.stateProperty.value, true );
+        iterateSolverFactory( safeSolverFactory, board, puzzleB.stateProperty.value, true );
+        iterateSolverFactory( safeSolverFactory, board, puzzleC.stateProperty.value, true );
+
+        const puzzleANode = new PuzzleNode( puzzleA, { scale: 10 } );
+        const puzzleBNode = new PuzzleNode( puzzleB, { scale: 10 } );
+        const puzzleCNode = new PuzzleNode( puzzleC, { scale: 10 } );
+
+        this.solutionContainer.children = [
+          new VBox( {
+            spacing: 10,
+            children: [
+              new UIText( 'Multiple Solutions Found' ),
+              new HBox( {
+                spacing: 10,
+                children: [
+                  new VBox( {
+                    spacing: 10,
+                    children: [
+                      puzzleANode,
+                      new UIText( 'Solution A' )
+                    ]
+                  } ),
+                  new VBox( {
+                    spacing: 10,
+                    children: [
+                      puzzleBNode,
+                      new UIText( 'Solution B' )
+                    ]
+                  } ),
+                  new VBox( {
+                    spacing: 10,
+                    children: [
+                      puzzleCNode,
+                      new UIText( 'Difference' )
+                    ]
+                  } )
+                ]
+              } )
+            ]
+          } )
+        ];
+      }
     }
   }
 }
