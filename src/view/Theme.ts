@@ -58,7 +58,7 @@ export const lightTheme = {
   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgb(181,181,181)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgb(217,217,217)' ),
   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(179,179,179)' ),
@@ -90,8 +90,8 @@ export const darkTheme = {
   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.4000000000000000222)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(66,66,66,0.30999999999999999778)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.17999999999999999334)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(89,89,89)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
@@ -117,13 +117,14 @@ export const fadeLightTheme = {
   ...lightTheme,
   name: 'Fade Light',
   isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(64,64,64)' ),
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(33,33,33)' ),
   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(255,102,0,0.36999999999999999556)' ),
   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(255,0,200,0.3499999999999999778)' ),
   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,17,255,0.34000000000000002442)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.91000000000000003109)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.79000000000000003553)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(148,148,148)' ),
 };
 
 export const fadeDarkTheme = {
@@ -137,7 +138,9 @@ export const fadeDarkTheme = {
   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(4,0,255,0.42999999999999999334)' ),
   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.46999999999999997335)' ),
   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(28,28,28)' ),
+  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(24,23,22)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(92,51,40)' ),
+  whiteLineColorProperty: new PaintColorProperty( 'rgb(78,73,70)' ),
 };
 
 export const autoTheme = {
