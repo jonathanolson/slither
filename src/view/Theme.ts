@@ -55,12 +55,12 @@ export const lightTheme = {
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(218,107,91)' ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(237,237,237)' ),
   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgb(217,217,217)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(173,199,210,0)' ),
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(179,179,179)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
@@ -68,7 +68,7 @@ export const lightTheme = {
   blackLineColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
-  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
+  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0.28999999999999998002)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -179,39 +179,6 @@ export const purplesDarkTheme = {
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
 };
 
-export const lighterTheme = {
-  name: 'Lighter',
-  isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(218,107,91)' ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(237,237,237)' ),
-  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(173,199,210,0)' ),
-  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(179,179,179)' ),
-  vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  blackLineColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-  whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
-  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0.28999999999999998002)' ),
-  faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-  uiForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiBackgroundProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
-  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
-  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
-};
-
 export const nightVisionTheme = {
   name: 'Night Vision',
   isEditable: true,
@@ -283,7 +250,6 @@ export const availableThemes: TTheme[] = [
   fadeLightTheme,
   fadeDarkTheme,
   purplesDarkTheme,
-  lighterTheme,
   nightVisionTheme
 ];
 
