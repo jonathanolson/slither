@@ -6,12 +6,43 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, TLineCap, TLineJoin } from '../Theme.ts';
-import { okhslToRGBString } from '../../util/color.ts';
+import { edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
+import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
+
+// Look-up table, but also support color shifts and matching a target color
+const hueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
+simpleRegionTargetColorProperty.link( () => {
+  const targetColor = simpleRegionTargetColorProperty.value;
+  const okhsl = parseToOKHSL( targetColor.toHexString() );
+
+  const hueForce = targetColor.alpha;
+  const targetHue = okhsl.h;
+
+  // Depending on the alpha of our target color, control the amount we are pulled to the hue of the target color
+  const mapHueDegree = ( hue: number ) => {
+    let hueDelta = hue - targetHue;
+
+    // sanity check wrap
+    if ( hueDelta > 180 ) {
+      hueDelta -= 360;
+    }
+    if ( hueDelta < -180 ) {
+      hueDelta += 360;
+    }
+    hueDelta *= ( 1 - hueForce );
+    hueDelta = Math.round( hueDelta );
+
+    return ( hueDelta + targetHue + 360 ) % 360;
+  };
+
+  for ( let i = 0; i < hueLUT.length; i++ ) {
+    hueLUT[ i ] = okhslToRGBString( mapHueDegree( i ), okhsl.s, okhsl.l );
+  }
+} );
 
 export class SimpleRegionViewNode extends Node {
 
@@ -35,8 +66,6 @@ export class SimpleRegionViewNode extends Node {
     board.faces.forEach( face => {
       this.adjacentFacesMap.set( face, face.edges.map( edge => edge.getOtherFace( face ) ).filter( face => face !== null ) as TFace[] );
     } );
-
-    // TODO: disposal
 
     this.children = [ this.weirdEdgeContainer, this.regionContainer ];
 
@@ -100,6 +129,10 @@ export class SimpleRegionViewNode extends Node {
         this.removeRegion( this.simpleRegionNodeMap.keys().next().value );
       }
     } );
+
+    const updateHueListener = () => this.updateHues();
+    simpleRegionTargetColorProperty.link( updateHueListener );
+    this.disposeEmitter.addListener( () => simpleRegionTargetColorProperty.unlink( updateHueListener ) );
   }
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
@@ -284,8 +317,6 @@ export class SimpleRegionViewNode extends Node {
     }
   }
 }
-
-const hueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
 
 // TODO: animation
 class SimpleRegionNode extends Path {
