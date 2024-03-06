@@ -4,7 +4,22 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - Background behind navbar? (so navbar can have its own transparency?) hmmm
+  - Face Coloring
+    - Base safe solver on SimpleRegions, since those won't cause error states
+    - Create "simple" face solver, that handles adjacent colors
+    - getFaceColor( face: TFace )
+    - getFacesWithColor( color: TFaceColor ) <--- this way is potentially higher performance than our SimpleRegion way
+      - Better for deltas, no?
+      - Should we refactor SimpleRegion support to be like this?
+    - TFaceColor:
+      - FaceColorState: "inside", "outside", "unknown"
+    - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
+      - Have a "minimum number of colors before showing"? 
+      - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+  - Difficulty:
+    - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
+      - Search for patterns where we can enable rules?
+    - How else can we best "really overdo" a particular rule?
   - Record topological demo?
   - Face coloring will help visualization of solving
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
@@ -161,10 +176,8 @@
     - Allow going through a vertical check list box easily?
   - Potentially "animate in" auto-solved things, and clicks don't do anything during the fade in(!)
     - THIS IS ANNOYING ON MOBILE 
-    - Or at least have a delay 
-  - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
-    - Have a "minimum number of colors before showing"? 
-    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+    - Or at least have a delay
+  - Background behind navbar? (so navbar can have its own transparency?) hmmm
   - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
     - Each pattern needs to specify the required topology/structure for the area (what is important)
     - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
