@@ -482,6 +482,13 @@
   - Delta = action + previous state
 
 [DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
+[DEPRECATED]
 
 - Backtracker:
   - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
