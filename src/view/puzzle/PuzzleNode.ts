@@ -81,7 +81,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     } );
 
     if ( options?.useSimpleRegionForBlack ) {
-      simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.stateProperty ) );
+      simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
     }
 
     super( combineOptions<BasicPuzzleNodeOptions>( {

@@ -6,7 +6,6 @@
 - Current code TODOs
   - Background behind navbar? (so navbar can have its own transparency?) hmmm
   - Record topological demo?
-  - Color shifting! 
   - Face coloring will help visualization of solving
   - (OMG face-coloring (hue OR value) will make it look so much cooler)
     - slight light/dark will look really nice (for inside/outside)... colors for others?
@@ -245,100 +244,6 @@
   - Could use FFT for finding scale/grid
   - !!! Get Scenery working with embedding DOM components, like the file input
   - Note "draw interior of large region in background color" to filter out
-
-- COLOR SHIFTING (for maintaining good color separation)
-  - Per-edge region view
-    - SimpleRegionView
-      - Transfers edge nodes between regions!!
-      - Has a (stepped) target hue as a whole
-      - Has a collection of edge nodes
-      - Has a collection of edges
-      - Has an ordered list of half-edges (helpful)
-      - Has an (ordered) array of "hue points" - connect them with the edge points.
-      - !!!!!!
-      -   convert to complex numbers, compute mean there, convert to polar again
-      -   see https://rosettacode.org/wiki/Averages/Mean_angle, is atan2( 1/N * sum(sin(x)), 1/N * sum(cos(x)) )
-      - !!!!!!
-      - MEASURE DISTANCE STATICALLY - estimate if far (e.g. bounding box?) - if bounding box close then give a better approximation
-        - FOR ANY GIVEN SET, just figure out what its "N closest regions" are
-          - Consider making this "N closest for any", so some regions might have "more"? (reflexive satisfied)
-        - ... if things have long regions of "close"...?
-          - Mark a distance to all reasonable faces (within M hops of an edge), should be a quick scan
-            - Each region has subset<face, distance> (to a threshold).
-            - Find the intersection set of faces, and compute something with the "distance"
-            - IF NONE, we use the bounding box setup (and it will be treated as "far" distance, with less (but slight) pressure).
-              - OR JUST IGNORE IT?
-              - IGNORE THOSE FAR THINGS, and rely maybe on the "global" distribution for these
-        - Oscillation should effectively have "no" effect (be careful about orientation switches)
-    - RegionEdgeNode: - pool
-      - Node with a Path (shape gets mutated) - fill 
-        - Slightly over-step to avoid conflation (thanks SVG)
-      - edge / startPoint / endPoint 
-      - startColorProperty: Property<string> <-- linked to gradient, BUT could also link to an "average" for the fill color
-      - endColorProperty: Property<string>
-      - startHue: Vector2 (polar)
-      - endHue: Vector2 (polar)
-      - startNextPoint: Vector2 | null - for handling shape
-      - endNextPoint: Vector2 | null - for handling shape
-    - RegionView:
-      - hue: Vector2 (polar)
-      - halfEdges: HalfEdge[] (ordered)
-      - regionEdgeNodes: RegionEdgeNode[] (ordered, but complicated)
-      - hueArray: Vector2[] (E+1) -- or unit Vector2 for polar/complex representation
-        - NOTE: magnitude can be the number of edges, no?
-    - Edge nodes (poolable?) --- pool yes
-      - Per step "goes to target color faster" if one point is closer to target and other is further (creates the pulse)
-  - PLAN:
-    - FIRST check performance with single-edge setups (gradient and no gradient)
-      - OOO the no-gradient approach could look neat
-    - Start with organic
-  - Edges AND Faces animate (shift) hue to maintain good separation
-    - FACES::: could actually shift to have "shade" variation?
-      - Imagine a subtle shift!!
-  - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
-  - Color Model - defines target/current color for each region (can swap whatever of these)
-    - Per-change computation (then animated to)
-      - Simple!
-      - Large changes might not look great... hmmm
-    - Organic (step-driven, recompute targets each frame)
-      - Might be simpler to get "good" behavior
-      - Might have cool shifts - one thing changes, which then triggers another thing to change, biological-looking
-      - Risk of oscillation
-      - Worse performance?
-    - Quality metrics
-      - Global color variation (spread out, and not just all e.g. green/red)
-        - Slight pressure away from others? (this is probably particularly helpful for isolated regions)
-      - Spatial color variation (don't just ignore far away regions - look at what are the closest FOR it)
-        - But allow "far away" ones to shift so we get better "closer" behavior 
-      - Avoid "bad" colors for large regions (and especially at the end)
-        - Can have global hue shifts/rotations
-      - Don't change large regions too much (or too quickly) (inertia/weight)
-      - Don't change hues too quickly (limit velocity)
-      - NO fast oscillations? Increase "damping" if something seems to be "bouncing" between targets, so that it slows down
-      - "Close" regions should have different BUT NOT TOO DIFFERENT colors (we don't want to create a bunch of inverses)
-        - Ideal "distance" in hue space? 
-        - Hue pressure is CIRCULAR
-      - Face hues are... different? similar? from the edge hues
-    - When we "spawn" a completely new region (no edges from before)... pick the colors nicely based on the metrics?
-      - Could check points around hue curve to see?
-  - Region Model - takes the Color Model, and can animate either:
-    - Full region color <---- START WITH THIS
-    - Subregions same color (until they join)
-      - Once a subregion matches color (enough), it gets combined 
-    - Each edge different
-      - Ooo this could potentially look neat!
-    - Each edge different + gradient color for each
-      - Model each vertex with a color separately 
-      - SO COOL to see the gradient "pulse through"? 
-      - Gradient should go UP TO the join, NOT INCLUDING the join (so that the entire join is the same color)
-      - Would create a node for each edge, position the gradient (and adjust shape/visibility/endpoint color based on connections/etc)
-      - (possible, each SVG stop gets updated in SVG without recreating - give it a Property)
-    - NOTE: anything other than full-region might want to get "mitered joints" at joints, however is desired
-      - That... seems like a pain. Especially for nicely rounded stroked corners. Probably do it without other support?
-  - Metric for "separation between two regions" - not dependent on other regions, does not need to be recomputed
-    - TODO: how to compute?
-  - Weird edges:
-    - Shorten them somewhat, so they don't connect? LEAVE GRAY
 
 - Solving
   - Regions:
@@ -668,3 +573,85 @@
   - FOR LAYOUT we'll create "K_n" style edges for each face (extra edges for layout)
     - Perhaps give "edges" that combine a bunch --- a potentially longer ideal length?
     - CHECK signed area of each face, to see if we are still a planar embedding
+- [deprecated because static instant works nicely] COLOR SHIFTING (for maintaining good color separation) 
+  - Per-edge region view
+    - SimpleRegionView
+      - Transfers edge nodes between regions!!
+      - Has a (stepped) target hue as a whole
+      - Has a collection of edge nodes
+      - Has a collection of edges
+      - Has an ordered list of half-edges (helpful)
+      - Has an (ordered) array of "hue points" - connect them with the edge points.
+      - !!!!!!
+      -   convert to complex numbers, compute mean there, convert to polar again
+      -   see https://rosettacode.org/wiki/Averages/Mean_angle, is atan2( 1/N * sum(sin(x)), 1/N * sum(cos(x)) )
+      - !!!!!!
+      - MEASURE DISTANCE STATICALLY - estimate if far (e.g. bounding box?) - if bounding box close then give a better approximation
+        - FOR ANY GIVEN SET, just figure out what its "N closest regions" are
+          - Consider making this "N closest for any", so some regions might have "more"? (reflexive satisfied)
+        - ... if things have long regions of "close"...?
+          - Mark a distance to all reasonable faces (within M hops of an edge), should be a quick scan
+            - Each region has subset<face, distance> (to a threshold).
+            - Find the intersection set of faces, and compute something with the "distance"
+            - IF NONE, we use the bounding box setup (and it will be treated as "far" distance, with less (but slight) pressure).
+              - OR JUST IGNORE IT?
+              - IGNORE THOSE FAR THINGS, and rely maybe on the "global" distribution for these
+        - Oscillation should effectively have "no" effect (be careful about orientation switches)
+    - RegionEdgeNode: - pool
+      - Node with a Path (shape gets mutated) - fill 
+        - Slightly over-step to avoid conflation (thanks SVG)
+      - edge / startPoint / endPoint 
+      - startColorProperty: Property<string> <-- linked to gradient, BUT could also link to an "average" for the fill color
+      - endColorProperty: Property<string>
+      - startHue: Vector2 (polar)
+      - endHue: Vector2 (polar)
+      - startNextPoint: Vector2 | null - for handling shape
+      - endNextPoint: Vector2 | null - for handling shape
+    - RegionView:
+      - hue: Vector2 (polar)
+      - halfEdges: HalfEdge[] (ordered)
+      - regionEdgeNodes: RegionEdgeNode[] (ordered, but complicated)
+      - hueArray: Vector2[] (E+1) -- or unit Vector2 for polar/complex representation
+        - NOTE: magnitude can be the number of edges, no?
+    - Edge nodes (poolable?) --- pool yes
+      - Per step "goes to target color faster" if one point is closer to target and other is further (creates the pulse)
+  - PLAN:
+    - FIRST check performance with single-edge setups (gradient and no gradient)
+      - OOO the no-gradient approach could look neat
+    - Start with organic
+  - Edges AND Faces animate (shift) hue to maintain good separation
+    - FACES::: could actually shift to have "shade" variation?
+      - Imagine a subtle shift!!
+  - New regions get a "good" starting color (based on surroundings), e.g. instantly go to their target color
+  - Color Model - defines target/current color for each region (can swap whatever of these)
+    - Organic (step-driven, recompute targets each frame)
+      - Might be simpler to get "good" behavior
+      - Might have cool shifts - one thing changes, which then triggers another thing to change, biological-looking
+      - Risk of oscillation
+      - Worse performance?
+    - Quality metrics (unimplemented)
+      - Avoid "bad" colors for large regions (and especially at the end)
+        - Can have global hue shifts/rotations
+      - Don't change hues too quickly (limit velocity)
+      - NO fast oscillations? Increase "damping" if something seems to be "bouncing" between targets, so that it slows down
+      - Face hues are... different? similar? from the edge hues
+    - When we "spawn" a completely new region (no edges from before)... pick the colors nicely based on the metrics?
+      - Could check points around hue curve to see?
+  - Region Model - takes the Color Model, and can animate either:
+    - Full region color <---- START WITH THIS
+    - Subregions same color (until they join)
+      - Once a subregion matches color (enough), it gets combined 
+    - Each edge different
+      - Ooo this could potentially look neat!
+    - Each edge different + gradient color for each
+      - Model each vertex with a color separately 
+      - SO COOL to see the gradient "pulse through"? 
+      - Gradient should go UP TO the join, NOT INCLUDING the join (so that the entire join is the same color)
+      - Would create a node for each edge, position the gradient (and adjust shape/visibility/endpoint color based on connections/etc)
+      - (possible, each SVG stop gets updated in SVG without recreating - give it a Property)
+    - NOTE: anything other than full-region might want to get "mitered joints" at joints, however is desired
+      - That... seems like a pain. Especially for nicely rounded stroked corners. Probably do it without other support?
+  - Metric for "separation between two regions" - not dependent on other regions, does not need to be recomputed
+    - TODO: how to compute?
+  - Weird edges:
+    - Shorten them somewhat, so they don't connect? LEAVE GRAY
