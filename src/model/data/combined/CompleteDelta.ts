@@ -11,6 +11,7 @@ import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
@@ -19,14 +20,16 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   public constructor(
     public readonly faceDelta: TDelta<TFaceData>,
     public readonly edgeDelta: TDelta<TEdgeData>,
-    public readonly simpleRegionDelta: TDelta<TSimpleRegionData>
+    public readonly simpleRegionDelta: TDelta<TSimpleRegionData>,
+    public readonly faceColorDelta: TDelta<TFaceColorData>
   ) {
-    super( faceDelta, edgeDelta, simpleRegionDelta );
+    super( faceDelta, edgeDelta, simpleRegionDelta, faceColorDelta );
 
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceDelta.faceStateChangedEmitter.addListener( anyChangeListener );
     edgeDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionDelta.simpleRegionsChangedEmitter.addListener( anyChangeListener );
+    faceColorDelta.faceColorsChangedEmitter.addListener( anyChangeListener );
   }
 
   public getFaceState( face: TFace ): FaceState {
@@ -91,12 +94,58 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     return this.simpleRegionDelta.simpleRegionsChangedEmitter;
   }
 
+  public getFaceColors(): TFaceColor[] {
+    return this.faceColorDelta.getFaceColors();
+  }
+
+  public getInsideColor(): TFaceColor {
+    return this.faceColorDelta.getInsideColor();
+  }
+
+  public getOutsideColor(): TFaceColor {
+    return this.faceColorDelta.getOutsideColor();
+  }
+
+  public getFaceColor( face: TFace ): TFaceColor {
+    return this.faceColorDelta.getFaceColor( face );
+  }
+
+  public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
+    return this.faceColorDelta.getFacesWithColor( faceColor );
+  }
+
+  public getFaceColorMap(): Map<TFace, TFaceColor> {
+    return this.faceColorDelta.getFaceColorMap();
+  }
+
+  public getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null {
+    return this.faceColorDelta.getOppositeFaceColor( faceColor );
+  }
+
+  public modifyFaceColors(
+    addedFaceColors: Iterable<TFaceColor>,
+    removedFaceColors: Iterable<TFaceColor>,
+    faceChangeMap: Map<TFace, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+  ): void {
+    this.faceColorDelta.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap );
+  }
+
+  public get faceColorsChangedEmitter(): TEmitter<[
+    addedFaceColors: Iterable<TFaceColor>,
+    removedFaceColors: Iterable<TFaceColor>,
+    oppositeChangedFaceColors: Iterable<TFaceColor>,
+    changedFaces: Iterable<TFace>,
+  ]> {
+    return this.faceColorDelta.faceColorsChangedEmitter;
+  }
+
   public clone(): CompleteDelta {
-    return new CompleteDelta( this.faceDelta.clone(), this.edgeDelta.clone(), this.simpleRegionDelta.clone() );
+    return new CompleteDelta( this.faceDelta.clone(), this.edgeDelta.clone(), this.simpleRegionDelta.clone(), this.faceColorDelta.clone() );
   }
 
   public createDelta(): TDelta<TCompleteData> {
-    return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta() );
+    return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta(), this.faceColorDelta.createDelta() );
   }
 
   public serializeState( board: TBoard ): TSerializedCompleteData {

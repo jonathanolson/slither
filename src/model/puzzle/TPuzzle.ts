@@ -44,6 +44,7 @@ export const puzzleToCompressedString = ( puzzle: TPuzzle ): string => {
 
 export const puzzleFromCompressedString = ( compressedString: string ): TPuzzle<TStructure, TState<TCompleteData>> | null => {
   try {
+    // TODO: can we wipe out some of the state here?
     const serializedPuzzle = JSON.parse( decompressString( compressedString )! );
 
     return deserializePuzzle( serializedPuzzle );

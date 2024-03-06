@@ -5,7 +5,6 @@ import { deserializeEdge, TEdge } from '../../board/core/TEdge.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
-
 import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
 import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
 

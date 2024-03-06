@@ -16,6 +16,8 @@ import { Vector2 } from 'phet-lib/dot';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { CompleteDelta } from './CompleteDelta.ts';
 import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegionData.ts';
+import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { GeneralFaceColorData } from '../face-color/GeneralFaceColorData.ts';
 
 export class CompleteData implements TState<TCompleteData> {
 
@@ -25,7 +27,8 @@ export class CompleteData implements TState<TCompleteData> {
   public constructor(
     public readonly faceData: TState<TFaceData>,
     public readonly edgeData: TState<TEdgeData>,
-    public readonly simpleRegionData: TState<TSimpleRegionData>
+    public readonly simpleRegionData: TState<TSimpleRegionData>,
+    public readonly faceColorData: TState<TFaceColorData>
   ) {
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceData.faceStateChangedEmitter.addListener( anyChangeListener );
@@ -41,7 +44,8 @@ export class CompleteData implements TState<TCompleteData> {
     return new CompleteData(
       new GeneralFaceData( board, getInitialFaceState ),
       new GeneralEdgeData( board, getInitialEdgeState ),
-      new GeneralSimpleRegionData( board )
+      new GeneralSimpleRegionData( board ),
+      new GeneralFaceColorData( board )
     );
   }
 
@@ -135,15 +139,62 @@ export class CompleteData implements TState<TCompleteData> {
     return this.simpleRegionData.simpleRegionsChangedEmitter;
   }
 
+  public getFaceColors(): TFaceColor[] {
+    return this.faceColorData.getFaceColors();
+  }
+  
+  public getInsideColor(): TFaceColor {
+    return this.faceColorData.getInsideColor();
+  }
+  
+  public getOutsideColor(): TFaceColor {
+    return this.faceColorData.getOutsideColor();
+  }
+
+  public getFaceColor( face: TFace ): TFaceColor {
+    return this.faceColorData.getFaceColor( face );
+  }
+  
+  public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
+    return this.faceColorData.getFacesWithColor( faceColor );
+  }
+  
+  public getFaceColorMap(): Map<TFace, TFaceColor> {
+    return this.faceColorData.getFaceColorMap();
+  }
+  
+  public getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null {
+    return this.faceColorData.getOppositeFaceColor( faceColor );
+  }
+
+  public modifyFaceColors(
+    addedFaceColors: Iterable<TFaceColor>,
+    removedFaceColors: Iterable<TFaceColor>,
+    faceChangeMap: Map<TFace, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+  ): void {
+    this.faceColorData.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap );
+  }
+
+  public get faceColorsChangedEmitter(): TEmitter<[
+    addedFaceColors: Iterable<TFaceColor>,
+    removedFaceColors: Iterable<TFaceColor>,
+    oppositeChangedFaceColors: Iterable<TFaceColor>,
+    changedFaces: Iterable<TFace>,
+  ]> {
+    return this.faceColorData.faceColorsChangedEmitter;
+  }
+
   public clone(): CompleteData {
-    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone() );
+    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone(), this.faceColorData.clone() );
   }
 
   public createDelta(): TDelta<TCompleteData> {
     return new CompleteDelta(
       this.faceData.createDelta(),
       this.edgeData.createDelta(),
-      this.simpleRegionData.createDelta()
+      this.simpleRegionData.createDelta(),
+      this.faceColorData.createDelta()
     );
   }
 
@@ -155,7 +206,10 @@ export class CompleteData implements TState<TCompleteData> {
     return new CompleteData(
       GeneralFaceData.deserializeState( board, serializedCompleteData.faceData ),
       GeneralEdgeData.deserializeState( board, serializedCompleteData.edgeData ),
-      GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData )
+      // TODO: get a setup so we can avoid shipping this data
+      serializedCompleteData.simpleRegionData ? GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData ) : new GeneralSimpleRegionData( board ),
+      // TODO: get a setup so we can avoid shipping this data
+      serializedCompleteData.faceColorData ? GeneralFaceColorData.deserializeState( board, serializedCompleteData.faceColorData ) : new GeneralFaceColorData( board )
     );
   }
 }
