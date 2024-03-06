@@ -212,6 +212,39 @@ export const lighterTheme = {
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
 };
 
+export const nightVisionTheme = {
+  name: 'Night Vision',
+  isEditable: true,
+  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(31,0,2)' ),
+  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(103,39,4)' ),
+  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(28,0,0)' ),
+  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(66,66,66,0)' ),
+  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(68,18,18)' ),
+  vertexColorProperty: new PaintColorProperty( 'rgb(117,0,0)' ),
+  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+  redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
+  whiteLineColorProperty: new PaintColorProperty( 'rgb(117,60,41)' ),
+  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(189,0,0,0.64000000000000001332)' ),
+  faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
+  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
+  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(75,58,58)' ),
+  uiForegroundProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
+  uiBackgroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,0,0)' ),
+  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  barrierColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.69999999999999995559)' ),
+  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
+  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
+};
+
 export const autoTheme = {
   name: 'Auto',
   isEditable: false
@@ -250,7 +283,8 @@ export const availableThemes: TTheme[] = [
   fadeLightTheme,
   fadeDarkTheme,
   purplesDarkTheme,
-  lighterTheme
+  lighterTheme,
+  nightVisionTheme
 ];
 
 // TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
