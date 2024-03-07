@@ -63,7 +63,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     this.isSolvedProperty = new DerivedProperty( [
       this.currentSnapshotProperty
     ], snapshot => {
-      if ( snapshot.state.getWeirdEdges().length ) {
+      if ( snapshot.state.getWeirdEdges().length || snapshot.state.hasInvalidFaceColors() ) {
         return false;
       }
 

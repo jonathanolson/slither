@@ -51,6 +51,11 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
     const requiresFullRecompute = this.hadEdgeAdjusted || this.state.hasInvalidFaceColors();
 
     if ( requiresFullRecompute ) {
+
+      // Clear our dirty state, so we don't infinite-loop
+      this.hadEdgeAdjusted = false;
+      this.dirtyEdges.clear();
+
       const faceProtoColorMap = new Map<TFace, ProtoFaceColor>();
       const protoOutside = new ProtoFaceColor( FaceColorState.OUTSIDE, new Set<TFace>() );
       const protoInside = new ProtoFaceColor( FaceColorState.INSIDE, new Set<TFace>() );
@@ -263,9 +268,6 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
       }
 
       const hasChange = addedFaceColors.size > 0 || removedFaceColors.size > 0 || faceChangeMap.size > 0 || oppositeChangeMap.size > 0 || this.state.hasInvalidFaceColors();
-
-      this.hadEdgeAdjusted = false;
-      this.dirtyEdges.clear();
 
       if ( hasChange ) {
         return new GeneralFaceColorAction( this.board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, false );

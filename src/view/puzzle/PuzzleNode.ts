@@ -1,7 +1,7 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
 import { DerivedProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { puzzleFont } from '../Theme.ts';
+import { faceColorsVisibleProperty, puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import { TFaceData } from '../../model/data/face/TFaceData.ts';
@@ -48,14 +48,16 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       backgroundOffsetDistance: 0.3
     }, providedOptions );
 
-    const faceColorContainer = new Node();
+    const faceColorContainer = new Node( {
+      visibleProperty: faceColorsVisibleProperty
+    } );
     const faceContainer = new Node();
     const edgeContainer = new Node();
     const vertexContainer = new Node();
     const simpleRegionContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
-      if ( state.getWeirdEdges().length ) {
+      if ( state.getWeirdEdges().length || state.hasInvalidFaceColors() ) {
         return false;
       }
 

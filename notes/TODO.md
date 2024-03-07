@@ -4,22 +4,17 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - Have the "faded" face values done with opacity, so it blends better with background color
   - Edit modes
     - Edge edit mode (default) 
     - Face link mode (to handle coloring) - different from edge edit mode
       - Or a mode for "edit face values" (and a generate-blank option in generation) to edit a puzzle?
   - Face Coloring
-    - Base safe solver on SimpleRegions, since those won't cause error states
+    - Have a "minimum number of colors before showing"? 
+    - BETTER color repulsion (don't handle colors that aren't... shown?) 
+    - Consider a texture for "inside" and "outside"
     - Create "simple" face solver, that handles adjacent colors
-    - getFaceColor( face: TFace )
-    - getFacesWithColor( color: TFaceColor ) <--- this way is potentially higher performance than our SimpleRegion way
-      - Better for deltas, no?
-      - Should we refactor SimpleRegion support to be like this?
-    - TFaceColor:
-      - FaceColorState: "inside", "outside", "unknown"
-    - FACE COLORING!!!! <--- figure out model + make solvers to solve the color state + ones that integrate color into other things
-      - Have a "minimum number of colors before showing"? 
-      - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
   - Difficulty:
     - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
       - Search for patterns where we can enable rules?

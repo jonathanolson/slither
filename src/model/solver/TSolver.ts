@@ -31,9 +31,15 @@ export const iterateSolver = <Data, Action extends TAction<Data>>(
   solver: TSolver<Data, Action>,
   state: TState<Data>
 ): void => {
+  let count = 0;
+
   while ( solver.dirty ) {
+    if ( count++ > 10000 ) {
+      throw new Error( 'Solver iteration limit exceeded? Looped?' );
+    }
     const action = solver.nextAction();
     if ( action ) {
+      console.log( action );
       action.apply( state );
     }
   }

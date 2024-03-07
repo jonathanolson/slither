@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { availableThemes, faceColorsVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -89,6 +89,7 @@ export class SettingsNode extends PopupNode {
           font: uiHeaderFont,
           fill: uiForegroundColorProperty
         } ),
+        new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
         new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),
         new UITextCheckbox( 'Impossible Line Visible', redLineVisibleProperty ),
         new UITextCheckbox( 'Vertices Visible', verticesVisibleProperty ),
