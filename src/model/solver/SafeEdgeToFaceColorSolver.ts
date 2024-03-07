@@ -12,6 +12,8 @@ import { GeneralFaceColor } from '../data/face-color/GeneralFaceColor.ts';
 import { getFaceColorGlobalId } from '../data/face-color/GeneralFaceColorData.ts';
 import { GeneralFaceColorAction } from '../data/face-color/GeneralFaceColorAction.ts';
 import { FaceColorInvalidAction } from '../data/face-color/FaceColorInvalidAction.ts';
+import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 
 type Data = TEdgeData & TFaceColorData;
 
@@ -258,16 +260,24 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
       }
     }
     else {
-      // TODO
+      while ( this.dirtyEdges.size ) {
+        const edge: TEdge = this.dirtyEdges.values().next().value;
+        this.dirtyEdges.delete( edge );
+
+        const state = this.state.getEdgeState( edge );
+        if ( state !== EdgeState.WHITE ) {
+          const faceColorA = edge.forwardFace ? this.state.getFaceColor( edge.forwardFace ) : this.state.getOutsideColor();
+          const faceColorB = edge.reversedFace ? this.state.getFaceColor( edge.reversedFace ) : this.state.getOutsideColor();
+
+          if ( state === EdgeState.BLACK ) {
+            return new FaceColorMakeOppositeAction( faceColorA, faceColorB );
+          }
+          else if ( state === EdgeState.RED ) {
+            return new FaceColorMakeSameAction( faceColorA, faceColorB );
+          }
+        }
+      }
     }
-
-    // TODO: clear dirtyEdges and reset state?
-
-    // TODO: for other purposes, create easy-actions like "set these two colors to the same" and "set these two colors to the opposite"
-    // TODO: have them error out as usual. we can get our normal solver actions to use those.
-
-    this.hadEdgeAdjusted = false;
-    this.dirtyEdges.clear();
 
     return null;
   }
