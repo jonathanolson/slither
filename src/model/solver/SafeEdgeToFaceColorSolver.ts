@@ -1,0 +1,293 @@
+import { TSolver } from './TSolver.ts';
+import EdgeState from '../data/edge/EdgeState.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TState } from '../data/core/TState.ts';
+import { TAction } from '../data/core/TAction.ts';
+import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
+import { TBoard } from '../board/core/TBoard.ts';
+import { TFace } from '../board/core/TFace.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { GeneralFaceColor } from '../data/face-color/GeneralFaceColor.ts';
+import { getFaceColorGlobalId } from '../data/face-color/GeneralFaceColorData.ts';
+import { GeneralFaceColorAction } from '../data/face-color/GeneralFaceColorAction.ts';
+import { FaceColorInvalidAction } from '../data/face-color/FaceColorInvalidAction.ts';
+
+type Data = TEdgeData & TFaceColorData;
+
+export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
+
+  // Track whether a red/black edge changed to something else (we'll need to recompute the face colors)
+  private hadEdgeAdjusted: boolean = true;
+
+  private readonly dirtyEdges = new Set<TEdge>();
+
+  private readonly edgeListener: TEdgeDataListener;
+
+  public constructor(
+    private readonly board: TBoard,
+    private readonly state: TState<Data>
+  ) {
+    // On init, hadEdgeAdjusted is marked as true, so we'll do a full recompute
+
+    this.edgeListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => {
+      this.dirtyEdges.add( edge );
+
+      this.hadEdgeAdjusted = this.hadEdgeAdjusted || oldState !== EdgeState.WHITE;
+    };
+
+    this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
+  }
+
+  public get dirty(): boolean {
+    return this.dirtyEdges.size > 0 || this.hadEdgeAdjusted;
+  }
+
+  public nextAction(): TAction<Data> | null {
+    if ( !this.dirty ) { return null; }
+
+    const requiresFullRecompute = this.hadEdgeAdjusted || this.state.hasInvalidFaceColors();
+
+    if ( requiresFullRecompute ) {
+      const faceProtoColorMap = new Map<TFace, ProtoFaceColor>();
+      const protoOutside = new ProtoFaceColor( FaceColorState.OUTSIDE, new Set<TFace>() );
+      const protoInside = new ProtoFaceColor( FaceColorState.INSIDE, new Set<TFace>() );
+      protoOutside.opposite = protoInside;
+      protoInside.opposite = protoOutside;
+      const protoColors = new Set( [
+        protoOutside,
+        protoInside,
+        ...this.board.faces.map( face => {
+          const protoColor = new ProtoFaceColor( FaceColorState.UNDECIDED, new Set<TFace>( [ face ] ) );
+          faceProtoColorMap.set( face, protoColor );
+          return protoColor;
+        } )
+      ] );
+
+      // If this is set, we can effectively abort and set the invalidFaceColor flag
+      let encounteredError = false;
+      const getColor = ( face: TFace | null ): ProtoFaceColor => {
+        if ( face === null ) { return protoOutside; }
+        const color = faceProtoColorMap.get( face )!;
+        assertEnabled() && assert( color );
+        return color;
+      };
+      const getCombinedColor = ( a: ProtoFaceColor, b: ProtoFaceColor ): ProtoFaceColor => {
+        // Don't get rid of our inside/outside colors
+        if ( b === protoOutside || b === protoInside ) {
+          return getCombinedColor( b, a );
+        }
+
+        assertEnabled() && assert( a !== b );
+
+        for ( const face of b.faces ) {
+          a.faces.add( face );
+          faceProtoColorMap.set( face, a );
+        }
+        b.faces.clear();
+        protoColors.delete( b );
+        return a;
+      };
+      const makeSame = ( a: ProtoFaceColor, b: ProtoFaceColor ) => {
+        assertEnabled() && assert( protoColors.has( a ) && protoColors.has( b ) );
+
+        if ( a === b ) { return; }
+
+        const aOpposite = a.opposite;
+        const bOpposite = b.opposite;
+
+        // TODO: based on opposite structure, we probably don't need both of these checks?
+        if ( aOpposite && aOpposite === b ) {
+          encounteredError = true;
+          return;
+        }
+        if ( bOpposite && bOpposite === a ) {
+          encounteredError = true;
+          return;
+        }
+
+        const result = getCombinedColor( a, b );
+        const opposite = ( aOpposite && bOpposite ) ? getCombinedColor( aOpposite, bOpposite ) : ( aOpposite || bOpposite );
+        result.opposite = opposite;
+        if ( opposite ) {
+          opposite.opposite = result;
+        }
+      };
+      const makeOpposite = ( a: ProtoFaceColor, b: ProtoFaceColor ) => {
+        assertEnabled() && assert( protoColors.has( a ) && protoColors.has( b ) );
+
+        if ( a === b ) {
+          encounteredError = true;
+          return;
+        }
+
+        // No-op if they are already opposites
+        if ( a.opposite && a.opposite === b ) {
+          return;
+        }
+
+        const aOpposite = a.opposite;
+        const bOpposite = b.opposite;
+
+        if ( aOpposite && aOpposite === bOpposite ) {
+          encounteredError = true;
+          return;
+        }
+
+        const newA = bOpposite ? getCombinedColor( a, bOpposite ) : a;
+        const newB = aOpposite ? getCombinedColor( b, aOpposite ) : b;
+        newA.opposite = newB;
+        newB.opposite = newA;
+      };
+
+      for ( const edge of this.board.edges ) {
+        if ( encounteredError ) { break; }
+
+        const state = this.state.getEdgeState( edge );
+        if ( state !== EdgeState.WHITE ) {
+          const faceColorA = getColor( edge.forwardFace );
+          const faceColorB = getColor( edge.reversedFace );
+
+          if ( state === EdgeState.BLACK ) {
+            makeOpposite( faceColorA, faceColorB );
+          }
+          else if ( state === EdgeState.RED ) {
+            makeSame( faceColorA, faceColorB );
+          }
+        }
+      }
+
+      if ( encounteredError ) {
+        return new FaceColorInvalidAction();
+      }
+
+      // Match up with old colors
+
+      const oldFaceColors = new Set( this.state.getFaceColors() );
+
+      // A few things for our action
+      const addedFaceColors: Set<TFaceColor> = new Set();
+      const faceChangeMap: Map<TFace, TFaceColor> = new Map();
+
+      const assignOldColor = ( oldFaceColor: TFaceColor, protoColor: ProtoFaceColor ) => {
+        assertEnabled() && assert( oldFaceColors.has( oldFaceColor ) );
+        assertEnabled() && assert( protoColor.faceColor === null );
+
+        oldFaceColors.delete( oldFaceColor );
+        protoColor.faceColor = oldFaceColor;
+      };
+
+      assignOldColor( this.state.getOutsideColor(), protoOutside );
+      assignOldColor( this.state.getInsideColor(), protoInside );
+
+      for ( const protoColor of protoColors ) {
+        // Ignore inside/outside
+        if ( protoColor.faceColor ) { continue; }
+
+        const possibleOldColors = new Set( [ ...protoColor.faces ].map( face => this.state.getFaceColor( face ) ) );
+        let bestOldColor: TFaceColor | null = null;
+        let bestCount = 0;
+
+        for ( const oldColor of possibleOldColors ) {
+          // Ignore already used
+          if ( !oldFaceColors.has( oldColor ) ) {
+            continue;
+          }
+
+          // Ignore if we didn't completely capture it
+          const oldFaces = this.state.getFacesWithColor( oldColor );
+          if ( oldFaces.some( oldFace => !protoColor.faces.has( oldFace ) ) ) {
+            continue;
+          }
+
+          if ( oldFaces.length > bestCount ) {
+            bestOldColor = oldColor;
+            bestCount = oldFaces.length;
+          }
+        }
+
+        if ( bestOldColor ) {
+          assignOldColor( bestOldColor, protoColor );
+        }
+        else {
+          const addedFaceColor = new GeneralFaceColor( getFaceColorGlobalId(), FaceColorState.UNDECIDED );
+          addedFaceColors.add( addedFaceColor );
+          protoColor.faceColor = addedFaceColor;
+        }
+
+        protoColor.faces.forEach( face => {
+          const oldColor = this.state.getFaceColor( face );
+          const newColor = protoColor.faceColor!;
+
+          if ( oldColor !== newColor ) {
+            faceChangeMap.set( face, newColor );
+          }
+        } );
+      }
+
+      const removedFaceColors: Set<TFaceColor> = new Set( oldFaceColors );
+      const oppositeChangeMap: Map<TFaceColor, TFaceColor | null> = new Map();
+
+      // Connect up the oppositeChangeMap
+      for ( const protoColor of protoColors ) {
+        const newColor = protoColor.faceColor!;
+        const newOpposite = protoColor.opposite?.faceColor ?? null;
+
+        let needsOppositeChange = addedFaceColors.has( newColor );
+        if ( !needsOppositeChange ) {
+          const oldOpposite = this.state.getOppositeFaceColor( newColor );
+
+          needsOppositeChange = oldOpposite !== newOpposite;
+        }
+
+        if ( needsOppositeChange ) {
+          oppositeChangeMap.set( newColor, newOpposite );
+        }
+      }
+
+      const hasChange = addedFaceColors.size > 0 || removedFaceColors.size > 0 || faceChangeMap.size > 0 || oppositeChangeMap.size > 0 || this.state.hasInvalidFaceColors();
+
+      this.hadEdgeAdjusted = false;
+      this.dirtyEdges.clear();
+
+      if ( hasChange ) {
+        return new GeneralFaceColorAction( this.board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, false );
+      }
+      else {
+        return null;
+      }
+    }
+    else {
+      // TODO
+    }
+
+    // TODO: clear dirtyEdges and reset state?
+
+    // TODO: for other purposes, create easy-actions like "set these two colors to the same" and "set these two colors to the opposite"
+    // TODO: have them error out as usual. we can get our normal solver actions to use those.
+
+    this.hadEdgeAdjusted = false;
+    this.dirtyEdges.clear();
+
+    return null;
+  }
+
+  public clone( equivalentState: TState<Data> ): SafeEdgeToFaceColorSolver {
+    return new SafeEdgeToFaceColorSolver( this.board, equivalentState );
+  }
+
+  public dispose(): void {
+    this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
+  }
+}
+
+class ProtoFaceColor {
+
+  public opposite: ProtoFaceColor | null = null;
+  public faceColor: TFaceColor | null = null;
+
+  public constructor(
+    public readonly colorState: FaceColorState,
+    public readonly faces: Set<TFace>
+  ) {}
+}

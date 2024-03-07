@@ -16,7 +16,9 @@ import { dotRandom } from 'phet-lib/dot';
 // Oops, because on app restart, region IDs are persistent
 const getSimpleRegionGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
-export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAction<TFaceData & TEdgeData & TSimpleRegionData>> {
+type Data = TFaceData & TEdgeData & TSimpleRegionData;
+
+export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAction<Data>> {
 
   private readonly dirtyEdges = new Set<TEdge>();
 
@@ -24,7 +26,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeDa
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TFaceData & TEdgeData & TSimpleRegionData>
+    private readonly state: TState<Data>
   ) {
     board.edges.forEach( edge => {
       this.dirtyEdges.add( edge );
@@ -41,7 +43,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeDa
     return this.dirtyEdges.size > 0;
   }
 
-  public nextAction(): TAction<TFaceData & TEdgeData & TSimpleRegionData> | null {
+  public nextAction(): TAction<Data> | null {
     if ( !this.dirty ) { return null; }
 
     const oldRegions = this.state.getSimpleRegions();
@@ -255,7 +257,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<TFaceData & TEdgeDa
     return new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
   }
 
-  public clone( equivalentState: TState<TFaceData & TEdgeData & TSimpleRegionData> ): SafeEdgeToSimpleRegionSolver {
+  public clone( equivalentState: TState<Data> ): SafeEdgeToSimpleRegionSolver {
     return new SafeEdgeToSimpleRegionSolver( this.board, equivalentState );
   }
 

@@ -9,7 +9,7 @@ import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeData> {
 
-  public readonly edgeStateChangedEmitter = new TinyEmitter<[ TEdge, EdgeState ]>();
+  public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
 
   public constructor(
     board: TBoard,
@@ -34,7 +34,7 @@ export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeD
     if ( oldState !== state ) {
       this.edgeStateMap.set( edge, state );
 
-      this.edgeStateChangedEmitter.emit( edge, state );
+      this.edgeStateChangedEmitter.emit( edge, state, oldState );
     }
   }
 

@@ -9,11 +9,10 @@ export interface TEdgeData {
 
   setEdgeState( edge: TEdge, state: EdgeState ): void;
 
-  // TODO: consider passing in the old value?
-  edgeStateChangedEmitter: TEmitter<[ TEdge, EdgeState ]>;
+  edgeStateChangedEmitter: TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>;
 }
 
-export type TEdgeDataListener = ( edge: TEdge, state: EdgeState ) => void;
+export type TEdgeDataListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => void;
 
 export interface TSerializedEdgeData extends TSerializedState {
   type: 'EdgeData';

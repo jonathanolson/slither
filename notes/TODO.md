@@ -4,6 +4,9 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - Edit modes
+    - Edge edit mode (default) 
+    - Face link mode (to handle coloring) - different from edge edit mode
   - Face Coloring
     - Base safe solver on SimpleRegions, since those won't cause error states
     - Create "simple" face solver, that handles adjacent colors

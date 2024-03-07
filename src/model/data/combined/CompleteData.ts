@@ -97,7 +97,7 @@ export class CompleteData implements TState<TCompleteData> {
     this.edgeData.setEdgeState( edge, state );
   }
 
-  public get edgeStateChangedEmitter(): TEmitter<[ TEdge, EdgeState ]> {
+  public get edgeStateChangedEmitter(): TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]> {
     return this.edgeData.edgeStateChangedEmitter;
   }
 

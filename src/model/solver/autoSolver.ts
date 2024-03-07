@@ -9,6 +9,7 @@ import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
+import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
@@ -21,8 +22,9 @@ export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanPropert
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver( [
-    new SafeEdgeToSimpleRegionSolver( board, state )
+  return new CompositeSolver<TCompleteData>( [
+    new SafeEdgeToSimpleRegionSolver( board, state ),
+    new SafeEdgeToFaceColorSolver( board, state )
   ] );
 };
 
@@ -44,7 +46,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleLoopToBlack
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-    return new CompositeSolver( [
+    return new CompositeSolver<TCompleteData>( [
       ...( simpleVertexJointToRed || simpleVertexOnlyOptionToBlack || simpleVertexAlmostEmptyToRed ? [
         new SimpleVertexSolver( board, state, {
           solveJointToRed: simpleVertexJointToRed,

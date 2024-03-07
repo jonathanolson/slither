@@ -13,7 +13,7 @@ import { GeneralEdgeDelta } from './GeneralEdgeDelta.ts';
 // TODO: faster forms for Square in particular (bit-pack the states!)
 export class GeneralEdgeData implements TState<TEdgeData> {
 
-  public readonly edgeStateChangedEmitter = new TinyEmitter<[ TEdge, EdgeState ]>();
+  public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
 
   public readonly edgeStateMap: Map<TEdge, EdgeState> = new Map();
 
@@ -40,7 +40,7 @@ export class GeneralEdgeData implements TState<TEdgeData> {
     if ( oldState !== state ) {
       this.edgeStateMap.set( edge, state );
 
-      this.edgeStateChangedEmitter.emit( edge, state );
+      this.edgeStateChangedEmitter.emit( edge, state, oldState );
     }
   }
 

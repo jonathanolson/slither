@@ -52,7 +52,7 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     this.edgeDelta.setEdgeState( edge, state );
   }
 
-  public get edgeStateChangedEmitter(): TEmitter<[ TEdge, EdgeState ]> {
+  public get edgeStateChangedEmitter(): TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]> {
     return this.edgeDelta.edgeStateChangedEmitter;
   }
 
