@@ -21,9 +21,10 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
     addedFaceColors: Set<TFaceColor> = new Set(),
     removedFaceColors: Set<TFaceColor> = new Set(),
     faceChangeMap: Map<TFace, TFaceColor> = new Map(),
-    oppositeChangeMap: Map<TFaceColor, TFaceColor | null> = new Map()
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null> = new Map(),
+    invalidFaceColor = false
   ) {
-    super( board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap );
+    super( board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, invalidFaceColor );
   }
 
   public getFaceColors(): TFaceColor[] {
@@ -75,11 +76,16 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
     return oppositeChange !== undefined ? oppositeChange : this.parentState.getOppositeFaceColor( faceColor );
   }
 
+  public hasInvalidFaceColors(): boolean {
+    return this.invalidFaceColor || this.parentState.hasInvalidFaceColors();
+  }
+
   public modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
     removedFaceColors: Iterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    invalidFaceColor: boolean
   ): void {
     /*
         addedFaceColors: Set<TFaceColor>,
@@ -111,6 +117,8 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
 
     const oppositeChangedFaceColors = new Set<TFaceColor>( oppositeChangeMap.keys() );
 
+    this.invalidFaceColor = invalidFaceColor;
+
     this.faceColorsChangedEmitter.emit(
       addedFaceColors,
       removedFaceColors,
@@ -120,7 +128,7 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
   }
 
   public clone(): GeneralFaceColorDelta {
-    return new GeneralFaceColorDelta( this.board, this.parentState, new Set( this.addedFaceColors ), new Set( this.removedFaceColors ), new Map( this.faceChangeMap ), new Map( this.oppositeChangeMap ) );
+    return new GeneralFaceColorDelta( this.board, this.parentState, new Set( this.addedFaceColors ), new Set( this.removedFaceColors ), new Map( this.faceChangeMap ), new Map( this.oppositeChangeMap ), this.invalidFaceColor || this.parentState.hasInvalidFaceColors() );
   }
 
   public createDelta(): TDelta<TFaceColorData> {

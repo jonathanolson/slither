@@ -122,13 +122,18 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     return this.faceColorDelta.getOppositeFaceColor( faceColor );
   }
 
+  public hasInvalidFaceColors(): boolean {
+    return this.faceColorDelta.hasInvalidFaceColors();
+  }
+
   public modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
     removedFaceColors: Iterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    invalidFaceColor: boolean
   ): void {
-    this.faceColorDelta.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap );
+    this.faceColorDelta.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, invalidFaceColor );
   }
 
   public get faceColorsChangedEmitter(): TEmitter<[

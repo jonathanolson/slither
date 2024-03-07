@@ -48,11 +48,14 @@ export interface TFaceColorData {
   getFaceColorMap(): Map<TFace, TFaceColor>;
   getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null;
 
+  hasInvalidFaceColors(): boolean;
+
   modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
     removedFaceColors: Iterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
+    invalidFaceColor: boolean
   ): void;
 
   faceColorsChangedEmitter: TEmitter<[
@@ -71,6 +74,7 @@ export type TFaceColorDataListener = (
 export interface TSerializedFaceColorData extends TSerializedState {
   type: 'FaceColorData';
   colors: TSerializedFaceColor[];
+  invalidFaceColor: boolean;
 }
 
 export const serializeFaceColorData = ( faceData: TFaceColorData ): TSerializedFaceColorData => ( {
@@ -79,5 +83,6 @@ export const serializeFaceColorData = ( faceData: TFaceColorData ): TSerializedF
     faceColor,
     faceData.getFacesWithColor( faceColor ),
     faceData.getOppositeFaceColor( faceColor )?.id ?? null
-  ) )
+  ) ),
+  invalidFaceColor: faceData.hasInvalidFaceColors()
 } );

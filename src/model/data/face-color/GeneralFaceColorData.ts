@@ -26,6 +26,7 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
   public readonly oppositeColorMap: Map<TFaceColor, TFaceColor | null>;
   public readonly outsideColor: TFaceColor;
   public readonly insideColor: TFaceColor;
+  public invalidFaceColor: boolean;
 
   public constructor(
     public readonly board: TBoard,
@@ -36,7 +37,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     colorInverseMap?: Map<TFaceColor, Set<TFace>>,
     oppositeColorMap?: Map<TFaceColor, TFaceColor | null>,
     outsideColor?: TFaceColor,
-    insideColor?: TFaceColor
+    insideColor?: TFaceColor,
+    invalidFaceColor?: boolean
   ) {
     // TODO: use a better pattern here
     assertEnabled() && assert( !faceColors || insideColor, 'Provide all or none of the optional arguments' );
@@ -61,6 +63,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     } ) );
 
     this.oppositeColorMap = new Map( oppositeColorMap ? oppositeColorMap : [ [ this.outsideColor, this.insideColor ], [ this.insideColor, this.outsideColor ] ] );
+
+    this.invalidFaceColor = !!invalidFaceColor;
   }
 
   public getFaceColors(): TFaceColor[] {
@@ -99,11 +103,16 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     return this.oppositeColorMap.get( faceColor ) ?? null;
   }
 
+  public hasInvalidFaceColors(): boolean {
+    return this.invalidFaceColor;
+  }
+
   public modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
     removedFaceColors: Iterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    invalidFaceColor: boolean
   ): void {
     for ( const addedFaceColor of addedFaceColors ) {
       this.faceColors.add( addedFaceColor );
@@ -131,6 +140,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
 
     const oppositeChangedFaceColors = new Set<TFaceColor>( oppositeChangeMap.keys() );
 
+    this.invalidFaceColor = invalidFaceColor;
+
     this.faceColorsChangedEmitter.emit(
       addedFaceColors,
       removedFaceColors,
@@ -147,7 +158,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
       this.colorInverseMap,
       this.oppositeColorMap,
       this.outsideColor,
-      this.insideColor
+      this.insideColor,
+      this.invalidFaceColor
     );
   }
 
@@ -201,7 +213,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
       colorInverseMap,
       oppositeColorMap,
       outsideColor,
-      insideColor
+      insideColor,
+      serializedFaceColorData.invalidFaceColor
     );
   }
 }

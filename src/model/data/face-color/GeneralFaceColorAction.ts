@@ -9,11 +9,12 @@ export class GeneralFaceColorAction implements TAction<TFaceColorData> {
     public readonly addedFaceColors: Set<TFaceColor>,
     public readonly removedFaceColors: Set<TFaceColor>,
     public readonly faceChangeMap: Map<TFace, TFaceColor>,
-    public readonly oppositeChangeMap: Map<TFaceColor, TFaceColor | null>
+    public readonly oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
+    public invalidFaceColor: boolean
   ) {}
 
   public apply( state: TFaceColorData ): void {
-    state.modifyFaceColors( this.addedFaceColors, this.removedFaceColors, this.faceChangeMap, this.oppositeChangeMap );
+    state.modifyFaceColors( this.addedFaceColors, this.removedFaceColors, this.faceChangeMap, this.oppositeChangeMap, this.invalidFaceColor );
   }
 
   public getUndo( state: TFaceColorData ): TAction<TFaceColorData> {

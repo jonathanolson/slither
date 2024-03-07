@@ -167,13 +167,18 @@ export class CompleteData implements TState<TCompleteData> {
     return this.faceColorData.getOppositeFaceColor( faceColor );
   }
 
+  public hasInvalidFaceColors(): boolean {
+    return this.faceColorData.hasInvalidFaceColors();
+  }
+
   public modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
     removedFaceColors: Iterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>
+    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    invalidFaceColor: boolean
   ): void {
-    this.faceColorData.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap );
+    this.faceColorData.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, invalidFaceColor );
   }
 
   public get faceColorsChangedEmitter(): TEmitter<[
