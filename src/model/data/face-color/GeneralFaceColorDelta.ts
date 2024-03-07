@@ -43,11 +43,22 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
   }
 
   public getFaceColor( face: TFace ): TFaceColor {
-    return this.faceChangeMap.get( face ) ?? this.parentState.getFaceColor( face );
+    if ( this.faceChangeMap.has( face ) ) {
+      return this.faceChangeMap.get( face )!;
+    }
+    else {
+      return this.parentState.getFaceColor( face );
+    }
   }
 
   public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
-    const faces = new Set( this.parentState.getFacesWithColor( faceColor ) );
+    let faces: Set<TFace>;
+    if ( this.addedFaceColors.has( faceColor ) ) {
+      faces = new Set();
+    }
+    else {
+      faces = new Set( this.parentState.getFacesWithColor( faceColor ) );
+    }
 
     for ( const [ face, newColor ] of this.faceChangeMap.entries() ) {
       if ( newColor === faceColor ) {

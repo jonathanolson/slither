@@ -3,12 +3,16 @@ import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { FaceColorMakeSameAction } from './FaceColorMakeSameAction.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorMakeOppositeAction implements TAction<TFaceColorData> {
   public constructor(
     public readonly a: TFaceColor,
     public readonly b: TFaceColor
-  ) {}
+  ) {
+    assertEnabled() && assert( a );
+    assertEnabled() && assert( b );
+  }
 
   public apply( state: TFaceColorData ): void {
 

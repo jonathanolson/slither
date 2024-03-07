@@ -54,6 +54,9 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
       ...board.faces.map( face => this.colorMap.get( face )! )
     ] );
 
+    assertEnabled() && assert( this.board.faces.every( face => this.colorMap.has( face ) ) );
+    assertEnabled() && assert( this.board.faces.every( face => this.faceColors.has( this.colorMap.get( face )! ) ) );
+
     this.colorInverseMap = new Map( colorInverseMap ? colorInverseMap : [ ...this.faceColors ].map( faceColor => {
       return [
         faceColor,
@@ -141,6 +144,9 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     const oppositeChangedFaceColors = new Set<TFaceColor>( oppositeChangeMap.keys() );
 
     this.invalidFaceColor = invalidFaceColor;
+
+    assertEnabled() && assert( this.board.faces.every( face => this.colorMap.has( face ) ) );
+    assertEnabled() && assert( this.board.faces.every( face => this.faceColors.has( this.colorMap.get( face )! ) ) );
 
     this.faceColorsChangedEmitter.emit(
       addedFaceColors,

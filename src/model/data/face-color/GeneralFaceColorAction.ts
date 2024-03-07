@@ -2,6 +2,7 @@ import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralFaceColorAction implements TAction<TFaceColorData> {
   public constructor(
@@ -11,7 +12,9 @@ export class GeneralFaceColorAction implements TAction<TFaceColorData> {
     public readonly faceChangeMap: Map<TFace, TFaceColor>,
     public readonly oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     public invalidFaceColor: boolean
-  ) {}
+  ) {
+    assertEnabled() && assert( removedFaceColors.size <= faceChangeMap.size );
+  }
 
   public apply( state: TFaceColorData ): void {
     state.modifyFaceColors( this.addedFaceColors, this.removedFaceColors, this.faceChangeMap, this.oppositeChangeMap, this.invalidFaceColor );

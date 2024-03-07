@@ -2,12 +2,16 @@ import { TAction, TSerializedAction } from '../core/TAction.ts';
 import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   public constructor(
     public readonly a: TFaceColor,
     public readonly b: TFaceColor
-  ) {}
+  ) {
+    assertEnabled() && assert( a );
+    assertEnabled() && assert( b );
+  }
 
   public apply( state: TFaceColorData ): void {
     if ( this.a === this.b ) {

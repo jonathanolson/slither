@@ -7,6 +7,7 @@
   - Edit modes
     - Edge edit mode (default) 
     - Face link mode (to handle coloring) - different from edge edit mode
+      - Or a mode for "edit face values" (and a generate-blank option in generation) to edit a puzzle?
   - Face Coloring
     - Base safe solver on SimpleRegions, since those won't cause error states
     - Create "simple" face solver, that handles adjacent colors

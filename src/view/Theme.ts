@@ -29,7 +29,14 @@ export interface TTheme {
   blackLineColorProperty: PaintColorProperty;
   redLineColorProperty: PaintColorProperty;
   whiteLineColorProperty: PaintColorProperty;
+
+  // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
   simpleRegionTargetColorProperty: PaintColorProperty;
+
+  // TODO: describe the effects of alpha here
+  faceColorTargetColorProperty: PaintColorProperty;
+  faceColorOutsideColorProperty: PaintColorProperty;
+  faceColorInsideColorProperty: PaintColorProperty;
   faceValueColorProperty: PaintColorProperty;
   faceValueCompletedColorProperty: PaintColorProperty;
   faceValueErrorColorProperty: PaintColorProperty;
@@ -69,6 +76,9 @@ export const lightTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(255,245,245,0)' ),
+  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,1)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(240,240,240,1)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -102,6 +112,9 @@ export const darkTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
+  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -165,6 +178,9 @@ export const purplesDarkTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(163,79,232,0.56000000000000005329)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
+  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -198,6 +214,9 @@ export const nightVisionTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(117,60,41)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(189,0,0,0.64000000000000001332)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
+  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -426,6 +445,18 @@ export const whiteLineColorProperty = new DynamicProperty( themeProperty, {
 
 export const simpleRegionTargetColorProperty = new DynamicProperty( themeProperty, {
   derive: 'simpleRegionTargetColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const faceColorTargetColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorTargetColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const faceColorOutsideColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorOutsideColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const faceColorInsideColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorInsideColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const faceValueColorProperty = new DynamicProperty( themeProperty, {

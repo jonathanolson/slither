@@ -14,6 +14,8 @@ import { VertexNode } from './VertexNode.ts';
 import { FaceNode } from './FaceNode.ts';
 import { EdgeNode } from './EdgeNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
+import { FaceColorViewNode } from './FaceColorViewNode.ts';
+import { TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -26,7 +28,7 @@ type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
 
 export type BasicPuzzleNodeOptions = SelfOptions & ParentOptions;
 
-export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData;
+export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TFaceColorData;
 
 // TODO: disposal!
 export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<BasicPuzzleNodeData> = TState<BasicPuzzleNodeData>> extends Node {
@@ -46,6 +48,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       backgroundOffsetDistance: 0.3
     }, providedOptions );
 
+    const faceColorContainer = new Node();
     const faceContainer = new Node();
     const edgeContainer = new Node();
     const vertexContainer = new Node();
@@ -59,6 +62,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
       const regions = state.getSimpleRegions();
       return regions.length === 1 && regions[ 0 ].isSolved;
     } );
+
+    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty ) );
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
@@ -87,6 +92,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     super( combineOptions<BasicPuzzleNodeOptions>( {
       children: [
         backgroundNode,
+        faceColorContainer,
         faceContainer,
         edgeContainer,
         vertexContainer,
@@ -95,6 +101,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, State
     }, options ) );
 
     this.disposeEmitter.addListener( () => {
+      faceColorContainer.children.forEach( child => child.dispose() );
       faceContainer.children.forEach( child => child.dispose() );
       edgeContainer.children.forEach( child => child.dispose() );
       vertexContainer.children.forEach( child => child.dispose() );

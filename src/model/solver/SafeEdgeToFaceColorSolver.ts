@@ -159,6 +159,19 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
         }
       }
 
+      // Double check that we cover all faces
+      if ( assertEnabled() ) {
+        const faceSet = new Set( this.board.faces );
+
+        for ( const protoColor of protoColors ) {
+          for ( const face of protoColor.faces ) {
+            faceSet.delete( face );
+          }
+        }
+
+        assert( faceSet.size === 0 );
+      }
+
       if ( encounteredError ) {
         return new FaceColorInvalidAction();
       }
@@ -183,46 +196,48 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
       assignOldColor( this.state.getInsideColor(), protoInside );
 
       for ( const protoColor of protoColors ) {
-        // Ignore inside/outside
-        if ( protoColor.faceColor ) { continue; }
 
-        const possibleOldColors = new Set( [ ...protoColor.faces ].map( face => this.state.getFaceColor( face ) ) );
-        let bestOldColor: TFaceColor | null = null;
-        let bestCount = 0;
+        if ( !protoColor.faceColor ) {
+          const possibleOldColors = new Set( [ ...protoColor.faces ].map( face => this.state.getFaceColor( face ) ) );
+          let bestOldColor: TFaceColor | null = null;
+          let bestCount = 0;
 
-        for ( const oldColor of possibleOldColors ) {
-          // Ignore already used
-          if ( !oldFaceColors.has( oldColor ) ) {
-            continue;
+          for ( const oldColor of possibleOldColors ) {
+            // Ignore already used
+            if ( !oldFaceColors.has( oldColor ) ) {
+              continue;
+            }
+
+            // Ignore if we didn't completely capture it
+            const oldFaces = this.state.getFacesWithColor( oldColor );
+            if ( oldFaces.some( oldFace => !protoColor.faces.has( oldFace ) ) ) {
+              continue;
+            }
+
+            if ( oldFaces.length > bestCount ) {
+              bestOldColor = oldColor;
+              bestCount = oldFaces.length;
+            }
           }
 
-          // Ignore if we didn't completely capture it
-          const oldFaces = this.state.getFacesWithColor( oldColor );
-          if ( oldFaces.some( oldFace => !protoColor.faces.has( oldFace ) ) ) {
-            continue;
+          if ( bestOldColor ) {
+            assignOldColor( bestOldColor, protoColor );
           }
-
-          if ( oldFaces.length > bestCount ) {
-            bestOldColor = oldColor;
-            bestCount = oldFaces.length;
+          else {
+            const addedFaceColor = new GeneralFaceColor( getFaceColorGlobalId(), FaceColorState.UNDECIDED );
+            addedFaceColors.add( addedFaceColor );
+            protoColor.faceColor = addedFaceColor;
           }
         }
 
-        if ( bestOldColor ) {
-          assignOldColor( bestOldColor, protoColor );
-        }
-        else {
-          const addedFaceColor = new GeneralFaceColor( getFaceColorGlobalId(), FaceColorState.UNDECIDED );
-          addedFaceColors.add( addedFaceColor );
-          protoColor.faceColor = addedFaceColor;
-        }
+        const newFaceColor = protoColor.faceColor!;
+        assertEnabled() && assert( newFaceColor );
 
         protoColor.faces.forEach( face => {
           const oldColor = this.state.getFaceColor( face );
-          const newColor = protoColor.faceColor!;
 
-          if ( oldColor !== newColor ) {
-            faceChangeMap.set( face, newColor );
+          if ( oldColor !== newFaceColor ) {
+            faceChangeMap.set( face, newFaceColor );
           }
         } );
       }
