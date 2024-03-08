@@ -5,6 +5,10 @@
 
 - Current code TODOs
   - Have the "faded" face values done with opacity, so it blends better with background color
+  - View modes?
+    - Color faces (with uncolored edges?)
+      - THIS COULD LOOK COOL!!!
+    - Color edges (with only critical faces colored?)
   - Edit modes
     - Edge edit mode (default) 
     - Face link mode (to handle coloring) - different from edge edit mode
