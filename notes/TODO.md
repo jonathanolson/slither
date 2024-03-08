@@ -4,7 +4,10 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - Have the "faded" face values done with opacity, so it blends better with background color
+  - Solve and reverse is breaking colors?
+  - Gamut fix to preserve value...?
+  - Fix color repulsion (normalize the difference perhaps?!?)
+    - Don't show buggy face coloring (undecided) when solved
   - View modes?
     - Color faces (with uncolored edges?)
       - THIS COULD LOOK COOL!!!

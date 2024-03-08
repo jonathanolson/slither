@@ -1,6 +1,6 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
-import { LocalStorageBooleanProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageNumberProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
 import { RectangularButton } from 'phet-lib/sun';
 import { copyToClipboard } from '../util/copyToClipboard.ts';
 
@@ -37,6 +37,7 @@ export interface TTheme {
   faceColorTargetColorProperty: PaintColorProperty;
   faceColorOutsideColorProperty: PaintColorProperty;
   faceColorInsideColorProperty: PaintColorProperty;
+  faceColorDefaultColorProperty: PaintColorProperty;
   faceValueColorProperty: PaintColorProperty;
   faceValueCompletedColorProperty: PaintColorProperty;
   faceValueErrorColorProperty: PaintColorProperty;
@@ -76,9 +77,10 @@ export const lightTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(255,245,245,0)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(255,229,229,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
-  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(240,240,240)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(230,230,230)' ),
+  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(245,245,245)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.2000000000000000111)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -112,9 +114,10 @@ export const darkTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(47,4,4,0)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(26,26,26)' ),
-  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(37,37,37)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(40,40,40)' ),
+  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(217,217,217,0.14000000000000001332)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -181,6 +184,7 @@ export const purplesDarkTheme = {
   faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
+  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -217,6 +221,7 @@ export const nightVisionTheme = {
   faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
+  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -459,6 +464,10 @@ export const faceColorInsideColorProperty = new DynamicProperty( themeProperty, 
   derive: 'faceColorInsideColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
+export const faceColorDefaultColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorDefaultColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
 export const faceValueColorProperty = new DynamicProperty( themeProperty, {
   derive: 'faceValueColorProperty'
 } ) as TReadOnlyProperty<Color>;
@@ -543,6 +552,8 @@ export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteL
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
 export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', false );
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
+
+export const faceColorThresholdProperty = new LocalStorageNumberProperty( 'faceColorThresholdProperty', 2 );
 
 export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;
 export type TLineJoin = typeof lineJoins[ number ];

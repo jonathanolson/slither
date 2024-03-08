@@ -38,6 +38,15 @@ export class LocalStorageBooleanProperty extends LocalStorageProperty<boolean> {
   }
 }
 
+export class LocalStorageNumberProperty extends LocalStorageProperty<number> {
+  public constructor( key: string, defaultValue: number ) {
+    super( key, {
+      serialize: value => value.toString(),
+      deserialize: value => value === null ? defaultValue : parseFloat( value )
+    } );
+  }
+}
+
 export class LocalStorageEnumerationProperty<T extends EnumerationValue> extends LocalStorageProperty<T> {
   public constructor(
     key: string,

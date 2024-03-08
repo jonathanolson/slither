@@ -5,7 +5,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { faceColorInsideColorProperty, faceColorOutsideColorProperty, faceColorTargetColorProperty } from '../Theme.ts';
+import { faceColorDefaultColorProperty, faceColorInsideColorProperty, faceColorOutsideColorProperty, faceColorTargetColorProperty, faceColorThresholdProperty } from '../Theme.ts';
 import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
@@ -54,7 +54,7 @@ export class FaceColorViewNode extends Node {
 
   public constructor(
     public readonly board: TBoard,
-    stateProperty: TReadOnlyProperty<TState<TFaceColorData>>
+    private readonly stateProperty: TReadOnlyProperty<TState<TFaceColorData>>
   ) {
     const faceColorNodeContainer = new Node();
 
@@ -119,13 +119,18 @@ export class FaceColorViewNode extends Node {
     } );
 
     const updateHueListener = () => this.updateHues();
-    faceColorTargetColorProperty.link( updateHueListener );
-    faceColorInsideColorProperty.link( updateHueListener );
-    faceColorOutsideColorProperty.link( updateHueListener );
+    faceColorTargetColorProperty.lazyLink( updateHueListener );
+    faceColorInsideColorProperty.lazyLink( updateHueListener );
+    faceColorOutsideColorProperty.lazyLink( updateHueListener );
+    faceColorThresholdProperty.lazyLink( updateHueListener );
+    faceColorDefaultColorProperty.lazyLink( updateHueListener ); // TODO: might not need this link
+    this.updateHues();
     this.disposeEmitter.addListener( () => {
       faceColorTargetColorProperty.unlink( updateHueListener );
       faceColorInsideColorProperty.unlink( updateHueListener );
       faceColorOutsideColorProperty.unlink( updateHueListener );
+      faceColorThresholdProperty.unlink( updateHueListener );
+      faceColorDefaultColorProperty.unlink( updateHueListener );
     } );
   }
 
@@ -181,135 +186,157 @@ export class FaceColorViewNode extends Node {
   // TODO: we only changed how to get the faces out of a primitive
   private updateHues(): void {
 
-    // TODO: improve perf?
-    const faceColorNodes = [ ...this.faceColorNodeMap.values() ];
+    const state = this.stateProperty.value;
 
-    if ( faceColorNodes.length < 2 ) {
-      return;
+    // TODO: improve perf?
+    const faceColorNodes = [ ...this.faceColorNodeMap.values() ].filter( faceColorNode => faceColorNode.faceCount >= faceColorThresholdProperty.value );
+
+    const oppositeMap = new Map<FaceColorNode, FaceColorNode | null>();
+    for ( const faceColorNode of faceColorNodes ) {
+      const oppositeFaceColor = state.getOppositeFaceColor( faceColorNode.faceColor );
+      oppositeMap.set( faceColorNode, oppositeFaceColor ? this.faceColorNodeMap.get( oppositeFaceColor )! : null );
     }
 
-    const scratchHue = new Vector2( 0, 0 );
+    if ( faceColorNodes.length >= 2 ) {
+      const scratchHue = new Vector2( 0, 0 );
 
-    const renormalizeHues = () => {
-      // Weighted hue normalize (in prep for other actions?)
+      const renormalizeHues = () => {
+        // Weighted hue normalize (in prep for other actions?)
+        for ( const faceColorNode of faceColorNodes ) {
+          if ( faceColorNode.hueVector.getMagnitude() > 1e-6 ) {
+            faceColorNode.hueVector.normalize();
+          }
+          else {
+            faceColorNode.hueVector.setXY( dotRandom.nextDouble() - 0.5, dotRandom.nextDouble() - 0.5 ).normalize();
+          }
+        }
+      };
+
+      // TODO: cache this data? (hah, does it really not matter for performance?)
+      const faceToFaceColorMap = new Map<TFace, FaceColorNode[]>();
+      const pairWeights: { a: FaceColorNode; b: FaceColorNode; weight: number }[] = [];
+      this.board.faces.forEach( face => {
+        faceToFaceColorMap.set( face, [] );
+      } );
       for ( const faceColorNode of faceColorNodes ) {
-        if ( faceColorNode.hueVector.getMagnitude() > 1e-6 ) {
-          faceColorNode.hueVector.normalize();
+        const primaryFaceSet = new Set<TFace>();
+        for ( const face of faceColorNode.faces ) {
+          primaryFaceSet.add( face );
         }
-        else {
-          faceColorNode.hueVector.setXY( 1, 0 );
+        const finalSet = new Set<TFace>();
+        for ( const face of primaryFaceSet ) {
+          finalSet.add( face );
+          for ( const adjacentFace of this.adjacentFacesMap.get( face )! ) {
+            finalSet.add( adjacentFace );
+          }
         }
-      }
-    };
+        for ( const face of finalSet ) {
+          const faceColorNodes = faceToFaceColorMap.get( face )!;
 
-    // TODO: cache this data? (hah, does it really not matter for performance?)
-    const faceToFaceColorMap = new Map<TFace, FaceColorNode[]>();
-    const pairWeights: { a: FaceColorNode; b: FaceColorNode; weight: number }[] = [];
-    this.board.faces.forEach( face => {
-      faceToFaceColorMap.set( face, [] );
-    } );
-    for ( const faceColorNode of faceColorNodes ) {
-      const primaryFaceSet = new Set<TFace>();
-      for ( const face of faceColorNode.faces ) {
-        primaryFaceSet.add( face );
-      }
-      const finalSet = new Set<TFace>();
-      for ( const face of primaryFaceSet ) {
-        finalSet.add( face );
-        for ( const adjacentFace of this.adjacentFacesMap.get( face )! ) {
-          finalSet.add( adjacentFace );
-        }
-      }
-      for ( const face of finalSet ) {
-        const faceColorNodes = faceToFaceColorMap.get( face )!;
-
-        if ( faceColorNodes.length ) {
-          for ( const otherFaceColorNode of faceColorNodes ) {
-            let found = false;
-            for ( const pairWeight of pairWeights ) {
-              if ( pairWeight.a === otherFaceColorNode && pairWeight.b === faceColorNode ) {
-                pairWeight.weight++;
-                found = true;
-                break;
+          if ( faceColorNodes.length ) {
+            for ( const otherFaceColorNode of faceColorNodes ) {
+              let found = false;
+              for ( const pairWeight of pairWeights ) {
+                if ( pairWeight.a === otherFaceColorNode && pairWeight.b === faceColorNode ) {
+                  pairWeight.weight++;
+                  found = true;
+                  break;
+                }
+              }
+              if ( !found ) {
+                pairWeights.push( {
+                  a: otherFaceColorNode,
+                  b: faceColorNode,
+                  weight: 1
+                } );
               }
             }
-            if ( !found ) {
-              pairWeights.push( {
-                a: otherFaceColorNode,
-                b: faceColorNode,
-                weight: 1
-              } );
+          }
+
+          faceColorNodes.push( faceColorNode );
+        }
+      }
+
+      // Initialize forces
+      const forces = new Map<FaceColorNode, Vector2>();
+      for ( const faceColorNode of faceColorNodes ) {
+        forces.set( faceColorNode, Vector2.ZERO.copy() );
+      }
+
+      const repulse = ( a: FaceColorNode, b: FaceColorNode, multiplier: number ) => {
+        const forceA = forces.get( a )!;
+        const forceB = forces.get( b )!;
+
+        const dot = a.hueVector.dot( b.hueVector );
+        // TODO: don't we want to normalize this?
+        const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector );
+
+        const isOpposite = oppositeMap.get( a ) === b;
+
+        const oppositeMultiplier = 1;
+
+        if ( isOpposite ) {
+          const zero = -0.3;
+          const power = oppositeMultiplier * multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 2 );
+          diff.multiplyScalar( power );
+
+          forceA.subtract( diff );
+          forceB.add( diff );
+        }
+        else {
+          const zero = 0.2;
+          const absDot = Math.abs( dot );
+          const power = multiplier * ( ( ( Math.max( zero, absDot ) - zero ) / ( 1 - zero ) ) ** 2 );
+          diff.multiplyScalar( power );
+
+          forceA.subtract( diff );
+          forceB.add( diff );
+        }
+      };
+
+      let amount = 1;
+      for ( let i = 0; i < 100; i++ ) {
+        amount *= 0.99;
+
+        // Clear forces
+        for ( const faceColorNode of faceColorNodes ) {
+          forces.get( faceColorNode )!.setXY( 0, 0 );
+        }
+
+        // Location-based forces
+        for ( const pairWeight of pairWeights ) {
+          const a = pairWeight.a;
+          const b = pairWeight.b;
+          const weight = pairWeight.weight;
+          repulse( a, b, weight );
+        }
+
+        // All-region repulsion (if we don't have that many)
+        if ( faceColorNodes.length < 8 ) {
+          for ( let i = 0; i < faceColorNodes.length; i++ ) {
+            const a = faceColorNodes[ i ];
+            for ( let j = i + 1; j < faceColorNodes.length; j++ ) {
+              repulse( a, faceColorNodes[ j ], 0.2 );
             }
           }
         }
 
-        faceColorNodes.push( faceColorNode );
-      }
-    }
+        // Apply forces
+        for ( const faceColorNode of faceColorNodes ) {
+          const force = forces.get( faceColorNode )!;
 
-    // Initialize forces
-    const forces = new Map<FaceColorNode, Vector2>();
-    for ( const faceColorNode of faceColorNodes ) {
-      forces.set( faceColorNode, Vector2.ZERO.copy() );
-    }
+          // TODO: maybe avoid this?
+          force.multiplyScalar( amount / faceColorNode.faceCount );
 
-    const repulse = ( a: FaceColorNode, b: FaceColorNode, multiplier: number ) => {
-      const forceA = forces.get( a )!;
-      const forceB = forces.get( b )!;
-
-      const dot = a.hueVector.dot( b.hueVector );
-      const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector );
-
-      const zero = 0.3;
-      const power = multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 2 );
-      diff.multiplyScalar( power );
-
-      forceA.subtract( diff );
-      forceB.add( diff );
-    };
-
-    let amount = 1;
-    for ( let i = 0; i < 100; i++ ) {
-      amount *= 0.99;
-
-      // Clear forces
-      for ( const faceColorNode of faceColorNodes ) {
-        forces.get( faceColorNode )!.setXY( 0, 0 );
-      }
-
-      // Location-based forces
-      for ( const pairWeight of pairWeights ) {
-        const a = pairWeight.a;
-        const b = pairWeight.b;
-        const weight = pairWeight.weight;
-        repulse( a, b, weight );
-      }
-
-      // All-region repulsion (if we don't have that many)
-      if ( faceColorNodes.length < 8 ) {
-        for ( let i = 0; i < faceColorNodes.length; i++ ) {
-          const a = faceColorNodes[ i ];
-          for ( let j = i + 1; j < faceColorNodes.length; j++ ) {
-            repulse( a, faceColorNodes[ j ], 0.2 );
-          }
+          faceColorNode.hueVector.add( force );
+          forces.get( faceColorNode )!.setXY( 0, 0 );
         }
+
+        renormalizeHues();
       }
-
-      // Apply forces
-      for ( const faceColorNode of faceColorNodes ) {
-        const force = forces.get( faceColorNode )!;
-
-        // TODO: maybe avoid this?
-        force.multiplyScalar( amount / faceColorNode.faceCount );
-
-        faceColorNode.hueVector.add( force );
-        forces.get( faceColorNode )!.setXY( 0, 0 );
-      }
-
-      renormalizeHues();
     }
 
-    for ( const faceColorNode of faceColorNodes ) {
+    for ( const faceColorNode of this.faceColorNodeMap.values() ) {
       faceColorNode.updateHue();
     }
   }
@@ -335,8 +362,14 @@ class FaceColorNode extends Path {
   }
 
   public updateHue(): void {
-    // if we have effectively zero magnitude, just use the x-axis
-    this.fill = FaceColorNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.faceColor.colorState );
+    const passesThreshold = this.faceCount >= faceColorThresholdProperty.value;
+    if ( passesThreshold ) {
+      // if we have effectively zero magnitude, just use the x-axis
+      this.fill = FaceColorNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.faceColor.colorState );
+    }
+    else {
+      this.fill = faceColorDefaultColorProperty; // TODO: should we just use the value, because we are linked?
+    }
   }
 
   public updateFaceColor( faceColor: TFaceColor, faces: TFace[] ): void {
