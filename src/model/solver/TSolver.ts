@@ -39,7 +39,6 @@ export const iterateSolver = <Data, Action extends TAction<Data>>(
     }
     const action = solver.nextAction();
     if ( action ) {
-      console.log( action );
       action.apply( state );
     }
   }

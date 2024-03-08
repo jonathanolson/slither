@@ -13,8 +13,11 @@
     - Have a "minimum number of colors before showing"? 
     - BETTER color repulsion (don't handle colors that aren't... shown?) 
     - Consider a texture for "inside" and "outside"
-    - Create "simple" face solver, that handles adjacent colors
     - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+      - Solvers: 
+        - OMG --- the mediumfacesolver bit... should work nicely for any geometry? figure out the math 
+        - Touching combinations of colors?
+        - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?" - examine face and coloring around it
   - Difficulty:
     - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
       - Search for patterns where we can enable rules?
@@ -410,7 +413,6 @@
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?
-  - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?"
   - Refer to things with Jordan curves
     - Different from "enclosing curve"? - how to handle going "corner through vertices" for the "needs 2+" in
       - Can JUST use FaceValue (basic), but also EdgeState (normal) or VertexState (advanced!) or coloring (yes!)

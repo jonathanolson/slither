@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
+import { autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
 import { availableThemes, faceColorsVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -34,7 +34,9 @@ export class SettingsNode extends PopupNode {
         new UITextCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
         new UITextCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
         new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
-        new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty )
+        new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty ),
+        new UITextCheckbox( 'Face Color X', autoSolveFaceColorToRedProperty ),
+        new UITextCheckbox( 'Face Color Lines', autoSolveFaceColorToBlackProperty )
       ]
     } );
 

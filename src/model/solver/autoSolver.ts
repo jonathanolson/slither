@@ -10,6 +10,7 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
+import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
@@ -18,7 +19,9 @@ export const autoSolveSimpleVertexAlmostEmptyToRedProperty = new LocalStorageBoo
 export const autoSolveSimpleFaceToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleFaceToRedProperty', true );
 export const autoSolveSimpleFaceToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleFaceToBlackProperty', true );
 export const autoSolveSimpleLoopToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToRedProperty', true );
-export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', true );
+export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', false );
+export const autoSolveFaceColorToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToRedProperty', false );
+export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToBlackProperty', false );
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
@@ -35,7 +38,9 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleFaceToRedProperty,
   autoSolveSimpleFaceToBlackProperty,
   autoSolveSimpleLoopToRedProperty,
-  autoSolveSimpleLoopToBlackProperty
+  autoSolveSimpleLoopToBlackProperty,
+  autoSolveFaceColorToRedProperty,
+  autoSolveFaceColorToBlackProperty
 ], (
   simpleVertexJointToRed,
   simpleVertexOnlyOptionToBlack,
@@ -43,7 +48,9 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleFaceToRed,
   simpleFaceToBlack,
   simpleLoopToRed,
-  simpleLoopToBlack
+  simpleLoopToBlack,
+  simpleFaceColorToRed,
+  simpleFaceColorToBlack
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver<TCompleteData>( [
@@ -69,6 +76,13 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
           solveToBlack: simpleLoopToBlack,
           resolveAllRegions: false // TODO: for full better exhaustive solvers, have true
         }, dirty ? undefined : [] )
+      ] : [] ),
+
+      ...( simpleFaceColorToRed || simpleFaceColorToBlack ? [
+        new SimpleFaceColorSolver( board, state, {
+          solveToRed: simpleFaceColorToRed,
+          solveToBlack: simpleFaceColorToBlack
+        }, dirty ? undefined : [] )
       ] : [] )
     ] );
   };
@@ -92,6 +106,12 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       solveToRed: true,
       solveToBlack: true,
       resolveAllRegions: false // NOTE: this will be faster
+    } ),
+
+    // We rely on the Face colors being accurate here
+    new SimpleFaceColorSolver( board, state, {
+      solveToRed: true,
+      solveToBlack: true
     } )
   ] );
 };

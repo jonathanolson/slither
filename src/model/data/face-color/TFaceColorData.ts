@@ -67,8 +67,10 @@ export interface TFaceColorData {
 }
 
 export type TFaceColorDataListener = (
+  addedFaceColors: Iterable<TFaceColor>,
+  removedFaceColors: Iterable<TFaceColor>,
+  oppositeChangedFaceColors: Iterable<TFaceColor>,
   changedFaces: Iterable<TFace>,
-  changedColors: Iterable<TFaceColor>
 ) => void;
 
 export interface TSerializedFaceColorData extends TSerializedState {
