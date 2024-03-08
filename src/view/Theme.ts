@@ -77,7 +77,7 @@ export const lightTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(255,229,229,0)' ),
+  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgb(230,230,230)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(245,245,245)' ),

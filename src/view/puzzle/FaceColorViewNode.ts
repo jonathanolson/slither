@@ -363,7 +363,7 @@ class FaceColorNode extends Path {
 
   public updateHue(): void {
     const passesThreshold = this.faceCount >= faceColorThresholdProperty.value;
-    if ( passesThreshold ) {
+    if ( passesThreshold || this.faceColor.colorState !== FaceColorState.UNDECIDED ) {
       // if we have effectively zero magnitude, just use the x-axis
       this.fill = FaceColorNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.faceColor.colorState );
     }
