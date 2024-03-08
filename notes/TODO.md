@@ -5,7 +5,6 @@
 
 - Current code TODOs
   - Stronger "white lines" when using face colors?(?) - how to handle UI
-  - Don't show buggy face coloring (undecided) when solved
   - View modes?
     - Color faces (with uncolored edges?)
       - THIS COULD LOOK COOL!!!
@@ -23,6 +22,7 @@
         - OMG --- the mediumfacesolver bit... should work nicely for any geometry? figure out the math 
         - Touching combinations of colors?
         - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?" - examine face and coloring around it
+  - Solver that detects "single vertex not-biconnected" cases and prunes
   - Difficulty:
     - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
       - Search for patterns where we can enable rules?

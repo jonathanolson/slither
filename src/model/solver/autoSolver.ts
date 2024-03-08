@@ -11,6 +11,7 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
+import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 
 // TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
@@ -27,6 +28,7 @@ export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData>( [
     new SafeEdgeToSimpleRegionSolver( board, state ),
+    new SafeSolvedEdgeSolver( board, state ),
     new SafeEdgeToFaceColorSolver( board, state )
   ] );
 };
@@ -100,6 +102,7 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       solveToBlack: true,
     } ),
     new SafeEdgeToSimpleRegionSolver( board, state ),
+    new SafeSolvedEdgeSolver( board, state ),
 
     // We rely on the Simple Regions being accurate here, so they are lower down
     new SimpleLoopSolver( board, state, {
