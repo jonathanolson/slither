@@ -98,12 +98,6 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
     invalidFaceColor: boolean
   ): void {
-    /*
-        addedFaceColors: Set<TFaceColor>,
-    removedFaceColors: Set<TFaceColor>,
-    faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>
-     */
     for ( const addedFaceColor of addedFaceColors ) {
       this.addedFaceColors.add( addedFaceColor );
     }
@@ -134,7 +128,7 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
       addedFaceColors,
       removedFaceColors,
       oppositeChangedFaceColors,
-      faceChangeMap.keys()
+      [ ...faceChangeMap.keys() ]
     );
   }
 

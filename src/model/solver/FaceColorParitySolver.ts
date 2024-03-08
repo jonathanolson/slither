@@ -4,7 +4,7 @@ import EdgeState from '../data/edge/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { TAction } from '../data/core/TAction.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
 import { TFace } from '../board/core/TFace.ts';
@@ -27,6 +27,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
 
   private readonly dirtyFaces: Set<TFace> = new Set();
 
+  private readonly edgeListener: TEdgeDataListener;
   private readonly faceColorListener: TFaceColorDataListener;
 
   public constructor(
@@ -49,13 +50,12 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
       changedFaces: Iterable<TFace>,
     ) => {
       const checkAddAdjacentFaces = ( face: TFace ) => {
+        this.dirtyFaces.add( face );
         for ( const edge of face.edges ) {
-          // If the edge is red/black, this won't provide any new information to our algorithm
-          if ( this.state.getEdgeState( edge ) === EdgeState.WHITE ) {
-            const otherFace = edge.getOtherFace( face );
-            if ( otherFace ) {
-              this.dirtyFaces.add( otherFace );
-            }
+          // Actually, black edges (maybe red too) can provide info for our algorithm
+          const otherFace = edge.getOtherFace( face );
+          if ( otherFace ) {
+            this.dirtyFaces.add( otherFace );
           }
         }
       };
@@ -73,6 +73,14 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
     };
 
     this.state.faceColorsChangedEmitter.addListener( this.faceColorListener );
+
+    this.edgeListener = ( edge: TEdge, state: EdgeState ) => {
+      for ( const face of edge.faces ) {
+        this.dirtyFaces.add( face );
+      }
+    };
+
+    this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
   }
 
   public get dirty(): boolean {
@@ -197,6 +205,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
             const isRed = M > F;
             const isBlack = M > NF;
             const isBalanced = M === maxFNF;
+            const isOneConstrained = F === 1 && NF === 1;
             if ( isRed && isBlack ) {
               throw new InvalidStateError( 'Too many adjacent faces with the same color' );
             }
@@ -215,6 +224,14 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
               // Sanity check?
               if ( oppositeColors.length ) {
                 return new CompositeAction( oppositeColors.map( oppositeColor => new FaceColorMakeOppositeAction( mainColor, oppositeColor ) ) );
+              }
+            }
+            if ( isOneConstrained && this.options.solveColors ) {
+              const colorA = sides[ 0 ].color;
+              const colorB = sides[ 1 ].color;
+
+              if ( this.state.getOppositeFaceColor( colorA ) !== colorB ) {
+                return new FaceColorMakeOppositeAction( colorA, colorB );
               }
             }
 
@@ -259,6 +276,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
 
   public dispose(): void {
     this.state.faceColorsChangedEmitter.removeListener( this.faceColorListener );
+    this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
   }
 }
 

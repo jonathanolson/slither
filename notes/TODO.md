@@ -4,33 +4,8 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - FaceColorParitySolver (MediumFaceColorSolver)
-    - Face value: F
-    - Face order: N
-    - Eventually will have:
-      - F black edges
-      - N-F red edges
-    - FIRST filter out adjacent faces where edges are NOT white
-      - Reduce N for each
-      - Reduce F for each black edge
-      - If we are left with no adjacent faces, move on
-    - If F is NULL:
-      - If all outside faces have the same color, our inside is that color (all edges are red)
-    - If there are M adjacent faces with the same color:
-      - The M will eventually be all black or all red
-      - If M > F, they need to be red
-      - If M > N-F, they need to be black
-      - IF THEY MEET BOTH, ERROR CONDITION?
-      - If M = max(F, N-F):
-        - If F > N-F, they are black, others are red
-        - If F < N-F, they are red, others are black
-        - If F = N-F, others are opposite color
-    - If we are adjacent to P + Q faces (with P opposite color of Q):
-      - This region will have min(P+Q) black and min(P+Q) red
-      - Repeat this, with:
-        - Removing min(P+Q) edges from the P and Q faces
-        - F* = F - min(P+Q)
-        - N* = N - 2 * min(P+Q)
+  - Unit tests and fuzzing for solvers (generate a puzzle, then apply the full solver. when it stops, give it another edge)
+    - ANY TIME IT GIVES SOMETHING INVALID FOR THE FINAL SOLUTION(!) notice
   - HINT button (highlight the thing the next rule would change?)
     - OMG LIGHT THE BUTTON UP AS ENABLED WHEN WE HAVE A HINT
   - For generation that emphasizes one target rule/solver (rule can be composite) (and has a base rules/solver set)
