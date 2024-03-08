@@ -57,7 +57,12 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     assertEnabled() && assert( this.board.faces.every( face => this.colorMap.has( face ) ) );
     assertEnabled() && assert( this.board.faces.every( face => this.faceColors.has( this.colorMap.get( face )! ) ) );
 
-    this.colorInverseMap = new Map( colorInverseMap ? colorInverseMap : [ ...this.faceColors ].map( faceColor => {
+    this.colorInverseMap = new Map( colorInverseMap ? [ ...colorInverseMap.keys() ].map( key => {
+      return [
+        key,
+        new Set( [ ...colorInverseMap.get( key )! ] )
+      ];
+    } ) : [ ...this.faceColors ].map( faceColor => {
       return [
         faceColor,
         // TODO: does this quadratic bit hit perf?

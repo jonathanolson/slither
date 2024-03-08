@@ -72,7 +72,15 @@ export class FaceColorViewNode extends Node {
     stateProperty.value.getFaceColors().forEach( faceColor => this.addFaceColor( faceColor, stateProperty.value.getFacesWithColor( faceColor ) ) );
     this.updateHues();
 
-    const stateListener = ( state: TState<TFaceColorData>, oldState: TState<TFaceColorData> ) => {
+    // TODO: see if we're getting performance loss with the clone?
+    let previousState = stateProperty.value.clone();
+
+    const stateListener = ( state: TState<TFaceColorData> ) => {
+
+      // NOTE: We weren't getting the correct old state. Going to be overly-cautious here
+      const oldState = previousState;
+      // TODO: see if we're getting performance loss with the clone?
+      previousState = state.clone();
 
       const oldFaceColors = oldState.getFaceColors();
       const newFaceColors = state.getFaceColors();

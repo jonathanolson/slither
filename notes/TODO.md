@@ -4,7 +4,6 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - Solve and reverse is breaking colors?
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - Don't show buggy face coloring (undecided) when solved
   - View modes?
