@@ -269,7 +269,7 @@ export class FaceColorViewNode extends Node {
 
         const dot = a.hueVector.dot( b.hueVector );
         // TODO: don't we want to normalize this?
-        const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector );
+        const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector ).normalize();
 
         const isOpposite = oppositeMap.get( a ) === b;
 
@@ -277,7 +277,7 @@ export class FaceColorViewNode extends Node {
 
         if ( isOpposite ) {
           const zero = -0.3;
-          const power = oppositeMultiplier * multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 2 );
+          const power = oppositeMultiplier * multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 3 );
           diff.multiplyScalar( power );
 
           forceA.subtract( diff );
@@ -286,7 +286,7 @@ export class FaceColorViewNode extends Node {
         else {
           const zero = 0.2;
           const absDot = Math.abs( dot );
-          const power = multiplier * ( ( ( Math.max( zero, absDot ) - zero ) / ( 1 - zero ) ) ** 2 );
+          const power = multiplier * ( ( ( Math.max( zero, absDot ) - zero ) / ( 1 - zero ) ) ** 3 );
           diff.multiplyScalar( power );
 
           forceA.subtract( diff );

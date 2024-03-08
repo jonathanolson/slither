@@ -261,10 +261,10 @@ export class SimpleRegionViewNode extends Node {
       const forceB = forces.get( b )!;
 
       const dot = a.hueVector.dot( b.hueVector );
-      const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector );
+      const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector ).normalize();
 
       const zero = 0.3;
-      const power = multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 2 );
+      const power = multiplier * ( ( ( Math.max( zero, dot ) - zero ) / ( 1 - zero ) ) ** 3 );
       diff.multiplyScalar( power );
 
       forceA.subtract( diff );

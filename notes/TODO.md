@@ -5,8 +5,8 @@
 
 - Current code TODOs
   - Solve and reverse is breaking colors?
-  - Fix color repulsion (normalize the difference perhaps?!?)
-    - Don't show buggy face coloring (undecided) when solved
+  - Don't show buggy face coloring (undecided) when solved
+  - Adjustment for coloring threshold
   - View modes?
     - Color faces (with uncolored edges?)
       - THIS COULD LOOK COOL!!!
