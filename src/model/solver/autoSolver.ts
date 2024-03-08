@@ -12,17 +12,25 @@ import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
+import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 
-// TODO: have certain Properties that serialize to localStorage transparently!
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexOnlyOptionToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexOnlyOptionToBlackProperty', true );
 export const autoSolveSimpleVertexAlmostEmptyToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexAlmostEmptyToRedProperty', true );
+
 export const autoSolveSimpleFaceToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleFaceToRedProperty', true );
 export const autoSolveSimpleFaceToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleFaceToBlackProperty', true );
+
 export const autoSolveSimpleLoopToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToRedProperty', true );
 export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', false );
+
 export const autoSolveFaceColorToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToRedProperty', false );
 export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToBlackProperty', false );
+
+export const autoSolveFaceColorParityToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityToRedProperty', false );
+export const autoSolveFaceColorParityToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityToBlackProperty', false );
+export const autoSolveFaceColorParityColorsProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityColorsProperty', false );
+export const autoSolveFaceColorParityPartialReductionProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityPartialReductionProperty', false );
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
@@ -42,7 +50,11 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleLoopToRedProperty,
   autoSolveSimpleLoopToBlackProperty,
   autoSolveFaceColorToRedProperty,
-  autoSolveFaceColorToBlackProperty
+  autoSolveFaceColorToBlackProperty,
+  autoSolveFaceColorParityToRedProperty,
+  autoSolveFaceColorParityToBlackProperty,
+  autoSolveFaceColorParityColorsProperty,
+  autoSolveFaceColorParityPartialReductionProperty
 ], (
   simpleVertexJointToRed,
   simpleVertexOnlyOptionToBlack,
@@ -52,7 +64,11 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleLoopToRed,
   simpleLoopToBlack,
   simpleFaceColorToRed,
-  simpleFaceColorToBlack
+  simpleFaceColorToBlack,
+  simpleFaceColorParityToRed,
+  simpleFaceColorParityToBlack,
+  simpleFaceColorParityColors,
+  simpleFaceColorParityPartialReduction
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver<TCompleteData>( [
@@ -85,6 +101,15 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
           solveToRed: simpleFaceColorToRed,
           solveToBlack: simpleFaceColorToBlack
         }, dirty ? undefined : [] )
+      ] : [] ),
+
+      ...( simpleFaceColorParityToRed || simpleFaceColorParityToBlack || simpleFaceColorParityColors ? [
+        new FaceColorParitySolver( board, state, {
+          solveToRed: simpleFaceColorParityToRed,
+          solveToBlack: simpleFaceColorParityToBlack,
+          solveColors: simpleFaceColorParityColors,
+          allowPartialReduction: simpleFaceColorParityPartialReduction
+        }, dirty ? undefined : [] )
       ] : [] )
     ] );
   };
@@ -115,6 +140,13 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
     new SimpleFaceColorSolver( board, state, {
       solveToRed: true,
       solveToBlack: true
+    } ),
+
+    new FaceColorParitySolver( board, state, {
+      solveToRed: true,
+      solveToBlack: true,
+      solveColors: true,
+      allowPartialReduction: true,
     } )
   ] );
 };

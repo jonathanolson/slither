@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
+import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
 import { availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -37,7 +37,11 @@ export class SettingsNode extends PopupNode {
         new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
         new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty ),
         new UITextCheckbox( 'Face Color X', autoSolveFaceColorToRedProperty ),
-        new UITextCheckbox( 'Face Color Lines', autoSolveFaceColorToBlackProperty )
+        new UITextCheckbox( 'Face Color Lines', autoSolveFaceColorToBlackProperty ),
+        new UITextCheckbox( 'Face Color Parity X', autoSolveFaceColorParityToRedProperty ),
+        new UITextCheckbox( 'Face Color Parity Lines', autoSolveFaceColorParityToBlackProperty ),
+        new UITextCheckbox( 'Face Color Parity Colors', autoSolveFaceColorParityColorsProperty ),
+        new UITextCheckbox( 'Face Color Parity Partial Reduction', autoSolveFaceColorParityPartialReductionProperty )
       ]
     } );
 
