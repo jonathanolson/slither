@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexOnlyOptionToBlackProperty } from '../model/solver/autoSolver';
-import { availableThemes, faceColorsVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { availableThemes, faceColorsVisibleProperty, faceColorThresholdProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -10,6 +10,7 @@ import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+import { UIText } from './UIText.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -92,6 +93,38 @@ export class SettingsNode extends PopupNode {
           fill: uiForegroundColorProperty
         } ),
         new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
+        getVerticalRadioButtonGroup( 'Face Color Threshold', faceColorThresholdProperty, [
+          {
+            value: 1,
+            createNode: () => new UIText( 'Show All' ),
+            labelContent: 'Show All'
+          },
+          {
+            value: 2,
+            createNode: () => new UIText( '2+' ),
+            labelContent: '2+'
+          },
+          {
+            value: 3,
+            createNode: () => new UIText( '3+' ),
+            labelContent: '3+'
+          },
+          {
+            value: 5,
+            createNode: () => new UIText( '5+' ),
+            labelContent: '5+'
+          },
+          {
+            value: 10,
+            createNode: () => new UIText( '10+' ),
+            labelContent: '10+'
+          },
+          {
+            value: Number.POSITIVE_INFINITY,
+            createNode: () => new UIText( 'Only Outside' ),
+            labelContent: 'Only Outside'
+          }
+        ] ),
         new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),
         new UITextCheckbox( 'Impossible Line Visible', redLineVisibleProperty ),
         new UITextCheckbox( 'Vertices Visible', verticesVisibleProperty ),
@@ -115,7 +148,7 @@ export class SettingsNode extends PopupNode {
                     font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
-                  a11yName: join
+                  labelContent: join
                 };
               } )
             ),
@@ -129,7 +162,7 @@ export class SettingsNode extends PopupNode {
                     font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
-                  a11yName: cap
+                  labelContent: cap
                 };
               } )
             ),
@@ -143,7 +176,7 @@ export class SettingsNode extends PopupNode {
                     font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
-                  a11yName: vertexStyle
+                  labelContent: vertexStyle
                 };
               } )
             ),
@@ -157,7 +190,7 @@ export class SettingsNode extends PopupNode {
                     font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
-                  a11yName: redLineStyle
+                  labelContent: redLineStyle
                 };
               } )
             ),
@@ -171,7 +204,7 @@ export class SettingsNode extends PopupNode {
                     font: uiFont,
                     fill: uiForegroundColorProperty
                   } ),
-                  a11yName: faceValueStyle
+                  labelContent: faceValueStyle
                 };
               } )
             )

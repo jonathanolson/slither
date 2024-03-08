@@ -553,7 +553,7 @@ export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'vertice
 export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', false );
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
 
-export const faceColorThresholdProperty = new LocalStorageNumberProperty( 'faceColorThresholdProperty', 2 );
+export const faceColorThresholdProperty = new LocalStorageNumberProperty( 'faceColorThresholdProperty', 10 );
 
 export const lineJoins = [ 'miter', 'round', 'bevel' ] as const;
 export type TLineJoin = typeof lineJoins[ number ];

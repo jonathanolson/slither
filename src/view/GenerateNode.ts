@@ -453,7 +453,7 @@ export class GenerateNode extends HBox {
           font: uiFont,
           fill: uiForegroundColorProperty
         } ),
-        a11yName: generator.name
+        labelContent: generator.name
       };
     } ), {
       layoutOptions: {
@@ -619,7 +619,7 @@ export class GenerateNode extends HBox {
                 font: uiFont,
                 fill: uiForegroundColorProperty
               } ),
-              a11yName: choice.label
+              labelContent: choice.label
             };
           } ) ) );
         }

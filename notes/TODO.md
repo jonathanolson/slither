@@ -7,7 +7,6 @@
   - Solve and reverse is breaking colors?
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - Don't show buggy face coloring (undecided) when solved
-  - Adjustment for coloring threshold
   - View modes?
     - Color faces (with uncolored edges?)
       - THIS COULD LOOK COOL!!!
