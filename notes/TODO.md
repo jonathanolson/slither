@@ -5,7 +5,6 @@
 
 - Current code TODOs
   - Solve and reverse is breaking colors?
-  - Gamut fix to preserve value...?
   - Fix color repulsion (normalize the difference perhaps?!?)
     - Don't show buggy face coloring (undecided) when solved
   - View modes?

@@ -1,16 +1,17 @@
 // @ts-expect-error
-import { formatHex, toGamut, converter, parse } from 'culori';
+import { formatHex, toGamut, converter, parse, clampChroma } from 'culori';
 import { Color } from 'phet-lib/scenery';
 
-const toRGB = toGamut( 'rgb' );
+export const toRGB = toGamut( 'rgb' );
 const okhslConverter = converter( 'okhsl' );
 
-export const okhslToRGBString = ( h: number, s: number, l: number ): string => formatHex( toRGB( {
+// Clamp chroma here, since we really care about the lightness and hue
+export const okhslToRGBString = ( h: number, s: number, l: number ): string => formatHex( clampChroma( {
   mode: 'okhsl',
   h: h,
   s: s,
   l: l
-} ) ) as unknown as string;
+}, 'oklch' ) ) as unknown as string;
 
 export const okhslToColor = ( h: number, s: number, l: number ): Color => {
   return new Color( okhslToRGBString( h, s, l ) );
