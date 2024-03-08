@@ -4,8 +4,29 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
+  - FaceColorParitySolver (MediumFaceColorSolver)
+    - Face value: F
+    - Face order: N
+    - Eventually will have:
+      - F black edges
+      - N-F red edges
+    - If there are M adjacent faces with the same color:
+      - The M will eventually be all black or all red
+      - If M > F, they need to be red
+      - If M > N-F, they need to be black
+      - IF THEY MEET BOTH, ERROR CONDITION?
+      - If M = max(F, N-F):
+        - If F > N-F, they are black, others are red
+        - If F < N-F, they are red, others are black
+        - If F = N-F, others are opposite color
+    - If we are adjacent to P + Q faces (with P opposite color of Q):
+      - This region will have min(P+Q) black and min(P+Q) red
+      - TODO
+  - HINT button (highlight the thing the next rule would change?)
+  - Highlight region of "dual color + opposite" on hover?
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - View modes?
+    - Separate toggles for various features? (face color in particular?)
     - Color faces (with uncolored edges?)
       - THIS COULD LOOK COOL!!!
     - Color edges (with only critical faces colored?)
@@ -14,8 +35,6 @@
     - Face link mode (to handle coloring) - different from edge edit mode
       - Or a mode for "edit face values" (and a generate-blank option in generation) to edit a puzzle?
   - Face Coloring
-    - Have a "minimum number of colors before showing"? 
-    - BETTER color repulsion (don't handle colors that aren't... shown?) 
     - Consider a texture for "inside" and "outside"
     - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
       - Solvers: 
@@ -23,6 +42,8 @@
         - Touching combinations of colors?
         - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?" - examine face and coloring around it
   - Solver that detects "single vertex not-biconnected" cases and prunes
+  - Solver that looks at adjacent colors (if we're adjacent to a color and its opposite, it affects the face/vertex/ state)
+  - Solver for colors around face states (e.g. spiked 2s)
   - Difficulty:
     - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
       - Search for patterns where we can enable rules?
