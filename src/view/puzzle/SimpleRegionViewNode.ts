@@ -6,7 +6,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
+import { blackLineColorProperty, edgeColorsVisibleProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
 import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
@@ -132,7 +132,11 @@ export class SimpleRegionViewNode extends Node {
 
     const updateHueListener = () => this.updateHues();
     simpleRegionTargetColorProperty.link( updateHueListener );
-    this.disposeEmitter.addListener( () => simpleRegionTargetColorProperty.unlink( updateHueListener ) );
+    edgeColorsVisibleProperty.lazyLink( updateHueListener );
+    this.disposeEmitter.addListener( () => {
+      simpleRegionTargetColorProperty.unlink( updateHueListener );
+      edgeColorsVisibleProperty.unlink( updateHueListener );
+    } );
   }
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
@@ -368,7 +372,9 @@ class SimpleRegionNode extends Path {
     const index = ( Math.round( hueVector.getAngle() * 180 / Math.PI ) + 360 ) % 360;
     assertEnabled() && assert( index >= 0 && index < hueLUT.length );
 
-    return hueLUT[ index ];
+    const showHues = edgeColorsVisibleProperty.value;
+
+    return showHues ? hueLUT[ index ] : blackLineColorProperty;
   }
 
   public static toShape( simpleRegion: TSimpleRegion ): Shape {

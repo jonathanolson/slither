@@ -73,7 +73,7 @@ export const lightTheme = {
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(179,179,179)' ),
   vertexColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  blackLineColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  blackLineColorProperty: new PaintColorProperty( 'rgb(64,64,64)' ),
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
@@ -546,6 +546,7 @@ export const generateButtonFont = new Font( {
   size: 25
 } );
 
+export const edgeColorsVisibleProperty = new LocalStorageBooleanProperty( 'simpleRegionColorsVisibleProperty', true );
 export const faceColorsVisibleProperty = new LocalStorageBooleanProperty( 'faceColorsVisibleProperty', true );
 export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', false );
 export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
