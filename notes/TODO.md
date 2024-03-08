@@ -10,6 +10,12 @@
     - Eventually will have:
       - F black edges
       - N-F red edges
+    - FIRST filter out adjacent faces where edges are NOT white
+      - Reduce N for each
+      - Reduce F for each black edge
+      - If we are left with no adjacent faces, move on
+    - If F is NULL:
+      - If all outside faces have the same color, our inside is that color (all edges are red)
     - If there are M adjacent faces with the same color:
       - The M will eventually be all black or all red
       - If M > F, they need to be red
@@ -21,8 +27,17 @@
         - If F = N-F, others are opposite color
     - If we are adjacent to P + Q faces (with P opposite color of Q):
       - This region will have min(P+Q) black and min(P+Q) red
-      - TODO
+      - Repeat this, with:
+        - Removing min(P+Q) edges from the P and Q faces
+        - F* = F - min(P+Q)
+        - N* = N - 2 * min(P+Q)
   - HINT button (highlight the thing the next rule would change?)
+    - OMG LIGHT THE BUTTON UP AS ENABLED WHEN WE HAVE A HINT
+  - For generation that emphasizes one target rule/solver (rule can be composite) (and has a base rules/solver set)
+    - Check for each valued face:
+      - When it is removed, what is the count change for how many times our solver HAS to use the target rule?
+    - If the highest count change is non-negative, pick one of the faces with the highest value
+    - Otherwise if highest count change is negative, STOP GENERATION
   - Highlight region of "dual color + opposite" on hover?
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - View modes?
