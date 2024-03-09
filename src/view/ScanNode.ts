@@ -5,7 +5,7 @@ import { PopupNode } from './PopupNode.ts';
 import { uiFont, uiForegroundColorProperty } from './Theme.ts';
 import { ScanOptions } from '../scan/scanURL.ts';
 import { Contour } from '../scan/Contour.ts';
-import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { TState } from '../model/data/core/TState.ts';
@@ -41,7 +41,7 @@ export class ScanNode extends PopupNode {
   private readonly thresholdImageLayer: Node;
   private readonly contourLayer: Node;
 
-  private puzzle: TPuzzle<TStructure, TState<TCompleteData>> | null = null;
+  private puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> | null = null;
 
   // @ts-expect-error
   private rootContour: Contour | null = null;
@@ -113,7 +113,7 @@ export class ScanNode extends PopupNode {
 
       debugImageCallback: debugImage => {},
 
-      puzzleCallback: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => this.onPuzzle( puzzle ),
+      puzzleCallback: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => this.onPuzzle( puzzle ),
       solutionsCallback: ( solutions: TEdge[][] ) => this.onSolutions( solutions ),
     };
   }
@@ -149,7 +149,7 @@ export class ScanNode extends PopupNode {
     }
   }
 
-  public onPuzzle( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ): void {
+  public onPuzzle( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ): void {
     this.puzzle = puzzle;
   }
 

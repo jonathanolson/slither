@@ -15,7 +15,7 @@ import { EdgeNode } from './EdgeNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
-import { TPuzzle } from '../../model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -33,7 +33,7 @@ export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TF
 // TODO: disposal!
 export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<BasicPuzzleNodeData> = TState<BasicPuzzleNodeData>> extends Node {
   public constructor(
-    public readonly puzzle: TPuzzle<Structure, State>,
+    public readonly puzzle: TPropertyPuzzle<Structure, State>,
     providedOptions?: BasicPuzzleNodeOptions
   ) {
     const options = optionize<BasicPuzzleNodeOptions, SelfOptions, ParentOptions>()( {

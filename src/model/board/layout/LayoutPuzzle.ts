@@ -23,7 +23,6 @@ import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
 import { TCompleteData } from '../../data/combined/TCompleteData.ts';
 import { CompleteData } from '../../data/combined/CompleteData.ts';
 import { TPuzzle } from '../../puzzle/TPuzzle.ts';
-import { Property } from 'phet-lib/axon';
 import { iterateSolverFactory } from '../../solver/TSolver.ts';
 import { safeSolverFactory } from '../../solver/autoSolver.ts';
 import { okhslToRGBString } from '../../../util/color.ts';
@@ -637,10 +636,10 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     return state;
   }
 
-  public getCompletePuzzle(): TPuzzle<LayoutStructure, TState<TCompleteData>> {
+  public getCompletePuzzle(): TPuzzle<LayoutStructure, TCompleteData> {
     return {
       board: this,
-      stateProperty: new Property( this.getCompleteState() )
+      state: this.getCompleteState()
     };
   }
 

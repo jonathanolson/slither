@@ -5,7 +5,7 @@ import { PopupNode } from './PopupNode.ts';
 import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import scanURL from '../scan/scanURL.ts';
-import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { GenerateNode } from './GenerateNode.ts';
@@ -14,7 +14,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { ScanNode } from './ScanNode.ts';
 
 export type GenNodeOptions = {
-  loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
 };
 
 export class GenNode extends PopupNode {

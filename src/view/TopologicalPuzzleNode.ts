@@ -8,6 +8,7 @@ import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
 import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 import { LayoutEdge } from '../model/board/layout/layout.ts';
+import { toPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> extends Node {
@@ -106,7 +107,7 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
         lastPuzzleNode.dispose();
       }
 
-      const puzzleNode = new PuzzleNode( puzzle, {
+      const puzzleNode = new PuzzleNode( toPropertyPuzzle( puzzle ), {
         edgePressListener: ( edge, button ) => {
           const originalEdges = ( edge as LayoutEdge ).originalEdges;
           if ( originalEdges ) {

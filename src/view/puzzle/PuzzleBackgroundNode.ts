@@ -59,7 +59,12 @@ export class PuzzleBackgroundNode extends Node {
         lineWidth: 2 * backgroundDistance
       } ) );
       const subpathShapes = strokedOuterBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
-      backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
+      try {
+        backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
+      }
+      catch ( e ) {
+        backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
+      }
     }
 
     // TODO: refactor to be more general --- WE CAN JUST INCLUDE THE HOLES IN THE MAIN SHAPE right?

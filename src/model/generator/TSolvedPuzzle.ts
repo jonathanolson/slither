@@ -5,6 +5,6 @@ import { TState } from '../data/core/TState.ts';
 
 export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceData> {
   board: TBoard<Structure>;
-  faceState: TState<Data>;
+  state: TState<Data>;
   blackEdges: Set<Structure[ 'Edge' ]>;
 }

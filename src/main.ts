@@ -11,7 +11,7 @@ import ControlBarNode from './view/ControlBarNode.ts';
 import { controlBarMargin, navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 import { TState } from './model/data/core/TState.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
-import { puzzleFromCompressedString, TPuzzle } from './model/puzzle/TPuzzle.ts';
+import { puzzleFromCompressedString, TPropertyPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
@@ -101,7 +101,7 @@ const mainBox = new VBox( {
       layoutBoundsProperty: layoutBoundsProperty,
 
       // Require the complete data for now
-      loadPuzzle: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ): void => {
+      loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ): void => {
         puzzleModelProperty.value = new PuzzleModel( puzzle );
       }
     } ), {

@@ -15,7 +15,7 @@ import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { TPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { satSolve } from '../model/solver/SATSolver.ts';
 import { MultipleSolutionsError } from '../model/solver/EdgeBacktracker.ts';
@@ -57,14 +57,14 @@ export type ScanOptions = {
   unknownContourCallback?: ( contour: Contour ) => void;
 
   debugImageCallback?: ( debugImage: HTMLCanvasElement ) => void;
-  puzzleCallback?: ( puzzle: TPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  puzzleCallback?: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
   solutionsCallback?: ( solutions: TEdge[][] ) => void;
 };
 
 const scanHTMLImageElement = async (
   domImage: HTMLImageElement,
   options?: ScanOptions
-): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
+): Promise<TPropertyPuzzle<TStructure, TState<TCompleteData>>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -490,7 +490,7 @@ class LineLocation {
   ) {}
 }
 
-export default async ( url: string, options?: ScanOptions ): Promise<TPuzzle<TStructure, TState<TCompleteData>>> => {
+export default async ( url: string, options?: ScanOptions ): Promise<TPropertyPuzzle<TStructure, TState<TCompleteData>>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();

@@ -2,15 +2,20 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { deserializeState, TSerializedState, TState } from '../data/core/TState.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
 import { deserializeBoard, serializeBoard, TBoard, TSerializedBoard } from '../board/core/TBoard.ts';
-import { TProperty } from 'phet-lib/axon';
+import { Property, TProperty } from 'phet-lib/axon';
 import { BasicPuzzle } from './BasicPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { compressString, decompressString } from '../../util/compression.ts';
 
 // TODO: parameterize over Data instead of State
-export type TPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
+export type TPropertyPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
   board: TBoard<Structure>;
   stateProperty: TProperty<State>;
+};
+
+export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+  board: TBoard<Structure>;
+  state: TState<Data>;
 };
 
 export interface TSerializedPuzzle {
@@ -19,13 +24,21 @@ export interface TSerializedPuzzle {
   state: TSerializedState;
 }
 
-export const serializePuzzle = ( puzzle: TPuzzle ): TSerializedPuzzle => ( {
+// TODO: deprecate and remove this once we don't need TPropertyPuzzle?
+export const toPropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData>( puzzle: TPuzzle<Structure, Data> ): TPropertyPuzzle<Structure, TState<Data>> => {
+  return {
+    board: puzzle.board,
+    stateProperty: new Property( puzzle.state )
+  };
+};
+
+export const serializePuzzle = ( puzzle: TPropertyPuzzle ): TSerializedPuzzle => ( {
   version: 1,
   board: serializeBoard( puzzle.board ),
   state: puzzle.stateProperty.value.serializeState( puzzle.board )
 } );
 
-export const deserializePuzzle = ( serializedPuzzle: TSerializedPuzzle ): TPuzzle<TStructure, TState<TCompleteData>> => {
+export const deserializePuzzle = ( serializedPuzzle: TSerializedPuzzle ): TPropertyPuzzle<TStructure, TState<TCompleteData>> => {
   if ( serializedPuzzle.version !== 1 ) {
     throw new Error( `Unsupported puzzle version: ${serializedPuzzle.version}` );
   }
@@ -36,13 +49,13 @@ export const deserializePuzzle = ( serializedPuzzle: TSerializedPuzzle ): TPuzzl
   return new BasicPuzzle( deserializedBoard, deserializedState );
 };
 
-export const puzzleToCompressedString = ( puzzle: TPuzzle ): string => {
+export const puzzleToCompressedString = ( puzzle: TPropertyPuzzle ): string => {
   const serializedPuzzle = serializePuzzle( puzzle );
 
   return compressString( JSON.stringify( serializedPuzzle ) );
 };
 
-export const puzzleFromCompressedString = ( compressedString: string ): TPuzzle<TStructure, TState<TCompleteData>> | null => {
+export const puzzleFromCompressedString = ( compressedString: string ): TPropertyPuzzle<TStructure, TState<TCompleteData>> | null => {
   try {
     // TODO: can we wipe out some of the state here?
     const serializedPuzzle = JSON.parse( decompressString( compressedString )! );

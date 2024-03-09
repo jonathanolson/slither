@@ -100,7 +100,7 @@ export const generateFaceAdditive = async (
     if ( solutionCount === 1 ) {
       return {
         board,
-        faceState: state,
+        state: state,
         blackEdges: new Set( solutions[ 0 ] )
       };
     }

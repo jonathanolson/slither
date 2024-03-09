@@ -21,7 +21,7 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
 ): Promise<TSolvedPuzzle<Structure, Data>> => {
 
   const board = solvedPuzzle.board;
-  const state = solvedPuzzle.faceState.clone();
+  const state = solvedPuzzle.state.clone();
 
   const faceOrder: TFace[] = dotRandom.shuffle( board.faces );
 
@@ -71,7 +71,7 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
 
   return {
     board: solvedPuzzle.board,
-    faceState: state,
+    state: state,
     blackEdges: solvedPuzzle.blackEdges
   };
 };

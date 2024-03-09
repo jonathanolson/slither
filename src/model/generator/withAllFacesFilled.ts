@@ -5,7 +5,7 @@ import { TFaceData } from '../data/face/TFaceData.ts';
 export const withAllFacesFilled = <Structure extends TStructure, Data extends TFaceData>(
   solvedPuzzle: TSolvedPuzzle<Structure, Data>
 ): TSolvedPuzzle<Structure, Data> => {
-  const faceState = solvedPuzzle.faceState.clone();
+  const faceState = solvedPuzzle.state.clone();
 
   for ( const face of solvedPuzzle.board.faces ) {
     if ( faceState.getFaceState( face ) === null ) {
@@ -15,6 +15,6 @@ export const withAllFacesFilled = <Structure extends TStructure, Data extends TF
 
   return {
     ...solvedPuzzle,
-    faceState
+    state: faceState
   };
 };
