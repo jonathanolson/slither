@@ -15,6 +15,7 @@ import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts
 import { satSolve } from '../solver/SATSolver.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TSerializedAction } from '../data/core/TAction.ts';
+import { CompleteDataValidator } from '../data/combined/CompleteDataValidator.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
@@ -124,6 +125,16 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     const state = lastTransition.state;
 
     let errorDetected = false;
+
+    const validator = new CompleteDataValidator( this.puzzle.solution );
+
+    // Validate against the solution!
+    try {
+      userAction.apply( validator );
+    }
+    catch ( e ) {
+      errorDetected = true;
+    }
 
     let delta = state.createDelta();
     try {
