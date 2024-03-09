@@ -1,6 +1,6 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../../config.ts';
-import { InvalidStateError } from '../solver/InvalidStateError.ts';
+import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolverFactoryProperty, safeSolve, safeSolverFactory } from '../solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';

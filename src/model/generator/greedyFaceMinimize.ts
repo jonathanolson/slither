@@ -6,11 +6,11 @@ import { TFace } from '../board/core/TFace.ts';
 import { TState } from '../data/core/TState.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
-import { MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import FaceState from '../data/face/FaceState.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
+import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
 
 // TODO: what happens if we take... the "average" of greedy face minimizes?
 // TODO: or, given a number of minimizes, we get an "order" of faces, from "usually can remove" to "usually can't remove"

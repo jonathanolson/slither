@@ -5,8 +5,7 @@ import { CompleteData } from '../data/combined/CompleteData.ts';
 import { dotRandom } from 'phet-lib/dot';
 import { TFace } from '../board/core/TFace.ts';
 import _ from '../../workarounds/_.ts';
-import { MaximumSolverIterationsError, satSolve } from '../solver/SATSolver.ts';
-import { MultipleSolutionsError } from '../solver/EdgeBacktracker.ts';
+import { satSolve } from '../solver/SATSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
@@ -14,6 +13,8 @@ import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import FaceState from '../data/face/FaceState.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
+import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
+import { MaximumSolverIterationsError } from '../solver/errors/MaximumSolverIterationsError.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
 // TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)

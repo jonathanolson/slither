@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { sleep } from './sleep.ts';
-import { InterruptedError } from '../model/solver/EdgeBacktracker.ts';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
 
 export const interruptableSleep = async function(
   milliseconds: number,

@@ -1,6 +1,6 @@
 import EdgeState from '../data/edge/EdgeState.ts';
 import FaceState from '../data/face/FaceState.ts';
-import { InvalidStateError } from './InvalidStateError.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';

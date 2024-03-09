@@ -19,10 +19,10 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
 import FaceState from '../model/data/face/FaceState.ts';
-import { InterruptedError } from '../model/solver/EdgeBacktracker.ts';
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 import { NumberControl } from 'phet-lib/scenery-phet';
+import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;

@@ -7,7 +7,7 @@ import { TStructure } from '../../board/core/TStructure.ts';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { InvalidStateError } from '../../solver/InvalidStateError.ts';
+import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though
 export class FaceColorValidator implements TState<TFaceColorData> {

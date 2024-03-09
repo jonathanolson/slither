@@ -1,5 +1,5 @@
 import EdgeState from '../data/edge/EdgeState.ts';
-import { InvalidStateError } from './InvalidStateError.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';

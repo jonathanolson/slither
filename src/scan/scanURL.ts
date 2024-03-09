@@ -17,8 +17,8 @@ import { TStructure } from '../model/board/core/TStructure.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { satSolve } from '../model/solver/SATSolver.ts';
-import { MultipleSolutionsError } from '../model/solver/EdgeBacktracker.ts';
-import { InvalidStateError } from '../model/solver/InvalidStateError.ts';
+import { InvalidStateError } from '../model/solver/errors/InvalidStateError.ts';
+import { MultipleSolutionsError } from '../model/solver/errors/MultipleSolutionsError.ts';
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html

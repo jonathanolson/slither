@@ -5,7 +5,7 @@ import { TState } from '../data/core/TState.ts';
 import { iterateSolver, SolverFactory, TSolver } from './TSolver.ts';
 import { TAction } from '../data/core/TAction.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
-import { InvalidStateError } from './InvalidStateError.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnyData, TAnyDataListener } from '../data/combined/TAnyData.ts';
 import { TStructure } from '../board/core/TStructure.ts';
@@ -14,6 +14,7 @@ import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { backtrackerSolverFactory, standardSolverFactory } from './autoSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
+import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
 
 export type EdgeBacktrackData = TEdgeData & TSimpleRegionData;
 
@@ -67,20 +68,6 @@ export type GetBacktrackedSolutionsOptions = {
   failOnMultipleSolutions: boolean;
   useEdgeBacktrackerSolver: boolean;
 };
-
-export class MultipleSolutionsError extends Error {
-  public constructor(
-    public readonly solutionEdges: TEdge[][]
-  ) {
-    super( 'Multiple solutions found' );
-  }
-}
-
-export class InterruptedError extends Error {
-  public constructor() {
-    super( 'Interrupted' );
-  }
-}
 
 export const getBacktrackedSolutions = <Data extends TCompleteData>(
   board: TBoard,

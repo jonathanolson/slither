@@ -6,7 +6,7 @@ import { TSolvedPuzzle } from '../../generator/TSolvedPuzzle.ts';
 import { TStructure } from '../../board/core/TStructure.ts';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { InvalidStateError } from '../../solver/InvalidStateError.ts';
+import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import FaceState from './FaceState.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though

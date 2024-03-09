@@ -19,13 +19,14 @@ import Logic from './logic-solver/logic-solver.js';
 import { TVertex } from '../board/core/TVertex.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TState } from '../data/core/TState.ts';
-import { MultipleSolutionsError } from './EdgeBacktracker.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
 import { Property } from 'phet-lib/axon';
 import { safeSolve } from './autoSolver.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
+import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
 
 export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
   board: TBoard<Structure>,
@@ -344,8 +345,3 @@ export const satSolve = (
   return solutions;
 };
 
-export class MaximumSolverIterationsError extends Error {
-  public constructor() {
-    super( 'Too many iterations!' );
-  }
-}

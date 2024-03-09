@@ -8,7 +8,7 @@ import { TFaceData } from '../face/TFaceData.ts';
 import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { InvalidStateError } from '../../solver/InvalidStateError.ts';
+import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though
 export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
