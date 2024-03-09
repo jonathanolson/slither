@@ -9,7 +9,7 @@ import { NoOpAction } from '../data/core/NoOpAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { puzzleToCompressedString, TPropertyPuzzle } from './TPuzzle.ts';
+import { puzzleToCompressedString, TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
@@ -35,7 +35,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
   public constructor(
-    public readonly puzzle: TPropertyPuzzle<Structure, Data>
+    public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
   ) {
     // Safe-solve our initial state (so things like simple region display works)
     {

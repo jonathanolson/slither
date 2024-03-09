@@ -17,6 +17,7 @@ import { glassPane } from './view/glassPane.ts';
 import { workaroundResolveStep } from './util/sleep.ts';
 import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
+import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -55,7 +56,7 @@ export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.inne
 
 const puzzleString = SlitherQueryParameters.p || localStorage.getItem( 'puzzleString' );
 const startingPuzzle = puzzleString ? puzzleFromCompressedString( puzzleString ) ?? BasicPuzzle.loadDefaultPuzzle() : BasicPuzzle.loadDefaultPuzzle();
-const startingPuzzleModel = new PuzzleModel( startingPuzzle );
+const startingPuzzleModel = new PuzzleModel( getSolvablePropertyPuzzle( startingPuzzle.board, startingPuzzle.stateProperty.value )! );
 
 // TODO: properly support null (it isn't right now)
 const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
@@ -101,7 +102,10 @@ const mainBox = new VBox( {
 
       // Require the complete data for now
       loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void => {
-        puzzleModelProperty.value = new PuzzleModel( puzzle );
+        const solvablePropertyPuzzle = getSolvablePropertyPuzzle( puzzle.board, puzzle.stateProperty.value );
+        if ( solvablePropertyPuzzle ) {
+          puzzleModelProperty.value = new PuzzleModel( solvablePropertyPuzzle );
+        }
       }
     } ), {
       margin: controlBarMargin

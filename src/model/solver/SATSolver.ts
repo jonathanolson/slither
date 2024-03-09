@@ -20,6 +20,55 @@ import { TVertex } from '../board/core/TVertex.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TState } from '../data/core/TState.ts';
 import { MultipleSolutionsError } from './EdgeBacktracker.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
+import { Property } from 'phet-lib/axon';
+import { safeSolve } from './autoSolver.ts';
+import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+
+export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
+  board: TBoard<Structure>,
+  currentState: TState<Data>
+): TSolvablePropertyPuzzle<Structure, Data> | null => {
+  try {
+    const solutions = satSolve( board, currentState, {
+      maxIterations: 10000,
+      failOnMultipleSolutions: true
+    } );
+
+    if ( solutions.length !== 1 ) {
+      return null;
+    }
+
+    const solutionEdges = solutions[ 0 ];
+
+    const solvedState = currentState.clone();
+    for ( const edge of solutionEdges ) {
+      solvedState.setEdgeState( edge, EdgeState.BLACK );
+    }
+    safeSolve( board, solvedState );
+    assertEnabled() && assert( simpleRegionIsSolved( solvedState ) );
+
+    return {
+      board,
+      stateProperty: new Property( currentState ),
+      solution: {
+        board,
+        state: solvedState,
+        blackEdges: new Set( solutionEdges )
+      }
+    };
+  }
+  catch ( e ) {
+    if ( e instanceof MultipleSolutionsError ) {
+      return null;
+    }
+    else {
+      throw e;
+    }
+  }
+};
 
 export type SatSolveOptions = {
   maxIterations: number;
