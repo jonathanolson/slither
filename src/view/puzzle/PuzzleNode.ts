@@ -8,7 +8,6 @@ import { TFaceData } from '../../model/data/face/TFaceData.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
-import { TReadOnlyPuzzle } from '../../model/puzzle/TReadOnlyPuzzle.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
 import { VertexNode } from './VertexNode.ts';
 import { FaceNode } from './FaceNode.ts';
@@ -16,6 +15,7 @@ import { EdgeNode } from './EdgeNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
+import { TPuzzle } from '../../model/puzzle/TPuzzle.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -33,7 +33,7 @@ export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TF
 // TODO: disposal!
 export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<BasicPuzzleNodeData> = TState<BasicPuzzleNodeData>> extends Node {
   public constructor(
-    public readonly puzzle: TReadOnlyPuzzle<Structure, State>,
+    public readonly puzzle: TPuzzle<Structure, State>,
     providedOptions?: BasicPuzzleNodeOptions
   ) {
     const options = optionize<BasicPuzzleNodeOptions, SelfOptions, ParentOptions>()( {
