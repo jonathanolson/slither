@@ -7,7 +7,6 @@ import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { controlBarFont, controlBarMargin, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -17,7 +16,7 @@ import { GenNode } from './GenNode.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
-  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
   glassPane: Node;
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };

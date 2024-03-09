@@ -9,7 +9,6 @@ import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { controlBarMargin, navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
-import { TState } from './model/data/core/TState.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
 import { puzzleFromCompressedString, TPropertyPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
@@ -101,7 +100,7 @@ const mainBox = new VBox( {
       layoutBoundsProperty: layoutBoundsProperty,
 
       // Require the complete data for now
-      loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ): void => {
+      loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void => {
         puzzleModelProperty.value = new PuzzleModel( puzzle );
       }
     } ), {

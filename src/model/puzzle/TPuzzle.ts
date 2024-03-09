@@ -7,10 +7,9 @@ import { BasicPuzzle } from './BasicPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { compressString, decompressString } from '../../util/compression.ts';
 
-// TODO: parameterize over Data instead of State
-export type TPropertyPuzzle<Structure extends TStructure = TStructure, State extends TState<TFaceData> = TState<TFaceData>> = {
+export type TPropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
   board: TBoard<Structure>;
-  stateProperty: TProperty<State>;
+  stateProperty: TProperty<TState<Data>>;
 };
 
 export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
@@ -25,7 +24,7 @@ export interface TSerializedPuzzle {
 }
 
 // TODO: deprecate and remove this once we don't need TPropertyPuzzle?
-export const toPropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData>( puzzle: TPuzzle<Structure, Data> ): TPropertyPuzzle<Structure, TState<Data>> => {
+export const toPropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData>( puzzle: TPuzzle<Structure, Data> ): TPropertyPuzzle<Structure, Data> => {
   return {
     board: puzzle.board,
     stateProperty: new Property( puzzle.state )
@@ -38,7 +37,7 @@ export const serializePuzzle = ( puzzle: TPropertyPuzzle ): TSerializedPuzzle =>
   state: puzzle.stateProperty.value.serializeState( puzzle.board )
 } );
 
-export const deserializePuzzle = ( serializedPuzzle: TSerializedPuzzle ): TPropertyPuzzle<TStructure, TState<TCompleteData>> => {
+export const deserializePuzzle = ( serializedPuzzle: TSerializedPuzzle ): TPropertyPuzzle<TStructure, TCompleteData> => {
   if ( serializedPuzzle.version !== 1 ) {
     throw new Error( `Unsupported puzzle version: ${serializedPuzzle.version}` );
   }
@@ -55,7 +54,7 @@ export const puzzleToCompressedString = ( puzzle: TPropertyPuzzle ): string => {
   return compressString( JSON.stringify( serializedPuzzle ) );
 };
 
-export const puzzleFromCompressedString = ( compressedString: string ): TPropertyPuzzle<TStructure, TState<TCompleteData>> | null => {
+export const puzzleFromCompressedString = ( compressedString: string ): TPropertyPuzzle<TStructure, TCompleteData> | null => {
   try {
     // TODO: can we wipe out some of the state here?
     const serializedPuzzle = JSON.parse( decompressString( compressedString )! );

@@ -1,6 +1,5 @@
 import { Node, NodeOptions } from 'phet-lib/scenery';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { combineOptions } from 'phet-lib/phet-core';
@@ -11,10 +10,10 @@ import { LayoutEdge } from '../model/board/layout/layout.ts';
 import { toPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> extends Node {
+export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {
 
   public constructor(
-    public readonly puzzleModel: PuzzleModel<Structure, State>,
+    public readonly puzzleModel: PuzzleModel<Structure, Data>,
     options?: NodeOptions
   ) {
     const layoutTestNode = new Node();

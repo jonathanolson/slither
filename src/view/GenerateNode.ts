@@ -2,7 +2,6 @@ import { Bounds2, Dimension2, Range, Vector2 } from 'phet-lib/dot';
 import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property, TinyEmitter, TinyProperty } from 'phet-lib/axon';
@@ -26,7 +25,7 @@ import { LocalStorageProperty } from '../util/localStorage.ts';
 import { NumberControl } from 'phet-lib/scenery-phet';
 
 type SelfOptions = {
-  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
 };
 
 export type GenerateNodeOptions = SelfOptions & HBoxOptions;

@@ -17,9 +17,9 @@ import EdgeState from '../data/edge/EdgeState.ts';
 import { TSerializedAction } from '../data/core/TAction.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class PuzzleModel<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
+export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
 
-  private readonly stack: PuzzleSnapshot<Structure, State>[];
+  private readonly stack: PuzzleSnapshot<Structure, Data>[];
 
   // Tracks how many transitions are in the stack
   private readonly stackLengthProperty = new NumberProperty( 0 );
@@ -30,16 +30,16 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
   public readonly undoPossibleProperty: TReadOnlyProperty<boolean>;
   public readonly redoPossibleProperty: TReadOnlyProperty<boolean>;
 
-  public readonly currentSnapshotProperty: TReadOnlyProperty<PuzzleSnapshot<Structure, State>>;
+  public readonly currentSnapshotProperty: TReadOnlyProperty<PuzzleSnapshot<Structure, Data>>;
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
   public constructor(
-    public readonly puzzle: TPropertyPuzzle<Structure, State>
+    public readonly puzzle: TPropertyPuzzle<Structure, Data>
   ) {
     // Safe-solve our initial state (so things like simple region display works)
     {
-      const newState = puzzle.stateProperty.value.clone() as State;
+      const newState = puzzle.stateProperty.value.clone();
       iterateSolverFactory( safeSolverFactory, puzzle.board, newState, true );
       puzzle.stateProperty.value = newState;
     }
@@ -106,7 +106,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
     this.stackLengthProperty.value = this.stack.length;
   }
 
-  private pushTransitionAtCurrentPosition( transition: PuzzleSnapshot<Structure, State> ): void {
+  private pushTransitionAtCurrentPosition( transition: PuzzleSnapshot<Structure, Data> ): void {
     this.wipeStackTop();
     this.stack.push( transition );
     this.stackLengthProperty.value = this.stack.length;
@@ -115,7 +115,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
   private applyUserActionToStack(
     userAction: PuzzleModelUserAction,
-    checkAutoSolve?: ( state: State ) => boolean
+    checkAutoSolve?: ( state: TState<Data> ) => boolean
   ): void {
     // TODO: have a way of creating a "solid" state from a delta?
     // TODO: we need to better figure this out(!)
@@ -133,7 +133,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
 
       // Hah, if we try to white out something, don't immediately solve it back!
       // TODO: why the cast here?
-      if ( checkAutoSolve && !checkAutoSolve( delta as unknown as State ) ) {
+      if ( checkAutoSolve && !checkAutoSolve( delta as unknown as TState<Data> ) ) {
         throw new InvalidStateError( 'Auto-solver did not respect user action' );
       }
     }
@@ -151,7 +151,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       }
     }
 
-    const newState = state.clone() as State;
+    const newState = state.clone();
     delta.apply( newState );
 
     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, userAction, newState, errorDetected ) );
@@ -163,7 +163,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       iterateSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, autoSolveDelta, true );
 
       if ( !autoSolveDelta.isEmpty() ) {
-        const autoSolveState = this.puzzle.stateProperty.value.clone() as State;
+        const autoSolveState = this.puzzle.stateProperty.value.clone();
         autoSolveDelta.apply( autoSolveState );
         // puzzle.stateProperty.value = autoSolveState;
 
@@ -253,7 +253,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Stat
       } );
 
       if ( solutions.length === 1 ) {
-        const solvedState = this.puzzle.stateProperty.value.clone() as State;
+        const solvedState = this.puzzle.stateProperty.value.clone();
 
         solutions[ 0 ].forEach( edge => {
           solvedState.setEdgeState( edge, EdgeState.BLACK );
@@ -338,11 +338,11 @@ export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
   }
 }
 
-export class PuzzleSnapshot<Structure extends TStructure = TStructure, State extends TState<TCompleteData> = TState<TCompleteData>> {
+export class PuzzleSnapshot<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
   public constructor(
     public readonly board: TBoard<Structure>,
     public readonly action: PuzzleModelUserAction | null,
-    public readonly state: State,
+    public readonly state: TState<Data>,
     public readonly errorDetected: boolean = false
   ) {}
 }

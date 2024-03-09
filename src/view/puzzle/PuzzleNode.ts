@@ -3,7 +3,6 @@ import { DerivedProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { faceColorsVisibleProperty, puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
-import { TState } from '../../model/data/core/TState.ts';
 import { TFaceData } from '../../model/data/face/TFaceData.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
@@ -31,9 +30,9 @@ export type BasicPuzzleNodeOptions = SelfOptions & ParentOptions;
 export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TFaceColorData;
 
 // TODO: disposal!
-export default class PuzzleNode<Structure extends TStructure = TStructure, State extends TState<BasicPuzzleNodeData> = TState<BasicPuzzleNodeData>> extends Node {
+export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends BasicPuzzleNodeData = BasicPuzzleNodeData> extends Node {
   public constructor(
-    public readonly puzzle: TPropertyPuzzle<Structure, State>,
+    public readonly puzzle: TPropertyPuzzle<Structure, Data>,
     providedOptions?: BasicPuzzleNodeOptions
   ) {
     const options = optionize<BasicPuzzleNodeOptions, SelfOptions, ParentOptions>()( {

@@ -8,7 +8,6 @@ import { Vector2 } from 'phet-lib/dot';
 import EdgeState from '../model/data/edge/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
@@ -57,14 +56,14 @@ export type ScanOptions = {
   unknownContourCallback?: ( contour: Contour ) => void;
 
   debugImageCallback?: ( debugImage: HTMLCanvasElement ) => void;
-  puzzleCallback?: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  puzzleCallback?: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
   solutionsCallback?: ( solutions: TEdge[][] ) => void;
 };
 
 const scanHTMLImageElement = async (
   domImage: HTMLImageElement,
   options?: ScanOptions
-): Promise<TPropertyPuzzle<TStructure, TState<TCompleteData>>> => {
+): Promise<TPropertyPuzzle<TStructure, TCompleteData>> => {
 
   // const workaroundCanvas = document.createElement( 'canvas' );
   // const workaroundContext = workaroundCanvas.getContext( '2d', {
@@ -490,7 +489,7 @@ class LineLocation {
   ) {}
 }
 
-export default async ( url: string, options?: ScanOptions ): Promise<TPropertyPuzzle<TStructure, TState<TCompleteData>>> => {
+export default async ( url: string, options?: ScanOptions ): Promise<TPropertyPuzzle<TStructure, TCompleteData>> => {
   const domImage = document.createElement( 'img' );
   domImage.src = url;
   await domImage.decode();

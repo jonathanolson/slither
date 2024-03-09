@@ -8,7 +8,6 @@ import { Contour } from '../scan/Contour.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { iterateSolverFactory } from '../model/solver/TSolver.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
@@ -41,7 +40,7 @@ export class ScanNode extends PopupNode {
   private readonly thresholdImageLayer: Node;
   private readonly contourLayer: Node;
 
-  private puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> | null = null;
+  private puzzle: TPropertyPuzzle<TStructure, TCompleteData> | null = null;
 
   // @ts-expect-error
   private rootContour: Contour | null = null;
@@ -113,7 +112,7 @@ export class ScanNode extends PopupNode {
 
       debugImageCallback: debugImage => {},
 
-      puzzleCallback: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => this.onPuzzle( puzzle ),
+      puzzleCallback: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => this.onPuzzle( puzzle ),
       solutionsCallback: ( solutions: TEdge[][] ) => this.onSolutions( solutions ),
     };
   }
@@ -149,7 +148,7 @@ export class ScanNode extends PopupNode {
     }
   }
 
-  public onPuzzle( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ): void {
+  public onPuzzle( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void {
     this.puzzle = puzzle;
   }
 

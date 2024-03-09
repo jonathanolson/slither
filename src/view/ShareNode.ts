@@ -2,7 +2,6 @@ import { BooleanProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { puzzleToCompressedString, TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
@@ -15,7 +14,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 export class ShareNode extends PopupNode {
 
   private readonly includeStateProperty;
-  private puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> | null = null;
+  private puzzle: TPropertyPuzzle<TStructure, TCompleteData> | null = null;
 
   public constructor(
     public readonly glassPane: Node,
@@ -54,7 +53,7 @@ export class ShareNode extends PopupNode {
     this.includeStateProperty = includeStateProperty;
   }
 
-  public setPuzzle( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ): void {
+  public setPuzzle( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void {
     this.puzzle = puzzle;
   }
 
