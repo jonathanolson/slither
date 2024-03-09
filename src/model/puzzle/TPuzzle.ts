@@ -6,16 +6,21 @@ import { Property, TProperty } from 'phet-lib/axon';
 import { BasicPuzzle } from './BasicPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { compressString, decompressString } from '../../util/compression.ts';
+import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+
+export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+  board: TBoard<Structure>;
+  state: TState<Data>;
+};
 
 export type TPropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
   board: TBoard<Structure>;
   stateProperty: TProperty<TState<Data>>;
 };
 
-export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
-  board: TBoard<Structure>;
-  state: TState<Data>;
-};
+export type TSolvablePropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+  solution: TSolvedPuzzle<Structure, Data>;
+} & TPropertyPuzzle<Structure, Data>;
 
 export interface TSerializedPuzzle {
   version: number;

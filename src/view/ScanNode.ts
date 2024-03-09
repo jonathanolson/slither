@@ -9,9 +9,8 @@ import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
-import { iterateSolverFactory } from '../model/solver/TSolver.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { safeSolverFactory } from '../model/solver/autoSolver.ts';
+import { safeSolve } from '../model/solver/autoSolver.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import EdgeState from '../model/data/edge/EdgeState.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
@@ -163,7 +162,7 @@ export class ScanNode extends PopupNode {
       const board = puzzle.board;
 
       if ( solutions.length === 0 ) {
-        iterateSolverFactory( safeSolverFactory, board, puzzle.stateProperty.value, true );
+        safeSolve( board, puzzle.stateProperty.value );
 
         const puzzleNode = new PuzzleNode( puzzle, {
           scale: 20
@@ -192,9 +191,9 @@ export class ScanNode extends PopupNode {
           }
         } );
 
-        iterateSolverFactory( safeSolverFactory, board, puzzleA.stateProperty.value, true );
-        iterateSolverFactory( safeSolverFactory, board, puzzleB.stateProperty.value, true );
-        iterateSolverFactory( safeSolverFactory, board, puzzleC.stateProperty.value, true );
+        safeSolve( board, puzzleA.stateProperty.value );
+        safeSolve( board, puzzleB.stateProperty.value );
+        safeSolve( board, puzzleC.stateProperty.value );
 
         const puzzleANode = new PuzzleNode( puzzleA, { scale: 10 } );
         const puzzleBNode = new PuzzleNode( puzzleB, { scale: 10 } );

@@ -1,7 +1,7 @@
 import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../../config.ts';
 import { InvalidStateError } from '../solver/InvalidStateError.ts';
-import { autoSolverFactoryProperty, safeSolverFactory } from '../solver/autoSolver.ts';
+import { autoSolverFactoryProperty, safeSolve, safeSolverFactory } from '../solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
@@ -40,7 +40,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     // Safe-solve our initial state (so things like simple region display works)
     {
       const newState = puzzle.stateProperty.value.clone();
-      iterateSolverFactory( safeSolverFactory, puzzle.board, newState, true );
+      safeSolve( puzzle.board, newState );
       puzzle.stateProperty.value = newState;
     }
 
@@ -258,7 +258,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
         solutions[ 0 ].forEach( edge => {
           solvedState.setEdgeState( edge, EdgeState.BLACK );
         } );
-        iterateSolverFactory( safeSolverFactory, this.puzzle.board, solvedState, true );
+        safeSolve( this.puzzle.board, solvedState );
 
         this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solvedState, false ) );
         this.updateState();

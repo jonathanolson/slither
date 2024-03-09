@@ -13,6 +13,7 @@ import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
+import { iterateSolverFactory } from './TSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexOnlyOptionToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexOnlyOptionToBlackProperty', true );
@@ -39,6 +40,10 @@ export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, 
     new SafeSolvedEdgeSolver( board, state ),
     new SafeEdgeToFaceColorSolver( board, state )
   ] );
+};
+
+export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
+  iterateSolverFactory( safeSolverFactory, board, state, true );
 };
 
 export const autoSolverFactoryProperty = new DerivedProperty( [
