@@ -1,4 +1,5 @@
 
+- Allow users to have custom-saved boards, with names (to generate from?)
 - Backtracker:
   - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?
   - What if we... slowly increase the depth until we get one reduction?
@@ -90,6 +91,8 @@
     - Perhaps give "edges" that combine a bunch --- a potentially longer ideal length?
     - CHECK signed area of each face, to see if we are still a planar embedding
 - [deprecated because static instant works nicely] COLOR SHIFTING (for maintaining good color separation) 
+  - Wave equation for color shifting is overkill right? (for per-segment)
+  - If we want triadic colors (no?), use superposition of multiple offset angles
   - Per-edge region view
     - SimpleRegionView
       - Transfers edge nodes between regions!!

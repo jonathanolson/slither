@@ -2,6 +2,8 @@
 - PhET bugginess:
   - How to get text entry (DOM node?) - can we focus it on detecting a click? NO we NEED to pass events through
   - RichText broken somehow... with rollup?
+  - Get CAG fixed, using Alpenglow's robust option
+    - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
   - "Error on startup" detection
@@ -81,9 +83,12 @@
   - Interface:
     - Possibilities
       - SLICK animation(!)
+        - Use Twixt damped animation! 
+        - Animate transitions to generation / puzzle start / puzzle end (TransitionNode?)
         - Can we make it more intuitive by having the line animate?
         - Option for no animation, or animation speed
       - Buttons 
+        - Add default option that hides "undo-all" and "redo-all" (can be enabled) - don't tend to use them much 
         - RAINBOW COLORS on the buttons
         - Hint button (maybe "add a face value")
         - Zoom (in/out) for help on desktop (e.g. with mouse)
@@ -132,6 +137,8 @@
   - Immutable views
     - Would be great for an "explainer" page (this would be fun to write up)
   - Mobile issues:
+    - HANDLE the annoyance that is "trying to tap multiple things" while auto-solve is active (and messes with the 2nd action)
+    - Don't allow panning outside of the "region" (can go far to left/right on vertical puzzle)
     - Autosolve annoyance on mobile:
       - Prevent user from changing auto-solved edges immediately (?)
       - Autosolve Delay? - (allow for putting in multiple things (e.g. multiple lines) or switching to Xs?)
@@ -183,6 +190,7 @@
     - OR detect fingers/mouse and apply different rules for them?
     - BASICALLY just try out both a bunch (phone, touch-pad, mouse)
   - Accessibility
+    - Fix up modal a11y, see how it works/looks
     - Let's get accessibility highlights a bit more refined-acceptable looking? 
     - Keyboard
       - Keyboard + Accessibility is first-class? (Could be fast for input on a computer) 
@@ -192,12 +200,6 @@
     - THIS IS ANNOYING ON MOBILE 
     - Or at least have a delay
   - Background behind navbar? (so navbar can have its own transparency?) hmmm
-  - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
-    - Each pattern needs to specify the required topology/structure for the area (what is important)
-    - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
-    - RED EDGES essentially CHANGES the topology
-      - Make rules that can be applied to ANY cases 
-    - Going off the side of the board is "all x" - Use a way of pattern matching those
   - Annotated solver actions (to show what happens next) <- omg, what if we animate this? (flash what it sees, then what it does)
     - PUZZLE SOLVING VIDEOS or ANIMATIONS would be really neat!!! - could it put these on YouTube (with text/annotations), people could pause if they don't see/understand?
   - Check when solved - we only have one chain + all numbers satisfied
@@ -242,6 +244,12 @@
   - Demo videos?:
     - topological view
     - face coloring
+  - Improved name:
+    - Looperoo?
+
+- Write up:
+  - Force-directed graph layout (techniques for planarity?)
+  - Force-directed color layout (region and face)
 
 - Rule generation / display
   - SAT solver tweaked for the exact constraints(!!!!) 
@@ -260,21 +268,6 @@
   - check r/slitherlink for more cases that were explained well!
   - Look up things under https://puzzling.stackexchange.com/search?q=slitherlink
 
-- Scan / Vision
-  - Use the locations of text-detected numbers to "vote" on what contours to use as a container
-    - Start at root. Check each child for how many it contains. Drill down until we have no child with more than the threshold.
-    - This approach works well for "completed" or "invalid" puzzles (both of which we'll want to scan)
-  - Unit tests
-    - Test with SAT solver 
-    - !!! Make us compatible with Puppeteer/Playwright, so we can batch-handle scanning/solving (for unit tests)
-  - Test with Android, and handle dashed line approach
-  - Detect on paper - perspective correction
-    - See https://pyimagesearch.com/2020/08/10/opencv-sudoku-solver-and-ocr/ for helpful notes
-  - Could use size of numbers to inform "scale" of things (we don't detect dots well if they are too large)
-  - Could use FFT for finding scale/grid
-  - !!! Get Scenery working with embedding DOM components, like the file input
-  - Note "draw interior of large region in background color" to filter out
-
 - Solving
   - General:
     - Can we assume uniqueness for the solver specifically? Adjusts techniques we can use
@@ -286,6 +279,12 @@
     - Jordan curve around face (possibilities and rules)
     - SAT formats? CNF for edges?
   - Patterns:
+    - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
+      - Each pattern needs to specify the required topology/structure for the area (what is important)
+      - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
+      - RED EDGES essentially CHANGES the topology
+        - Make rules that can be applied to ANY cases 
+      - Going off the side of the board is "all x" - Use a way of pattern matching those
     - Pattern (GridPattern?) -- less general than "solver"
       - check( spot: Spot, reversed: bool ): bool - whether it matches and can be applied
         - apply( spot: Spot, reversed: bool ): Action[] - what to do
@@ -325,6 +324,7 @@
   - Boolean edge pairs!!! (many cases where we know something will be one of two, e.g. the double-3 pattern) - interacts in fun ways
     - Actually, can factor out to "boolean" sets of edges (black OR red)
   - KwonTomLoop threads for ideas:
+    - Main patterns: https://kwontomloop.com/forum.php?a=topic&topic_id=100 
     - Especially this one: https://kwontomloop.com/forum.php?a=topic&topic_id=404
     - https://kwontomloop.com/forum.php?a=topic&topic_id=464
     - https://kwontomloop.com/forum.php?a=topic&topic_id=94
@@ -348,12 +348,16 @@
     - See https://github.com/unassert-js/rollup-plugin-unassert and https://github.com/unassert-js/unassert
   - Bit-pack states (especially for square edge/face/etc.) - have a linear array based on logicalCoordinates.
   - Not great performance on: 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
+- 
 - Maintainability
   - Prettier
   - At a certain point, cut features and clean clean 
   - Separate out structure.ts into a structure directory
   - Make clean! Document things!
   - Add copyright statement to files at some point
+
 - Scaffolding
   - "Each number needs to have that many edges/lines around it, and no more"
   - "Single loop, like a loop of string"
+  - Use coloring and description like in https://ciechanow.ski/airfoil/
+  - See https://meganesulli.com/blog/paper-mario-tutorial/

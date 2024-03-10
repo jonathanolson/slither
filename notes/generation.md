@@ -12,6 +12,11 @@
 
 # Puzzle generation
  
+- Consider external puzzle generation / Investigate patterns
+  - slinker, GPL 3: https://github.com/timhutton/slinker
+  - Check license on https://www.themissingdocs.net/bridge/LoopDeLoopBridge.html
+  - Check license on https://www.kakuro-online.com/slitherlink/
+  - Check license on https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/loopy.html
 - Generation:
   - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD
     - Use numeric difficulty instead of easy/medium/hard
