@@ -4,7 +4,15 @@
   - RichText broken somehow... with rollup?
 
 - Current code TODOs
-  - TRACK DOWN face color (parity?) bug, see double-5 in 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 
+  - "Error on startup" detection
+    - clear puzzleString first? if not set, clear localStorage?
+    - set a flag in localStorage noting that it was cleared (so we can display a message?)
+    - force the reload
+  - TRACK DOWN face color (parity?) bug, see double-5 in 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
+  - Autosolver should always go "until error detected" (whether our input is valid or not)
+    - Just use the validator
+  - High Contrast themes
+    - Hard to see colors at night on phone
   - Move more parts of files out to the top level (hard to find things!)
   - Immediate error detection when a mistake is made (also NOTICE if the auto-solver fucks up independently from the user)
   - Unit tests and fuzzing for solvers (generate a puzzle, then apply the full solver. when it stops, give it another edge)
@@ -15,12 +23,8 @@
     - So that if we encounter a buggy thing, we can see what it was trying to do
   - HINT button (highlight the thing the next rule would change?)
     - OMG LIGHT THE BUTTON UP AS ENABLED WHEN WE HAVE A HINT
-  - For generation that emphasizes one target rule/solver (rule can be composite) (and has a base rules/solver set)
-    - Check for each valued face:
-      - When it is removed, what is the count change for how many times our solver HAS to use the target rule?
-    - If the highest count change is non-negative, pick one of the faces with the highest value
-    - Otherwise if highest count change is negative, STOP GENERATION
   - Highlight region of "dual color + opposite" on hover?
+  - Generation / difficulty [see generation.md]
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - View modes?
     - Separate toggles for various features? (face color in particular?)
@@ -31,24 +35,21 @@
     - Edge edit mode (default) 
     - Face link mode (to handle coloring) - different from edge edit mode
       - Or a mode for "edit face values" (and a generate-blank option in generation) to edit a puzzle?
-  - Face Coloring
+  - Solver that detects "single vertex not-biconnected" cases and prunes
+  - Solver that looks at adjacent colors (if we're adjacent to a color and its opposite, it affects the face/vertex/ state)
+  - Solver for colors around face states (e.g. spiked 2s)
+  - Face Coloring UI
+    - Face coloring by value (monochrome?) - give speckled pattern for blank board
+      - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
+        - NO, just use our force-directed style
     - Consider a texture for "inside" and "outside"
     - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
       - Solvers: 
         - OMG --- the mediumfacesolver bit... should work nicely for any geometry? figure out the math 
         - Touching combinations of colors?
         - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?" - examine face and coloring around it
-  - Solver that detects "single vertex not-biconnected" cases and prunes
-  - Solver that looks at adjacent colors (if we're adjacent to a color and its opposite, it affects the face/vertex/ state)
-  - Solver for colors around face states (e.g. spiked 2s)
-  - Difficulty:
-    - Can we ... forward-generate based on rules (checking to see if there is at least one solution with how we add numbers?)
-      - Search for patterns where we can enable rules?
-    - How else can we best "really overdo" a particular rule?
-  - Face coloring will help visualization of solving
-  - (OMG face-coloring (hue OR value) will make it look so much cooler)
-    - slight light/dark will look really nice (for inside/outside)... colors for others?
-      - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
+  - Face Coloring Solving
+    - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
   - SHOW the vision working on the image(!)
   - Code cleanup
     - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
@@ -56,41 +57,22 @@
       - Maybe just have a TPuzzleProperty? (hmmm) bleh
     - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - Settings
+    - "Control Center" style
+      - Provide quick high-level on-off (ABSwitch?), with "more..." to control details
+        - Auto-solver on/off
+        - Face coloring on/off
+        - ...?
     - Separate appearance from auto-solver settings 
       - Tabs? (from joist? eek)
     - Style preview (demo puzzle)
       - Include animation previews(!) 
-  - Tether to phone for debugging code generation failures
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
-  - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
-    - Face coloring can override this later?
   - Bugs
     - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
-  - Generation:
-    - DIFFICULTY!!!!!!! STOP GENERATING THINGS THAT ARE SO HARD
-      - Use numeric difficulty instead of easy/medium/hard
-      - Difficulty also relates to "solving style", maybe ratings for different approaches?
-        - e.g. "easier with face coloring" vs "easier with backtracking" or "easier with vertex state"
-    - Faster "face minimization": 
-      - start by removing a good number at once. have a heuristic where this eventually goes down to removing 1 at a time
-      - any time a removal doesn't work, apply a multiplier to our "fresh from next time" amount to remove, and ... split the removal amount in half?
-    - Faster "filling" method, basically just set up something that creates windy patterns quickly?
-      - Sprout off area-filling "winding" attempts, where it keeps walking
-        - Repeatedly do this until we have a good amount of "fill" - 50%? also windiness?
-        - Start in "less filled" regions
-        - If we have a region without transitions, apply fixes
-        - Ensure we have approximately half of the boundary faces filled
-    - Try to generate puzzles which have patterns that I should learn
-    - Generate different "themes" of puzzles (i.e. we solve uniqueness with different techniques)
-      - Find puzzles that need technique A that can't be solved with technique B
   - Aesthetics:
     - Finished appearance: improve somehow?
   - Interface:
-    - Error/mistake detection ("safety net")
-      - Compute the full solution, NOTE when we go off of it. Potential delay. Unrelated to the auto-solver
-        - Don't allow use of the auto-solver for this? 
-        - Button to rewind + show error
     - Possibilities
       - SLICK animation(!)
         - Can we make it more intuitive by having the line animate?
