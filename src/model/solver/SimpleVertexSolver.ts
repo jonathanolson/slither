@@ -4,19 +4,21 @@ import { TSolver } from './TSolver.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 export type SimpleVertexSolverOptions = {
   solveJointToRed: boolean;
-  solveOnlyOptionToBlack: boolean;
+  solveForcedLineToBlack: boolean;
   solveAlmostEmptyToRed: boolean;
 };
 
-export class SimpleVertexSolver implements TSolver<TEdgeData, TAction<TEdgeData>> {
+export class SimpleVertexSolver implements TSolver<TEdgeData, TAnnotatedAction<TEdgeData>> {
 
   private readonly dirtyVertices: TVertex[] = [];
 
@@ -47,7 +49,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAction<TEdgeData>
     return this.dirtyVertices.length > 0;
   }
 
-  public nextAction(): TAction<TEdgeData> | null {
+  public nextAction(): TAnnotatedAction<TEdgeData> | null {
     if ( !this.dirty ) { return null; }
 
     while ( this.dirtyVertices.length ) {
@@ -77,20 +79,41 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAction<TEdgeData>
 
       if ( whiteCount > 0 ) {
         if ( this.options.solveJointToRed && blackCount === 2 ) {
-          // TODO: factor out the "set all white edges to <color>" into a helper?
-          return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
-            return new EdgeStateSetAction( edge, EdgeState.RED );
-          } ) );
+          const whiteEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+          const blackEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.BLACK );
+          assertEnabled() && assert( blackEdges.length === 2 );
+
+          return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
+            type: 'JointToRed',
+            vertex: vertex,
+            whiteEdges: whiteEdges,
+            blackEdges: blackEdges as [ TEdge, TEdge ] // we checked earlier
+          } );
         }
-        else if ( this.options.solveOnlyOptionToBlack && blackCount === 1 && whiteCount === 1 ) {
-          return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
-            return new EdgeStateSetAction( edge, EdgeState.BLACK );
-          } ) );
+        else if ( this.options.solveForcedLineToBlack && blackCount === 1 && whiteCount === 1 ) {
+          const whiteEdge = edges.find( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE )!;
+          const blackEdge = edges.find( edge => this.state.getEdgeState( edge ) === EdgeState.BLACK )!;
+          assertEnabled() && assert( whiteEdge );
+          assertEnabled() && assert( blackEdge );
+
+          return new AnnotatedAction( new EdgeStateSetAction( whiteEdge, EdgeState.BLACK ), {
+            type: 'ForcedLine',
+            vertex: vertex,
+            blackEdge: blackEdge,
+            whiteEdge: whiteEdge,
+            redEdges: edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.RED )
+          } );
         }
         else if ( this.options.solveAlmostEmptyToRed && blackCount === 0 && whiteCount === 1 ) {
-          return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
-            return new EdgeStateSetAction( edge, EdgeState.RED );
-          } ) );
+          const whiteEdge = edges.find( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE )!;
+          assertEnabled() && assert( whiteEdge );
+
+          return new AnnotatedAction( new EdgeStateSetAction( whiteEdge, EdgeState.RED ), {
+            type: 'AlmostEmptyToRed',
+            vertex: vertex,
+            whiteEdge: whiteEdge,
+            redEdges: edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.RED )
+          } );
         }
       }
     }

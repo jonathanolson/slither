@@ -16,7 +16,7 @@ import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { iterateSolverFactory } from './TSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
-export const autoSolveSimpleVertexOnlyOptionToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexOnlyOptionToBlackProperty', true );
+export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
 export const autoSolveSimpleVertexAlmostEmptyToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexAlmostEmptyToRedProperty', true );
 
 export const autoSolveSimpleFaceToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleFaceToRedProperty', true );
@@ -48,7 +48,7 @@ export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
 
 export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleVertexJointToRedProperty,
-  autoSolveSimpleVertexOnlyOptionToBlackProperty,
+  autoSolveSimpleVertexForcedLineToBlackProperty,
   autoSolveSimpleVertexAlmostEmptyToRedProperty,
   autoSolveSimpleFaceToRedProperty,
   autoSolveSimpleFaceToBlackProperty,
@@ -80,7 +80,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
       ...( simpleVertexJointToRed || simpleVertexOnlyOptionToBlack || simpleVertexAlmostEmptyToRed ? [
         new SimpleVertexSolver( board, state, {
           solveJointToRed: simpleVertexJointToRed,
-          solveOnlyOptionToBlack: simpleVertexOnlyOptionToBlack,
+          solveForcedLineToBlack: simpleVertexOnlyOptionToBlack,
           solveAlmostEmptyToRed: simpleVertexAlmostEmptyToRed
         }, dirty ? undefined : [] )
       ] : [] ),
@@ -124,7 +124,7 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
   return new CompositeSolver( [
     new SimpleVertexSolver( board, state, {
       solveJointToRed: true,
-      solveOnlyOptionToBlack: true,
+      solveForcedLineToBlack: true,
       solveAlmostEmptyToRed: true
     } ),
     new SimpleFaceSolver( board, state, {

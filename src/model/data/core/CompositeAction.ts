@@ -2,19 +2,19 @@ import { deserializeAction, TAction, TSerializedAction } from './TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
 
-export class CompositeAction<State> implements TAction<State> {
+export class CompositeAction<Data> implements TAction<Data> {
 
   public constructor(
-    public readonly actions: TAction<State>[]
+    public readonly actions: TAction<Data>[]
   ) {}
 
-  public apply( state: State ): void {
+  public apply( state: Data ): void {
     for ( let i = 0; i < this.actions.length; i++ ) {
       this.actions[ i ].apply( state );
     }
   }
 
-  public getUndo( state: State ): TAction<State> {
+  public getUndo( state: Data ): TAction<Data> {
     return new CompositeAction( this.actions.map( action => action.getUndo( state ) ).reverse() );
   }
 

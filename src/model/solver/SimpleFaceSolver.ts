@@ -5,19 +5,20 @@ import { TSolver } from './TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TFaceData, TFaceDataListener } from '../data/face/TFaceData.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 export type SimpleFaceSolverOptions = {
   solveToRed: boolean;
   solveToBlack: boolean;
 };
 
-export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAction<TFaceData & TEdgeData>> {
+export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAnnotatedAction<TFaceData & TEdgeData>> {
 
   private readonly dirtyFaces: TFace[] = [];
 
@@ -53,7 +54,7 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAction<
     return this.dirtyFaces.length > 0;
   }
 
-  public nextAction(): TAction<TFaceData & TEdgeData> | null {
+  public nextAction(): TAnnotatedAction<TFaceData & TEdgeData> | null {
     if ( !this.dirty ) { return null; }
 
     while ( this.dirtyFaces.length ) {
@@ -89,14 +90,26 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAction<
 
         if ( whiteCount > 0 ) {
           if ( this.options.solveToRed && blackCount === faceValue ) {
-            return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
-              return new EdgeStateSetAction( edge, EdgeState.RED );
-            } ) );
+            const whiteEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+            const blackEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.BLACK );
+
+            return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
+              type: 'FaceSatisfied',
+              face: face,
+              whiteEdges: whiteEdges,
+              blackEdges: blackEdges
+            } );
           }
           else if ( this.options.solveToBlack && redCount === face.edges.length - faceValue ) {
-            return new CompositeAction( edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
-              return new EdgeStateSetAction( edge, EdgeState.BLACK );
-            } ) );
+            const whiteEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+            const redEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.RED );
+
+            return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.BLACK ) ) ), {
+              type: 'FaceAntiSatisfied',
+              face: face,
+              whiteEdges: whiteEdges,
+              redEdges: redEdges
+            } );
           }
         }
       }
