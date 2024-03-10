@@ -100,36 +100,33 @@ export type FaceColorNoTrivialLoopAnnotation = {
   face: TFace;
 };
 
-export type FaceColorMatchToRedAnnotation = {
-  type: 'FaceColorMatchToRed';
+export type FaceColorAnnotationPartial = {
   face: TFace;
-  matchingEdges: TEdge[];
   remainingValue: number;
   availableSideCount: number;
+  balancedPairs: [ TEdge[], TEdge[] ][];
 };
+
+export type FaceColorMatchToRedAnnotation = {
+  type: 'FaceColorMatchToRed';
+  matchingEdges: TEdge[];
+} & FaceColorAnnotationPartial;
 
 export type FaceColorMatchToBlackAnnotation = {
   type: 'FaceColorMatchToBlack';
-  face: TFace;
   matchingEdges: TEdge[];
-  remainingValue: number;
-  availableSideCount: number;
-};
+} & FaceColorAnnotationPartial;
 
 export type FaceColorBalanceAnnotation = {
   type: 'FaceColorBalance';
-  face: TFace;
   matchingEdges: TEdge[];
   oppositeEdges: TEdge[];
-  remainingValue: number;
-  availableSideCount: number;
-};
+} & FaceColorAnnotationPartial;
 
 export type FaceColorOneConstrainedAnnotation = {
   type: 'FaceColorOneConstrained';
-  face: TFace;
   edges: [ TEdge, TEdge ];
-};
+} & FaceColorAnnotationPartial;
 
 export type TAnnotation =
   ForcedLineAnnotation
@@ -147,7 +144,11 @@ export type TAnnotation =
   | FaceColoringRedEdgeAnnotation
   | FaceColorToBlackAnnotation
   | FaceColorToRedAnnotation
-  | FaceColorNoTrivialLoopAnnotation;
+  | FaceColorNoTrivialLoopAnnotation
+  | FaceColorMatchToRedAnnotation
+  | FaceColorMatchToBlackAnnotation
+  | FaceColorBalanceAnnotation
+  | FaceColorOneConstrainedAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',

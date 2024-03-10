@@ -1,18 +1,18 @@
 import { TSolver } from './TSolver.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { simpleRegionIsSolved, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 type Data = TSimpleRegionData & TEdgeData;
 
 // If solved, we turn white edges to red (useful so that we trigger proper face coloring for the end)
-export class SafeSolvedEdgeSolver implements TSolver<Data, TAction<Data>> {
+export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private hasDirtySimpleRegions = true;
 
@@ -33,7 +33,7 @@ export class SafeSolvedEdgeSolver implements TSolver<Data, TAction<Data>> {
     return this.hasDirtySimpleRegions;
   }
 
-  public nextAction(): TAction<Data> | null {
+  public nextAction(): TAnnotatedAction<Data> | null {
     if ( !this.dirty ) { return null; }
 
     if ( simpleRegionIsSolved( this.state ) ) {

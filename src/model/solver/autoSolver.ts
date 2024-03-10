@@ -14,6 +14,7 @@ import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { iterateSolverFactory } from './TSolver.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -35,7 +36,7 @@ export const autoSolveFaceColorParityPartialReductionProperty = new LocalStorage
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver<TCompleteData>( [
+  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new SafeEdgeToSimpleRegionSolver( board, state ),
     new SafeSolvedEdgeSolver( board, state ),
     new SafeEdgeToFaceColorSolver( board, state )
@@ -76,7 +77,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleFaceColorParityPartialReduction
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-    return new CompositeSolver<TCompleteData>( [
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
       ...( simpleVertexJointToRed || simpleVertexOnlyOptionToBlack || simpleVertexAlmostEmptyToRed ? [
         new SimpleVertexSolver( board, state, {
           solveJointToRed: simpleVertexJointToRed,
@@ -121,7 +122,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
 } );
 
 export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver( [
+  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new SimpleVertexSolver( board, state, {
       solveJointToRed: true,
       solveForcedLineToBlack: true,
