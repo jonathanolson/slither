@@ -17,14 +17,16 @@ export default defineConfig( {
 
   // Because of https://github.com/vitejs/vite/issues/12434?
   optimizeDeps: {
-    exclude: [ 'phet-lib', 'tesseract.js', 'culori', 'pako', 'tactile-js' ]
+    exclude: [ 'phet-lib', 'tesseract.js', 'culori', 'pako', 'tactile-js' ],
+    entries: []
   },
 
   build: {
     rollupOptions: {
       input: {
         main: '/index.html',
-        'scan-test': '/scan-test.html'
+        'scan-test': '/scan-test.html',
+        'solver-fuzz': '/solver-fuzz.html'
       },
       plugins: [
         unassert( {

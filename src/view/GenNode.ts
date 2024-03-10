@@ -2,7 +2,6 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2, dotRandom } from 'phet-lib/dot';
 import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import scanURL from '../scan/scanURL.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -14,7 +13,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { ScanNode } from './ScanNode.ts';
 
 export type GenNodeOptions = {
-  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TState<TCompleteData>> ) => void;
+  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
 };
 
 export class GenNode extends PopupNode {
