@@ -5,6 +5,11 @@
 
 - How to measure difficulty? Certain solvers could report out what they needed to get (but what if it requires a chain of colors?)
 
+# Importance of Technique
+
+- Look at what combinations of techniques will solve (completely or %) a random sampling of puzzles.
+  - See which ones are more powerful, and good to learn 
+
 # Puzzle generation
  
 - Generation:
