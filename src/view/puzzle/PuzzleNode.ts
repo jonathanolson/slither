@@ -31,6 +31,9 @@ export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TF
 
 // TODO: disposal!
 export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends BasicPuzzleNodeData = BasicPuzzleNodeData> extends Node {
+
+  private readonly annotationContainer: Node;
+
   public constructor(
     public readonly puzzle: TPropertyPuzzle<Structure, Data>,
     providedOptions?: BasicPuzzleNodeOptions
@@ -54,6 +57,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const edgeContainer = new Node();
     const vertexContainer = new Node();
     const simpleRegionContainer = new Node();
+    const annotationContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
       if ( state.getWeirdEdges().length || state.hasInvalidFaceColors() ) {
@@ -97,9 +101,12 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         faceContainer,
         edgeContainer,
         vertexContainer,
-        simpleRegionContainer
+        simpleRegionContainer,
+        annotationContainer
       ]
     }, options ) );
+
+    this.annotationContainer = annotationContainer;
 
     this.disposeEmitter.addListener( () => {
       faceColorContainer.children.forEach( child => child.dispose() );
@@ -109,6 +116,19 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       simpleRegionContainer.children.forEach( child => child.dispose() );
       isSolvedProperty.dispose();
     } );
+  }
+
+  public addAnnotationNode( node: Node ): void {
+    this.annotationContainer.addChild( node );
+  }
+
+  public removeAnnotationNode( node: Node ): void {
+    this.annotationContainer.removeChild( node );
+  }
+
+  public clearAnnotationNodes(): void {
+    // TODO: will we need to dispose?
+    this.annotationContainer.removeAllChildren();
   }
 }
 

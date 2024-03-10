@@ -4,6 +4,8 @@ import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { combineOptions } from 'phet-lib/phet-core';
+import { TAnnotation } from '../model/data/core/TAnnotation.ts';
+import { AnnotationNode } from './AnnotationNode.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModelNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {
@@ -25,5 +27,31 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
     }, options ) );
 
     this.disposeEmitter.addListener( () => puzzleNode.dispose() );
+
+    let lastAnnotationNode: AnnotationNode | null = null;
+
+    const annotationListener = ( annotation: TAnnotation | null ) => {
+      puzzleNode.clearAnnotationNodes();
+
+      if ( lastAnnotationNode ) {
+        lastAnnotationNode.dispose();
+        lastAnnotationNode = null;
+      }
+
+      if ( annotation ) {
+        const annotationNode = new AnnotationNode( annotation );
+        puzzleNode.addAnnotationNode( annotationNode );
+        lastAnnotationNode = annotationNode;
+      }
+    };
+    this.disposeEmitter.addListener( () => {
+      if ( lastAnnotationNode ) {
+        lastAnnotationNode.dispose();
+        lastAnnotationNode = null;
+      }
+    } );
+
+    puzzleModel.displayedAnnotationProperty.link( annotationListener );
+    this.disposeEmitter.addListener( () => puzzleModel.displayedAnnotationProperty.unlink( annotationListener ) );
   }
 }

@@ -6,6 +6,18 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
+  - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
+    - We'll want this in order to list out all of the potential hints(!)
+  - Could we... have the "solve with engine" button... add to the history, without going forward?
+    - Have a "history" bar on left, that shows each action?
+      - We WANT RICH TEXT for this... text wrapping...
+      - Figure out a "composite" annotation, we'll need it
+        - e.g. for showing the "auto-solve" parts of something?
+  - OMG... for our hint, we'll actually want to show MULTIPLE actions, all of the ones that lead up to an edge being set?
+    - We'll want to minimize the number of actions. From the "end", start going back trying to remove actions, and see if it can deduce the next thing
+  - Hint button notes:
+    - How can we "apply" the hint after? Especially for coloring-based ones?
   - Actions for face color changes... should potentially specify the faces? Bleh not sure, is tricky how to serialize
     - If they don't... the face color IDs might change.
   - Reloading on completed puzzle... seems to "error out"? Check (it is wiping our state)

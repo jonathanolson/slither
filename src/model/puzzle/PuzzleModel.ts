@@ -1,7 +1,7 @@
-import { DerivedProperty, NumberProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { getPressStyle } from '../../config.ts';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
-import { autoSolverFactoryProperty, safeSolve, safeSolverFactory } from '../solver/autoSolver.ts';
+import { autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
@@ -14,8 +14,10 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
-import { TSerializedAction } from '../data/core/TAction.ts';
+import { TAction, TSerializedAction } from '../data/core/TAction.ts';
 import { CompleteDataValidator } from '../data/combined/CompleteDataValidator.ts';
+import { TAnnotation } from '../data/core/TAnnotation.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
@@ -35,9 +37,14 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
+  public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new Property( null );
+  public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
+
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
   ) {
+    this.displayedAnnotationProperty = new DerivedProperty( [ this.pendingHintActionProperty ], action => action ? action.annotation : null );
+
     // Safe-solve our initial state (so things like simple region display works)
     {
       const newState = puzzle.stateProperty.value.clone();
@@ -93,6 +100,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   private updateState(): void {
+    this.pendingHintActionProperty.value = null;
     this.puzzle.stateProperty.value = this.stack[ this.stackPositionProperty.value ].state;
 
     setTimeout( () => {
@@ -316,9 +324,61 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       // }
     }
   }
+
+  public onUserRequestHint(): void {
+    if ( this.pendingHintActionProperty.value ) {
+      const action = this.pendingHintActionProperty.value;
+      this.pendingHintActionProperty.value = null;
+
+      this.applyUserActionToStack( new UserPuzzleHintApplyAction( action ) );
+
+      this.updateState();
+    }
+    else {
+      const state = this.puzzle.stateProperty.value.clone();
+
+      const solver = standardSolverFactory( this.puzzle.board, state, true );
+
+      try {
+        const action = solver.nextAction();
+
+        if ( action ) {
+          const validator = new CompleteDataValidator( this.puzzle.board, this.puzzle.solution.solvedState );
+          let valid = true;
+          try {
+            action.apply( validator );
+          }
+          catch ( e ) {
+            if ( e instanceof InvalidStateError ) {
+              valid = false;
+            }
+            else {
+              throw e;
+            }
+          }
+
+          console.log( valid ? 'valid' : 'INVALID', action );
+          this.pendingHintActionProperty.value = action;
+
+          // action.apply( state );
+        }
+        else {
+          console.log( 'no action' );
+        }
+      }
+      catch ( e ) {
+        if ( e instanceof InvalidStateError ) {
+          console.error( e );
+        }
+        else {
+          throw e;
+        }
+      }
+    }
+  }
 }
 
-export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction;
+export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
 
 export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;
@@ -345,6 +405,36 @@ export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
 
   public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserRequestSolveAction {
     return new UserRequestSolveAction();
+  }
+}
+
+export class UserPuzzleHintApplyAction implements TAnnotatedAction<TCompleteData> {
+  public constructor(
+    public readonly hintAction: TAnnotatedAction<TCompleteData>
+  ) {}
+
+  public get annotation(): TAnnotation {
+    return this.hintAction.annotation;
+  }
+
+  public apply( state: TCompleteData ): void {
+    this.hintAction.apply( state );
+  }
+
+  public getUndo( state: TCompleteData ): TAction<TCompleteData> {
+    throw new Error( 'unimplemented' );
+  }
+
+  public isEmpty(): boolean {
+    return this.hintAction.isEmpty();
+  }
+
+  public serializeAction(): TSerializedAction {
+    throw new Error( 'unimplemented' );
+  }
+
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): NoOpAction<any> {
+    throw new Error( 'unimplemented' );
   }
 }
 

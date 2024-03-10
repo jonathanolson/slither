@@ -255,9 +255,14 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAct
     // NOTE: only do this at the end, since if we "error out" we'll want to note we still need to be computed
     this.dirtyEdges.clear();
 
-    return new AnnotatedAction( new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges ), {
-      type: 'SimpleRegions'
-    } );
+    if ( addedRegions.size || removedRegions.size || addedWeirdEdges.size || removedWeirdEdges.size ) {
+      return new AnnotatedAction( new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges ), {
+        type: 'SimpleRegions'
+      } );
+    }
+    else {
+      return null;
+    }
   }
 
   public clone( equivalentState: TState<Data> ): SafeEdgeToSimpleRegionSolver {
