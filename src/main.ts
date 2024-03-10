@@ -10,14 +10,14 @@ import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { controlBarMargin, navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
-import { puzzleFromCompressedString, TPropertyPuzzle } from './model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
 import { scene } from './view/scene.ts';
 import { glassPane } from './view/glassPane.ts';
 import { workaroundResolveStep } from './util/sleep.ts';
 import { showLayoutTestProperty } from './model/board/layout/layout.ts';
-import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
 import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
+import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -54,12 +54,8 @@ window.oncontextmenu = e => e.preventDefault();
 
 export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
 
-const puzzleString = SlitherQueryParameters.p || localStorage.getItem( 'puzzleString' );
-const startingPuzzle = puzzleString ? puzzleFromCompressedString( puzzleString ) ?? BasicPuzzle.loadDefaultPuzzle() : BasicPuzzle.loadDefaultPuzzle();
-const startingPuzzleModel = new PuzzleModel( getSolvablePropertyPuzzle( startingPuzzle.board, startingPuzzle.stateProperty.value )! );
-
 // TODO: properly support null (it isn't right now)
-const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( startingPuzzleModel );
+const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( getStartupPuzzleModel() );
 
 const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty, {
   layoutOptions: {
