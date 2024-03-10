@@ -126,9 +126,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
     let errorDetected = false;
 
-    const validator = new CompleteDataValidator( this.puzzle.solution );
-
     // Validate against the solution!
+    const validator = new CompleteDataValidator( this.puzzle.board, this.puzzle.solution.solvedState );
     try {
       userAction.apply( validator );
     }

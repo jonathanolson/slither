@@ -7,7 +7,7 @@ import { TFace } from '../board/core/TFace.ts';
 import _ from '../../workarounds/_.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
-import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { getSolvedPuzzle, TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import FaceState from '../data/face/FaceState.ts';
@@ -99,11 +99,7 @@ export const generateFaceAdditive = async (
     }
 
     if ( solutionCount === 1 ) {
-      return {
-        board,
-        state: state,
-        blackEdges: new Set( solutions[ 0 ] )
-      };
+      return getSolvedPuzzle( board, state, solutions[ 0 ] );
     }
   }
 

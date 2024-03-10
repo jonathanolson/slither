@@ -34,7 +34,7 @@ export const iterateSolver = <Data, Action extends TAction<Data>>(
   let count = 0;
 
   while ( solver.dirty ) {
-    if ( count++ > 10000 ) {
+    if ( count++ > 100000 ) {
       throw new Error( 'Solver iteration limit exceeded? Looped?' );
     }
     const action = solver.nextAction();

@@ -27,7 +27,7 @@ export class BasicPuzzle<Data> {
   }
 
   public static fromSolvedPuzzle<Structure extends TStructure, Data extends TFaceData>( puzzle: TSolvedPuzzle<Structure, Data> ): BasicPuzzle<Data> {
-    return new BasicPuzzle( puzzle.board, puzzle.state );
+    return new BasicPuzzle( puzzle.board, puzzle.cleanState );
   }
 
   public static loadDefaultPuzzle(): BasicPuzzle<TCompleteData> {

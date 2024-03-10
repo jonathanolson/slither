@@ -27,6 +27,7 @@ import { safeSolve } from './autoSolver.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
 import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
+import { getSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
 
 export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
   board: TBoard<Structure>,
@@ -54,11 +55,7 @@ export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStruct
     return {
       board,
       stateProperty: new Property( currentState ),
-      solution: {
-        board,
-        state: solvedState,
-        blackEdges: new Set( solutionEdges )
-      }
+      solution: getSolvedPuzzle( board, currentState, solutionEdges )
     };
   }
   catch ( e ) {

@@ -10,14 +10,13 @@ import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { TSolvedPuzzle } from '../../generator/TSolvedPuzzle.ts';
-import { TStructure } from '../../board/core/TStructure.ts';
 import { EdgeDataValidator } from '../edge/EdgeDataValidator.ts';
 import { FaceColorValidator } from '../face-color/FaceColorValidator.ts';
 import { SimpleRegionDataValidator } from '../simple-region/SimpleRegionDataValidator.ts';
 import { FaceDataValidator } from '../face/FaceDataValidator.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class CompleteDataValidator implements TState<TCompleteData> {
 
@@ -29,12 +28,16 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   private readonly faceColorValidator: TState<TFaceColorData>;
 
   public constructor(
-    solvedPuzzle: TSolvedPuzzle<TStructure, TCompleteData>
+    board: TBoard,
+    solvedState: TState<TCompleteData>
   ) {
-    this.edgeDataValidator = new EdgeDataValidator( solvedPuzzle );
-    this.faceDataValidator = new FaceDataValidator( solvedPuzzle );
-    this.simpleRegionDataValidator = new SimpleRegionDataValidator( solvedPuzzle );
-    this.faceColorValidator = new FaceColorValidator( solvedPuzzle );
+    assertEnabled() && assert( board );
+    assertEnabled() && assert( solvedState );
+
+    this.edgeDataValidator = new EdgeDataValidator( board, solvedState );
+    this.faceDataValidator = new FaceDataValidator( board, solvedState );
+    this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, solvedState );
+    this.faceColorValidator = new FaceColorValidator( board, solvedState );
   }
 
   public getFaceState( face: TFace ): FaceState {

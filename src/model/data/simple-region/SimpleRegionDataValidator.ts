@@ -2,9 +2,6 @@ import { TSerializedState, TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { TSolvedPuzzle } from '../../generator/TSolvedPuzzle.ts';
-import { TStructure } from '../../board/core/TStructure.ts';
-import { TFaceData } from '../face/TFaceData.ts';
 import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
@@ -22,27 +19,28 @@ export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
 
   public constructor(
     // @ts-expect-error
-    private readonly solvedPuzzle: TSolvedPuzzle<TStructure, TFaceData & TSimpleRegionData>
+    private readonly board: TBoard,
+    private readonly solvedState: TState<TSimpleRegionData>
   ) {}
 
   public getSimpleRegions(): TSimpleRegion[] {
-    throw new Error( 'unimplemented' );
+    return this.solvedState.getSimpleRegions();
   }
 
   public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
-    throw new Error( 'unimplemented' );
+    return this.solvedState.getSimpleRegionWithVertex( vertex );
   }
 
   public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
-    throw new Error( 'unimplemented' );
+    return this.solvedState.getSimpleRegionWithEdge( edge );
   }
 
   public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
-    throw new Error( 'unimplemented' );
+    return this.solvedState.getSimpleRegionWithId( id );
   }
 
   public getWeirdEdges(): TEdge[] {
-    throw new Error( 'unimplemented' );
+    return this.solvedState.getWeirdEdges();
   }
 
   public modifyRegions(

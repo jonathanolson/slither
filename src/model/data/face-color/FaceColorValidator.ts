@@ -2,9 +2,6 @@ import { TSerializedState, TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { TSolvedPuzzle } from '../../generator/TSolvedPuzzle.ts';
-import { TStructure } from '../../board/core/TStructure.ts';
-import { TFaceData } from '../face/TFaceData.ts';
 import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
@@ -20,19 +17,42 @@ export class FaceColorValidator implements TState<TFaceColorData> {
   ]>();
 
   public constructor(
-    private readonly solvedPuzzle: TSolvedPuzzle<TStructure, TFaceData & TFaceColorData>
+    // @ts-expect-error
+    private readonly board: TBoard,
+    private readonly solvedState: TState<TFaceColorData>
   ) {}
 
-  public getFaceColors(): TFaceColor[] { throw new Error( 'unimplemented' ); }
-  public getInsideColor(): TFaceColor { throw new Error( 'unimplemented' ); }
-  public getOutsideColor(): TFaceColor { throw new Error( 'unimplemented' ); }
+  public getFaceColors(): TFaceColor[] {
+    return this.solvedState.getFaceColors();
+  }
 
-  public getFaceColor( face: TFace ): TFaceColor { throw new Error( 'unimplemented' ); }
-  public getFacesWithColor( faceColor: TFaceColor ): TFace[] { throw new Error( 'unimplemented' ); }
-  public getFaceColorMap(): Map<TFace, TFaceColor> { throw new Error( 'unimplemented' ); }
-  public getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null { throw new Error( 'unimplemented' ); }
+  public getInsideColor(): TFaceColor {
+    return this.solvedState.getInsideColor();
+  }
 
-  public hasInvalidFaceColors(): boolean { throw new Error( 'unimplemented' ); }
+  public getOutsideColor(): TFaceColor {
+    return this.solvedState.getOutsideColor();
+  }
+
+  public getFaceColor( face: TFace ): TFaceColor {
+    return this.solvedState.getFaceColor( face );
+  }
+
+  public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
+    return this.solvedState.getFacesWithColor( faceColor );
+  }
+
+  public getFaceColorMap(): Map<TFace, TFaceColor> {
+    return this.solvedState.getFaceColorMap();
+  }
+
+  public getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null {
+    return this.solvedState.getOppositeFaceColor( faceColor );
+  }
+
+  public hasInvalidFaceColors(): boolean {
+    return this.solvedState.hasInvalidFaceColors();
+  }
 
   public modifyFaceColors(
     addedFaceColors: Iterable<TFaceColor>,
@@ -47,8 +67,8 @@ export class FaceColorValidator implements TState<TFaceColorData> {
 
     const faces = [ ...faceChangeMap.keys() ];
 
-    const insideFaces = faces.filter( face => this.solvedPuzzle.state.getFaceColor( face ) === this.solvedPuzzle.state.getInsideColor() );
-    const outsideFaces = faces.filter( face => this.solvedPuzzle.state.getFaceColor( face ) === this.solvedPuzzle.state.getOutsideColor() );
+    const insideFaces = faces.filter( face => this.solvedState.getFaceColor( face ) === this.solvedState.getInsideColor() );
+    const outsideFaces = faces.filter( face => this.solvedState.getFaceColor( face ) === this.solvedState.getOutsideColor() );
 
     const insideColors = new Set( insideFaces.map( face => faceChangeMap.get( face ) ).filter( color => color !== null ) as TFaceColor[] );
     const outsideColors = new Set( outsideFaces.map( face => faceChangeMap.get( face ) ).filter( color => color !== null ) as TFaceColor[] );
