@@ -4,13 +4,14 @@ import EdgeState from '../data/edge/EdgeState.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener } from '../data/simple-region/TSimpleRegionData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 export type SimpleLoopSolverOptions = {
   solveToRed: boolean;
@@ -18,7 +19,7 @@ export type SimpleLoopSolverOptions = {
   resolveAllRegions: boolean;
 };
 
-export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAction<TFaceData & TEdgeData & TSimpleRegionData>> {
+export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAnnotatedAction<TFaceData & TEdgeData & TSimpleRegionData>> {
 
   private readonly dirtySimpleRegions: Set<TSimpleRegion>;
   private hasDirtyWeirdEdges: boolean = false;
@@ -60,7 +61,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     return this.dirtySimpleRegions.size > 0 || this.hasDirtyWeirdEdges;
   }
 
-  public nextAction(): TAction<TFaceData & TEdgeData & TSimpleRegionData> | null {
+  public nextAction(): TAnnotatedAction<TFaceData & TEdgeData & TSimpleRegionData> | null {
     if ( !this.dirty ) { return null; }
 
     if ( this.state.getWeirdEdges().length ) {
@@ -117,12 +118,24 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
           if ( currentVertex === endVertex ) {
             if ( this.isSolvedWithAddedEdges( region, edges ) ) {
               if ( this.options.solveToBlack ) {
-                return new CompositeAction( edges.map( edge => new EdgeStateSetAction( edge, EdgeState.BLACK ) ) );
+                return new AnnotatedAction( new CompositeAction( edges.map( edge => new EdgeStateSetAction( edge, EdgeState.BLACK ) ) ), {
+                  type: 'ForcedSolveLoop',
+                  a: startVertex,
+                  b: endVertex,
+                  regionEdges: region.edges,
+                  pathEdges: edges
+                } );
               }
             }
             else {
               if ( this.options.solveToRed ) {
-                return new CompositeAction( edges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) );
+                return new AnnotatedAction( new CompositeAction( edges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
+                  type: 'PrematureForcedLoop',
+                  a: startVertex,
+                  b: endVertex,
+                  regionEdges: region.edges,
+                  pathEdges: edges
+                } );
               }
             }
           }

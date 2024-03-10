@@ -2,7 +2,6 @@ import { TSolver } from './TSolver.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import FaceColorState, { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
@@ -14,10 +13,12 @@ import { GeneralFaceColorAction } from '../data/face-color/GeneralFaceColorActio
 import { FaceColorInvalidAction } from '../data/face-color/FaceColorInvalidAction.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 type Data = TEdgeData & TFaceColorData;
 
-export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
+export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   // Track whether a red/black edge changed to something else (we'll need to recompute the face colors)
   private hadEdgeAdjusted: boolean = true;
@@ -45,7 +46,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
     return this.dirtyEdges.size > 0 || this.hadEdgeAdjusted;
   }
 
-  public nextAction(): TAction<Data> | null {
+  public nextAction(): TAnnotatedAction<Data> | null {
     if ( !this.dirty ) { return null; }
 
     const requiresFullRecompute = this.hadEdgeAdjusted || this.state.hasInvalidFaceColors();
@@ -178,7 +179,9 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
       }
 
       if ( encounteredError ) {
-        return new FaceColorInvalidAction();
+        return new AnnotatedAction( new FaceColorInvalidAction(), {
+          type: 'InvalidFaceColoring'
+        } );
       }
 
       // Match up with old colors
@@ -270,7 +273,9 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
       const hasChange = addedFaceColors.size > 0 || removedFaceColors.size > 0 || faceChangeMap.size > 0 || oppositeChangeMap.size > 0 || this.state.hasInvalidFaceColors();
 
       if ( hasChange ) {
-        return new GeneralFaceColorAction( this.board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, false );
+        return new AnnotatedAction( new GeneralFaceColorAction( this.board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, false ), {
+          type: 'GeneralFaceColoring'
+        } );
       }
       else {
         return null;
@@ -287,10 +292,16 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAction<Data>> {
           const faceColorB = edge.reversedFace ? this.state.getFaceColor( edge.reversedFace ) : this.state.getOutsideColor();
 
           if ( state === EdgeState.BLACK ) {
-            return new FaceColorMakeOppositeAction( faceColorA, faceColorB );
+            return new AnnotatedAction( new FaceColorMakeOppositeAction( faceColorA, faceColorB ), {
+              type: 'FaceColoringBlackEdge',
+              edge: edge
+            } );
           }
           else if ( state === EdgeState.RED ) {
-            return new FaceColorMakeSameAction( faceColorA, faceColorB );
+            return new AnnotatedAction( new FaceColorMakeSameAction( faceColorA, faceColorB ), {
+              type: 'FaceColoringRedEdge',
+              edge: edge
+            } );
           }
         }
       }

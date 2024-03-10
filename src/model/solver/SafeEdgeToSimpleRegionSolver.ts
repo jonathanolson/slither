@@ -5,20 +5,21 @@ import { GeneralSimpleRegion } from '../data/simple-region/GeneralSimpleRegion.t
 import { THalfEdge } from '../board/core/THalfEdge.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegionAction.ts';
 import { dotRandom } from 'phet-lib/dot';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 // Oops, because on app restart, region IDs are persistent
 const getSimpleRegionGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
 type Data = TFaceData & TEdgeData & TSimpleRegionData;
 
-export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAction<Data>> {
+export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyEdges = new Set<TEdge>();
 
@@ -43,7 +44,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAction<Data>
     return this.dirtyEdges.size > 0;
   }
 
-  public nextAction(): TAction<Data> | null {
+  public nextAction(): TAnnotatedAction<Data> | null {
     if ( !this.dirty ) { return null; }
 
     const oldRegions = this.state.getSimpleRegions();
@@ -254,7 +255,9 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAction<Data>
     // NOTE: only do this at the end, since if we "error out" we'll want to note we still need to be computed
     this.dirtyEdges.clear();
 
-    return new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+    return new AnnotatedAction( new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges ), {
+      type: 'SimpleRegions'
+    } );
   }
 
   public clone( equivalentState: TState<Data> ): SafeEdgeToSimpleRegionSolver {

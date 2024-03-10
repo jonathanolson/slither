@@ -3,12 +3,13 @@ import { InvalidStateError } from './errors/InvalidStateError.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TAction } from '../data/core/TAction.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
 export type SimpleFaceColorSolverOptions = {
   solveToRed: boolean;
@@ -17,7 +18,7 @@ export type SimpleFaceColorSolverOptions = {
 
 type Data = TEdgeData & TFaceColorData;
 
-export class SimpleFaceColorSolver implements TSolver<Data, TAction<Data>> {
+export class SimpleFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyEdges: Set<TEdge> = new Set();
 
@@ -65,7 +66,7 @@ export class SimpleFaceColorSolver implements TSolver<Data, TAction<Data>> {
     return this.dirtyEdges.size > 0;
   }
 
-  public nextAction(): TAction<Data> | null {
+  public nextAction(): TAnnotatedAction<Data> | null {
     if ( !this.dirty ) { return null; }
 
     if ( this.state.hasInvalidFaceColors() ) {
@@ -85,11 +86,17 @@ export class SimpleFaceColorSolver implements TSolver<Data, TAction<Data>> {
         const isOpposite = this.state.getOppositeFaceColor( faceColorA ) === faceColorB;
 
         if ( this.options.solveToBlack && isOpposite ) {
-          return new EdgeStateSetAction( edge, EdgeState.BLACK );
+          return new AnnotatedAction( new EdgeStateSetAction( edge, EdgeState.BLACK ), {
+            type: 'FaceColorToBlack',
+            edge: edge
+          } );
         }
 
         if ( this.options.solveToRed && isSame ) {
-          return new EdgeStateSetAction( edge, EdgeState.RED );
+          return new AnnotatedAction( new EdgeStateSetAction( edge, EdgeState.RED ), {
+            type: 'FaceColorToRed',
+            edge: edge
+          } );
         }
       }
 

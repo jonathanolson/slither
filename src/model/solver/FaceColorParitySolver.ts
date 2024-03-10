@@ -13,6 +13,7 @@ import { TFaceData } from '../data/face/TFaceData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import _ from '../../workarounds/_.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;
@@ -122,14 +123,17 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
             } );
 
             if ( hasNonAdjacentValuedFace ) {
-              return new CompositeAction( sides.map( side => new EdgeStateSetAction( side.edge, EdgeState.RED ) ) );
+              return new AnnotatedAction( new CompositeAction( sides.map( side => new EdgeStateSetAction( side.edge, EdgeState.RED ) ) ), {
+                type: 'FaceColorNoTrivialLoop',
+                face: face
+              } );
             }
           }
         }
         else {
           const blackCount = face.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.BLACK ).length;
 
-          const findAction = ( value: number, sides: Side[] ): TAction<Data> | null => {
+          const findAction = ( value: number, sides: Side[], partialPairsExcluded: [ Side[], Side[] ][] ): TAction<Data> | null => {
 
             let dualCounts: DualColorCount[] = [];
             for ( const side of sides ) {
@@ -248,7 +252,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
 
                 const filteredSides = sides.filter( side => !removedMainSides.includes( side ) && !removedOppositeSides.includes( side ) );
                 if ( filteredSides.length ) {
-                  const action = findAction( F - dualCount.size, filteredSides );
+                  const action = findAction( F - dualCount.size, filteredSides, partialPairsExcluded.concat( [ [ removedMainSides, removedOppositeSides ] ] ) );
                   if ( action ) {
                     return action;
                   }
@@ -259,7 +263,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAction<Data>> {
             return null;
           };
 
-          const action = findAction( faceValue - blackCount, sides );
+          const action = findAction( faceValue - blackCount, sides, [] );
 
           if ( action ) {
             return action;

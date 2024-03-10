@@ -6,6 +6,8 @@ import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { simpleRegionIsSolved, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 
 type Data = TSimpleRegionData & TEdgeData;
 
@@ -35,12 +37,13 @@ export class SafeSolvedEdgeSolver implements TSolver<Data, TAction<Data>> {
     if ( !this.dirty ) { return null; }
 
     if ( simpleRegionIsSolved( this.state ) ) {
-      for ( const edge of this.board.edges ) {
-        const edgeState = this.state.getEdgeState( edge );
+      const whiteEdges = this.board.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
 
-        if ( edgeState === EdgeState.WHITE ) {
-          return new EdgeStateSetAction( edge, EdgeState.RED );
-        }
+      if ( whiteEdges.length ) {
+        return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
+          type: 'CompletingEdgesAfterSolve',
+          whiteEdges: whiteEdges
+        } );
       }
     }
 
