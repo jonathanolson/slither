@@ -140,7 +140,8 @@ export class AnnotationNode extends Node {
     }
 
     super( {
-      children: children
+      children: children,
+      pickable: false
     } );
   }
 }

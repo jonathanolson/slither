@@ -3,7 +3,7 @@ import { HBox, Node } from 'phet-lib/scenery';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
-import { advancedSettingsVisibleProperty, SettingsNode } from './SettingsNode.ts';
+import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { controlBarFont, controlBarMargin, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
@@ -170,7 +170,6 @@ export default class ControlBarNode extends HBox {
               puzzleModelProperty.value.onUserRequestHint();
             }
           },
-          visibleProperty: advancedSettingsVisibleProperty,
 
           // TODO: enabledProperty
 

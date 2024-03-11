@@ -1,5 +1,5 @@
 import { Bounds2, Dimension2, Range, Vector2 } from 'phet-lib/dot';
-import { HBox, HBoxOptions, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
+import { HBox, HBoxOptions, HSeparator, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
@@ -23,6 +23,10 @@ import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 import { NumberControl } from 'phet-lib/scenery-phet';
 import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
+import CanSolveDifficulty, { canSolveDifficultyProperty } from '../model/generator/CanSolveDifficulty.ts';
+import { withAllFacesFilled } from '../model/generator/withAllFacesFilled.ts';
+import { UIText } from './UIText.ts';
+import { UIAquaRadioButtonGroup } from './UIAquaRadioButtonGroup.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
@@ -471,6 +475,33 @@ export class GenerateNode extends HBox {
       grow: 1
     } );
 
+    const difficultyControlsContainer = new HBox( {
+      spacing: 10,
+      align: 'center',
+      layoutOptions: {
+        grow: 0
+      },
+      children: [
+        new UIText( 'Solver Difficulty' ),
+        new UIAquaRadioButtonGroup( canSolveDifficultyProperty, [
+          {
+            value: CanSolveDifficulty.STANDARD,
+            createNode: () => new UIText( 'Standard' ),
+            labelContent: 'Standard'
+          },
+          {
+            value: CanSolveDifficulty.NO_LIMIT,
+            createNode: () => new UIText( 'No Limit' ),
+            labelContent: 'No Limit'
+          }
+        ], {
+          orientation: 'horizontal',
+          align: 'center',
+          spacing: 30
+        } )
+      ]
+    } );
+
     const propertiesControlsContainer = new HBox( {
       spacing: 10,
       align: 'center',
@@ -650,6 +681,11 @@ export class GenerateNode extends HBox {
 
           const faceDefineEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
           const faceMinimizeEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
+          const faceResetEmitter = new TinyEmitter();
+
+          faceResetEmitter.addListener( () => {
+            previewGeneratedNode.children = [];
+          } );
 
           faceDefineEmitter.addListener( ( index, state ) => {
             previewGeneratedNode.addChild( new Path( Shape.polygon( polygons[ index ] ), {
@@ -686,8 +722,38 @@ export class GenerateNode extends HBox {
           } );
 
           try {
-            const definedPuzzle = await generateFaceAdditive( board, interruptedProperty, faceDefineEmitter );
-            const minimizedPuzzle = await greedyFaceMinimize( definedPuzzle, interruptedProperty, faceMinimizeEmitter );
+            const canSolveDifficulty = canSolveDifficultyProperty.value;
+            const canSolve = canSolveDifficulty.canSolve;
+
+            const getUniquePuzzle = async () => {
+              return await generateFaceAdditive( board, interruptedProperty, faceDefineEmitter );
+            };
+
+            const getMinimizablePuzzle = async () => {
+              let uniquePuzzle = await getUniquePuzzle();
+
+              if ( canSolveDifficulty === CanSolveDifficulty.NO_LIMIT ) {
+                return uniquePuzzle;
+              }
+              else {
+                // TODO: should we do this on everything? probably not, because it ... doesn't change the distribution? BUT might make it harder?
+
+                const blankFaces = board.faces.filter( face => uniquePuzzle.cleanState.getFaceState( face ) === null );
+                const minimizablePuzzle = withAllFacesFilled( uniquePuzzle );
+                blankFaces.forEach( face => {
+                  faceDefineEmitter.emit( board.faces.indexOf( face ), minimizablePuzzle.cleanState.getFaceState( face ) );
+                } );
+                return minimizablePuzzle;
+              }
+            };
+
+            let minimizablePuzzle = await getMinimizablePuzzle();
+            while ( !canSolve( minimizablePuzzle.board, minimizablePuzzle.cleanState.clone() ) ) {
+              faceResetEmitter.emit();
+              minimizablePuzzle = await getMinimizablePuzzle();
+            }
+
+            const minimizedPuzzle = await greedyFaceMinimize( minimizablePuzzle, canSolve, interruptedProperty, faceMinimizeEmitter );
 
             // Maybe... let it complete on the screen before we do complicated time consuming things
             interruptableSleep( 17, interruptedProperty );
@@ -751,6 +817,9 @@ export class GenerateNode extends HBox {
           children: [
             previewRectangle,
             generateButtonContainer,
+            new HSeparator(),
+            difficultyControlsContainer,
+            new HSeparator(),
             propertiesControlsContainer,
           ]
         } ),

@@ -10,11 +10,13 @@ import FaceState from '../data/face/FaceState.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 // TODO: what happens if we take... the "average" of greedy face minimizes?
 // TODO: or, given a number of minimizes, we get an "order" of faces, from "usually can remove" to "usually can't remove"
 export const greedyFaceMinimize = async <Structure extends TStructure, Data extends TCompleteData>(
   solvedPuzzle: TSolvedPuzzle<Structure, Data>,
+  isEasyEnough: ( board: TBoard, state: TState<Data> ) => boolean = () => true,
   interruptedProperty?: TReadOnlyProperty<boolean>,
   faceProcessedEmitter?: TEmitter<[ index: number, state: FaceState ]>
 ): Promise<TSolvedPuzzle<Structure, Data>> => {
@@ -44,6 +46,8 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
   };
 
   assertEnabled() && assert( !hasMultipleSolutions( state ), 'Initial state has multiple solutions' );
+  // TODO: consider getting rid of the defensive copy
+  assertEnabled() && assert( isEasyEnough( board, state.clone() ), 'Initial state is not easy enough' );
 
   for ( const face of faceOrder ) {
     interruptedProperty && await interruptableSleep( 0, interruptedProperty );
@@ -59,7 +63,8 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
 
     delta.setFaceState( face, null );
 
-    if ( !hasMultipleSolutions( delta ) ) {
+    // TODO: consider getting rid of the defensive copy
+    if ( !hasMultipleSolutions( delta ) && isEasyEnough( board, delta.clone() ) ) {
       delta.apply( state );
       faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), null );
     }

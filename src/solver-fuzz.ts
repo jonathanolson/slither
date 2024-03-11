@@ -66,7 +66,7 @@ const boards = [
     // TODO: omg, cleanup here, it is a wreck with naming
 
     const definedPuzzle = await generateFaceAdditive( board, interrutedProperty );
-    const minimizedPuzzle = await greedyFaceMinimize( definedPuzzle, interrutedProperty );
+    const minimizedPuzzle = await greedyFaceMinimize( definedPuzzle, () => true, interrutedProperty );
 
     const solvedPuzzle = minimizedPuzzle;
 
