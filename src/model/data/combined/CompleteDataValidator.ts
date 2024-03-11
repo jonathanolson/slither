@@ -29,15 +29,16 @@ export class CompleteDataValidator implements TState<TCompleteData> {
 
   public constructor(
     board: TBoard,
+    currentState: TState<TCompleteData>,
     solvedState: TState<TCompleteData>
   ) {
     assertEnabled() && assert( board );
     assertEnabled() && assert( solvedState );
 
-    this.edgeDataValidator = new EdgeDataValidator( board, solvedState );
-    this.faceDataValidator = new FaceDataValidator( board, solvedState );
-    this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, solvedState );
-    this.faceColorValidator = new FaceColorValidator( board, solvedState );
+    this.edgeDataValidator = new EdgeDataValidator( board, currentState, solvedState );
+    this.faceDataValidator = new FaceDataValidator( board, currentState, solvedState );
+    this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, currentState, solvedState );
+    this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState );
   }
 
   public getFaceState( face: TFace ): FaceState {

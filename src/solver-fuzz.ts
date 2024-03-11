@@ -89,7 +89,7 @@ const boards = [
       const action = solver.nextAction();
       if ( action ) {
         console.log( action );
-        const validator = new CompleteDataValidator( board, solvedState );
+        const validator = new CompleteDataValidator( board, state, solvedState );
         action.apply( validator );
         action.apply( state );
       }

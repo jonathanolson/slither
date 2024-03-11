@@ -15,11 +15,12 @@ export class EdgeDataValidator implements TState<TEdgeData> {
 
   public constructor(
     private readonly board: TBoard,
+    private readonly currentState: TState<TEdgeData>,
     private readonly solvedState: TState<TEdgeData>
   ) {}
 
   public getEdgeState( edge: TEdge ): EdgeState {
-    return this.solvedState.getEdgeState( edge );
+    return this.currentState.getEdgeState( edge );
   }
 
   public setEdgeState( edge: TEdge, state: EdgeState ): void {

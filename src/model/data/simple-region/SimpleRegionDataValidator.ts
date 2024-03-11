@@ -20,27 +20,29 @@ export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
   public constructor(
     // @ts-expect-error
     private readonly board: TBoard,
+    private readonly currentState: TState<TSimpleRegionData>,
+    // @ts-expect-error
     private readonly solvedState: TState<TSimpleRegionData>
   ) {}
 
   public getSimpleRegions(): TSimpleRegion[] {
-    return this.solvedState.getSimpleRegions();
+    return this.currentState.getSimpleRegions();
   }
 
   public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
-    return this.solvedState.getSimpleRegionWithVertex( vertex );
+    return this.currentState.getSimpleRegionWithVertex( vertex );
   }
 
   public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
-    return this.solvedState.getSimpleRegionWithEdge( edge );
+    return this.currentState.getSimpleRegionWithEdge( edge );
   }
 
   public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
-    return this.solvedState.getSimpleRegionWithId( id );
+    return this.currentState.getSimpleRegionWithId( id );
   }
 
   public getWeirdEdges(): TEdge[] {
-    return this.solvedState.getWeirdEdges();
+    return this.currentState.getWeirdEdges();
   }
 
   public modifyRegions(

@@ -15,11 +15,12 @@ export class FaceDataValidator implements TState<TFaceData> {
   public constructor(
     // @ts-expect-error
     private readonly board: TBoard,
+    private readonly currentState: TState<TFaceData>,
     private readonly solvedState: TState<TFaceData>
   ) {}
 
   public getFaceState( face: TFace ): FaceState {
-    return this.solvedState.getFaceState( face );
+    return this.currentState.getFaceState( face );
   }
 
   public setFaceState( face: TFace, state: FaceState ): void {

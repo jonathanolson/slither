@@ -96,6 +96,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
   }
 
   public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
+    assertEnabled() && assert( this.faceColors.has( faceColor ) );
+    
     const faces = this.colorInverseMap.get( faceColor )!;
     assertEnabled() && assert( faces );
 
