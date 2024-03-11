@@ -15,6 +15,7 @@ import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
+import { SectorNode } from './SectorNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -54,6 +55,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       visibleProperty: faceColorsVisibleProperty
     } );
     const faceContainer = new Node();
+    const sectorContainer = new Node();
     const edgeContainer = new Node();
     const vertexContainer = new Node();
     const simpleRegionContainer = new Node();
@@ -90,6 +92,10 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, options ) );
     } );
 
+    puzzle.board.halfEdges.forEach( sector => {
+      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty ) );
+    } );
+
     if ( options?.useSimpleRegionForBlack ) {
       simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
     }
@@ -99,6 +105,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         backgroundNode,
         faceColorContainer,
         faceContainer,
+        sectorContainer,
         edgeContainer,
         vertexContainer,
         simpleRegionContainer,
@@ -114,6 +121,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       edgeContainer.children.forEach( child => child.dispose() );
       vertexContainer.children.forEach( child => child.dispose() );
       simpleRegionContainer.children.forEach( child => child.dispose() );
+      sectorContainer.children.forEach( child => child.dispose() );
       isSolvedProperty.dispose();
     } );
   }

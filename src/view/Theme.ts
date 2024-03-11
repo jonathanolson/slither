@@ -548,6 +548,7 @@ export const generateButtonFont = new Font( {
 
 export const edgeColorsVisibleProperty = new LocalStorageBooleanProperty( 'simpleRegionColorsVisibleProperty', true );
 export const faceColorsVisibleProperty = new LocalStorageBooleanProperty( 'faceColorsVisibleProperty', true );
+export const sectorsVisibleProperty = new LocalStorageBooleanProperty( 'sectorsVisibleProperty', true ); // TODO: re-evaluate default
 export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', false );
 export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );

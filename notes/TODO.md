@@ -33,16 +33,28 @@
         - Vertex + face colors => sectors
         - Face (value + sectors internal) => edges/sectors
     - View:
+      - A way to view ALL sector state values (especially buggy ones?)
+        - showSectorsNextToEdges (default false)
+        - showSimpleSectors (default false)
+      - 
       - Color the sector lines.
         - double for NOT_ONE
         - single for ONLY_ONE
         - ??? for NOT_TWO
         - ??? for NOT_ZERO
+      - lineWidth?
+      - color (for sure)
+      - dash?
+      - fill instead of stroke?
+      - inverse arc would be... great?
+  - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one
+    - If it's still broken, it is still broken.
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?
   - Binary sets:
     - WE CAN VISUALIZE THESE with coloring!!!
+  - TO set an X... user presses one finger down elsewhere, THEN presses on edge?
   - Bugs:
     - App broken when reloading on broken state?
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
