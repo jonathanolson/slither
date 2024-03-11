@@ -95,8 +95,7 @@ const boards = [
 
     const updateView = () => {
       unsolvedPuzzle.stateProperty.value = state.clone();
-      // TODO: only do this on animation frames... omg...
-      display.updateDisplay();
+      display.updateDisplay(); // NOTE: this MIGHT look for overkill, but keeps things looking correct
     };
 
     let count = 0;

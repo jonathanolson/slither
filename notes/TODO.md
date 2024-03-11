@@ -6,6 +6,12 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - Static double N-1 face
+    - 
+  - "double 3 share face" -
+    - NEEDS "other face so that a loop isn't failure" - CHECK THIS GLOBALLY IN SOLVER FIRST?
+    - If they are "FULL" N-1 faces: Edge between both N-1 faces is set
+  - 
   - Test out applying an action when a hint is showing
   - SimpleVertexState? (and then... 3-3 loop prevention? use it for generation and stuff)
   - Show current hint info... somewhere
