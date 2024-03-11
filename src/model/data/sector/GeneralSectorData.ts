@@ -20,7 +20,7 @@ export class GeneralSectorData implements TState<TSectorData> {
 
   public constructor(
     public readonly board: TBoard,
-    getInitialSectorState: ( sector: TSector ) => SectorState
+    getInitialSectorState: ( sector: TSector ) => SectorState = () => SectorState.ANY
   ) {
     board.halfEdges.forEach( sector => {
       this.sectorStateMap.set( sector, getInitialSectorState( sector ) );

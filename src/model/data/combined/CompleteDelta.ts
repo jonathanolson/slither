@@ -12,6 +12,9 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TSectorData } from '../sector/TSectorData.ts';
+import { TSector } from '../sector/TSector.ts';
+import SectorState from '../sector/SectorState.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
@@ -21,15 +24,17 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     public readonly faceDelta: TDelta<TFaceData>,
     public readonly edgeDelta: TDelta<TEdgeData>,
     public readonly simpleRegionDelta: TDelta<TSimpleRegionData>,
-    public readonly faceColorDelta: TDelta<TFaceColorData>
+    public readonly faceColorDelta: TDelta<TFaceColorData>,
+    public readonly sectorDelta: TDelta<TSectorData>
   ) {
-    super( faceDelta, edgeDelta, simpleRegionDelta, faceColorDelta );
+    super( faceDelta, edgeDelta, simpleRegionDelta, faceColorDelta, sectorDelta );
 
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceDelta.faceStateChangedEmitter.addListener( anyChangeListener );
     edgeDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionDelta.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorDelta.faceColorsChangedEmitter.addListener( anyChangeListener );
+    sectorDelta.sectorChangedEmitter.addListener( anyChangeListener );
   }
 
   public getFaceState( face: TFace ): FaceState {
@@ -145,12 +150,24 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     return this.faceColorDelta.faceColorsChangedEmitter;
   }
 
+  public getSectorState( sector: TSector ): SectorState {
+    return this.sectorDelta.getSectorState( sector );
+  }
+
+  public setSectorState( sector: TSector, state: SectorState ): void {
+    this.sectorDelta.setSectorState( sector, state );
+  }
+
+  public get sectorChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
+    return this.sectorDelta.sectorChangedEmitter;
+  }
+
   public clone(): CompleteDelta {
-    return new CompleteDelta( this.faceDelta.clone(), this.edgeDelta.clone(), this.simpleRegionDelta.clone(), this.faceColorDelta.clone() );
+    return new CompleteDelta( this.faceDelta.clone(), this.edgeDelta.clone(), this.simpleRegionDelta.clone(), this.faceColorDelta.clone(), this.sectorDelta.clone() );
   }
 
   public createDelta(): TDelta<TCompleteData> {
-    return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta(), this.faceColorDelta.createDelta() );
+    return new CompleteDelta( this.faceDelta.createDelta(), this.edgeDelta.createDelta(), this.simpleRegionDelta.createDelta(), this.faceColorDelta.createDelta(), this.sectorDelta.createDelta() );
   }
 
   public serializeState( board: TBoard ): TSerializedCompleteData {

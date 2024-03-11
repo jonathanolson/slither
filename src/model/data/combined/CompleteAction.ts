@@ -5,13 +5,15 @@ import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TSectorData } from '../sector/TSectorData.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(
     public readonly faceAction: TAction<TFaceData>,
     public readonly edgeAction: TAction<TEdgeData>,
     public readonly simpleRegionAction: TAction<TSimpleRegionData>,
-    public readonly faceColorAction: TAction<TFaceColorData>
+    public readonly faceColorAction: TAction<TFaceColorData>,
+    public readonly sectorAction: TAction<TSectorData>
   ) {}
 
   public apply( state: TCompleteData ): void {
@@ -19,14 +21,25 @@ export class CompleteAction implements TAction<TCompleteData> {
     this.edgeAction.apply( state );
     this.simpleRegionAction.apply( state );
     this.faceColorAction.apply( state );
+    this.sectorAction.apply( state );
   }
 
   public getUndo( state: TCompleteData ): TAction<TCompleteData> {
-    return new CompleteAction( this.faceAction.getUndo( state ), this.edgeAction.getUndo( state ), this.simpleRegionAction.getUndo( state ), this.faceColorAction.getUndo( state ) );
+    return new CompleteAction(
+      this.faceAction.getUndo( state ),
+      this.edgeAction.getUndo( state ),
+      this.simpleRegionAction.getUndo( state ),
+      this.faceColorAction.getUndo( state ),
+      this.sectorAction.getUndo( state )
+    );
   }
 
   public isEmpty(): boolean {
-    return this.faceAction.isEmpty() && this.edgeAction.isEmpty() && this.simpleRegionAction.isEmpty();
+    return this.faceAction.isEmpty() &&
+      this.edgeAction.isEmpty() &&
+      this.simpleRegionAction.isEmpty() &&
+      this.faceColorAction.isEmpty() &&
+      this.sectorAction.isEmpty();
   }
 
   public serializeAction(): TSerializedAction {
@@ -35,7 +48,8 @@ export class CompleteAction implements TAction<TCompleteData> {
       faceAction: this.faceAction.serializeAction(),
       edgeAction: this.edgeAction.serializeAction(),
       simpleRegionAction: this.simpleRegionAction.serializeAction(),
-      faceColorAction: this.faceColorAction.serializeAction()
+      faceColorAction: this.faceColorAction.serializeAction(),
+      sectorAction: this.sectorAction.serializeAction()
     };
   }
 
@@ -44,7 +58,8 @@ export class CompleteAction implements TAction<TCompleteData> {
       deserializeAction( board, serializedAction.faceAction ),
       deserializeAction( board, serializedAction.edgeAction ),
       deserializeAction( board, serializedAction.simpleRegionAction ),
-      deserializeAction( board, serializedAction.faceColorAction )
+      deserializeAction( board, serializedAction.faceColorAction ),
+      deserializeAction( board, serializedAction.sectorAction )
     );
   }
 }

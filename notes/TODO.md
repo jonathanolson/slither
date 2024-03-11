@@ -32,6 +32,12 @@
         - Vertex + all sectors => sectors/edges update (or... also face colors)
         - Vertex + face colors => sectors
         - Face (value + sectors internal) => edges/sectors
+    - View:
+      - Color the sector lines.
+        - double for NOT_ONE
+        - single for ONLY_ONE
+        - ??? for NOT_TWO
+        - ??? for NOT_ZERO
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?

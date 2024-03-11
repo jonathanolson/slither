@@ -18,6 +18,10 @@ import { CompleteDelta } from './CompleteDelta.ts';
 import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegionData.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { GeneralFaceColorData } from '../face-color/GeneralFaceColorData.ts';
+import { TSectorData } from '../sector/TSectorData.ts';
+import { GeneralSectorData } from '../sector/GeneralSectorData.ts';
+import { TSector } from '../sector/TSector.ts';
+import SectorState from '../sector/SectorState.ts';
 
 export class CompleteData implements TState<TCompleteData> {
 
@@ -28,12 +32,15 @@ export class CompleteData implements TState<TCompleteData> {
     public readonly faceData: TState<TFaceData>,
     public readonly edgeData: TState<TEdgeData>,
     public readonly simpleRegionData: TState<TSimpleRegionData>,
-    public readonly faceColorData: TState<TFaceColorData>
+    public readonly faceColorData: TState<TFaceColorData>,
+    public readonly sectorData: TState<TSectorData>
   ) {
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceData.faceStateChangedEmitter.addListener( anyChangeListener );
     edgeData.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionData.simpleRegionsChangedEmitter.addListener( anyChangeListener );
+    faceColorData.faceColorsChangedEmitter.addListener( anyChangeListener );
+    sectorData.sectorChangedEmitter.addListener( anyChangeListener );
   }
 
   public static fromFacesEdges(
@@ -45,7 +52,8 @@ export class CompleteData implements TState<TCompleteData> {
       new GeneralFaceData( board, getInitialFaceState ),
       new GeneralEdgeData( board, getInitialEdgeState ),
       new GeneralSimpleRegionData( board ),
-      new GeneralFaceColorData( board )
+      new GeneralFaceColorData( board ),
+      new GeneralSectorData( board )
     );
   }
 
@@ -190,8 +198,20 @@ export class CompleteData implements TState<TCompleteData> {
     return this.faceColorData.faceColorsChangedEmitter;
   }
 
+  public getSectorState( sector: TSector ): SectorState {
+    return this.sectorData.getSectorState( sector );
+  }
+
+  public setSectorState( sector: TSector, state: SectorState ): void {
+    this.sectorData.setSectorState( sector, state );
+  }
+
+  public get sectorChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
+    return this.sectorData.sectorChangedEmitter;
+  }
+
   public clone(): CompleteData {
-    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone(), this.faceColorData.clone() );
+    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone(), this.faceColorData.clone(), this.sectorData.clone() );
   }
 
   public createDelta(): TDelta<TCompleteData> {
@@ -199,7 +219,8 @@ export class CompleteData implements TState<TCompleteData> {
       this.faceData.createDelta(),
       this.edgeData.createDelta(),
       this.simpleRegionData.createDelta(),
-      this.faceColorData.createDelta()
+      this.faceColorData.createDelta(),
+      this.sectorData.createDelta()
     );
   }
 
@@ -214,7 +235,8 @@ export class CompleteData implements TState<TCompleteData> {
       // TODO: get a setup so we can avoid shipping this data
       serializedCompleteData.simpleRegionData ? GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData ) : new GeneralSimpleRegionData( board ),
       // TODO: get a setup so we can avoid shipping this data
-      serializedCompleteData.faceColorData ? GeneralFaceColorData.deserializeState( board, serializedCompleteData.faceColorData ) : new GeneralFaceColorData( board )
+      serializedCompleteData.faceColorData ? GeneralFaceColorData.deserializeState( board, serializedCompleteData.faceColorData ) : new GeneralFaceColorData( board ),
+      serializedCompleteData.sectorData ? GeneralSectorData.deserializeState( board, serializedCompleteData.sectorData ) : new GeneralSectorData( board )
     );
   }
 }

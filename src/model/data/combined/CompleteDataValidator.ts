@@ -17,6 +17,10 @@ import { FaceDataValidator } from '../face/FaceDataValidator.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { TSectorData } from '../sector/TSectorData.ts';
+import { SectorDataValidator } from '../sector/SectorDataValidator.ts';
+import { TSector } from '../sector/TSector.ts';
+import SectorState from '../sector/SectorState.ts';
 
 export class CompleteDataValidator implements TState<TCompleteData> {
 
@@ -26,6 +30,7 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   private readonly faceDataValidator: TState<TFaceData>;
   private readonly simpleRegionDataValidator: TState<TSimpleRegionData>;
   private readonly faceColorValidator: TState<TFaceColorData>;
+  private readonly sectorValidator: TState<TSectorData>;
 
   public constructor(
     board: TBoard,
@@ -38,7 +43,8 @@ export class CompleteDataValidator implements TState<TCompleteData> {
     this.edgeDataValidator = new EdgeDataValidator( board, currentState, solvedState );
     this.faceDataValidator = new FaceDataValidator( board, currentState, solvedState );
     this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, currentState, solvedState );
-    this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState );
+    this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState ); // TODO: naming discrepancies
+    this.sectorValidator = new SectorDataValidator( board, currentState, solvedState );
   }
 
   public getFaceState( face: TFace ): FaceState {
@@ -152,6 +158,18 @@ export class CompleteDataValidator implements TState<TCompleteData> {
     changedFaces: Iterable<TFace>,
   ]> {
     return this.faceColorValidator.faceColorsChangedEmitter;
+  }
+
+  public getSectorState( sector: TSector ): SectorState {
+    return this.sectorValidator.getSectorState( sector );
+  }
+
+  public setSectorState( sector: TSector, state: SectorState ): void {
+    this.sectorValidator.setSectorState( sector, state );
+  }
+
+  public get sectorChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
+    return this.sectorValidator.sectorChangedEmitter;
   }
 
   public clone(): CompleteDataValidator {
