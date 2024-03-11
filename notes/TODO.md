@@ -10,8 +10,6 @@
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?
-  - Hard to visualize OPPOSITE colors with... all the noise
-    - Better way of HARD showing disconnected opposite colors? 
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
   - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
     - We'll want this in order to list out all of the potential hints(!)
@@ -26,7 +24,6 @@
     - -- forward generation, right?
     - greedy checks for face minimization? (check all faces, and for each removed, CHECK ALL AGAIN to see which face removal still allows the most removals)
       - That... sounds slow.
-  - Hint: do better than second-press to apply (switch... text in it?)
   - Actions for face color changes... should potentially specify the faces? Bleh not sure, is tricky how to serialize
     - If they don't... the face color IDs might change.
   - Autosolver should always go "until error detected" (whether our input is valid or not)
@@ -42,9 +39,9 @@
   - Rename FaceData => FaceValueData, FaceState => FaceValue?
   - TaggedAction - noting the "required" parts of the pattern, and noting the "changes"
     - So that if we encounter a buggy thing, we can see what it was trying to do
-  - HINT button (highlight the thing the next rule would change?)
-    - OMG LIGHT THE BUTTON UP AS ENABLED WHEN WE HAVE A HINT
-  - Highlight region of "dual color + opposite" on hover?
+  - Hint
+    - do better than second-press to apply (switch... text in it?)
+    - Highlight button differently when there is a hint to apply?
   - Generation / difficulty [see generation.md]
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - View modes?
@@ -60,15 +57,24 @@
   - Solver that looks at adjacent colors (if we're adjacent to a color and its opposite, it affects the face/vertex/ state)
   - Solver for colors around face states (e.g. spiked 2s)
   - Face Coloring UI
+    - Dual (opposite) colors have same hue, BUT:
+      - different light/dark values
+      - one is cross-hatched
+      - both are hatched different directions?
+    - HELPS with "loop" hunting too:
+      - "Connected component" visualization? (e.g. all faces that are connected by a black/red)
+        - If we stroke/fill this, we'd need to write that "tracing" of outside boundaries (that we'll use for hex)
+      - "Seam" visualization? (e.g. lines between connected components)
+    - Make duals MORE obvious!
+    - Mode for viewing colors, with link-lines to connect disconnected opposite colors
+    - Hard to visualize OPPOSITE colors with... all the noise
+      - Better way of HARD showing disconnected opposite colors? 
+    - Highlight region of "dual color + opposite" on hover?
     - Face coloring by value (monochrome?) - give speckled pattern for blank board
       - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
         - NO, just use our force-directed style
     - Consider a texture for "inside" and "outside"
     - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
-      - Solvers: 
-        - OMG --- the mediumfacesolver bit... should work nicely for any geometry? figure out the math 
-        - Touching combinations of colors?
-        - Ensure I have everything ported from my Scala code regards to solvers, e.g. "MediumFaceColorSolver?" - examine face and coloring around it
   - Face Coloring Solving
     - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
   - SHOW the vision working on the image(!)
@@ -95,6 +101,7 @@
     - Finished appearance: improve somehow?
   - Interface:
     - Possibilities
+      - Minimap when zoomed in (DAG it, but unpickable)... 
       - SLICK animation(!)
         - Use Twixt damped animation! 
         - Animate transitions to generation / puzzle start / puzzle end (TransitionNode?)
@@ -158,11 +165,6 @@
         - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
     - On victory, animate to zoom out fully (how to do that)?
     - AnimatedPanZoomListener seems a bit clunky at the start. Faster hook?
-  - General issues:
-    - Need better face coloring visualization (or ways to find those "loops")
-      - "Connected component" visualization? (e.g. all faces that are connected by a black/red)
-        - If we stroke/fill this, we'd need to write that "tracing" of outside boundaries (that we'll use for hex)
-      - "Seam" visualization? (e.g. lines between connected components)
   - Annotated actions
     - Possibly with the "difficulty" if auto-solve involved
   - Annotated errors
