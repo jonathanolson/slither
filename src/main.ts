@@ -3,7 +3,7 @@ import './main.css';
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
 import { BooleanProperty, DynamicProperty, Multilink, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
@@ -18,6 +18,8 @@ import { workaroundResolveStep } from './util/sleep.ts';
 import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
+import { TAnnotation } from './model/data/core/TAnnotation.ts';
+import { HintTipNode } from './view/HintTipNode.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -79,6 +81,11 @@ const hasErrorProperty = new DynamicProperty( puzzleModelProperty, {
     return puzzleModel ? puzzleModel.hasErrorProperty : falseProperty;
   }
 } ) as TReadOnlyProperty<boolean>; // Why, TS?
+const displayedAnnotationProperty = new DynamicProperty( puzzleModelProperty, {
+  derive: ( puzzleModel: PuzzleModel | null ): TReadOnlyProperty<TAnnotation | null> => {
+    return puzzleModel ? puzzleModel.displayedAnnotationProperty : new Property( null );
+  }
+} ) as TReadOnlyProperty<TAnnotation | null>; // Why, TS?
 
 // TODO: better place to handle this type of logic...
 Multilink.multilink( [
@@ -89,21 +96,25 @@ Multilink.multilink( [
   display.backgroundColor = hasError ? errorColor : color;
 } );
 
+const controlBarNode = new ControlBarNode( puzzleModelProperty, {
+  glassPane: glassPane,
+  layoutBoundsProperty: layoutBoundsProperty,
+
+  // Require the complete data for now
+  loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void => {
+    const solvablePropertyPuzzle = getSolvablePropertyPuzzle( puzzle.board, puzzle.stateProperty.value );
+    if ( solvablePropertyPuzzle ) {
+      puzzleModelProperty.value = new PuzzleModel( solvablePropertyPuzzle );
+    }
+  }
+} );
+
+const hintTip = new HintTipNode( displayedAnnotationProperty );
+
 const mainBox = new VBox( {
   stretch: true,
   children: [
-    new AlignBox( new ControlBarNode( puzzleModelProperty, {
-      glassPane: glassPane,
-      layoutBoundsProperty: layoutBoundsProperty,
-
-      // Require the complete data for now
-      loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void => {
-        const solvablePropertyPuzzle = getSolvablePropertyPuzzle( puzzle.board, puzzle.stateProperty.value );
-        if ( solvablePropertyPuzzle ) {
-          puzzleModelProperty.value = new PuzzleModel( solvablePropertyPuzzle );
-        }
-      }
-    } ), {
+    new AlignBox( controlBarNode, {
       margin: controlBarMargin
     } ),
     new HBox( {
@@ -126,7 +137,12 @@ layoutBoundsProperty.lazyLink( bounds => {
   mainBox.y = bounds.top;
 } );
 scene.addChild( mainBox );
+scene.addChild( hintTip );
 scene.addChild( glassPane );
+
+ManualConstraint.create( scene, [ controlBarNode, hintTip ], ( controlBarProxy, hintTipProxy ) => {
+  hintTipProxy.centerTop = controlBarProxy.centerBottom.plusXY( 0, 10 );
+} );
 
 display.initializeEvents();
 

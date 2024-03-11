@@ -6,15 +6,7 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - Static double N-1 face
-    - 
-  - "double 3 share face" -
-    - NEEDS "other face so that a loop isn't failure" - CHECK THIS GLOBALLY IN SOLVER FIRST?
-    - If they are "FULL" N-1 faces: Edge between both N-1 faces is set
-  - 
-  - Missing a faceValue=0 loop check case somewhere in a solver? SimpleLoopSolver? Check it
-  - SimpleVertexState? (and then... 3-3 loop prevention? use it for generation and stuff)
-  - Show current hint info... somewhere
+  - SimpleVertexState
   - Hard to visualize OPPOSITE colors with... all the noise
     - Better way of HARD showing disconnected opposite colors? 
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
@@ -27,8 +19,7 @@
         - e.g. for showing the "auto-solve" parts of something?
   - OMG... for our hint, we'll actually want to show MULTIPLE actions, all of the ones that lead up to an edge being set?
     - We'll want to minimize the number of actions. From the "end", start going back trying to remove actions, and see if it can deduce the next thing
-  - Hint button notes:
-    - How can we "apply" the hint after? Especially for coloring-based ones?
+  - Hint: do better than second-press to apply (switch... text in it?)
   - Actions for face color changes... should potentially specify the faces? Bleh not sure, is tricky how to serialize
     - If they don't... the face color IDs might change.
   - Reloading on completed puzzle... seems to "error out"? Check (it is wiping our state)

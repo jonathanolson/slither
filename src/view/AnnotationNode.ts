@@ -2,6 +2,7 @@ import { Node, Path, TPaint } from 'phet-lib/scenery';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
+import { UIText } from './UIText.ts';
 
 export class AnnotationNode extends Node {
   public constructor(
@@ -143,5 +144,10 @@ export class AnnotationNode extends Node {
       children: children,
       pickable: false
     } );
+  }
+
+  public static getHintNode( annotation: TAnnotation ): Node {
+    // TODO: sync colors, etc.
+    return new UIText( annotation.type );
   }
 }
