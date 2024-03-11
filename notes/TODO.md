@@ -7,6 +7,9 @@
 
 - Current code TODOs
   - SimpleVertexState
+  - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
+    - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
+      - WAIT, can't we trace a red edge to see if it constrained something?
   - Hard to visualize OPPOSITE colors with... all the noise
     - Better way of HARD showing disconnected opposite colors? 
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
@@ -96,7 +99,6 @@
       - Buttons 
         - Add default option that hides "undo-all" and "redo-all" (can be enabled) - don't tend to use them much 
         - RAINBOW COLORS on the buttons
-        - Hint button (maybe "add a face value")
         - Zoom (in/out) for help on desktop (e.g. with mouse)
           - Show these only if the control bar is large enough!!
         - Solve button (solve everything as one action, or solve but put each step on stack, OR solve just one action)
