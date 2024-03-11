@@ -2,6 +2,8 @@ import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { TAnnotatedAction } from './TAnnotatedAction.ts';
+import { TSector } from '../sector/TSector.ts';
+import SectorState from '../sector/SectorState.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';
@@ -135,6 +137,20 @@ export type DoubleMinusOneFacesAnnotation = {
   toRedEdges: TEdge[];
 };
 
+export type SingleEdgeToSectorAnnotation = {
+  type: 'SingleEdgeToSector';
+  sector: TSector;
+  beforeState: SectorState;
+  afterState: SectorState;
+};
+
+export type DoubleEdgeToSectorAnnotation = {
+  type: 'DoubleEdgeToSector';
+  sector: TSector;
+  beforeState: SectorState;
+  afterState: SectorState;
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -156,14 +172,18 @@ export type TAnnotation =
   | FaceColorMatchToBlackAnnotation
   | FaceColorBalanceAnnotation
   | FaceColorOneConstrainedAnnotation
-  | DoubleMinusOneFacesAnnotation;
+  | DoubleMinusOneFacesAnnotation
+  | SingleEdgeToSectorAnnotation
+  | DoubleEdgeToSectorAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',
   'InvalidFaceColoring',
   'GeneralFaceColoring',
   'FaceColoringBlackEdge',
-  'FaceColoringRedEdge'
+  'FaceColoringRedEdge',
+  'SingleEdgeToSector',
+  'DoubleEdgeToSector'
 ] as const );
 
 export const isAnnotationIgnored = ( annotation: TAnnotation ): boolean => {

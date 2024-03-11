@@ -75,12 +75,31 @@ export default class SectorState extends EnumerationValue {
     return SectorState.enumeration.values.find( value => value.zero === zero && value.one === one && value.two === two )!;
   }
 
+  public static getOnly( n: number ): SectorState {
+    assertEnabled() && assert( n === 0 || n === 1 || n === 2 );
+
+    return SectorState.getWithValue( n === 0, n === 1, n === 2 );
+  }
+
+  public static getNot( n: number ): SectorState {
+    assertEnabled() && assert( n === 0 || n === 1 || n === 2 );
+
+    return SectorState.getWithValue( n !== 0, n !== 1, n !== 2 );
+  }
+
   public static deserialize( value: TSerializedSectorState ): SectorState {
     const sectorState = sectorStateMap.get( value );
     assertEnabled() && assert( sectorState, `invalid serialized value: ${value}` );
 
     return sectorState!;
   }
+
+  public static trivialStates = [
+    SectorState.NONE,
+    SectorState.ONLY_ZERO,
+    SectorState.ONLY_TWO,
+    SectorState.ANY
+  ];
 }
 
 export type TSerializedSectorState = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
