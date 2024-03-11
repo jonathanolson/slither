@@ -64,7 +64,9 @@ export class PuzzleBackgroundNode extends Node {
         if ( strokedOuterBoundaryShape.bounds.width === 9.718028227819117 ) {
           backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
         }
-        backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
+        else {
+          backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
+        }
       }
       catch ( e ) {
         backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
