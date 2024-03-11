@@ -16,6 +16,42 @@ export default class SectorState extends EnumerationValue {
     return ( !this.zero || other.zero ) && ( !this.one || other.one ) && ( !this.two || other.two );
   }
 
+  public withZero( zero: boolean ): SectorState {
+    return SectorState.getWithValue( zero, this.one, this.two );
+  }
+
+  public withOne( one: boolean ): SectorState {
+    return SectorState.getWithValue( this.zero, one, this.two );
+  }
+
+  public withTwo( two: boolean ): SectorState {
+    return SectorState.getWithValue( this.zero, this.one, two );
+  }
+
+  public withAllowZero(): SectorState {
+    return this.withZero( true );
+  }
+
+  public withAllowOne(): SectorState {
+    return this.withOne( true );
+  }
+
+  public withAllowTwo(): SectorState {
+    return this.withTwo( true );
+  }
+
+  public withDisallowZero(): SectorState {
+    return this.withZero( false );
+  }
+
+  public withDisallowOne(): SectorState {
+    return this.withOne( false );
+  }
+
+  public withDisallowTwo(): SectorState {
+    return this.withTwo( false );
+  }
+
   public serialize(): TSerializedSectorState {
     return this.serializedValue;
   }
@@ -34,6 +70,10 @@ export default class SectorState extends EnumerationValue {
   public static readonly ANY = new SectorState( true, true, true, 7 );
 
   public static readonly enumeration = new Enumeration( SectorState );
+
+  public static getWithValue( zero: boolean, one: boolean, two: boolean ): SectorState {
+    return SectorState.enumeration.values.find( value => value.zero === zero && value.one === one && value.two === two )!;
+  }
 
   public static deserialize( value: TSerializedSectorState ): SectorState {
     const sectorState = sectorStateMap.get( value );

@@ -6,6 +6,14 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - Modes:
+    - Edge mode (normal)
+    - Face mode (coloring, but also select and allows perhaps puzzle editing?)
+      - Allows combining and opposing colors
+        - In this mode, DRAG is present, so we won't be able to PAN
+    - Sector mode (allow selecting / manipulating sectors)
+    - Vertex mode (allow adjusting vertex state?)
+  - 
   - SimpleVertexState (SectorData / WedgeData) - wedge looks too much like edge
     - Sectors are indexed by HalfEdge (halfEdge + halfEdge.next)
     - For each sector:
@@ -33,6 +41,8 @@
         - Vertex + face colors => sectors
         - Face (value + sectors internal) => edges/sectors
     - View:
+      - HEY!! Use my "spike" annotation? (what was my old incident notation?)
+      - 
       - A way to view ALL sector state values (especially buggy ones?)
         - showSectorsNextToEdges (default false)
         - showSimpleSectors (default false)
