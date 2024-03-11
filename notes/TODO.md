@@ -22,6 +22,10 @@
         - e.g. for showing the "auto-solve" parts of something?
   - OMG... for our hint, we'll actually want to show MULTIPLE actions, all of the ones that lead up to an edge being set?
     - We'll want to minimize the number of actions. From the "end", start going back trying to remove actions, and see if it can deduce the next thing
+  - Generation: how do we get the CONSISTENCY of difficulty?
+    - -- forward generation, right?
+    - greedy checks for face minimization? (check all faces, and for each removed, CHECK ALL AGAIN to see which face removal still allows the most removals)
+      - That... sounds slow.
   - Hint: do better than second-press to apply (switch... text in it?)
   - Actions for face color changes... should potentially specify the faces? Bleh not sure, is tricky how to serialize
     - If they don't... the face color IDs might change.
