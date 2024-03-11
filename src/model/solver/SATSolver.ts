@@ -34,6 +34,15 @@ export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStruct
   currentState: TState<Data>
 ): TSolvablePropertyPuzzle<Structure, Data> | null => {
   try {
+    // SAT solver doesn't work with fully solved boards, check this first
+    if ( simpleRegionIsSolved( currentState ) ) {
+      return {
+        board,
+        stateProperty: new Property( currentState ),
+        solution: getSolvedPuzzle( board, currentState, [] )
+      };
+    }
+
     const solutions = satSolve( board, currentState, {
       maxIterations: 10000,
       failOnMultipleSolutions: true
@@ -89,6 +98,8 @@ export const satSolve = (
 
   const blackEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.BLACK );
   const whiteEdges = board.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
+
+  assertEnabled() && assert( whiteEdges.length, 'Need to have at least some undefined edges to use solver' );
 
   const whiteEdgeSet = new Set( whiteEdges ); // For faster lookup
 

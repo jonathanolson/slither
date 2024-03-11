@@ -14,7 +14,7 @@ export const getStartupPuzzleModel = (): PuzzleModel => {
 
   // Try to detect issues loading the puzzle, so we can fall back to a default.
   try {
-    const startingPuzzle = puzzleString ? puzzleFromCompressedString( puzzleString ) ?? defaultPuzzle : defaultPuzzle;
+    const startingPuzzle = puzzleString ? ( puzzleFromCompressedString( puzzleString ) ?? defaultPuzzle ) : defaultPuzzle;
     startingSolvablePuzzle = getSolvablePropertyPuzzle( startingPuzzle.board, startingPuzzle.stateProperty.value );
   }
   catch ( e ) {
