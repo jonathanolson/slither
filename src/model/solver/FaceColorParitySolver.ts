@@ -100,18 +100,22 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
     while ( this.dirtyFaces.size > 0 ) {
       const face: TFace = this.dirtyFaces.values().next().value;
 
-      const sides = face.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edge => {
+      const edgeToSide = ( edge: TEdge ): Side => {
         const otherFace = edge.getOtherFace( face );
         const color = otherFace ? this.state.getFaceColor( otherFace ) : this.state.getOutsideColor();
         return new Side( color, edge );
-      } );
+      };
+
+      const sides = face.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE ).map( edgeToSide );
 
       if ( sides.length ) {
 
         const faceValue = this.state.getFaceState( face );
         if ( faceValue === null ) {
           const exteriorColor = sides[ 0 ].color;
-          const allExterior = sides.every( side => side.color === exteriorColor );
+
+          const allSides = face.edges.map( edgeToSide );
+          const allExterior = allSides.every( side => side.color === exteriorColor );
 
           // For a non-valued face, if all of the exterior colors are the same, then we know the interior is the same
           // color (otherwise it would create a closed loop around nothing)
@@ -259,6 +263,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
                 } );
               }
             }
+            // TODO: OMG wait, isn't this handled by ... the above isBalanced?
             if ( isOneConstrained && this.options.solveColors ) {
               const colorA = sides[ 0 ].color;
               const colorB = sides[ 1 ].color;

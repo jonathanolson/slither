@@ -24,7 +24,7 @@ export class FaceColorMakeOppositeAction implements TAction<TFaceColorData> {
     const aOpposite = state.getOppositeFaceColor( this.a );
     const bOpposite = state.getOppositeFaceColor( this.b );
 
-    if ( aOpposite && aOpposite === this.b || bOpposite && bOpposite === this.a ) {
+    if ( ( aOpposite && aOpposite === this.b ) || ( bOpposite && bOpposite === this.a ) ) {
       return;
     }
 

@@ -21,7 +21,7 @@ type Data = TEdgeData & TFaceColorData;
 export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   // Track whether a red/black edge changed to something else (we'll need to recompute the face colors)
-  private hadEdgeAdjusted: boolean = true;
+  private hadEdgeAdjusted: boolean = false;
 
   private readonly dirtyEdges = new Set<TEdge>();
 
@@ -31,7 +31,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
     private readonly board: TBoard,
     private readonly state: TState<Data>
   ) {
-    // On init, hadEdgeAdjusted is marked as true, so we'll do a full recompute
+    board.edges.forEach( edge => this.dirtyEdges.add( edge ) );
 
     this.edgeListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => {
       this.dirtyEdges.add( edge );
@@ -50,6 +50,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
     if ( !this.dirty ) { return null; }
 
     const requiresFullRecompute = this.hadEdgeAdjusted || this.state.hasInvalidFaceColors();
+    console.log( 'requiresFullRecompute', requiresFullRecompute );
 
     if ( requiresFullRecompute ) {
 

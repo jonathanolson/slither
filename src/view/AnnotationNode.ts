@@ -19,7 +19,7 @@ export class AnnotationNode extends Node {
       } ) );
 
       return strokedShape.getStrokedShape( new LineStyles( {
-        lineWidth: 0.01
+        lineWidth: 0.02
       } ) );
     };
 

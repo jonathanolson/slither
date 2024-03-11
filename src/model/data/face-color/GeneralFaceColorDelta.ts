@@ -116,8 +116,8 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
       this.faceChangeMap.set( face, newColor );
     }
 
-    for ( const [ oldColor, newColor ] of oppositeChangeMap.entries() ) {
-      this.oppositeChangeMap.set( oldColor, newColor );
+    for ( const [ color, oppositeColor ] of oppositeChangeMap.entries() ) {
+      this.oppositeChangeMap.set( color, oppositeColor );
     }
 
     const oppositeChangedFaceColors = new Set<TFaceColor>( oppositeChangeMap.keys() );
