@@ -116,7 +116,7 @@ export const darkTheme = {
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
   faceColorTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(26,26,26)' ),
-  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(40,40,40)' ),
+  faceColorInsideColorProperty: new PaintColorProperty( 'rgb(43,43,43)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(217,217,217,0.14000000000000001332)' ),
