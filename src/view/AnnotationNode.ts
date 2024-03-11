@@ -129,6 +129,12 @@ export class AnnotationNode extends Node {
         children.push( ...annotation.edges.map( edge => getEdgeColoredOutline( edge, 'red' ) ) );
       }
     }
+    else if ( annotation.type === 'DoubleMinusOneFaces' ) {
+      children = [
+        ...annotation.toBlackEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ),
+        ...annotation.toRedEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) )
+      ];
+    }
     else {
       children = [];
     }

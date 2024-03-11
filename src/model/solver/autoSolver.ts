@@ -15,6 +15,7 @@ import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { iterateSolverFactory } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -25,6 +26,8 @@ export const autoSolveSimpleFaceToBlackProperty = new LocalStorageBooleanPropert
 
 export const autoSolveSimpleLoopToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToRedProperty', true );
 export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', false );
+
+export const autoSolveDoubleMinusOneFacesProperty = new LocalStorageBooleanProperty( 'autoSolveDoubleMinusOneFacesProperty', false );
 
 export const autoSolveFaceColorToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToRedProperty', false );
 export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToBlackProperty', false );
@@ -55,6 +58,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleFaceToBlackProperty,
   autoSolveSimpleLoopToRedProperty,
   autoSolveSimpleLoopToBlackProperty,
+  autoSolveDoubleMinusOneFacesProperty,
   autoSolveFaceColorToRedProperty,
   autoSolveFaceColorToBlackProperty,
   autoSolveFaceColorParityToRedProperty,
@@ -69,6 +73,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleFaceToBlack,
   simpleLoopToRed,
   simpleLoopToBlack,
+  doubleMinusOneFaces,
   simpleFaceColorToRed,
   simpleFaceColorToBlack,
   simpleFaceColorParityToRed,
@@ -90,6 +95,9 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
           solveToRed: simpleFaceToRed,
           solveToBlack: simpleFaceToBlack,
         }, dirty ? undefined : [] )
+      ] : [] ),
+      ...( doubleMinusOneFaces ? [
+        new StaticDoubleMinusOneFacesSolver( board, state, dirty ? undefined : [] )
       ] : [] ),
       safeSolverFactory( board, state, dirty ),
 
@@ -141,6 +149,9 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       solveToBlack: true,
       resolveAllRegions: false // NOTE: this will be faster
     } ),
+
+    // e.g. double-3s adjacent in square form
+    new StaticDoubleMinusOneFacesSolver( board, state ),
 
     // We rely on the Face colors being accurate here
     new SimpleFaceColorSolver( board, state, {

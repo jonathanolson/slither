@@ -128,6 +128,13 @@ export type FaceColorOneConstrainedAnnotation = {
   edges: [ TEdge, TEdge ];
 } & FaceColorAnnotationPartial;
 
+export type DoubleMinusOneFacesAnnotation = {
+  type: 'DoubleMinusOneFaces';
+  faces: [ TFace, TFace ];
+  toBlackEdges: TEdge[];
+  toRedEdges: TEdge[];
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -148,7 +155,8 @@ export type TAnnotation =
   | FaceColorMatchToRedAnnotation
   | FaceColorMatchToBlackAnnotation
   | FaceColorBalanceAnnotation
-  | FaceColorOneConstrainedAnnotation;
+  | FaceColorOneConstrainedAnnotation
+  | DoubleMinusOneFacesAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',
