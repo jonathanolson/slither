@@ -15,6 +15,7 @@ import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOpp
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;
@@ -255,6 +256,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
 
               // Sanity check?
               if ( oppositeColors.length ) {
+                assertEnabled() && assert( oppositeColors.every( oppositeColor => this.state.getFaceColors().includes( oppositeColor ) ) );
                 return new AnnotatedAction( new CompositeAction( oppositeColors.map( oppositeColor => new FaceColorMakeOppositeAction( mainColor, oppositeColor ) ) ), {
                   type: 'FaceColorBalance',
                   matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
