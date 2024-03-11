@@ -13,6 +13,8 @@
         - In this mode, DRAG is present, so we won't be able to PAN
     - Sector mode (allow selecting / manipulating sectors)
     - Vertex mode (allow adjusting vertex state?)
+    - 
+    - Mouse hover behavior over what it will change! (Also a11y?)
   - 
   - SimpleVertexState (SectorData / WedgeData) - wedge looks too much like edge
     - Sectors are indexed by HalfEdge (halfEdge + halfEdge.next)
