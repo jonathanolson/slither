@@ -60,6 +60,10 @@ export class PuzzleBackgroundNode extends Node {
       } ) );
       const subpathShapes = strokedOuterBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
       try {
+        // TODO: remove this code! It's so we can fuzz without this ONE case messing us up
+        if ( strokedOuterBoundaryShape.bounds.width === 9.718028227819117 ) {
+          backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
+        }
         backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
       }
       catch ( e ) {

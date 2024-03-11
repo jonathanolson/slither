@@ -2,7 +2,7 @@ import { TSerializedState, TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -102,7 +102,12 @@ export class FaceColorValidator implements TState<TFaceColorData> {
     }
 
     for ( const color of affectedColors ) {
-      const faces = [ ...faceColorInverseMap.get( color )! ];
+      const potentialFaces = faceColorInverseMap.get( color );
+      if ( !potentialFaces ) {
+        continue;
+      }
+
+      const faces = [ ...potentialFaces ];
       assertEnabled() && assert( faces.length > 0 );
 
       const solvedColor = this.solvedState.getFaceColor( faces[ 0 ] );
@@ -115,41 +120,22 @@ export class FaceColorValidator implements TState<TFaceColorData> {
 
       const oppositeColor = getOppositeFaceColor( color );
       if ( oppositeColor ) {
-        const solvedOppositeColor = this.solvedState.getFaceColor( [ ...faceColorInverseMap.get( oppositeColor )! ][ 0 ] );
+        let solvedOppositeColor: TFaceColor;
+        if ( oppositeColor.colorState === FaceColorState.INSIDE ) {
+          solvedOppositeColor = this.solvedState.getInsideColor();
+        }
+        else if ( oppositeColor.colorState === FaceColorState.OUTSIDE ) {
+          solvedOppositeColor = this.solvedState.getOutsideColor();
+        }
+        else {
+          solvedOppositeColor = this.solvedState.getFaceColor( [ ...faceColorInverseMap.get( oppositeColor )! ][ 0 ] );
+        }
 
         if ( solvedColor === solvedOppositeColor ) {
           throw new InvalidStateError( 'opposite colors are the same' );
         }
       }
     }
-
-    // TODO: are these checks still helpful?
-    //
-    // const faces = [ ...faceChangeMap.keys() ];
-    //
-    // const insideFaces = faces.filter( face => this.solvedState.getFaceColor( face ) === this.solvedState.getInsideColor() );
-    // const outsideFaces = faces.filter( face => this.solvedState.getFaceColor( face ) === this.solvedState.getOutsideColor() );
-    //
-    // const insideColors = new Set( insideFaces.map( face => faceChangeMap.get( face ) ).filter( color => color !== null ) as TFaceColor[] );
-    // const outsideColors = new Set( outsideFaces.map( face => faceChangeMap.get( face ) ).filter( color => color !== null ) as TFaceColor[] );
-    //
-    // for ( const color of insideColors ) {
-    //   if ( outsideColors.has( color ) ) {
-    //     throw new InvalidStateError( 'inside and outside colors are the same' );
-    //   }
-    //
-    //   const opposite = oppositeChangeMap.get( color );
-    //   if ( opposite && insideColors.has( opposite ) ) {
-    //     throw new InvalidStateError( 'opposite colors are the same' );
-    //   }
-    // }
-    //
-    // for ( const color of outsideColors ) {
-    //   const opposite = oppositeChangeMap.get( color );
-    //   if ( opposite && outsideColors.has( opposite ) ) {
-    //     throw new InvalidStateError( 'opposite colors are the same' );
-    //   }
-    // }
   }
 
   public clone(): FaceColorValidator {

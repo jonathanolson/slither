@@ -6,7 +6,9 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - Text out applying an action when a hint is showing
+  - Test out applying an action when a hint is showing
+  - SimpleVertexState? (and then... 3-3 loop prevention? use it for generation and stuff)
+  - Show current hint info... somewhere
   - Hard to visualize OPPOSITE colors with... all the noise
     - Better way of HARD showing disconnected opposite colors? 
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
