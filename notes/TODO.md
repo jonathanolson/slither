@@ -6,10 +6,37 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - SimpleVertexState
+  - SimpleVertexState (SectorData / WedgeData) - wedge looks too much like edge
+    - Sectors are indexed by HalfEdge (halfEdge + halfEdge.next)
+    - For each sector:
+      - Eventually, either 0, 1, or 2 of the edges will be black
+      - Incident: only 1 of the edges will be black
+      - Spiked: 0 or 2 of the edges will be black
+      - Unspikeable: 1 or 2 of the edges will be black
+      - Better setup:
+        - 0: ((trivial)) all red
+        - 1:
+        - 2: ((trivial)) all black
+        - 0 or 1:
+        - 0 or 2:
+        - 1 or 2:
+        - 0 or 1 or 2:
+      - Solvers:
+        - Safe edges => sectors
+        - Simple sector => edge (if 0-only or 2-only)
+        - sector => face color
+          - (0-or-2 can same-color the adjacent faces)
+          - (1 can opposite-color the adjacent faces)
+        - Static face value => sectors
+        - Dynamic face value + edges around it => sectors
+        - Vertex + all sectors => sectors/edges update (or... also face colors)
+        - Vertex + face colors => sectors
+        - Face (value + sectors internal) => edges/sectors
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?
+  - Binary sets:
+    - WE CAN VISUALIZE THESE with coloring!!!
   - Bugs:
     - App broken when reloading on broken state?
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
