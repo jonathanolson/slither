@@ -1,4 +1,5 @@
 
+- Haptics? (vibration on... long press?) - Not supported by iOS
 - Allow users to have custom-saved boards, with names (to generate from?)
 - Backtracker:
   - Reprioritize so we pick edges either (a) near to last change, or (b) the closer of 2 points on the region just modified?

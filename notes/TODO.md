@@ -10,14 +10,11 @@
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?
+  - Bugs:
+    - App broken when reloading on broken state?
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
   - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
     - We'll want this in order to list out all of the potential hints(!)
-  - Could we... have the "solve with engine" button... add to the history, without going forward?
-    - Have a "history" bar on left, that shows each action?
-      - We WANT RICH TEXT for this... text wrapping...
-      - Figure out a "composite" annotation, we'll need it
-        - e.g. for showing the "auto-solve" parts of something?
   - OMG... for our hint, we'll actually want to show MULTIPLE actions, all of the ones that lead up to an edge being set?
     - We'll want to minimize the number of actions. From the "end", start going back trying to remove actions, and see if it can deduce the next thing
   - Generation: how do we get the CONSISTENCY of difficulty?
@@ -42,6 +39,14 @@
   - Hint
     - do better than second-press to apply (switch... text in it?)
     - Highlight button differently when there is a hint to apply?
+    - Allow user to order solvers for hints?
+  - History + Hint/Solve
+    - Group annotations by what they change
+    - Could we... have the "solve with engine" button... add to the history, without going forward?
+      - Have a "history" bar on left, that shows each action?
+        - We WANT RICH TEXT for this... text wrapping...
+        - Figure out a "composite" annotation, we'll need it
+          - e.g. for showing the "auto-solve" parts of something?
   - Generation / difficulty [see generation.md]
   - Stronger "white lines" when using face colors?(?) - how to handle UI
   - View modes?
@@ -61,11 +66,14 @@
       - different light/dark values
       - one is cross-hatched
       - both are hatched different directions?
+    - Highlight the regions/border for the "connected" and "unconnected" parts of face colors
+      - Border inset?
+        - Dash pattern along the inside of groups? Dash colors?
     - HELPS with "loop" hunting too:
       - "Connected component" visualization? (e.g. all faces that are connected by a black/red)
         - If we stroke/fill this, we'd need to write that "tracing" of outside boundaries (that we'll use for hex)
       - "Seam" visualization? (e.g. lines between connected components)
-    - Make duals MORE obvious!
+    - Hover appearance for dual colors?
     - Mode for viewing colors, with link-lines to connect disconnected opposite colors
     - Hard to visualize OPPOSITE colors with... all the noise
       - Better way of HARD showing disconnected opposite colors? 
@@ -74,7 +82,8 @@
       - Slight background color change for each cell (for tilings), based on ... the tactile-js coloring?
         - NO, just use our force-directed style
     - Consider a texture for "inside" and "outside"
-    - Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
+    - Different visualization modes (for face colors)? Where dual nature of borders are highly emphasized?
+    - (!!) Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
   - Face Coloring Solving
     - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
   - SHOW the vision working on the image(!)
@@ -95,8 +104,6 @@
       - Include animation previews(!) 
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
-  - Bugs
-    - Auto rules don't seem to be... working on some of the shape sizes...? (31 in particular?)
   - Aesthetics:
     - Finished appearance: improve somehow?
   - Interface:
@@ -142,6 +149,7 @@
         - An "inverse" or "X" sticky button at the top? 
       - Vertex interaction (note incident or spike? - or any of possible vertex states?)
         - Allow a "mark save point" (that can be jumped back to)
+      - 3d appearance visual style? Add some depth (edges/lines as walls?)
   - Share URL size:
     - Store "board generation string" on a TBoard
       - Consists generally of "which generator" + "which parameters", but also our scanner will need to output (e.g. square?)
