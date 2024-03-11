@@ -59,6 +59,7 @@
       - dash?
       - fill instead of stroke?
       - inverse arc would be... great?
+  - Delay puzzle string save by a frame, it is taking a bit to deflate right now.
   - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one
     - If it's still broken, it is still broken.
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.

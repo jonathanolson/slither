@@ -16,6 +16,7 @@ import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { iterateSolverFactory } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
+import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -42,7 +43,8 @@ export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, 
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new SafeEdgeToSimpleRegionSolver( board, state ),
     new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToFaceColorSolver( board, state )
+    new SafeEdgeToFaceColorSolver( board, state ),
+    new SafeEdgeToSectorSolver( board, state )
   ] );
 };
 
@@ -142,6 +144,7 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
     } ),
     new SafeEdgeToSimpleRegionSolver( board, state ),
     new SafeSolvedEdgeSolver( board, state ),
+    new SafeEdgeToSectorSolver( board, state ),
 
     // We rely on the Simple Regions being accurate here, so they are lower down
     new SimpleLoopSolver( board, state, {
