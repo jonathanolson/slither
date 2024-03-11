@@ -117,6 +117,17 @@ const boards = [
       }
       // If it doesn't pick up on anything, give it a hint so we can test more things
       else if ( !simpleRegionIsSolved( state ) ) {
+        // Ensure a fresh solver doesn't give us anything new, otherwise we have a bug in "dirty" detection code.
+        const freshSolver = standardSolverFactory( board, state, true );
+        const freshSolverAction = freshSolver.nextAction();
+        if ( freshSolverAction ) {
+          puzzleNode.addAnnotationNode( new AnnotationNode( freshSolverAction.annotation ) );
+          updateView();
+          await sleep( 0 );
+          throw new Error( 'Fresh solver should not have any actions' );
+        }
+        freshSolver.dispose();
+
         const edge = _.find( _.shuffle( board.edges ), edge => state.getEdgeState( edge ) === EdgeState.WHITE )!;
         assertEnabled() && assert( edge );
         state.setEdgeState( edge, solvedState.getEdgeState( edge ) );

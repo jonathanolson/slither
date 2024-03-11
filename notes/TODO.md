@@ -31,7 +31,6 @@
   - Switch to ABSwitches (toggle switches) for configurations
     - https://blog.uxtweak.com/checkbox-vs-toggle-switch/ notes they are for "immediate effect" - which they are, checkboxes are delayed effect
   - Move more parts of files out to the top level (hard to find things!)
-  - Test Solver Dirty: In fuzzing, check to see whether there is a bug in the "dirty" handling - fresh solver shouldn't solve anything additional
   - TPuzzle improvements (Property is awkward)
   - Rename FaceData => FaceValueData, FaceState => FaceValue?
   - TaggedAction - noting the "required" parts of the pattern, and noting the "changes"
