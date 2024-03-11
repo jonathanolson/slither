@@ -50,7 +50,6 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
     if ( !this.dirty ) { return null; }
 
     const requiresFullRecompute = this.hadEdgeAdjusted || this.state.hasInvalidFaceColors();
-    console.log( 'requiresFullRecompute', requiresFullRecompute );
 
     if ( requiresFullRecompute ) {
 

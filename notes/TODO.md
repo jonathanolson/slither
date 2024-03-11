@@ -6,6 +6,9 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - Text out applying an action when a hint is showing
+  - Hard to visualize OPPOSITE colors with... all the noise
+    - Better way of HARD showing disconnected opposite colors? 
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
   - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
     - We'll want this in order to list out all of the potential hints(!)

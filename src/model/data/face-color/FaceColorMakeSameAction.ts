@@ -42,7 +42,7 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
       }
     }
 
-    state.modifyFaceColors( [], removedFaceColors, faceChangeMap, oppositeChangeMap, true );
+    state.modifyFaceColors( [], removedFaceColors, faceChangeMap, oppositeChangeMap, false );
   }
 
   public getUndo( state: TFaceColorData ): TAction<TFaceColorData> {

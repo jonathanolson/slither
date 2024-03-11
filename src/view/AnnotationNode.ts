@@ -79,22 +79,22 @@ export class AnnotationNode extends Node {
     }
     else if ( annotation.type === 'FaceColoringBlackEdge' ) {
       children = [
-        getEdgeColoredOutline( annotation.edge, 'black' ),
+        getEdgeColoredOutline( annotation.edge, 'red' ),
       ];
     }
     else if ( annotation.type === 'FaceColoringRedEdge' ) {
       children = [
-        getEdgeColoredOutline( annotation.edge, 'black' ),
+        getEdgeColoredOutline( annotation.edge, 'red' ),
       ];
     }
     else if ( annotation.type === 'FaceColorToBlack' ) {
       children = [
-        getEdgeColoredOutline( annotation.edge, 'black' ),
+        getEdgeColoredOutline( annotation.edge, 'red' ),
       ];
     }
     else if ( annotation.type === 'FaceColorToRed' ) {
       children = [
-        getEdgeColoredOutline( annotation.edge, 'black' ),
+        getEdgeColoredOutline( annotation.edge, 'red' ),
       ];
     }
     else if ( annotation.type === 'FaceColorNoTrivialLoop' ) {
@@ -122,7 +122,7 @@ export class AnnotationNode extends Node {
         children.push( ...annotation.matchingEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ) );
       }
       else if ( annotation.type === 'FaceColorBalance' ) {
-        children.push( ...annotation.matchingEdges.map( edge => getEdgeColoredOutline( edge, 'magenta' ) ) );
+        children.push( ...annotation.matchingEdges.map( edge => getEdgeColoredOutline( edge, 'orange' ) ) );
         children.push( ...annotation.oppositeEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ) );
       }
       else if ( annotation.type === 'FaceColorOneConstrained' ) {
