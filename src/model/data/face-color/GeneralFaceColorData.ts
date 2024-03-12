@@ -166,6 +166,22 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     assertEnabled() && assert( this.board.faces.every( face => this.colorMap.has( face ) ) );
     assertEnabled() && assert( this.board.faces.every( face => this.faceColors.has( this.colorMap.get( face )! ) ) );
 
+    // Lots of error checks for cases we're having issues with
+    if ( assertEnabled() ) {
+      const colors = new Set( this.getFaceColors() );
+
+      for ( const color of colors ) {
+        const opposite = this.getOppositeFaceColor( color );
+        if ( opposite && !colors.has( opposite ) ) {
+          assert( false, `opposite color ${opposite} of color ${color} is not in the set of colors` );
+        }
+      }
+
+      for ( const color of oppositeChangedFaceColors ) {
+        assert( colors.has( color ) );
+      }
+    }
+
     this.faceColorsChangedEmitter.emit(
       addedFaceColors,
       removedFaceColors,

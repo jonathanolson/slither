@@ -267,6 +267,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
               }
             }
             // TODO: OMG wait, isn't this handled by ... the above isBalanced?
+            // TODO: YES, remove this
             if ( isOneConstrained && this.options.solveColors ) {
               const colorA = sides[ 0 ].color;
               const colorB = sides[ 1 ].color;

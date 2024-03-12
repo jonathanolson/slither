@@ -21,6 +21,18 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
     const aOpposite = state.getOppositeFaceColor( this.a );
     const bOpposite = state.getOppositeFaceColor( this.b );
 
+    if ( assertEnabled() ) {
+      const colors = new Set( state.getFaceColors() );
+      assert( colors.has( this.a ) );
+      assert( colors.has( this.b ) );
+      if ( aOpposite ) {
+        assert( colors.has( aOpposite ) );
+      }
+      if ( bOpposite ) {
+        assert( colors.has( bOpposite ) );
+      }
+    }
+
     // TODO: based on opposite structure, we probably don't need both of these checks?
     if ( aOpposite && aOpposite === this.b || bOpposite && bOpposite === this.a ) {
       state.modifyFaceColors( [], [], new Map(), new Map(), true );
