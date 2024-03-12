@@ -552,6 +552,7 @@ export const sectorsVisibleProperty = new LocalStorageBooleanProperty( 'sectorsV
 export const sectorsNextToEdgesVisibleProperty = new LocalStorageBooleanProperty( 'sectorsNextToEdgesVisibleProperty', false );
 export const sectorsTrivialVisibleProperty = new LocalStorageBooleanProperty( 'sectorsTrivialVisibleProperty', false );
 export const vertexStateVisibleProperty = new LocalStorageBooleanProperty( 'vertexStateVisibleProperty', false );
+export const allVertexStateVisibleProperty = new LocalStorageBooleanProperty( 'allVertexStateVisibleProperty', false );
 export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', false );
 export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );

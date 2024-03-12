@@ -2,23 +2,22 @@ import { Circle, Node, Path } from 'phet-lib/scenery';
 import { TVertex } from '../../model/board/core/TVertex.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { vertexStateVisibleProperty } from '../Theme.ts';
+import { allVertexStateVisibleProperty, vertexStateVisibleProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import { TVertexData } from '../../model/data/vertex/TVertexData.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { ConvexHull2, Vector2 } from 'phet-lib/dot';
 import { VertexState } from '../../model/data/vertex/VertexState.ts';
+import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import EdgeState from '../../model/data/edge/EdgeState.ts';
 
 export class VertexStateNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
-    stateProperty: TReadOnlyProperty<TState<TVertexData>>,
+    stateProperty: TReadOnlyProperty<TState<TVertexData & TEdgeData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
     super();
-
-    const container = new Node();
-    this.addChild( container );
 
     const mainPointDistance = 0.1;
     const relativeVertexDirections = vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
@@ -31,6 +30,7 @@ export class VertexStateNode extends Node {
     const backgroundShape = mainShape.getOffsetShape( -0.05 );
 
     const statePath = new Path( null, {
+      // TODO: themify
       stroke: 'red',
       lineWidth: 0.01
     } );
@@ -43,7 +43,6 @@ export class VertexStateNode extends Node {
       fill: 'white',
       stroke: 'black',
       lineWidth: 0.01,
-      opacity: 0.4, // TODO?
 
       children: [
         statePath,
@@ -51,26 +50,42 @@ export class VertexStateNode extends Node {
           radius: 0.02,
           translation: point,
 
+          // TODO: themify
           fill: 'black'
         } ) )
-      ],
-
-      visibleProperty: vertexStateVisibleProperty
+      ]
     } );
-    this.addChild( mainPath );
 
     let lastVertexState: VertexState | null = null;
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      vertexStateVisibleProperty
-    ], ( state, isVertexStateVisible ) => {
+      vertexStateVisibleProperty,
+      allVertexStateVisibleProperty
+    ], ( state, isVertexStateVisible, showAllState ) => {
+      const hide = () => { this.children = []; };
+
       if ( !isVertexStateVisible ) {
-        container.children = [];
+        hide();
         return;
       }
-
       const vertexState = state.getVertexState( vertex );
+
+      if ( !showAllState ) {
+        let hasBlack = false;
+        let hasWhite = false;
+        for ( const edge of vertex.edges ) {
+          const edgeState = state.getEdgeState( edge );
+          hasBlack = hasBlack || edgeState === EdgeState.BLACK;
+          hasWhite = hasWhite || edgeState === EdgeState.WHITE;
+        }
+
+        if ( hasBlack || !hasWhite ) {
+          hide();
+          return;
+        }
+      }
+
       if ( !lastVertexState || !lastVertexState.equals( vertexState ) ) {
         lastVertexState = vertexState;
 
@@ -91,7 +106,7 @@ export class VertexStateNode extends Node {
         statePath.shape = shape;
       }
 
-      container.children = [
+      this.children = [
         mainPath
       ];
     } );
