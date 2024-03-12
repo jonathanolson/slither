@@ -183,6 +183,9 @@ export class VertexState {
     const blackEdge = blackEdges.length ? blackEdges[ 0 ] : null;
 
     const redEdges = new Set( vertex.edges.filter( edge => data.getEdgeState( edge ) === EdgeState.RED ) );
+    if ( redEdges.size === order ) {
+      return VertexState.withOnlyEmpty( vertex );
+    }
 
     let sectors = getSectorsFromVertex( vertex );
 
