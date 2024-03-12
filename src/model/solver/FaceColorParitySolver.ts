@@ -67,7 +67,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
         checkAddAdjacentFaces( face );
       }
 
-      for ( const faceColor of oppositeChangedFaceColors ) {
+      for ( const faceColor of [ ...addedFaceColors, ...oppositeChangedFaceColors ] ) {
         const faces = this.state.getFacesWithColor( faceColor );
         for ( const face of faces ) {
           checkAddAdjacentFaces( face );

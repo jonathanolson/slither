@@ -155,6 +155,11 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
 
 export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+    new SafeEdgeToSimpleRegionSolver( board, state ),
+    new SafeSolvedEdgeSolver( board, state ),
+    new SafeEdgeToFaceColorSolver( board, state ),
+    new SafeEdgeToSectorSolver( board, state ),
+
     new SimpleVertexSolver( board, state, {
       solveJointToRed: true,
       solveForcedLineToBlack: true,
@@ -164,9 +169,6 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       solveToRed: true,
       solveToBlack: true,
     } ),
-    new SafeEdgeToSimpleRegionSolver( board, state ),
-    new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToSectorSolver( board, state ),
 
     // We rely on the Simple Regions being accurate here, so they are lower down
     new SimpleLoopSolver( board, state, {

@@ -292,16 +292,20 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
           const faceColorB = edge.reversedFace ? this.state.getFaceColor( edge.reversedFace ) : this.state.getOutsideColor();
 
           if ( state === EdgeState.BLACK ) {
-            return new AnnotatedAction( new FaceColorMakeOppositeAction( faceColorA, faceColorB ), {
-              type: 'FaceColoringBlackEdge',
-              edge: edge
-            } );
+            if ( this.state.getOppositeFaceColor( faceColorA ) !== faceColorB ) {
+              return new AnnotatedAction( new FaceColorMakeOppositeAction( faceColorA, faceColorB ), {
+                type: 'FaceColoringBlackEdge',
+                edge: edge
+              } );
+            }
           }
           else if ( state === EdgeState.RED ) {
-            return new AnnotatedAction( new FaceColorMakeSameAction( faceColorA, faceColorB ), {
-              type: 'FaceColoringRedEdge',
-              edge: edge
-            } );
+            if ( faceColorA !== faceColorB ) {
+              return new AnnotatedAction( new FaceColorMakeSameAction( faceColorA, faceColorB ), {
+                type: 'FaceColoringRedEdge',
+                edge: edge
+              } );
+            }
           }
         }
       }
