@@ -119,7 +119,6 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
   }
 
   public modifyFaceColors(
-    // TODO: modify this to Array | Set
     addedFaceColors: MultiIterable<TFaceColor>,
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
