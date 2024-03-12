@@ -14,12 +14,17 @@
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
       - Allows combining and opposing colors
         - In this mode, DRAG is present, so we won't be able to PAN
+      - TWO modes:
+        - Join colors (when dragged)
+        - Oppose colors (when dragged)
     - Sector mode (allow selecting / manipulating sectors)
     - Vertex mode (allow adjusting vertex state?)
     - 
     - Mouse hover behavior over what it will change! (Also a11y?)
   - Explicitly list out the "rules" for a given difficulty level in the future?
   - FORCED checks should look at Vertex state(!) --- like SimpleLoopSolver.
+  - Abstract way to say "when" something should be made dirty (e.g. { face: face => ..., edge: edge => ... })
+    - Base Solver class
   - 
   - VertexData
     - Solvers

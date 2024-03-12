@@ -22,6 +22,7 @@ import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
 import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
+import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -41,6 +42,7 @@ export const autoSolveSimpleSectorProperty = new LocalStorageBooleanProperty( 'a
 
 export const autoSolveVertexToRedEdgeProperty = new LocalStorageBooleanProperty( 'autoSolveVertexToRedEdgeProperty', false );
 export const autoSolveVertexToBlackEdgeProperty = new LocalStorageBooleanProperty( 'autoSolveVertexToBlackEdgeProperty', false );
+export const autoSolveVertexToSectorsProperty = new LocalStorageBooleanProperty( 'autoSolveVertexToSectorsProperty', false );
 
 export const autoSolveFaceColorToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToRedProperty', false );
 export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToBlackProperty', false );
@@ -80,6 +82,7 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   autoSolveSimpleSectorProperty,
   autoSolveVertexToRedEdgeProperty,
   autoSolveVertexToBlackEdgeProperty,
+  autoSolveVertexToSectorsProperty,
   autoSolveFaceColorToRedProperty,
   autoSolveFaceColorToBlackProperty,
   autoSolveFaceColorParityToRedProperty,
@@ -99,6 +102,7 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   simpleSector: boolean,
   vertexToRedEdge: boolean,
   vertexToBlackEdge: boolean,
+  vertexToSectors: boolean,
   simpleFaceColorToRed: boolean,
   simpleFaceColorToBlack: boolean,
   simpleFaceColorParityToRed: boolean,
@@ -149,6 +153,10 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
           solveToRed: vertexToRedEdge,
           solveToBlack: vertexToBlackEdge
         }, dirty ? undefined : [] )
+      ] : [] ),
+
+      ...( vertexToSectors ? [
+        new VertexToSectorSolver( board, state, dirty ? undefined : [] )
       ] : [] ),
 
       ...( simpleFaceColorToRed || simpleFaceColorToBlack ? [
@@ -206,6 +214,7 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       solveToRed: true,
       solveToBlack: true
     } ),
+    new VertexToSectorSolver( board, state ),
 
     // We rely on the Face colors being accurate here
     new SimpleFaceColorSolver( board, state, {

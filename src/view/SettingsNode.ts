@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
-import { HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty } from '../model/solver/autoSolver';
+import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
+import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexToSectorsProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToRedEdgeProperty } from '../model/solver/autoSolver';
 import { allVertexStateVisibleProperty, availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -29,22 +29,33 @@ export class SettingsNode extends PopupNode {
           font: uiHeaderFont,
           fill: uiForegroundColorProperty
         } ),
-        new UITextCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
-        new UITextCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexForcedLineToBlackProperty ),
-        new UITextCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
-        new UITextCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
-        new UITextCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
-        new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
-        new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty ),
-        new UITextCheckbox( 'Double Minus One Faces', autoSolveDoubleMinusOneFacesProperty ),
-        new UITextCheckbox( '1/N-1 Sectors', autoSolveStaticFaceSectorProperty ),
-        new UITextCheckbox( 'Simple Sectors', autoSolveSimpleSectorProperty ),
-        new UITextCheckbox( 'Face Color X', autoSolveFaceColorToRedProperty ),
-        new UITextCheckbox( 'Face Color Lines', autoSolveFaceColorToBlackProperty ),
-        new UITextCheckbox( 'Face Color Parity X', autoSolveFaceColorParityToRedProperty ),
-        new UITextCheckbox( 'Face Color Parity Lines', autoSolveFaceColorParityToBlackProperty ),
-        new UITextCheckbox( 'Face Color Parity Colors', autoSolveFaceColorParityColorsProperty ),
-        new UITextCheckbox( 'Face Color Parity Partial Reduction', autoSolveFaceColorParityPartialReductionProperty )
+        new GridBox( {
+          xAlign: 'left',
+          xSpacing: 20,
+          ySpacing: 8,
+          columns: [ [
+            new UITextCheckbox( 'Vertex Joint X', autoSolveSimpleVertexJointToRedProperty ),
+            new UITextCheckbox( 'Vertex Forced Line', autoSolveSimpleVertexForcedLineToBlackProperty ),
+            new UITextCheckbox( 'Vertex Forced X', autoSolveSimpleVertexAlmostEmptyToRedProperty ),
+            new UITextCheckbox( 'Completed Face X', autoSolveSimpleFaceToRedProperty ),
+            new UITextCheckbox( 'Completed Face Lines', autoSolveSimpleFaceToBlackProperty ),
+            new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
+            new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty ),
+            new UITextCheckbox( 'Double Minus One Faces', autoSolveDoubleMinusOneFacesProperty ),
+            new UITextCheckbox( '1/N-1 Sectors', autoSolveStaticFaceSectorProperty ),
+            new UITextCheckbox( 'Simple Sectors', autoSolveSimpleSectorProperty ),
+          ], [
+            new UITextCheckbox( 'Vertex X', autoSolveVertexToRedEdgeProperty ),
+            new UITextCheckbox( 'Vertex Lines', autoSolveVertexToBlackEdgeProperty ),
+            new UITextCheckbox( 'Vertex => Sectors', autoSolveVertexToSectorsProperty ),
+            new UITextCheckbox( 'Color X', autoSolveFaceColorToRedProperty ),
+            new UITextCheckbox( 'Color Lines', autoSolveFaceColorToBlackProperty ),
+            new UITextCheckbox( 'Color Parity X', autoSolveFaceColorParityToRedProperty ),
+            new UITextCheckbox( 'Color Parity Lines', autoSolveFaceColorParityToBlackProperty ),
+            new UITextCheckbox( 'Color Parity Colors', autoSolveFaceColorParityColorsProperty ),
+            new UITextCheckbox( 'Color Parity Partial', autoSolveFaceColorParityPartialReductionProperty )
+          ] ]
+        } ),
       ]
     } );
 

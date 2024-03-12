@@ -42,6 +42,12 @@ export default class SectorState extends EnumerationValue {
     return SectorState.getWithValue( this.zero, this.one, two );
   }
 
+  public with( n: number ): SectorState {
+    assertEnabled() && assert( n === 0 || n === 1 || n === 2 );
+
+    return SectorState.getWithValue( n === 0 ? true : this.zero, n === 1 ? true : this.one, n === 2 ? true : this.two );
+  }
+
   public withAllowZero(): SectorState {
     return this.withZero( true );
   }

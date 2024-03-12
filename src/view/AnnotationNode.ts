@@ -156,6 +156,9 @@ export class AnnotationNode extends Node {
         ...annotation.toRedEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) )
       ];
     }
+    else if ( annotation.type === 'VertexStateToSector' ) {
+      children = _.uniq( annotation.sectors.flatMap( sector => [ sector.edge, sector.next.edge ] ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
+    }
     else {
       children = [];
     }

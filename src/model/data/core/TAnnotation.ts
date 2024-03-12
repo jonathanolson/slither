@@ -180,6 +180,14 @@ export type VertexStateToEdgeAnnotation = {
   toBlackEdges: TEdge[];
 };
 
+export type VertexStateToSectorAnnotation = {
+  type: 'VertexStateToSector';
+  vertex: TVertex;
+  sectors: TSector[];
+  beforeStates: SectorState[];
+  afterStates: SectorState[];
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -207,7 +215,8 @@ export type TAnnotation =
   | ForcedSectorAnnotation
   | StaticFaceSectorsAnnotation
   | VertexStateAnnotation
-  | VertexStateToEdgeAnnotation;
+  | VertexStateToEdgeAnnotation
+  | VertexStateToSectorAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',

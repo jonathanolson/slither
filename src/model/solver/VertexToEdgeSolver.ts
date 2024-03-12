@@ -10,6 +10,7 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TVertexData, TVertexDataListener } from '../data/vertex/TVertexData.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 
 export type VertexToEdgeSolverOptions = {
   solveToRed: boolean;
@@ -54,6 +55,10 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
       const vertex = this.dirtyVertices.pop()!;
 
       const vertexState = this.state.getVertexState( vertex );
+
+      if ( vertexState.possibilityCount === 0 ) {
+        throw new InvalidStateError( 'Vertex has no possibilities' );
+      }
 
       const toRedEdges: TEdge[] = [];
       const toBlackEdges: TEdge[] = [];
