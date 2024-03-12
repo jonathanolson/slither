@@ -34,7 +34,7 @@ export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanPropert
 
 export const autoSolveDoubleMinusOneFacesProperty = new LocalStorageBooleanProperty( 'autoSolveDoubleMinusOneFacesProperty', false );
 
-export const autoSolveStaticFaceSectorProperty = new LocalStorageBooleanProperty( 'autoSolveStaticFaceSectorProperty', false );
+export const autoSolveStaticFaceSectorProperty = new LocalStorageBooleanProperty( 'autoSolveStaticFaceSectorProperty', true );
 
 export const autoSolveSimpleSectorProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleSectorProperty', false );
 

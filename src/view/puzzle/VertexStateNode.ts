@@ -19,7 +19,7 @@ export class VertexStateNode extends Node {
   ) {
     super();
 
-    const mainPointDistance = 0.1;
+    const mainPointDistance = 0.12;
     const relativeVertexDirections = vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
     const mainPoints = relativeVertexDirections.map( direction => direction.times( mainPointDistance ) );
 
@@ -74,13 +74,23 @@ export class VertexStateNode extends Node {
       if ( !showAllState ) {
         let hasBlack = false;
         let hasWhite = false;
+        const whiteEdges = new Set<TEdge>();
         for ( const edge of vertex.edges ) {
           const edgeState = state.getEdgeState( edge );
           hasBlack = hasBlack || edgeState === EdgeState.BLACK;
           hasWhite = hasWhite || edgeState === EdgeState.WHITE;
+          if ( edgeState === EdgeState.WHITE ) {
+            whiteEdges.add( edge );
+          }
         }
 
         if ( hasBlack || !hasWhite ) {
+          hide();
+          return;
+        }
+
+        const basicState = VertexState.fromLookup( vertex, ( a, b ) => whiteEdges.has( a ) && whiteEdges.has( b ), true );
+        if ( basicState.equals( vertexState ) ) {
           hide();
           return;
         }
