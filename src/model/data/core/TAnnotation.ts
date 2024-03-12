@@ -159,6 +159,12 @@ export type ForcedSectorAnnotation = {
   toBlackEdges: TEdge[];
 };
 
+export type StaticFaceSectorsAnnotation = {
+  type: 'StaticFaceSectors';
+  face: TFace;
+  sectors: TSector[];
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -183,7 +189,8 @@ export type TAnnotation =
   | DoubleMinusOneFacesAnnotation
   | SingleEdgeToSectorAnnotation
   | DoubleEdgeToSectorAnnotation
-  | ForcedSectorAnnotation;
+  | ForcedSectorAnnotation
+  | StaticFaceSectorsAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',

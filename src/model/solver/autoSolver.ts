@@ -13,11 +13,13 @@ import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
-import { iterateSolverFactory } from './TSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
 import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
 import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
+import { StaticSectorSolver } from './StaticSectorSolver.ts';
+import { TStructure } from '../board/core/TStructure.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -30,6 +32,8 @@ export const autoSolveSimpleLoopToRedProperty = new LocalStorageBooleanProperty(
 export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', false );
 
 export const autoSolveDoubleMinusOneFacesProperty = new LocalStorageBooleanProperty( 'autoSolveDoubleMinusOneFacesProperty', false );
+
+export const autoSolveStaticFaceSectorProperty = new LocalStorageBooleanProperty( 'autoSolveStaticFaceSectorProperty', false );
 
 export const autoSolveSimpleSectorProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleSectorProperty', false );
 
@@ -55,7 +59,9 @@ export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
   iterateSolverFactory( safeSolverFactory, board, state, true );
 };
 
-export const autoSolverFactoryProperty = new DerivedProperty( [
+// TODO: we should use a more scalable approach(!)
+// @ts-expect-error - omg, DerivedProperty is... limit. TODO find a better approach, we hit the maximum number.
+export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFactory<TStructure, TCompleteData>, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean>( [
   autoSolveSimpleVertexJointToRedProperty,
   autoSolveSimpleVertexForcedLineToBlackProperty,
   autoSolveSimpleVertexAlmostEmptyToRedProperty,
@@ -64,6 +70,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleLoopToRedProperty,
   autoSolveSimpleLoopToBlackProperty,
   autoSolveDoubleMinusOneFacesProperty,
+  autoSolveStaticFaceSectorProperty,
   autoSolveSimpleSectorProperty,
   autoSolveFaceColorToRedProperty,
   autoSolveFaceColorToBlackProperty,
@@ -72,21 +79,22 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveFaceColorParityColorsProperty,
   autoSolveFaceColorParityPartialReductionProperty
 ], (
-  simpleVertexJointToRed,
-  simpleVertexOnlyOptionToBlack,
-  simpleVertexAlmostEmptyToRed,
-  simpleFaceToRed,
-  simpleFaceToBlack,
-  simpleLoopToRed,
-  simpleLoopToBlack,
-  doubleMinusOneFaces,
-  simpleSector,
-  simpleFaceColorToRed,
-  simpleFaceColorToBlack,
-  simpleFaceColorParityToRed,
-  simpleFaceColorParityToBlack,
-  simpleFaceColorParityColors,
-  simpleFaceColorParityPartialReduction
+  simpleVertexJointToRed: boolean,
+  simpleVertexOnlyOptionToBlack: boolean,
+  simpleVertexAlmostEmptyToRed: boolean,
+  simpleFaceToRed: boolean,
+  simpleFaceToBlack: boolean,
+  simpleLoopToRed: boolean,
+  simpleLoopToBlack: boolean,
+  doubleMinusOneFaces: boolean,
+  staticFaceSector: boolean,
+  simpleSector: boolean,
+  simpleFaceColorToRed: boolean,
+  simpleFaceColorToBlack: boolean,
+  simpleFaceColorParityToRed: boolean,
+  simpleFaceColorParityToBlack: boolean,
+  simpleFaceColorParityColors: boolean,
+  simpleFaceColorParityPartialReduction: boolean,
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
@@ -108,6 +116,10 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
       ] : [] ),
 
       safeSolverFactory( board, state, dirty ),
+
+      ...( staticFaceSector ? [
+        new StaticSectorSolver( board, state, dirty ? undefined : [] )
+      ] : [] ),
 
       ...( simpleSector ? [
         new SimpleSectorSolver( board, state, dirty ? undefined : [] )
@@ -165,6 +177,10 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
 
     // e.g. double-3s adjacent in square form
     new StaticDoubleMinusOneFacesSolver( board, state ),
+
+    new StaticSectorSolver( board, state ),
+
+    new SimpleSectorSolver( board, state ),
 
     // We rely on the Face colors being accurate here
     new SimpleFaceColorSolver( board, state, {

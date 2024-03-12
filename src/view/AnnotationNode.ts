@@ -3,6 +3,7 @@ import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
 import { UIText } from './UIText.ts';
+import _ from '../workarounds/_.ts';
 
 export class AnnotationNode extends Node {
   public constructor(
@@ -142,6 +143,9 @@ export class AnnotationNode extends Node {
     else if ( annotation.type === 'ForcedSector' ) {
       const changedEdges = [ ...annotation.toRedEdges, ...annotation.toBlackEdges ];
       children = [ annotation.sector.edge, annotation.sector.next.edge ].map( edge => getEdgeColoredOutline( edge, changedEdges.includes( edge ) ? 'red' : 'blue' ) );
+    }
+    else if ( annotation.type === 'StaticFaceSectors' ) {
+      children = _.uniq( annotation.sectors.flatMap( sector => [ sector.edge, sector.next.edge ] ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
     else {
       children = [];

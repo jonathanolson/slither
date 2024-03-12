@@ -22,6 +22,14 @@ export default class SectorState extends EnumerationValue {
     return ( !this.zero || other.zero ) && ( !this.one || other.one ) && ( !this.two || other.two );
   }
 
+  public and( other: SectorState ): SectorState {
+    return SectorState.getWithValue( this.zero && other.zero, this.one && other.one, this.two && other.two );
+  }
+
+  public or( other: SectorState ): SectorState {
+    return SectorState.getWithValue( this.zero || other.zero, this.one || other.one, this.two || other.two );
+  }
+
   public withZero( zero: boolean ): SectorState {
     return SectorState.getWithValue( zero, this.one, this.two );
   }
