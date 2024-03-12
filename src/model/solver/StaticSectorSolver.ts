@@ -13,6 +13,7 @@ import { SectorStateSetAction } from '../data/sector/SectorStateSetAction.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TFaceData & TSectorData;
 
@@ -26,7 +27,7 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    dirtyFaces?: Iterable<TFace>
+    dirtyFaces?: MultiIterable<TFace>
   ) {
     if ( dirtyFaces ) {
       this.dirtyFaces = new Set( dirtyFaces );

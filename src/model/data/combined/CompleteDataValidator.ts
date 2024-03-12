@@ -21,6 +21,7 @@ import { TSectorData } from '../sector/TSectorData.ts';
 import { SectorDataValidator } from '../sector/SectorDataValidator.ts';
 import { TSector } from '../sector/TSector.ts';
 import SectorState from '../sector/SectorState.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class CompleteDataValidator implements TState<TCompleteData> {
 
@@ -92,19 +93,19 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   }
 
   public modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void {
     this.simpleRegionDataValidator.modifyRegions( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
   }
 
   public get simpleRegionsChangedEmitter(): TEmitter<[
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ]> {
     return this.simpleRegionDataValidator.simpleRegionsChangedEmitter;
   }
@@ -142,8 +143,8 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   }
 
   public modifyFaceColors(
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
     invalidFaceColor: boolean
@@ -152,10 +153,10 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   }
 
   public get faceColorsChangedEmitter(): TEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]> {
     return this.faceColorValidator.faceColorsChangedEmitter;
   }

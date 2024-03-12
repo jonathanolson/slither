@@ -11,6 +11,7 @@ import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 // Look-up table, but also support color shifts and matching a target color
 const hueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
@@ -411,7 +412,7 @@ class FaceColorNode extends Path {
     }
   }
 
-  public static toShape( faces: Iterable<TFace> ): Shape {
+  public static toShape( faces: MultiIterable<TFace> ): Shape {
     const shape = new Shape();
 
     // TODO: do we encounter conflation with this?

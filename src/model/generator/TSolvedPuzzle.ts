@@ -6,6 +6,7 @@ import { TEdge } from '../board/core/TEdge.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { safeSolve } from '../solver/autoSolver.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceData> {
   board: TBoard<Structure>;
@@ -17,7 +18,7 @@ export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceD
 export const getSolvedPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
   board: TBoard<Structure>,
   cleanState: TState<Data>,
-  blackEdges: Iterable<TEdge>
+  blackEdges: MultiIterable<TEdge>
 ): TSolvedPuzzle<Structure, Data> => {
   const solvedState = cleanState.clone();
 

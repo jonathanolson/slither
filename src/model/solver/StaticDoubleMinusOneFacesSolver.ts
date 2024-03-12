@@ -13,6 +13,7 @@ import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import FaceState from '../data/face/FaceState.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { edgeHasVertex } from '../board/util/edgeHasVertex.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TFaceData & TEdgeData;
 
@@ -25,7 +26,7 @@ export class StaticDoubleMinusOneFacesSolver implements TSolver<Data, TAnnotated
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    dirtyFaces?: Iterable<TFace>
+    dirtyFaces?: MultiIterable<TFace>
   ) {
     if ( dirtyFaces ) {
       this.dirtyFaces = new Set( dirtyFaces );

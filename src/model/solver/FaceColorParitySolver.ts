@@ -16,6 +16,7 @@ import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;
@@ -37,7 +38,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
     private readonly board: TBoard,
     private readonly state: TState<Data>,
     private readonly options: FaceColorParitySolverOptions,
-    dirtyFaces?: Iterable<TFace>
+    dirtyFaces?: MultiIterable<TFace>
   ) {
     if ( dirtyFaces ) {
       this.dirtyFaces = new Set( dirtyFaces );
@@ -47,10 +48,10 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
     }
 
     this.faceColorListener = (
-      addedFaceColors: Iterable<TFaceColor>,
-      removedFaceColors: Iterable<TFaceColor>,
-      oppositeChangedFaceColors: Iterable<TFaceColor>,
-      changedFaces: Iterable<TFace>,
+      addedFaceColors: MultiIterable<TFaceColor>,
+      removedFaceColors: MultiIterable<TFaceColor>,
+      oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+      changedFaces: MultiIterable<TFace>,
     ) => {
       const checkAddAdjacentFaces = ( face: TFace ) => {
         this.dirtyFaces.add( face );

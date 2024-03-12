@@ -12,6 +12,7 @@ import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export type SimpleLoopSolverOptions = {
   solveToRed: boolean;
@@ -30,7 +31,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     private readonly board: TBoard,
     private readonly state: TState<TFaceData & TEdgeData & TSimpleRegionData>,
     private readonly options: SimpleLoopSolverOptions,
-    dirtySimpleRegions?: Iterable<TSimpleRegion>
+    dirtySimpleRegions?: MultiIterable<TSimpleRegion>
   ) {
     if ( dirtySimpleRegions ) {
       this.dirtySimpleRegions = new Set( dirtySimpleRegions );
@@ -40,10 +41,10 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     }
 
     this.simpleRegionListener = (
-      addedRegions: Iterable<TSimpleRegion>,
-      removedRegions: Iterable<TSimpleRegion>,
-      addedWeirdEdges: Iterable<TEdge>,
-      removedWeirdEdges: Iterable<TEdge>
+      addedRegions: MultiIterable<TSimpleRegion>,
+      removedRegions: MultiIterable<TSimpleRegion>,
+      addedWeirdEdges: MultiIterable<TEdge>,
+      removedWeirdEdges: MultiIterable<TEdge>
     ) => {
       for ( const region of removedRegions ) {
         this.dirtySimpleRegions.delete( region );

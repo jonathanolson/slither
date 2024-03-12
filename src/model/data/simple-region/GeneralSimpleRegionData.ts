@@ -7,18 +7,19 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
 import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
 
-  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: Iterable<TSimpleRegion>, removedRegions: Iterable<TSimpleRegion>, addedWeirdEdges: Iterable<TEdge>, removedWeirdEdges: Iterable<TEdge> ]>;
+  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: MultiIterable<TSimpleRegion>, removedRegions: MultiIterable<TSimpleRegion>, addedWeirdEdges: MultiIterable<TEdge>, removedWeirdEdges: MultiIterable<TEdge> ]>;
 
   public readonly simpleRegions: Set<TSimpleRegion>;
   public readonly weirdEdges: Set<TEdge>;
 
   public constructor(
     public readonly board: TBoard,
-    simpleRegions?: Iterable<TSimpleRegion>,
-    weirdEdges?: Iterable<TEdge>
+    simpleRegions?: MultiIterable<TSimpleRegion>,
+    weirdEdges?: MultiIterable<TEdge>
   ) {
     this.simpleRegions = new Set( simpleRegions );
     this.weirdEdges = new Set( weirdEdges );
@@ -60,10 +61,10 @@ export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
   }
 
   public modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void {
     for ( const removedRegion of removedRegions ) {
       this.simpleRegions.delete( removedRegion );

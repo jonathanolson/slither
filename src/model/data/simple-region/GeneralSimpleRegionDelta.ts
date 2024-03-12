@@ -6,10 +6,11 @@ import { TEdge } from '../../board/core/TEdge.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implements TDelta<TSimpleRegionData> {
 
-  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: Iterable<TSimpleRegion>, removedRegions: Iterable<TSimpleRegion>, addedWeirdEdges: Iterable<TEdge>, removedWeirdEdges: Iterable<TEdge> ]>;
+  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[ addedRegions: MultiIterable<TSimpleRegion>, removedRegions: MultiIterable<TSimpleRegion>, addedWeirdEdges: MultiIterable<TEdge>, removedWeirdEdges: MultiIterable<TEdge> ]>;
 
   public constructor(
     board: TBoard,
@@ -65,10 +66,10 @@ export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implemen
   }
 
   public modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void {
     for ( const removedRegion of removedRegions ) {
       if ( this.addedRegions.has( removedRegion ) ) {

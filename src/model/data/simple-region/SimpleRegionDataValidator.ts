@@ -6,15 +6,16 @@ import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though
 export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
 
   public readonly simpleRegionsChangedEmitter = new TinyEmitter<[
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ]>();
 
   public constructor(
@@ -46,10 +47,10 @@ export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
   }
 
   public modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void {
     if ( [ ...addedWeirdEdges ].length ) {
       throw new InvalidStateError( 'weird edges added' );

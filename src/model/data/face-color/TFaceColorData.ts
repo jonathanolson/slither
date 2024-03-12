@@ -2,6 +2,7 @@ import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import { serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export default class FaceColorState extends EnumerationValue {
   public static readonly OUTSIDE = new FaceColorState();
@@ -51,26 +52,26 @@ export interface TFaceColorData {
   hasInvalidFaceColors(): boolean;
 
   modifyFaceColors(
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean
   ): void;
 
   faceColorsChangedEmitter: TEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]>;
 }
 
 export type TFaceColorDataListener = (
-  addedFaceColors: Iterable<TFaceColor>,
-  removedFaceColors: Iterable<TFaceColor>,
-  oppositeChangedFaceColors: Iterable<TFaceColor>,
-  changedFaces: Iterable<TFace>,
+  addedFaceColors: MultiIterable<TFaceColor>,
+  removedFaceColors: MultiIterable<TFaceColor>,
+  oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+  changedFaces: MultiIterable<TFace>,
 ) => void;
 
 export interface TSerializedFaceColorData extends TSerializedState {

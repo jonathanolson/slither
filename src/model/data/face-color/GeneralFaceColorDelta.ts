@@ -5,14 +5,15 @@ import { TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDelta<TFaceColorData> {
 
   public readonly faceColorsChangedEmitter = new TinyEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]>;
 
   public constructor(
@@ -92,8 +93,8 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
   }
 
   public modifyFaceColors(
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
     invalidFaceColor: boolean

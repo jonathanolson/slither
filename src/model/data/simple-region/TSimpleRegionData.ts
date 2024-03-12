@@ -3,6 +3,7 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import { serializeHalfEdge, THalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export interface TSimpleRegion {
   // An identifier that is tracked across simple regions over time. Algorithms will try to keep this consistent, for
@@ -45,25 +46,25 @@ export interface TSimpleRegionData {
   getWeirdEdges(): TEdge[];
 
   modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void;
 
   simpleRegionsChangedEmitter: TEmitter<[
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ]>;
 }
 
 export type TSimpleRegionDataListener = (
-  addedRegions: Iterable<TSimpleRegion>,
-  removedRegions: Iterable<TSimpleRegion>,
-  addedWeirdEdges: Iterable<TEdge>,
-  removedWeirdEdges: Iterable<TEdge>
+  addedRegions: MultiIterable<TSimpleRegion>,
+  removedRegions: MultiIterable<TSimpleRegion>,
+  addedWeirdEdges: MultiIterable<TEdge>,
+  removedWeirdEdges: MultiIterable<TEdge>
 ) => void;
 
 export const simpleRegionIsSolved = ( data: TSimpleRegionData ): boolean => {

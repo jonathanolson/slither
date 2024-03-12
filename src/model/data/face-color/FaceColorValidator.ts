@@ -6,15 +6,16 @@ import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts'
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though
 export class FaceColorValidator implements TState<TFaceColorData> {
 
   public readonly faceColorsChangedEmitter = new TinyEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]>();
 
   public constructor(
@@ -57,8 +58,8 @@ export class FaceColorValidator implements TState<TFaceColorData> {
   }
 
   public modifyFaceColors(
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean

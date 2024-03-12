@@ -12,6 +12,7 @@ import SectorState from '../data/sector/SectorState.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TEdgeData & TSectorData;
 
@@ -26,7 +27,7 @@ export class SimpleSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    dirtySectors?: Iterable<TSector>
+    dirtySectors?: MultiIterable<TSector>
   ) {
     if ( dirtySectors ) {
       this.dirtySectors = new Set( dirtySectors );

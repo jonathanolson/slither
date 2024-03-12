@@ -10,6 +10,7 @@ import { TFace } from '../board/core/TFace.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export type SimpleFaceColorSolverOptions = {
   solveToRed: boolean;
@@ -28,7 +29,7 @@ export class SimpleFaceColorSolver implements TSolver<Data, TAnnotatedAction<Dat
     private readonly board: TBoard,
     private readonly state: TState<Data>,
     private readonly options: SimpleFaceColorSolverOptions,
-    dirtyEdges?: Iterable<TEdge>
+    dirtyEdges?: MultiIterable<TEdge>
   ) {
     if ( dirtyEdges ) {
       this.dirtyEdges = new Set( dirtyEdges );
@@ -38,10 +39,10 @@ export class SimpleFaceColorSolver implements TSolver<Data, TAnnotatedAction<Dat
     }
 
     this.faceColorListener = (
-      addedFaceColors: Iterable<TFaceColor>,
-      removedFaceColors: Iterable<TFaceColor>,
-      oppositeChangedFaceColors: Iterable<TFaceColor>,
-      changedFaces: Iterable<TFace>,
+      addedFaceColors: MultiIterable<TFaceColor>,
+      removedFaceColors: MultiIterable<TFaceColor>,
+      oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+      changedFaces: MultiIterable<TFace>,
     ) => {
       for ( const face of changedFaces ) {
         for ( const edge of face.edges ) {

@@ -8,16 +8,17 @@ import { GeneralFaceColor } from './GeneralFaceColor.ts';
 import { deserializeFace, TFace } from '../../board/core/TFace.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { dotRandom } from 'phet-lib/dot';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export const getFaceColorGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
 export class GeneralFaceColorData implements TState<TFaceColorData> {
 
   public readonly faceColorsChangedEmitter = new TinyEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]>;
 
   public readonly faceColors: Set<TFaceColor>;
@@ -119,8 +120,8 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
 
   public modifyFaceColors(
     // TODO: modify this to Array | Set
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
     invalidFaceColor: boolean
@@ -170,7 +171,7 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
       addedFaceColors,
       removedFaceColors,
       oppositeChangedFaceColors,
-      faceChangeMap.keys()
+      [ ...faceChangeMap.keys() ]
     );
   }
 

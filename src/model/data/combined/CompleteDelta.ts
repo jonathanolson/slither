@@ -15,6 +15,7 @@ import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { TSectorData } from '../sector/TSectorData.ts';
 import { TSector } from '../sector/TSector.ts';
 import SectorState from '../sector/SectorState.ts';
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
@@ -82,19 +83,19 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   }
 
   public modifyRegions(
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ): void {
     this.simpleRegionDelta.modifyRegions( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
   }
 
   public get simpleRegionsChangedEmitter(): TEmitter<[
-    addedRegions: Iterable<TSimpleRegion>,
-    removedRegions: Iterable<TSimpleRegion>,
-    addedWeirdEdges: Iterable<TEdge>,
-    removedWeirdEdges: Iterable<TEdge>
+    addedRegions: MultiIterable<TSimpleRegion>,
+    removedRegions: MultiIterable<TSimpleRegion>,
+    addedWeirdEdges: MultiIterable<TEdge>,
+    removedWeirdEdges: MultiIterable<TEdge>
   ]> {
     return this.simpleRegionDelta.simpleRegionsChangedEmitter;
   }
@@ -132,8 +133,8 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   }
 
   public modifyFaceColors(
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
     invalidFaceColor: boolean
@@ -142,10 +143,10 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   }
 
   public get faceColorsChangedEmitter(): TEmitter<[
-    addedFaceColors: Iterable<TFaceColor>,
-    removedFaceColors: Iterable<TFaceColor>,
-    oppositeChangedFaceColors: Iterable<TFaceColor>,
-    changedFaces: Iterable<TFace>,
+    addedFaceColors: MultiIterable<TFaceColor>,
+    removedFaceColors: MultiIterable<TFaceColor>,
+    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+    changedFaces: MultiIterable<TFace>,
   ]> {
     return this.faceColorDelta.faceColorsChangedEmitter;
   }
