@@ -150,6 +150,12 @@ export class AnnotationNode extends Node {
     else if ( annotation.type === 'VertexState' ) {
       children = annotation.vertex.edges.map( edge => getEdgeColoredOutline( edge, 'blue' ) );
     }
+    else if ( annotation.type === 'VertexStateToEdge' ) {
+      children = [
+        ...annotation.toBlackEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ),
+        ...annotation.toRedEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) )
+      ];
+    }
     else {
       children = [];
     }

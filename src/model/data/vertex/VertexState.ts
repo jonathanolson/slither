@@ -69,6 +69,24 @@ export class VertexState {
     return result;
   }
 
+  public getFinalStatesOfEdge( edge: TEdge ): Set<EdgeState> {
+    const result = new Set<EdgeState>();
+
+    for ( const pair of this.getAllowedPairs() ) {
+      if ( pair[ 0 ] === edge || pair[ 1 ] === edge ) {
+        result.add( EdgeState.BLACK );
+      }
+      else {
+        result.add( EdgeState.RED );
+      }
+    }
+    if ( this.allowsEmpty() ) {
+      result.add( EdgeState.RED );
+    }
+
+    return result;
+  }
+
   public getPairIndex( edgeA: TEdge, edgeB: TEdge ): number {
     const indexA = this.vertex.edges.indexOf( edgeA );
     const indexB = this.vertex.edges.indexOf( edgeB );
