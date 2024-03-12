@@ -121,6 +121,16 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
       this.oppositeChangeMap.set( color, oppositeColor );
     }
 
+    const toRemoveForOpposites = new Set<TFaceColor>( removedFaceColors );
+    for ( const color of this.oppositeChangeMap.keys() ) {
+      const opposite = this.oppositeChangeMap.get( color );
+
+      // Null-out opposite colors that are now invalid, so we don't propagate them to below
+      if ( opposite && toRemoveForOpposites.has( opposite ) ) {
+        this.oppositeChangeMap.set( color, null );
+      }
+    }
+
     const oppositeChangedFaceColors = new Set<TFaceColor>( oppositeChangeMap.keys() );
 
     this.invalidFaceColor = invalidFaceColor;
