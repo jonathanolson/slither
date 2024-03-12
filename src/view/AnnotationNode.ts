@@ -139,6 +139,10 @@ export class AnnotationNode extends Node {
     else if ( annotation.type === 'SingleEdgeToSector' || annotation.type === 'DoubleEdgeToSector' ) {
       children = [ annotation.sector.edge, annotation.sector.next.edge ].map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
+    else if ( annotation.type === 'ForcedSector' ) {
+      const changedEdges = [ ...annotation.toRedEdges, ...annotation.toBlackEdges ];
+      children = [ annotation.sector.edge, annotation.sector.next.edge ].map( edge => getEdgeColoredOutline( edge, changedEdges.includes( edge ) ? 'red' : 'blue' ) );
+    }
     else {
       children = [];
     }

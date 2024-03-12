@@ -17,6 +17,7 @@ import { iterateSolverFactory } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
 import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
+import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -29,6 +30,8 @@ export const autoSolveSimpleLoopToRedProperty = new LocalStorageBooleanProperty(
 export const autoSolveSimpleLoopToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopToBlackProperty', false );
 
 export const autoSolveDoubleMinusOneFacesProperty = new LocalStorageBooleanProperty( 'autoSolveDoubleMinusOneFacesProperty', false );
+
+export const autoSolveSimpleSectorProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleSectorProperty', false );
 
 export const autoSolveFaceColorToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToRedProperty', false );
 export const autoSolveFaceColorToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorToBlackProperty', false );
@@ -61,6 +64,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   autoSolveSimpleLoopToRedProperty,
   autoSolveSimpleLoopToBlackProperty,
   autoSolveDoubleMinusOneFacesProperty,
+  autoSolveSimpleSectorProperty,
   autoSolveFaceColorToRedProperty,
   autoSolveFaceColorToBlackProperty,
   autoSolveFaceColorParityToRedProperty,
@@ -76,6 +80,7 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
   simpleLoopToRed,
   simpleLoopToBlack,
   doubleMinusOneFaces,
+  simpleSector,
   simpleFaceColorToRed,
   simpleFaceColorToBlack,
   simpleFaceColorParityToRed,
@@ -101,7 +106,12 @@ export const autoSolverFactoryProperty = new DerivedProperty( [
       ...( doubleMinusOneFaces ? [
         new StaticDoubleMinusOneFacesSolver( board, state, dirty ? undefined : [] )
       ] : [] ),
+
       safeSolverFactory( board, state, dirty ),
+
+      ...( simpleSector ? [
+        new SimpleSectorSolver( board, state, dirty ? undefined : [] )
+      ] : [] ),
 
       // We rely on the Simple Regions being accurate here, so they are lower down
       ...( simpleLoopToRed || simpleLoopToBlack ? [

@@ -33,7 +33,7 @@
         - 0 or 1 or 2:
       - Solvers:
         - Safe edges => sectors
-        - Simple sector => edge (if 0-only or 2-only)
+        - Simple sector => edge (if 0-only or 2-only -- or 1-only omg)
         - sector => face color
           - (0-or-2 can same-color the adjacent faces)
           - (1 can opposite-color the adjacent faces)

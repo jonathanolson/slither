@@ -12,6 +12,12 @@ export default class SectorState extends EnumerationValue {
     super();
   }
 
+  public allows( n: number ): boolean {
+    assertEnabled() && assert( n === 0 || n === 1 || n === 2 );
+
+    return ( n === 0 && this.zero ) || ( n === 1 && this.one ) || ( n === 2 && this.two );
+  }
+
   public isSubsetOf( other: SectorState ): boolean {
     return ( !this.zero || other.zero ) && ( !this.one || other.one ) && ( !this.two || other.two );
   }

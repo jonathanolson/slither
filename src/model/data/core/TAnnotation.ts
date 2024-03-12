@@ -151,6 +151,14 @@ export type DoubleEdgeToSectorAnnotation = {
   afterState: SectorState;
 };
 
+export type ForcedSectorAnnotation = {
+  type: 'ForcedSector';
+  sector: TSector;
+  sectorState: SectorState;
+  toRedEdges: TEdge[];
+  toBlackEdges: TEdge[];
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -174,7 +182,8 @@ export type TAnnotation =
   | FaceColorOneConstrainedAnnotation
   | DoubleMinusOneFacesAnnotation
   | SingleEdgeToSectorAnnotation
-  | DoubleEdgeToSectorAnnotation;
+  | DoubleEdgeToSectorAnnotation
+  | ForcedSectorAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',

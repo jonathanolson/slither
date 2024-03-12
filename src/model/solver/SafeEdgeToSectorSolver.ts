@@ -13,6 +13,7 @@ import { SectorStateSetAction } from '../data/sector/SectorStateSetAction.ts';
 
 type Data = TEdgeData & TSectorData;
 
+// sector + edges => sector
 export class SafeEdgeToSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtySectors = new Set<TSector>();
