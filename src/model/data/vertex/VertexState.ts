@@ -25,7 +25,7 @@ export class VertexState {
       this.matrix = matrix;
     }
     else {
-      this.matrix = _.range( 0, this.order * ( this.order - 1 ) + 1 ).map( () => true );
+      this.matrix = _.range( 0, VertexState.getMatrixSize( this.order ) ).map( () => true );
     }
 
     if ( possibilityCount !== undefined ) {
@@ -35,12 +35,12 @@ export class VertexState {
       this.possibilityCount = this.matrix.filter( x => x ).length;
     }
 
-    assertEnabled() && assert( this.matrix.length === this.order * ( this.order - 1 ) + 1 );
+    assertEnabled() && assert( this.matrix.length === VertexState.getMatrixSize( this.order ) );
     assertEnabled() && assert( this.possibilityCount === this.matrix.filter( x => x ).length );
   }
 
   public isAny(): boolean {
-    return this.possibilityCount === this.order * ( this.order - 1 ) + 1;
+    return this.possibilityCount === VertexState.getMatrixSize( this.order );
   }
 
   public isForced(): boolean {
@@ -48,7 +48,7 @@ export class VertexState {
   }
 
   public allowsEmpty(): boolean {
-    return this.matrix[ this.order * ( this.order - 1 ) ];
+    return this.matrix[ VertexState.getMatrixSize( this.order ) - 1 ];
   }
 
   public allowsPair( edgeA: TEdge, edgeB: TEdge ): boolean {
@@ -106,6 +106,10 @@ export class VertexState {
   public static getIndex( minIndex: number, maxIndex: number, order: number ): number {
     // upper-triangular matrix indexing
     return ( minIndex * ( 2 * order - minIndex - 1 ) / 2 ) + ( maxIndex - minIndex - 1 );
+  }
+
+  public static getMatrixSize( order: number ): number {
+    return order * ( order - 1 ) / 2 + 1;
   }
 
   public static fromLookup( vertex: TVertex, lookup: ( a: TEdge, b: TEdge ) => boolean, allowEmpty: boolean ): VertexState {

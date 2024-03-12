@@ -6,8 +6,9 @@ import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeFaceColorData, TFaceColorData, TSerializedFaceColorData } from '../face-color/TFaceColorData.ts';
 import { serializeSectorData, TSectorData, TSerializedSectorData } from '../sector/TSectorData.ts';
+import { serializeVertexData, TSerializedVertexData, TVertexData } from '../vertex/TVertexData.ts';
 
-export interface TCompleteData extends TFaceData, TEdgeData, TSimpleRegionData, TFaceColorData, TSectorData, TAnyData {}
+export interface TCompleteData extends TFaceData, TEdgeData, TSimpleRegionData, TFaceColorData, TSectorData, TVertexData, TAnyData {}
 
 export interface TSerializedCompleteData extends TSerializedState {
   type: 'CompleteData';
@@ -16,6 +17,7 @@ export interface TSerializedCompleteData extends TSerializedState {
   simpleRegionData: TSerializedSimpleRegionData;
   faceColorData: TSerializedFaceColorData;
   sectorData: TSerializedSectorData;
+  vertexData: TSerializedVertexData;
 }
 
 export const serializeCompleteData = ( board: TBoard, data: TCompleteData ): TSerializedCompleteData => ( {
@@ -24,5 +26,6 @@ export const serializeCompleteData = ( board: TBoard, data: TCompleteData ): TSe
   edgeData: serializeEdgeData( board, data ),
   simpleRegionData: serializeSimpleRegionData( data ),
   faceColorData: serializeFaceColorData( data ),
-  sectorData: serializeSectorData( board, data )
+  sectorData: serializeSectorData( board, data ),
+  vertexData: serializeVertexData( board, data )
 } );

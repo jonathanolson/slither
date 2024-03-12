@@ -22,6 +22,9 @@ import { SectorDataValidator } from '../sector/SectorDataValidator.ts';
 import { TSector } from '../sector/TSector.ts';
 import SectorState from '../sector/SectorState.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TVertexData } from '../vertex/TVertexData.ts';
+import { VertexDataValidator } from '../vertex/VertexDataValidator.ts';
+import { VertexState } from '../vertex/VertexState.ts';
 
 export class CompleteDataValidator implements TState<TCompleteData> {
 
@@ -32,6 +35,7 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   private readonly simpleRegionDataValidator: TState<TSimpleRegionData>;
   private readonly faceColorValidator: TState<TFaceColorData>;
   private readonly sectorValidator: TState<TSectorData>;
+  private readonly vertexValidator: TState<TVertexData>;
 
   public constructor(
     board: TBoard,
@@ -46,6 +50,7 @@ export class CompleteDataValidator implements TState<TCompleteData> {
     this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, currentState, solvedState );
     this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState ); // TODO: naming discrepancies
     this.sectorValidator = new SectorDataValidator( board, currentState, solvedState );
+    this.vertexValidator = new VertexDataValidator( board, currentState, solvedState );
   }
 
   public getFaceState( face: TFace ): FaceState {
@@ -171,6 +176,18 @@ export class CompleteDataValidator implements TState<TCompleteData> {
 
   public get sectorChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
     return this.sectorValidator.sectorChangedEmitter;
+  }
+
+  public getVertexState( vertex: TVertex ): VertexState {
+    return this.vertexValidator.getVertexState( vertex );
+  }
+
+  public setVertexState( vertex: TVertex, state: VertexState ): void {
+    this.vertexValidator.setVertexState( vertex, state );
+  }
+
+  public get vertexChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
+    return this.vertexValidator.vertexChangedEmitter;
   }
 
   public clone(): CompleteDataValidator {

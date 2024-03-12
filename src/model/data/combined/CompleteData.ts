@@ -23,6 +23,9 @@ import { GeneralSectorData } from '../sector/GeneralSectorData.ts';
 import { TSector } from '../sector/TSector.ts';
 import SectorState from '../sector/SectorState.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TVertexData } from '../vertex/TVertexData.ts';
+import { GeneralVertexData } from '../vertex/GeneralVertexData.ts';
+import { VertexState } from '../vertex/VertexState.ts';
 
 export class CompleteData implements TState<TCompleteData> {
 
@@ -34,7 +37,8 @@ export class CompleteData implements TState<TCompleteData> {
     public readonly edgeData: TState<TEdgeData>,
     public readonly simpleRegionData: TState<TSimpleRegionData>,
     public readonly faceColorData: TState<TFaceColorData>,
-    public readonly sectorData: TState<TSectorData>
+    public readonly sectorData: TState<TSectorData>,
+    public readonly vertexData: TState<TVertexData>
   ) {
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceData.faceStateChangedEmitter.addListener( anyChangeListener );
@@ -42,6 +46,7 @@ export class CompleteData implements TState<TCompleteData> {
     simpleRegionData.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorData.faceColorsChangedEmitter.addListener( anyChangeListener );
     sectorData.sectorChangedEmitter.addListener( anyChangeListener );
+    vertexData.vertexChangedEmitter.addListener( anyChangeListener );
   }
 
   public static fromFacesEdges(
@@ -54,7 +59,8 @@ export class CompleteData implements TState<TCompleteData> {
       new GeneralEdgeData( board, getInitialEdgeState ),
       new GeneralSimpleRegionData( board ),
       new GeneralFaceColorData( board ),
-      new GeneralSectorData( board )
+      new GeneralSectorData( board ),
+      new GeneralVertexData( board )
     );
   }
 
@@ -211,8 +217,27 @@ export class CompleteData implements TState<TCompleteData> {
     return this.sectorData.sectorChangedEmitter;
   }
 
+  public getVertexState( vertex: TVertex ): VertexState {
+    return this.vertexData.getVertexState( vertex );
+  }
+
+  public setVertexState( vertex: TVertex, state: VertexState ): void {
+    this.vertexData.setVertexState( vertex, state );
+  }
+
+  public get vertexChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
+    return this.vertexData.vertexChangedEmitter;
+  }
+
   public clone(): CompleteData {
-    return new CompleteData( this.faceData.clone(), this.edgeData.clone(), this.simpleRegionData.clone(), this.faceColorData.clone(), this.sectorData.clone() );
+    return new CompleteData(
+      this.faceData.clone(),
+      this.edgeData.clone(),
+      this.simpleRegionData.clone(),
+      this.faceColorData.clone(),
+      this.sectorData.clone(),
+      this.vertexData.clone()
+    );
   }
 
   public createDelta(): TDelta<TCompleteData> {
@@ -221,7 +246,8 @@ export class CompleteData implements TState<TCompleteData> {
       this.edgeData.createDelta(),
       this.simpleRegionData.createDelta(),
       this.faceColorData.createDelta(),
-      this.sectorData.createDelta()
+      this.sectorData.createDelta(),
+      this.vertexData.createDelta()
     );
   }
 
@@ -237,7 +263,8 @@ export class CompleteData implements TState<TCompleteData> {
       serializedCompleteData.simpleRegionData ? GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData ) : new GeneralSimpleRegionData( board ),
       // TODO: get a setup so we can avoid shipping this data
       serializedCompleteData.faceColorData ? GeneralFaceColorData.deserializeState( board, serializedCompleteData.faceColorData ) : new GeneralFaceColorData( board ),
-      serializedCompleteData.sectorData ? GeneralSectorData.deserializeState( board, serializedCompleteData.sectorData ) : new GeneralSectorData( board )
+      serializedCompleteData.sectorData ? GeneralSectorData.deserializeState( board, serializedCompleteData.sectorData ) : new GeneralSectorData( board ),
+      serializedCompleteData.vertexData ? GeneralVertexData.deserializeState( board, serializedCompleteData.vertexData ) : new GeneralVertexData( board )
     );
   }
 }

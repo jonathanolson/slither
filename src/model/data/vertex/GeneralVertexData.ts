@@ -6,6 +6,7 @@ import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 import { deserializeVertex, TSerializedVertex, TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
+import { GeneralVertexDelta } from './GeneralVertexDelta.ts';
 
 export class GeneralVertexData implements TState<TVertexData> {
 
@@ -53,7 +54,7 @@ export class GeneralVertexData implements TState<TVertexData> {
   }
 
   public static deserializeState( board: TBoard, serializedVertexData: TSerializedVertexData ): GeneralVertexData {
-    const map: Map<TVertex, VertexState> = new Map( serializedVertexData.vertexs.map( ( serializedVertexState: { vertex: TSerializedVertex; state: TSerializedVertexState } ) => {
+    const map: Map<TVertex, VertexState> = new Map( serializedVertexData.vertices.map( ( serializedVertexState: { vertex: TSerializedVertex; state: TSerializedVertexState } ) => {
       const vertex = deserializeVertex( board, serializedVertexState.vertex );
       return [
         vertex,
