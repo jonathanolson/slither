@@ -6,6 +6,7 @@ import { TSectorData } from '../sector/TSectorData.ts';
 import { getSectorsFromVertex } from '../sector/getSectorsFromVertex.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import EdgeState from '../edge/EdgeState.ts';
+import { TFaceColorData } from '../face-color/TFaceColorData.ts';
 
 export class VertexState {
 
@@ -163,12 +164,13 @@ export class VertexState {
     return VertexState.fromLookup( vertex, ( a, b ) => ( a !== edgeA && a !== edgeB ) || ( b !== edgeA && b !== edgeB ), true );
   }
 
-  public static fromEdgeSectorData( vertex: TVertex, data: TEdgeData & TSectorData ): VertexState {
+  public static fromEdgeColorSectorData( vertex: TVertex, data: TEdgeData & TFaceColorData & TSectorData ): VertexState {
     const order = vertex.edges.length;
     const matrix: boolean[] = [];
 
     const blackEdges = vertex.edges.filter( edge => data.getEdgeState( edge ) === EdgeState.BLACK );
 
+    // TODO: BAIL if we are guaranteed to have no changes? (all edges white, all colors unique no opposites, sectors are any)
 
     if ( blackEdges.length > 2 ) {
       // buggy case!
@@ -182,28 +184,76 @@ export class VertexState {
 
     const redEdges = new Set( vertex.edges.filter( edge => data.getEdgeState( edge ) === EdgeState.RED ) );
 
-    const sectors = getSectorsFromVertex( vertex );
+    let sectors = getSectorsFromVertex( vertex );
+
+    // Reorder sectors (so that sector[ 0 ] is between edge[ 0 ] and edge[ 1 ], and so on)
+    sectors = [ ...sectors.slice( 1 ), sectors[ 0 ] ];
+    assertEnabled() && assert( sectors[ 0 ].edge === vertex.edges[ 1 ] && sectors[ 0 ].next.edge === vertex.edges[ 0 ] );
+
     const sectorStates = sectors.map( sector => data.getSectorState( sector ) );
+    const sectorsAllowZero = sectorStates.every( state => state.zero );
+
+    const faceColors = sectors.map( sector => sector.face ? data.getFaceColor( sector.face ) : data.getOutsideColor() );
+
+    const uniqueFaceColors = new Set( faceColors );
+    const oppositeMap = new Map( [ ...uniqueFaceColors ].map( color => [ color, data.getOppositeFaceColor( color ) ] ) );
+    const containsNoOppositeColors = [ ...oppositeMap.values() ].every( color => !color || !uniqueFaceColors.has( color ) );
 
     for ( let i = 0; i < order; i++ ) {
       const edgeA = vertex.edges[ i ];
       if ( redEdges.has( edgeA ) ) { continue; }
 
       for ( let j = i + 1; j < order; j++ ) {
-        const edgeB = vertex.edges[ j ];
-        if ( redEdges.has( edgeB ) ) { continue; }
-        if ( blackEdge && ( edgeA !== blackEdge && edgeB !== blackEdge ) ) { continue; }
+        let possible = true;
 
-        matrix.push( sectorStates.every( ( state, i ) => {
-          const sector = sectors[ i ];
-          let count = 0;
-          if ( edgeA === sector.edge || edgeA === sector.next.edge ) { count++; }
-          if ( edgeB === sector.edge || edgeB === sector.next.edge ) { count++; }
-          return state.allows( count );
-        } ) );
+        const edgeB = vertex.edges[ j ];
+        if ( possible && redEdges.has( edgeB ) ) {
+          possible = false;
+        }
+
+        if ( possible && blackEdge && ( edgeA !== blackEdge && edgeB !== blackEdge ) ) {
+          possible = false;
+        }
+
+        if ( possible ) {
+          possible = possible && sectorStates.every( ( state, i ) => {
+            const sector = sectors[ i ];
+            let count = 0;
+            if ( edgeA === sector.edge || edgeA === sector.next.edge ) { count++; }
+            if ( edgeB === sector.edge || edgeB === sector.next.edge ) { count++; }
+            return state.allows( count );
+          } );
+        }
+
+        if ( possible ) {
+          // TODO: potentially optimize here?
+          const sideAColors = faceColors.slice( i, j );
+          const sideBColors = [ ...faceColors.slice( j ), ...faceColors.slice( 0, i ) ];
+
+          // on same colors are on both sides
+          if ( sideAColors.some( color => sideBColors.includes( color ) ) ) {
+            possible = false;
+          }
+
+          // no opposites are together on a side
+          if ( possible && sideAColors.some( color => {
+            const opposite = oppositeMap.get( color );
+            return opposite && sideAColors.includes( opposite );
+          } ) ) {
+            possible = false;
+          }
+          if ( possible && sideBColors.some( color => {
+            const opposite = oppositeMap.get( color );
+            return opposite && sideBColors.includes( opposite );
+          } ) ) {
+            possible = false;
+          }
+        }
+
+        matrix.push( possible );
       }
     }
-    matrix.push( blackEdges.length === 0 && sectorStates.every( state => state.zero ) );
+    matrix.push( blackEdges.length === 0 && sectorsAllowZero && containsNoOppositeColors );
 
     return new VertexState( vertex, matrix );
   }
