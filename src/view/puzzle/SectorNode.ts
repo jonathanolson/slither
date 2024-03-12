@@ -134,8 +134,16 @@ export class SectorNode extends Node {
       let stroke: TPaint = null;
 
       if ( nextToEdgesVisible || ( edgeStateA === EdgeState.WHITE && edgeStateB === EdgeState.WHITE ) ) {
-        // NOTE: it is trivial if a 2-order vertex excludes 1
-        const isTrivial = SectorState.trivialStates.includes( sectorState ) || ( sectorState === SectorState.NOT_ONE && sector.end.edges.length === 2 );
+        let isTrivial = SectorState.trivialStates.includes( sectorState );
+
+        // NOTE: it is trivial if an (effectively) 2-order vertex excludes 1
+        if ( sectorState === SectorState.NOT_ONE ) {
+          const blackEdges = sector.end.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.BLACK );
+          const whiteEdges = sector.end.edges.filter( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
+          if ( blackEdges.length === 0 && whiteEdges.length === 2 ) {
+            isTrivial = true;
+          }
+        }
         if ( trivialVisible || !isTrivial ) {
           shape = shapeMap.get( sectorState ) ?? null;
           stroke = strokeMap.get( sectorState ) ?? null;
