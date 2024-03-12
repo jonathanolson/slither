@@ -8,14 +8,14 @@ import { getSectorsFromVertex } from '../sector/getSectorsFromVertex.ts';
 export class VertexState {
 
   public readonly order: number;
-  public readonly caseCount: number;
+  public readonly possibilityCount: number;
 
   private readonly matrix: boolean[]; // TODO: bitpacking?
 
   public constructor(
     public readonly vertex: TVertex,
     matrix?: boolean[],
-    caseCount?: number
+    possibilityCount?: number
   ) {
     this.order = vertex.edges.length;
 
@@ -26,15 +26,23 @@ export class VertexState {
       this.matrix = _.range( 0, this.order * ( this.order - 1 ) + 1 ).map( () => true );
     }
 
-    if ( caseCount !== undefined ) {
-      this.caseCount = caseCount;
+    if ( possibilityCount !== undefined ) {
+      this.possibilityCount = possibilityCount;
     }
     else {
-      this.caseCount = this.matrix.filter( x => x ).length;
+      this.possibilityCount = this.matrix.filter( x => x ).length;
     }
 
     assertEnabled() && assert( this.matrix.length === this.order * ( this.order - 1 ) + 1 );
-    assertEnabled() && assert( this.caseCount === this.matrix.filter( x => x ).length );
+    assertEnabled() && assert( this.possibilityCount === this.matrix.filter( x => x ).length );
+  }
+
+  public isAny(): boolean {
+    return this.possibilityCount === this.order * ( this.order - 1 ) + 1;
+  }
+
+  public isForced(): boolean {
+    return this.possibilityCount === 1;
   }
 
   public allowsEmpty(): boolean {
@@ -85,6 +93,14 @@ export class VertexState {
     return new VertexState( this.vertex, this.matrix.slice( 0, index ).concat( pair, this.matrix.slice( index + 1 ) ) );
   }
 
+  public serialize(): TSerializedVertexState {
+    const result = VertexState.packMatrix( this.matrix );
+
+    assertEnabled() && assert( this.equals( VertexState.deserialize( this.vertex, result ) ) );
+
+    return result;
+  }
+
   public static getIndex( minIndex: number, maxIndex: number, order: number ): number {
     // upper-triangular matrix indexing
     return ( minIndex * ( 2 * order - minIndex - 1 ) / 2 ) + ( maxIndex - minIndex - 1 );
@@ -102,6 +118,10 @@ export class VertexState {
     matrix.push( allowEmpty );
 
     return new VertexState( vertex, matrix );
+  }
+
+  public static any( vertex: TVertex ): VertexState {
+    return VertexState.fromLookup( vertex, () => true, true );
   }
 
   public static withOnlyEmpty( vertex: TVertex ): VertexState {
@@ -145,4 +165,34 @@ export class VertexState {
 
     return new VertexState( vertex, matrix );
   }
+
+  public static packMatrix( matrix: boolean[] ): string {
+    const bytes = new Uint8Array( Math.ceil( matrix.length / 8 ) );
+    for ( let i = 0; i < matrix.length; i++ ) {
+      if ( matrix[ i ] ) {
+        bytes[ Math.floor( i / 8 ) ] |= 1 << ( 7 - ( i % 8 ) );
+      }
+    }
+    const result = btoa( String.fromCharCode( ...bytes ) );
+    if ( assertEnabled() ) {
+      const unpacked = VertexState.unpackMatrix( result ).slice( 0, matrix.length );
+      assert( matrix.length === unpacked.length && matrix.every( ( x, i ) => x === unpacked[ i ] ) );
+    }
+    return result;
+  }
+
+  public static unpackMatrix( str: string ): boolean[] {
+    const bytes = Uint8Array.from( atob( str ), c => c.charCodeAt( 0 ) );
+    const booleans = [];
+    for ( let i = 0; i < bytes.length * 8; i++ ) {
+      booleans.push( ( bytes[ Math.floor( i / 8 ) ] & ( 1 << ( 7 - ( i % 8 ) ) ) ) !== 0 );
+    }
+    return booleans;
+  }
+
+  public static deserialize( vertex: TVertex, serialized: TSerializedVertexState ): VertexState {
+    return new VertexState( vertex, VertexState.unpackMatrix( serialized ).slice( 0, vertex.edges.length ) );
+  }
 }
+
+export type TSerializedVertexState = string;

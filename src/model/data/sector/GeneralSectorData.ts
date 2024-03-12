@@ -9,9 +9,6 @@ import { TSector } from './TSector.ts';
 import { deserializeHalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 import { GeneralSectorDelta } from './GeneralSectorDelta.ts';
 
-// TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
-
-// TODO: faster forms for Square in particular (bit-pack the states!)
 export class GeneralSectorData implements TState<TSectorData> {
 
   public readonly sectorChangedEmitter = new TinyEmitter<[ sector: TSector, state: SectorState, oldState: SectorState ]>();
