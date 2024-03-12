@@ -55,6 +55,19 @@ export class VertexState {
     return this.matrix[ this.getPairIndex( edgeA, edgeB ) ];
   }
 
+  public getAllowedPairs(): [ TEdge, TEdge ][] {
+    const result: [ TEdge, TEdge ][] = [];
+    let index = 0;
+    for ( let i = 0; i < this.order; i++ ) {
+      for ( let j = i + 1; j < this.order; j++ ) {
+        if ( this.matrix[ index++ ] ) {
+          result.push( [ this.vertex.edges[ i ], this.vertex.edges[ j ] ] );
+        }
+      }
+    }
+    return result;
+  }
+
   public getPairIndex( edgeA: TEdge, edgeB: TEdge ): number {
     const indexA = this.vertex.edges.indexOf( edgeA );
     const indexB = this.vertex.edges.indexOf( edgeB );

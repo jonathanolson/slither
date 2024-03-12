@@ -3,9 +3,6 @@ import { DerivedProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { faceColorsVisibleProperty, puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
-import { TFaceData } from '../../model/data/face/TFaceData.ts';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
-import { TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
 import { VertexNode } from './VertexNode.ts';
@@ -13,9 +10,10 @@ import { FaceNode } from './FaceNode.ts';
 import { EdgeNode } from './EdgeNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
-import { TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 import { SectorNode } from './SectorNode.ts';
+import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
+import { VertexStateNode } from './VertexStateNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -28,7 +26,7 @@ type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
 
 export type BasicPuzzleNodeOptions = SelfOptions & ParentOptions;
 
-export type BasicPuzzleNodeData = TFaceData & TEdgeData & TSimpleRegionData & TFaceColorData;
+export type BasicPuzzleNodeData = TCompleteData;
 
 // TODO: disposal!
 export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends BasicPuzzleNodeData = BasicPuzzleNodeData> extends Node {
@@ -59,6 +57,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const edgeContainer = new Node();
     const vertexContainer = new Node();
     const simpleRegionContainer = new Node();
+    const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const annotationContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
@@ -86,6 +85,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     puzzle.board.vertices.forEach( vertex => {
       vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
+      vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
     } );
 
     puzzle.board.edges.forEach( edge => {
@@ -109,6 +109,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         edgeContainer,
         vertexContainer,
         simpleRegionContainer,
+        vertexStateContainer,
         annotationContainer
       ]
     }, options ) );
@@ -121,6 +122,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       edgeContainer.children.forEach( child => child.dispose() );
       vertexContainer.children.forEach( child => child.dispose() );
       simpleRegionContainer.children.forEach( child => child.dispose() );
+      vertexStateContainer.children.forEach( child => child.dispose() );
       sectorContainer.children.forEach( child => child.dispose() );
       isSolvedProperty.dispose();
     } );
