@@ -37,7 +37,7 @@ export class SettingsNode extends PopupNode {
         new UITextCheckbox( 'Simple Loop X', autoSolveSimpleLoopToRedProperty ),
         new UITextCheckbox( 'Simple Loop Lines', autoSolveSimpleLoopToBlackProperty ),
         new UITextCheckbox( 'Double Minus One Faces', autoSolveDoubleMinusOneFacesProperty ),
-        new UITextCheckbox( 'Face-Only Sectors', autoSolveStaticFaceSectorProperty ),
+        new UITextCheckbox( '1/N-1 Sectors', autoSolveStaticFaceSectorProperty ),
         new UITextCheckbox( 'Simple Sectors', autoSolveSimpleSectorProperty ),
         new UITextCheckbox( 'Face Color X', autoSolveFaceColorToRedProperty ),
         new UITextCheckbox( 'Face Color Lines', autoSolveFaceColorToBlackProperty ),
