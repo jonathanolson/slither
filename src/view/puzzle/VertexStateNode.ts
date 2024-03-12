@@ -19,7 +19,7 @@ export class VertexStateNode extends Node {
     const container = new Node();
     this.addChild( container );
 
-    const mainPointDistance = 0.12;
+    const mainPointDistance = 0.1;
     const relativeVertexDirections = vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
     const mainPoints = relativeVertexDirections.map( direction => direction.times( mainPointDistance ) );
 
@@ -42,6 +42,7 @@ export class VertexStateNode extends Node {
       fill: 'white',
       stroke: 'black',
       lineWidth: 0.01,
+      opacity: 0.4, // TODO?
 
       children: [
         statePath,

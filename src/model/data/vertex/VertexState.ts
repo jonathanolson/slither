@@ -204,7 +204,13 @@ export class VertexState {
 
     for ( let i = 0; i < order; i++ ) {
       const edgeA = vertex.edges[ i ];
-      if ( redEdges.has( edgeA ) ) { continue; }
+      if ( redEdges.has( edgeA ) ) {
+        // Short-circuit, no need to check the rest of the row
+        for ( let j = i + 1; j < order; j++ ) {
+          matrix.push( false );
+        }
+        continue;
+      }
 
       for ( let j = i + 1; j < order; j++ ) {
         let possible = true;
@@ -286,7 +292,7 @@ export class VertexState {
   }
 
   public static deserialize( vertex: TVertex, serialized: TSerializedVertexState ): VertexState {
-    return new VertexState( vertex, VertexState.unpackMatrix( serialized ).slice( 0, vertex.edges.length ) );
+    return new VertexState( vertex, VertexState.unpackMatrix( serialized ).slice( 0, VertexState.getMatrixSize( vertex.edges.length ) ) );
   }
 }
 

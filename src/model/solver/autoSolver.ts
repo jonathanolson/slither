@@ -20,6 +20,7 @@ import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
 import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
 import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { TStructure } from '../board/core/TStructure.ts';
+import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -51,7 +52,8 @@ export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, 
     new SafeEdgeToSimpleRegionSolver( board, state ),
     new SafeSolvedEdgeSolver( board, state ),
     new SafeEdgeToFaceColorSolver( board, state ),
-    new SafeEdgeToSectorSolver( board, state )
+    new SafeEdgeToSectorSolver( board, state ),
+    new SafeEdgeSectorColorToVertexSolver( board, state ),
   ] );
 };
 
@@ -158,7 +160,6 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
     new SafeEdgeToSimpleRegionSolver( board, state ),
     new SafeSolvedEdgeSolver( board, state ),
     new SafeEdgeToFaceColorSolver( board, state ),
-    new SafeEdgeToSectorSolver( board, state ),
 
     new SimpleVertexSolver( board, state, {
       solveJointToRed: true,
@@ -180,9 +181,11 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
     // e.g. double-3s adjacent in square form
     new StaticDoubleMinusOneFacesSolver( board, state ),
 
+    new SafeEdgeToSectorSolver( board, state ),
     new StaticSectorSolver( board, state ),
-
     new SimpleSectorSolver( board, state ),
+
+    new SafeEdgeSectorColorToVertexSolver( board, state ),
 
     // We rely on the Face colors being accurate here
     new SimpleFaceColorSolver( board, state, {

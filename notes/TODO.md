@@ -18,6 +18,7 @@
     - Vertex mode (allow adjusting vertex state?)
     - 
     - Mouse hover behavior over what it will change! (Also a11y?)
+  - Explicitly list out the "rules" for a given difficulty level in the future?
   - 
   - VertexData
     - Solvers

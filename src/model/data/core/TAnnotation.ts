@@ -4,6 +4,7 @@ import { TFace } from '../../board/core/TFace.ts';
 import { TAnnotatedAction } from './TAnnotatedAction.ts';
 import { TSector } from '../sector/TSector.ts';
 import SectorState from '../sector/SectorState.ts';
+import { VertexState } from '../vertex/VertexState.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';
@@ -165,6 +166,13 @@ export type StaticFaceSectorsAnnotation = {
   sectors: TSector[];
 };
 
+export type VertexStateAnnotation = {
+  type: 'VertexState';
+  vertex: TVertex;
+  beforeState: VertexState;
+  afterState: VertexState;
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -190,7 +198,8 @@ export type TAnnotation =
   | SingleEdgeToSectorAnnotation
   | DoubleEdgeToSectorAnnotation
   | ForcedSectorAnnotation
-  | StaticFaceSectorsAnnotation;
+  | StaticFaceSectorsAnnotation
+  | VertexStateAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',
