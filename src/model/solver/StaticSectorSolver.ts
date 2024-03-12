@@ -89,6 +89,7 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
 
           if ( sectorState !== constrainedState ) {
             actions.push( new SectorStateSetAction( sector, constrainedState ) );
+            modifiedSectors.push( sector );
           }
         }
 
