@@ -5,7 +5,7 @@ import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { TFaceData } from '../data/face/TFaceData.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener } from '../data/simple-region/TSimpleRegionData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
@@ -26,6 +26,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
   private hasDirtyWeirdEdges: boolean = false;
 
   private readonly simpleRegionListener: TSimpleRegionDataListener;
+  private readonly edgeListener: TEdgeDataListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -54,8 +55,60 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
       }
       this.hasDirtyWeirdEdges = state.getWeirdEdges().length > 0;
     };
-
     this.state.simpleRegionsChangedEmitter.addListener( this.simpleRegionListener );
+
+    this.edgeListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => {
+      // We need to see if red edges created a forced connection(!)
+      // We'll start scanning from each endpoint of the red edge. If it has the proper conditions (2 white edges, 0 black),
+      // we'll start venturing down one of those directions. If it starts on (or hits) a black edge, we'll identify the
+      // region and mark it as dirty.
+      if ( state === EdgeState.RED ) {
+        const simpleRegions = this.state.getSimpleRegions();
+
+        const walkVertex = ( startingVertex: TVertex ): void => {
+          let vertex = startingVertex;
+          let lastVertex: TVertex | null = null;
+
+          let bailCount = 0;
+
+          do {
+            if ( bailCount++ > 10000 ) {
+              throw new Error( 'infinite loop detected' );
+            }
+
+            // If it has a black edge, do a region check (make it dirty)
+            const blackEdges = vertex.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.BLACK );
+            if ( blackEdges.length === 1 ) {
+              for ( const simpleRegion of simpleRegions ) {
+                if ( simpleRegion.a === vertex || simpleRegion.b === vertex ) {
+                  this.dirtySimpleRegions.add( simpleRegion );
+                }
+              }
+              break;
+            }
+
+            // If we're not forced, bail
+            if ( blackEdges.length !== 0 ) {
+              break;
+            }
+            const whiteEdges = vertex.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+            if ( whiteEdges.length !== 2 ) {
+              break;
+            }
+
+            const nextEdge = whiteEdges[ 0 ].getOtherVertex( vertex ) === lastVertex ? whiteEdges[ 1 ] : whiteEdges[ 0 ];
+
+            // Move on, JUST in one direction (if this is our first call, we only need to inspect in one direction
+            lastVertex = vertex;
+            vertex = nextEdge.getOtherVertex( vertex );
+          }
+          while ( vertex !== startingVertex );
+        };
+        walkVertex( edge.start );
+        walkVertex( edge.end );
+      }
+    };
+    this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
   }
 
   public get dirty(): boolean {
@@ -175,5 +228,6 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
 
   public dispose(): void {
     this.state.simpleRegionsChangedEmitter.removeListener( this.simpleRegionListener );
+    this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
   }
 }
