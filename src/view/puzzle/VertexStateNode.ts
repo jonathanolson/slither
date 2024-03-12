@@ -7,6 +7,7 @@ import { Shape } from 'phet-lib/kite';
 import { TVertexData } from '../../model/data/vertex/TVertexData.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { ConvexHull2, Vector2 } from 'phet-lib/dot';
+import { VertexState } from '../../model/data/vertex/VertexState.ts';
 
 export class VertexStateNode extends Node {
   public constructor(
@@ -58,6 +59,8 @@ export class VertexStateNode extends Node {
     } );
     this.addChild( mainPath );
 
+    let lastVertexState: VertexState | null = null;
+
     const multilink = Multilink.multilink( [
       stateProperty,
       vertexStateVisibleProperty
@@ -68,22 +71,25 @@ export class VertexStateNode extends Node {
       }
 
       const vertexState = state.getVertexState( vertex );
+      if ( !lastVertexState || !lastVertexState.equals( vertexState ) ) {
+        lastVertexState = vertexState;
 
-      // TODO: better performance for changing
-      const shape = new Shape();
-      for ( const pair of vertexState.getAllowedPairs() ) {
-        const getPoint = ( edge: TEdge ) => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized().times( mainPointDistance );
-        shape.moveToPoint( getPoint( pair[ 0 ] ) );
-        shape.lineToPoint( getPoint( pair[ 1 ] ) );
+        // TODO: better performance for changing
+        const shape = new Shape();
+        for ( const pair of vertexState.getAllowedPairs() ) {
+          const getPoint = ( edge: TEdge ) => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized().times( mainPointDistance );
+          shape.moveToPoint( getPoint( pair[ 0 ] ) );
+          shape.lineToPoint( getPoint( pair[ 1 ] ) );
+        }
+        if ( vertexState.allowsEmpty() ) {
+          const emptyRadius = 0.03;
+          shape.moveTo( emptyRadius, 0 );
+          shape.circle( Vector2.ZERO, emptyRadius );
+          shape.close();
+        }
+        shape.makeImmutable();
+        statePath.shape = shape;
       }
-      if ( vertexState.allowsEmpty() ) {
-        const emptyRadius = 0.03;
-        shape.moveTo( emptyRadius, 0 );
-        shape.circle( Vector2.ZERO, emptyRadius );
-        shape.close();
-      }
-      shape.makeImmutable();
-      statePath.shape = shape;
 
       container.children = [
         mainPath
