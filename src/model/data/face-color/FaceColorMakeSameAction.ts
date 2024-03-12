@@ -3,28 +3,32 @@ import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts'
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { dereferenceFaceColorPointer, TFaceColorPointer } from './FaceColorPointer.ts';
 
 export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   public constructor(
-    public readonly a: TFaceColor,
-    public readonly b: TFaceColor
+    public readonly a: TFaceColorPointer,
+    public readonly b: TFaceColorPointer
   ) {
     assertEnabled() && assert( a );
     assertEnabled() && assert( b );
   }
 
   public apply( state: TFaceColorData ): void {
-    if ( this.a === this.b ) {
+    const a = dereferenceFaceColorPointer( state, this.a );
+    const b = dereferenceFaceColorPointer( state, this.b );
+
+    if ( a === b ) {
       return;
     }
 
-    const aOpposite = state.getOppositeFaceColor( this.a );
-    const bOpposite = state.getOppositeFaceColor( this.b );
+    const aOpposite = state.getOppositeFaceColor( a );
+    const bOpposite = state.getOppositeFaceColor( b );
 
     if ( assertEnabled() ) {
       const colors = new Set( state.getFaceColors() );
-      assert( colors.has( this.a ) );
-      assert( colors.has( this.b ) );
+      assert( colors.has( a ) );
+      assert( colors.has( b ) );
       if ( aOpposite ) {
         assert( colors.has( aOpposite ) );
       }
@@ -34,7 +38,7 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
     }
 
     // TODO: based on opposite structure, we probably don't need both of these checks?
-    if ( aOpposite && aOpposite === this.b || bOpposite && bOpposite === this.a ) {
+    if ( aOpposite && aOpposite === b || bOpposite && bOpposite === a ) {
       state.modifyFaceColors( [], [], new Map(), new Map(), true );
       return;
     }
@@ -43,10 +47,10 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
     const faceChangeMap = new Map<TFace, TFaceColor>();
     const oppositeChangeMap = new Map<TFaceColor, TFaceColor | null>();
 
-    const result = FaceColorMakeSameAction.combineFaces( this.a, this.b, state, removedFaceColors, faceChangeMap );
+    const result = FaceColorMakeSameAction.combineFaces( a, b, state, removedFaceColors, faceChangeMap );
     const opposite = ( aOpposite && bOpposite ) ? FaceColorMakeSameAction.combineFaces( aOpposite, bOpposite, state, removedFaceColors, faceChangeMap ) : ( aOpposite || bOpposite );
 
-    const hadOpposite = ( result === this.a && opposite === aOpposite ) || ( result === this.b && opposite === bOpposite );
+    const hadOpposite = ( result === a && opposite === aOpposite ) || ( result === b && opposite === bOpposite );
     if ( !hadOpposite ) {
       oppositeChangeMap.set( result, opposite );
       if ( opposite ) {
@@ -62,7 +66,7 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   }
 
   public isEmpty(): boolean {
-    return this.a !== this.b;
+    return false;
   }
 
   public serializeAction(): TSerializedAction {

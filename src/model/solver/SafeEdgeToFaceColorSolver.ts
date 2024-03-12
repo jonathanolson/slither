@@ -15,6 +15,7 @@ import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOpp
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 
 type Data = TEdgeData & TFaceColorData;
 
@@ -293,7 +294,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
 
           if ( state === EdgeState.BLACK ) {
             if ( this.state.getOppositeFaceColor( faceColorA ) !== faceColorB ) {
-              return new AnnotatedAction( new FaceColorMakeOppositeAction( faceColorA, faceColorB ), {
+              return new AnnotatedAction( new FaceColorMakeOppositeAction( getFaceColorPointer( this.state, faceColorA ), getFaceColorPointer( this.state, faceColorB ) ), {
                 type: 'FaceColoringBlackEdge',
                 edge: edge
               } );
@@ -301,7 +302,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
           }
           else if ( state === EdgeState.RED ) {
             if ( faceColorA !== faceColorB ) {
-              return new AnnotatedAction( new FaceColorMakeSameAction( faceColorA, faceColorB ), {
+              return new AnnotatedAction( new FaceColorMakeSameAction( getFaceColorPointer( this.state, faceColorA ), getFaceColorPointer( this.state, faceColorB ) ), {
                 type: 'FaceColoringRedEdge',
                 edge: edge
               } );

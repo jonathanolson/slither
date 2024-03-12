@@ -17,6 +17,7 @@ import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
+import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;
@@ -258,7 +259,10 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
               // Sanity check?
               if ( oppositeColors.length ) {
                 assertEnabled() && assert( oppositeColors.every( oppositeColor => this.state.getFaceColors().includes( oppositeColor ) ) );
-                return new AnnotatedAction( new CompositeAction( oppositeColors.map( oppositeColor => new FaceColorMakeOppositeAction( mainColor, oppositeColor ) ) ), {
+                return new AnnotatedAction( new CompositeAction( oppositeColors.map( oppositeColor => new FaceColorMakeOppositeAction(
+                  getFaceColorPointer( this.state, mainColor ),
+                  getFaceColorPointer( this.state, oppositeColor )
+                ) ) ), {
                   type: 'FaceColorBalance',
                   matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
                   oppositeEdges: [ ...oppositeSides ].map( side => side.edge ),
@@ -273,7 +277,10 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
               const colorB = sides[ 1 ].color;
 
               if ( this.state.getOppositeFaceColor( colorA ) !== colorB ) {
-                return new AnnotatedAction( new FaceColorMakeOppositeAction( colorA, colorB ), {
+                return new AnnotatedAction( new FaceColorMakeOppositeAction(
+                  getFaceColorPointer( this.state, colorA ),
+                  getFaceColorPointer( this.state, colorB )
+                ), {
                   type: 'FaceColorOneConstrained',
                   edges: [ sides[ 0 ].edge, sides[ 1 ].edge ],
                   ...getBaseAnnotation()

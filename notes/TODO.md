@@ -6,10 +6,7 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - Add assertions that detect if any state has ... an inconsistent face coloring state (e.g. opposites issues, missing in opposites)
-    - This is caused by... storing face colors in actions (FaceColorMakeSameAction/FaceColorMakeOppositeAction)
-    - We'll really want to based this more... on face/colorState lookup?
-      - FaceColorPointer: Face | inside | outside
+  - GeneralFaceColorAction: Use FaceColorPointer
   - Remove isOneConstrained (balanced handles this)
   - Swap solver order for fuzzing (we want to be robust to that)
     - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)

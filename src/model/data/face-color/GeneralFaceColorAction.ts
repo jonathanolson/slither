@@ -7,6 +7,9 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 export class GeneralFaceColorAction implements TAction<TFaceColorData> {
   public constructor(
     public readonly board: TBoard,
+
+    // TODO: MAKE THIS USE FaceColorPointer!!!!!!
+    // TODO: This will enable (a) serialization, but also (b) won't mess us up if we compose this with another type of action
     public readonly addedFaceColors: Set<TFaceColor>,
     public readonly removedFaceColors: Set<TFaceColor>,
     public readonly faceChangeMap: Map<TFace, TFaceColor>,
