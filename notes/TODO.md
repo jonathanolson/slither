@@ -7,6 +7,8 @@
 
 - Current code TODOs
   - Add assertions that detect if any state has ... an inconsistent face coloring state (e.g. opposites issues, missing in opposites)
+  - Swap solver order for fuzzing (we want to be robust to that)
+    - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)
   - Modes:
     - Edge mode (normal)
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
@@ -17,6 +19,15 @@
     - 
     - Mouse hover behavior over what it will change! (Also a11y?)
   - 
+  - VertexData
+    - Solvers
+      - SafeEdgeSectorToVertexSolver --- NOTE when testing, do NOT just include this in the safeSolver. Make it prove itself.
+        - Also... will we ever want this to be in the safe route? Will we directly SHOW vertex state?
+      - VertexToEdgeSolver
+      - VertexToSectorSolver
+      - VertexToFaceColorSolver
+    - SHOW VertexState
+      - In a unit circle (subset of complete graph style) - potentially curve edges in too
   - SimpleVertexState (SectorData / WedgeData) - wedge looks too much like edge
     - Solvers:
       - sector => face color
@@ -121,6 +132,7 @@
       - dash?
       - fill instead of stroke?
       - inverse arc would be... great?
+  - Solver for "keep even enter/exits around the vertices of a face" - or really any region? (like that advanced reddit post)
   - Are we able to SAT-solve some solvers, to see if there are any (in the limited scope) missed rules?
   - Delay puzzle string save by a frame, it is taking a bit to deflate right now.
   - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one

@@ -4,6 +4,8 @@ import { TEdge } from '../../board/core/TEdge.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TSectorData } from '../sector/TSectorData.ts';
 import { getSectorsFromVertex } from '../sector/getSectorsFromVertex.ts';
+import { TEdgeData } from '../edge/TEdgeData.ts';
+import EdgeState from '../edge/EdgeState.ts';
 
 export class VertexState {
 
@@ -120,6 +122,10 @@ export class VertexState {
     return new VertexState( vertex, matrix );
   }
 
+  public static none( vertex: TVertex ): VertexState {
+    return VertexState.fromLookup( vertex, () => false, false );
+  }
+
   public static any( vertex: TVertex ): VertexState {
     return VertexState.fromLookup( vertex, () => true, true );
   }
@@ -140,17 +146,36 @@ export class VertexState {
     return VertexState.fromLookup( vertex, ( a, b ) => ( a !== edgeA && a !== edgeB ) || ( b !== edgeA && b !== edgeB ), true );
   }
 
-  public static fromVertexSectorData( vertex: TVertex, sectorData: TSectorData ): VertexState {
+  public static fromEdgeSectorData( vertex: TVertex, data: TEdgeData & TSectorData ): VertexState {
     const order = vertex.edges.length;
     const matrix: boolean[] = [];
 
+    const blackEdges = vertex.edges.filter( edge => data.getEdgeState( edge ) === EdgeState.BLACK );
+
+
+    if ( blackEdges.length > 2 ) {
+      // buggy case!
+      return VertexState.none( vertex );
+    }
+    if ( blackEdges.length === 2 ) {
+      // TODO: how to handle... bad cases?
+      return VertexState.withOnlyPair( vertex, blackEdges[ 0 ], blackEdges[ 1 ] );
+    }
+    const blackEdge = blackEdges.length ? blackEdges[ 0 ] : null;
+
+    const redEdges = new Set( vertex.edges.filter( edge => data.getEdgeState( edge ) === EdgeState.RED ) );
+
     const sectors = getSectorsFromVertex( vertex );
-    const sectorStates = sectors.map( sector => sectorData.getSectorState( sector ) );
+    const sectorStates = sectors.map( sector => data.getSectorState( sector ) );
 
     for ( let i = 0; i < order; i++ ) {
       const edgeA = vertex.edges[ i ];
+      if ( redEdges.has( edgeA ) ) { continue; }
+
       for ( let j = i + 1; j < order; j++ ) {
         const edgeB = vertex.edges[ j ];
+        if ( redEdges.has( edgeB ) ) { continue; }
+        if ( blackEdge && ( edgeA !== blackEdge && edgeB !== blackEdge ) ) { continue; }
 
         matrix.push( sectorStates.every( ( state, i ) => {
           const sector = sectors[ i ];
@@ -161,7 +186,7 @@ export class VertexState {
         } ) );
       }
     }
-    matrix.push( sectorStates.every( state => state.zero ) );
+    matrix.push( blackEdges.length === 0 && sectorStates.every( state => state.zero ) );
 
     return new VertexState( vertex, matrix );
   }
