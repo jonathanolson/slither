@@ -24,6 +24,16 @@
         - (1 can opposite-color the adjacent faces)
       - Dynamic face value + edges around it => sectors
       - Vertex + all sectors => sectors/edges update (or... also face colors)
+        - OMG, OMG, just (cubic... in time? this hopefully is fast enough):
+          - FIRST check all edges around vertex. If they are all set, ABORT. 
+          - create a fresh state for each sector (NONE)
+          - create a pair of booleans for each edge (canBeBlack: false, canBeRed: false)
+          - Enumerate all the cases:
+            - if a case satisfies all of the input sector states:
+              - make the sector state field that happened to TRUE for those "fresh states"
+              - make the edge fields that happened to TRUE for those edges
+          - if edges are just a single type, color them black/red (if they aren't already)
+          - adjust sector types by ANDing our fresh ones with the current ones, look for changes
         - if 2 edges:
           - AND them, and be done with it
           - OH, and exclude 1s (might as well)
@@ -36,7 +46,14 @@
             - 0-1, 0-2, 1, 1-2   (note: we will have 0s and 0-1-2s - ignore possibility of 2-only as that is already solved)
           - 
           - If we think SAT-style:
-            - 
+            - 0 is !A ^ !B
+            - 1 is A xor B e.g. ....
+            - 2 is A ^ B
+            - 0-1 is not-2, e.g. (!A or !B)
+            - 0-2 is not-1, e.g. (!A or B)
+            - 1-2 is not-0, e.g. (A or B)
+            - 0-1-2 is... true.
+            - ... we could just SAT this, bleh
           - 
           - GUARANTEED SafeEdgeToSectorSolver, so we don't have to worry about awkward cases
           - Quick Removals (do first, and keep dirty), since this reduces the later logic - NOTE more efficient to keep in memory and keep applying reductions? maybe a future thing
@@ -62,6 +79,7 @@
             - All non-adjacent to the black edge will have 2's removed, thus:
               - adjacent to black: 1/1-2
               - non-adjacent to black: 0/0-1/1
+              - JUST... enumerate the cases, and see what can potentially change?
               - IF there is a 1 non-black-adjacent, red-out everything but its two edges and the black edge
               - (thus after, all non-adjacent are 0/0-1)
               - IF black-adjacent is 1 and 1/1-2 (with another 0-1 only next to it) and all the rest are 0s, we have a forced exit (... would we already know this from another solver?)
