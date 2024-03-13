@@ -6,7 +6,7 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - GeneralFaceColorAction: Use FaceColorPointer
+  - Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
   - Remove isOneConstrained (balanced handles this)
   - Swap solver order for fuzzing (we want to be robust to that)
     - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)

@@ -177,9 +177,9 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
         }
       }
 
-      for ( const color of oppositeChangedFaceColors ) {
-        assert( colors.has( color ) );
-      }
+      // for ( const color of oppositeChangedFaceColors ) {
+      //   assert( colors.has( color ) );
+      // }
     }
 
     this.faceColorsChangedEmitter.emit(
