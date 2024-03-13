@@ -126,11 +126,6 @@ export type FaceColorBalanceAnnotation = {
   oppositeEdges: TEdge[];
 } & FaceColorAnnotationPartial;
 
-export type FaceColorOneConstrainedAnnotation = {
-  type: 'FaceColorOneConstrained';
-  edges: [ TEdge, TEdge ];
-} & FaceColorAnnotationPartial;
-
 export type DoubleMinusOneFacesAnnotation = {
   type: 'DoubleMinusOneFaces';
   faces: [ TFace, TFace ];
@@ -222,7 +217,6 @@ export type TAnnotation =
   | FaceColorMatchToRedAnnotation
   | FaceColorMatchToBlackAnnotation
   | FaceColorBalanceAnnotation
-  | FaceColorOneConstrainedAnnotation
   | DoubleMinusOneFacesAnnotation
   | SingleEdgeToSectorAnnotation
   | DoubleEdgeToSectorAnnotation

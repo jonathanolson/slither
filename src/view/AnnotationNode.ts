@@ -104,7 +104,7 @@ export class AnnotationNode extends Node {
         ...annotation.face.edges.map( edge => getEdgeColoredOutline( edge, 'red' ) ),
       ];
     }
-    else if ( annotation.type === 'FaceColorMatchToRed' || annotation.type === 'FaceColorMatchToBlack' || annotation.type === 'FaceColorBalance' || annotation.type === 'FaceColorOneConstrained' ) {
+    else if ( annotation.type === 'FaceColorMatchToRed' || annotation.type === 'FaceColorMatchToBlack' || annotation.type === 'FaceColorBalance' ) {
       children = [
         ...annotation.balancedPairs.flatMap( ( balancedPair, i ) => {
           const mainColor = [ 'green', 'blue', 'black' ][ i % 3 ];
@@ -126,9 +126,6 @@ export class AnnotationNode extends Node {
       else if ( annotation.type === 'FaceColorBalance' ) {
         children.push( ...annotation.matchingEdges.map( edge => getEdgeColoredOutline( edge, 'orange' ) ) );
         children.push( ...annotation.oppositeEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ) );
-      }
-      else if ( annotation.type === 'FaceColorOneConstrained' ) {
-        children.push( ...annotation.edges.map( edge => getEdgeColoredOutline( edge, 'red' ) ) );
       }
     }
     else if ( annotation.type === 'DoubleMinusOneFaces' ) {

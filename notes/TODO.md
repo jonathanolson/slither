@@ -7,9 +7,6 @@
 
 - Current code TODOs
   - Buggy solver: Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
-  - Remove isOneConstrained (balanced handles this)
-  - Swap solver order for fuzzing (we want to be robust to that)
-    - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)
   - Modes:
     - Edge mode (normal)
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
@@ -24,8 +21,6 @@
     - Mouse hover behavior over what it will change! (Also a11y?)
   - Explicitly list out the "rules" for a given difficulty level in the future?
   - FORCED checks should look at Vertex state(!) --- like SimpleLoopSolver.
-  - Abstract way to say "when" something should be made dirty (e.g. { face: face => ..., edge: edge => ... })
-    - Base Solver class
   - 
   - Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
   - Face+Vertex+Color => updates
@@ -47,8 +42,12 @@
   - Binary sets:
     - WE CAN VISUALIZE THESE with coloring!!!
   - TO set an X... user presses one finger down elsewhere, THEN presses on edge?
+  - Abstract way to say "when" something should be made dirty (e.g. { face: face => ..., edge: edge => ... })
+    - Base Solver class
   - Bugs:
     - App broken when reloading on broken state?
+  - Swap solver order for fuzzing (we want to be robust to that)
+    - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)
   - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
   - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
     - We'll want this in order to list out all of the potential hints(!)

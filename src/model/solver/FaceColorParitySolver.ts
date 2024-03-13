@@ -217,7 +217,6 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
             const isRed = M > F;
             const isBlack = M > NF;
             const isBalanced = M === maxFNF;
-            const isOneConstrained = F === 1 && NF === 1;
             if ( isRed && isBlack ) {
               throw new InvalidStateError( 'Too many adjacent faces with the same color' );
             }
@@ -266,23 +265,6 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
                   type: 'FaceColorBalance',
                   matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
                   oppositeEdges: [ ...oppositeSides ].map( side => side.edge ),
-                  ...getBaseAnnotation()
-                } );
-              }
-            }
-            // TODO: OMG wait, isn't this handled by ... the above isBalanced?
-            // TODO: YES, remove this
-            if ( isOneConstrained && this.options.solveColors ) {
-              const colorA = sides[ 0 ].color;
-              const colorB = sides[ 1 ].color;
-
-              if ( this.state.getOppositeFaceColor( colorA ) !== colorB ) {
-                return new AnnotatedAction( new FaceColorMakeOppositeAction(
-                  getFaceColorPointer( this.state, colorA ),
-                  getFaceColorPointer( this.state, colorB )
-                ), {
-                  type: 'FaceColorOneConstrained',
-                  edges: [ sides[ 0 ].edge, sides[ 1 ].edge ],
                   ...getBaseAnnotation()
                 } );
               }
