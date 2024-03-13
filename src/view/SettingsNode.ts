@@ -11,6 +11,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
+import { uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -165,6 +166,9 @@ export class SettingsNode extends PopupNode {
         new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
         new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
         new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
+          advanced: true
+        } ),
+        new UITextCheckbox( 'Solve Uses Built-In', uiHintUsesBuiltInSolveProperty, {
           advanced: true
         } ),
         new HBox( {

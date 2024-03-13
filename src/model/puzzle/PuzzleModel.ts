@@ -18,6 +18,9 @@ import { TAction, TSerializedAction } from '../data/core/TAction.ts';
 import { CompleteDataValidator } from '../data/combined/CompleteDataValidator.ts';
 import { TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
+
+export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
@@ -265,35 +268,37 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
     if ( !simpleRegionIsSolved( state ) ) {
 
-      const solutions = satSolve( this.puzzle.board, this.puzzle.stateProperty.value, {
-        maxIterations: 10000,
-        failOnMultipleSolutions: true
-      } );
+      if ( uiHintUsesBuiltInSolveProperty.value ) {
+        const moreSolvedState = state.clone();
 
-      if ( solutions.length === 1 ) {
-        const solvedState = this.puzzle.stateProperty.value.clone();
+        iterateSolverFactory( standardSolverFactory, this.puzzle.board, moreSolvedState, true );
 
-        solutions[ 0 ].forEach( edge => {
-          solvedState.setEdgeState( edge, EdgeState.BLACK );
-        } );
-        safeSolve( this.puzzle.board, solvedState );
-
-        this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solvedState, false ) );
+        this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), moreSolvedState, false ) );
         this.updateState();
       }
-      else if ( solutions.length === 0 ) {
-        // TODO: what to do?
-        console.log( 'No solution found' );
-      }
       else {
-        // TODO: what to do?
-        console.log( 'Multiple solution found?!?' );
+        const solutions = satSolve( this.puzzle.board, this.puzzle.stateProperty.value, {
+          maxIterations: 10000,
+          failOnMultipleSolutions: true
+        } );
 
-        // debugBoardState( this.puzzle.board, solvedState, {
-        //   scale: 15,
-        //   left: 10,
-        //   top: 10
-        // } );
+        if ( solutions.length === 1 ) {
+          const solvedState = this.puzzle.stateProperty.value.clone();
+
+          solutions[ 0 ].forEach( edge => {
+            solvedState.setEdgeState( edge, EdgeState.BLACK );
+          } );
+          safeSolve( this.puzzle.board, solvedState );
+
+          this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solvedState, false ) );
+          this.updateState();
+        }
+        else if ( solutions.length === 0 ) {
+          console.log( 'No solution found' );
+        }
+        else {
+          console.log( 'Multiple solution found?!?' );
+        }
       }
 
       // Should we remove the old backtracker approach?
