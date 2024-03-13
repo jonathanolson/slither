@@ -102,10 +102,6 @@ export class VertexToSectorSolver implements TSolver<Data, TAnnotatedAction<Data
       }
 
       if ( changedSectors.length ) {
-        console.log( 'sectors', sectors );
-        console.log( 'oldSectorStates', oldSectorStates );
-        console.log( 'newSectorStates', newSectorStates );
-
         return new AnnotatedAction( new CompositeAction(
           changedSectors.map( ( sector, i ) => new SectorStateSetAction( sector, changedNewSectorStates[ i ] ) )
         ), {

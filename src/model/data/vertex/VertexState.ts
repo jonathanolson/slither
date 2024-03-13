@@ -3,10 +3,10 @@ import _ from '../../../workarounds/_.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TSectorData } from '../sector/TSectorData.ts';
-import { getSectorsFromVertex } from '../sector/getSectorsFromVertex.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { getFaceOrderedSectorsFromVertex } from '../sector/getFaceOrderedSectorsFromVertex.ts';
 
 export class VertexState {
 
@@ -205,11 +205,7 @@ export class VertexState {
       return VertexState.withOnlyEmpty( vertex );
     }
 
-    let sectors = getSectorsFromVertex( vertex );
-
-    // Reorder sectors (so that sector[ 0 ] is between edge[ 0 ] and edge[ 1 ], and so on)
-    sectors = [ ...sectors.slice( 1 ), sectors[ 0 ] ];
-    assertEnabled() && assert( sectors[ 0 ].edge === vertex.edges[ 1 ] && sectors[ 0 ].next.edge === vertex.edges[ 0 ] );
+    const sectors = getFaceOrderedSectorsFromVertex( vertex );
 
     const sectorStates = sectors.map( sector => data.getSectorState( sector ) );
     const sectorsAllowZero = sectorStates.every( state => state.zero );

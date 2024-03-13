@@ -6,6 +6,7 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - Themes for sectors/vertex-state
   - Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
   - Remove isOneConstrained (balanced handles this)
   - Swap solver order for fuzzing (we want to be robust to that)

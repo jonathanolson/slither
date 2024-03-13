@@ -159,6 +159,9 @@ export class AnnotationNode extends Node {
     else if ( annotation.type === 'VertexStateToSector' ) {
       children = _.uniq( annotation.sectors.flatMap( sector => [ sector.edge, sector.next.edge ] ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
+    else if ( annotation.type === 'VertexStateToSameFaceColor' || annotation.type === 'VertexStateToOppositeFaceColor' ) {
+      children = _.uniq( [ ...annotation.facesA, ...annotation.facesB ].flatMap( face => face.edges ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
+    }
     else {
       children = [];
     }
