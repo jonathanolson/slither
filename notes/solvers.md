@@ -23,6 +23,7 @@
       - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
         - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
         - take + reject both, or take + split permutations also possibilities
+      - HEY!!! Some topologies might have a section of shared edges between faces. Figure out this generalization
   - Parity... is naturally handled
   - [deprecated because this handles, right?], Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
   - [deprecated for same reason, right?] Face+Vertex+Color => updates
