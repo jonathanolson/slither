@@ -1,14 +1,14 @@
 import { TState } from '../core/TState.ts';
-import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
+import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from './TFaceValueData.ts';
 import { deserializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
 import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { GeneralFaceDelta } from './GeneralFaceDelta.ts';
+import { GeneralFaceValueDelta } from './GeneralFaceValueDelta.ts';
 
-export class GeneralFaceData implements TState<TFaceData> {
+export class GeneralFaceValueData implements TState<TFaceValueData> {
 
   public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
@@ -41,25 +41,25 @@ export class GeneralFaceData implements TState<TFaceData> {
     }
   }
 
-  public clone(): GeneralFaceData {
-    return new GeneralFaceData( this.board, face => this.getFaceValue( face ) );
+  public clone(): GeneralFaceValueData {
+    return new GeneralFaceValueData( this.board, face => this.getFaceValue( face ) );
   }
 
-  public createDelta(): TDelta<TFaceData> {
-    return new GeneralFaceDelta( this.board, this );
+  public createDelta(): TDelta<TFaceValueData> {
+    return new GeneralFaceValueDelta( this.board, this );
   }
 
-  public serializeState( board: TBoard ): TSerializedFaceData {
-    return serializeFaceData( board, this );
+  public serializeState( board: TBoard ): TSerializedFaceValueData {
+    return serializeFaceValueData( board, this );
   }
 
-  public static deserializeState( board: TBoard, serializedFaceData: TSerializedFaceData ): GeneralFaceData {
-    const map: Map<TFace, FaceValue> = new Map( serializedFaceData.faces.map( ( serializedFaceValue: { face: TSerializedFace; state: FaceValue } ) => [
+  public static deserializeState( board: TBoard, serializedFaceValueData: TSerializedFaceValueData ): GeneralFaceValueData {
+    const map: Map<TFace, FaceValue> = new Map( serializedFaceValueData.faces.map( ( serializedFaceValue: { face: TSerializedFace; state: FaceValue } ) => [
       deserializeFace( board, serializedFaceValue.face ),
       serializedFaceValue.state
     ] ) );
 
-    return new GeneralFaceData(
+    return new GeneralFaceValueData(
       board,
       face => map.get( face ) ?? null
     );

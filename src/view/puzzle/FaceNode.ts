@@ -6,7 +6,7 @@ import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueError
 import EdgeState from '../../model/data/edge/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
-import { TFaceData } from '../../model/data/face/TFaceData.ts';
+import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
 
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
@@ -16,7 +16,7 @@ export class FaceNode extends Node {
 
   public constructor(
     public readonly face: TFace,
-    stateProperty: TReadOnlyProperty<TState<TEdgeData & TFaceData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeData & TFaceValueData>>,
     providedOptions?: FaceNodeOptions
   ) {
 

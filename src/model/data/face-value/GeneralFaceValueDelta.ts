@@ -1,19 +1,19 @@
-import { GeneralFaceAction } from './GeneralFaceAction.ts';
+import { GeneralFaceValueAction } from './GeneralFaceValueAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
+import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from './TFaceValueData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 
-export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceData> {
+export class GeneralFaceValueDelta extends GeneralFaceValueAction implements TDelta<TFaceValueData> {
 
   public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
   public constructor(
     board: TBoard,
-    public readonly parentState: TState<TFaceData>,
+    public readonly parentState: TState<TFaceValueData>,
     faceValueMap: Map<TFace, FaceValue> = new Map()
   ) {
     super( board, faceValueMap );
@@ -38,15 +38,15 @@ export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceD
     }
   }
 
-  public clone(): GeneralFaceDelta {
-    return new GeneralFaceDelta( this.board, this.parentState, new Map( this.faceValueMap ) );
+  public clone(): GeneralFaceValueDelta {
+    return new GeneralFaceValueDelta( this.board, this.parentState, new Map( this.faceValueMap ) );
   }
 
-  public createDelta(): TDelta<TFaceData> {
-    return new GeneralFaceDelta( this.board, this, new Map() );
+  public createDelta(): TDelta<TFaceValueData> {
+    return new GeneralFaceValueDelta( this.board, this, new Map() );
   }
 
-  public serializeState( board: TBoard ): TSerializedFaceData {
-    return serializeFaceData( board, this );
+  public serializeState( board: TBoard ): TSerializedFaceValueData {
+    return serializeFaceValueData( board, this );
   }
 }

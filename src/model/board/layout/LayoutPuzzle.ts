@@ -1,9 +1,9 @@
 import { BaseBoard } from '../core/BaseBoard.ts';
 import EdgeState from '../../data/edge/EdgeState.ts';
-import FaceValue from '../../data/face/FaceValue.ts';
+import FaceValue from '../../data/face-value/FaceValue.ts';
 import { TBoard } from '../core/TBoard.ts';
 import { TState } from '../../data/core/TState.ts';
-import { TFaceData } from '../../data/face/TFaceData.ts';
+import { TFaceValueData } from '../../data/face-value/TFaceValueData.ts';
 import { TEdgeData } from '../../data/edge/TEdgeData.ts';
 import { TVertex } from '../core/TVertex.ts';
 import { TFace } from '../core/TFace.ts';
@@ -33,7 +33,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public constructor(
     public readonly originalBoard: TBoard,
-    public readonly originalState: TState<TFaceData & TEdgeData>
+    public readonly originalState: TState<TFaceValueData & TEdgeData>
   ) {
     const vertexMap = new Map<TVertex, LayoutVertex>();
     const faceMap = new Map<TFace, LayoutFace>();

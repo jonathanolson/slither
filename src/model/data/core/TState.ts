@@ -1,6 +1,6 @@
 import { TDelta } from './TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { GeneralFaceData } from '../face/GeneralFaceData.ts';
+import { GeneralFaceValueData } from '../face-value/GeneralFaceValueData.ts';
 import { GeneralEdgeData } from '../edge/GeneralEdgeData.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
 import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegionData.ts';
@@ -24,8 +24,8 @@ export const deserializeState = ( board: TBoard, serializedState: TSerializedSta
   if ( type === 'CompleteData' ) {
     return CompleteData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
   }
-  else if ( type === 'FaceData' ) {
-    return GeneralFaceData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
+  else if ( type === 'FaceValueData' ) {
+    return GeneralFaceValueData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
   }
   else if ( type === 'EdgeData' ) {
     return GeneralEdgeData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;

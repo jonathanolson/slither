@@ -1,6 +1,6 @@
 import { TStructure } from '../board/core/TStructure.ts';
 import { deserializeState, TSerializedState, TState } from '../data/core/TState.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { deserializeBoard, serializeBoard, TBoard, TSerializedBoard } from '../board/core/TBoard.ts';
 import { Property, TProperty } from 'phet-lib/axon';
 import { BasicPuzzle } from './BasicPuzzle.ts';
@@ -8,17 +8,17 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { compressString, decompressString } from '../../util/compression.ts';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
 
-export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData> = {
   board: TBoard<Structure>;
   state: TState<Data>;
 };
 
-export type TPropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+export type TPropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData> = {
   board: TBoard<Structure>;
   stateProperty: TProperty<TState<Data>>;
 };
 
-export type TSolvablePropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData> = {
+export type TSolvablePropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData> = {
   solution: TSolvedPuzzle<Structure, Data>;
 } & TPropertyPuzzle<Structure, Data>;
 
@@ -29,7 +29,7 @@ export interface TSerializedPuzzle {
 }
 
 // TODO: deprecate and remove this once we don't need TPropertyPuzzle?
-export const toPropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TFaceData = TFaceData>( puzzle: TPuzzle<Structure, Data> ): TPropertyPuzzle<Structure, Data> => {
+export const toPropertyPuzzle = <Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData>( puzzle: TPuzzle<Structure, Data> ): TPropertyPuzzle<Structure, Data> => {
   return {
     board: puzzle.board,
     stateProperty: new Property( puzzle.state )

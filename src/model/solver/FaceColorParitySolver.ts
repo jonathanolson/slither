@@ -8,7 +8,7 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import _ from '../../workarounds/_.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
@@ -26,7 +26,7 @@ export type FaceColorParitySolverOptions = {
   allowPartialReduction: boolean;
 };
 
-type Data = TFaceData & TEdgeData & TFaceColorData;
+type Data = TFaceValueData & TEdgeData & TFaceColorData;
 
 export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Data>> {
 

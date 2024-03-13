@@ -3,8 +3,8 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
 import { EdgeStateSetAction } from '../edge/EdgeStateSetAction.ts';
 import { GeneralEdgeAction } from '../edge/GeneralEdgeAction.ts';
-import { FaceValueSetAction } from '../face/FaceValueSetAction.ts';
-import { GeneralFaceAction } from '../face/GeneralFaceAction.ts';
+import { FaceValueSetAction } from '../face-value/FaceValueSetAction.ts';
+import { GeneralFaceValueAction } from '../face-value/GeneralFaceValueAction.ts';
 import { NoOpAction } from './NoOpAction.ts';
 import { CompositeAction } from './CompositeAction.ts';
 import { CompleteAction } from '../combined/CompleteAction.ts';
@@ -47,7 +47,7 @@ export const deserializeAction = ( board: TBoard, serializedAction: TSerializedA
     return FaceValueSetAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'GeneralFaceAction' ) {
-    return GeneralFaceAction.deserializeAction( board, serializedAction );
+    return GeneralFaceValueAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'GeneralSimpleRegionAction' ) {
     return GeneralSimpleRegionAction.deserializeAction( board, serializedAction );

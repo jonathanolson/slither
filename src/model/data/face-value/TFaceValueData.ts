@@ -4,7 +4,7 @@ import { TEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TSerializedState } from '../core/TState.ts';
 
-export interface TFaceData {
+export interface TFaceValueData {
   getFaceValue( face: TFace ): FaceValue;
 
   setFaceValue( face: TFace, state: FaceValue ): void;
@@ -13,18 +13,18 @@ export interface TFaceData {
   faceValueChangedEmitter: TEmitter<[ TFace, FaceValue ]>;
 }
 
-export type TFaceDataListener = ( face: TFace, state: FaceValue ) => void;
+export type TFaceValueDataListener = ( face: TFace, state: FaceValue ) => void;
 
-export interface TSerializedFaceData extends TSerializedState {
-  type: 'FaceData';
+export interface TSerializedFaceValueData extends TSerializedState {
+  type: 'FaceValueData';
   faces: {
     face: TSerializedFace;
     state: FaceValue;
   }[];
 }
 
-export const serializeFaceData = ( board: TBoard, faceData: TFaceData ): TSerializedFaceData => ( {
-  type: 'FaceData',
+export const serializeFaceValueData = ( board: TBoard, faceData: TFaceValueData ): TSerializedFaceValueData => ( {
+  type: 'FaceValueData',
   faces: board.faces.filter( face => faceData.getFaceValue( face ) !== null ).map( face => ( {
     face: serializeFace( face ),
     state: faceData.getFaceValue( face )

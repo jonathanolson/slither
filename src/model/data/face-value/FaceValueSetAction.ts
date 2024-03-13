@@ -1,21 +1,21 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TFaceData } from './TFaceData.ts';
+import { TFaceValueData } from './TFaceValueData.ts';
 import { deserializeFace, serializeFace, TFace } from '../../board/core/TFace.ts';
 import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 
-export class FaceValueSetAction implements TAction<TFaceData> {
+export class FaceValueSetAction implements TAction<TFaceValueData> {
 
   public constructor(
     public readonly face: TFace,
     public readonly state: FaceValue
   ) {}
 
-  public apply( state: TFaceData ): void {
+  public apply( state: TFaceValueData ): void {
     state.setFaceValue( this.face, this.state );
   }
 
-  public getUndo( state: TFaceData ): TAction<TFaceData> {
+  public getUndo( state: TFaceValueData ): TAction<TFaceValueData> {
     const previousValue = state.getFaceValue( this.face );
     return new FaceValueSetAction( this.face, previousValue );
   }

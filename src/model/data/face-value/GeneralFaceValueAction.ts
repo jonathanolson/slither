@@ -1,29 +1,29 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TFaceData } from './TFaceData.ts';
+import { TFaceValueData } from './TFaceValueData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { deserializeFace, serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
 import FaceValue from './FaceValue.ts';
 
-export class GeneralFaceAction implements TAction<TFaceData> {
+export class GeneralFaceValueAction implements TAction<TFaceValueData> {
   public constructor(
     public readonly board: TBoard,
     public readonly faceValueMap: Map<TFace, FaceValue> = new Map()
   ) {}
 
-  public apply( state: TFaceData ): void {
+  public apply( state: TFaceValueData ): void {
     for ( const [ face, faceValue ] of this.faceValueMap ) {
       state.setFaceValue( face, faceValue );
     }
   }
 
-  public getUndo( state: TFaceData ): TAction<TFaceData> {
+  public getUndo( state: TFaceValueData ): TAction<TFaceValueData> {
     const faceValueMap = new Map<TFace, FaceValue>();
 
     for ( const face of this.faceValueMap.keys() ) {
       faceValueMap.set( face, state.getFaceValue( face ) );
     }
 
-    return new GeneralFaceAction( this.board, faceValueMap );
+    return new GeneralFaceValueAction( this.board, faceValueMap );
   }
 
   public isEmpty(): boolean {
@@ -40,8 +40,8 @@ export class GeneralFaceAction implements TAction<TFaceData> {
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralFaceAction {
-    return new GeneralFaceAction(
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralFaceValueAction {
+    return new GeneralFaceValueAction(
       board,
       new Map( serializedAction.faces.map( ( serializedFaceValue: { face: TSerializedFace; state: FaceValue } ) => [
         deserializeFace( board, serializedFaceValue.face ),

@@ -18,7 +18,7 @@ import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
-import FaceValue from '../model/data/face/FaceValue.ts';
+import FaceValue from '../model/data/face-value/FaceValue.ts';
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 import { NumberControl } from 'phet-lib/scenery-phet';

@@ -6,7 +6,7 @@ import { TState } from '../data/core/TState.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
-import FaceValue from '../data/face/FaceValue.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';

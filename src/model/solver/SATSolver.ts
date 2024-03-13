@@ -10,7 +10,7 @@
 
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdgeData } from '../data/edge/TEdgeData.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import EdgeState from '../data/edge/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { Combination } from 'phet-lib/dot';
@@ -85,7 +85,7 @@ export type SatSolveOptions = {
 // TODO: in the future, vertex state might help! anything that gives us more helpful clauses? maybe not
 export const satSolve = (
   board: TBoard,
-  state: TState<TEdgeData & TFaceData>,
+  state: TState<TEdgeData & TFaceValueData>,
   options: SatSolveOptions
 ): TEdge[][] => {
 

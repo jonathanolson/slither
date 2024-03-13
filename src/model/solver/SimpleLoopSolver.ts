@@ -4,7 +4,7 @@ import EdgeState from '../data/edge/EdgeState.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener } from '../data/simple-region/TSimpleRegionData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
@@ -20,7 +20,7 @@ export type SimpleLoopSolverOptions = {
   resolveAllRegions: boolean;
 };
 
-export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimpleRegionData, TAnnotatedAction<TFaceData & TEdgeData & TSimpleRegionData>> {
+export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeData & TSimpleRegionData, TAnnotatedAction<TFaceValueData & TEdgeData & TSimpleRegionData>> {
 
   private readonly dirtySimpleRegions: Set<TSimpleRegion>;
   private hasDirtyWeirdEdges: boolean = false;
@@ -30,7 +30,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TFaceData & TEdgeData & TSimpleRegionData>,
+    private readonly state: TState<TFaceValueData & TEdgeData & TSimpleRegionData>,
     private readonly options: SimpleLoopSolverOptions,
     dirtySimpleRegions?: MultiIterable<TSimpleRegion>
   ) {
@@ -115,7 +115,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     return this.dirtySimpleRegions.size > 0 || this.hasDirtyWeirdEdges;
   }
 
-  public nextAction(): TAnnotatedAction<TFaceData & TEdgeData & TSimpleRegionData> | null {
+  public nextAction(): TAnnotatedAction<TFaceValueData & TEdgeData & TSimpleRegionData> | null {
     if ( !this.dirty ) { return null; }
 
     if ( this.state.getWeirdEdges().length ) {
@@ -222,7 +222,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     return true;
   }
 
-  public clone( equivalentState: TState<TFaceData & TEdgeData & TSimpleRegionData> ): SimpleLoopSolver {
+  public clone( equivalentState: TState<TFaceValueData & TEdgeData & TSimpleRegionData> ): SimpleLoopSolver {
     return new SimpleLoopSolver( this.board, equivalentState, this.options, this.dirtySimpleRegions );
   }
 

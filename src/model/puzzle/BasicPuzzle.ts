@@ -3,12 +3,12 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
-import FaceValue from '../data/face/FaceValue.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
 import { TStructure } from '../board/core/TStructure.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import EdgeState from '../data/edge/EdgeState.ts';
@@ -26,7 +26,7 @@ export class BasicPuzzle<Data> {
     this.stateProperty = new TinyProperty( initialState );
   }
 
-  public static fromSolvedPuzzle<Structure extends TStructure, Data extends TFaceData>( puzzle: TSolvedPuzzle<Structure, Data> ): BasicPuzzle<Data> {
+  public static fromSolvedPuzzle<Structure extends TStructure, Data extends TFaceValueData>( puzzle: TSolvedPuzzle<Structure, Data> ): BasicPuzzle<Data> {
     return new BasicPuzzle( puzzle.board, puzzle.cleanState );
   }
 

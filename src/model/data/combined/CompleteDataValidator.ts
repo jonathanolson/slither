@@ -1,10 +1,10 @@
 import { TState } from '../core/TState.ts';
 import { TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
-import { TFaceData } from '../face/TFaceData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from '../face/FaceValue.ts';
+import FaceValue from '../face-value/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
@@ -13,7 +13,7 @@ import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { EdgeDataValidator } from '../edge/EdgeDataValidator.ts';
 import { FaceColorValidator } from '../face-color/FaceColorValidator.ts';
 import { SimpleRegionDataValidator } from '../simple-region/SimpleRegionDataValidator.ts';
-import { FaceDataValidator } from '../face/FaceDataValidator.ts';
+import { FaceValueDataValidator } from '../face-value/FaceValueDataValidator.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -31,7 +31,7 @@ export class CompleteDataValidator implements TState<TCompleteData> {
   public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
 
   private readonly edgeDataValidator: TState<TEdgeData>;
-  private readonly faceDataValidator: TState<TFaceData>;
+  private readonly faceDataValidator: TState<TFaceValueData>;
   private readonly simpleRegionDataValidator: TState<TSimpleRegionData>;
   private readonly faceColorValidator: TState<TFaceColorData>;
   private readonly sectorValidator: TState<TSectorData>;
@@ -46,7 +46,7 @@ export class CompleteDataValidator implements TState<TCompleteData> {
     assertEnabled() && assert( solvedState );
 
     this.edgeDataValidator = new EdgeDataValidator( board, currentState, solvedState );
-    this.faceDataValidator = new FaceDataValidator( board, currentState, solvedState );
+    this.faceDataValidator = new FaceValueDataValidator( board, currentState, solvedState );
     this.simpleRegionDataValidator = new SimpleRegionDataValidator( board, currentState, solvedState );
     this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState ); // TODO: naming discrepancies
     this.sectorValidator = new SectorDataValidator( board, currentState, solvedState );

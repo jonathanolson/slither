@@ -6,22 +6,22 @@ import { TEdgeData } from '../data/edge/TEdgeData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
-import { TFaceData, TFaceDataListener } from '../data/face/TFaceData.ts';
+import { TFaceValueData, TFaceValueDataListener } from '../data/face-value/TFaceValueData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import FaceValue from '../data/face/FaceValue.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { edgeHasVertex } from '../board/util/edgeHasVertex.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
-type Data = TFaceData & TEdgeData;
+type Data = TFaceValueData & TEdgeData;
 
 export class StaticDoubleMinusOneFacesSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyFaces: Set<TFace>;
 
-  private readonly faceListener: TFaceDataListener;
+  private readonly faceListener: TFaceValueDataListener;
 
   public constructor(
     private readonly board: TBoard,

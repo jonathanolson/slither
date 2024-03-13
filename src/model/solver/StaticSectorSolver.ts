@@ -2,9 +2,9 @@ import { TSolver } from './TSolver.ts';
 import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { TFaceData, TFaceDataListener } from '../data/face/TFaceData.ts';
+import { TFaceValueData, TFaceValueDataListener } from '../data/face-value/TFaceValueData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import FaceValue from '../data/face/FaceValue.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { TSectorData } from '../data/sector/TSectorData.ts';
 import SectorState from '../data/sector/SectorState.ts';
@@ -15,14 +15,14 @@ import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
-type Data = TFaceData & TSectorData;
+type Data = TFaceValueData & TSectorData;
 
 // face values 0, 1, N-1, N => sectors
 export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyFaces: Set<TFace>;
 
-  private readonly faceListener: TFaceDataListener;
+  private readonly faceListener: TFaceValueDataListener;
 
   public constructor(
     private readonly board: TBoard,

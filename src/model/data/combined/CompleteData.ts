@@ -1,14 +1,14 @@
 import { TState } from '../core/TState.ts';
 import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
-import { TFaceData } from '../face/TFaceData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from '../face/FaceValue.ts';
+import FaceValue from '../face-value/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
-import { GeneralFaceData } from '../face/GeneralFaceData.ts';
+import { GeneralFaceValueData } from '../face-value/GeneralFaceValueData.ts';
 import { GeneralEdgeData } from '../edge/GeneralEdgeData.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
@@ -33,7 +33,7 @@ export class CompleteData implements TState<TCompleteData> {
 
   // TODO: can we do trait/mixin stuff to support a better way of doing this? TS has been picky with traits before
   public constructor(
-    public readonly faceData: TState<TFaceData>,
+    public readonly faceValueData: TState<TFaceValueData>,
     public readonly edgeData: TState<TEdgeData>,
     public readonly simpleRegionData: TState<TSimpleRegionData>,
     public readonly faceColorData: TState<TFaceColorData>,
@@ -41,7 +41,7 @@ export class CompleteData implements TState<TCompleteData> {
     public readonly vertexData: TState<TVertexData>
   ) {
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
-    faceData.faceValueChangedEmitter.addListener( anyChangeListener );
+    faceValueData.faceValueChangedEmitter.addListener( anyChangeListener );
     edgeData.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionData.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorData.faceColorsChangedEmitter.addListener( anyChangeListener );
@@ -55,7 +55,7 @@ export class CompleteData implements TState<TCompleteData> {
     getInitialEdgeState: ( edge: TEdge ) => EdgeState
   ): CompleteData {
     return new CompleteData(
-      new GeneralFaceData( board, getInitialFaceValue ),
+      new GeneralFaceValueData( board, getInitialFaceValue ),
       new GeneralEdgeData( board, getInitialEdgeState ),
       new GeneralSimpleRegionData( board ),
       new GeneralFaceColorData( board ),
@@ -71,9 +71,9 @@ export class CompleteData implements TState<TCompleteData> {
     return CompleteData.fromFacesEdges( board, getInitialFaceValue, () => EdgeState.WHITE );
   }
 
-  public static fromFaceData(
+  public static fromFaceValueData(
     board: TBoard,
-    faceData: TFaceData
+    faceData: TFaceValueData
   ): CompleteData {
     return CompleteData.fromFaces( board, face => faceData.getFaceValue( face ) );
   }
@@ -93,15 +93,15 @@ export class CompleteData implements TState<TCompleteData> {
   }
 
   public getFaceValue( face: TFace ): FaceValue {
-    return this.faceData.getFaceValue( face );
+    return this.faceValueData.getFaceValue( face );
   }
 
   public setFaceValue( face: TFace, state: FaceValue ): void {
-    this.faceData.setFaceValue( face, state );
+    this.faceValueData.setFaceValue( face, state );
   }
 
   public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
-    return this.faceData.faceValueChangedEmitter;
+    return this.faceValueData.faceValueChangedEmitter;
   }
 
   public getEdgeState( edge: TEdge ): EdgeState {
@@ -231,7 +231,7 @@ export class CompleteData implements TState<TCompleteData> {
 
   public clone(): CompleteData {
     return new CompleteData(
-      this.faceData.clone(),
+      this.faceValueData.clone(),
       this.edgeData.clone(),
       this.simpleRegionData.clone(),
       this.faceColorData.clone(),
@@ -242,7 +242,7 @@ export class CompleteData implements TState<TCompleteData> {
 
   public createDelta(): TDelta<TCompleteData> {
     return new CompleteDelta(
-      this.faceData.createDelta(),
+      this.faceValueData.createDelta(),
       this.edgeData.createDelta(),
       this.simpleRegionData.createDelta(),
       this.faceColorData.createDelta(),
@@ -257,7 +257,7 @@ export class CompleteData implements TState<TCompleteData> {
 
   public static deserializeState( board: TBoard, serializedCompleteData: TSerializedCompleteData ): CompleteData {
     return new CompleteData(
-      GeneralFaceData.deserializeState( board, serializedCompleteData.faceData ),
+      GeneralFaceValueData.deserializeState( board, serializedCompleteData.faceData ),
       GeneralEdgeData.deserializeState( board, serializedCompleteData.edgeData ),
       // TODO: get a setup so we can avoid shipping this data
       serializedCompleteData.simpleRegionData ? GeneralSimpleRegionData.deserializeState( board, serializedCompleteData.simpleRegionData ) : new GeneralSimpleRegionData( board ),

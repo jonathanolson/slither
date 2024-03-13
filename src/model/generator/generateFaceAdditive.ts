@@ -10,7 +10,7 @@ import { TEdge } from '../board/core/TEdge.ts';
 import { getSolvedPuzzle, TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
-import FaceValue from '../data/face/FaceValue.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';

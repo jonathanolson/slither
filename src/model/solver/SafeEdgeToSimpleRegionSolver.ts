@@ -5,7 +5,7 @@ import { GeneralSimpleRegion } from '../data/simple-region/GeneralSimpleRegion.t
 import { THalfEdge } from '../board/core/THalfEdge.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TFaceData } from '../data/face/TFaceData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
@@ -17,7 +17,7 @@ import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 // Oops, because on app restart, region IDs are persistent
 const getSimpleRegionGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
-type Data = TFaceData & TEdgeData & TSimpleRegionData;
+type Data = TFaceValueData & TEdgeData & TSimpleRegionData;
 
 export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
@@ -273,7 +273,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAct
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
   }
 
-  public static isSolvedWithAddedEdge( board: TBoard, data: TFaceData & TEdgeData, simpleRegion: TSimpleRegion, edge: TEdge ): boolean {
+  public static isSolvedWithAddedEdge( board: TBoard, data: TFaceValueData & TEdgeData, simpleRegion: TSimpleRegion, edge: TEdge ): boolean {
     // Sanity checks
     if ( edge.start !== simpleRegion.a && edge.start !== simpleRegion.b ) {
       return false;

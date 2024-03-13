@@ -1,11 +1,11 @@
 import { CompleteAction } from './CompleteAction.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
-import { TFaceData } from '../face/TFaceData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from '../face/FaceValue.ts';
+import FaceValue from '../face-value/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
@@ -24,7 +24,7 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
 
   public constructor(
-    public readonly faceDelta: TDelta<TFaceData>,
+    public readonly faceDelta: TDelta<TFaceValueData>,
     public readonly edgeDelta: TDelta<TEdgeData>,
     public readonly simpleRegionDelta: TDelta<TSimpleRegionData>,
     public readonly faceColorDelta: TDelta<TFaceColorData>,

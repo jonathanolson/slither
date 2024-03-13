@@ -35,7 +35,7 @@ export class ShareNode extends PopupNode {
 
               let puzzle = this.puzzle;
               if ( !this.includeStateProperty.value ) {
-                puzzle = new BasicPuzzle( puzzle.board, CompleteData.fromFaceData( puzzle.board, puzzle.stateProperty.value ) );
+                puzzle = new BasicPuzzle( puzzle.board, CompleteData.fromFaceValueData( puzzle.board, puzzle.stateProperty.value ) );
               }
 
               const puzzleString = puzzleToCompressedString( puzzle );

@@ -1,6 +1,6 @@
 import { deserializeAction, TAction, TSerializedAction } from '../core/TAction.ts';
 import { TCompleteData } from './TCompleteData.ts';
-import { TFaceData } from '../face/TFaceData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
@@ -10,7 +10,7 @@ import { TVertexData } from '../vertex/TVertexData.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(
-    public readonly faceAction: TAction<TFaceData>,
+    public readonly faceValueAction: TAction<TFaceValueData>,
     public readonly edgeAction: TAction<TEdgeData>,
     public readonly simpleRegionAction: TAction<TSimpleRegionData>,
     public readonly faceColorAction: TAction<TFaceColorData>,
@@ -19,7 +19,7 @@ export class CompleteAction implements TAction<TCompleteData> {
   ) {}
 
   public apply( state: TCompleteData ): void {
-    this.faceAction.apply( state );
+    this.faceValueAction.apply( state );
     this.edgeAction.apply( state );
     this.simpleRegionAction.apply( state );
     this.faceColorAction.apply( state );
@@ -29,7 +29,7 @@ export class CompleteAction implements TAction<TCompleteData> {
 
   public getUndo( state: TCompleteData ): TAction<TCompleteData> {
     return new CompleteAction(
-      this.faceAction.getUndo( state ),
+      this.faceValueAction.getUndo( state ),
       this.edgeAction.getUndo( state ),
       this.simpleRegionAction.getUndo( state ),
       this.faceColorAction.getUndo( state ),
@@ -39,18 +39,18 @@ export class CompleteAction implements TAction<TCompleteData> {
   }
 
   public isEmpty(): boolean {
-    return this.faceAction.isEmpty() &&
-      this.edgeAction.isEmpty() &&
-      this.simpleRegionAction.isEmpty() &&
-      this.faceColorAction.isEmpty() &&
-      this.sectorAction.isEmpty() &&
-      this.vertexAction.isEmpty();
+    return this.faceValueAction.isEmpty() &&
+           this.edgeAction.isEmpty() &&
+           this.simpleRegionAction.isEmpty() &&
+           this.faceColorAction.isEmpty() &&
+           this.sectorAction.isEmpty() &&
+           this.vertexAction.isEmpty();
   }
 
   public serializeAction(): TSerializedAction {
     return {
       type: 'CompleteAction',
-      faceAction: this.faceAction.serializeAction(),
+      faceAction: this.faceValueAction.serializeAction(),
       edgeAction: this.edgeAction.serializeAction(),
       simpleRegionAction: this.simpleRegionAction.serializeAction(),
       faceColorAction: this.faceColorAction.serializeAction(),
