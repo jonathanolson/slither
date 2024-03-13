@@ -32,6 +32,7 @@ export class SettingsNode extends PopupNode {
         } ),
         new GridBox( {
           xAlign: 'left',
+          yAlign: 'top',
           xSpacing: 20,
           ySpacing: 8,
           columns: [ [
@@ -112,65 +113,82 @@ export class SettingsNode extends PopupNode {
           font: uiHeaderFont,
           fill: uiForegroundColorProperty
         } ),
-        new UITextCheckbox( 'Edge Colors Visible', edgeColorsVisibleProperty ),
-        new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
-        new UITextCheckbox( 'Sectors Visible', sectorsVisibleProperty ),
-        new UITextCheckbox( 'Sectors Next to Edges', sectorsNextToEdgesVisibleProperty, {
-          advanced: true
+        new GridBox( {
+          xAlign: 'left',
+          yAlign: 'top',
+          xSpacing: 20,
+          ySpacing: 8,
+          columns: [ [
+            new UITextCheckbox( 'Edge Colors Visible', edgeColorsVisibleProperty ),
+            new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
+            new UITextCheckbox( 'Sectors Visible', sectorsVisibleProperty ),
+            new UITextCheckbox( 'Sectors Next to Edges', sectorsNextToEdgesVisibleProperty, {
+              advanced: true,
+              layoutOptions: {
+                leftMargin: 20
+              }
+            } ),
+            new UITextCheckbox( 'Trivial Sectors', sectorsTrivialVisibleProperty, {
+              advanced: true,
+              layoutOptions: {
+                leftMargin: 20
+              }
+            } ),
+            new UITextCheckbox( 'Vertex State', vertexStateVisibleProperty ),
+            new UITextCheckbox( 'All Vertex State', allVertexStateVisibleProperty, {
+              advanced: true,
+              layoutOptions: {
+                leftMargin: 20
+              }
+            } ),
+            getVerticalRadioButtonGroup( 'Face Color Threshold', faceColorThresholdProperty, [
+              {
+                value: 1,
+                createNode: () => new UIText( 'Show All' ),
+                labelContent: 'Show All'
+              },
+              {
+                value: 2,
+                createNode: () => new UIText( '2+' ),
+                labelContent: '2+'
+              },
+              {
+                value: 3,
+                createNode: () => new UIText( '3+' ),
+                labelContent: '3+'
+              },
+              {
+                value: 5,
+                createNode: () => new UIText( '5+' ),
+                labelContent: '5+'
+              },
+              {
+                value: 10,
+                createNode: () => new UIText( '10+' ),
+                labelContent: '10+'
+              },
+              {
+                value: Number.POSITIVE_INFINITY,
+                createNode: () => new UIText( 'Only Outside' ),
+                labelContent: 'Only Outside'
+              }
+            ] ),
+          ], [
+            new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),
+            new UITextCheckbox( 'Impossible Line Visible', redLineVisibleProperty ),
+            new UITextCheckbox( 'Vertices Visible', verticesVisibleProperty ),
+            new UITextCheckbox( 'Vertices Small', smallVertexProperty ),
+            new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
+            new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
+            new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
+              advanced: true
+            } ),
+            new UITextCheckbox( 'Solve Uses Built-In', uiHintUsesBuiltInSolveProperty, {
+              advanced: true
+            } ),
+          ] ]
         } ),
-        new UITextCheckbox( 'Trivial Sectors', sectorsTrivialVisibleProperty, {
-          advanced: true
-        } ),
-        new UITextCheckbox( 'Vertex State', vertexStateVisibleProperty, {
-          advanced: true
-        } ),
-        new UITextCheckbox( 'All Vertex State', allVertexStateVisibleProperty, {
-          advanced: true
-        } ),
-        getVerticalRadioButtonGroup( 'Face Color Threshold', faceColorThresholdProperty, [
-          {
-            value: 1,
-            createNode: () => new UIText( 'Show All' ),
-            labelContent: 'Show All'
-          },
-          {
-            value: 2,
-            createNode: () => new UIText( '2+' ),
-            labelContent: '2+'
-          },
-          {
-            value: 3,
-            createNode: () => new UIText( '3+' ),
-            labelContent: '3+'
-          },
-          {
-            value: 5,
-            createNode: () => new UIText( '5+' ),
-            labelContent: '5+'
-          },
-          {
-            value: 10,
-            createNode: () => new UIText( '10+' ),
-            labelContent: '10+'
-          },
-          {
-            value: Number.POSITIVE_INFINITY,
-            createNode: () => new UIText( 'Only Outside' ),
-            labelContent: 'Only Outside'
-          }
-        ] ),
-        new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),
-        new UITextCheckbox( 'Impossible Line Visible', redLineVisibleProperty ),
-        new UITextCheckbox( 'Vertices Visible', verticesVisibleProperty ),
-        new UITextCheckbox( 'Vertices Small', smallVertexProperty ),
-        new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
-        new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
-        new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
-          advanced: true
-        } ),
-        new UITextCheckbox( 'Solve Uses Built-In', uiHintUsesBuiltInSolveProperty, {
-          advanced: true
-        } ),
+
         new HBox( {
           spacing: 20,
           visibleProperty: advancedSettingsVisibleProperty,

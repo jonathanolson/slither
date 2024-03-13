@@ -309,7 +309,7 @@ export const popupColorEditor = ( theme: TTheme ) => {
 
   const div = document.createElement( 'div' );
   // @ts-expect-error
-  div.style.zoom = '0.8';
+  div.style.zoom = '0.6';
   div.style.backgroundColor = 'rgba(127,127,127,0.3)';
 
   // Close button
