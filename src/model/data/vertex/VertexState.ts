@@ -7,6 +7,7 @@ import { TEdgeData } from '../edge/TEdgeData.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { getFaceOrderedSectorsFromVertex } from '../sector/getFaceOrderedSectorsFromVertex.ts';
+import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
 
 export class VertexState {
 
@@ -128,7 +129,7 @@ export class VertexState {
   }
 
   public serialize(): TSerializedVertexState {
-    const result = VertexState.packMatrix( this.matrix );
+    const result = packBooleanArray( this.matrix );
 
     assertEnabled() && assert( this.equals( VertexState.deserialize( this.vertex, result ) ) );
 
@@ -281,32 +282,8 @@ export class VertexState {
     return new VertexState( vertex, matrix );
   }
 
-  public static packMatrix( matrix: boolean[] ): string {
-    const bytes = new Uint8Array( Math.ceil( matrix.length / 8 ) );
-    for ( let i = 0; i < matrix.length; i++ ) {
-      if ( matrix[ i ] ) {
-        bytes[ Math.floor( i / 8 ) ] |= 1 << ( 7 - ( i % 8 ) );
-      }
-    }
-    const result = btoa( String.fromCharCode( ...bytes ) );
-    if ( assertEnabled() ) {
-      const unpacked = VertexState.unpackMatrix( result ).slice( 0, matrix.length );
-      assert( matrix.length === unpacked.length && matrix.every( ( x, i ) => x === unpacked[ i ] ) );
-    }
-    return result;
-  }
-
-  public static unpackMatrix( str: string ): boolean[] {
-    const bytes = Uint8Array.from( atob( str ), c => c.charCodeAt( 0 ) );
-    const booleans = [];
-    for ( let i = 0; i < bytes.length * 8; i++ ) {
-      booleans.push( ( bytes[ Math.floor( i / 8 ) ] & ( 1 << ( 7 - ( i % 8 ) ) ) ) !== 0 );
-    }
-    return booleans;
-  }
-
   public static deserialize( vertex: TVertex, serialized: TSerializedVertexState ): VertexState {
-    return new VertexState( vertex, VertexState.unpackMatrix( serialized ).slice( 0, VertexState.getMatrixSize( vertex.edges.length ) ) );
+    return new VertexState( vertex, unpackBooleanArray( serialized, VertexState.getMatrixSize( vertex.edges.length ) ) );
   }
 }
 
