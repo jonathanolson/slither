@@ -6,7 +6,7 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - Buggy solver: Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
+  - Move boolean packing to utils
   - Modes:
     - Edge mode (normal)
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
@@ -20,18 +20,40 @@
     - 
     - Mouse hover behavior over what it will change! (Also a11y?)
   - Explicitly list out the "rules" for a given difficulty level in the future?
-  - FORCED checks should look at Vertex state(!) --- like SimpleLoopSolver.
+  - Are we using ignore for the hint button? Would be nice to exclude some things
   - 
-  - Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
-  - Face+Vertex+Color => updates
-    - Type A: Use face value only, and update vertex state (or set edges?) --- YES to iterating through all face states?
-    - Type B: Any face (null?), and ensure EVEN number of edges around it (and escape conditions)
-      - Solver for "keep even enter/exits around the vertices of a face" - or really any region? (like that advanced reddit post)
-  - SimpleVertexState (SectorData / WedgeData) - wedge looks too much like edge
-    - Solvers:
-      - Vertex + face colors => sectors
-      - Face (value + sectors internal) => edges/sectors
-      - SECTORS around a square/face ---- USE PARITY DO HANDLE!
+  - FaceState (proper)
+    - (rename current FaceState to FaceValue)
+    - Enumerate options
+    - NOTE: Sectors are NOT GOOD ENOUGH. imagine sector black-red and red-black, we have the 3-1 side case, or rhombille 3-1 / 2-1.
+    - Constrain by:
+      - face value (if any)
+      - 4 red/black permutations for around each vertex (from edges + vertex state OR sectors), e.g. red-red, red-black, black-red, black-black
+      - face colors
+      - NO FULL LOOP unless it meets the stringent loop conditions
+      - Binary sets (in the future!!!)
+    - Storage:
+      - If there is a face value, probably can only create booleans for valid combinations (e.g. 4 cases for 3-square)
+        - Store the face value in serialization if we do this
+      - Can lazily instantiate (e.g. 'any' is an object with no booleans)
+    - Solvers (using):
+      - Edges / Sectors / VertexState
+      - Face Colors
+      - Multi-face (**) adjacent faces
+        - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
+          - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
+          - take + reject both, or take + split permutations also possibilities
+    - Parity... is naturally handled
+    - [deprecated because this handles, right?], Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
+    - [deprecated for same reason, right?] Face+Vertex+Color => updates
+      - Type A: Use face value only, and update vertex state (or set edges?) --- YES to iterating through all face states?
+      - Type B: Any face (null?), and ensure EVEN number of edges around it (and escape conditions)
+        - [this will force even enter/exit, right?] Solver for "keep even enter/exits around the vertices of a face" - or really any region? (like that advanced reddit post)
+  - Binary sets:
+    - WE CAN VISUALIZE THESE with coloring!!!
+  - Full Region (!) seems powerful too, particularly the ordering bits?
+  - 
+  - Try to give a hint in the zoomed-in region
   - Are we able to SAT-solve some solvers, to see if there are any (in the limited scope) missed rules?
   - Delay puzzle string save by a frame, it is taking a bit to deflate right now.
   - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one
@@ -39,8 +61,11 @@
   - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
     - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
       - WAIT, can't we trace a red edge to see if it constrained something?
-  - Binary sets:
-    - WE CAN VISUALIZE THESE with coloring!!!
+    - FORCED checks should look at Vertex state(!) --- like SimpleLoopSolver.
+      - Eventually also use BINARY sets to check for region handling
+  - Full correctness:
+    - Buggy solver: Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
+    - More error detection in solvers (to avoid infinite loop issues)
   - TO set an X... user presses one finger down elsewhere, THEN presses on edge?
   - Abstract way to say "when" something should be made dirty (e.g. { face: face => ..., edge: edge => ... })
     - Base Solver class
@@ -120,9 +145,6 @@
     - Consider a texture for "inside" and "outside"
     - Different visualization modes (for face colors)? Where dual nature of borders are highly emphasized?
     - (!!) Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
-  - Face Coloring Solving
-    - Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
-  - SHOW the vision working on the image(!)
   - Code cleanup
     - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
     - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
@@ -209,14 +231,11 @@
         - TAG stack transitions (puzzle snapshot) with what autosolver has been applied
     - On victory, animate to zoom out fully (how to do that)?
     - AnimatedPanZoomListener seems a bit clunky at the start. Faster hook?
-  - Annotated actions
-    - Possibly with the "difficulty" if auto-solve involved
   - Annotated errors
     - Subtype InvalidStateError - for simple ones especially, we can visually report on the issue
   - Autosolver JUST to check for simple errors (or in general)
     - [NEEDS] annotated errors 
     - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
-  - Hex "square" line cap makes things confusing, looks off-centered in hexagonal
   - FILE SIZE improvements:
     - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
     - If we attempt to do a dynamic import (in NewNode):
@@ -246,7 +265,6 @@
     - Soon we'll be able to... generate puzzles? Get backtracker?
   - Simple Region based edges, OR prefer the raw edges (uncolored)? 
   - Smooth animations between things ... instead of "New", have a main menu?
-  - Try VSCode
   - Mobile vs Desktop
     - Settings presets for each?
     - OR detect fingers/mouse and apply different rules for them?
@@ -312,6 +330,7 @@
 - Write up:
   - Force-directed graph layout (techniques for planarity?)
   - Force-directed color layout (region and face)
+  - Solving techniques (visualized)
 
 - Rule generation / display
   - SAT solver tweaked for the exact constraints(!!!!) 
@@ -325,10 +344,11 @@
   - Show the "next rule" that can be applied (and why) - consider TAnnotatedAction?
   - In Rule Description (auto-solver) describe the rule there with images? Possibly animate it?
 
-- Read
+- Read / Watch
   - https://link.springer.com/chapter/10.1007/978-3-030-34339-2_8 
   - check r/slitherlink for more cases that were explained well!
   - Look up things under https://puzzling.stackexchange.com/search?q=slitherlink
+  - Face Coloring Solving Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
 
 - Solving
   - General:
@@ -417,6 +437,7 @@
   - Separate out structure.ts into a structure directory
   - Make clean! Document things!
   - Add copyright statement to files at some point
+  - Try VSCode
 
 - Scaffolding
   - "Each number needs to have that many edges/lines around it, and no more"
