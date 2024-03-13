@@ -1,28 +1,28 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorData, TSectorDataListener } from '../data/sector/TSectorData.ts';
-import { TSector } from '../data/sector/TSector.ts';
-import SectorState from '../data/sector/SectorState.ts';
+import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
-type Data = TEdgeData & TSectorData;
+type Data = TEdgeStateData & TSectorStateData;
 
 // sector + edges => edges
 export class SimpleSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtySectors: Set<TSector>;
 
-  private readonly edgeListener: TEdgeDataListener;
-  private readonly sectorListener: TSectorDataListener;
+  private readonly edgeListener: TEdgeStateListener;
+  private readonly sectorListener: TSectorStateListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -47,7 +47,7 @@ export class SimpleSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
     this.sectorListener = ( sector: TSector, state: SectorState, oldState: SectorState ) => {
       this.dirtySectors.add( sector );
     };
-    this.state.sectorChangedEmitter.addListener( this.sectorListener );
+    this.state.sectorStateChangedEmitter.addListener( this.sectorListener );
   }
 
   public get dirty(): boolean {
@@ -129,6 +129,6 @@ export class SimpleSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
 
   public dispose(): void {
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
-    this.state.sectorChangedEmitter.removeListener( this.sectorListener );
+    this.state.sectorStateChangedEmitter.removeListener( this.sectorListener );
   }
 }

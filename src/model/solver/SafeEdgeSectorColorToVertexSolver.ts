@@ -1,23 +1,23 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorData, TSectorDataListener } from '../data/sector/TSectorData.ts';
-import { TSector } from '../data/sector/TSector.ts';
-import SectorState from '../data/sector/SectorState.ts';
-import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
-import { TVertexData } from '../data/vertex/TVertexData.ts';
+import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
+import { TVertexStateData } from '../data/vertex-state/TVertexStateData.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { VertexState } from '../data/vertex/VertexState.ts';
-import { VertexStateSetAction } from '../data/vertex/VertexStateSetAction.ts';
+import { VertexState } from '../data/vertex-state/VertexState.ts';
+import { VertexStateSetAction } from '../data/vertex-state/VertexStateSetAction.ts';
 
-type Data = TEdgeData & TSectorData & TFaceColorData & TVertexData;
+type Data = TEdgeStateData & TSectorStateData & TFaceColorData & TVertexStateData;
 
 /**
  * Some related notes
@@ -107,9 +107,9 @@ export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotat
 
   private readonly dirtyVertices = new Set<TVertex>();
 
-  private readonly edgeListener: TEdgeDataListener;
-  private readonly sectorListener: TSectorDataListener;
-  private readonly faceColorListener: TFaceColorDataListener;
+  private readonly edgeListener: TEdgeStateListener;
+  private readonly sectorListener: TSectorStateListener;
+  private readonly faceColorListener: TFaceColorListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -126,7 +126,7 @@ export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotat
     this.sectorListener = ( sector: TSector, state: SectorState, oldState: SectorState ) => {
       this.dirtyVertices.add( sector.start );
     };
-    this.state.sectorChangedEmitter.addListener( this.sectorListener );
+    this.state.sectorStateChangedEmitter.addListener( this.sectorListener );
 
     this.faceColorListener = (
       addedFaceColors: MultiIterable<TFaceColor>,
@@ -190,7 +190,7 @@ export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotat
 
   public dispose(): void {
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
-    this.state.sectorChangedEmitter.removeListener( this.sectorListener );
+    this.state.sectorStateChangedEmitter.removeListener( this.sectorListener );
     this.state.faceColorsChangedEmitter.removeListener( this.faceColorListener );
   }
 }

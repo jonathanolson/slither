@@ -1,21 +1,21 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TEdgeData } from './TEdgeData.ts';
+import { TEdgeStateData } from './TEdgeStateData.ts';
 import { deserializeEdge, serializeEdge, TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 
-export class EdgeStateSetAction implements TAction<TEdgeData> {
+export class EdgeStateSetAction implements TAction<TEdgeStateData> {
 
   public constructor(
     public readonly edge: TEdge,
     public readonly state: EdgeState
   ) {}
 
-  public apply( state: TEdgeData ): void {
+  public apply( state: TEdgeStateData ): void {
     state.setEdgeState( this.edge, this.state );
   }
 
-  public getUndo( state: TEdgeData ): TAction<TEdgeData> {
+  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
     const previousState = state.getEdgeState( this.edge );
     return new EdgeStateSetAction( this.edge, previousState );
   }

@@ -7,8 +7,7 @@ import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import FaceValue from './FaceValue.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
-export class FaceValueDataValidator implements TState<TFaceValueData> {
+export class FaceValueValidator implements TState<TFaceValueData> {
 
   public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
@@ -29,7 +28,7 @@ export class FaceValueDataValidator implements TState<TFaceValueData> {
     }
   }
 
-  public clone(): FaceValueDataValidator {
+  public clone(): FaceValueValidator {
     return this;
   }
 

@@ -1,12 +1,12 @@
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
@@ -18,15 +18,15 @@ export type SimpleVertexSolverOptions = {
   solveAlmostEmptyToRed: boolean;
 };
 
-export class SimpleVertexSolver implements TSolver<TEdgeData, TAnnotatedAction<TEdgeData>> {
+export class SimpleVertexSolver implements TSolver<TEdgeStateData, TAnnotatedAction<TEdgeStateData>> {
 
   private readonly dirtyVertices: TVertex[] = [];
 
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TEdgeData>,
+    private readonly state: TState<TEdgeStateData>,
     private readonly options: SimpleVertexSolverOptions,
     dirtyVertices?: TVertex[]
   ) {
@@ -49,7 +49,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAnnotatedAction<T
     return this.dirtyVertices.length > 0;
   }
 
-  public nextAction(): TAnnotatedAction<TEdgeData> | null {
+  public nextAction(): TAnnotatedAction<TEdgeStateData> | null {
     if ( !this.dirty ) { return null; }
 
     while ( this.dirtyVertices.length ) {
@@ -121,7 +121,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeData, TAnnotatedAction<T
     return null;
   }
 
-  public clone( equivalentState: TState<TEdgeData> ): SimpleVertexSolver {
+  public clone( equivalentState: TState<TEdgeStateData> ): SimpleVertexSolver {
     return new SimpleVertexSolver( this.board, equivalentState, this.options, this.dirtyVertices );
   }
 

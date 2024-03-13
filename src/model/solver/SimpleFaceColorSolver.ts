@@ -1,13 +1,13 @@
 import { TSolver } from './TSolver.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
+import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
@@ -17,13 +17,13 @@ export type SimpleFaceColorSolverOptions = {
   solveToBlack: boolean;
 };
 
-type Data = TEdgeData & TFaceColorData;
+type Data = TEdgeStateData & TFaceColorData;
 
 export class SimpleFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyEdges: Set<TEdge> = new Set();
 
-  private readonly faceColorListener: TFaceColorDataListener;
+  private readonly faceColorListener: TFaceColorListener;
 
   public constructor(
     private readonly board: TBoard,

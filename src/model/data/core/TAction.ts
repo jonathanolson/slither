@@ -1,8 +1,8 @@
-import { EdgeStateCycleAction } from '../edge/EdgeStateCycleAction.ts';
+import { EdgeStateCycleAction } from '../edge-state/EdgeStateCycleAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
-import { EdgeStateSetAction } from '../edge/EdgeStateSetAction.ts';
-import { GeneralEdgeAction } from '../edge/GeneralEdgeAction.ts';
+import { EdgeStateSetAction } from '../edge-state/EdgeStateSetAction.ts';
+import { GeneralEdgeStateAction } from '../edge-state/GeneralEdgeStateAction.ts';
 import { FaceValueSetAction } from '../face-value/FaceValueSetAction.ts';
 import { GeneralFaceValueAction } from '../face-value/GeneralFaceValueAction.ts';
 import { NoOpAction } from './NoOpAction.ts';
@@ -41,7 +41,7 @@ export const deserializeAction = ( board: TBoard, serializedAction: TSerializedA
     return EdgeStateSetAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'GeneralEdgeAction' ) {
-    return GeneralEdgeAction.deserializeAction( board, serializedAction );
+    return GeneralEdgeStateAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'FaceValueSetAction' ) {
     return FaceValueSetAction.deserializeAction( board, serializedAction );

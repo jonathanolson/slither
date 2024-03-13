@@ -1,13 +1,13 @@
 import { TSolver } from './TSolver.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TFaceColor, TFaceColorData, TFaceColorDataListener } from '../data/face-color/TFaceColorData.ts';
+import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import _ from '../../workarounds/_.ts';
@@ -26,14 +26,14 @@ export type FaceColorParitySolverOptions = {
   allowPartialReduction: boolean;
 };
 
-type Data = TFaceValueData & TEdgeData & TFaceColorData;
+type Data = TFaceValueData & TEdgeStateData & TFaceColorData;
 
 export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyFaces: Set<TFace> = new Set();
 
-  private readonly edgeListener: TEdgeDataListener;
-  private readonly faceColorListener: TFaceColorDataListener;
+  private readonly edgeListener: TEdgeStateListener;
+  private readonly faceColorListener: TFaceColorListener;
 
   public constructor(
     private readonly board: TBoard,

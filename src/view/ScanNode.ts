@@ -12,7 +12,7 @@ import { TEdge } from '../model/board/core/TEdge.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { safeSolve } from '../model/solver/autoSolver.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import EdgeState from '../model/data/edge/EdgeState.ts';
+import EdgeState from '../model/data/edge-state/EdgeState.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 import { UIText } from './UIText.ts';
 

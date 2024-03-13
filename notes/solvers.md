@@ -3,14 +3,6 @@
 
 ## New
 
-- fix up emitter naming:
-  - FaceValue
-  - FaceColor
-  - EdgeState
-  - VertexState
-  - SimpleRegion
-  - SectorState ??
-
 - FaceState (proper)   ---- HEY, better name?
   - Enumerate options
   - NOTE: Sectors are NOT GOOD ENOUGH. imagine sector black-red and red-black, we have the 3-1 side case, or rhombille 3-1 / 2-1.

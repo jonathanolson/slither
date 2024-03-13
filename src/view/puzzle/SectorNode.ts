@@ -2,18 +2,18 @@ import { Node, Path, TPaint } from 'phet-lib/scenery';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { sectorNotOneColorProperty, sectorNotTwoColorProperty, sectorNotZeroColorProperty, sectorOnlyOneColorProperty, sectorOtherColorProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty } from '../Theme.ts';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { Shape } from 'phet-lib/kite';
-import { TSector } from '../../model/data/sector/TSector.ts';
+import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
-import SectorState from '../../model/data/sector/SectorState.ts';
-import { TSectorData } from '../../model/data/sector/TSectorData.ts';
-import EdgeState from '../../model/data/edge/EdgeState.ts';
+import SectorState from '../../model/data/sector-state/SectorState.ts';
+import { TSectorStateData } from '../../model/data/sector-state/TSectorStateData.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 
 export class SectorNode extends Node {
   public constructor(
     public readonly sector: TSector,
-    stateProperty: TReadOnlyProperty<TState<TSectorData & TEdgeData>>
+    stateProperty: TReadOnlyProperty<TState<TSectorStateData & TEdgeStateData>>
   ) {
     super();
 

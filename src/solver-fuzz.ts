@@ -8,8 +8,8 @@ import PuzzleNode from './view/puzzle/PuzzleNode.ts';
 import { sleep } from './util/sleep.ts';
 import { BooleanProperty } from 'phet-lib/axon';
 import { safeSolve, standardSolverFactory } from './model/solver/autoSolver.ts';
-import { CompleteDataValidator } from './model/data/combined/CompleteDataValidator.ts';
-import EdgeState from './model/data/edge/EdgeState.ts';
+import { CompleteValidator } from './model/data/combined/CompleteValidator.ts';
+import EdgeState from './model/data/edge-state/EdgeState.ts';
 import { simpleRegionIsSolved } from './model/data/simple-region/TSimpleRegionData.ts';
 import _ from './workarounds/_.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
@@ -108,7 +108,7 @@ const boards = [
       const action = solver.nextAction();
       if ( action ) {
         console.log( action );
-        const validator = new CompleteDataValidator( board, state, solvedState );
+        const validator = new CompleteValidator( board, state, solvedState );
         puzzleNode.addAnnotationNode( new AnnotationNode( action.annotation ) );
         updateView();
         await sleep( 0 );

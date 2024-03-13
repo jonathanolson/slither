@@ -4,8 +4,8 @@ import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { blackLineColorProperty, redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
-import EdgeState from '../../model/data/edge/EdgeState.ts';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
 
@@ -20,7 +20,7 @@ export class EdgeNode extends Node {
 
   public constructor(
     public readonly edge: TEdge,
-    stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
     options: EdgeNodeOptions
   ) {

@@ -1,16 +1,16 @@
 import { TState } from '../core/TState.ts';
-import { serializeVertexData, TSerializedVertexData, TVertexData } from './TVertexData.ts';
+import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 import { deserializeVertex, TSerializedVertex, TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
-import { GeneralVertexDelta } from './GeneralVertexDelta.ts';
+import { GeneralVertexStateDelta } from './GeneralVertexStateDelta.ts';
 
-export class GeneralVertexData implements TState<TVertexData> {
+export class GeneralVertexStateData implements TState<TVertexStateData> {
 
-  public readonly vertexChangedEmitter = new TinyEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>();
+  public readonly vertexStateChangedEmitter = new TinyEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>();
 
   public readonly vertexStateMap: Map<TVertex, VertexState> = new Map();
 
@@ -37,23 +37,23 @@ export class GeneralVertexData implements TState<TVertexData> {
     if ( !oldState.equals( state ) ) {
       this.vertexStateMap.set( vertex, state );
 
-      this.vertexChangedEmitter.emit( vertex, state, oldState );
+      this.vertexStateChangedEmitter.emit( vertex, state, oldState );
     }
   }
 
-  public clone(): GeneralVertexData {
-    return new GeneralVertexData( this.board, vertex => this.getVertexState( vertex ) );
+  public clone(): GeneralVertexStateData {
+    return new GeneralVertexStateData( this.board, vertex => this.getVertexState( vertex ) );
   }
 
-  public createDelta(): TDelta<TVertexData> {
-    return new GeneralVertexDelta( this.board, this );
+  public createDelta(): TDelta<TVertexStateData> {
+    return new GeneralVertexStateDelta( this.board, this );
   }
 
-  public serializeState( board: TBoard ): TSerializedVertexData {
-    return serializeVertexData( board, this );
+  public serializeState( board: TBoard ): TSerializedVertexStateData {
+    return serializeVertexStateData( board, this );
   }
 
-  public static deserializeState( board: TBoard, serializedVertexData: TSerializedVertexData ): GeneralVertexData {
+  public static deserializeState( board: TBoard, serializedVertexData: TSerializedVertexStateData ): GeneralVertexStateData {
     const map: Map<TVertex, VertexState> = new Map( serializedVertexData.vertices.map( ( serializedVertexState: { vertex: TSerializedVertex; state: TSerializedVertexState } ) => {
       const vertex = deserializeVertex( board, serializedVertexState.vertex );
       return [
@@ -62,7 +62,7 @@ export class GeneralVertexData implements TState<TVertexData> {
       ];
     } ) );
 
-    return new GeneralVertexData(
+    return new GeneralVertexStateData(
       board,
       vertex => map.get( vertex ) ?? VertexState.any( vertex )
     );

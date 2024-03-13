@@ -67,7 +67,7 @@ export interface TFaceColorData {
   ]>;
 }
 
-export type TFaceColorDataListener = (
+export type TFaceColorListener = (
   addedFaceColors: MultiIterable<TFaceColor>,
   removedFaceColors: MultiIterable<TFaceColor>,
   oppositeChangedFaceColors: MultiIterable<TFaceColor>,

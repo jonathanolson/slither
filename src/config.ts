@@ -1,5 +1,5 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import EdgeState from './model/data/edge/EdgeState.ts';
+import EdgeState from './model/data/edge-state/EdgeState.ts';
 import { LocalStorageEnumerationProperty } from './util/localStorage.ts';
 
 export default class EdgePressStyle extends EnumerationValue {

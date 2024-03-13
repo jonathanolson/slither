@@ -1,12 +1,12 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
-import { TFaceValueData, TFaceValueDataListener } from '../data/face-value/TFaceValueData.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
@@ -15,13 +15,13 @@ import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { edgeHasVertex } from '../board/util/edgeHasVertex.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
-type Data = TFaceValueData & TEdgeData;
+type Data = TFaceValueData & TEdgeStateData;
 
 export class StaticDoubleMinusOneFacesSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyFaces: Set<TFace>;
 
-  private readonly faceListener: TFaceValueDataListener;
+  private readonly faceListener: TFaceValueListener;
 
   public constructor(
     private readonly board: TBoard,

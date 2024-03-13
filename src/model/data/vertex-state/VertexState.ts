@@ -2,11 +2,11 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import _ from '../../../workarounds/_.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TSectorData } from '../sector/TSectorData.ts';
-import { TEdgeData } from '../edge/TEdgeData.ts';
-import EdgeState from '../edge/EdgeState.ts';
+import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { getFaceOrderedSectorsFromVertex } from '../sector/getFaceOrderedSectorsFromVertex.ts';
+import { getFaceOrderedSectorsFromVertex } from '../sector-state/getFaceOrderedSectorsFromVertex.ts';
 import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
 
 export class VertexState {
@@ -183,7 +183,7 @@ export class VertexState {
     return VertexState.fromLookup( vertex, ( a, b ) => ( a !== edgeA && a !== edgeB ) || ( b !== edgeA && b !== edgeB ), true );
   }
 
-  public static fromEdgeColorSectorData( vertex: TVertex, data: TEdgeData & TFaceColorData & TSectorData ): VertexState {
+  public static fromEdgeColorSectorData( vertex: TVertex, data: TEdgeStateData & TFaceColorData & TSectorStateData ): VertexState {
     const order = vertex.edges.length;
     const matrix: boolean[] = [];
 

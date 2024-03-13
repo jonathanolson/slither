@@ -1,19 +1,19 @@
-import { GeneralEdgeAction } from './GeneralEdgeAction.ts';
+import { GeneralEdgeStateAction } from './GeneralEdgeStateAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { serializeEdgeData, TEdgeData, TSerializedEdgeData } from './TEdgeData.ts';
+import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from './TEdgeStateData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 
-export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeData> {
+export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TDelta<TEdgeStateData> {
 
   public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
 
   public constructor(
     board: TBoard,
-    public readonly parentState: TState<TEdgeData>,
+    public readonly parentState: TState<TEdgeStateData>,
     edgeStateMap: Map<TEdge, EdgeState> = new Map()
   ) {
     super( board, edgeStateMap );
@@ -38,15 +38,15 @@ export class GeneralEdgeDelta extends GeneralEdgeAction implements TDelta<TEdgeD
     }
   }
 
-  public clone(): GeneralEdgeDelta {
-    return new GeneralEdgeDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
+  public clone(): GeneralEdgeStateDelta {
+    return new GeneralEdgeStateDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
   }
 
-  public createDelta(): TDelta<TEdgeData> {
-    return new GeneralEdgeDelta( this.board, this, new Map() );
+  public createDelta(): TDelta<TEdgeStateData> {
+    return new GeneralEdgeStateDelta( this.board, this, new Map() );
   }
 
-  public serializeState( board: TBoard ): TSerializedEdgeData {
-    return serializeEdgeData( board, this );
+  public serializeState( board: TBoard ): TSerializedEdgeStateData {
+    return serializeEdgeStateData( board, this );
   }
 }

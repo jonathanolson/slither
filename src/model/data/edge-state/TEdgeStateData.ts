@@ -4,7 +4,7 @@ import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 
-export interface TEdgeData {
+export interface TEdgeStateData {
   getEdgeState( edge: TEdge ): EdgeState;
 
   setEdgeState( edge: TEdge, state: EdgeState ): void;
@@ -12,9 +12,9 @@ export interface TEdgeData {
   edgeStateChangedEmitter: TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>;
 }
 
-export type TEdgeDataListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => void;
+export type TEdgeStateListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => void;
 
-export interface TSerializedEdgeData extends TSerializedState {
+export interface TSerializedEdgeStateData extends TSerializedState {
   type: 'EdgeData';
   edges: {
     edge: TSerializedEdge;
@@ -22,7 +22,7 @@ export interface TSerializedEdgeData extends TSerializedState {
   }[];
 }
 
-export const serializeEdgeData = ( board: TBoard, edgeData: TEdgeData ): TSerializedEdgeData => ( {
+export const serializeEdgeStateData = ( board: TBoard, edgeData: TEdgeStateData ): TSerializedEdgeStateData => ( {
   type: 'EdgeData',
   edges: board.edges.filter( edge => edgeData.getEdgeState( edge ) !== EdgeState.WHITE ).map( edge => ( {
     edge: serializeEdge( edge ),

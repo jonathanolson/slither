@@ -4,22 +4,22 @@ import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TVertexData, TVertexDataListener } from '../data/vertex/TVertexData.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
-import { getFaceOrderedSectorsFromVertex } from '../data/sector/getFaceOrderedSectorsFromVertex.ts';
+import { getFaceOrderedSectorsFromVertex } from '../data/sector-state/getFaceOrderedSectorsFromVertex.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 
-type Data = TFaceColorData & TVertexData;
+type Data = TFaceColorData & TVertexStateData;
 
 export class VertexToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyVertices: TVertex[] = [];
 
-  private readonly vertexListener: TVertexDataListener;
+  private readonly vertexListener: TVertexStateListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -36,7 +36,7 @@ export class VertexToFaceColorSolver implements TSolver<Data, TAnnotatedAction<D
     this.vertexListener = ( vertex: TVertex ) => {
       this.dirtyVertices.push( vertex );
     };
-    this.state.vertexChangedEmitter.addListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.addListener( this.vertexListener );
   }
 
   public get dirty(): boolean {
@@ -148,6 +148,6 @@ export class VertexToFaceColorSolver implements TSolver<Data, TAnnotatedAction<D
   }
 
   public dispose(): void {
-    this.state.vertexChangedEmitter.removeListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.removeListener( this.vertexListener );
   }
 }

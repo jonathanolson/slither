@@ -4,4 +4,4 @@ export interface TAnyData {
   anyStateChangedEmitter: TEmitter;
 }
 
-export type TAnyDataListener = () => void;
+export type TAnyStateListener = () => void;

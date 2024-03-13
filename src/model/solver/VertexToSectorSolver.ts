@@ -5,21 +5,21 @@ import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TVertexData, TVertexDataListener } from '../data/vertex/TVertexData.ts';
-import { TSectorData } from '../data/sector/TSectorData.ts';
-import { getSectorsFromVertex } from '../data/sector/getSectorsFromVertex.ts';
-import SectorState from '../data/sector/SectorState.ts';
-import { SectorStateSetAction } from '../data/sector/SectorStateSetAction.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { getSectorsFromVertex } from '../data/sector-state/getSectorsFromVertex.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
-import { TSector } from '../data/sector/TSector.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
 
-type Data = TSectorData & TVertexData;
+type Data = TSectorStateData & TVertexStateData;
 
 export class VertexToSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyVertices: TVertex[] = [];
 
-  private readonly vertexListener: TVertexDataListener;
+  private readonly vertexListener: TVertexStateListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -36,7 +36,7 @@ export class VertexToSectorSolver implements TSolver<Data, TAnnotatedAction<Data
     this.vertexListener = ( vertex: TVertex ) => {
       this.dirtyVertices.push( vertex );
     };
-    this.state.vertexChangedEmitter.addListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.addListener( this.vertexListener );
   }
 
   public get dirty(): boolean {
@@ -122,6 +122,6 @@ export class VertexToSectorSolver implements TSolver<Data, TAnnotatedAction<Data
   }
 
   public dispose(): void {
-    this.state.vertexChangedEmitter.removeListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.removeListener( this.vertexListener );
   }
 }

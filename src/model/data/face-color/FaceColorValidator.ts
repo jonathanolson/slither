@@ -8,7 +8,6 @@ import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
 export class FaceColorValidator implements TState<TFaceColorData> {
 
   public readonly faceColorsChangedEmitter = new TinyEmitter<[

@@ -1,22 +1,22 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TSectorData } from './TSectorData.ts';
+import { TSectorStateData } from './TSectorStateData.ts';
 import SectorState from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TSector } from './TSector.ts';
 import { deserializeHalfEdge, serializeHalfEdge } from '../../board/core/THalfEdge.ts';
 
-export class SectorStateSetAction implements TAction<TSectorData> {
+export class SectorStateSetAction implements TAction<TSectorStateData> {
 
   public constructor(
     public readonly sector: TSector,
     public readonly state: SectorState
   ) {}
 
-  public apply( state: TSectorData ): void {
+  public apply( state: TSectorStateData ): void {
     state.setSectorState( this.sector, this.state );
   }
 
-  public getUndo( state: TSectorData ): TAction<TSectorData> {
+  public getUndo( state: TSectorStateData ): TAction<TSectorStateData> {
     const previousState = state.getSectorState( this.sector );
     return new SectorStateSetAction( this.sector, previousState );
   }

@@ -13,7 +13,7 @@ export interface TFaceValueData {
   faceValueChangedEmitter: TEmitter<[ TFace, FaceValue ]>;
 }
 
-export type TFaceValueDataListener = ( face: TFace, state: FaceValue ) => void;
+export type TFaceValueListener = ( face: TFace, state: FaceValue ) => void;
 
 export interface TSerializedFaceValueData extends TSerializedState {
   type: 'FaceValueData';

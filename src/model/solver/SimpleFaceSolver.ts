@@ -1,14 +1,14 @@
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { TState } from '../data/core/TState.ts';
-import { TFaceValueData, TFaceValueDataListener } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
@@ -18,16 +18,16 @@ export type SimpleFaceSolverOptions = {
   solveToBlack: boolean;
 };
 
-export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeData, TAnnotatedAction<TFaceValueData & TEdgeData>> {
+export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeStateData, TAnnotatedAction<TFaceValueData & TEdgeStateData>> {
 
   private readonly dirtyFaces: TFace[] = [];
 
-  private readonly faceListener: TFaceValueDataListener;
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly faceListener: TFaceValueListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TFaceValueData & TEdgeData>,
+    private readonly state: TState<TFaceValueData & TEdgeStateData>,
     private readonly options: SimpleFaceSolverOptions,
     dirtyFaces?: TFace[]
   ) {
@@ -54,7 +54,7 @@ export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeData, TAn
     return this.dirtyFaces.length > 0;
   }
 
-  public nextAction(): TAnnotatedAction<TFaceValueData & TEdgeData> | null {
+  public nextAction(): TAnnotatedAction<TFaceValueData & TEdgeStateData> | null {
     if ( !this.dirty ) { return null; }
 
     while ( this.dirtyFaces.length ) {
@@ -118,7 +118,7 @@ export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeData, TAn
     return null;
   }
 
-  public clone( equivalentState: TState<TFaceValueData & TEdgeData> ): SimpleFaceSolver {
+  public clone( equivalentState: TState<TFaceValueData & TEdgeStateData> ): SimpleFaceSolver {
     return new SimpleFaceSolver( this.board, equivalentState, this.options, this.dirtyFaces );
   }
 

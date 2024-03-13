@@ -1,12 +1,12 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import _ from '../../workarounds/_.ts';
 import { GeneralSimpleRegion } from '../data/simple-region/GeneralSimpleRegion.ts';
 import { THalfEdge } from '../board/core/THalfEdge.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegionAction.ts';
@@ -17,13 +17,13 @@ import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 // Oops, because on app restart, region IDs are persistent
 const getSimpleRegionGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 
-type Data = TFaceValueData & TEdgeData & TSimpleRegionData;
+type Data = TFaceValueData & TEdgeStateData & TSimpleRegionData;
 
 export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyEdges = new Set<TEdge>();
 
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -273,7 +273,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAct
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
   }
 
-  public static isSolvedWithAddedEdge( board: TBoard, data: TFaceValueData & TEdgeData, simpleRegion: TSimpleRegion, edge: TEdge ): boolean {
+  public static isSolvedWithAddedEdge( board: TBoard, data: TFaceValueData & TEdgeStateData, simpleRegion: TSimpleRegion, edge: TEdge ): boolean {
     // Sanity checks
     if ( edge.start !== simpleRegion.a && edge.start !== simpleRegion.b ) {
       return false;

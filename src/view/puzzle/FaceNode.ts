@@ -3,9 +3,9 @@ import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont } from '../Theme.ts';
-import EdgeState from '../../model/data/edge/EdgeState.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
 
 export type FaceNodeOptions = {
@@ -16,7 +16,7 @@ export class FaceNode extends Node {
 
   public constructor(
     public readonly face: TFace,
-    stateProperty: TReadOnlyProperty<TState<TEdgeData & TFaceValueData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeStateData & TFaceValueData>>,
     providedOptions?: FaceNodeOptions
   ) {
 

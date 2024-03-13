@@ -2,68 +2,68 @@ import { CompleteAction } from './CompleteAction.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
 import { TFaceValueData } from '../face-value/TFaceValueData.ts';
-import { TEdgeData } from '../edge/TEdgeData.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import FaceValue from '../face-value/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from '../edge/EdgeState.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { TSectorData } from '../sector/TSectorData.ts';
-import { TSector } from '../sector/TSector.ts';
-import SectorState from '../sector/SectorState.ts';
+import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import SectorState from '../sector-state/SectorState.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
-import { TVertexData } from '../vertex/TVertexData.ts';
-import { VertexState } from '../vertex/VertexState.ts';
+import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import { VertexState } from '../vertex-state/VertexState.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
   public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
 
   public constructor(
-    public readonly faceDelta: TDelta<TFaceValueData>,
-    public readonly edgeDelta: TDelta<TEdgeData>,
+    public readonly faceValueDelta: TDelta<TFaceValueData>,
+    public readonly edgeStateDelta: TDelta<TEdgeStateData>,
     public readonly simpleRegionDelta: TDelta<TSimpleRegionData>,
     public readonly faceColorDelta: TDelta<TFaceColorData>,
-    public readonly sectorDelta: TDelta<TSectorData>,
-    public readonly vertexDelta: TDelta<TVertexData>
+    public readonly sectorStateDelta: TDelta<TSectorStateData>,
+    public readonly vertexStateDelta: TDelta<TVertexStateData>
   ) {
-    super( faceDelta, edgeDelta, simpleRegionDelta, faceColorDelta, sectorDelta, vertexDelta );
+    super( faceValueDelta, edgeStateDelta, simpleRegionDelta, faceColorDelta, sectorStateDelta, vertexStateDelta );
 
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
-    faceDelta.faceValueChangedEmitter.addListener( anyChangeListener );
-    edgeDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
+    faceValueDelta.faceValueChangedEmitter.addListener( anyChangeListener );
+    edgeStateDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionDelta.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorDelta.faceColorsChangedEmitter.addListener( anyChangeListener );
-    sectorDelta.sectorChangedEmitter.addListener( anyChangeListener );
-    vertexDelta.vertexChangedEmitter.addListener( anyChangeListener );
+    sectorStateDelta.sectorStateChangedEmitter.addListener( anyChangeListener );
+    vertexStateDelta.vertexStateChangedEmitter.addListener( anyChangeListener );
   }
 
   public getFaceValue( face: TFace ): FaceValue {
-    return this.faceDelta.getFaceValue( face );
+    return this.faceValueDelta.getFaceValue( face );
   }
 
   public setFaceValue( face: TFace, state: FaceValue ): void {
-    this.faceDelta.setFaceValue( face, state );
+    this.faceValueDelta.setFaceValue( face, state );
   }
 
   public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
-    return this.faceDelta.faceValueChangedEmitter;
+    return this.faceValueDelta.faceValueChangedEmitter;
   }
 
   public getEdgeState( edge: TEdge ): EdgeState {
-    return this.edgeDelta.getEdgeState( edge );
+    return this.edgeStateDelta.getEdgeState( edge );
   }
 
   public setEdgeState( edge: TEdge, state: EdgeState ): void {
-    this.edgeDelta.setEdgeState( edge, state );
+    this.edgeStateDelta.setEdgeState( edge, state );
   }
 
   public get edgeStateChangedEmitter(): TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]> {
-    return this.edgeDelta.edgeStateChangedEmitter;
+    return this.edgeStateDelta.edgeStateChangedEmitter;
   }
 
   public getSimpleRegions(): TSimpleRegion[] {
@@ -156,48 +156,48 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
   }
 
   public getSectorState( sector: TSector ): SectorState {
-    return this.sectorDelta.getSectorState( sector );
+    return this.sectorStateDelta.getSectorState( sector );
   }
 
   public setSectorState( sector: TSector, state: SectorState ): void {
-    this.sectorDelta.setSectorState( sector, state );
+    this.sectorStateDelta.setSectorState( sector, state );
   }
 
-  public get sectorChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
-    return this.sectorDelta.sectorChangedEmitter;
+  public get sectorStateChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
+    return this.sectorStateDelta.sectorStateChangedEmitter;
   }
 
   public getVertexState( vertex: TVertex ): VertexState {
-    return this.vertexDelta.getVertexState( vertex );
+    return this.vertexStateDelta.getVertexState( vertex );
   }
 
   public setVertexState( vertex: TVertex, state: VertexState ): void {
-    this.vertexDelta.setVertexState( vertex, state );
+    this.vertexStateDelta.setVertexState( vertex, state );
   }
 
-  public get vertexChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
-    return this.vertexDelta.vertexChangedEmitter;
+  public get vertexStateChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
+    return this.vertexStateDelta.vertexStateChangedEmitter;
   }
 
   public clone(): CompleteDelta {
     return new CompleteDelta(
-      this.faceDelta.clone(),
-      this.edgeDelta.clone(),
+      this.faceValueDelta.clone(),
+      this.edgeStateDelta.clone(),
       this.simpleRegionDelta.clone(),
       this.faceColorDelta.clone(),
-      this.sectorDelta.clone(),
-      this.vertexDelta.clone()
+      this.sectorStateDelta.clone(),
+      this.vertexStateDelta.clone()
     );
   }
 
   public createDelta(): TDelta<TCompleteData> {
     return new CompleteDelta(
-      this.faceDelta.createDelta(),
-      this.edgeDelta.createDelta(),
+      this.faceValueDelta.createDelta(),
+      this.edgeStateDelta.createDelta(),
       this.simpleRegionDelta.createDelta(),
       this.faceColorDelta.createDelta(),
-      this.sectorDelta.createDelta(),
-      this.vertexDelta.createDelta()
+      this.sectorStateDelta.createDelta(),
+      this.vertexStateDelta.createDelta()
     );
   }
 

@@ -1,5 +1,5 @@
 import { TState } from '../core/TState.ts';
-import { TVertexData, TSerializedVertexData } from './TVertexData.ts';
+import { TVertexStateData, TSerializedVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
@@ -8,15 +8,14 @@ import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { VertexState } from './VertexState.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
-export class VertexDataValidator implements TState<TVertexData> {
+export class VertexStateValidator implements TState<TVertexStateData> {
 
-  public readonly vertexChangedEmitter = new TinyEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>();
+  public readonly vertexStateChangedEmitter = new TinyEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>();
 
   public constructor(
     private readonly board: TBoard,
-    private readonly currentState: TState<TVertexData>,
-    private readonly solvedState: TState<TVertexData>
+    private readonly currentState: TState<TVertexStateData>,
+    private readonly solvedState: TState<TVertexStateData>
   ) {}
 
   public getVertexState( vertex: TVertex ): VertexState {
@@ -33,15 +32,15 @@ export class VertexDataValidator implements TState<TVertexData> {
     }
   }
 
-  public clone(): VertexDataValidator {
+  public clone(): VertexStateValidator {
     return this;
   }
 
-  public createDelta(): TDelta<TVertexData> {
-    return this as unknown as TDelta<TVertexData>;
+  public createDelta(): TDelta<TVertexStateData> {
+    return this as unknown as TDelta<TVertexStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedVertexData {
+  public serializeState( board: TBoard ): TSerializedVertexStateData {
     throw new Error( 'unimplemented' );
   }
 }

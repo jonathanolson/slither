@@ -2,16 +2,16 @@ import { Node, Path } from 'phet-lib/scenery';
 import { TVertex } from '../../model/board/core/TVertex.ts';
 import { DerivedProperty, Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import EdgeState from '../../model/data/edge/EdgeState.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { smallVertexProperty, vertexColorProperty, vertexStyleProperty, verticesVisibleProperty } from '../Theme.ts';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { Shape } from 'phet-lib/kite';
 
 export class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
-    stateProperty: TReadOnlyProperty<TState<TEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
     super();

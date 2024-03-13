@@ -1,17 +1,15 @@
 import { TState } from '../core/TState.ts';
-import { serializeEdgeData, TEdgeData, TSerializedEdgeData } from './TEdgeData.ts';
+import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from './TEdgeStateData.ts';
 import { deserializeEdge, TEdge, TSerializedEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { GeneralEdgeDelta } from './GeneralEdgeDelta.ts';
+import { GeneralEdgeStateDelta } from './GeneralEdgeStateDelta.ts';
 
-// TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
-
-// TODO: faster forms for Square in particular (bit-pack the states!)
-export class GeneralEdgeData implements TState<TEdgeData> {
+// TODO: lots of types like this have duplication, figure out an improvement
+export class GeneralEdgeStateData implements TState<TEdgeStateData> {
 
   public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
 
@@ -44,25 +42,25 @@ export class GeneralEdgeData implements TState<TEdgeData> {
     }
   }
 
-  public clone(): GeneralEdgeData {
-    return new GeneralEdgeData( this.board, edge => this.getEdgeState( edge ) );
+  public clone(): GeneralEdgeStateData {
+    return new GeneralEdgeStateData( this.board, edge => this.getEdgeState( edge ) );
   }
 
-  public createDelta(): TDelta<TEdgeData> {
-    return new GeneralEdgeDelta( this.board, this );
+  public createDelta(): TDelta<TEdgeStateData> {
+    return new GeneralEdgeStateDelta( this.board, this );
   }
 
-  public serializeState( board: TBoard ): TSerializedEdgeData {
-    return serializeEdgeData( board, this );
+  public serializeState( board: TBoard ): TSerializedEdgeStateData {
+    return serializeEdgeStateData( board, this );
   }
 
-  public static deserializeState( board: TBoard, serializedEdgeData: TSerializedEdgeData ): GeneralEdgeData {
+  public static deserializeState( board: TBoard, serializedEdgeData: TSerializedEdgeStateData ): GeneralEdgeStateData {
     const map: Map<TEdge, EdgeState> = new Map( serializedEdgeData.edges.map( ( serializedEdgeState: { edge: TSerializedEdge; state: string } ) => [
       deserializeEdge( board, serializedEdgeState.edge ),
       EdgeState.enumeration.getValue( serializedEdgeState.state )
     ] ) );
 
-    return new GeneralEdgeData(
+    return new GeneralEdgeStateData(
       board,
       edge => map.get( edge ) ?? EdgeState.WHITE
     );

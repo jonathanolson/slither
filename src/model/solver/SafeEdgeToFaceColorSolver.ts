@@ -1,8 +1,8 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import FaceColorState, { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
@@ -17,7 +17,7 @@ import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 
-type Data = TEdgeData & TFaceColorData;
+type Data = TEdgeStateData & TFaceColorData;
 
 export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
@@ -26,7 +26,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
 
   private readonly dirtyEdges = new Set<TEdge>();
 
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,

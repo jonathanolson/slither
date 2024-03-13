@@ -5,27 +5,27 @@ import SectorState, { TSerializedSectorState } from './SectorState.ts';
 import { TSector } from './TSector.ts';
 import { serializeHalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 
-export interface TSectorData {
+export interface TSectorStateData {
   // a sector is effectively halfEdge and halfEdge.next
   getSectorState( sector: TSector ): SectorState;
 
   setSectorState( sector: TSector, state: SectorState ): void;
 
-  sectorChangedEmitter: TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]>;
+  sectorStateChangedEmitter: TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]>;
 }
 
-export type TSectorDataListener = ( edge: TSector, state: SectorState, oldState: SectorState ) => void;
+export type TSectorStateListener = ( edge: TSector, state: SectorState, oldState: SectorState ) => void;
 
-export interface TSerializedSectorData extends TSerializedState {
-  type: 'SectorData';
+export interface TSerializedSectorStateData extends TSerializedState {
+  type: 'SectorStateData';
   sectors: {
     sector: TSerializedHalfEdge;
     state: TSerializedSectorState;
   }[];
 }
 
-export const serializeSectorData = ( board: TBoard, sectorData: TSectorData ): TSerializedSectorData => ( {
-  type: 'SectorData',
+export const serializeSectorStateData = ( board: TBoard, sectorData: TSectorStateData ): TSerializedSectorStateData => ( {
+  type: 'SectorStateData',
   sectors: board.halfEdges.filter( sector => sectorData.getSectorState( sector ) !== SectorState.ANY ).map( sector => ( {
     sector: serializeHalfEdge( sector ),
     state: sectorData.getSectorState( sector ).serialize()

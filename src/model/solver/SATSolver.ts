@@ -9,9 +9,9 @@
  */
 
 import { TBoard } from '../board/core/TBoard.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { Combination } from 'phet-lib/dot';
 // @ts-expect-error
@@ -85,7 +85,7 @@ export type SatSolveOptions = {
 // TODO: in the future, vertex state might help! anything that gives us more helpful clauses? maybe not
 export const satSolve = (
   board: TBoard,
-  state: TState<TEdgeData & TFaceValueData>,
+  state: TState<TEdgeStateData & TFaceValueData>,
   options: SatSolveOptions
 ): TEdge[][] => {
 

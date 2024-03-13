@@ -3,7 +3,7 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TState } from '../data/core/TState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { safeSolve } from '../solver/autoSolver.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';

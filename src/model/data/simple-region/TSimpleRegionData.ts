@@ -60,7 +60,7 @@ export interface TSimpleRegionData {
   ]>;
 }
 
-export type TSimpleRegionDataListener = (
+export type TSimpleRegionListener = (
   addedRegions: MultiIterable<TSimpleRegion>,
   removedRegions: MultiIterable<TSimpleRegion>,
   addedWeirdEdges: MultiIterable<TEdge>,

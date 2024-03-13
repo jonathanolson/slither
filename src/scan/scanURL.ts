@@ -5,7 +5,7 @@ import { ContourCollection } from './ContourCollection.ts';
 import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
 import { Vector2 } from 'phet-lib/dot';
-import EdgeState from '../model/data/edge/EdgeState.ts';
+import EdgeState from '../model/data/edge-state/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';

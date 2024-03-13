@@ -1,24 +1,24 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorData } from '../data/sector/TSectorData.ts';
-import { TSector } from '../data/sector/TSector.ts';
-import SectorState from '../data/sector/SectorState.ts';
-import { SectorStateSetAction } from '../data/sector/SectorStateSetAction.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
 
-type Data = TEdgeData & TSectorData;
+type Data = TEdgeStateData & TSectorStateData;
 
 // sector + edges => sector
 export class SafeEdgeToSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtySectors = new Set<TSector>();
 
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,

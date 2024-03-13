@@ -1,5 +1,5 @@
 import { TState } from '../core/TState.ts';
-import { TSectorData, TSerializedSectorData } from './TSectorData.ts';
+import { TSectorStateData, TSerializedSectorStateData } from './TSectorStateData.ts';
 import SectorState from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -8,15 +8,14 @@ import { TinyEmitter } from 'phet-lib/axon';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import { TSector } from './TSector.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
-export class SectorDataValidator implements TState<TSectorData> {
+export class SectorStateValidator implements TState<TSectorStateData> {
 
-  public readonly sectorChangedEmitter = new TinyEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]>();
+  public readonly sectorStateChangedEmitter = new TinyEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]>();
 
   public constructor(
     private readonly board: TBoard,
-    private readonly currentState: TState<TSectorData>,
-    private readonly solvedState: TState<TSectorData>
+    private readonly currentState: TState<TSectorStateData>,
+    private readonly solvedState: TState<TSectorStateData>
   ) {}
 
   public getSectorState( edge: TSector ): SectorState {
@@ -32,15 +31,15 @@ export class SectorDataValidator implements TState<TSectorData> {
     }
   }
 
-  public clone(): SectorDataValidator {
+  public clone(): SectorStateValidator {
     return this;
   }
 
-  public createDelta(): TDelta<TSectorData> {
-    return this as unknown as TDelta<TSectorData>;
+  public createDelta(): TDelta<TSectorStateData> {
+    return this as unknown as TDelta<TSectorStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedSectorData {
+  public serializeState( board: TBoard ): TSerializedSectorStateData {
     throw new Error( 'unimplemented' );
   }
 }

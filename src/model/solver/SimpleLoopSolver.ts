@@ -1,14 +1,14 @@
 import { TSolver } from './TSolver.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeData, TEdgeDataListener } from '../data/edge/TEdgeData.ts';
-import { TSimpleRegion, TSimpleRegionData, TSimpleRegionDataListener } from '../data/simple-region/TSimpleRegionData.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import { TSimpleRegion, TSimpleRegionData, TSimpleRegionListener } from '../data/simple-region/TSimpleRegionData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
@@ -20,17 +20,17 @@ export type SimpleLoopSolverOptions = {
   resolveAllRegions: boolean;
 };
 
-export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeData & TSimpleRegionData, TAnnotatedAction<TFaceValueData & TEdgeData & TSimpleRegionData>> {
+export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeStateData & TSimpleRegionData, TAnnotatedAction<TFaceValueData & TEdgeStateData & TSimpleRegionData>> {
 
   private readonly dirtySimpleRegions: Set<TSimpleRegion>;
   private hasDirtyWeirdEdges: boolean = false;
 
-  private readonly simpleRegionListener: TSimpleRegionDataListener;
-  private readonly edgeListener: TEdgeDataListener;
+  private readonly simpleRegionListener: TSimpleRegionListener;
+  private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<TFaceValueData & TEdgeData & TSimpleRegionData>,
+    private readonly state: TState<TFaceValueData & TEdgeStateData & TSimpleRegionData>,
     private readonly options: SimpleLoopSolverOptions,
     dirtySimpleRegions?: MultiIterable<TSimpleRegion>
   ) {
@@ -115,7 +115,7 @@ export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeData & TS
     return this.dirtySimpleRegions.size > 0 || this.hasDirtyWeirdEdges;
   }
 
-  public nextAction(): TAnnotatedAction<TFaceValueData & TEdgeData & TSimpleRegionData> | null {
+  public nextAction(): TAnnotatedAction<TFaceValueData & TEdgeStateData & TSimpleRegionData> | null {
     if ( !this.dirty ) { return null; }
 
     if ( this.state.getWeirdEdges().length ) {
@@ -222,7 +222,7 @@ export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeData & TS
     return true;
   }
 
-  public clone( equivalentState: TState<TFaceValueData & TEdgeData & TSimpleRegionData> ): SimpleLoopSolver {
+  public clone( equivalentState: TState<TFaceValueData & TEdgeStateData & TSimpleRegionData> ): SimpleLoopSolver {
     return new SimpleLoopSolver( this.board, equivalentState, this.options, this.dirtySimpleRegions );
   }
 

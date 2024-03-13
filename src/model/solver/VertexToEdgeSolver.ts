@@ -1,15 +1,15 @@
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TSolver } from './TSolver.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TVertexData, TVertexDataListener } from '../data/vertex/TVertexData.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 
 export type VertexToEdgeSolverOptions = {
@@ -17,13 +17,13 @@ export type VertexToEdgeSolverOptions = {
   solveToBlack: boolean;
 };
 
-type Data = TEdgeData & TVertexData;
+type Data = TEdgeStateData & TVertexStateData;
 
 export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyVertices: TVertex[] = [];
 
-  private readonly vertexListener: TVertexDataListener;
+  private readonly vertexListener: TVertexStateListener;
 
   public constructor(
     private readonly board: TBoard,
@@ -41,7 +41,7 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
     this.vertexListener = ( vertex: TVertex ) => {
       this.dirtyVertices.push( vertex );
     };
-    this.state.vertexChangedEmitter.addListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.addListener( this.vertexListener );
   }
 
   public get dirty(): boolean {
@@ -103,6 +103,6 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
   }
 
   public dispose(): void {
-    this.state.vertexChangedEmitter.removeListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.removeListener( this.vertexListener );
   }
 }

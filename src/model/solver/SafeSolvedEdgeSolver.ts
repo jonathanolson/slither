@@ -1,15 +1,15 @@
 import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TState } from '../data/core/TState.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { simpleRegionIsSolved, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 
-type Data = TSimpleRegionData & TEdgeData;
+type Data = TSimpleRegionData & TEdgeStateData;
 
 // If solved, we turn white edges to red (useful so that we trigger proper face coloring for the end)
 export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {

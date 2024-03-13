@@ -4,26 +4,26 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeVertex, TSerializedVertex, TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
 
-export interface TVertexData {
+export interface TVertexStateData {
   getVertexState( vertex: TVertex ): VertexState;
 
   setVertexState( vertex: TVertex, state: VertexState ): void;
 
-  vertexChangedEmitter: TEmitter<[ edge: TVertex, state: VertexState, oldState: VertexState ]>;
+  vertexStateChangedEmitter: TEmitter<[ edge: TVertex, state: VertexState, oldState: VertexState ]>;
 }
 
-export type TVertexDataListener = ( edge: TVertex, state: VertexState, oldState: VertexState ) => void;
+export type TVertexStateListener = ( edge: TVertex, state: VertexState, oldState: VertexState ) => void;
 
-export interface TSerializedVertexData extends TSerializedState {
-  type: 'VertexData';
+export interface TSerializedVertexStateData extends TSerializedState {
+  type: 'VertexStateData';
   vertices: {
     vertex: TSerializedVertex;
     state: TSerializedVertexState;
   }[];
 }
 
-export const serializeVertexData = ( board: TBoard, vertexData: TVertexData ): TSerializedVertexData => ( {
-  type: 'VertexData',
+export const serializeVertexStateData = ( board: TBoard, vertexData: TVertexStateData ): TSerializedVertexStateData => ( {
+  type: 'VertexStateData',
   vertices: board.vertices.filter( vertex => !vertexData.getVertexState( vertex ).isAny() ).map( vertex => ( {
     vertex: serializeVertex( vertex ),
     state: vertexData.getVertexState( vertex ).serialize()

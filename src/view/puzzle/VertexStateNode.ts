@@ -4,17 +4,17 @@ import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { allVertexStateVisibleProperty, vertexStateBackgroundProperty, vertexStateLineProperty, vertexStateOutlineProperty, vertexStatePointProperty, vertexStateVisibleProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
-import { TVertexData } from '../../model/data/vertex/TVertexData.ts';
+import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { ConvexHull2, Vector2 } from 'phet-lib/dot';
-import { VertexState } from '../../model/data/vertex/VertexState.ts';
-import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
-import EdgeState from '../../model/data/edge/EdgeState.ts';
+import { VertexState } from '../../model/data/vertex-state/VertexState.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 
 export class VertexStateNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
-    stateProperty: TReadOnlyProperty<TState<TVertexData & TEdgeData>>,
+    stateProperty: TReadOnlyProperty<TState<TVertexStateData & TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
     super();

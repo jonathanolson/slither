@@ -6,16 +6,16 @@ import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { NoOpAction } from '../data/core/NoOpAction.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { puzzleToCompressedString, TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TAction, TSerializedAction } from '../data/core/TAction.ts';
-import { CompleteDataValidator } from '../data/combined/CompleteDataValidator.ts';
+import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
 import { TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
@@ -138,7 +138,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     let errorDetected = false;
 
     // Validate against the solution!
-    const validator = new CompleteDataValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
+    const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
     try {
       userAction.apply( validator );
     }
@@ -348,7 +348,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
         const action = solver.nextAction();
 
         if ( action ) {
-          const validator = new CompleteDataValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
+          const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
           let valid = true;
           try {
             action.apply( validator );

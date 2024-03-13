@@ -2,9 +2,9 @@ import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { TAnnotatedAction } from './TAnnotatedAction.ts';
-import { TSector } from '../sector/TSector.ts';
-import SectorState from '../sector/SectorState.ts';
-import { VertexState } from '../vertex/VertexState.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import SectorState from '../sector-state/SectorState.ts';
+import { VertexState } from '../vertex-state/VertexState.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';

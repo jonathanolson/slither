@@ -1,29 +1,29 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TVertexData } from './TVertexData.ts';
+import { TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { deserializeVertex, serializeVertex, TSerializedVertex, TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
 
-export class GeneralVertexAction implements TAction<TVertexData> {
+export class GeneralVertexStateAction implements TAction<TVertexStateData> {
   public constructor(
     public readonly board: TBoard,
     public readonly vertexStateMap: Map<TVertex, VertexState> = new Map()
   ) {}
 
-  public apply( state: TVertexData ): void {
+  public apply( state: TVertexStateData ): void {
     for ( const [ vertex, vertexState ] of this.vertexStateMap ) {
       state.setVertexState( vertex, vertexState );
     }
   }
 
-  public getUndo( state: TVertexData ): TAction<TVertexData> {
+  public getUndo( state: TVertexStateData ): TAction<TVertexStateData> {
     const vertexStateMap = new Map<TVertex, VertexState>();
 
     for ( const vertex of this.vertexStateMap.keys() ) {
       vertexStateMap.set( vertex, state.getVertexState( vertex ) );
     }
 
-    return new GeneralVertexAction( this.board, vertexStateMap );
+    return new GeneralVertexStateAction( this.board, vertexStateMap );
   }
 
   public isEmpty(): boolean {
@@ -40,8 +40,8 @@ export class GeneralVertexAction implements TAction<TVertexData> {
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralVertexAction {
-    return new GeneralVertexAction(
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralVertexStateAction {
+    return new GeneralVertexStateAction(
       board,
       new Map( serializedAction.vertices.map( ( serializedVertexState: { vertex: TSerializedVertex; state: TSerializedVertexState } ) => [
         deserializeVertex( board, serializedVertexState.vertex ),

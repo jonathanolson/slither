@@ -1,22 +1,22 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TEdgeData } from '../data/edge/TEdgeData.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { simpleRegionIsSolved, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TState } from '../data/core/TState.ts';
 import { iterateSolver, SolverFactory, TSolver } from './TSolver.ts';
 import { TAction } from '../data/core/TAction.ts';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { TAnyData, TAnyDataListener } from '../data/combined/TAnyData.ts';
+import { TAnyData, TAnyStateListener } from '../data/combined/TAnyData.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TDelta } from '../data/core/TDelta.ts';
-import { EdgeStateSetAction } from '../data/edge/EdgeStateSetAction.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { backtrackerSolverFactory, standardSolverFactory } from './autoSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
 
-export type EdgeBacktrackData = TEdgeData & TSimpleRegionData;
+export type EdgeBacktrackData = TEdgeStateData & TSimpleRegionData;
 
 export type BacktrackOptions<Data extends EdgeBacktrackData> = {
   solutionCallback( state: TState<Data> ): void;
@@ -124,7 +124,7 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
   private isDirty: boolean = true;
   private readonly solver: TSolver<Data, TAction<Data>>;
 
-  private readonly anyChangeListener: TAnyDataListener;
+  private readonly anyChangeListener: TAnyStateListener;
 
   public constructor(
     private readonly board: TBoard,

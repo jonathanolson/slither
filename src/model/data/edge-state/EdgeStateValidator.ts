@@ -1,5 +1,5 @@
 import { TState } from '../core/TState.ts';
-import { TEdgeData, TSerializedEdgeData } from './TEdgeData.ts';
+import { TEdgeStateData, TSerializedEdgeStateData } from './TEdgeStateData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
@@ -8,15 +8,14 @@ import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
-export class EdgeDataValidator implements TState<TEdgeData> {
+export class EdgeStateValidator implements TState<TEdgeStateData> {
 
   public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
 
   public constructor(
     private readonly board: TBoard,
-    private readonly currentState: TState<TEdgeData>,
-    private readonly solvedState: TState<TEdgeData>
+    private readonly currentState: TState<TEdgeStateData>,
+    private readonly solvedState: TState<TEdgeStateData>
   ) {}
 
   public getEdgeState( edge: TEdge ): EdgeState {
@@ -34,15 +33,15 @@ export class EdgeDataValidator implements TState<TEdgeData> {
     }
   }
 
-  public clone(): EdgeDataValidator {
+  public clone(): EdgeStateValidator {
     return this;
   }
 
-  public createDelta(): TDelta<TEdgeData> {
-    return this as unknown as TDelta<TEdgeData>;
+  public createDelta(): TDelta<TEdgeStateData> {
+    return this as unknown as TDelta<TEdgeStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedEdgeData {
+  public serializeState( board: TBoard ): TSerializedEdgeStateData {
     throw new Error( 'unimplemented' );
   }
 }

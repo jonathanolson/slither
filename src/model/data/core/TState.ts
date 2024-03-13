@@ -1,7 +1,7 @@
 import { TDelta } from './TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { GeneralFaceValueData } from '../face-value/GeneralFaceValueData.ts';
-import { GeneralEdgeData } from '../edge/GeneralEdgeData.ts';
+import { GeneralEdgeStateData } from '../edge-state/GeneralEdgeStateData.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
 import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegionData.ts';
 import { CompleteData } from '../combined/CompleteData.ts';
@@ -28,7 +28,7 @@ export const deserializeState = ( board: TBoard, serializedState: TSerializedSta
     return GeneralFaceValueData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
   }
   else if ( type === 'EdgeData' ) {
-    return GeneralEdgeData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
+    return GeneralEdgeStateData.deserializeState( board, serializedState ) as unknown as TState<TCompleteData>;
   }
   // TODO: can we leave this out, and reconstruct it from the other data?
   else if ( type === 'SimpleRegionData' ) {

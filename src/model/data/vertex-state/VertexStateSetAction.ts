@@ -1,21 +1,21 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TVertexData } from './TVertexData.ts';
+import { TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { deserializeVertex, serializeVertex, TVertex } from '../../board/core/TVertex.ts';
 import { VertexState } from './VertexState.ts';
 
-export class VertexStateSetAction implements TAction<TVertexData> {
+export class VertexStateSetAction implements TAction<TVertexStateData> {
 
   public constructor(
     public readonly vertex: TVertex,
     public readonly state: VertexState
   ) {}
 
-  public apply( state: TVertexData ): void {
+  public apply( state: TVertexStateData ): void {
     state.setVertexState( this.vertex, this.state );
   }
 
-  public getUndo( state: TVertexData ): TAction<TVertexData> {
+  public getUndo( state: TVertexStateData ): TAction<TVertexStateData> {
     const previousState = state.getVertexState( this.vertex );
     return new VertexStateSetAction( this.vertex, previousState );
   }

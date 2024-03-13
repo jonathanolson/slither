@@ -11,7 +11,7 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
 import { Orientation } from 'phet-lib/phet-core';
-import EdgeState from '../data/edge/EdgeState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { SquareBoard } from '../board/square/SquareBoard.ts';
 

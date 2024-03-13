@@ -1,12 +1,12 @@
 // "There will be one (and only one) strongly-connecting chain between the vertices through edges in the edge set"
 // (it will not contain the entire loop)
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import EdgeState from '../edge/EdgeState.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 import SetRelation from './SetRelation.ts';
 import _ from '../../../workarounds/_.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import { TEdgeData } from '../edge/TEdgeData.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
 
 export class Net {
   public constructor(
@@ -19,7 +19,7 @@ export class Net {
 
   // If all of the edges are black (for regions, this will be one subchain)
   public isComplete(
-    data: TEdgeData
+    data: TEdgeStateData
   ): boolean {
     return [ ...this.edges ].every( edge => data.getEdgeState( edge ) === EdgeState.BLACK );
   }

@@ -8,8 +8,7 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
-// TODO: can we... ditch the TState part of this? In a way it is useful though
-export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
+export class SimpleRegionValidator implements TState<TSimpleRegionData> {
 
   public readonly simpleRegionsChangedEmitter = new TinyEmitter<[
     addedRegions: MultiIterable<TSimpleRegion>,
@@ -59,7 +58,7 @@ export class SimpleRegionDataValidator implements TState<TSimpleRegionData> {
     // NOTE: we rely on the edge validator
   }
 
-  public clone(): SimpleRegionDataValidator {
+  public clone(): SimpleRegionValidator {
     return this;
   }
 
