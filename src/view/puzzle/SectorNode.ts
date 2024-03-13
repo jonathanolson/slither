@@ -36,7 +36,8 @@ export class SectorNode extends Node {
     const halfAngle = endUnit.minus( startUnit ).angle + Math.PI / 2;
     const diffAngle = endAngle - startAngle;
 
-    const baseRadius = 0.2;
+    const baseArcRadius = 0.2;
+    const baseSplineRadius = 0.3;
     const arcRadiusDelta = 0.02;
     const splineRadiusDelta = 0.04;
 
@@ -51,7 +52,7 @@ export class SectorNode extends Node {
 
     const addSpline = ( shape: Shape, radius: number ) => {
 
-      const middleRadius = DotUtils.linear( 0, 2 * Math.PI, radius / 2, 0, Math.abs( 2 * Math.PI - diffAngle ) );
+      const middleRadius = DotUtils.linear( 0, 2 * Math.PI, radius * 0.5, 0, Math.abs( 2 * Math.PI - diffAngle ) );
 
       const splineStart = startUnit.timesScalar( radius );
       const splineEnd = endUnit.timesScalar( radius );
@@ -74,10 +75,15 @@ export class SectorNode extends Node {
       return shape;
     };
 
-    const singleArcShape = addArc( new Shape(), baseRadius ).makeImmutable();
-    const doubleArcShape = addArc( addArc( new Shape(), baseRadius + arcRadiusDelta ), baseRadius - arcRadiusDelta ).makeImmutable();
-    const singleSplineShape = addSpline( new Shape(), baseRadius ).makeImmutable();
-    const doubleSplineShape = addSpline( addSpline( new Shape(), baseRadius + splineRadiusDelta ), baseRadius - splineRadiusDelta ).makeImmutable();
+    const singleArcShape = addArc( new Shape(), baseArcRadius ).makeImmutable();
+    const doubleArcShape = addArc( addArc( new Shape(), baseArcRadius + arcRadiusDelta ), baseArcRadius - arcRadiusDelta ).makeImmutable();
+    // TODO: handle these, remove if we don't like?
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const singleSplineShape = addSpline( new Shape(), baseSplineRadius ).makeImmutable();
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const doubleSplineShape = addSpline( addSpline( new Shape(), baseSplineRadius + splineRadiusDelta ), baseSplineRadius - splineRadiusDelta ).makeImmutable();
     const onlyZeroShape = addCircle( new Shape(), iconCenter, 0.05 ).makeImmutable();
     const anyShape = addCircle( addCircle( addCircle( new Shape(), iconCenter, 0.05 ), iconCenter, 0.03 ), iconCenter, 0.01 ).makeImmutable();
     const noneShape = new Shape()
@@ -95,22 +101,34 @@ export class SectorNode extends Node {
       [ SectorState.ONLY_ZERO, onlyZeroShape ],
       [ SectorState.ONLY_ONE, singleArcShape ],
       [ SectorState.ONLY_TWO, onlyTwoShape ],
-      [ SectorState.NOT_ZERO, doubleSplineShape ],
+      [ SectorState.NOT_ZERO, doubleArcShape ],
       [ SectorState.NOT_ONE, doubleArcShape ],
-      [ SectorState.NOT_TWO, singleSplineShape ],
+      [ SectorState.NOT_TWO, singleArcShape ],
       [ SectorState.ANY, anyShape ]
     ] );
 
     // TODO: Theme!
     const strokeMap = new Map<SectorState, TPaint>( [
-      [ SectorState.NONE, 'blue' ],
-      [ SectorState.ONLY_ZERO, 'blue' ],
+      [ SectorState.NONE, 'cyan' ],
+      [ SectorState.ONLY_ZERO, 'cyan' ],
       [ SectorState.ONLY_ONE, 'red' ],
-      [ SectorState.ONLY_TWO, 'blue' ],
+      [ SectorState.ONLY_TWO, 'cyan' ],
       [ SectorState.NOT_ZERO, 'green' ],
-      [ SectorState.NOT_ONE, 'magenta' ],
-      [ SectorState.NOT_TWO, 'cyan' ],
-      [ SectorState.ANY, 'blue' ]
+      [ SectorState.NOT_ONE, 'blue' ],
+      [ SectorState.NOT_TWO, 'orange' ],
+      [ SectorState.ANY, 'cyan' ]
+    ] );
+
+    const basicDash = [ 0.02, 0.02 ];
+    const dashMap = new Map<SectorState, number[]>( [
+      [ SectorState.NONE, [] ],
+      [ SectorState.ONLY_ZERO, [] ],
+      [ SectorState.ONLY_ONE, [] ],
+      [ SectorState.ONLY_TWO, [] ],
+      [ SectorState.NOT_ZERO, basicDash ],
+      [ SectorState.NOT_ONE, [] ],
+      [ SectorState.NOT_TWO, basicDash ],
+      [ SectorState.ANY, [] ]
     ] );
 
     const path = new Path( null, {
@@ -132,6 +150,7 @@ export class SectorNode extends Node {
 
       let shape: Shape | null = null;
       let stroke: TPaint = null;
+      let dash: number[] = [];
 
       if ( nextToEdgesVisible || ( edgeStateA === EdgeState.WHITE && edgeStateB === EdgeState.WHITE ) ) {
         let isTrivial = SectorState.trivialStates.includes( sectorState );
@@ -147,11 +166,13 @@ export class SectorNode extends Node {
         if ( trivialVisible || !isTrivial ) {
           shape = shapeMap.get( sectorState ) ?? null;
           stroke = strokeMap.get( sectorState ) ?? null;
+          dash = dashMap.get( sectorState ) ?? [];
         }
       }
 
       path.shape = shape;
       path.stroke = stroke;
+      path.lineDash = dash;
     } );
     this.disposeEmitter.addListener( () => multilink.dispose() );
   }
