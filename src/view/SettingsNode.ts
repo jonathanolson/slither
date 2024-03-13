@@ -141,38 +141,6 @@ export class SettingsNode extends PopupNode {
                 leftMargin: 20
               }
             } ),
-            getVerticalRadioButtonGroup( 'Face Color Threshold', faceColorThresholdProperty, [
-              {
-                value: 1,
-                createNode: () => new UIText( 'Show All' ),
-                labelContent: 'Show All'
-              },
-              {
-                value: 2,
-                createNode: () => new UIText( '2+' ),
-                labelContent: '2+'
-              },
-              {
-                value: 3,
-                createNode: () => new UIText( '3+' ),
-                labelContent: '3+'
-              },
-              {
-                value: 5,
-                createNode: () => new UIText( '5+' ),
-                labelContent: '5+'
-              },
-              {
-                value: 10,
-                createNode: () => new UIText( '10+' ),
-                labelContent: '10+'
-              },
-              {
-                value: Number.POSITIVE_INFINITY,
-                createNode: () => new UIText( 'Only Outside' ),
-                labelContent: 'Only Outside'
-              }
-            ] ),
           ], [
             new UITextCheckbox( 'Possible Line Visible', whiteLineVisibleProperty ),
             new UITextCheckbox( 'Impossible Line Visible', redLineVisibleProperty ),
@@ -275,7 +243,38 @@ export class SettingsNode extends PopupNode {
       ]
     } );
 
-    // TODO: debug?
+    const faceColorThresholdNode = getVerticalRadioButtonGroup( 'Face Color Threshold', faceColorThresholdProperty, [
+      {
+        value: 1,
+        createNode: () => new UIText( 'Show All' ),
+        labelContent: 'Show All'
+      },
+      {
+        value: 2,
+        createNode: () => new UIText( '2+' ),
+        labelContent: '2+'
+      },
+      {
+        value: 3,
+        createNode: () => new UIText( '3+' ),
+        labelContent: '3+'
+      },
+      {
+        value: 5,
+        createNode: () => new UIText( '5+' ),
+        labelContent: '5+'
+      },
+      {
+        value: 10,
+        createNode: () => new UIText( '10+' ),
+        labelContent: '10+'
+      },
+      {
+        value: Number.POSITIVE_INFINITY,
+        createNode: () => new UIText( 'Only Outside' ),
+        labelContent: 'Only Outside'
+      }
+    ] );
 
     super( new VBox( {
       spacing: 20,
@@ -283,8 +282,13 @@ export class SettingsNode extends PopupNode {
       children: [
         autoSolveNode,
         new HBox( {
+          align: 'top',
           spacing: 30,
-          children: [ themeNode, themeEditButtons ]
+          children: [
+            themeNode,
+            themeEditButtons,
+            faceColorThresholdNode
+          ]
         } ),
         displayNode,
         new UITextCheckbox( 'Advanced Settings Visible', advancedSettingsVisibleProperty )
