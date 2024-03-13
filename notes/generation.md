@@ -5,6 +5,7 @@
 
 - How to measure difficulty? Certain solvers could report out what they needed to get (but what if it requires a chain of colors?)
 - Explicitly list out the "rules" for a given difficulty level in the future?
+- Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
 
 # Importance of Technique
 
