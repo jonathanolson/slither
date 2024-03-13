@@ -2,7 +2,7 @@ import { Circle, Node, Path } from 'phet-lib/scenery';
 import { TVertex } from '../../model/board/core/TVertex.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { allVertexStateVisibleProperty, vertexStateVisibleProperty } from '../Theme.ts';
+import { allVertexStateVisibleProperty, vertexStateBackgroundProperty, vertexStateLineProperty, vertexStateOutlineProperty, vertexStatePointProperty, vertexStateVisibleProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import { TVertexData } from '../../model/data/vertex/TVertexData.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
@@ -30,8 +30,7 @@ export class VertexStateNode extends Node {
     const backgroundShape = mainShape.getOffsetShape( -0.05 );
 
     const statePath = new Path( null, {
-      // TODO: themify
-      stroke: 'red',
+      stroke: vertexStateLineProperty,
       lineWidth: 0.01
     } );
 
@@ -39,9 +38,8 @@ export class VertexStateNode extends Node {
     const mainPath = new Path( backgroundShape, {
       translation: vertex.viewCoordinates,
 
-      // TODO: themify
-      fill: 'white',
-      stroke: 'black',
+      fill: vertexStateBackgroundProperty,
+      stroke: vertexStateOutlineProperty,
       lineWidth: 0.01,
 
       children: [
@@ -49,9 +47,7 @@ export class VertexStateNode extends Node {
         ...mainPoints.map( point => new Circle( {
           radius: 0.02,
           translation: point,
-
-          // TODO: themify
-          fill: 'black'
+          fill: vertexStatePointProperty
         } ) )
       ]
     } );

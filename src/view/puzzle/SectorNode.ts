@@ -1,7 +1,7 @@
 import { Node, Path, TPaint } from 'phet-lib/scenery';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty } from '../Theme.ts';
+import { sectorNotOneColorProperty, sectorNotTwoColorProperty, sectorNotZeroColorProperty, sectorOnlyOneColorProperty, sectorOtherColorProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty } from '../Theme.ts';
 import { TEdgeData } from '../../model/data/edge/TEdgeData.ts';
 import { Shape } from 'phet-lib/kite';
 import { TSector } from '../../model/data/sector/TSector.ts';
@@ -109,14 +109,14 @@ export class SectorNode extends Node {
 
     // TODO: Theme!
     const strokeMap = new Map<SectorState, TPaint>( [
-      [ SectorState.NONE, 'cyan' ],
-      [ SectorState.ONLY_ZERO, 'cyan' ],
-      [ SectorState.ONLY_ONE, 'red' ],
-      [ SectorState.ONLY_TWO, 'cyan' ],
-      [ SectorState.NOT_ZERO, 'green' ],
-      [ SectorState.NOT_ONE, 'blue' ],
-      [ SectorState.NOT_TWO, 'orange' ],
-      [ SectorState.ANY, 'cyan' ]
+      [ SectorState.NONE, sectorOtherColorProperty ],
+      [ SectorState.ONLY_ZERO, sectorOtherColorProperty ],
+      [ SectorState.ONLY_ONE, sectorOnlyOneColorProperty ],
+      [ SectorState.ONLY_TWO, sectorOtherColorProperty ],
+      [ SectorState.NOT_ZERO, sectorNotZeroColorProperty ],
+      [ SectorState.NOT_ONE, sectorNotOneColorProperty ],
+      [ SectorState.NOT_TWO, sectorNotTwoColorProperty ],
+      [ SectorState.ANY, sectorOtherColorProperty ]
     ] );
 
     const basicDash = [ 0.02, 0.02 ];

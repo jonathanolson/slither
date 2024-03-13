@@ -38,6 +38,18 @@ export interface TTheme {
   faceColorOutsideColorProperty: PaintColorProperty;
   faceColorInsideColorProperty: PaintColorProperty;
   faceColorDefaultColorProperty: PaintColorProperty;
+
+  sectorOnlyOneColorProperty: PaintColorProperty;
+  sectorNotOneColorProperty: PaintColorProperty;
+  sectorNotZeroColorProperty: PaintColorProperty;
+  sectorNotTwoColorProperty: PaintColorProperty;
+  sectorOtherColorProperty: PaintColorProperty;
+
+  vertexStateLineProperty: PaintColorProperty;
+  vertexStateBackgroundProperty: PaintColorProperty;
+  vertexStateOutlineProperty: PaintColorProperty;
+  vertexStatePointProperty: PaintColorProperty;
+
   faceValueColorProperty: PaintColorProperty;
   faceValueCompletedColorProperty: PaintColorProperty;
   faceValueErrorColorProperty: PaintColorProperty;
@@ -81,6 +93,15 @@ export const lightTheme = {
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgb(230,230,230)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(245,245,245)' ),
+  sectorOnlyOneColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  sectorNotOneColorProperty: new PaintColorProperty( 'rgb(0,153,204)' ),
+  sectorNotZeroColorProperty: new PaintColorProperty( 'rgb(0,163,0)' ),
+  sectorNotTwoColorProperty: new PaintColorProperty( 'rgb(199,146,0)' ),
+  sectorOtherColorProperty: new PaintColorProperty( 'rgb(182,26,255)' ),
+  vertexStateLineProperty: new PaintColorProperty( 'rgb(0,132,255)' ),
+  vertexStateBackgroundProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  vertexStateOutlineProperty: new PaintColorProperty( 'rgb(120,120,120)' ),
+  vertexStatePointProperty: new PaintColorProperty( 'rgb(61,61,61)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.2000000000000000111)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -118,6 +139,15 @@ export const darkTheme = {
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(13,13,13)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgb(43,43,43)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(26,26,26)' ),
+  sectorOnlyOneColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+  sectorNotOneColorProperty: new PaintColorProperty( 'rgb(0,153,204)' ),
+  sectorNotZeroColorProperty: new PaintColorProperty( 'rgb(0,117,0)' ),
+  sectorNotTwoColorProperty: new PaintColorProperty( 'rgb(189,138,0)' ),
+  sectorOtherColorProperty: new PaintColorProperty( 'rgb(153,0,224)' ),
+  vertexStateLineProperty: new PaintColorProperty( 'rgb(255,119,41)' ),
+  vertexStateBackgroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  vertexStateOutlineProperty: new PaintColorProperty( 'rgb(56,56,56)' ),
+  vertexStatePointProperty: new PaintColorProperty( 'rgb(209,209,209)' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(217,217,217,0.14000000000000001332)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -185,6 +215,15 @@ export const purplesDarkTheme = {
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
+  sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
+  sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
+  sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
+  sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
+  sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
+  vertexStateLineProperty: new PaintColorProperty( 'red' ),
+  vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
+  vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
+  vertexStatePointProperty: new PaintColorProperty( 'black' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -222,6 +261,15 @@ export const nightVisionTheme = {
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
+  sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
+  sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
+  sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
+  sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
+  sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
+  vertexStateLineProperty: new PaintColorProperty( 'red' ),
+  vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
+  vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
+  vertexStatePointProperty: new PaintColorProperty( 'black' ),
   faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
@@ -466,6 +514,42 @@ export const faceColorInsideColorProperty = new DynamicProperty( themeProperty, 
 
 export const faceColorDefaultColorProperty = new DynamicProperty( themeProperty, {
   derive: 'faceColorDefaultColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const sectorOnlyOneColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'sectorOnlyOneColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const sectorNotOneColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'sectorNotOneColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const sectorNotZeroColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'sectorNotZeroColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const sectorNotTwoColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'sectorNotTwoColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const sectorOtherColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'sectorOtherColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const vertexStateLineProperty = new DynamicProperty( themeProperty, {
+  derive: 'vertexStateLineProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const vertexStateBackgroundProperty = new DynamicProperty( themeProperty, {
+  derive: 'vertexStateBackgroundProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const vertexStateOutlineProperty = new DynamicProperty( themeProperty, {
+  derive: 'vertexStateOutlineProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const vertexStatePointProperty = new DynamicProperty( themeProperty, {
+  derive: 'vertexStatePointProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const faceValueColorProperty = new DynamicProperty( themeProperty, {
