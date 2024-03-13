@@ -7,7 +7,8 @@
 
 - Current code TODOs
   - Move boolean packing to utils
-  - Modes:
+  - Solvers [see solvers.md]
+  - Modes (changes view and edit):
     - Edge mode (normal)
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
       - Allows combining and opposing colors
@@ -15,54 +16,16 @@
       - TWO modes:
         - Join colors (when dragged)
         - Oppose colors (when dragged)
+      - View:
+        - uncolored edges perhaps?
     - Sector mode (allow selecting / manipulating sectors)
     - Vertex mode (allow adjusting vertex state?)
     - 
     - Mouse hover behavior over what it will change! (Also a11y?)
-  - Explicitly list out the "rules" for a given difficulty level in the future?
-  - Are we using ignore for the hint button? Would be nice to exclude some things
-  - 
-  - FaceState (proper)
-    - (rename current FaceState to FaceValue)
-    - Enumerate options
-    - NOTE: Sectors are NOT GOOD ENOUGH. imagine sector black-red and red-black, we have the 3-1 side case, or rhombille 3-1 / 2-1.
-    - Constrain by:
-      - face value (if any)
-      - 4 red/black permutations for around each vertex (from edges + vertex state OR sectors), e.g. red-red, red-black, black-red, black-black
-      - face colors
-      - NO FULL LOOP unless it meets the stringent loop conditions
-      - Binary sets (in the future!!!)
-    - Storage:
-      - If there is a face value, probably can only create booleans for valid combinations (e.g. 4 cases for 3-square)
-        - Store the face value in serialization if we do this
-      - Can lazily instantiate (e.g. 'any' is an object with no booleans)
-    - Solvers (using):
-      - Edges / Sectors / VertexState
-      - Face Colors
-      - Multi-face (**) adjacent faces
-        - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
-          - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
-          - take + reject both, or take + split permutations also possibilities
-    - Parity... is naturally handled
-    - [deprecated because this handles, right?], Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
-    - [deprecated for same reason, right?] Face+Vertex+Color => updates
-      - Type A: Use face value only, and update vertex state (or set edges?) --- YES to iterating through all face states?
-      - Type B: Any face (null?), and ensure EVEN number of edges around it (and escape conditions)
-        - [this will force even enter/exit, right?] Solver for "keep even enter/exits around the vertices of a face" - or really any region? (like that advanced reddit post)
-  - Binary sets:
-    - WE CAN VISUALIZE THESE with coloring!!!
-  - Full Region (!) seems powerful too, particularly the ordering bits?
-  - 
-  - Try to give a hint in the zoomed-in region
-  - Are we able to SAT-solve some solvers, to see if there are any (in the limited scope) missed rules?
+    - Consider separate view and edit settings?
   - Delay puzzle string save by a frame, it is taking a bit to deflate right now.
   - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one
     - If it's still broken, it is still broken.
-  - SimpleLoopSolver --- red edges can create simple loops, which isn't detected by the "dirty" bit.
-    - Perhaps have an "exhaustive" action, that re-checks for a ton of stuff?
-      - WAIT, can't we trace a red edge to see if it constrained something?
-    - FORCED checks should look at Vertex state(!) --- like SimpleLoopSolver.
-      - Eventually also use BINARY sets to check for region handling
   - Full correctness:
     - Buggy solver: Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
     - More error detection in solvers (to avoid infinite loop issues)
@@ -71,17 +34,8 @@
     - Base Solver class
   - Bugs:
     - App broken when reloading on broken state?
-  - Swap solver order for fuzzing (we want to be robust to that)
-    - Then user could potentially reorder solvers, disable whatever, etc. (to handle generation and hints)
-  - In solver fuzzer --- if it fails validation... CATCH IT, annotate it, update the view, THEN RE-CAUSE THE ERROR
-  - A lot of ... solvers aren't clearing their "dirty" state (essentially fully completing the contract of 'do not return the same result twice in a row')
-    - We'll want this in order to list out all of the potential hints(!)
   - OMG... for our hint, we'll actually want to show MULTIPLE actions, all of the ones that lead up to an edge being set?
     - We'll want to minimize the number of actions. From the "end", start going back trying to remove actions, and see if it can deduce the next thing
-  - Generation: how do we get the CONSISTENCY of difficulty?
-    - -- forward generation, right?
-    - greedy checks for face minimization? (check all faces, and for each removed, CHECK ALL AGAIN to see which face removal still allows the most removals)
-      - That... sounds slow.
   - Actions for face color changes... should potentially specify the faces? Bleh not sure, is tricky how to serialize
     - If they don't... the face color IDs might change.
   - Autosolver should always go "until error detected" (whether our input is valid or not)
@@ -95,12 +49,15 @@
   - Move more parts of files out to the top level (hard to find things!)
   - TPuzzle improvements (Property is awkward)
   - Rename FaceData => FaceValueData, FaceState => FaceValue?
-  - TaggedAction - noting the "required" parts of the pattern, and noting the "changes"
-    - So that if we encounter a buggy thing, we can see what it was trying to do
+  - AnnotatedAction
+    - noting the "required" parts of the pattern, and noting the "changes"
+      - So that if we encounter a buggy thing, we can see what it was trying to do
   - Hint
     - do better than second-press to apply (switch... text in it?)
     - Highlight button differently when there is a hint to apply?
+    - use the "ignore" of some steps perhaps, once done with debugging
     - Allow user to order solvers for hints?
+    - restrict to zoomed-in region?
   - History + Hint/Solve
     - Group annotations by what they change
     - Could we... have the "solve with engine" button... add to the history, without going forward?
@@ -110,18 +67,6 @@
           - e.g. for showing the "auto-solve" parts of something?
   - Generation / difficulty [see generation.md]
   - Stronger "white lines" when using face colors?(?) - how to handle UI
-  - View modes?
-    - Separate toggles for various features? (face color in particular?)
-    - Color faces (with uncolored edges?)
-      - THIS COULD LOOK COOL!!!
-    - Color edges (with only critical faces colored?)
-  - Edit modes
-    - Edge edit mode (default) 
-    - Face link mode (to handle coloring) - different from edge edit mode
-      - Or a mode for "edit face values" (and a generate-blank option in generation) to edit a puzzle?
-  - Solver that detects "single vertex not-biconnected" cases and prunes
-  - Solver that looks at adjacent colors (if we're adjacent to a color and its opposite, it affects the face/vertex/ state)
-  - Solver for colors around face states (e.g. spiked 2s)
   - Face Coloring UI
     - Dual (opposite) colors have same hue, BUT:
       - different light/dark values
@@ -146,9 +91,6 @@
     - Different visualization modes (for face colors)? Where dual nature of borders are highly emphasized?
     - (!!) Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
   - Code cleanup
-    - Clean up BasicSquarePuzzle too? Move it to BasicPuzzle?
-    - TPuzzle shouldn't have Property... that should be TMutablePuzzle?
-      - Maybe just have a TPuzzleProperty? (hmmm) bleh
     - Have TEdge mimic BaseEdge's API, etc. (they define the interface)
   - Settings
     - "Control Center" style
@@ -170,6 +112,7 @@
       - SLICK animation(!)
         - Use Twixt damped animation! 
         - Animate transitions to generation / puzzle start / puzzle end (TransitionNode?)
+          - Smooth animations between things ... instead of "New", have a main menu?
         - Can we make it more intuitive by having the line animate?
         - Option for no animation, or animation speed
       - Buttons 
@@ -233,9 +176,9 @@
     - AnimatedPanZoomListener seems a bit clunky at the start. Faster hook?
   - Annotated errors
     - Subtype InvalidStateError - for simple ones especially, we can visually report on the issue
-  - Autosolver JUST to check for simple errors (or in general)
-    - [NEEDS] annotated errors 
-    - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
+    - Autosolver JUST to check for simple errors (or in general)
+      - [NEEDS] annotated errors 
+      - e.g. toss the action of the SimpleFaceSolver/SimpleVertexSolver, just look for errors thrown
   - FILE SIZE improvements:
     - If we cut scanURL (and iframe-load it to compute)... we go from gzip 4MB => 0.67MB
     - If we attempt to do a dynamic import (in NewNode):
@@ -260,11 +203,7 @@
     - We want to give anything implementing the interfaces multiple helper methods... is that just abstract classes? 
     - TODO: I need to read up more on TypeScript
     - Just... use top level methods for now...?
-      - HEY! Put each interface into a file, and then PUT FUNCTIONS THAT USE IT in the same file 
-  - FIX puzzle loading, especially on phone (or get some other way of getting puzzles in)
-    - Soon we'll be able to... generate puzzles? Get backtracker?
-  - Simple Region based edges, OR prefer the raw edges (uncolored)? 
-  - Smooth animations between things ... instead of "New", have a main menu?
+      - HEY! Put each interface into a file, and then PUT FUNCTIONS THAT USE IT in the same file
   - Mobile vs Desktop
     - Settings presets for each?
     - OR detect fingers/mouse and apply different rules for them?
@@ -351,15 +290,6 @@
   - Face Coloring Solving Watch https://www.youtube.com/watch?v=PLdZwjs3mzQ to see if there are good tips, also https://www.youtube.com/watch?v=FU_xW8n-jzo
 
 - Solving
-  - General:
-    - Can we assume uniqueness for the solver specifically? Adjusts techniques we can use
-    - If we run through a solver WITHOUT applying changes, we get a list of what it can figure out without going deeper.
-  - [from elsehwere, cleanup] Data:
-    - SimplifiedVertexState: note if it is incident/spiked --- how does this extend to other grid types (don't try?)?
-    - VertexState: (can pretend to be SimplifiedVertexState)
-      - Allow empty or every combination of 2 edges
-    - Jordan curve around face (possibilities and rules)
-    - SAT formats? CNF for edges?
   - Patterns:
     - "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
       - Each pattern needs to specify the required topology/structure for the area (what is important)
@@ -390,7 +320,6 @@
   - Face values are fairly constant, can inspect up front to determine "WHERE" we can apply certain patterns.
   - "Finder" can find patterns, or use patterns/solvers/combination to solve everything (or to a point).
     - e.g. anything ending in backtrack will "work"
-  - Highlander rules (how to we detect more?)
   - Note that if we have a closed loop, path crossings are even, so any adjustment to the loop should also have an even delta
   - OMG OMG solve that "crossing a spiked two" maintains the chain/line
     - SO COLOR IT in the UI! What other cases can we detect that will maintain the link?

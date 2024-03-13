@@ -4,6 +4,7 @@
 # Difficulty
 
 - How to measure difficulty? Certain solvers could report out what they needed to get (but what if it requires a chain of colors?)
+- Explicitly list out the "rules" for a given difficulty level in the future?
 
 # Importance of Technique
 
@@ -12,6 +13,10 @@
 
 # Puzzle generation
  
+- Generation: how do we get the CONSISTENCY of difficulty?
+  - -- forward generation, right?
+  - greedy checks for face minimization? (check all faces, and for each removed, CHECK ALL AGAIN to see which face removal still allows the most removals)
+    - That... sounds slow.
 - Consider external puzzle generation / Investigate patterns
   - slinker, GPL 3: https://github.com/timhutton/slinker
   - Check license on https://www.themissingdocs.net/bridge/LoopDeLoopBridge.html
