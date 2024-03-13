@@ -3,6 +3,11 @@
 
 ## New
 
+- VertexState/FaceState:
+  - enumerate edge combinations
+  - enumerate section combinations
+  - enumerate face color combinations
+
 - FaceState (proper)   ---- HEY, better name?
   - Enumerate options
   - NOTE: Sectors are NOT GOOD ENOUGH. imagine sector black-red and red-black, we have the 3-1 side case, or rhombille 3-1 / 2-1.
