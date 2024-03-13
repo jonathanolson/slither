@@ -113,7 +113,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
 
       if ( sides.length ) {
 
-        const faceValue = this.state.getFaceState( face );
+        const faceValue = this.state.getFaceValue( face );
         if ( faceValue === null ) {
           const exteriorColor = sides[ 0 ].color;
 
@@ -127,7 +127,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
 
             // Ensure there is a non-adjacent face with a value that would NOT be satisfied by this condition
             const hasNonAdjacentValuedFace = this.board.faces.some( otherFace => {
-              return otherFace !== face && this.state.getFaceState( otherFace ) !== null && !adjacentFaces.includes( otherFace );
+              return otherFace !== face && this.state.getFaceValue( otherFace ) !== null && !adjacentFaces.includes( otherFace );
             } );
 
             if ( hasNonAdjacentValuedFace ) {

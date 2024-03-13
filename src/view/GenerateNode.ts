@@ -18,7 +18,7 @@ import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
-import FaceState from '../model/data/face/FaceState.ts';
+import FaceValue from '../model/data/face/FaceValue.ts';
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 import { NumberControl } from 'phet-lib/scenery-phet';
@@ -679,8 +679,8 @@ export class GenerateNode extends HBox {
           };
           interruptGenerateEmitter.addListener( interruptListener );
 
-          const faceDefineEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
-          const faceMinimizeEmitter = new TinyEmitter<[ index: number, state: FaceState ]>;
+          const faceDefineEmitter = new TinyEmitter<[ index: number, state: FaceValue ]>;
+          const faceMinimizeEmitter = new TinyEmitter<[ index: number, state: FaceValue ]>;
           const faceResetEmitter = new TinyEmitter();
 
           faceResetEmitter.addListener( () => {
@@ -738,10 +738,10 @@ export class GenerateNode extends HBox {
               else {
                 // TODO: should we do this on everything? probably not, because it ... doesn't change the distribution? BUT might make it harder?
 
-                const blankFaces = board.faces.filter( face => uniquePuzzle.cleanState.getFaceState( face ) === null );
+                const blankFaces = board.faces.filter( face => uniquePuzzle.cleanState.getFaceValue( face ) === null );
                 const minimizablePuzzle = withAllFacesFilled( uniquePuzzle );
                 blankFaces.forEach( face => {
-                  faceDefineEmitter.emit( board.faces.indexOf( face ), minimizablePuzzle.cleanState.getFaceState( face ) );
+                  faceDefineEmitter.emit( board.faces.indexOf( face ), minimizablePuzzle.cleanState.getFaceValue( face ) );
                 } );
                 return minimizablePuzzle;
               }

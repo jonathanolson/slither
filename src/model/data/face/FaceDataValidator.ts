@@ -5,12 +5,12 @@ import { TinyEmitter } from 'phet-lib/axon';
 import { TFaceData } from '../face/TFaceData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 
 // TODO: can we... ditch the TState part of this? In a way it is useful though
 export class FaceDataValidator implements TState<TFaceData> {
 
-  public readonly faceStateChangedEmitter = new TinyEmitter<[ TFace, FaceState ]>();
+  public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
   public constructor(
     // @ts-expect-error
@@ -19,12 +19,12 @@ export class FaceDataValidator implements TState<TFaceData> {
     private readonly solvedState: TState<TFaceData>
   ) {}
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.currentState.getFaceState( face );
+  public getFaceValue( face: TFace ): FaceValue {
+    return this.currentState.getFaceValue( face );
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    if ( this.solvedState.getFaceState( face ) !== state ) {
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    if ( this.solvedState.getFaceValue( face ) !== state ) {
       throw new InvalidStateError( 'invalid face state' );
     }
   }

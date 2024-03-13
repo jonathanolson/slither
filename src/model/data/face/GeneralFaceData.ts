@@ -1,7 +1,7 @@
 import { TState } from '../core/TState.ts';
 import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
 import { deserializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
@@ -10,39 +10,39 @@ import { GeneralFaceDelta } from './GeneralFaceDelta.ts';
 
 export class GeneralFaceData implements TState<TFaceData> {
 
-  public readonly faceStateChangedEmitter = new TinyEmitter<[ TFace, FaceState ]>();
+  public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
-  public readonly faceStateMap: Map<TFace, FaceState> = new Map();
+  public readonly faceValueMap: Map<TFace, FaceValue> = new Map();
 
   public constructor(
     public readonly board: TBoard,
-    getInitialFaceState: ( face: TFace ) => FaceState
+    getInitialFaceValue: ( face: TFace ) => FaceValue
   ) {
     board.faces.forEach( face => {
-      this.faceStateMap.set( face, getInitialFaceState( face ) );
+      this.faceValueMap.set( face, getInitialFaceValue( face ) );
     } );
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    assertEnabled() && assert( this.faceStateMap.has( face ) );
+  public getFaceValue( face: TFace ): FaceValue {
+    assertEnabled() && assert( this.faceValueMap.has( face ) );
 
-    return this.faceStateMap.get( face )!;
+    return this.faceValueMap.get( face )!;
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    assertEnabled() && assert( this.faceStateMap.has( face ) );
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    assertEnabled() && assert( this.faceValueMap.has( face ) );
 
-    const oldState = this.faceStateMap.get( face )!;
+    const oldValue = this.faceValueMap.get( face )!;
 
-    if ( oldState !== state ) {
-      this.faceStateMap.set( face, state );
+    if ( oldValue !== state ) {
+      this.faceValueMap.set( face, state );
 
-      this.faceStateChangedEmitter.emit( face, state );
+      this.faceValueChangedEmitter.emit( face, state );
     }
   }
 
   public clone(): GeneralFaceData {
-    return new GeneralFaceData( this.board, face => this.getFaceState( face ) );
+    return new GeneralFaceData( this.board, face => this.getFaceValue( face ) );
   }
 
   public createDelta(): TDelta<TFaceData> {
@@ -54,9 +54,9 @@ export class GeneralFaceData implements TState<TFaceData> {
   }
 
   public static deserializeState( board: TBoard, serializedFaceData: TSerializedFaceData ): GeneralFaceData {
-    const map: Map<TFace, FaceState> = new Map( serializedFaceData.faces.map( ( serializedFaceState: { face: TSerializedFace; state: FaceState } ) => [
-      deserializeFace( board, serializedFaceState.face ),
-      serializedFaceState.state
+    const map: Map<TFace, FaceValue> = new Map( serializedFaceData.faces.map( ( serializedFaceValue: { face: TSerializedFace; state: FaceValue } ) => [
+      deserializeFace( board, serializedFaceValue.face ),
+      serializedFaceValue.state
     ] ) );
 
     return new GeneralFaceData(

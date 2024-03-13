@@ -10,7 +10,7 @@ import { TEdge } from '../board/core/TEdge.ts';
 import { getSolvedPuzzle, TSolvedPuzzle } from './TSolvedPuzzle.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
-import FaceState from '../data/face/FaceState.ts';
+import FaceValue from '../data/face/FaceValue.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
@@ -23,7 +23,7 @@ import { MaximumSolverIterationsError } from '../solver/errors/MaximumSolverIter
 export const generateFaceAdditive = async (
   board: TBoard,
   interruptedProperty?: TReadOnlyProperty<boolean>,
-  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceState ]>
+  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceValue ]>
 ): Promise<TSolvedPuzzle<TStructure, TCompleteData>> => {
 
   let iterations = 0;
@@ -77,7 +77,7 @@ export const generateFaceAdditive = async (
       for ( const possibleState of possibleStates ) {
         const delta = state.createDelta();
 
-        delta.setFaceState( face, possibleState );
+        delta.setFaceValue( face, possibleState );
 
         solutionCount = getSolutionCount( delta );
 

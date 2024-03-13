@@ -1,23 +1,23 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceData } from './TFaceData.ts';
 import { deserializeFace, serializeFace, TFace } from '../../board/core/TFace.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 
-export class FaceStateSetAction implements TAction<TFaceData> {
+export class FaceValueSetAction implements TAction<TFaceData> {
 
   public constructor(
     public readonly face: TFace,
-    public readonly state: FaceState
+    public readonly state: FaceValue
   ) {}
 
   public apply( state: TFaceData ): void {
-    state.setFaceState( this.face, this.state );
+    state.setFaceValue( this.face, this.state );
   }
 
   public getUndo( state: TFaceData ): TAction<TFaceData> {
-    const previousState = state.getFaceState( this.face );
-    return new FaceStateSetAction( this.face, previousState );
+    const previousValue = state.getFaceValue( this.face );
+    return new FaceValueSetAction( this.face, previousValue );
   }
 
   public isEmpty(): boolean {
@@ -26,14 +26,14 @@ export class FaceStateSetAction implements TAction<TFaceData> {
 
   public serializeAction(): TSerializedAction {
     return {
-      type: 'FaceStateSetAction',
+      type: 'FaceValueSetAction',
       edge: serializeFace( this.face ),
       state: this.state
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): FaceStateSetAction {
-    return new FaceStateSetAction(
+  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): FaceValueSetAction {
+    return new FaceValueSetAction(
       deserializeFace( board, serializedAction.edge ),
       serializedAction.state
     );

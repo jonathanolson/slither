@@ -2,44 +2,44 @@ import { GeneralFaceAction } from './GeneralFaceAction.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { serializeFaceData, TFaceData, TSerializedFaceData } from './TFaceData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralFaceDelta extends GeneralFaceAction implements TDelta<TFaceData> {
 
-  public readonly faceStateChangedEmitter = new TinyEmitter<[ TFace, FaceState ]>();
+  public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
 
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TFaceData>,
-    faceStateMap: Map<TFace, FaceState> = new Map()
+    faceValueMap: Map<TFace, FaceValue> = new Map()
   ) {
-    super( board, faceStateMap );
+    super( board, faceValueMap );
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    if ( this.faceStateMap.has( face ) ) {
-      return this.faceStateMap.get( face )!;
+  public getFaceValue( face: TFace ): FaceValue {
+    if ( this.faceValueMap.has( face ) ) {
+      return this.faceValueMap.get( face )!;
     }
     else {
-      return this.parentState.getFaceState( face );
+      return this.parentState.getFaceValue( face );
     }
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    const oldState = this.getFaceState( face );
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    const oldValue = this.getFaceValue( face );
 
-    if ( oldState !== state ) {
-      this.faceStateMap.set( face, state );
+    if ( oldValue !== state ) {
+      this.faceValueMap.set( face, state );
 
-      this.faceStateChangedEmitter.emit( face, state );
+      this.faceValueChangedEmitter.emit( face, state );
     }
   }
 
   public clone(): GeneralFaceDelta {
-    return new GeneralFaceDelta( this.board, this.parentState, new Map( this.faceStateMap ) );
+    return new GeneralFaceDelta( this.board, this.parentState, new Map( this.faceValueMap ) );
   }
 
   public createDelta(): TDelta<TFaceData> {

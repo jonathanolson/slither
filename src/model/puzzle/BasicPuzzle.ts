@@ -3,7 +3,7 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
-import FaceState from '../data/face/FaceState.ts';
+import FaceValue from '../data/face/FaceValue.ts';
 import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TinyProperty, TProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
@@ -148,7 +148,7 @@ export class BasicPuzzle<Data> {
     const faceLocations = HexagonalBoard.enumeratePointyFaceCoordinates( radius );
 
     // TODO: just be able to read it out?
-    const faceMap = new Map<Vector2, FaceState>();
+    const faceMap = new Map<Vector2, FaceValue>();
 
     for ( let i = 0; i < faceValues.length; i++ ) {
       const value = faceValues[ i ];

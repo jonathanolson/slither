@@ -210,7 +210,7 @@ export class SimpleLoopSolver implements TSolver<TFaceData & TEdgeData & TSimple
     }
 
     for ( const face of this.board.faces ) {
-      const faceValue = this.state.getFaceState( face );
+      const faceValue = this.state.getFaceValue( face );
       if ( faceValue !== null ) {
         const count = face.edges.filter( faceEdge => edgeSet.has( faceEdge ) ).length;
         if ( count !== faceValue ) {

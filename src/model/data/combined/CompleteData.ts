@@ -5,7 +5,7 @@ import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceState from '../face/FaceState.ts';
+import FaceValue from '../face/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { GeneralFaceData } from '../face/GeneralFaceData.ts';
@@ -41,7 +41,7 @@ export class CompleteData implements TState<TCompleteData> {
     public readonly vertexData: TState<TVertexData>
   ) {
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
-    faceData.faceStateChangedEmitter.addListener( anyChangeListener );
+    faceData.faceValueChangedEmitter.addListener( anyChangeListener );
     edgeData.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionData.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorData.faceColorsChangedEmitter.addListener( anyChangeListener );
@@ -51,11 +51,11 @@ export class CompleteData implements TState<TCompleteData> {
 
   public static fromFacesEdges(
     board: TBoard,
-    getInitialFaceState: ( face: TFace ) => FaceState,
+    getInitialFaceValue: ( face: TFace ) => FaceValue,
     getInitialEdgeState: ( edge: TEdge ) => EdgeState
   ): CompleteData {
     return new CompleteData(
-      new GeneralFaceData( board, getInitialFaceState ),
+      new GeneralFaceData( board, getInitialFaceValue ),
       new GeneralEdgeData( board, getInitialEdgeState ),
       new GeneralSimpleRegionData( board ),
       new GeneralFaceColorData( board ),
@@ -66,16 +66,16 @@ export class CompleteData implements TState<TCompleteData> {
 
   public static fromFaces(
     board: TBoard,
-    getInitialFaceState: ( face: TFace ) => FaceState
+    getInitialFaceValue: ( face: TFace ) => FaceValue
   ): CompleteData {
-    return CompleteData.fromFacesEdges( board, getInitialFaceState, () => EdgeState.WHITE );
+    return CompleteData.fromFacesEdges( board, getInitialFaceValue, () => EdgeState.WHITE );
   }
 
   public static fromFaceData(
     board: TBoard,
     faceData: TFaceData
   ): CompleteData {
-    return CompleteData.fromFaces( board, face => faceData.getFaceState( face ) );
+    return CompleteData.fromFaces( board, face => faceData.getFaceValue( face ) );
   }
 
   public static empty(
@@ -84,7 +84,7 @@ export class CompleteData implements TState<TCompleteData> {
     return CompleteData.fromFaces( board, () => null );
   }
 
-  public static faceMapLookup( faceMap: Map<Vector2, FaceState> ): ( ( face: TFace ) => FaceState ) {
+  public static faceMapLookup( faceMap: Map<Vector2, FaceValue> ): ( ( face: TFace ) => FaceValue ) {
     const stringMap = new Map( Array.from( faceMap.entries() ).map( ( [ key, value ] ) => [ `${key.x},${key.y}`, value ] ) );
     return ( face: TFace ) => {
       const value = stringMap.get( `${face.logicalCoordinates.x},${face.logicalCoordinates.y}` );
@@ -92,16 +92,16 @@ export class CompleteData implements TState<TCompleteData> {
     };
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.faceData.getFaceState( face );
+  public getFaceValue( face: TFace ): FaceValue {
+    return this.faceData.getFaceValue( face );
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    this.faceData.setFaceState( face, state );
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    this.faceData.setFaceValue( face, state );
   }
 
-  public get faceStateChangedEmitter(): TEmitter<[ TFace, FaceState ]> {
-    return this.faceData.faceStateChangedEmitter;
+  public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
+    return this.faceData.faceValueChangedEmitter;
   }
 
   public getEdgeState( edge: TEdge ): EdgeState {

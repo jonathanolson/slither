@@ -1,5 +1,5 @@
 import EdgeState from '../data/edge/EdgeState.ts';
-import FaceState from '../data/face/FaceState.ts';
+import FaceValue from '../data/face/FaceValue.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSolver } from './TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
@@ -35,10 +35,10 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAnnotat
       this.dirtyFaces.push( ...dirtyFaces );
     }
     else {
-      this.dirtyFaces.push( ...board.faces.filter( face => state.getFaceState( face ) !== null ) );
+      this.dirtyFaces.push( ...board.faces.filter( face => state.getFaceValue( face ) !== null ) );
     }
 
-    this.faceListener = ( face: TFace, state: FaceState ) => {
+    this.faceListener = ( face: TFace, state: FaceValue ) => {
       this.dirtyFaces.push( face );
     };
     this.edgeListener = ( edge: TEdge, state: EdgeState ) => {
@@ -46,7 +46,7 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAnnotat
       this.dirtyFaces.push( ...edge.faces );
     };
 
-    this.state.faceStateChangedEmitter.addListener( this.faceListener );
+    this.state.faceValueChangedEmitter.addListener( this.faceListener );
     this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
   }
 
@@ -60,7 +60,7 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAnnotat
     while ( this.dirtyFaces.length ) {
       const face = this.dirtyFaces.pop()!;
 
-      const faceValue = this.state.getFaceState( face );
+      const faceValue = this.state.getFaceValue( face );
       if ( faceValue !== null ) {
         const edges = face.edges;
         let blackCount = 0;
@@ -123,7 +123,7 @@ export class SimpleFaceSolver implements TSolver<TFaceData & TEdgeData, TAnnotat
   }
 
   public dispose(): void {
-    this.state.faceStateChangedEmitter.removeListener( this.faceListener );
+    this.state.faceValueChangedEmitter.removeListener( this.faceListener );
     this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
   }
 }

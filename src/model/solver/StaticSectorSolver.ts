@@ -4,7 +4,7 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
 import { TFaceData, TFaceDataListener } from '../data/face/TFaceData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import FaceState from '../data/face/FaceState.ts';
+import FaceValue from '../data/face/FaceValue.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { TSectorData } from '../data/sector/TSectorData.ts';
 import SectorState from '../data/sector/SectorState.ts';
@@ -36,13 +36,13 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
       this.dirtyFaces = new Set( board.faces );
     }
 
-    this.faceListener = ( face: TFace, state: FaceState ) => {
+    this.faceListener = ( face: TFace, state: FaceValue ) => {
       this.dirtyFaces.add( face );
       for ( const otherFace of faceAdjacentFaces( face ) ) {
         this.dirtyFaces.add( otherFace );
       }
     };
-    this.state.faceStateChangedEmitter.addListener( this.faceListener );
+    this.state.faceValueChangedEmitter.addListener( this.faceListener );
   }
 
   public get dirty(): boolean {
@@ -56,7 +56,7 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
     while ( this.dirtyFaces.size ) {
       const face: TFace = this.dirtyFaces.values().next().value;
 
-      const faceValue = this.state.getFaceState( face );
+      const faceValue = this.state.getFaceValue( face );
       const faceOrder = face.edges.length;
 
       let idealSectorState: SectorState | null = null;
@@ -114,6 +114,6 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
   }
 
   public dispose(): void {
-    this.state.faceStateChangedEmitter.removeListener( this.faceListener );
+    this.state.faceValueChangedEmitter.removeListener( this.faceListener );
   }
 }

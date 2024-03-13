@@ -288,7 +288,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAct
     // NOTE: we can probably get a more efficient check in the future, but this is robust to cases where the user
     // creates additional loops or bogus things. This only depends on THIS region.
     for ( const face of board.faces ) {
-      const faceValue = data.getFaceState( face );
+      const faceValue = data.getFaceValue( face );
       if ( faceValue !== null ) {
         const count = face.edges.filter( faceEdge => edgeSet.has( faceEdge ) ).length;
         if ( count !== faceValue ) {

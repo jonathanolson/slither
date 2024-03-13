@@ -6,7 +6,7 @@ import { TState } from '../data/core/TState.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
-import FaceState from '../data/face/FaceState.ts';
+import FaceValue from '../data/face/FaceValue.ts';
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
@@ -18,7 +18,7 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
   solvedPuzzle: TSolvedPuzzle<Structure, Data>,
   isEasyEnough: ( board: TBoard, state: TState<Data> ) => boolean = () => true,
   interruptedProperty?: TReadOnlyProperty<boolean>,
-  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceState ]>
+  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceValue ]>
 ): Promise<TSolvedPuzzle<Structure, Data>> => {
 
   const board = solvedPuzzle.board;
@@ -52,16 +52,16 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
   for ( const face of faceOrder ) {
     interruptedProperty && await interruptableSleep( 0, interruptedProperty );
 
-    const previousState = state.getFaceState( face );
+    const previousValue = state.getFaceValue( face );
 
-    if ( previousState === null ) {
+    if ( previousValue === null ) {
       faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), null );
       continue;
     }
 
     const delta = state.createDelta();
 
-    delta.setFaceState( face, null );
+    delta.setFaceValue( face, null );
 
     // TODO: consider getting rid of the defensive copy
     if ( !hasMultipleSolutions( delta ) && isEasyEnough( board, delta.clone() ) ) {
@@ -69,7 +69,7 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
       faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), null );
     }
     else {
-      faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), previousState );
+      faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), previousValue );
     }
   }
 

@@ -1,6 +1,6 @@
 import { BaseBoard } from '../core/BaseBoard.ts';
 import EdgeState from '../../data/edge/EdgeState.ts';
-import FaceState from '../../data/face/FaceState.ts';
+import FaceValue from '../../data/face/FaceValue.ts';
 import { TBoard } from '../core/TBoard.ts';
 import { TState } from '../../data/core/TState.ts';
 import { TFaceData } from '../../data/face/TFaceData.ts';
@@ -29,7 +29,7 @@ import { okhslToRGBString } from '../../../util/color.ts';
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();
-  public faceValueMap: Map<LayoutFace, FaceState> = new Map();
+  public faceValueMap: Map<LayoutFace, FaceValue> = new Map();
 
   public constructor(
     public readonly originalBoard: TBoard,
@@ -175,13 +175,13 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     } );
 
     faces.forEach( layoutFace => {
-      this.faceValueMap.set( layoutFace, originalState.getFaceState( getOriginalFace( layoutFace ) ) );
+      this.faceValueMap.set( layoutFace, originalState.getFaceValue( getOriginalFace( layoutFace ) ) );
     } );
 
     assertEnabled() && validateBoard( this );
   }
 
-  public getFaceValue( face: LayoutFace ): FaceState {
+  public getFaceValue( face: LayoutFace ): FaceValue {
     const state = this.faceValueMap.get( face );
     assertEnabled() && assert( state !== undefined );
     return state!;

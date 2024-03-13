@@ -1,32 +1,32 @@
 import { serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 import { TEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TSerializedState } from '../core/TState.ts';
 
 export interface TFaceData {
-  getFaceState( face: TFace ): FaceState;
+  getFaceValue( face: TFace ): FaceValue;
 
-  setFaceState( face: TFace, state: FaceState ): void;
+  setFaceValue( face: TFace, state: FaceValue ): void;
 
   // TODO: consider passing in the old value?
-  faceStateChangedEmitter: TEmitter<[ TFace, FaceState ]>;
+  faceValueChangedEmitter: TEmitter<[ TFace, FaceValue ]>;
 }
 
-export type TFaceDataListener = ( face: TFace, state: FaceState ) => void;
+export type TFaceDataListener = ( face: TFace, state: FaceValue ) => void;
 
 export interface TSerializedFaceData extends TSerializedState {
   type: 'FaceData';
   faces: {
     face: TSerializedFace;
-    state: FaceState;
+    state: FaceValue;
   }[];
 }
 
 export const serializeFaceData = ( board: TBoard, faceData: TFaceData ): TSerializedFaceData => ( {
   type: 'FaceData',
-  faces: board.faces.filter( face => faceData.getFaceState( face ) !== null ).map( face => ( {
+  faces: board.faces.filter( face => faceData.getFaceValue( face ) !== null ).map( face => ( {
     face: serializeFace( face ),
-    state: faceData.getFaceState( face )
+    state: faceData.getFaceValue( face )
   } ) )
 } );

@@ -4,7 +4,6 @@
 ## New
 
 - FaceState (proper)   ---- HEY, better name?
-  - (rename current FaceState to FaceValue)
   - Enumerate options
   - NOTE: Sectors are NOT GOOD ENOUGH. imagine sector black-red and red-black, we have the 3-1 side case, or rhombille 3-1 / 2-1.
   - Constrain by:

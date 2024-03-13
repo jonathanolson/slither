@@ -4,7 +4,7 @@ import { TFaceData } from '../face/TFaceData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceState from '../face/FaceState.ts';
+import FaceValue from '../face/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
@@ -53,16 +53,16 @@ export class CompleteDataValidator implements TState<TCompleteData> {
     this.vertexValidator = new VertexDataValidator( board, currentState, solvedState );
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.faceDataValidator.getFaceState( face );
+  public getFaceValue( face: TFace ): FaceValue {
+    return this.faceDataValidator.getFaceValue( face );
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    this.faceDataValidator.setFaceState( face, state );
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    this.faceDataValidator.setFaceValue( face, state );
   }
 
-  public get faceStateChangedEmitter(): TEmitter<[ TFace, FaceState ]> {
-    return this.faceDataValidator.faceStateChangedEmitter;
+  public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
+    return this.faceDataValidator.faceValueChangedEmitter;
   }
 
   public getEdgeState( edge: TEdge ): EdgeState {

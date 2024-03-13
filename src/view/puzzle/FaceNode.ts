@@ -47,7 +47,7 @@ export class FaceNode extends Node {
       completedColor,
       errorColor
     ) => {
-      const faceState = state.getFaceState( face );
+      const faceValue = state.getFaceValue( face );
 
       let string: string;
       let fill: TColor;
@@ -55,7 +55,7 @@ export class FaceNode extends Node {
       let usingRemaining = false;
       let usingRatio = false;
 
-      if ( faceState === null ) {
+      if ( faceValue === null ) {
         string = '';
         fill = null;
       }
@@ -73,22 +73,22 @@ export class FaceNode extends Node {
         }
 
 
-        if ( faceValueStyle === 'static' || faceState === 0 ) {
-          string = `${faceState}`;
+        if ( faceValueStyle === 'static' || faceValue === 0 ) {
+          string = `${faceValue}`;
         }
         else if ( faceValueStyle === 'remaining' ) {
-          string = `${faceState - blackCount}`;
+          string = `${faceValue - blackCount}`;
           usingRemaining = blackCount > 0;
         }
         else if ( faceValueStyle === 'ratio' ) {
           // TODO: optimize?
-          const numerator = faceState - blackCount;
+          const numerator = faceValue - blackCount;
           if ( numerator === 0 ) {
             string = '0';
           }
           else {
             // TODO: rich text broken, testing this instead
-            string = `${faceState - blackCount}/${whiteCount}`;
+            string = `${faceValue - blackCount}/${whiteCount}`;
             usingRatio = true;
           }
           usingRemaining = blackCount > 0;
@@ -97,10 +97,10 @@ export class FaceNode extends Node {
           throw new Error( `unhandled faceValueStyle: ${faceValueStyle}` );
         }
 
-        if ( blackCount < faceState ) {
+        if ( blackCount < faceValue ) {
           fill = usingRemaining ? color : color; // TODO figure out a better color... for this? Try a color difference?
         }
-        else if ( blackCount === faceState ) {
+        else if ( blackCount === faceValue ) {
           fill = completedColor;
         }
         else {

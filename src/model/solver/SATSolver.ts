@@ -210,7 +210,7 @@ export const satSolve = (
 
   let hasFaceWithValue = false;
   for ( const face of board.faces ) {
-    const faceValue = state.getFaceState( face );
+    const faceValue = state.getFaceValue( face );
     if ( faceValue === null ) {
       continue;
     }
@@ -295,7 +295,7 @@ export const satSolve = (
         blackEdgeSet.delete( currentEdge );
         loop.push( currentEdge );
 
-        touchingValue = touchingValue || currentEdge.faces.some( face => state.getFaceState( face ) !== null );
+        touchingValue = touchingValue || currentEdge.faces.some( face => state.getFaceValue( face ) !== null );
 
         currentEdge = vertex.edges.find( e => blackEdgeSet.has( e ) ) ?? null;
 

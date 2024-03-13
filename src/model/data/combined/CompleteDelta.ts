@@ -5,7 +5,7 @@ import { TFaceData } from '../face/TFaceData.ts';
 import { TEdgeData } from '../edge/TEdgeData.ts';
 import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceState from '../face/FaceState.ts';
+import FaceValue from '../face/FaceValue.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from '../edge/EdgeState.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
@@ -34,7 +34,7 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     super( faceDelta, edgeDelta, simpleRegionDelta, faceColorDelta, sectorDelta, vertexDelta );
 
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
-    faceDelta.faceStateChangedEmitter.addListener( anyChangeListener );
+    faceDelta.faceValueChangedEmitter.addListener( anyChangeListener );
     edgeDelta.edgeStateChangedEmitter.addListener( anyChangeListener );
     simpleRegionDelta.simpleRegionsChangedEmitter.addListener( anyChangeListener );
     faceColorDelta.faceColorsChangedEmitter.addListener( anyChangeListener );
@@ -42,16 +42,16 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     vertexDelta.vertexChangedEmitter.addListener( anyChangeListener );
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.faceDelta.getFaceState( face );
+  public getFaceValue( face: TFace ): FaceValue {
+    return this.faceDelta.getFaceValue( face );
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    this.faceDelta.setFaceState( face, state );
+  public setFaceValue( face: TFace, state: FaceValue ): void {
+    this.faceDelta.setFaceValue( face, state );
   }
 
-  public get faceStateChangedEmitter(): TEmitter<[ TFace, FaceState ]> {
-    return this.faceDelta.faceStateChangedEmitter;
+  public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
+    return this.faceDelta.faceValueChangedEmitter;
   }
 
   public getEdgeState( edge: TEdge ): EdgeState {

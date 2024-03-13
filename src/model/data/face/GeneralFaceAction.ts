@@ -2,40 +2,40 @@ import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceData } from './TFaceData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { deserializeFace, serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
-import FaceState from './FaceState.ts';
+import FaceValue from './FaceValue.ts';
 
 export class GeneralFaceAction implements TAction<TFaceData> {
   public constructor(
     public readonly board: TBoard,
-    public readonly faceStateMap: Map<TFace, FaceState> = new Map()
+    public readonly faceValueMap: Map<TFace, FaceValue> = new Map()
   ) {}
 
   public apply( state: TFaceData ): void {
-    for ( const [ face, faceState ] of this.faceStateMap ) {
-      state.setFaceState( face, faceState );
+    for ( const [ face, faceValue ] of this.faceValueMap ) {
+      state.setFaceValue( face, faceValue );
     }
   }
 
   public getUndo( state: TFaceData ): TAction<TFaceData> {
-    const faceStateMap = new Map<TFace, FaceState>();
+    const faceValueMap = new Map<TFace, FaceValue>();
 
-    for ( const face of this.faceStateMap.keys() ) {
-      faceStateMap.set( face, state.getFaceState( face ) );
+    for ( const face of this.faceValueMap.keys() ) {
+      faceValueMap.set( face, state.getFaceValue( face ) );
     }
 
-    return new GeneralFaceAction( this.board, faceStateMap );
+    return new GeneralFaceAction( this.board, faceValueMap );
   }
 
   public isEmpty(): boolean {
-    return this.faceStateMap.size === 0;
+    return this.faceValueMap.size === 0;
   }
 
   public serializeAction(): TSerializedAction {
     return {
       type: 'GeneralFaceAction',
-      faces: Array.from( this.faceStateMap.entries() ).map( ( [ face, faceState ] ) => ( {
+      faces: Array.from( this.faceValueMap.entries() ).map( ( [ face, faceValue ] ) => ( {
         face: serializeFace( face ),
-        state: faceState
+        state: faceValue
       } ) )
     };
   }
@@ -43,9 +43,9 @@ export class GeneralFaceAction implements TAction<TFaceData> {
   public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): GeneralFaceAction {
     return new GeneralFaceAction(
       board,
-      new Map( serializedAction.faces.map( ( serializedFaceState: { face: TSerializedFace; state: FaceState } ) => [
-        deserializeFace( board, serializedFaceState.face ),
-        serializedFaceState.state
+      new Map( serializedAction.faces.map( ( serializedFaceValue: { face: TSerializedFace; state: FaceValue } ) => [
+        deserializeFace( board, serializedFaceValue.face ),
+        serializedFaceValue.state
       ] ) )
     );
   }
