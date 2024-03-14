@@ -9,6 +9,7 @@ import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import EdgeState from '../edge-state/EdgeState.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 
 export class FaceState {
 
@@ -250,7 +251,7 @@ export class FaceState {
     return new FaceState( face, faceValue, matrix, size - 1 );
   }
 
-  public static fromVertexAndColorData( face: TFace, data: TFaceValueData & TVertexStateData & TFaceColorData ): FaceState {
+  public static fromVertexAndColorData( face: TFace, board: TBoard, data: TFaceValueData & TVertexStateData & TFaceColorData ): FaceState {
 
     const vertexStates = face.vertices.map( vertex => data.getVertexState( vertex ) );
     const binaryCombinations: TaggedBinaryCombinations[] = vertexStates.map( vertexState => {
@@ -330,6 +331,19 @@ export class FaceState {
         const opposite = oppositeMap.get( color );
         if ( opposite && blackSet.has( opposite ) ) {
           return false;
+        }
+      }
+
+      // Prevent simple face-only loops (if there is a non-adjacent face Face-based check to prevent loops
+      if ( blackEdges.size === face.edges.length ) {
+        for ( const otherFace of board.faces ) {
+          if ( data.getFaceValue( otherFace ) !== null ) {
+            for ( const edge of otherFace.edges ) {
+              if ( !blackEdges.has( edge ) ) {
+                return false;
+              }
+            }
+          }
         }
       }
 

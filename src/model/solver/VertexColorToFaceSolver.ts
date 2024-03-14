@@ -98,7 +98,7 @@ export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<D
 
       // TODO: consider moving that code in here?
       // NOTE: the AND here is because if we have MORE advanced deductions in, we want to keep them
-      const newState = FaceState.fromVertexAndColorData( face, this.state ).and( oldState );
+      const newState = FaceState.fromVertexAndColorData( face, this.board, this.state ).and( oldState );
 
       if ( !oldState.equals( newState ) ) {
         return new AnnotatedAction( new FaceStateSetAction( face, newState ), {
