@@ -11,27 +11,41 @@
   - OH, ... we are setting the sector nicely. Vertex state looks correct too
     - dynamic sector solver? why is face state failing here?
       - Yes, but SOMETHING IS FAILING FIRST HERE
+
 - Multi-face (**) adjacent faces
   - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
     - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
     - take + reject both, or take + split permutations also possibilities
   - HEY!!! Some topologies might have a section of shared edges between faces. Figure out this generalization
+
 - 1-level simple backtrack (see if we get fast failures or ... MAINLY LOOPS)
   - MY BASIC BIT is only-BLACK edges during attempts? 
   - Just using the simple "forced" bits? (maybe face values optionally?)
   - Consider "advanced" coalescing of on/off state?
   - HEY HEY - how to detect if we CUT OFF a region?
-- Binary sets:
+
+- Dual-Face Binary Combinations
+  - Pair of duals, have two ways to combine.
+    - Do either shut off sections (cause future bad loops) or cause loops directly?
+    - This looks like how we handle the "Jordan curve detection" bit
+  - Amazing choke detection!!!
+  - How does it handle vertex constrictions? (nicely? - have it based on coloring and possible escapes)
+    - THINK on how to handle "corners"
+
+- Binary sets (Edge or Face):
   - WE CAN VISUALIZE THESE with coloring!!!
   - Edge case:
     - for each edge included, it has a primary and secondary state (e.g. we can separate into "on" and "off")
   - Face case:
     - for each face included, it is either... hmmm. this could be POWERFUL!
+    - POWERFUL!!!!
   - Solvers:
     - Binary Sets constrain FaceState
+
 - Full Region (!) seems powerful too, particularly the ordering bits?
   - Perhaps start across "spiked 2" type things? hmmm
   - HOW DO WE COLOR THESE IN THE UI?
+
 - Highlander:
   - ...rules (how to we detect more?)
 - Region detection with Jordan curve detection/constraints:
@@ -44,6 +58,7 @@
         - For "enclosing", we need to make sure there is content inside and outside. Numbers or edges mean there will be edges.
           - Numbers fully outside, or... hmm 
     - "How to solve the Jordan curve walked a turn around white. Only one can get out through vertices" - think of curves that turn at verties.
+
 - Jordan curve PROPER:
   - DO like our FaceStateData, BUT do it along an arbitrary curve
   - HOW do we handle going "through" vertices?

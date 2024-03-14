@@ -25,6 +25,8 @@
       - SKIP EDGES, not needed (will just show up as bi-color)
   - 
   - Misc Solvers [see solvers.md]
+  - Constrain "solve" to actions within a certain region (e.g. zoom in, ask "how does it solve this?")
+    - Hint in region? Solve in region?
   - Enable "validation" as part of TSolver.nextAction? (how to easily do this?)
   - See the "enable visual highlight bits" that PhET sims have?
   - RUNNING INTO ISSUES STUFFING THINGS IN LOCAL STORAGE?
