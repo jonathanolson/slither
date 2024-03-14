@@ -3,6 +3,7 @@ import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageBooleanProperty, LocalStorageNumberProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
 import { RectangularButton } from 'phet-lib/sun';
 import { copyToClipboard } from '../util/copyToClipboard.ts';
+import { platform } from 'phet-lib/phet-core';
 
 // Listen to the OS default light/dark mode
 const mediaQueryList = window.matchMedia( '(prefers-color-scheme: dark)' );
@@ -603,30 +604,32 @@ export const generateMinimizedFaceColorProperty = new DynamicProperty( themeProp
 const useFlatButtons = true;
 export const rectangularButtonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;
 
+// TODO: why such bad font metrics on Firefox?
+export const uiFontFamily = platform.firefox ? 'Arial, sans-serif' : 'Helvetica, Arial, sans-serif';
+
 export const controlBarFont = new Font( {
-  family: 'sans-serif',
-  // weight: 'bold',
+  family: uiFontFamily,
   size: 15
 } );
 
 export const uiFont = new Font( {
-  family: 'sans-serif',
+  family: uiFontFamily,
   size: 16
 } );
 
 export const uiHeaderFont = new Font( {
-  family: 'sans-serif',
+  family: uiFontFamily,
   size: 16,
   weight: 'bold'
 } );
 
 export const puzzleFont = new Font( {
-  family: 'sans-serif',
+  family: uiFontFamily,
   size: 25
 } );
 
 export const generateButtonFont = new Font( {
-  family: 'sans-serif',
+  family: uiFontFamily,
   size: 25
 } );
 

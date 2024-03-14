@@ -11,22 +11,13 @@
   - OH, ... we are setting the sector nicely. Vertex state looks correct too
     - dynamic sector solver? why is face state failing here?
       - Yes, but SOMETHING IS FAILING FIRST HERE
-- FaceState (proper)   ---- HEY, better name?
-  - Constrain by:
-    - Binary sets (in the future!!!)
-  - Solvers (using):
-    - Multi-face (**) adjacent faces
-      - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
-        - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
-        - take + reject both, or take + split permutations also possibilities
-      - HEY!!! Some topologies might have a section of shared edges between faces. Figure out this generalization
-  - Parity... is naturally handled
-  - [deprecated because this handles, right?], Dynamic face value + edges around it => sectors??? (do my solvers already do this?)
-  - [deprecated for same reason, right?] Face+Vertex+Color => updates
-    - Type A: Use face value only, and update vertex state (or set edges?) --- YES to iterating through all face states?
-    - Type B: Any face (null?), and ensure EVEN number of edges around it (and escape conditions)
-      - [this will force even enter/exit, right?] Solver for "keep even enter/exits around the vertices of a face" - or really any region? (like that advanced reddit post)
+- Multi-face (**) adjacent faces
+  - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
+    - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
+    - take + reject both, or take + split permutations also possibilities
+  - HEY!!! Some topologies might have a section of shared edges between faces. Figure out this generalization
 - 1-level simple backtrack (see if we get fast failures or ... MAINLY LOOPS)
+  - MY BASIC BIT is only-BLACK edges during attempts? 
   - Just using the simple "forced" bits? (maybe face values optionally?)
   - Consider "advanced" coalescing of on/off state?
 - Binary sets:
@@ -35,6 +26,8 @@
     - for each edge included, it has a primary and secondary state (e.g. we can separate into "on" and "off")
   - Face case:
     - for each face included, it is either... hmmm. this could be POWERFUL!
+  - Solvers:
+    - Binary Sets constrain FaceState
 - Full Region (!) seems powerful too, particularly the ordering bits?
   - Perhaps start across "spiked 2" type things? hmmm
   - HOW DO WE COLOR THESE IN THE UI?

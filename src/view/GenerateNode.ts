@@ -184,8 +184,8 @@ export const squarePolygonGenerator: PolygonGenerator = {
     }
   },
   defaultParameterValues: {
-    width: 5,
-    height: 8
+    width: 6,
+    height: 10
   },
   generate: ( parameters ) => {
     const width = parameters.width as number;
