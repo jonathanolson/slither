@@ -6,7 +6,18 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
-  - Solvers [see solvers.md]
+  - Multi-face solver
+  - HOW to show face coloring better?
+    - (include opposites in the counting?) -- and try that light/dark coloring for them?
+    - OMG - only show non-trivial face coloring connections?
+    - SLRTKN
+    - SRLTKNSRLT
+    - SRLTNKSLRT
+    - OMG ----
+    - WHAT IF WE JUST SHOW bi-colored sections (dual colors) as... THE ONLY WAY OF SHOWING THINGS?
+      - SKIP EDGES, not needed (will just show up as bi-color)
+  - 
+  - Misc Solvers [see solvers.md]
   - Enable "validation" as part of TSolver.nextAction? (how to easily do this?)
   - See the "enable visual highlight bits" that PhET sims have?
   - RUNNING INTO ISSUES STUFFING THINGS IN LOCAL STORAGE?
