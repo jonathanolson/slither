@@ -30,6 +30,11 @@ export class FaceStateValidator implements TState<TFaceStateData> {
       // TODO: how can we stringify this? toString() on FaceState
       throw new InvalidStateError( `Attempt to make face ${state} when it should be ${solvedState}` );
     }
+
+    const oldState = this.currentState.getFaceState( face );
+    if ( !state.isSubsetOf( oldState ) ) {
+      throw new InvalidStateError( 'Do not generalize face state' );
+    }
   }
 
   public clone(): FaceStateValidator {

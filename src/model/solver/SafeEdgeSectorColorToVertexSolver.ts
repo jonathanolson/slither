@@ -123,7 +123,7 @@ export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotat
     this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
 
     this.sectorListener = ( sector: TSector, state: SectorState, oldState: SectorState ) => {
-      this.dirtyVertices.add( sector.start );
+      this.dirtyVertices.add( sector.end );
     };
     this.state.sectorStateChangedEmitter.addListener( this.sectorListener );
 

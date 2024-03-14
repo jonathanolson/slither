@@ -30,6 +30,11 @@ export class VertexStateValidator implements TState<TVertexStateData> {
       // TODO: how can we stringify this? toString() on VertexState
       throw new InvalidStateError( `Attempt to make vertex ${state} when it should be ${solvedState}` );
     }
+
+    const oldState = this.currentState.getVertexState( vertex );
+    if ( !state.isSubsetOf( oldState ) ) {
+      throw new InvalidStateError( 'Do not generalize vertex state' );
+    }
   }
 
   public clone(): VertexStateValidator {
