@@ -129,12 +129,14 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Sectors Visible', sectorsVisibleProperty ),
             new UITextCheckbox( 'Sectors Next to Edges', sectorsNextToEdgesVisibleProperty, {
               advanced: true,
+              enabledProperty: sectorsVisibleProperty,
               layoutOptions: {
                 leftMargin: 20
               }
             } ),
             new UITextCheckbox( 'Trivial Sectors', sectorsTrivialVisibleProperty, {
               advanced: true,
+              enabledProperty: sectorsVisibleProperty,
               layoutOptions: {
                 leftMargin: 20
               }
@@ -142,6 +144,7 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Vertex State', vertexStateVisibleProperty ),
             new UITextCheckbox( 'All Vertex State', allVertexStateVisibleProperty, {
               advanced: true,
+              enabledProperty: vertexStateVisibleProperty,
               layoutOptions: {
                 leftMargin: 20
               }
