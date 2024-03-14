@@ -105,6 +105,10 @@ const boards = [
       if ( count++ > 100000 ) {
         throw new Error( 'Solver iteration limit exceeded? Looped?' );
       }
+
+      const stateCopy = state.clone();
+      const solverCopy = solver.clone( stateCopy );
+
       const action = solver.nextAction();
       if ( action ) {
         console.log( action );
@@ -112,7 +116,17 @@ const boards = [
         puzzleNode.addAnnotationNode( new AnnotationNode( action.annotation ) );
         updateView();
         await sleep( 0 );
-        action.apply( validator );
+        try {
+          action.apply( validator );
+        }
+        catch ( e ) {
+          console.error( e );
+          debugger;
+          const actionCopy = solverCopy.nextAction();
+          if ( actionCopy ) {
+            actionCopy.apply( validator );
+          }
+        }
         action.apply( state );
       }
       // If it doesn't pick up on anything, give it a hint so we can test more things

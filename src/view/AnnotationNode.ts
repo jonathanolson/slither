@@ -11,8 +11,6 @@ export class AnnotationNode extends Node {
   ) {
     let children: Node[];
 
-    console.log( annotation.type );
-
     const getEdgeOutlineShape = ( edge: TEdge ) => {
       const initialShape = new Shape().moveToPoint( edge.start.viewCoordinates ).lineToPoint( edge.end.viewCoordinates );
       const strokedShape = initialShape.getStrokedShape( new LineStyles( {
@@ -183,11 +181,12 @@ export class AnnotationNode extends Node {
       ];
     }
     else if ( annotation.type === 'FaceStateToVertexState' ) {
-      const edges = annotation.face.edges.filter( edge => edge.start === annotation.vertex || edge.end === annotation.vertex );
+      const edges = annotation.face.edges.filter( edge => annotation.vertices.includes( edge.start ) || annotation.vertices.includes( edge.end ) );
       children = edges.map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
     else {
       children = [];
+      console.log( `unknown type: ${annotation.type}` );
     }
 
     super( {

@@ -156,6 +156,8 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
             oldVertexState.allowsEmpty() && newBinaryCombination.allowsNone
           );
 
+          assertEnabled() && assert( newVertexState.isSubsetOf( oldVertexState ) );
+
           if ( !oldVertexState.equals( newVertexState ) ) {
             changedVertexStates.push( newVertexState );
           }
