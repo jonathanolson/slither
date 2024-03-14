@@ -23,7 +23,7 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
 import { Property } from 'phet-lib/axon';
-import { safeSolve } from './autoSolver.ts';
+import { finalStateSolve } from './autoSolver.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
 import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
@@ -58,7 +58,7 @@ export const getSolvablePropertyPuzzle = <Structure extends TStructure = TStruct
     for ( const edge of solutionEdges ) {
       solvedState.setEdgeState( edge, EdgeState.BLACK );
     }
-    safeSolve( board, solvedState );
+    finalStateSolve( board, solvedState );
     assertEnabled() && assert( simpleRegionIsSolved( solvedState ) );
 
     return {

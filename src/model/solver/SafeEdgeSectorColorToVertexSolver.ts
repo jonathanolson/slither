@@ -102,7 +102,6 @@ type Data = TEdgeStateData & TSectorStateData & TFaceColorData & TVertexStateDat
             - x out all the 2s that are NOT ... adjacent(?) to this cluster
  */
 
-// sector + edges => sector
 export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private readonly dirtyVertices = new Set<TVertex>();

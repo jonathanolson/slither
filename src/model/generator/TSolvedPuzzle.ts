@@ -4,7 +4,7 @@ import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TState } from '../data/core/TState.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import EdgeState from '../data/edge-state/EdgeState.ts';
-import { safeSolve } from '../solver/autoSolver.ts';
+import { finalStateSolve } from '../solver/autoSolver.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
@@ -25,7 +25,7 @@ export const getSolvedPuzzle = <Structure extends TStructure = TStructure, Data 
   for ( const edge of blackEdges ) {
     solvedState.setEdgeState( edge, EdgeState.BLACK );
   }
-  safeSolve( board, solvedState );
+  finalStateSolve( board, solvedState );
 
   return {
     board: board,

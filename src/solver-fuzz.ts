@@ -7,7 +7,7 @@ import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
 import PuzzleNode from './view/puzzle/PuzzleNode.ts';
 import { sleep } from './util/sleep.ts';
 import { BooleanProperty } from 'phet-lib/axon';
-import { safeSolve, standardSolverFactory } from './model/solver/autoSolver.ts';
+import { finalStateSolve, standardSolverFactory } from './model/solver/autoSolver.ts';
 import { CompleteValidator } from './model/data/combined/CompleteValidator.ts';
 import EdgeState from './model/data/edge-state/EdgeState.ts';
 import { simpleRegionIsSolved } from './model/data/simple-region/TSimpleRegionData.ts';
@@ -72,7 +72,7 @@ const boards = [
 
     const solvedState = solvedPuzzle.cleanState.clone();
     solvedPuzzle.blackEdges.forEach( edge => solvedState.setEdgeState( edge, EdgeState.BLACK ) );
-    safeSolve( board, solvedState );
+    finalStateSolve( board, solvedState );
 
     const unsolvedPuzzle = BasicPuzzle.fromSolvedPuzzle( solvedPuzzle );
 
@@ -99,7 +99,7 @@ const boards = [
     };
 
     let count = 0;
-    while ( solver.dirty ) {
+    while ( !simpleRegionIsSolved( state ) ) {
       puzzleNode.clearAnnotationNodes();
 
       if ( count++ > 100000 ) {
@@ -131,9 +131,19 @@ const boards = [
         const edge = _.find( _.shuffle( board.edges ), edge => state.getEdgeState( edge ) === EdgeState.WHITE )!;
         assertEnabled() && assert( edge );
         state.setEdgeState( edge, solvedState.getEdgeState( edge ) );
+
+        console.log( 'setting white edge to red/black', edge );
+
+        if ( !solver.dirty ) {
+          throw new Error( 'Solver should be dirty after setting edge state' );
+        }
       }
       updateView();
       await sleep( 0 );
+    }
+
+    if ( !simpleRegionIsSolved( state ) ) {
+      throw new Error( 'Solver did not solve the puzzle' );
     }
   }
 } )();

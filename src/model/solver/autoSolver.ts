@@ -24,6 +24,7 @@ import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertex
 import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
 import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
+import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -54,6 +55,8 @@ export const autoSolveFaceColorParityToBlackProperty = new LocalStorageBooleanPr
 export const autoSolveFaceColorParityColorsProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityColorsProperty', false );
 export const autoSolveFaceColorParityPartialReductionProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityPartialReductionProperty', false );
 
+export const autoSolveVertexColorToFaceProperty = new LocalStorageBooleanProperty( 'autoSolveVertexColorToFaceProperty', false );
+
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
@@ -65,8 +68,20 @@ export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, 
   ] );
 };
 
+// TODO: rename "safe" to "view-specific"?
 export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
   iterateSolverFactory( safeSolverFactory, board, state, true );
+};
+
+export const finalStateSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+    safeSolverFactory( board, state, dirty ),
+    new VertexColorToFaceSolver( board, state )
+  ] );
+};
+
+export const finalStateSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
+  iterateSolverFactory( finalStateSolverFactory, board, state, true );
 };
 
 // TODO: we should use a more scalable approach(!)
@@ -91,7 +106,8 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   autoSolveFaceColorParityToRedProperty,
   autoSolveFaceColorParityToBlackProperty,
   autoSolveFaceColorParityColorsProperty,
-  autoSolveFaceColorParityPartialReductionProperty
+  autoSolveFaceColorParityPartialReductionProperty,
+  autoSolveVertexColorToFaceProperty
 ], (
   simpleVertexJointToRed: boolean,
   simpleVertexOnlyOptionToBlack: boolean,
@@ -113,6 +129,7 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   simpleFaceColorParityToBlack: boolean,
   simpleFaceColorParityColors: boolean,
   simpleFaceColorParityPartialReduction: boolean,
+  vertexColorToFace: boolean
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
@@ -181,7 +198,11 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
 
       ...( vertexToFaceColor ? [
         new VertexToFaceColorSolver( board, state, dirty ? undefined : [] )
-      ] : [] )
+      ] : [] ),
+
+      ...( vertexColorToFace ? [
+        new VertexColorToFaceSolver( board, state, dirty ? undefined : [] )
+      ] : [] ),
     ] );
   };
 } );
@@ -237,7 +258,9 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
       allowPartialReduction: true,
     } ),
 
-    new VertexToFaceColorSolver( board, state )
+    new VertexToFaceColorSolver( board, state ),
+
+    new VertexColorToFaceSolver( board, state )
   ] );
 };
 
