@@ -5,6 +5,9 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
 import FaceValue from '../face-value/FaceValue.ts';
 import { getBinaryIndex, getBinaryQuantity, getCombinationIndex, getCombinationQuantity } from '../../../util/booleanIndexing.ts';
+import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 
 export class FaceState {
 
@@ -56,8 +59,13 @@ export class FaceState {
   }
 
   public getAllowedCombinations(): TEdge[][] {
-    // TODO:
-    throw new Error( 'unimplemented' );
+    const allowedCombinations: TEdge[][] = [];
+
+    FaceState.forEachEdgeCombination( this.face.edges, this.faceValue, ( indices: number[], edges: TEdge[] ) => {
+      allowedCombinations.push( edges.slice() );
+    } );
+
+    return allowedCombinations;
   }
 
   public getBlackEdgesIndex( blackEdges: TEdge[] ): number {
@@ -212,10 +220,106 @@ export class FaceState {
     return new FaceState( face, faceValue, matrix, size - 1 );
   }
 
+  public static fromVertexAndColorData( face: TFace, data: TFaceValueData & TVertexStateData & TFaceColorData ): FaceState {
+
+    const vertexStates = face.vertices.map( vertex => data.getVertexState( vertex ) );
+    const binaryCombinations: TaggedBinaryCombinations[] = vertexStates.map( vertexState => {
+      const edges = vertexState.vertex.edges.filter( edge => edge.faces.includes( face ) );
+      assertEnabled() && assert( edges.length === 2 );
+
+      return {
+        edgeA: edges[ 0 ],
+        edgeB: edges[ 1 ],
+        ...vertexState.getBinaryCombinationsAllowed( edges[ 0 ], edges[ 1 ] )
+      };
+    } );
+
+    const faceColorMap = new Map( face.edges.map( edge => {
+      const otherFace = edge.getOtherFace( face );
+      return [
+        edge,
+        otherFace ? data.getFaceColor( otherFace ) : data.getOutsideColor()
+      ];
+    } ) );
+    const selfColor = data.getFaceColor( face );
+
+    const uniqueFaceColors = new Set( [ ...faceColorMap.values(), selfColor ] );
+    const oppositeMap = new Map( [ ...uniqueFaceColors ].map( color => [ color, data.getOppositeFaceColor( color ) ] ) );
+
+    return FaceState.fromLookup( face, data.getFaceValue( face ), blackEdgesArray => {
+      const blackEdges = new Set( blackEdgesArray );
+
+      for ( const binaryCombination of binaryCombinations ) {
+        const hasA = blackEdges.has( binaryCombination.edgeA );
+        const hasB = blackEdges.has( binaryCombination.edgeB );
+
+        if ( hasA && hasB && !binaryCombination.allowsBoth ) {
+          return false;
+        }
+        if ( hasA && !hasB && !binaryCombination.allowsAOnly ) {
+          return false;
+        }
+        if ( !hasA && hasB && !binaryCombination.allowsBOnly ) {
+          return false;
+        }
+        if ( !hasA && !hasB && !binaryCombination.allowsNone ) {
+          return false;
+        }
+      }
+
+      const redSet = new Set<TFaceColor>( [ selfColor ] );
+      const blackSet = new Set<TFaceColor>();
+
+      for ( const edge of face.edges ) {
+        const color = faceColorMap.get( edge )!;
+        assertEnabled() && assert( color );
+
+        if ( blackEdges.has( edge ) ) {
+          blackSet.add( color );
+        }
+        else {
+          redSet.add( color );
+        }
+      }
+
+      for ( const color of redSet ) {
+        // no same colors are on both sides
+        if ( blackSet.has( color ) ) {
+          return false;
+        }
+
+        // no opposites are together on a side
+        const opposite = oppositeMap.get( color );
+        if ( opposite && redSet.has( opposite ) ) {
+          return false;
+        }
+      }
+
+      for ( const color of blackSet ) {
+        // no opposites are together on a side
+        const opposite = oppositeMap.get( color );
+        if ( opposite && blackSet.has( opposite ) ) {
+          return false;
+        }
+      }
+
+      return true;
+    } );
+  }
+
   public static deserialize( face: TFace, serialized: TSerializedFaceState ): FaceState {
     return new FaceState( face, serialized.faceValue, unpackBooleanArray( serialized.matrix, FaceState.getMatrixSize( face.edges.length, serialized.faceValue ) ) );
   }
 }
+
+type TaggedBinaryCombinations = {
+  edgeA: TEdge;
+  edgeB: TEdge;
+  allowsNone: boolean;
+  allowsBoth: boolean;
+  allowsAOnly: boolean;
+  allowsBOnly: boolean;
+};
 
 export type TSerializedFaceState = {
   faceValue: FaceValue;

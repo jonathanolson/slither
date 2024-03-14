@@ -57,6 +57,38 @@ export class VertexState {
     return this.matrix[ this.getPairIndex( edgeA, edgeB ) ];
   }
 
+  public getBinaryCombinationsAllowed( edgeA: TEdge, edgeB: TEdge ): {
+    allowsNone: boolean;
+    allowsBoth: boolean;
+    allowsAOnly: boolean;
+    allowsBOnly: boolean;
+  } {
+    let allowsNone = this.allowsEmpty();
+    let allowsBoth = false;
+    let allowsAOnly = false;
+    let allowsBOnly = false;
+
+    for ( const pair of this.getAllowedPairs() ) {
+      const hasA = pair[ 0 ] === edgeA || pair[ 1 ] === edgeA;
+      const hasB = pair[ 0 ] === edgeB || pair[ 1 ] === edgeB;
+
+      if ( hasA && hasB ) {
+        allowsBoth = true;
+      }
+      else if ( hasA ) {
+        allowsAOnly = true;
+      }
+      else if ( hasB ) {
+        allowsBOnly = true;
+      }
+      else {
+        allowsNone = true;
+      }
+    }
+
+    return { allowsNone, allowsBoth, allowsAOnly, allowsBOnly };
+  }
+
   public getAllowedPairs(): [ TEdge, TEdge ][] {
     const result: [ TEdge, TEdge ][] = [];
     let index = 0;
@@ -254,7 +286,7 @@ export class VertexState {
           const sideAColors = faceColors.slice( i, j );
           const sideBColors = [ ...faceColors.slice( j ), ...faceColors.slice( 0, i ) ];
 
-          // on same colors are on both sides
+          // no same colors are on both sides
           if ( sideAColors.some( color => sideBColors.includes( color ) ) ) {
             possible = false;
           }
