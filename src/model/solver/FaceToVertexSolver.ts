@@ -134,8 +134,8 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
                 return false;
               }
 
-              const hasA = a === newBinaryCombination.edgeA || a === newBinaryCombination.edgeB;
-              const hasB = b === newBinaryCombination.edgeA || b === newBinaryCombination.edgeB;
+              const hasA = a === newBinaryCombination.edgeA || b === newBinaryCombination.edgeA;
+              const hasB = a === newBinaryCombination.edgeB || b === newBinaryCombination.edgeB;
 
               if ( hasA && hasB ) {
                 return newBinaryCombination.allowsBoth;

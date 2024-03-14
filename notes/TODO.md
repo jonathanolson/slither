@@ -7,6 +7,7 @@
 
 - Current code TODOs
   - Solvers [see solvers.md]
+  - Enable "validation" as part of TSolver.nextAction? (how to easily do this?)
   - See the "enable visual highlight bits" that PhET sims have?
   - RUNNING INTO ISSUES STUFFING THINGS IN LOCAL STORAGE?
     - Storage api: https://developer.mozilla.org/en-US/docs/Web/API/Storage_API
