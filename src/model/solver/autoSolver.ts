@@ -28,7 +28,6 @@ import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
 import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
 import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
-import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -238,9 +237,9 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
         new FaceToFaceColorSolver( board, state, dirty ? undefined : [] )
       ] : [] ),
 
-      ...( faceToVertex ? [
-        new FaceToVertexSolver( board, state, dirty ? undefined : [] )
-      ] : [] ),
+      // ...( faceToVertex ? [
+      //   new FaceToVertexSolver( board, state, dirty ? undefined : [] )
+      // ] : [] ),
     ] );
   };
 } );
@@ -305,7 +304,7 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
     } ),
     new FaceToSectorSolver( board, state ),
     new FaceToFaceColorSolver( board, state ),
-    new FaceToVertexSolver( board, state ),
+    // new FaceToVertexSolver( board, state ),
   ] );
 };
 

@@ -2,7 +2,7 @@ import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont } from '../Theme.ts';
+import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont, faceStateVisibleProperty } from '../Theme.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
@@ -39,15 +39,19 @@ export class FaceNode extends Node {
       faceValueStyleProperty,
       faceValueColorProperty,
       faceValueCompletedColorProperty,
-      faceValueErrorColorProperty
+      faceValueErrorColorProperty,
+      faceStateVisibleProperty
     ], (
       state,
       faceValueStyle,
       color,
       completedColor,
-      errorColor
+      errorColor,
+      faceStateVisible
     ) => {
       const faceValue = state.getFaceValue( face );
+
+      this.visible = !faceStateVisible;
 
       let string: string;
       let fill: TColor;
