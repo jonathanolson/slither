@@ -18,6 +18,8 @@ import SectorState from '../sector-state/SectorState.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
+import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import { FaceState } from '../face-state/FaceState.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
 
@@ -29,9 +31,10 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     public readonly simpleRegionDelta: TDelta<TSimpleRegionData>,
     public readonly faceColorDelta: TDelta<TFaceColorData>,
     public readonly sectorStateDelta: TDelta<TSectorStateData>,
-    public readonly vertexStateDelta: TDelta<TVertexStateData>
+    public readonly vertexStateDelta: TDelta<TVertexStateData>,
+    public readonly faceStateDelta: TDelta<TFaceStateData>
   ) {
-    super( faceValueDelta, edgeStateDelta, simpleRegionDelta, faceColorDelta, sectorStateDelta, vertexStateDelta );
+    super( faceValueDelta, edgeStateDelta, simpleRegionDelta, faceColorDelta, sectorStateDelta, vertexStateDelta, faceStateDelta );
 
     const anyChangeListener = () => this.anyStateChangedEmitter.emit();
     faceValueDelta.faceValueChangedEmitter.addListener( anyChangeListener );
@@ -40,6 +43,7 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     faceColorDelta.faceColorsChangedEmitter.addListener( anyChangeListener );
     sectorStateDelta.sectorStateChangedEmitter.addListener( anyChangeListener );
     vertexStateDelta.vertexStateChangedEmitter.addListener( anyChangeListener );
+    faceStateDelta.faceStateChangedEmitter.addListener( anyChangeListener );
   }
 
   public getFaceValue( face: TFace ): FaceValue {
@@ -179,6 +183,18 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     return this.vertexStateDelta.vertexStateChangedEmitter;
   }
 
+  public getFaceState( face: TFace ): FaceState {
+    return this.faceStateDelta.getFaceState( face );
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    this.faceStateDelta.setFaceState( face, state );
+  }
+
+  public get faceStateChangedEmitter(): TEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]> {
+    return this.faceStateDelta.faceStateChangedEmitter;
+  }
+
   public clone(): CompleteDelta {
     return new CompleteDelta(
       this.faceValueDelta.clone(),
@@ -186,7 +202,8 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
       this.simpleRegionDelta.clone(),
       this.faceColorDelta.clone(),
       this.sectorStateDelta.clone(),
-      this.vertexStateDelta.clone()
+      this.vertexStateDelta.clone(),
+      this.faceStateDelta.clone()
     );
   }
 
@@ -197,7 +214,8 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
       this.simpleRegionDelta.createDelta(),
       this.faceColorDelta.createDelta(),
       this.sectorStateDelta.createDelta(),
-      this.vertexStateDelta.createDelta()
+      this.vertexStateDelta.createDelta(),
+      this.faceStateDelta.createDelta()
     );
   }
 

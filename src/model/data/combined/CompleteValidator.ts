@@ -25,6 +25,9 @@ import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { VertexStateValidator } from '../vertex-state/VertexStateValidator.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
+import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import { FaceState } from '../face-state/FaceState.ts';
+import { FaceStateValidator } from '../face-state/FaceStateValidator.ts';
 
 export class CompleteValidator implements TState<TCompleteData> {
 
@@ -36,6 +39,7 @@ export class CompleteValidator implements TState<TCompleteData> {
   private readonly faceColorValidator: TState<TFaceColorData>;
   private readonly sectorStateValidator: TState<TSectorStateData>;
   private readonly vertexStateValidator: TState<TVertexStateData>;
+  private readonly faceStateValidator: TState<TFaceStateData>;
 
   public constructor(
     board: TBoard,
@@ -51,6 +55,7 @@ export class CompleteValidator implements TState<TCompleteData> {
     this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState ); // TODO: naming discrepancies
     this.sectorStateValidator = new SectorStateValidator( board, currentState, solvedState );
     this.vertexStateValidator = new VertexStateValidator( board, currentState, solvedState );
+    this.faceStateValidator = new FaceStateValidator( board, currentState, solvedState );
   }
 
   public getFaceValue( face: TFace ): FaceValue {
@@ -188,6 +193,18 @@ export class CompleteValidator implements TState<TCompleteData> {
 
   public get vertexStateChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
     return this.vertexStateValidator.vertexStateChangedEmitter;
+  }
+
+  public getFaceState( face: TFace ): FaceState {
+    return this.faceStateValidator.getFaceState( face );
+  }
+
+  public setFaceState( face: TFace, state: FaceState ): void {
+    this.faceStateValidator.setFaceState( face, state );
+  }
+
+  public get faceStateChangedEmitter(): TEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]> {
+    return this.faceStateValidator.faceStateChangedEmitter;
   }
 
   public clone(): CompleteValidator {

@@ -7,8 +7,9 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeFaceColorData, TFaceColorData, TSerializedFaceColorData } from '../face-color/TFaceColorData.ts';
 import { serializeSectorStateData, TSectorStateData, TSerializedSectorStateData } from '../sector-state/TSectorStateData.ts';
 import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import { serializeFaceStateData, TFaceStateData, TSerializedFaceStateData } from '../face-state/TFaceStateData.ts';
 
-export interface TCompleteData extends TFaceValueData, TEdgeStateData, TSimpleRegionData, TFaceColorData, TSectorStateData, TVertexStateData, TAnyData {}
+export interface TCompleteData extends TFaceValueData, TEdgeStateData, TSimpleRegionData, TFaceColorData, TSectorStateData, TVertexStateData, TFaceStateData, TAnyData {}
 
 export interface TSerializedCompleteData extends TSerializedState {
   type: 'CompleteData';
@@ -18,6 +19,7 @@ export interface TSerializedCompleteData extends TSerializedState {
   faceColorData: TSerializedFaceColorData;
   sectorStateData: TSerializedSectorStateData;
   vertexStateData: TSerializedVertexStateData;
+  faceStateData: TSerializedFaceStateData;
 }
 
 export const serializeCompleteData = ( board: TBoard, data: TCompleteData ): TSerializedCompleteData => ( {
@@ -27,5 +29,6 @@ export const serializeCompleteData = ( board: TBoard, data: TCompleteData ): TSe
   simpleRegionData: serializeSimpleRegionData( data ),
   faceColorData: serializeFaceColorData( data ),
   sectorStateData: serializeSectorStateData( board, data ),
-  vertexStateData: serializeVertexStateData( board, data )
+  vertexStateData: serializeVertexStateData( board, data ),
+  faceStateData: serializeFaceStateData( board, data )
 } );

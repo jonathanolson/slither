@@ -7,6 +7,7 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import { TFaceStateData } from '../face-state/TFaceStateData.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(
@@ -15,7 +16,8 @@ export class CompleteAction implements TAction<TCompleteData> {
     public readonly simpleRegionAction: TAction<TSimpleRegionData>,
     public readonly faceColorAction: TAction<TFaceColorData>,
     public readonly sectorStateAction: TAction<TSectorStateData>,
-    public readonly vertexStateAction: TAction<TVertexStateData>
+    public readonly vertexStateAction: TAction<TVertexStateData>,
+    public readonly faceStateAction: TAction<TFaceStateData>
   ) {}
 
   public apply( state: TCompleteData ): void {
@@ -25,6 +27,7 @@ export class CompleteAction implements TAction<TCompleteData> {
     this.faceColorAction.apply( state );
     this.sectorStateAction.apply( state );
     this.vertexStateAction.apply( state );
+    this.faceStateAction.apply( state );
   }
 
   public getUndo( state: TCompleteData ): TAction<TCompleteData> {
@@ -34,7 +37,8 @@ export class CompleteAction implements TAction<TCompleteData> {
       this.simpleRegionAction.getUndo( state ),
       this.faceColorAction.getUndo( state ),
       this.sectorStateAction.getUndo( state ),
-      this.vertexStateAction.getUndo( state )
+      this.vertexStateAction.getUndo( state ),
+      this.faceStateAction.getUndo( state )
     );
   }
 
@@ -44,18 +48,20 @@ export class CompleteAction implements TAction<TCompleteData> {
            this.simpleRegionAction.isEmpty() &&
            this.faceColorAction.isEmpty() &&
            this.sectorStateAction.isEmpty() &&
-           this.vertexStateAction.isEmpty();
+           this.vertexStateAction.isEmpty() &&
+           this.faceStateAction.isEmpty();
   }
 
   public serializeAction(): TSerializedAction {
     return {
       type: 'CompleteAction',
-      faceStateAction: this.faceValueAction.serializeAction(),
+      faceValueAction: this.faceValueAction.serializeAction(),
       edgeStateAction: this.edgeStateAction.serializeAction(),
       simpleRegionAction: this.simpleRegionAction.serializeAction(),
       faceColorAction: this.faceColorAction.serializeAction(),
       sectorStateAction: this.sectorStateAction.serializeAction(),
-      vertexStateAction: this.vertexStateAction.serializeAction()
+      vertexStateAction: this.vertexStateAction.serializeAction(),
+      faceStateAction: this.faceStateAction.serializeAction()
     };
   }
 
@@ -66,7 +72,8 @@ export class CompleteAction implements TAction<TCompleteData> {
       deserializeAction( board, serializedAction.simpleRegionAction ),
       deserializeAction( board, serializedAction.faceColorAction ),
       deserializeAction( board, serializedAction.sectorStateAction ),
-      deserializeAction( board, serializedAction.vertexStateAction )
+      deserializeAction( board, serializedAction.vertexStateAction ),
+      deserializeAction( board, serializedAction.faceStateAction )
     );
   }
 }
