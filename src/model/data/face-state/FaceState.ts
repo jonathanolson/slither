@@ -64,8 +64,12 @@ export class FaceState {
     const allowedCombinations: TEdge[][] = [];
 
     FaceState.forEachEdgeCombination( this.face.edges, this.faceValue, ( indices: number[], edges: TEdge[] ) => {
-      allowedCombinations.push( edges.slice() );
+      if ( this.matrix[ this.getIndexFromIndices( indices ) ] ) {
+        allowedCombinations.push( edges.slice() );
+      }
     } );
+
+    assertEnabled() && assert( allowedCombinations.length === this.possibilityCount );
 
     return allowedCombinations;
   }
@@ -94,6 +98,10 @@ export class FaceState {
     const indices = blackEdges.map( edge => this.face.edges.indexOf( edge ) );
     assertEnabled() && assert( indices.every( index => index >= 0 ) );
 
+    return this.getIndexFromIndices( indices );
+  }
+
+  public getIndexFromIndices( indices: number[] ): number {
     return this.faceValue === null ? getBinaryIndex( indices, this.order ) : getCombinationIndex( indices, this.order );
   }
 

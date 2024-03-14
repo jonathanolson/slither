@@ -14,6 +14,7 @@ import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 import { SectorNode } from './SectorNode.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { VertexStateNode } from './VertexStateNode.ts';
+import { FaceStateNode } from './FaceStateNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -58,6 +59,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const vertexContainer = new Node();
     const simpleRegionContainer = new Node();
     const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
+    const faceStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const annotationContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
@@ -73,6 +75,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
+      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty ) );
     } );
 
     const backgroundNode = new PuzzleBackgroundNode(
@@ -110,6 +113,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         vertexContainer,
         simpleRegionContainer,
         vertexStateContainer,
+        faceStateContainer,
         annotationContainer
       ]
     }, options ) );
@@ -123,6 +127,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       vertexContainer.children.forEach( child => child.dispose() );
       simpleRegionContainer.children.forEach( child => child.dispose() );
       vertexStateContainer.children.forEach( child => child.dispose() );
+      faceStateContainer.children.forEach( child => child.dispose() );
       sectorContainer.children.forEach( child => child.dispose() );
       isSolvedProperty.dispose();
     } );

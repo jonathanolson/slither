@@ -637,6 +637,7 @@ export const sectorsNextToEdgesVisibleProperty = new LocalStorageBooleanProperty
 export const sectorsTrivialVisibleProperty = new LocalStorageBooleanProperty( 'sectorsTrivialVisibleProperty', false );
 export const vertexStateVisibleProperty = new LocalStorageBooleanProperty( 'vertexStateVisibleProperty', false );
 export const allVertexStateVisibleProperty = new LocalStorageBooleanProperty( 'allVertexStateVisibleProperty', false );
+export const faceStateVisibleProperty = new LocalStorageBooleanProperty( 'faceStateVisibleProperty', false );
 export const redLineVisibleProperty = new LocalStorageBooleanProperty( 'redLineVisibleProperty', false );
 export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteLineVisibleProperty', true );
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
