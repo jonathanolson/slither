@@ -182,6 +182,10 @@ export class AnnotationNode extends Node {
         ...unchangedEdges.map( edge => getEdgeColoredOutline( edge, 'blue' ) )
       ];
     }
+    else if ( annotation.type === 'FaceStateToVertexState' ) {
+      const edges = annotation.face.edges.filter( edge => edge.start === annotation.vertex || edge.end === annotation.vertex );
+      children = edges.map( edge => getEdgeColoredOutline( edge, 'red' ) );
+    }
     else {
       children = [];
     }

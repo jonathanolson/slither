@@ -9,12 +9,9 @@
   - enumerate face color combinations
 
 - FaceState (proper)   ---- HEY, better name?
-  - FaceToVertexSolver!!!!!!
-  - 
   - Constrain by:
     - Binary sets (in the future!!!)
   - Solvers (using):
-    - VertexState
     - Multi-face (**) adjacent faces
       - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
         - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
