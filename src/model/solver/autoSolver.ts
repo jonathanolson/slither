@@ -25,6 +25,8 @@ import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
 import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
 import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
+import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
+import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
@@ -56,6 +58,9 @@ export const autoSolveFaceColorParityColorsProperty = new LocalStorageBooleanPro
 export const autoSolveFaceColorParityPartialReductionProperty = new LocalStorageBooleanProperty( 'autoSolveFaceColorParityPartialReductionProperty', false );
 
 export const autoSolveVertexColorToFaceProperty = new LocalStorageBooleanProperty( 'autoSolveVertexColorToFaceProperty', false );
+export const autoSolveFaceToRedProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToRedProperty', false );
+export const autoSolveFaceToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToBlackProperty', false );
+export const autoSolveFaceToSectorsProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToSectorsProperty', false );
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
@@ -107,7 +112,10 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   autoSolveFaceColorParityToBlackProperty,
   autoSolveFaceColorParityColorsProperty,
   autoSolveFaceColorParityPartialReductionProperty,
-  autoSolveVertexColorToFaceProperty
+  autoSolveVertexColorToFaceProperty,
+  autoSolveFaceToRedProperty,
+  autoSolveFaceToBlackProperty,
+  autoSolveFaceToSectorsProperty
 ], (
   simpleVertexJointToRed: boolean,
   simpleVertexOnlyOptionToBlack: boolean,
@@ -129,7 +137,10 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   simpleFaceColorParityToBlack: boolean,
   simpleFaceColorParityColors: boolean,
   simpleFaceColorParityPartialReduction: boolean,
-  vertexColorToFace: boolean
+  vertexColorToFace: boolean,
+  faceToRed: boolean,
+  faceToBlack: boolean,
+  faceToSectors: boolean
 ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
@@ -203,6 +214,17 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
       ...( vertexColorToFace ? [
         new VertexColorToFaceSolver( board, state, dirty ? undefined : [] )
       ] : [] ),
+
+      ...( faceToRed || faceToBlack ? [
+        new FaceToEdgeSolver( board, state, {
+          solveToRed: faceToRed,
+          solveToBlack: faceToBlack
+        }, dirty ? undefined : [] )
+      ] : [] ),
+
+      ...( faceToSectors ? [
+        new FaceToSectorSolver( board, state, dirty ? undefined : [] )
+      ] : [] )
     ] );
   };
 } );
@@ -260,7 +282,12 @@ export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteDat
 
     new VertexToFaceColorSolver( board, state ),
 
-    new VertexColorToFaceSolver( board, state )
+    new VertexColorToFaceSolver( board, state ),
+    new FaceToEdgeSolver( board, state, {
+      solveToRed: true,
+      solveToBlack: true
+    } ),
+    new FaceToSectorSolver( board, state )
   ] );
 };
 

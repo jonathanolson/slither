@@ -6,6 +6,9 @@
     - Get alpenglow into a usable state in phet-lib
 
 - Current code TODOs
+  - FaceToFaceColorSolver!!!!!!
+  - FaceToVertexSolver!!!!!!
+  - 
   - Solvers [see solvers.md]
   - Modes (changes view and edit):
     - Edge mode (normal)

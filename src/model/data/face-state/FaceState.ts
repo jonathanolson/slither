@@ -8,6 +8,7 @@ import { getBinaryIndex, getBinaryQuantity, getCombinationIndex, getCombinationQ
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../face-value/TFaceValueData.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 
 export class FaceState {
 
@@ -66,6 +67,26 @@ export class FaceState {
     } );
 
     return allowedCombinations;
+  }
+
+  public getFinalStatesOfEdge( edge: TEdge ): Set<EdgeState> {
+    const result = new Set<EdgeState>();
+
+    for ( const blackEdges of this.getAllowedCombinations() ) {
+      const hasEdge = blackEdges.includes( edge );
+
+      if ( hasEdge ) {
+        result.add( EdgeState.BLACK );
+      }
+      else {
+        result.add( EdgeState.RED );
+      }
+    }
+    if ( this.allowsEmpty() ) {
+      result.add( EdgeState.RED );
+    }
+
+    return result;
   }
 
   public getBlackEdgesIndex( blackEdges: TEdge[] ): number {

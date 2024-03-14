@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexToSectorsProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexColorToFaceProperty } from '../model/solver/autoSolver';
+import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexToSectorsProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexColorToFaceProperty, autoSolveFaceToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToSectorsProperty } from '../model/solver/autoSolver';
 import { allVertexStateVisibleProperty, availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -46,9 +46,9 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Double Minus One Faces', autoSolveDoubleMinusOneFacesProperty ),
             new UITextCheckbox( '1/N-1 Sectors', autoSolveStaticFaceSectorProperty ),
             new UITextCheckbox( 'Simple Sectors', autoSolveSimpleSectorProperty ),
-          ], [
             new UITextCheckbox( 'Vertex X', autoSolveVertexToRedEdgeProperty ),
             new UITextCheckbox( 'Vertex Lines', autoSolveVertexToBlackEdgeProperty ),
+          ], [
             new UITextCheckbox( 'Vertex Sectors', autoSolveVertexToSectorsProperty ),
             new UITextCheckbox( 'Vertex Faces', autoSolveVertexToFaceColorProperty ),
             new UITextCheckbox( 'Color X', autoSolveFaceColorToRedProperty ),
@@ -58,6 +58,9 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Color Parity Colors', autoSolveFaceColorParityColorsProperty ),
             new UITextCheckbox( 'Color Parity Partial', autoSolveFaceColorParityPartialReductionProperty ),
             new UITextCheckbox( 'Vertex/Color To Face', autoSolveVertexColorToFaceProperty ),
+            new UITextCheckbox( 'Face X', autoSolveFaceToRedProperty ),
+            new UITextCheckbox( 'Face Lines', autoSolveFaceToBlackProperty ),
+            new UITextCheckbox( 'Face Sectors', autoSolveFaceToSectorsProperty ),
           ] ]
         } ),
       ]

@@ -205,6 +205,21 @@ export type FaceStateAnnotation = {
   afterState: FaceState;
 };
 
+export type FaceStateToEdgeAnnotation = {
+  type: 'FaceStateToEdge';
+  face: TFace;
+  toRedEdges: TEdge[];
+  toBlackEdges: TEdge[];
+};
+
+export type FaceStateToSectorAnnotation = {
+  type: 'FaceStateToSector';
+  face: TFace;
+  sectors: TSector[];
+  beforeStates: SectorState[];
+  afterStates: SectorState[];
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -235,7 +250,9 @@ export type TAnnotation =
   | VertexStateToSectorAnnotation
   | VertexStateToSameFaceColorAnnotation
   | VertexStateToOppositeFaceColorAnnotation
-  | FaceStateAnnotation;
+  | FaceStateAnnotation
+  | FaceStateToEdgeAnnotation
+  | FaceStateToSectorAnnotation;
 
 export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
   'SimpleRegions',

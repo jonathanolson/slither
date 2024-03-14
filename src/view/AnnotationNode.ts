@@ -148,6 +148,7 @@ export class AnnotationNode extends Node {
       children = annotation.vertex.edges.map( edge => getEdgeColoredOutline( edge, 'blue' ) );
     }
     else if ( annotation.type === 'VertexStateToEdge' ) {
+      // TODO: note which vertex it is
       children = [
         ...annotation.toBlackEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ),
         ...annotation.toRedEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) )
@@ -161,6 +162,16 @@ export class AnnotationNode extends Node {
     }
     else if ( annotation.type === 'FaceState' ) {
       children = annotation.face.edges.map( edge => getEdgeColoredOutline( edge, 'red' ) );
+    }
+    else if ( annotation.type === 'FaceStateToEdge' ) {
+      // TODO: note which face it is
+      children = [
+        ...annotation.toBlackEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) ),
+        ...annotation.toRedEdges.map( edge => getEdgeColoredOutline( edge, 'red' ) )
+      ];
+    }
+    else if ( annotation.type === 'FaceStateToSector' ) {
+      children = _.uniq( annotation.sectors.flatMap( sector => [ sector.edge, sector.next.edge ] ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
     else {
       children = [];
