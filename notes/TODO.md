@@ -8,6 +8,13 @@
 - Current code TODOs
   - Multi-face solver
   - HOW to show face coloring better?
+    - FaceColorViewNode (or something) should separate out "color duals" (primary and opposite)
+      - Intelligently combine them, trying to maintain light/dark
+        - Detect "combinations" or "splits" first?
+          - e.g. "my opposite and your primary are removed"?
+        - Have one outside/inside
+        - Separately handle non-combinations?
+    - 
     - (include opposites in the counting?) -- and try that light/dark coloring for them?
     - OMG - only show non-trivial face coloring connections?
     - SLRTKN

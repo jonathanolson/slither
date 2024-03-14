@@ -20,6 +20,7 @@
   - MY BASIC BIT is only-BLACK edges during attempts? 
   - Just using the simple "forced" bits? (maybe face values optionally?)
   - Consider "advanced" coalescing of on/off state?
+  - HEY HEY - how to detect if we CUT OFF a region?
 - Binary sets:
   - WE CAN VISUALIZE THESE with coloring!!!
   - Edge case:
