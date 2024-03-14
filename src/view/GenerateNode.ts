@@ -10,7 +10,7 @@ import { blackLineColorProperty, faceValueColorProperty, generateAddedFaceColorP
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import { UITextCheckbox } from './UITextCheckbox.ts';
-import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, falseCubicTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, penrose10, penrose11, penrose13, penrose14, penrose20, penrose6, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
+import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, penrose10, penrose11, penrose13, penrose14, penrose20, penrose6, PeriodicBoardTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../model/board/core/TiledBoard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
@@ -400,10 +400,11 @@ export const polygonGenerators: PolygonGenerator[] = [
     width: 9,
     height: 9
   } ),
-  getPeriodicTilingGenerator( falseCubicTiling, {
-    width: 9,
-    height: 10
-  } ),
+  // NOTE: Disabled because this is basically just hex...
+  // getPeriodicTilingGenerator( falseCubicTiling, {
+  //   width: 9,
+  //   height: 10
+  // } ),
 
   // Large N faces
   getPeriodicTilingGenerator( truncatedHexagonalTiling ),

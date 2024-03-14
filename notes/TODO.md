@@ -7,6 +7,9 @@
 
 - Current code TODOs
   - Solvers [see solvers.md]
+  - See the "enable visual highlight bits" that PhET sims have?
+  - RUNNING INTO ISSUES STUFFING THINGS IN LOCAL STORAGE?
+    - Storage api: https://developer.mozilla.org/en-US/docs/Web/API/Storage_API
   - Modes (changes view and edit):
     - Edge mode (normal)
     - Face mode (coloring, but also select and allows perhaps puzzle editing?)
