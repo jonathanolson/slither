@@ -9,10 +9,10 @@ export interface TVertexStateData {
 
   setVertexState( vertex: TVertex, state: VertexState ): void;
 
-  vertexStateChangedEmitter: TEmitter<[ edge: TVertex, state: VertexState, oldState: VertexState ]>;
+  vertexStateChangedEmitter: TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>;
 }
 
-export type TVertexStateListener = ( edge: TVertex, state: VertexState, oldState: VertexState ) => void;
+export type TVertexStateListener = ( vertex: TVertex, state: VertexState, oldState: VertexState ) => void;
 
 export interface TSerializedVertexStateData extends TSerializedState {
   type: 'VertexStateData';

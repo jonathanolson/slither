@@ -103,9 +103,18 @@ export class FaceState {
   }
 
   public serialize(): TSerializedFaceState {
+    if ( this.isAny() ) {
+      return {
+        faceValue: this.faceValue,
+        matrix: '',
+        isAny: true
+      };
+    }
+
     const result: TSerializedFaceState = {
       faceValue: this.faceValue,
-      matrix: packBooleanArray( this.matrix )
+      matrix: packBooleanArray( this.matrix ),
+      isAny: false
     };
 
     assertEnabled() && assert( this.equals( FaceState.deserialize( this.face, result ) ) );
@@ -308,7 +317,12 @@ export class FaceState {
   }
 
   public static deserialize( face: TFace, serialized: TSerializedFaceState ): FaceState {
-    return new FaceState( face, serialized.faceValue, unpackBooleanArray( serialized.matrix, FaceState.getMatrixSize( face.edges.length, serialized.faceValue ) ) );
+    if ( serialized.isAny ) {
+      return FaceState.any( face, serialized.faceValue );
+    }
+    else {
+      return new FaceState( face, serialized.faceValue, unpackBooleanArray( serialized.matrix, FaceState.getMatrixSize( face.edges.length, serialized.faceValue ) ) );
+    }
   }
 }
 
@@ -324,4 +338,5 @@ type TaggedBinaryCombinations = {
 export type TSerializedFaceState = {
   faceValue: FaceValue;
   matrix: string;
+  isAny: boolean;
 };
