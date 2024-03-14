@@ -173,6 +173,15 @@ export class AnnotationNode extends Node {
     else if ( annotation.type === 'FaceStateToSector' ) {
       children = _.uniq( annotation.sectors.flatMap( sector => [ sector.edge, sector.next.edge ] ) ).map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
+    else if ( annotation.type === 'FaceStateToSameFaceColor' || annotation.type === 'FaceStateToOppositeFaceColor' ) {
+      const changedEdges = new Set( [ ...annotation.facesA, ...annotation.facesB ].flatMap( face => face.edges ) );
+      const unchangedEdges = annotation.face.edges.filter( edge => !changedEdges.has( edge ) );
+
+      children = [
+        ...[ ...changedEdges ].map( edge => getEdgeColoredOutline( edge, 'red' ) ),
+        ...unchangedEdges.map( edge => getEdgeColoredOutline( edge, 'blue' ) )
+      ];
+    }
     else {
       children = [];
     }
