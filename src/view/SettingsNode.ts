@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexToSectorsProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexColorToFaceProperty, autoSolveFaceToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToSectorsProperty, autoSolveFaceToFaceColorsProperty } from '../model/solver/autoSolver';
+import { autoSolveDoubleMinusOneFacesProperty, autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToFaceColorsProperty, autoSolveFaceToRedProperty, autoSolveFaceToSectorsProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleSectorProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexColorToFaceProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToSectorsProperty } from '../model/solver/autoSolver';
 import { allVertexStateVisibleProperty, availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, linesVisibleProperty, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -125,7 +125,12 @@ export class SettingsNode extends PopupNode {
           ySpacing: 8,
           columns: [ [
             new UITextCheckbox( 'Lines Visible', linesVisibleProperty ),
-            new UITextCheckbox( 'Edge Colors Visible', edgeColorsVisibleProperty ),
+            new UITextCheckbox( 'Color Lines', edgeColorsVisibleProperty, {
+              enabledProperty: linesVisibleProperty,
+              layoutOptions: {
+                leftMargin: 20
+              }
+            } ),
             new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
             new UITextCheckbox( 'Sectors Visible', sectorsVisibleProperty ),
             new UITextCheckbox( 'Sectors Next to Edges', sectorsNextToEdgesVisibleProperty, {
