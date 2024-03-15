@@ -3,7 +3,7 @@ import FaceColorState, { TFaceColor, TFaceColorData } from '../../model/data/fac
 import { Shape } from 'phet-lib/kite';
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { arrayDifference } from 'phet-lib/phet-core';
+import { arrayDifference, Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { faceColorDefaultColorProperty, faceColorInsideColorProperty, faceColorOutsideColorProperty, faceColorTargetColorProperty, faceColorThresholdProperty } from '../Theme.ts';
 import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
@@ -53,6 +53,8 @@ export class FaceColorViewNode extends Node {
 
   private readonly faceColorNodeContainer: Node;
 
+  private readonly dualColorViews = new Set<DualColorView>();
+
   public constructor(
     public readonly board: TBoard,
     private readonly stateProperty: TReadOnlyProperty<TState<TFaceColorData>>
@@ -70,6 +72,15 @@ export class FaceColorViewNode extends Node {
       this.adjacentFacesMap.set( face, face.edges.map( edge => edge.getOtherFace( face ) ).filter( face => face !== null ) as TFace[] );
     } );
 
+    {
+      const initialFaceColors = stateProperty.value.getFaceColors();
+
+      for ( const faceColor of initialFaceColors ) {
+        this.addFaceColor( faceColor, stateProperty.value.getFacesWithColor( faceColor ) );
+      }
+
+      this.addDualColorViews( stateProperty.value, initialFaceColors );
+    }
     stateProperty.value.getFaceColors().forEach( faceColor => this.addFaceColor( faceColor, stateProperty.value.getFacesWithColor( faceColor ) ) );
     this.updateHues();
 
@@ -94,8 +105,12 @@ export class FaceColorViewNode extends Node {
 
       const removals = new Set( onlyOldFaceColors );
 
+      const dualNeededFaceColors = this.removeInvalidDualColorViews( state );
+
       // Handle additions first, so we can abuse our faceColorIdMap to handle replacements
       for ( const faceColor of onlyNewFaceColors ) {
+        dualNeededFaceColors.add( faceColor );
+
         if ( this.faceColorIdMap.has( faceColor.id ) ) {
           const oldFaceColor = this.faceColorIdMap.get( faceColor.id )!;
           this.replaceFaceColor( oldFaceColor, faceColor, state.getFacesWithColor( faceColor ) );
@@ -110,9 +125,13 @@ export class FaceColorViewNode extends Node {
         this.updateFaceColor( faceColor, state.getFacesWithColor( faceColor ) );
       }
 
-      for ( const region of removals ) {
-        this.removeFaceColor( region );
+      for ( const faceColor of removals ) {
+        dualNeededFaceColors.delete( faceColor );
+
+        this.removeFaceColor( faceColor );
       }
+
+      this.addDualColorViews( state, [ ...dualNeededFaceColors ] );
 
       if ( onlyNewFaceColors.length || onlyOldFaceColors.length ) {
         this.updateHues();
@@ -188,6 +207,49 @@ export class FaceColorViewNode extends Node {
     this.faceColorNodeMap.delete( faceColor );
     this.faceColorIdMap.delete( faceColor.id );
     faceColorNode.dispose();
+  }
+
+  private addDualColorViews( state: TState<TFaceColorData>, faceColors: TFaceColor[] ): void {
+    const remainingFaceColors = new Set( faceColors );
+    while ( remainingFaceColors.size ) {
+      const faceColor: TFaceColor = remainingFaceColors.values().next().value;
+      remainingFaceColors.delete( faceColor );
+
+      const mainFaceColorNode = this.faceColorNodeMap.get( faceColor )!;
+      assertEnabled() && assert( mainFaceColorNode );
+
+      const oppositeColor = state.getOppositeFaceColor( faceColor );
+      if ( oppositeColor ) {
+        assertEnabled() && assert( remainingFaceColors.has( oppositeColor ) );
+        remainingFaceColors.delete( oppositeColor );
+
+        const oppositeFaceColorNode = this.faceColorNodeMap.get( oppositeColor )!;
+        assertEnabled() && assert( oppositeFaceColorNode );
+
+        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode, oppositeFaceColorNode ] ) );
+      }
+      else {
+        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode ] ) );
+      }
+    }
+  }
+
+  private removeInvalidDualColorViews( state: TState<TFaceColorData> ): Set<TFaceColor> {
+    const invalidatedFaceColors = new Set<TFaceColor>();
+
+    const validFaceColors = new Set( state.getFaceColors() );
+
+    for ( const dualColorView of [ ...this.dualColorViews ] ) {
+      if ( !dualColorView.isStillValidInState( this.stateProperty.value, validFaceColors ) ) {
+        for ( const colorNode of dualColorView.colorNodes ) {
+          invalidatedFaceColors.add( colorNode.faceColor );
+        }
+        this.dualColorViews.delete( dualColorView );
+        dualColorView.dispose();
+      }
+    }
+
+    return invalidatedFaceColors;
   }
 
   // Force-directed balancing of hues.
@@ -351,10 +413,101 @@ export class FaceColorViewNode extends Node {
   }
 }
 
+export default class DualColorType extends EnumerationValue {
+  public static readonly BASIC = new DualColorType();
+  public static readonly PRIMARY = new DualColorType();
+  public static readonly SECONDARY = new DualColorType();
+
+  public static readonly enumeration = new Enumeration( DualColorType );
+}
+
+
+class DualColorView {
+
+  public readonly hueVector: Vector2;
+  public faceCount: number;
+
+  public constructor(
+    public readonly colorNodes: FaceColorNode[]
+  ) {
+    assertEnabled() && assert( colorNodes.length === 1 || colorNodes.length === 2 );
+
+    this.faceCount = _.sum( this.colorNodes.map( colorNode => colorNode.faceCount ) );
+    colorNodes.forEach( colorNode => {
+      colorNode.dualColorView = this;
+    } );
+
+    if ( colorNodes.length === 1 ) {
+      colorNodes[ 0 ].type = DualColorType.BASIC;
+
+      this.hueVector = colorNodes[ 0 ].hueVector.copy();
+    }
+    else {
+      const largerNode = colorNodes[ 0 ].faceCount > colorNodes[ 1 ].faceCount ? colorNodes[ 0 ] : colorNodes[ 1 ];
+      const smallerNode = largerNode === colorNodes[ 0 ] ? colorNodes[ 1 ] : colorNodes[ 0 ];
+      let primaryNode: FaceColorNode;
+
+      if ( largerNode.type === DualColorType.PRIMARY ) {
+        primaryNode = largerNode;
+      }
+      else if ( smallerNode.type === DualColorType.PRIMARY ) {
+        primaryNode = smallerNode;
+      }
+      else if ( largerNode.type === DualColorType.SECONDARY ) {
+        primaryNode = smallerNode;
+      }
+      else if ( smallerNode.type === DualColorType.SECONDARY ) {
+        primaryNode = largerNode;
+      }
+      else {
+        primaryNode = largerNode;
+      }
+
+      const secondaryNode = primaryNode === largerNode ? smallerNode : largerNode;
+
+      this.hueVector = largerNode.hueVector.copy();
+
+      primaryNode.type = DualColorType.PRIMARY;
+      secondaryNode.type = DualColorType.SECONDARY;
+    }
+  }
+
+  public isStillValidInState( state: TState<TFaceColorData>, newFaceColors: Set<TFaceColor> ): boolean {
+    for ( const colorNode of this.colorNodes ) {
+      if ( !newFaceColors.has( colorNode.faceColor ) ) {
+        return false;
+      }
+    }
+
+    if ( this.colorNodes.length === 1 ) {
+      return state.getOppositeFaceColor( this.colorNodes[ 0 ].faceColor ) === null;
+    }
+    else {
+      return state.getOppositeFaceColor( this.colorNodes[ 0 ].faceColor ) === this.colorNodes[ 1 ].faceColor;
+    }
+  }
+
+  public updateHue(): void {
+    for ( const colorNode of this.colorNodes ) {
+      colorNode.hueVector.set( this.hueVector );
+
+      colorNode.updateHue();
+    }
+  }
+
+  public dispose(): void {
+    for ( const colorNode of this.colorNodes ) {
+      colorNode.dualColorView = null;
+    }
+  }
+}
+
 class FaceColorNode extends Path {
 
   public readonly hueVector: Vector2;
   public faceCount: number;
+  public dualColorView: DualColorView | null = null;
+  public type: DualColorType = DualColorType.BASIC;
 
   public constructor(
     public faceColor: TFaceColor,
