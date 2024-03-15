@@ -35,7 +35,9 @@ export interface TTheme {
   simpleRegionTargetColorProperty: PaintColorProperty;
 
   // TODO: describe the effects of alpha here
-  faceColorTargetColorProperty: PaintColorProperty;
+  faceColorBasicTargetColorProperty: PaintColorProperty;
+  faceColorLightTargetColorProperty: PaintColorProperty;
+  faceColorDarkTargetColorProperty: PaintColorProperty;
   faceColorOutsideColorProperty: PaintColorProperty;
   faceColorInsideColorProperty: PaintColorProperty;
   faceColorDefaultColorProperty: PaintColorProperty;
@@ -90,7 +92,9 @@ export const lightTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
+  faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
+  faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
+  faceColorDarkTargetColorProperty: new PaintColorProperty( 'rgba(210,182,182,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgb(230,230,230)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(245,245,245)' ),
@@ -136,7 +140,9 @@ export const darkTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
+  faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
+  faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(101,43,40,0)' ),
+  faceColorDarkTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
   faceColorOutsideColorProperty: new PaintColorProperty( 'rgb(13,13,13)' ),
   faceColorInsideColorProperty: new PaintColorProperty( 'rgb(43,43,43)' ),
   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(26,26,26)' ),
@@ -193,97 +199,97 @@ export const fadeDarkTheme = {
   whiteLineColorProperty: new PaintColorProperty( 'rgb(78,73,70)' ),
 };
 
-export const purplesDarkTheme = {
-  name: 'Purples Dark',
-  isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
-  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
-  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgb(89,84,142)' ),
-  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgb(81,99,149)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.42999999999999999334)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(153,142,180)' ),
-  vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
-  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-  redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
-  whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
-  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(163,79,232,0.56000000000000005329)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
-  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
-  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
-  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
-  sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
-  sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
-  sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
-  sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
-  sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
-  vertexStateLineProperty: new PaintColorProperty( 'red' ),
-  vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
-  vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
-  vertexStatePointProperty: new PaintColorProperty( 'black' ),
-  faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
-  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-  uiForegroundProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-  uiBackgroundProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(95,129,196)' ),
-  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
-};
-
-export const nightVisionTheme = {
-  name: 'Night Vision',
-  isEditable: true,
-  navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(31,0,2)' ),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(103,39,4)' ),
-  playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(28,0,0)' ),
-  playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(66,66,66,0)' ),
-  playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-  puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(68,18,18)' ),
-  vertexColorProperty: new PaintColorProperty( 'rgb(117,0,0)' ),
-  xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-  redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
-  whiteLineColorProperty: new PaintColorProperty( 'rgb(117,60,41)' ),
-  simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(189,0,0,0.64000000000000001332)' ),
-  faceColorTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
-  faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
-  faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
-  faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
-  sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
-  sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
-  sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
-  sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
-  sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
-  vertexStateLineProperty: new PaintColorProperty( 'red' ),
-  vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
-  vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
-  vertexStatePointProperty: new PaintColorProperty( 'black' ),
-  faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
-  faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
-  faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-  edgeWeirdColorProperty: new PaintColorProperty( 'rgb(75,58,58)' ),
-  uiForegroundProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
-  uiBackgroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,0,0)' ),
-  uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  barrierColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.69999999999999995559)' ),
-  generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
-};
+// export const purplesDarkTheme = {
+//   name: 'Purples Dark',
+//   isEditable: true,
+//   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
+//   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
+//   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
+//   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
+//   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgb(89,84,142)' ),
+//   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgb(81,99,149)' ),
+//   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.42999999999999999334)' ),
+//   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+//   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+//   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(153,142,180)' ),
+//   vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
+//   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+//   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+//   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
+//   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
+//   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(163,79,232,0.56000000000000005329)' ),
+//   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
+//   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
+//   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
+//   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
+//   sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
+//   sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
+//   sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
+//   sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
+//   sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
+//   vertexStateLineProperty: new PaintColorProperty( 'red' ),
+//   vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
+//   vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
+//   vertexStatePointProperty: new PaintColorProperty( 'black' ),
+//   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+//   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
+//   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+//   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
+//   uiForegroundProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+//   uiBackgroundProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+//   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(95,129,196)' ),
+//   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
+//   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
+//   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
+//   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
+// };
+//
+// export const nightVisionTheme = {
+//   name: 'Night Vision',
+//   isEditable: true,
+//   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(31,0,2)' ),
+//   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(103,39,4)' ),
+//   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(28,0,0)' ),
+//   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+//   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+//   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+//   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(66,66,66,0)' ),
+//   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
+//   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(68,18,18)' ),
+//   vertexColorProperty: new PaintColorProperty( 'rgb(117,0,0)' ),
+//   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+//   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
+//   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
+//   whiteLineColorProperty: new PaintColorProperty( 'rgb(117,60,41)' ),
+//   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(189,0,0,0.64000000000000001332)' ),
+//   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
+//   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
+//   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
+//   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
+//   sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
+//   sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
+//   sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
+//   sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
+//   sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
+//   vertexStateLineProperty: new PaintColorProperty( 'red' ),
+//   vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
+//   vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
+//   vertexStatePointProperty: new PaintColorProperty( 'black' ),
+//   faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
+//   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
+//   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
+//   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(75,58,58)' ),
+//   uiForegroundProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
+//   uiBackgroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,0,0)' ),
+//   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   barrierColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.69999999999999995559)' ),
+//   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
+//   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
+// };
 
 export const autoTheme = {
   name: 'Auto',
@@ -322,8 +328,8 @@ export const availableThemes: TTheme[] = [
   autoTheme,
   fadeLightTheme,
   fadeDarkTheme,
-  purplesDarkTheme,
-  nightVisionTheme
+  // purplesDarkTheme,
+  // nightVisionTheme
 ];
 
 // TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
@@ -501,8 +507,16 @@ export const simpleRegionTargetColorProperty = new DynamicProperty( themePropert
   derive: 'simpleRegionTargetColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
-export const faceColorTargetColorProperty = new DynamicProperty( themeProperty, {
-  derive: 'faceColorTargetColorProperty'
+export const faceColorBasicTargetColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorBasicTargetColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const faceColorLightTargetColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorLightTargetColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const faceColorDarkTargetColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'faceColorDarkTargetColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const faceColorOutsideColorProperty = new DynamicProperty( themeProperty, {
