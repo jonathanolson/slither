@@ -385,7 +385,7 @@ export class FaceColorViewNode extends Node {
           for ( let i = 0; i < dualColorViews.length; i++ ) {
             const a = dualColorViews[ i ];
             for ( let j = i + 1; j < dualColorViews.length; j++ ) {
-              repulse( a, dualColorViews[ j ], 0.4 );
+              repulse( a, dualColorViews[ j ], 0.2 );
             }
           }
         }
