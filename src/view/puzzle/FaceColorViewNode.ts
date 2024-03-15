@@ -269,7 +269,16 @@ export class FaceColorViewNode extends Node {
   private updateHues(): void {
 
     // TODO: improve perf?
-    const dualColorViews = [ ...this.dualColorViews ].filter( dualColorView => dualColorView.faceCount >= faceColorThresholdProperty.value );
+    const dualColorViews = [ ...this.dualColorViews ].filter( dualColorView => {
+      // Exclude the inside/outside from colors if they won't be used.
+      if ( dualColorView.colorNodes[ 0 ].faceColor.colorState !== FaceColorState.UNDECIDED &&
+           faceColorOutsideColorProperty.value.alpha === 1 &&
+           faceColorInsideColorProperty.value.alpha === 1 ) {
+        return false;
+      }
+
+      return dualColorView.faceCount >= faceColorThresholdProperty.value;
+    } );
 
     if ( dualColorViews.length >= 2 ) {
       const scratchHue = new Vector2( 0, 0 );
