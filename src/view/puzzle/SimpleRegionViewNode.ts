@@ -6,7 +6,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { blackLineColorProperty, edgeColorsVisibleProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
+import { blackLineColorProperty, edgeColorsVisibleProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, linesVisibleProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
 import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
@@ -60,7 +60,10 @@ export class SimpleRegionViewNode extends Node {
     stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>
   ) {
     super( {
-      pickable: false
+      pickable: false,
+
+      // TODO: also kill computation if we are not visible?
+      visibleProperty: linesVisibleProperty
     } );
 
     board.faces.forEach( face => {

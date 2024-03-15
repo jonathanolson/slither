@@ -647,6 +647,7 @@ export const generateButtonFont = new Font( {
   size: 25
 } );
 
+export const linesVisibleProperty = new LocalStorageBooleanProperty( 'linesVisibleProperty', true );
 export const edgeColorsVisibleProperty = new LocalStorageBooleanProperty( 'simpleRegionColorsVisibleProperty', true );
 export const faceColorsVisibleProperty = new LocalStorageBooleanProperty( 'faceColorsVisibleProperty', true );
 export const sectorsVisibleProperty = new LocalStorageBooleanProperty( 'sectorsVisibleProperty', false );

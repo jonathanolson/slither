@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveDoubleMinusOneFacesProperty, autoSolveSimpleSectorProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexToSectorsProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexColorToFaceProperty, autoSolveFaceToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToSectorsProperty, autoSolveFaceToFaceColorsProperty } from '../model/solver/autoSolver';
-import { allVertexStateVisibleProperty, availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { allVertexStateVisibleProperty, availableThemes, edgeColorsVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, linesVisibleProperty, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -124,6 +124,7 @@ export class SettingsNode extends PopupNode {
           xSpacing: 20,
           ySpacing: 8,
           columns: [ [
+            new UITextCheckbox( 'Lines Visible', linesVisibleProperty ),
             new UITextCheckbox( 'Edge Colors Visible', edgeColorsVisibleProperty ),
             new UITextCheckbox( 'Face Colors Visible', faceColorsVisibleProperty ),
             new UITextCheckbox( 'Sectors Visible', sectorsVisibleProperty ),
