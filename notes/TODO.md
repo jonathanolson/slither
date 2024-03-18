@@ -11,24 +11,33 @@
   - Modes (changes view and edit):
     - 
     - Hover states (don't duplicate ton of nodes for this, keep it lightweight)
+      - hoverHighlightProperty (union type PuzzleHoverHighlight), in PuzzleModel
+      - editModeProperty (enum), global
+      - face/edge/etc. nodes notify when they hover start/end, PuzzleModel can use that to figure out what to do
+      - PuzzleModel tracks its certain partial edit state (like for single-face-selected, or sector/vertex/face-open)
+        - If we swap from face-color-match to face-color-opposite, should it leave a face selected?
+        - How to "clear" that --- escape? Click outside?
+          - JUST PRESS THE SAME FACE AGAIN - no-op
     - 
     - Edit modes (row for all of this?):
-      - Edge (hover-edge highlight)
-      - Edge opposite (red-out?) (hover-edge highlight)
-      - [IF face-color] Face color match, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
-      - [IF face-color] Face color opposite, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
-      - [IF sector] Sector edit (pop up radio-button-like list)
-      - [IF vertex-state] Vertex state (pop up ... some view of options?)
-      - [IF face-state] Face state (pop up view with on/off for each?)
-      - Face value (allow entering a number, or '-'/'.' for blank?)
-      - Delete face
+      - Hotkeys for edit type 1: edge, 2: edge-opposite, 3: face-color-match, 4: face-color-opposite, etc.?
+      - Modes:
+        - Edge (hover-edge highlight)
+        - Edge opposite (red-out?) (hover-edge highlight)
+        - [IF face-color] Face color match, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
+        - [IF face-color] Face color opposite, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
+        - [IF sector] Sector edit (pop up radio-button-like list)
+        - [IF vertex-state] Vertex state (pop up ... some view of options?)
+        - [IF face-state] Face state (pop up view with on/off for each?)
+        - Face value (allow entering a number, or '-'/'.' for blank?)
+        - Delete face
     - 
     - View modes (space-efficient drop-downs? check combobox again -- drop-downs show full info and name):
       - Face values (regular value / remaining / fraction / face-state)
         - TODO: Actually, just have a "basic" face-state safe solver that will handle cases where edges are red/black...
-      - Impossible edges (none / red-x / full-line / middle-line)
-      - Possible edges (none / line)
-      - Vertices (none / small / big)
+      - [maybe] Impossible edges (none / red-x / full-line / middle-line)
+      - [maybe] Possible edges (none / line)
+      - [maybe] Vertices (none / small / big)
       - Edges (colored / uncolored / none)
       - Face Colors (all?, 2+, outside-only, none)
       - Sectors (none / normal / also-next-to-edges / debug-all (advanced))
