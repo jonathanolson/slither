@@ -12,6 +12,9 @@
     - 
     - Hover states (don't duplicate ton of nodes for this, keep it lightweight)
       - hoverHighlightProperty (union type PuzzleHoverHighlight), in PuzzleModel
+        - Edge highlight on black should ALSO highlight the entire simple region
+        - Face color highlight should potentially highlight the entire color? (but also the specific face?)
+        - "partial face color" highlights
       - editModeProperty (enum), global
       - face/edge/etc. nodes notify when they hover start/end, PuzzleModel can use that to figure out what to do
       - PuzzleModel tracks its certain partial edit state (like for single-face-selected, or sector/vertex/face-open)
