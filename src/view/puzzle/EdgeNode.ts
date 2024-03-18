@@ -2,7 +2,7 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { FireListener, Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { blackLineColorProperty, redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
+import { redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
@@ -11,7 +11,6 @@ import { DotUtils, Vector2 } from 'phet-lib/dot';
 
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
-  useSimpleRegionForBlack?: boolean;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   backgroundOffsetDistance: number;
 };
@@ -32,12 +31,6 @@ export class EdgeNode extends Node {
     const startPoint = edge.start.viewCoordinates;
     const endPoint = edge.end.viewCoordinates;
     const centerPoint = startPoint.average( endPoint );
-
-    const blackLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
-      lineWidth: 0.1,
-      stroke: blackLineColorProperty,
-      lineCap: 'square' // TODO: still not ideal, the overlap shows up and is unpleasant. We'll either need to use Alpenglow, or use a different approach to drawing the lines.
-    } );
 
     // TODO: We will want to display the actual CHAIN instead of just the link?
 
@@ -226,7 +219,7 @@ export class EdgeNode extends Node {
         this.children = [ whiteLine ];
       }
       else if ( edgeState === EdgeState.BLACK ) {
-        this.children = options?.useSimpleRegionForBlack ? [] : [ blackLine ];
+        this.children = [];
       }
       else {
         this.children = [ redLine, x ];

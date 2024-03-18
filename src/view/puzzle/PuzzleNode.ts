@@ -19,7 +19,6 @@ import { FaceStateNode } from './FaceStateNode.ts';
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
-  useSimpleRegionForBlack?: boolean;
   backgroundOffsetDistance?: number;
 };
 
@@ -46,7 +45,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         maxHeight: 0.9
       },
       edgePressListener: () => {},
-      useSimpleRegionForBlack: true,
       backgroundOffsetDistance: 0.3
     }, providedOptions );
 
@@ -99,9 +97,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty ) );
     } );
 
-    if ( options?.useSimpleRegionForBlack ) {
-      simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
-    }
+    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
 
     super( combineOptions<BasicPuzzleNodeOptions>( {
       children: [
