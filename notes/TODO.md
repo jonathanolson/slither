@@ -20,9 +20,12 @@
       - Face value (allow entering a number, or '-'/'.' for blank?)
       - Delete face
     - 
-    - View modes (space-efficient drop-downs? check combobox again):
+    - View modes (space-efficient drop-downs? check combobox again -- drop-downs show full info and name):
       - Face values (regular value / remaining / fraction / face-state)
-        - Actually, just have a "basic" face-state safe solver that will handle cases where edges are red/black...
+        - TODO: Actually, just have a "basic" face-state safe solver that will handle cases where edges are red/black...
+      - Impossible edges (none / red-x / full-line / middle-line)
+      - Possible edges (none / line)
+      - Vertices (none / small / big)
       - Edges (colored / uncolored / none)
       - Face Colors (all?, 2+, outside-only, none)
       - Sectors (none / normal / also-next-to-edges / debug-all (advanced))
