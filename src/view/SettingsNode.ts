@@ -11,7 +11,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
-import { uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
+import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -165,6 +165,7 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Vertices Small', smallVertexProperty ),
             new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
             new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
+            new UITextCheckbox( 'Show Undo-All / Redo-All', showUndoRedoAllProperty ),
             new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
               advanced: true
             } ),

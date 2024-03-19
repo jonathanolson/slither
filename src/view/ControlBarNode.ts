@@ -1,6 +1,6 @@
 import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { HBox, Node } from 'phet-lib/scenery';
-import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
+import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
@@ -88,7 +88,8 @@ export default class ControlBarNode extends HBox {
               puzzleModelProperty.value.onUserUndoAll();
             }
           },
-          enabledProperty: undoEnabledProperty
+          enabledProperty: undoEnabledProperty,
+          visibleProperty: showUndoRedoAllProperty
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Undo',
@@ -120,7 +121,8 @@ export default class ControlBarNode extends HBox {
               puzzleModelProperty.value.onUserRedoAll();
             }
           },
-          enabledProperty: redoEnabledProperty
+          enabledProperty: redoEnabledProperty,
+          visibleProperty: showUndoRedoAllProperty
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Settings',

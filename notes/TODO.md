@@ -24,6 +24,7 @@
     - 
     - Edit modes (row for all of this?):
       - Hotkeys for edit type 1: edge, 2: edge-opposite, 3: face-color-match, 4: face-color-opposite, etc.?
+      - Present options ON THE BOTTOM (perhaps with undo/redo?)
       - Modes:
         - Edge (hover-edge highlight)
         - Edge opposite (red-out?) (hover-edge highlight)
@@ -151,7 +152,6 @@
         - Can we make it more intuitive by having the line animate?
         - Option for no animation, or animation speed
       - Buttons 
-        - Add default option that hides "undo-all" and "redo-all" (can be enabled) - don't tend to use them much 
         - RAINBOW COLORS on the buttons
         - Zoom (in/out) for help on desktop (e.g. with mouse)
           - Show these only if the control bar is large enough!!
