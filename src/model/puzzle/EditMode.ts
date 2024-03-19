@@ -44,11 +44,22 @@ export default class EditMode extends EnumerationValue {
 }
 
 export const editModeProperty = new LocalStorageEnumerationProperty( 'editModeProperty', EditMode.EDGE_STATE );
+
+let listenedMode: EditMode | null = null;
+const onEditModeEnabledChange = ( enabled: boolean ) => {
+  if ( !enabled ) {
+    editModeProperty.value = EditMode.EDGE_STATE;
+  }
+};
 editModeProperty.link( mode => {
-  console.log( 'editMode', mode.name );
+  if ( listenedMode ) {
+    listenedMode.isEnabledProperty.unlink( onEditModeEnabledChange );
+  }
+  console.log( 'editMode', mode.name ); // TODO: add in UI soon so we don't need this
+  listenedMode = mode;
+  mode.isEnabledProperty.link( onEditModeEnabledChange );
 } );
 
-// TODO: switch to a mode when this becomes... undone?
 export const tryToSetEditMode = ( mode: EditMode ) => {
   if ( mode.isEnabledProperty.value ) {
     editModeProperty.value = mode;

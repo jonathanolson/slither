@@ -17,7 +17,9 @@ export class VertexStateNode extends Node {
     stateProperty: TReadOnlyProperty<TState<TVertexStateData & TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>
   ) {
-    super();
+    super( {
+      pickable: false
+    } );
 
     const mainPointDistance = 0.12;
     const relativeVertexDirections = vertex.edges.map( edge => edge.getOtherVertex( vertex ).viewCoordinates.minus( vertex.viewCoordinates ).normalized() );
