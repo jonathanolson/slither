@@ -1,14 +1,17 @@
-import { Node, Path } from 'phet-lib/scenery';
+import { FireListener, Node, Path } from 'phet-lib/scenery';
 import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
 import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
 import _ from '../../workarounds/_.ts';
 import { playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty } from '../Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
+import { isFaceColorEditModeProperty } from '../../model/puzzle/EditMode.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
 
 export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
+  facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
 };
 
 export class PuzzleBackgroundNode extends Node {
@@ -20,10 +23,30 @@ export class PuzzleBackgroundNode extends Node {
 
     const options = optionize<PuzzleBackgroundNodeOptions>()( {
       useBackgroundOffsetStroke: false,
-      backgroundOffsetDistance: 0.3
+      backgroundOffsetDistance: 0.3,
+      facePressListener: () => {}
     }, providedOptions );
 
-    super();
+    super( {
+      pickableProperty: isFaceColorEditModeProperty
+    } );
+
+    // TODO: config setting for shift-click reversal?
+    this.addInputListener( new FireListener( {
+      mouseButton: 0,
+      // @ts-expect-error
+      fire: event => options.facePressListener( null, event.domEvent?.shiftKey ? 2 : 0 )
+    } ) );
+    this.addInputListener( new FireListener( {
+      mouseButton: 1,
+      fire: event => options.facePressListener( null, 1 )
+    } ) );
+    this.addInputListener( new FireListener( {
+      mouseButton: 2,
+      // @ts-expect-error
+      fire: event => options.facePressListener( null, event.domEvent?.shiftKey ? 0 : 2 )
+    } ) );
+    this.cursor = 'pointer';
 
     const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
     const outerBoundaryShape = Shape.polygon( outerBoundaryPoints );

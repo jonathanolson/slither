@@ -1,5 +1,4 @@
 import { DerivedProperty, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { getPressStyle } from '../../config.ts';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
@@ -19,6 +18,8 @@ import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
 import { TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
+import { getPressStyle } from './EdgePressStyle.ts';
+import { TFace } from '../board/core/TFace.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -262,6 +263,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
       this.updateState();
     }
+  }
+
+  public onUserFacePress( face: TFace | null, button: 0 | 1 | 2 ): void {
+    console.log( face );
   }
 
   public onUserRequestSolve(): void {

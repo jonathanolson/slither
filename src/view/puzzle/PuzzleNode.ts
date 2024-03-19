@@ -15,10 +15,13 @@ import { SectorNode } from './SectorNode.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { VertexStateNode } from './VertexStateNode.ts';
 import { FaceStateNode } from './FaceStateNode.ts';
+import { isEdgeEditModeProperty, isFaceEditModeProperty, isSectorEditModeProperty, isVertexEditModeProperty } from '../../model/puzzle/EditMode.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
   backgroundOffsetDistance?: number;
 };
 
@@ -45,16 +48,25 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         maxHeight: 0.9
       },
       edgePressListener: () => {},
+      facePressListener: () => {},
       backgroundOffsetDistance: 0.3
     }, providedOptions );
 
     const faceColorContainer = new Node( {
       visibleProperty: faceColorsVisibleProperty
     } );
-    const faceContainer = new Node();
-    const sectorContainer = new Node();
-    const edgeContainer = new Node();
-    const vertexContainer = new Node();
+    const faceContainer = new Node( {
+      pickableProperty: isFaceEditModeProperty
+    } );
+    const sectorContainer = new Node( {
+      pickableProperty: isSectorEditModeProperty
+    } );
+    const edgeContainer = new Node( {
+      pickableProperty: isEdgeEditModeProperty
+    } );
+    const vertexContainer = new Node( {
+      pickableProperty: isVertexEditModeProperty
+    } );
     const simpleRegionContainer = new Node();
     const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const faceStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
@@ -117,14 +129,21 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     this.annotationContainer = annotationContainer;
 
     this.disposeEmitter.addListener( () => {
-      faceColorContainer.children.forEach( child => child.dispose() );
-      faceContainer.children.forEach( child => child.dispose() );
-      edgeContainer.children.forEach( child => child.dispose() );
-      vertexContainer.children.forEach( child => child.dispose() );
-      simpleRegionContainer.children.forEach( child => child.dispose() );
-      vertexStateContainer.children.forEach( child => child.dispose() );
-      faceStateContainer.children.forEach( child => child.dispose() );
-      sectorContainer.children.forEach( child => child.dispose() );
+      const containers = [
+        faceColorContainer,
+        faceContainer,
+        edgeContainer,
+        vertexContainer,
+        simpleRegionContainer,
+        vertexStateContainer,
+        faceStateContainer,
+        sectorContainer
+      ];
+      containers.forEach( container => {
+        container.children.forEach( child => child.dispose() );
+        container.dispose();
+      } );
+
       isSolvedProperty.dispose();
     } );
   }

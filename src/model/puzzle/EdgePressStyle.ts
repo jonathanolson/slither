@@ -1,6 +1,6 @@
+import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import EdgeState from './model/data/edge-state/EdgeState.ts';
-import { LocalStorageEnumerationProperty } from './util/localStorage.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 
 export default class EdgePressStyle extends EnumerationValue {
 
@@ -34,16 +34,12 @@ export default class EdgePressStyle extends EnumerationValue {
 
   public static readonly enumeration = new Enumeration( EdgePressStyle );
 }
-
 // Button 0 (left)
 export const pressStyle0Property = new LocalStorageEnumerationProperty( 'pressStyle0', EdgePressStyle.CYCLE );
-
 // Button 1 (middle)
 export const pressStyle1Property = new LocalStorageEnumerationProperty( 'pressStyle1', EdgePressStyle.WHITE_SET );
-
 // Button 2 (right)
 export const pressStyle2Property = new LocalStorageEnumerationProperty( 'pressStyle2', EdgePressStyle.REVERSE_CYCLE );
-
 export const getPressStyle = ( button: 0 | 1 | 2 ) => {
   switch ( button ) {
     case 0:
@@ -54,4 +50,3 @@ export const getPressStyle = ( button: 0 | 1 | 2 ) => {
       return pressStyle2Property.value;
   }
 };
-

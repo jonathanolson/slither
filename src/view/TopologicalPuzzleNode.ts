@@ -6,7 +6,7 @@ import { combineOptions } from 'phet-lib/phet-core';
 import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
 import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
-import { LayoutEdge } from '../model/board/layout/layout.ts';
+import { LayoutEdge, LayoutFace } from '../model/board/layout/layout.ts';
 import { toPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
@@ -112,6 +112,12 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
           if ( originalEdges ) {
             // TODO: for now, just do one? (auto-solver hopefully handles others?) TODO
             puzzleModel.onUserEdgePress( originalEdges.values().next().value, button );
+          }
+        },
+        facePressListener: ( face, button ) => {
+          const originalFace = ( face as LayoutFace ).originalFace;
+          if ( originalFace ) {
+            puzzleModel.onUserFacePress( originalFace, button );
           }
         }
       } );

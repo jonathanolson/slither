@@ -11,11 +11,11 @@
   - Modes (changes view and edit):
     - 
     - Hover states (don't duplicate ton of nodes for this, keep it lightweight)
+      - TOPOLOGICAL how should this work?
       - hoverHighlightProperty (union type PuzzleHoverHighlight), in PuzzleModel
         - Edge highlight on black should ALSO highlight the entire simple region
         - Face color highlight should potentially highlight the entire color? (but also the specific face?)
         - "partial face color" highlights
-      - editModeProperty (enum), global
       - face/edge/etc. nodes notify when they hover start/end, PuzzleModel can use that to figure out what to do
       - PuzzleModel tracks its certain partial edit state (like for single-face-selected, or sector/vertex/face-open)
         - If we swap from face-color-match to face-color-opposite, should it leave a face selected?
@@ -29,7 +29,9 @@
         - Edge (hover-edge highlight)
         - Edge opposite (red-out?) (hover-edge highlight)
         - [IF face-color] Face color match, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
+          - ==== NEED clickable outside area initially(!)
         - [IF face-color] Face color opposite, tap one face then other (show initial highlight before click A, then highlight A while searching B highlights)
+          - ==== NEED clickable outside area initially(!) 
         - [IF sector] Sector edit (pop up radio-button-like list)
         - [IF vertex-state] Vertex state (pop up ... some view of options?)
         - [IF face-state] Face state (pop up view with on/off for each?)

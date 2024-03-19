@@ -1,4 +1,4 @@
-import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
+import { FireListener, Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
@@ -7,9 +7,11 @@ import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
+import { Shape } from 'phet-lib/kite';
 
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
+  facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
 };
 
 export class FaceNode extends Node {
@@ -24,11 +26,33 @@ export class FaceNode extends Node {
       textOptions: {
         font: puzzleFont,
         maxWidth: 0.9,
-        maxHeight: 0.9
-      }
+        maxHeight: 0.9,
+      },
+      facePressListener: () => {}
     }, providedOptions );
 
     super( {} );
+
+    const pointerArea = Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
+    this.mouseArea = pointerArea;
+    this.touchArea = pointerArea;
+
+    // TODO: config setting for shift-click reversal?
+    this.addInputListener( new FireListener( {
+      mouseButton: 0,
+      // @ts-expect-error
+      fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 2 : 0 )
+    } ) );
+    this.addInputListener( new FireListener( {
+      mouseButton: 1,
+      fire: event => options.facePressListener( face, 1 )
+    } ) );
+    this.addInputListener( new FireListener( {
+      mouseButton: 2,
+      // @ts-expect-error
+      fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 0 : 2 )
+    } ) );
+    this.cursor = 'pointer';
 
     const text = new Text( '', combineOptions<TextOptions>( {
 

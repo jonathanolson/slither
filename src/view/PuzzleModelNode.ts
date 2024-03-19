@@ -17,6 +17,9 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
     const puzzleNode = new PuzzleNode( puzzleModel.puzzle, {
       edgePressListener: ( edge, button ) => {
         puzzleModel.onUserEdgePress( edge, button );
+      },
+      facePressListener: ( face, button ) => {
+        puzzleModel.onUserFacePress( face, button );
       }
     } );
 
