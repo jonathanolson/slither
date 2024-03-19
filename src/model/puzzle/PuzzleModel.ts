@@ -20,6 +20,11 @@ import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
 import { getPressStyle } from './EdgePressStyle.ts';
 import { TFace } from '../board/core/TFace.ts';
+import EditMode, { editModeProperty } from './EditMode.ts';
+import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
+import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -44,6 +49,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new Property( null );
   public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
+
+  private readonly pendingActionFaceColorProperty: TProperty<TFaceColor | null> = new Property( null );
 
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
@@ -246,8 +253,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
+    const isReversed = editModeProperty.value === EditMode.EDGE_STATE_REVERSED;
+
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState( edge );
-    const style = getPressStyle( button );
+    const style = getPressStyle( isReversed ? ( 2 - button ) as 0 | 1 | 2 : button );
     const newEdgeState = style.apply( oldEdgeState );
 
     if ( oldEdgeState !== newEdgeState ) {
@@ -266,7 +275,48 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserFacePress( face: TFace | null, button: 0 | 1 | 2 ): void {
-    console.log( face );
+    const isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
+
+    const color = face ? this.puzzle.stateProperty.value.getFaceColor( face ) : this.puzzle.stateProperty.value.getOutsideColor();
+
+    // TODO: handle resetting this on mode changes
+
+    const otherColor = this.pendingActionFaceColorProperty.value;
+    if ( otherColor ) {
+      if ( isSame ) {
+        this.applyUserActionToStack( new FaceColorMakeSameAction(
+          getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+          getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+        ) );
+      }
+      else {
+        this.applyUserActionToStack( new FaceColorMakeOppositeAction(
+          getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+          getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+        ) );
+      }
+
+      this.pendingActionFaceColorProperty.value = null;
+
+      this.updateState();
+    }
+    else {
+      this.pendingActionFaceColorProperty.value = color;
+    }
+
+    // if ( oldEdgeState !== newEdgeState ) {
+    //   const lastTransition = this.stack[ this.stackPositionProperty.value ];
+    //
+    //   // If we just modified the same edge again, we'll want to undo any solving/etc. we did.
+    //   if ( lastTransition.action && lastTransition.action instanceof EdgeStateSetAction && lastTransition.action.edge === edge ) {
+    //     this.stackPositionProperty.value--;
+    //   }
+    //
+    //   const userAction = new EdgeStateSetAction( edge, newEdgeState );
+    //   this.applyUserActionToStack( userAction, state => state.getEdgeState( edge ) === newEdgeState );
+    //
+    //   this.updateState();
+    // }
   }
 
   public onUserRequestSolve(): void {
@@ -389,7 +439,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 }
 
-export type PuzzleModelUserAction = EdgeStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
+export type PuzzleModelUserAction = EdgeStateSetAction | FaceColorMakeSameAction | FaceColorMakeOppositeAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
 
 export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;

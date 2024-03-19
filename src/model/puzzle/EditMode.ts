@@ -48,6 +48,7 @@ editModeProperty.link( mode => {
   console.log( 'editMode', mode.name );
 } );
 
+// TODO: switch to a mode when this becomes... undone?
 export const tryToSetEditMode = ( mode: EditMode ) => {
   if ( mode.isEnabledProperty.value ) {
     editModeProperty.value = mode;

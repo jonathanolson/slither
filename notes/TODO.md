@@ -25,6 +25,7 @@
     - Edit modes (row for all of this?):
       - Hotkeys for edit type 1: edge, 2: edge-opposite, 3: face-color-match, 4: face-color-opposite, etc.?
       - Present options ON THE BOTTOM (perhaps with undo/redo?)
+      - Switch away from a mode when it becomes "undone"
       - Modes:
         - Edge (hover-edge highlight)
         - Edge opposite (red-out?) (hover-edge highlight)
