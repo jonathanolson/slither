@@ -62,6 +62,8 @@ export interface TTheme {
   uiButtonForegroundProperty: PaintColorProperty;
   uiButtonBaseColorProperty: PaintColorProperty;
   uiButtonDisabledColorProperty: PaintColorProperty;
+  uiButtonSelectedStrokeColorProperty: PaintColorProperty;
+  uiButtonDeselectedStrokeColorProperty: PaintColorProperty;
   barrierColorProperty: PaintColorProperty;
   generateAddedFaceColorProperty: PaintColorProperty;
   generateMinimizedFaceColorProperty: PaintColorProperty;
@@ -116,6 +118,8 @@ export const lightTheme = {
   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
+  uiButtonSelectedStrokeColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(50,50,50)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
@@ -164,6 +168,8 @@ export const darkTheme = {
   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(206,119,67)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
+  uiButtonSelectedStrokeColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(200,200,200)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
@@ -601,6 +607,14 @@ export const uiButtonBaseColorProperty = new DynamicProperty( themeProperty, {
 
 export const uiButtonDisabledColorProperty = new DynamicProperty( themeProperty, {
   derive: 'uiButtonDisabledColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const uiButtonSelectedStrokeColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'uiButtonSelectedStrokeColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const uiButtonDeselectedStrokeColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'uiButtonDeselectedStrokeColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const barrierColorProperty = new DynamicProperty( themeProperty, {
