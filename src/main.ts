@@ -21,6 +21,7 @@ import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
 import { TAnnotation } from './model/data/core/TAnnotation.ts';
 import { HintTipNode } from './view/HintTipNode.ts';
 import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
+import EditModeBarNode from './view/EditModeBarNode.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -110,6 +111,10 @@ const controlBarNode = new ControlBarNode( puzzleModelProperty, {
   }
 } );
 
+const editModeBarNode = new EditModeBarNode( {
+  layoutBoundsProperty: layoutBoundsProperty
+} );
+
 const hintTip = new HintTipNode( displayedAnnotationProperty );
 
 const mainBox = new VBox( {
@@ -128,7 +133,10 @@ const mainBox = new VBox( {
         puzzleContainerNode,
         topologicalContainerNode
       ]
-    } )
+    } ),
+    new AlignBox( editModeBarNode, {
+      margin: controlBarMargin
+    } ),
   ]
 } );
 layoutBoundsProperty.lazyLink( bounds => {
