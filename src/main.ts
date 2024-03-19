@@ -20,7 +20,7 @@ import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
 import { TAnnotation } from './model/data/core/TAnnotation.ts';
 import { HintTipNode } from './view/HintTipNode.ts';
-import EditMode, { editModeProperty } from './model/puzzle/EditMode.ts';
+import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -196,30 +196,30 @@ document.addEventListener( 'keydown', event => {
   }
   // TODO: check whether the given type is... enabled(!)
   else if ( event.key === '1' ) {
-    editModeProperty.value = EditMode.EDGE_STATE;
+    tryToSetEditMode( EditMode.EDGE_STATE );
   }
   else if ( event.key === '2' ) {
-    editModeProperty.value = EditMode.EDGE_STATE_REVERSED;
+    tryToSetEditMode( EditMode.EDGE_STATE_REVERSED );
   }
   else if ( event.key === '3' ) {
-    editModeProperty.value = EditMode.FACE_COLOR_MATCH;
+    tryToSetEditMode( EditMode.FACE_COLOR_MATCH );
   }
   else if ( event.key === '4' ) {
-    editModeProperty.value = EditMode.FACE_COLOR_OPPOSITE;
+    tryToSetEditMode( EditMode.FACE_COLOR_OPPOSITE );
   }
   else if ( event.key === '5' ) {
-    editModeProperty.value = EditMode.SECTOR_STATE;
+    tryToSetEditMode( EditMode.SECTOR_STATE );
   }
   else if ( event.key === '6' ) {
-    editModeProperty.value = EditMode.VERTEX_STATE;
+    tryToSetEditMode( EditMode.VERTEX_STATE );
   }
   else if ( event.key === '7' ) {
-    editModeProperty.value = EditMode.FACE_STATE;
+    tryToSetEditMode( EditMode.FACE_STATE );
   }
   else if ( event.key === '8' ) {
-    editModeProperty.value = EditMode.FACE_VALUE;
+    tryToSetEditMode( EditMode.FACE_VALUE );
   }
   else if ( event.key === '9' ) {
-    editModeProperty.value = EditMode.DELETE_FACE;
+    tryToSetEditMode( EditMode.DELETE_FACE );
   }
 } );
