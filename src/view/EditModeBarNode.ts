@@ -1,9 +1,10 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { RectangularRadioButtonGroup } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
-import { controlBarFont, controlBarMargin, uiButtonBaseColorProperty, uiButtonDeselectedStrokeColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty, uiButtonSelectedStrokeColorProperty } from './Theme.ts';
+import { controlBarMargin, uiBackgroundColorProperty, uiButtonBaseColorProperty, uiButtonDeselectedStrokeColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty, uiButtonSelectedStrokeColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
-import { Text } from 'phet-lib/scenery';
+import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
+import { Shape } from 'phet-lib/kite';
 
 export type EditModeBarNodeOptions = {
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
@@ -15,24 +16,48 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
     options: EditModeBarNodeOptions
   ) {
 
-    const edgeIcon = new Text( 'Edge', {
-      fill: uiButtonForegroundProperty,
-      font: controlBarFont,
+    const edgeIcon = new Line( 0, 0, 15, 0, {
+      stroke: uiButtonForegroundProperty,
+      lineWidth: 4,
+      lineCap: 'round'
     } );
 
-    const edgeReversedIcon = new Text( 'Edge Reversed', {
-      fill: uiButtonForegroundProperty,
-      font: controlBarFont,
+    const halfSize = 6;
+    const xShape = new Shape()
+      .moveTo( -halfSize, -halfSize )
+      .lineTo( halfSize, halfSize )
+      .moveTo( -halfSize, halfSize )
+      .lineTo( halfSize, -halfSize );
+
+    const edgeReversedIcon = new Path( xShape, {
+      stroke: uiButtonForegroundProperty,
+      lineWidth: 2
     } );
 
-    const faceColorMatchIcon = new Text( 'Face Color Match', {
-      fill: uiButtonForegroundProperty,
-      font: controlBarFont,
+    const faceColorMatchIcon = new Node( {
+      children: [
+        new Rectangle( 0, 0, 7, 7, {
+          stroke: uiButtonForegroundProperty,
+          fill: uiForegroundColorProperty
+        } ),
+        new Rectangle( 7, 7, 7, 7, {
+          stroke: uiButtonForegroundProperty,
+          fill: uiForegroundColorProperty
+        } ),
+      ]
     } );
 
-    const faceColorOppositeIcon = new Text( 'Face Color Opposite', {
-      fill: uiButtonForegroundProperty,
-      font: controlBarFont,
+    const faceColorOppositeIcon = new Node( {
+      children: [
+        new Rectangle( 0, 0, 7, 7, {
+          stroke: uiButtonForegroundProperty,
+          fill: uiForegroundColorProperty
+        } ),
+        new Rectangle( 7, 7, 7, 7, {
+          stroke: uiButtonForegroundProperty,
+          fill: uiBackgroundColorProperty
+        } ),
+      ]
     } );
 
     super( editModeProperty, [

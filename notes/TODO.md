@@ -13,6 +13,7 @@
     - Hover states (don't duplicate ton of nodes for this, keep it lightweight)
       - TOPOLOGICAL how should this work?
       - hoverHighlightProperty (union type PuzzleHoverHighlight), in PuzzleModel
+        - DIFFERENT highlight for each edit mode? 
         - Edge highlight on black should ALSO highlight the entire simple region
         - Face color highlight should potentially highlight the entire color? (but also the specific face?)
         - "partial face color" highlights

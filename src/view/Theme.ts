@@ -57,8 +57,8 @@ export interface TTheme {
   faceValueCompletedColorProperty: PaintColorProperty;
   faceValueErrorColorProperty: PaintColorProperty;
   edgeWeirdColorProperty: PaintColorProperty;
-  uiForegroundProperty: PaintColorProperty;
-  uiBackgroundProperty: PaintColorProperty;
+  uiForegroundColorProperty: PaintColorProperty;
+  uiBackgroundColorProperty: PaintColorProperty;
   uiButtonForegroundProperty: PaintColorProperty;
   uiButtonBaseColorProperty: PaintColorProperty;
   uiButtonDisabledColorProperty: PaintColorProperty;
@@ -113,8 +113,8 @@ export const lightTheme = {
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.2000000000000000111)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-  uiForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-  uiBackgroundProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  uiForegroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiBackgroundColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,206,255)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
@@ -163,8 +163,8 @@ export const darkTheme = {
   faceValueCompletedColorProperty: new PaintColorProperty( 'rgba(217,217,217,0.14000000000000001332)' ),
   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-  uiForegroundProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-  uiBackgroundProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+  uiForegroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+  uiBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(206,119,67)' ),
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
@@ -241,8 +241,8 @@ export const fadeDarkTheme = {
 //   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
 //   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
 //   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-//   uiForegroundProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-//   uiBackgroundProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
+//   uiForegroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
+//   uiBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
 //   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
 //   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(95,129,196)' ),
 //   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
@@ -287,8 +287,8 @@ export const fadeDarkTheme = {
 //   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
 //   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
 //   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(75,58,58)' ),
-//   uiForegroundProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
-//   uiBackgroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+//   uiForegroundColorProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
+//   uiBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
 //   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
 //   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,0,0)' ),
 //   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
@@ -590,11 +590,11 @@ export const edgeWeirdColorProperty = new DynamicProperty( themeProperty, {
 } ) as TReadOnlyProperty<Color>;
 
 export const uiForegroundColorProperty = new DynamicProperty( themeProperty, {
-  derive: 'uiForegroundProperty'
+  derive: 'uiForegroundColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const uiBackgroundColorProperty = new DynamicProperty( themeProperty, {
-  derive: 'uiBackgroundProperty'
+  derive: 'uiBackgroundColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const uiButtonForegroundProperty = new DynamicProperty( themeProperty, {
