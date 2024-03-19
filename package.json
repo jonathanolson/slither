@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "phet-lib": "~0.0.5",
+    "phet-lib": "0.0.6",
     "@techstark/opencv-js": "4.9.0-release.2",
     "tesseract.js": "~5.0.4",
     "culori": "~4.0.1",
