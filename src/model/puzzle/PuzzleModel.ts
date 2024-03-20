@@ -29,6 +29,7 @@ import { HoverHighlight } from './HoverHighlight.ts';
 import { showHoverHighlightsProperty } from '../../view/Theme.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
+import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -60,6 +61,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
 
   private readonly pendingActionFaceColorProperty: TProperty<PendingFaceColor | null> = new Property( null );
+  private readonly pendingActionSectorProperty: TProperty<TSector | null> = new Property( null );
 
   private readonly hoverEdgeProperty: TProperty<TEdge | null> = new Property( null );
   private readonly hoverFaceProperty: TProperty<TFace | null | false> = new Property( false ); // null is exterior face, false is no face (TODO this is bad)
@@ -67,6 +69,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   public readonly hoverHighlightProperty: TReadOnlyProperty<HoverHighlight | null>;
   public readonly selectedFaceColorHighlightProperty: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
+  public readonly selectedSectorEditProperty: TReadOnlyProperty<SelectedSectorEdit | null>;
 
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
@@ -78,6 +81,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     // Clear pending actions (e.g. face-color selection) when certain conditions happen
     const clearPendingActionListener = () => {
       this.pendingActionFaceColorProperty.value = null;
+      this.pendingActionSectorProperty.value = null;
     };
     this.stackPositionProperty.lazyLink( clearPendingActionListener );
     editModeProperty.lazyLink( clearPendingActionListener );
@@ -102,6 +106,24 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       return null;
     } );
     this.disposeEmitter.addListener( () => this.selectedFaceColorHighlightProperty.dispose() );
+
+    this.selectedSectorEditProperty = new DerivedProperty( [
+      puzzle.stateProperty,
+      editModeProperty,
+      this.pendingActionSectorProperty
+    ], ( state, editMode, pendingActionSector ) => {
+      if ( editMode === EditMode.SECTOR_STATE && pendingActionSector ) {
+        return {
+          sector: pendingActionSector,
+          currentState: state.getSectorState( pendingActionSector )
+        };
+      }
+      else {
+        return null;
+      }
+    } );
+    this.disposeEmitter.addListener( () => this.selectedSectorEditProperty.dispose() );
+    this.selectedSectorEditProperty.lazyLink( value => console.log( value ) );
 
     // TODO: update on shift-press too!
     this.hoverHighlightProperty = new DerivedProperty( [
@@ -428,7 +450,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserSectorPress( sector: TSector, button: 0 | 1 | 2 ): void {
-    console.log( sector );
+    this.pendingActionSectorProperty.value = sector;
   }
 
   public onUserEdgeHover( edge: TEdge, isOver: boolean ): void {
