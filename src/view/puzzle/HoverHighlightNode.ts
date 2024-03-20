@@ -2,6 +2,7 @@ import { Node, Path } from 'phet-lib/scenery';
 import { HoverHighlight } from '../../model/puzzle/HoverHighlight.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
 import { hoverHighlightColorProperty, showHoverHighlightsProperty } from '../Theme.ts';
+import { SectorNode } from './SectorNode.ts';
 
 const lineStyles = new LineStyles( {
   lineWidth: 0.2,
@@ -11,7 +12,8 @@ const lineStyles = new LineStyles( {
 
 export class HoverHighlightNode extends Node {
   public constructor(
-    public readonly hoverHighlight: HoverHighlight
+    public readonly hoverHighlight: HoverHighlight,
+    backgroundOffsetDistance: number
   ) {
     let children: Node[];
 
@@ -39,6 +41,15 @@ export class HoverHighlightNode extends Node {
           // TODO: how to handle outside?
           children = [];
         }
+      }
+      else if ( hoverHighlight.type === 'sector' ) {
+        const sectorShape = SectorNode.getSectorArcShape( hoverHighlight.sector, 0.5 );
+        const sectorHighlightNode = new Path( sectorShape.getOffsetShape( 0.05 ), {
+          stroke: hoverHighlightColorProperty,
+          lineWidth: 0.02
+        } );
+
+        children = [ sectorHighlightNode ];
       }
       else {
         // TODO

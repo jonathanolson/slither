@@ -21,6 +21,7 @@ import { HoverHighlight } from '../../model/puzzle/HoverHighlight.ts';
 import { HoverHighlightNode } from './HoverHighlightNode.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
 import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
+import { TSector } from '../../model/data/sector-state/TSector.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -28,6 +29,8 @@ type SelfOptions = {
   edgeHoverListener?: ( edge: TEdge, isOver: boolean ) => void;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
   faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
+  sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
+  sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
   backgroundOffsetDistance?: number;
   hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
@@ -59,6 +62,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       edgeHoverListener: () => {},
       facePressListener: () => {},
       faceHoverListener: () => {},
+      sectorPressListener: () => {},
+      sectorHoverListener: () => {},
       backgroundOffsetDistance: 0.3,
       hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null )
@@ -126,7 +131,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     } );
 
     puzzle.board.halfEdges.forEach( sector => {
-      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty ) );
+      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, options ) );
     } );
 
     simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
@@ -153,7 +158,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const hoverListener = ( hoverHighlight: HoverHighlight | null ) => {
       hoverHighlightContainer.removeAllChildren();
       if ( hoverHighlight ) {
-        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight ) ); // no unlink necessary
+        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight, options.backgroundOffsetDistance ) ); // no unlink necessary
       }
     };
     options.hoverHighlightProperty.link( hoverListener );

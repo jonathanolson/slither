@@ -28,6 +28,7 @@ import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
 import { HoverHighlight } from './HoverHighlight.ts';
 import { showHoverHighlightsProperty } from '../../view/Theme.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -62,6 +63,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   private readonly hoverEdgeProperty: TProperty<TEdge | null> = new Property( null );
   private readonly hoverFaceProperty: TProperty<TFace | null | false> = new Property( false ); // null is exterior face, false is no face (TODO this is bad)
+  private readonly hoverSectorProperty: TProperty<TSector | null> = new Property( null );
 
   public readonly hoverHighlightProperty: TReadOnlyProperty<HoverHighlight | null>;
   public readonly selectedFaceColorHighlightProperty: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
@@ -107,8 +109,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       editModeProperty,
       this.hoverEdgeProperty,
       this.hoverFaceProperty,
+      this.hoverSectorProperty,
       showHoverHighlightsProperty,
-    ], ( state, editMode, hoverEdge, hoverFace, showHoverHighlights ) => {
+    ], ( state, editMode, hoverEdge, hoverFace, hoverSector, showHoverHighlights ) => {
       if ( editMode === EditMode.EDGE_STATE || editMode === EditMode.EDGE_STATE_REVERSED ) {
         if ( hoverEdge && showHoverHighlights ) {
           const currentEdgeState = state.getEdgeState( hoverEdge );
@@ -141,11 +144,21 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
           return null;
         }
       }
+      else if ( editMode === EditMode.SECTOR_STATE ) {
+        if ( hoverSector && showHoverHighlights ) {
+          return {
+            type: 'sector',
+            sector: hoverSector
+          };
+        }
+        else {
+          return null;
+        }
+      }
       else {
         return null;
       }
     } );
-    this.hoverHighlightProperty.lazyLink( value => console.log( value ) );
     this.disposeEmitter.addListener( () => this.hoverHighlightProperty.dispose() );
 
     // Safe-solve our initial state (so things like simple region display works)
@@ -414,6 +427,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     }
   }
 
+  public onUserSectorPress( sector: TSector, button: 0 | 1 | 2 ): void {
+    console.log( sector );
+  }
+
   public onUserEdgeHover( edge: TEdge, isOver: boolean ): void {
     if ( isOver ) {
       this.hoverEdgeProperty.value = edge;
@@ -429,6 +446,15 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     }
     else {
       this.hoverFaceProperty.value = false;
+    }
+  }
+
+  public onUserSectorHover( sector: TSector, isOver: boolean ): void {
+    if ( isOver ) {
+      this.hoverSectorProperty.value = sector;
+    }
+    else {
+      this.hoverSectorProperty.value = null;
     }
   }
 

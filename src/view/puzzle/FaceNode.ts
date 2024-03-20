@@ -1,13 +1,14 @@
-import { FireListener, Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
+import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont, faceStateVisibleProperty } from '../Theme.ts';
+import { faceStateVisibleProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont } from '../Theme.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
 import { Shape } from 'phet-lib/kite';
+import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
@@ -39,28 +40,7 @@ export class FaceNode extends Node {
     this.mouseArea = pointerArea;
     this.touchArea = pointerArea;
 
-    // TODO: config setting for shift-click reversal?
-    const primaryFireListener = new FireListener( {
-      mouseButton: 0,
-      // @ts-expect-error
-      fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 2 : 0 )
-    } );
-    this.addInputListener( primaryFireListener );
-    this.addInputListener( new FireListener( {
-      mouseButton: 1,
-      fire: event => options.facePressListener( face, 1 )
-    } ) );
-    this.addInputListener( new FireListener( {
-      mouseButton: 2,
-      // @ts-expect-error
-      fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 0 : 2 )
-    } ) );
-    this.cursor = 'pointer';
-
-    // TODO: disposal?
-    primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
-      options.faceHoverListener && options.faceHoverListener( face, isOver );
-    } );
+    hookPuzzleListeners( face, this, options.facePressListener, options.faceHoverListener );
 
     const text = new Text( '', combineOptions<TextOptions>( {
 

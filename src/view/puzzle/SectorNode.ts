@@ -9,11 +9,19 @@ import { DotUtils, Vector2 } from 'phet-lib/dot';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { TSectorStateData } from '../../model/data/sector-state/TSectorStateData.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
+import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+
+export type SectorNodeOptions = {
+  sectorPressListener: ( sector: TSector, button: 0 | 1 | 2 ) => void;
+  sectorHoverListener: ( sector: TSector, isOver: boolean ) => void;
+  backgroundOffsetDistance: number;
+};
 
 export class SectorNode extends Node {
   public constructor(
     public readonly sector: TSector,
-    stateProperty: TReadOnlyProperty<TState<TSectorStateData & TEdgeStateData>>
+    stateProperty: TReadOnlyProperty<TState<TSectorStateData & TEdgeStateData>>,
+    options: SectorNodeOptions
   ) {
     super();
 
@@ -42,6 +50,12 @@ export class SectorNode extends Node {
     const splineRadiusDelta = 0.04;
 
     const iconCenter = Vector2.createPolar( 0.2, halfAngle );
+
+    const pointerArea = SectorNode.getSectorBaseShape( sector, options.backgroundOffsetDistance );
+    this.mouseArea = pointerArea;
+    this.touchArea = pointerArea;
+
+    hookPuzzleListeners( sector, this, options.sectorPressListener, options.sectorHoverListener );
 
     const addArc = ( shape: Shape, radius: number ) => {
       shape.moveToPoint( startUnit.timesScalar( radius ) );
@@ -175,5 +189,50 @@ export class SectorNode extends Node {
       path.lineDash = dash;
     } );
     this.disposeEmitter.addListener( () => multilink.dispose() );
+  }
+
+  // TODO: reduce duplication with... SectorMetrics?
+  public static getSectorBaseShape( sector: TSector, backgroundOffsetDistance: number ): Shape {
+    const startPoint = sector.start.viewCoordinates;
+    const vertexPoint = sector.end.viewCoordinates;
+    const endPoint = sector.next.end.viewCoordinates;
+
+    const startDelta = startPoint.minus( vertexPoint );
+    const endDelta = endPoint.minus( vertexPoint );
+
+    const startUnit = startDelta.normalized();
+    const endUnit = endDelta.normalized();
+
+    const halfAngle = endUnit.minus( startUnit ).angle + Math.PI / 2;
+
+    const faceCenter = sector.face ? sector.face.viewCoordinates : Vector2.createPolar( backgroundOffsetDistance, halfAngle ).plus( vertexPoint );
+    const halfStart = startPoint.average( vertexPoint );
+    const halfEnd = endPoint.average( vertexPoint );
+
+    return Shape.polygon( [ halfStart, vertexPoint, halfEnd, faceCenter ] ).makeImmutable();
+  }
+
+  public static getSectorArcShape( sector: TSector, radius: number ): Shape {
+    const startPoint = sector.start.viewCoordinates;
+    const vertexPoint = sector.end.viewCoordinates;
+    const endPoint = sector.next.end.viewCoordinates;
+
+    const startDelta = startPoint.minus( vertexPoint );
+    const endDelta = endPoint.minus( vertexPoint );
+
+    const startUnit = startDelta.normalized();
+
+    const startAngle = startDelta.angle;
+    let endAngle = endDelta.angle;
+    if ( endAngle < startAngle ) {
+      endAngle += 2 * Math.PI;
+    }
+
+    return new Shape()
+      .moveToPoint( vertexPoint )
+      .lineToPoint( startUnit.timesScalar( radius ).plus( vertexPoint ) )
+      .arcPoint( vertexPoint, radius, startAngle, endAngle, true )
+      .close()
+      .makeImmutable();
   }
 }

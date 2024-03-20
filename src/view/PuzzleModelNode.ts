@@ -27,6 +27,12 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       faceHoverListener: ( face, isOver ) => {
         puzzleModel.onUserFaceHover( face, isOver );
       },
+      sectorPressListener: ( sector, button ) => {
+        puzzleModel.onUserSectorPress( sector, button );
+      },
+      sectorHoverListener: ( sector, isOver ) => {
+        puzzleModel.onUserSectorHover( sector, isOver );
+      },
       hoverHighlightProperty: puzzleModel.hoverHighlightProperty,
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
     } );

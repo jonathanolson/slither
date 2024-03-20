@@ -1,4 +1,4 @@
-import { FireListener, Node, Path } from 'phet-lib/scenery';
+import { Node, Path } from 'phet-lib/scenery';
 import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
 import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
@@ -7,6 +7,7 @@ import { playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, puzzleB
 import { optionize } from 'phet-lib/phet-core';
 import { isFaceColorEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
+import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 
 export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;
@@ -33,28 +34,7 @@ export class PuzzleBackgroundNode extends Node {
       pickableProperty: isFaceColorEditModeProperty
     } );
 
-    // TODO: config setting for shift-click reversal?
-    const primaryFireListener = new FireListener( {
-      mouseButton: 0,
-      // @ts-expect-error
-      fire: event => options.facePressListener( null, event.domEvent?.shiftKey ? 2 : 0 )
-    } );
-    this.addInputListener( primaryFireListener );
-    this.addInputListener( new FireListener( {
-      mouseButton: 1,
-      fire: event => options.facePressListener( null, 1 )
-    } ) );
-    this.addInputListener( new FireListener( {
-      mouseButton: 2,
-      // @ts-expect-error
-      fire: event => options.facePressListener( null, event.domEvent?.shiftKey ? 0 : 2 )
-    } ) );
-    this.cursor = 'pointer';
-
-    // TODO: disposal?
-    primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
-      options.faceHoverListener && options.faceHoverListener( null, isOver );
-    } );
+    hookPuzzleListeners( null, this, options.facePressListener, options.faceHoverListener );
 
     const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
 

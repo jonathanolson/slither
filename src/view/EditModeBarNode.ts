@@ -60,6 +60,17 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
       ]
     } );
 
+    const sectorIcon = new Node( {
+      children: [
+        new Path( new Shape().moveTo( 0, 14 ).lineTo( 0, 0 ).lineTo( 14, 0 ), {
+          stroke: uiButtonForegroundProperty
+        }  ),
+        new Path( new Shape().arc( 0, 0, 7, 0, Math.PI / 2, false ), {
+          stroke: uiButtonForegroundProperty
+        } )
+      ]
+    } );
+
     super( editModeProperty, [
       {
         value: EditMode.EDGE_STATE,
@@ -91,6 +102,14 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
         createNode: () => faceColorOppositeIcon,
         options: {
           visibleProperty: EditMode.FACE_COLOR_OPPOSITE.isEnabledProperty
+        }
+      },
+      {
+        value: EditMode.SECTOR_STATE,
+        labelContent: 'Sector',
+        createNode: () => sectorIcon,
+        options: {
+          visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty
         }
       }
     ], {

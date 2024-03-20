@@ -1,5 +1,5 @@
 import { TEdge } from '../../model/board/core/TEdge.ts';
-import { FireListener, Line, Node, Path } from 'phet-lib/scenery';
+import { Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
@@ -8,6 +8,7 @@ import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
+import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
@@ -197,28 +198,7 @@ export class EdgeNode extends Node {
       //   .close();
       this.mouseArea = this.touchArea = pointerArea;
 
-      // TODO: config setting for shift-click reversal?
-      const primaryFireListener = new FireListener( {
-        mouseButton: 0,
-        // @ts-expect-error
-        fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 2 : 0 )
-      } );
-      this.addInputListener( primaryFireListener );
-      this.addInputListener( new FireListener( {
-        mouseButton: 1,
-        fire: event => edgePressListener( edge, 1 )
-      } ) );
-      this.addInputListener( new FireListener( {
-        mouseButton: 2,
-        // @ts-expect-error
-        fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 0 : 2 )
-      } ) );
-      this.cursor = 'pointer';
-
-      // TODO: disposal?
-      primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
-        options.edgeHoverListener && options.edgeHoverListener( edge, isOver );
-      } );
+      hookPuzzleListeners( edge, this, edgePressListener, options.edgeHoverListener );
     }
 
     edgeStateProperty.link( edgeState => {
