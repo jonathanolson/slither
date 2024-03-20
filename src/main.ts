@@ -231,3 +231,10 @@ document.addEventListener( 'keydown', event => {
     tryToSetEditMode( EditMode.DELETE_FACE );
   }
 } );
+
+// Clean up old puzzle models
+puzzleModelProperty.lazyLink( ( puzzleModel, oldPuzzleModel ) => {
+  if ( oldPuzzleModel ) {
+    oldPuzzleModel.dispose();
+  }
+} );

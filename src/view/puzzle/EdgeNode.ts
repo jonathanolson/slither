@@ -12,6 +12,7 @@ import { DotUtils, Vector2 } from 'phet-lib/dot';
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  edgeHoverListener?: ( edge: TEdge, isOver: boolean ) => void;
   backgroundOffsetDistance: number;
 };
 
@@ -197,11 +198,12 @@ export class EdgeNode extends Node {
       this.mouseArea = this.touchArea = pointerArea;
 
       // TODO: config setting for shift-click reversal?
-      this.addInputListener( new FireListener( {
+      const primaryFireListener = new FireListener( {
         mouseButton: 0,
         // @ts-expect-error
         fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 2 : 0 )
-      } ) );
+      } );
+      this.addInputListener( primaryFireListener );
       this.addInputListener( new FireListener( {
         mouseButton: 1,
         fire: event => edgePressListener( edge, 1 )
@@ -212,6 +214,11 @@ export class EdgeNode extends Node {
         fire: event => edgePressListener( edge, event.domEvent?.shiftKey ? 0 : 2 )
       } ) );
       this.cursor = 'pointer';
+
+      // TODO: disposal?
+      primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
+        options.edgeHoverListener && options.edgeHoverListener( edge, isOver );
+      } );
     }
 
     edgeStateProperty.link( edgeState => {

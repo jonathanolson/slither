@@ -175,3 +175,11 @@
     - TODO: how to compute?
   - Weird edges:
     - Shorten them somewhat, so they don't connect? LEAVE GRAY
+- Hover states (don't duplicate ton of nodes for this, keep it lightweight)
+  - [defer] TOPOLOGICAL how should this work?
+    - It really doesn't right now, and is slow. Maybe don't worry about this.
+  - [defer] hoverHighlightProperty (union type PuzzleHoverHighlight), in PuzzleModel
+    - DIFFERENT highlight for each edit mode? 
+    - Edge highlight on black should ALSO highlight the entire simple region
+    - Face color highlight should potentially highlight the entire color? (but also the specific face?)
+    - "partial face color" highlights

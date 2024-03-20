@@ -1,5 +1,5 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty } from 'phet-lib/axon';
+import { DerivedProperty, Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { faceColorsVisibleProperty, puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
@@ -17,12 +17,20 @@ import { VertexStateNode } from './VertexStateNode.ts';
 import { FaceStateNode } from './FaceStateNode.ts';
 import { isEdgeEditModeProperty, isFaceEditModeProperty, isSectorEditModeProperty, isVertexEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
+import { HoverHighlight } from '../../model/puzzle/HoverHighlight.ts';
+import { HoverHighlightNode } from './HoverHighlightNode.ts';
+import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
+import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  edgeHoverListener?: ( edge: TEdge, isOver: boolean ) => void;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
+  faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
   backgroundOffsetDistance?: number;
+  hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
+  selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
@@ -48,8 +56,12 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         maxHeight: 0.9
       },
       edgePressListener: () => {},
+      edgeHoverListener: () => {},
       facePressListener: () => {},
-      backgroundOffsetDistance: 0.3
+      faceHoverListener: () => {},
+      backgroundOffsetDistance: 0.3,
+      hoverHighlightProperty: new Property( null ),
+      selectedFaceColorHighlightProperty: new Property( null )
     }, providedOptions );
 
     const faceColorContainer = new Node( {
@@ -70,7 +82,15 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const simpleRegionContainer = new Node();
     const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const faceStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
-    const annotationContainer = new Node();
+    const annotationContainer = new Node( {
+      pickable: false
+    } );
+    const selectedFaceColorHighlightContainer = new Node( {
+      pickable: false
+    } );
+    const hoverHighlightContainer = new Node( {
+      pickable: false
+    } );
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
       if ( state.getWeirdEdges().length || state.hasInvalidFaceColors() ) {
@@ -122,11 +142,31 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         simpleRegionContainer,
         vertexStateContainer,
         faceStateContainer,
-        annotationContainer
+        annotationContainer,
+        selectedFaceColorHighlightContainer,
+        hoverHighlightContainer
       ]
     }, options ) );
 
     this.annotationContainer = annotationContainer;
+
+    const hoverListener = ( hoverHighlight: HoverHighlight | null ) => {
+      hoverHighlightContainer.removeAllChildren();
+      if ( hoverHighlight ) {
+        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight ) ); // no unlink necessary
+      }
+    };
+    options.hoverHighlightProperty.link( hoverListener );
+    this.disposeEmitter.addListener( () => options.hoverHighlightProperty.unlink( hoverListener ) );
+
+    const selectedFaceColorListener = ( selectedFaceColorHighlight: SelectedFaceColorHighlight | null ) => {
+      selectedFaceColorHighlightContainer.removeAllChildren();
+      if ( selectedFaceColorHighlight ) {
+        selectedFaceColorHighlightContainer.addChild( new SelectedFaceColorHighlightNode( selectedFaceColorHighlight, puzzle.board, options ) ); // no unlink necessary
+      }
+    };
+    options.selectedFaceColorHighlightProperty.link( selectedFaceColorListener );
+    this.disposeEmitter.addListener( () => options.selectedFaceColorHighlightProperty.unlink( selectedFaceColorListener ) );
 
     this.disposeEmitter.addListener( () => {
       const containers = [

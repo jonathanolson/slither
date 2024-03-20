@@ -12,6 +12,7 @@ import { Shape } from 'phet-lib/kite';
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
+  faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
 };
 
 export class FaceNode extends Node {
@@ -28,7 +29,8 @@ export class FaceNode extends Node {
         maxWidth: 0.9,
         maxHeight: 0.9,
       },
-      facePressListener: () => {}
+      facePressListener: () => {},
+      faceHoverListener: () => {}
     }, providedOptions );
 
     super( {} );
@@ -38,11 +40,12 @@ export class FaceNode extends Node {
     this.touchArea = pointerArea;
 
     // TODO: config setting for shift-click reversal?
-    this.addInputListener( new FireListener( {
+    const primaryFireListener = new FireListener( {
       mouseButton: 0,
       // @ts-expect-error
       fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 2 : 0 )
-    } ) );
+    } );
+    this.addInputListener( primaryFireListener );
     this.addInputListener( new FireListener( {
       mouseButton: 1,
       fire: event => options.facePressListener( face, 1 )
@@ -53,6 +56,11 @@ export class FaceNode extends Node {
       fire: event => options.facePressListener( face, event.domEvent?.shiftKey ? 0 : 2 )
     } ) );
     this.cursor = 'pointer';
+
+    // TODO: disposal?
+    primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
+      options.faceHoverListener && options.faceHoverListener( face, isOver );
+    } );
 
     const text = new Text( '', combineOptions<TextOptions>( {
 

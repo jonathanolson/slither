@@ -30,6 +30,8 @@ export interface TTheme {
   blackLineColorProperty: PaintColorProperty;
   redLineColorProperty: PaintColorProperty;
   whiteLineColorProperty: PaintColorProperty;
+  selectedFaceColorHighlightColorProperty: PaintColorProperty;
+  hoverHighlightColorProperty: PaintColorProperty;
 
   // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
   simpleRegionTargetColorProperty: PaintColorProperty;
@@ -93,6 +95,8 @@ export const lightTheme = {
   blackLineColorProperty: new PaintColorProperty( 'rgb(64,64,64)' ),
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
+  selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.5)' ),
+  hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.6)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
   faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(245,224,224,0)' ),
@@ -143,6 +147,8 @@ export const darkTheme = {
   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
+  selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.5)' ),
+  hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.6)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
   faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(101,43,40,0)' ),
@@ -370,7 +376,7 @@ export const popupColorEditor = ( theme: TTheme ) => {
 
   const div = document.createElement( 'div' );
   // @ts-expect-error
-  div.style.zoom = '0.6';
+  div.style.zoom = '0.5';
   div.style.backgroundColor = 'rgba(127,127,127,0.3)';
 
   // Close button
@@ -507,6 +513,14 @@ export const redLineColorProperty = new DynamicProperty( themeProperty, {
 
 export const whiteLineColorProperty = new DynamicProperty( themeProperty, {
   derive: 'whiteLineColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const selectedFaceColorHighlightColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'selectedFaceColorHighlightColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const hoverHighlightColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'hoverHighlightColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const simpleRegionTargetColorProperty = new DynamicProperty( themeProperty, {
@@ -675,6 +689,8 @@ export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteL
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
 export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', false );
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
+
+export const showHoverHighlightsProperty = new LocalStorageBooleanProperty( 'showHoverHighlightsProperty', false );
 
 export const faceColorThresholdProperty = new LocalStorageNumberProperty( 'faceColorThresholdProperty', Number.POSITIVE_INFINITY );
 

@@ -1,4 +1,4 @@
-import { DerivedProperty, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
 import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
@@ -25,12 +25,20 @@ import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAct
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
+import { HoverHighlight } from './HoverHighlight.ts';
+import { showHoverHighlightsProperty } from '../../view/Theme.ts';
+import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
 
+export type PendingFaceColor = {
+  face: TFace | null;
+  color: TFaceColor;
+};
+
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
+export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Disposable {
 
   private readonly stack: PuzzleSnapshot<Structure, Data>[];
 
@@ -50,12 +58,95 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new Property( null );
   public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
 
-  private readonly pendingActionFaceColorProperty: TProperty<TFaceColor | null> = new Property( null );
+  private readonly pendingActionFaceColorProperty: TProperty<PendingFaceColor | null> = new Property( null );
+
+  private readonly hoverEdgeProperty: TProperty<TEdge | null> = new Property( null );
+  private readonly hoverFaceProperty: TProperty<TFace | null | false> = new Property( false ); // null is exterior face, false is no face (TODO this is bad)
+
+  public readonly hoverHighlightProperty: TReadOnlyProperty<HoverHighlight | null>;
+  public readonly selectedFaceColorHighlightProperty: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
 
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
   ) {
+    super();
+
     this.displayedAnnotationProperty = new DerivedProperty( [ this.pendingHintActionProperty ], action => action ? action.annotation : null );
+
+    // Clear pending actions (e.g. face-color selection) when certain conditions happen
+    const clearPendingActionListener = () => {
+      this.pendingActionFaceColorProperty.value = null;
+    };
+    this.stackPositionProperty.lazyLink( clearPendingActionListener );
+    editModeProperty.lazyLink( clearPendingActionListener );
+    this.disposeEmitter.addListener( () => editModeProperty.unlink( clearPendingActionListener ) );
+
+    this.selectedFaceColorHighlightProperty = new DerivedProperty( [
+      puzzle.stateProperty,
+      editModeProperty,
+      this.pendingActionFaceColorProperty
+    ], ( state, editMode, pendingActionFaceColor ) => {
+      if ( editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE ) {
+        if ( pendingActionFaceColor ) {
+          const primaryFaces = state.getFacesWithColor( pendingActionFaceColor.color );
+          return {
+            faceColor: pendingActionFaceColor.color,
+            face: pendingActionFaceColor.face,
+            faces: primaryFaces
+          };
+        }
+      }
+
+      return null;
+    } );
+    this.disposeEmitter.addListener( () => this.selectedFaceColorHighlightProperty.dispose() );
+
+    // TODO: update on shift-press too!
+    this.hoverHighlightProperty = new DerivedProperty( [
+      puzzle.stateProperty,
+      editModeProperty,
+      this.hoverEdgeProperty,
+      this.hoverFaceProperty,
+      showHoverHighlightsProperty,
+    ], ( state, editMode, hoverEdge, hoverFace, showHoverHighlights ) => {
+      if ( editMode === EditMode.EDGE_STATE || editMode === EditMode.EDGE_STATE_REVERSED ) {
+        if ( hoverEdge && showHoverHighlights ) {
+          const currentEdgeState = state.getEdgeState( hoverEdge );
+          const newEdgeState = this.getNewEdgeState( currentEdgeState, editMode === EditMode.EDGE_STATE_REVERSED ? 2 : 0 );
+
+          return {
+            type: 'edge-state',
+            edge: hoverEdge,
+            simpleRegion: currentEdgeState === EdgeState.BLACK ? state.getSimpleRegionWithEdge( hoverEdge ) : null,
+            potentialEdgeState: newEdgeState
+          };
+        }
+        else {
+          return null;
+        }
+      }
+      else if ( editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE ) {
+        if ( hoverFace !== false && showHoverHighlights ) {
+          const primaryFaceColor = hoverFace ? this.puzzle.stateProperty.value.getFaceColor( hoverFace ) : this.puzzle.stateProperty.value.getOutsideColor();
+          const primaryFaces = this.puzzle.stateProperty.value.getFacesWithColor( primaryFaceColor );
+
+          return {
+            type: 'face-color',
+            faceColor: primaryFaceColor,
+            face: hoverFace,
+            faces: primaryFaces
+          };
+        }
+        else {
+          return null;
+        }
+      }
+      else {
+        return null;
+      }
+    } );
+    this.hoverHighlightProperty.lazyLink( value => console.log( value ) );
+    this.disposeEmitter.addListener( () => this.hoverHighlightProperty.dispose() );
 
     // Safe-solve our initial state (so things like simple region display works)
     {
@@ -252,12 +343,16 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     }
   }
 
-  public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
+  public getNewEdgeState( oldEdgeState: EdgeState, button: 0 | 1 | 2 ): EdgeState {
     const isReversed = editModeProperty.value === EditMode.EDGE_STATE_REVERSED;
 
-    const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState( edge );
     const style = getPressStyle( isReversed ? ( 2 - button ) as 0 | 1 | 2 : button );
-    const newEdgeState = style.apply( oldEdgeState );
+    return style.apply( oldEdgeState );
+  }
+
+  public onUserEdgePress( edge: TEdge, button: 0 | 1 | 2 ): void {
+    const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState( edge );
+    const newEdgeState = this.getNewEdgeState( oldEdgeState, button );
 
     if ( oldEdgeState !== newEdgeState ) {
       const lastTransition = this.stack[ this.stackPositionProperty.value ];
@@ -275,25 +370,36 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserFacePress( face: TFace | null, button: 0 | 1 | 2 ): void {
-    const isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
+    let isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
+    if ( button === 2 ) {
+      isSame = !isSame;
+    }
 
     const color = face ? this.puzzle.stateProperty.value.getFaceColor( face ) : this.puzzle.stateProperty.value.getOutsideColor();
 
     // TODO: handle resetting this on mode changes
 
-    const otherColor = this.pendingActionFaceColorProperty.value;
-    if ( otherColor ) {
-      if ( isSame ) {
-        this.applyUserActionToStack( new FaceColorMakeSameAction(
-          getFaceColorPointer( this.puzzle.stateProperty.value, color ),
-          getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
-        ) );
-      }
-      else {
-        this.applyUserActionToStack( new FaceColorMakeOppositeAction(
-          getFaceColorPointer( this.puzzle.stateProperty.value, color ),
-          getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
-        ) );
+    const pendingAction = this.pendingActionFaceColorProperty.value;
+    if ( pendingAction ) {
+      // no-op for same face
+      if ( face !== pendingAction.face ) {
+        const otherColor = pendingAction.color;
+
+        // no-op for same color
+        if ( otherColor !== color ) {
+          if ( isSame ) {
+            this.applyUserActionToStack( new FaceColorMakeSameAction(
+              getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+              getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+            ) );
+          }
+          else {
+            this.applyUserActionToStack( new FaceColorMakeOppositeAction(
+              getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+              getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+            ) );
+          }
+        }
       }
 
       this.pendingActionFaceColorProperty.value = null;
@@ -301,22 +407,29 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       this.updateState();
     }
     else {
-      this.pendingActionFaceColorProperty.value = color;
+      this.pendingActionFaceColorProperty.value = {
+        face: face,
+        color: color
+      };
     }
+  }
 
-    // if ( oldEdgeState !== newEdgeState ) {
-    //   const lastTransition = this.stack[ this.stackPositionProperty.value ];
-    //
-    //   // If we just modified the same edge again, we'll want to undo any solving/etc. we did.
-    //   if ( lastTransition.action && lastTransition.action instanceof EdgeStateSetAction && lastTransition.action.edge === edge ) {
-    //     this.stackPositionProperty.value--;
-    //   }
-    //
-    //   const userAction = new EdgeStateSetAction( edge, newEdgeState );
-    //   this.applyUserActionToStack( userAction, state => state.getEdgeState( edge ) === newEdgeState );
-    //
-    //   this.updateState();
-    // }
+  public onUserEdgeHover( edge: TEdge, isOver: boolean ): void {
+    if ( isOver ) {
+      this.hoverEdgeProperty.value = edge;
+    }
+    else {
+      this.hoverEdgeProperty.value = null;
+    }
+  }
+
+  public onUserFaceHover( face: TFace | null, isOver: boolean ): void {
+    if ( isOver ) {
+      this.hoverFaceProperty.value = face;
+    }
+    else {
+      this.hoverFaceProperty.value = false;
+    }
   }
 
   public onUserRequestSolve(): void {

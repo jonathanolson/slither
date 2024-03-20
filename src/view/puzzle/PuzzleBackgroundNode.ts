@@ -12,6 +12,7 @@ export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
+  faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
 };
 
 export class PuzzleBackgroundNode extends Node {
@@ -24,7 +25,8 @@ export class PuzzleBackgroundNode extends Node {
     const options = optionize<PuzzleBackgroundNodeOptions>()( {
       useBackgroundOffsetStroke: false,
       backgroundOffsetDistance: 0.3,
-      facePressListener: () => {}
+      facePressListener: () => {},
+      faceHoverListener: () => {}
     }, providedOptions );
 
     super( {
@@ -32,11 +34,12 @@ export class PuzzleBackgroundNode extends Node {
     } );
 
     // TODO: config setting for shift-click reversal?
-    this.addInputListener( new FireListener( {
+    const primaryFireListener = new FireListener( {
       mouseButton: 0,
       // @ts-expect-error
       fire: event => options.facePressListener( null, event.domEvent?.shiftKey ? 2 : 0 )
-    } ) );
+    } );
+    this.addInputListener( primaryFireListener );
     this.addInputListener( new FireListener( {
       mouseButton: 1,
       fire: event => options.facePressListener( null, 1 )
@@ -48,8 +51,12 @@ export class PuzzleBackgroundNode extends Node {
     } ) );
     this.cursor = 'pointer';
 
+    // TODO: disposal?
+    primaryFireListener.isHighlightedProperty.lazyLink( isOver => {
+      options.faceHoverListener && options.faceHoverListener( null, isOver );
+    } );
+
     const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
-    const outerBoundaryShape = Shape.polygon( outerBoundaryPoints );
 
     const useOffset = options.useBackgroundOffsetStroke;
     const backgroundDistance = options.backgroundOffsetDistance;
@@ -73,28 +80,7 @@ export class PuzzleBackgroundNode extends Node {
       return resultShape;
     };
 
-    let backgroundShape: Shape;
-    if ( useOffset ) {
-      backgroundShape = outerBoundaryShape.getOffsetShape( offsetShapeOffset )!.getSimplifiedAreaShape();
-    }
-    else {
-      const strokedOuterBoundaryShape = outerBoundaryShape.getStrokedShape( new LineStyles( {
-        lineWidth: 2 * backgroundDistance
-      } ) );
-      const subpathShapes = strokedOuterBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
-      try {
-        // TODO: remove this code! It's so we can fuzz without this ONE case messing us up
-        if ( strokedOuterBoundaryShape.bounds.width === 9.718028227819117 ) {
-          backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
-        }
-        else {
-          backgroundShape = _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
-        }
-      }
-      catch ( e ) {
-        backgroundShape = Shape.bounds( strokedOuterBoundaryShape.bounds );
-      }
-    }
+    const backgroundShape = PuzzleBackgroundNode.getOffsetBackgroundShape( outerBoundary, useOffset, backgroundDistance );
 
     // TODO: refactor to be more general --- WE CAN JUST INCLUDE THE HOLES IN THE MAIN SHAPE right?
     const innerBoundaryShapes: Shape[] = innerBoundaries.map( innerBoundary => {
@@ -125,5 +111,36 @@ export class PuzzleBackgroundNode extends Node {
         lineWidth: 0.03
       } ) )
     ];
+  }
+
+  public static getOffsetBackgroundShape( outerBoundary: THalfEdge[], useOffset: boolean, backgroundDistance: number ): Shape {
+    const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
+    const outerBoundaryShape = Shape.polygon( outerBoundaryPoints );
+
+    // TODO: reduce code duplication?
+    const isNormalOrientation = getSignedArea( outerBoundaryPoints ) > 0;
+    const offsetShapeOffset = isNormalOrientation ? -backgroundDistance : backgroundDistance;
+
+    if ( useOffset ) {
+      return outerBoundaryShape.getOffsetShape( offsetShapeOffset )!.getSimplifiedAreaShape();
+    }
+    else {
+      const strokedOuterBoundaryShape = outerBoundaryShape.getStrokedShape( new LineStyles( {
+        lineWidth: 2 * backgroundDistance
+      } ) );
+      const subpathShapes = strokedOuterBoundaryShape.subpaths.map( subpath => new Shape( [ subpath ] ) );
+      try {
+        // TODO: remove this code! It's so we can fuzz without this ONE case messing us up
+        if ( strokedOuterBoundaryShape.bounds.width === 9.718028227819117 ) {
+          return Shape.bounds( strokedOuterBoundaryShape.bounds );
+        }
+        else {
+          return _.maxBy( subpathShapes, shape => shape.getArea() )!.getSimplifiedAreaShape();
+        }
+      }
+      catch ( e ) {
+        return Shape.bounds( strokedOuterBoundaryShape.bounds );
+      }
+    }
   }
 }
