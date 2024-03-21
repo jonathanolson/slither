@@ -12,8 +12,8 @@ import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 
 export type SectorNodeOptions = {
-  sectorPressListener: ( sector: TSector, button: 0 | 1 | 2 ) => void;
-  sectorHoverListener: ( sector: TSector, isOver: boolean ) => void;
+  sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
+  sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
   backgroundOffsetDistance: number;
 };
 
@@ -121,18 +121,6 @@ export class SectorNode extends Node {
       [ SectorState.ANY, anyShape ]
     ] );
 
-    // TODO: Theme!
-    const strokeMap = new Map<SectorState, TPaint>( [
-      [ SectorState.NONE, sectorOtherColorProperty ],
-      [ SectorState.ONLY_ZERO, sectorOtherColorProperty ],
-      [ SectorState.ONLY_ONE, sectorOnlyOneColorProperty ],
-      [ SectorState.ONLY_TWO, sectorOtherColorProperty ],
-      [ SectorState.NOT_ZERO, sectorNotZeroColorProperty ],
-      [ SectorState.NOT_ONE, sectorNotOneColorProperty ],
-      [ SectorState.NOT_TWO, sectorNotTwoColorProperty ],
-      [ SectorState.ANY, sectorOtherColorProperty ]
-    ] );
-
     const basicDash = [ 0.02, 0.02 ];
     const dashMap = new Map<SectorState, number[]>( [
       [ SectorState.NONE, [] ],
@@ -179,7 +167,7 @@ export class SectorNode extends Node {
         }
         if ( trivialVisible || !isTrivial ) {
           shape = shapeMap.get( sectorState ) ?? null;
-          stroke = strokeMap.get( sectorState ) ?? null;
+          stroke = SectorNode.strokeMap.get( sectorState ) ?? null;
           dash = dashMap.get( sectorState ) ?? [];
         }
       }
@@ -235,4 +223,27 @@ export class SectorNode extends Node {
       .close()
       .makeImmutable();
   }
+
+  public static strokeMap = new Map<SectorState, TPaint>( [
+    [ SectorState.NONE, sectorOtherColorProperty ],
+    [ SectorState.ONLY_ZERO, sectorOtherColorProperty ],
+    [ SectorState.ONLY_ONE, sectorOnlyOneColorProperty ],
+    [ SectorState.ONLY_TWO, sectorOtherColorProperty ],
+    [ SectorState.NOT_ZERO, sectorNotZeroColorProperty ],
+    [ SectorState.NOT_ONE, sectorNotOneColorProperty ],
+    [ SectorState.NOT_TWO, sectorNotTwoColorProperty ],
+    [ SectorState.ANY, sectorOtherColorProperty ]
+  ] );
+
+  // TODO: move to a general location?
+  public static nameMap = new Map<SectorState, string>( [
+    [ SectorState.NONE, 'Invalid' ],
+    [ SectorState.ONLY_ZERO, 'No Lines' ],
+    [ SectorState.ONLY_ONE, 'Only One Line' ],
+    [ SectorState.ONLY_TWO, 'Both Lines' ],
+    [ SectorState.NOT_ZERO, 'At Least One Line' ],
+    [ SectorState.NOT_ONE, 'Zero or Two Lines' ],
+    [ SectorState.NOT_TWO, 'Less Than Two Lines' ],
+    [ SectorState.ANY, 'Any Lines' ]
+  ] );
 }

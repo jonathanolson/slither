@@ -22,6 +22,9 @@ import { HoverHighlightNode } from './HoverHighlightNode.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
 import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
 import { TSector } from '../../model/data/sector-state/TSector.ts';
+import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
+import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
+import SectorState from '../../model/data/sector-state/SectorState.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -31,9 +34,11 @@ type SelfOptions = {
   faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
   sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
+  sectorSetListener?: ( sector: TSector, state: SectorState ) => void;
   backgroundOffsetDistance?: number;
   hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
+  selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
@@ -64,9 +69,11 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       faceHoverListener: () => {},
       sectorPressListener: () => {},
       sectorHoverListener: () => {},
+      sectorSetListener: () => {},
       backgroundOffsetDistance: 0.3,
       hoverHighlightProperty: new Property( null ),
-      selectedFaceColorHighlightProperty: new Property( null )
+      selectedFaceColorHighlightProperty: new Property( null ),
+      selectedSectorEditProperty: new Property( null )
     }, providedOptions );
 
     const faceColorContainer = new Node( {
@@ -96,6 +103,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const hoverHighlightContainer = new Node( {
       pickable: false
     } );
+    const selectedSectorEditContainer = new Node();
 
     const isSolvedProperty = new DerivedProperty( [ puzzle.stateProperty ], state => {
       if ( state.getWeirdEdges().length || state.hasInvalidFaceColors() ) {
@@ -149,14 +157,15 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         faceStateContainer,
         annotationContainer,
         selectedFaceColorHighlightContainer,
-        hoverHighlightContainer
+        hoverHighlightContainer,
+        selectedSectorEditContainer
       ]
     }, options ) );
 
     this.annotationContainer = annotationContainer;
 
     const hoverListener = ( hoverHighlight: HoverHighlight | null ) => {
-      hoverHighlightContainer.removeAllChildren();
+      hoverHighlightContainer.children.forEach( child => child.dispose() );
       if ( hoverHighlight ) {
         hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight, options.backgroundOffsetDistance ) ); // no unlink necessary
       }
@@ -165,13 +174,22 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     this.disposeEmitter.addListener( () => options.hoverHighlightProperty.unlink( hoverListener ) );
 
     const selectedFaceColorListener = ( selectedFaceColorHighlight: SelectedFaceColorHighlight | null ) => {
-      selectedFaceColorHighlightContainer.removeAllChildren();
+      selectedFaceColorHighlightContainer.children.forEach( child => child.dispose() );
       if ( selectedFaceColorHighlight ) {
         selectedFaceColorHighlightContainer.addChild( new SelectedFaceColorHighlightNode( selectedFaceColorHighlight, puzzle.board, options ) ); // no unlink necessary
       }
     };
     options.selectedFaceColorHighlightProperty.link( selectedFaceColorListener );
     this.disposeEmitter.addListener( () => options.selectedFaceColorHighlightProperty.unlink( selectedFaceColorListener ) );
+
+    const selectedSectorEditListener = ( selectedSectorEdit: SelectedSectorEdit | null ) => {
+      selectedSectorEditContainer.children.forEach( child => child.dispose() );
+      if ( selectedSectorEdit ) {
+        selectedSectorEditContainer.addChild( new SelectedSectorEditNode( selectedSectorEdit, backgroundNode, options ) ); // no unlink necessary
+      }
+    };
+    options.selectedSectorEditProperty.link( selectedSectorEditListener );
+    this.disposeEmitter.addListener( () => options.selectedSectorEditProperty.unlink( selectedSectorEditListener ) );
 
     this.disposeEmitter.addListener( () => {
       const containers = [

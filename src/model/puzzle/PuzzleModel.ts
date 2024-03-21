@@ -30,6 +30,8 @@ import { showHoverHighlightsProperty } from '../../view/Theme.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -453,6 +455,14 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.pendingActionSectorProperty.value = sector;
   }
 
+  public onUserSectorSet( sector: TSector, state: SectorState ): void {
+    this.applyUserActionToStack( new SectorStateSetAction( sector, state ) );
+
+    this.pendingActionSectorProperty.value = null;
+
+    this.updateState();
+  }
+
   public onUserEdgeHover( edge: TEdge, isOver: boolean ): void {
     if ( isOver ) {
       this.hoverEdgeProperty.value = edge;
@@ -600,7 +610,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 }
 
-export type PuzzleModelUserAction = EdgeStateSetAction | FaceColorMakeSameAction | FaceColorMakeOppositeAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
+export type PuzzleModelUserAction = EdgeStateSetAction | FaceColorMakeSameAction | FaceColorMakeOppositeAction | SectorStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
 
 export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
   public readonly isUserLoadPuzzleAutoSolveAction = true;

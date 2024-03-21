@@ -6,6 +6,8 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { AnnotationNode } from './AnnotationNode.ts';
+import { TSector } from '../model/data/sector-state/TSector.ts';
+import SectorState from '../model/data/sector-state/SectorState.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModelNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {
@@ -33,8 +35,12 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       sectorHoverListener: ( sector, isOver ) => {
         puzzleModel.onUserSectorHover( sector, isOver );
       },
+      sectorSetListener: ( sector: TSector, state: SectorState ) => {
+        puzzleModel.onUserSectorSet( sector, state );
+      },
       hoverHighlightProperty: puzzleModel.hoverHighlightProperty,
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
+      selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty
     } );
 
     super( combineOptions<NodeOptions>( {

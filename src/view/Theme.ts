@@ -31,6 +31,7 @@ export interface TTheme {
   redLineColorProperty: PaintColorProperty;
   whiteLineColorProperty: PaintColorProperty;
   selectedFaceColorHighlightColorProperty: PaintColorProperty;
+  selectedSectorEditColorProperty: PaintColorProperty;
   hoverHighlightColorProperty: PaintColorProperty;
 
   // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
@@ -96,6 +97,7 @@ export const lightTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.5)' ),
+  selectedSectorEditColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.8)' ),
   hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.6)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
@@ -148,6 +150,7 @@ export const darkTheme = {
   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.5)' ),
+  selectedSectorEditColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.8)' ),
   hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.6)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
@@ -517,6 +520,10 @@ export const whiteLineColorProperty = new DynamicProperty( themeProperty, {
 
 export const selectedFaceColorHighlightColorProperty = new DynamicProperty( themeProperty, {
   derive: 'selectedFaceColorHighlightColorProperty'
+} ) as TReadOnlyProperty<Color>;
+
+export const selectedSectorEditColorProperty = new DynamicProperty( themeProperty, {
+  derive: 'selectedSectorEditColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
 export const hoverHighlightColorProperty = new DynamicProperty( themeProperty, {
