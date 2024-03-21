@@ -125,7 +125,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       }
     } );
     this.disposeEmitter.addListener( () => this.selectedSectorEditProperty.dispose() );
-    this.selectedSectorEditProperty.lazyLink( value => console.log( value ) );
 
     // TODO: update on shift-press too!
     this.hoverHighlightProperty = new DerivedProperty( [
@@ -378,6 +377,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       this.stackPositionProperty.value = this.stackLengthProperty.value - 1;
       this.updateState();
     }
+  }
+
+  public onUserEscape(): void {
+    this.pendingActionFaceColorProperty.value = null;
+    this.pendingActionSectorProperty.value = null;
   }
 
   public getNewEdgeState( oldEdgeState: EdgeState, button: 0 | 1 | 2 ): EdgeState {

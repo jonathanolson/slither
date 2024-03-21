@@ -230,6 +230,9 @@ document.addEventListener( 'keydown', event => {
   else if ( event.key === '9' ) {
     tryToSetEditMode( EditMode.DELETE_FACE );
   }
+  else if ( event.key === 'Escape' ) {
+    puzzleModelProperty.value?.onUserEscape();
+  }
 } );
 
 // Clean up old puzzle models
