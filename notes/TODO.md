@@ -12,13 +12,38 @@
     - 
     - Edit modes (row for all of this?):
       - Modes:
-        - [IF sector] Sector edit (pop up radio-button-like list)
         - [IF vertex-state] Vertex state (pop up ... some view of options?)
         - [IF face-state] Face state (pop up view with on/off for each?)
         - Face value (allow entering a number, or '-'/'.' OR SPACEBAR for blank?)
         - Delete face
     - 
     - View modes (space-efficient drop-downs? check combobox again -- drop-downs show full info and name):
+      - 
+      - Classic
+        - Lines (without color)
+        - NO FACE COLORING
+        - red Xs
+        - vertices
+      - Basic Lines
+        - Lines with color
+        - Possible line
+        - Face colors with "only outside"
+      - Basic Face Coloring
+        - Lines (without color)
+        - Possible line
+        - Face colors with 2+
+      - Pure Color (solving rules should have face color => edge)
+        - No lines visible
+        - No possible line visible
+        - Ideally different solver set (color => x, color => lines)
+      - Sectors
+        - Lines (???)
+        - Possible line
+        - Face colors with 2+? or "only outside"?
+        - Sectors visible and editable
+      - Custom
+        - (allow all of the possibilities)
+      - 
       - Face values (regular value / remaining / fraction / face-state)
         - TODO: Actually, just have a "basic" face-state safe solver that will handle cases where edges are red/black...
       - [maybe] Impossible edges (none / red-x / full-line / middle-line)

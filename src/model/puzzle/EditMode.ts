@@ -55,7 +55,6 @@ editModeProperty.link( mode => {
   if ( listenedMode ) {
     listenedMode.isEnabledProperty.unlink( onEditModeEnabledChange );
   }
-  console.log( 'editMode', mode.name ); // TODO: add in UI soon so we don't need this
   listenedMode = mode;
   mode.isEnabledProperty.link( onEditModeEnabledChange );
 } );
