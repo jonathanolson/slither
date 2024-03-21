@@ -71,6 +71,7 @@ export interface TReadOnlyTheme {
   generateAddedFaceColorProperty: TReadOnlyProperty<Color>;
   generateMinimizedFaceColorProperty: TReadOnlyProperty<Color>;
 
+  simpleRegionHueLUTProperty: TReadOnlyProperty<string[]>;
   faceColorBasicHueLUTProperty: TReadOnlyProperty<string[]>;
   faceColorLightHueLUTProperty: TReadOnlyProperty<string[]>;
   faceColorDarkHueLUTProperty: TReadOnlyProperty<string[]>;
@@ -794,6 +795,7 @@ export const currentTheme: TReadOnlyTheme = {
   generateAddedFaceColorProperty: generateAddedFaceColorProperty,
   generateMinimizedFaceColorProperty: generateMinimizedFaceColorProperty,
 
+  simpleRegionHueLUTProperty: getLUTProperty( simpleRegionTargetColorProperty ),
   faceColorBasicHueLUTProperty: getLUTProperty( faceColorBasicTargetColorProperty ),
   faceColorLightHueLUTProperty: getLUTProperty( faceColorLightTargetColorProperty ),
   faceColorDarkHueLUTProperty: getLUTProperty( faceColorDarkTargetColorProperty ),

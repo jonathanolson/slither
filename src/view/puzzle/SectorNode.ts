@@ -1,7 +1,6 @@
-import { Node, Path, TPaint } from 'phet-lib/scenery';
+import { Color, Node, Path, TPaint } from 'phet-lib/scenery';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { sectorNotOneColorProperty, sectorNotTwoColorProperty, sectorNotZeroColorProperty, sectorOnlyOneColorProperty, sectorOtherColorProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty } from '../Theme.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { Shape } from 'phet-lib/kite';
 import { TSector } from '../../model/data/sector-state/TSector.ts';
@@ -10,6 +9,7 @@ import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { TSectorStateData } from '../../model/data/sector-state/TSectorStateData.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type SectorNodeOptions = {
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
@@ -21,6 +21,7 @@ export class SectorNode extends Node {
   public constructor(
     public readonly sector: TSector,
     stateProperty: TReadOnlyProperty<TState<TSectorStateData & TEdgeStateData>>,
+    style: TPuzzleStyle,
     options: SectorNodeOptions
   ) {
     super();
@@ -137,14 +138,14 @@ export class SectorNode extends Node {
       translation: vertexPoint,
       lineWidth: 0.01,
       lineCap: 'butt',
-      visibleProperty: sectorsVisibleProperty
+      visibleProperty: style.sectorsVisibleProperty
     } );
     this.addChild( path );
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      sectorsNextToEdgesVisibleProperty,
-      sectorsTrivialVisibleProperty
+      style.sectorsNextToEdgesVisibleProperty,
+      style.sectorsTrivialVisibleProperty
     ], ( state, nextToEdgesVisible, trivialVisible ) => {
       const edgeStateA = state.getEdgeState( sector.edge );
       const edgeStateB = state.getEdgeState( sector.next.edge );
@@ -168,7 +169,7 @@ export class SectorNode extends Node {
         }
         if ( trivialVisible || !isTrivial ) {
           shape = shapeMap.get( sectorState ) ?? null;
-          stroke = SectorNode.strokeMap.get( sectorState ) ?? null;
+          stroke = SectorNode.getStrokeFromStyle( sectorState, style ) ?? null;
           dash = dashMap.get( sectorState ) ?? [];
           if ( dash.length ) {
             lineWidth = 0.015;
@@ -229,16 +230,23 @@ export class SectorNode extends Node {
       .makeImmutable();
   }
 
-  public static strokeMap = new Map<SectorState, TPaint>( [
-    [ SectorState.NONE, sectorOtherColorProperty ],
-    [ SectorState.ONLY_ZERO, sectorOtherColorProperty ],
-    [ SectorState.ONLY_ONE, sectorOnlyOneColorProperty ],
-    [ SectorState.ONLY_TWO, sectorOtherColorProperty ],
-    [ SectorState.NOT_ZERO, sectorNotZeroColorProperty ],
-    [ SectorState.NOT_ONE, sectorNotOneColorProperty ],
-    [ SectorState.NOT_TWO, sectorNotTwoColorProperty ],
-    [ SectorState.ANY, sectorOtherColorProperty ]
-  ] );
+  public static getStrokeFromStyle( sectorState: SectorState, style: TPuzzleStyle ): TReadOnlyProperty<Color> {
+    if ( sectorState === SectorState.ONLY_ONE ) {
+      return style.theme.sectorOnlyOneColorProperty;
+    }
+    else if ( sectorState === SectorState.NOT_ZERO ) {
+      return style.theme.sectorNotZeroColorProperty;
+    }
+    else if ( sectorState === SectorState.NOT_ONE ) {
+      return style.theme.sectorNotOneColorProperty;
+    }
+    else if ( sectorState === SectorState.NOT_TWO ) {
+      return style.theme.sectorNotTwoColorProperty;
+    }
+    else {
+      return style.theme.sectorOtherColorProperty;
+    }
+  }
 
   // TODO: move to a general location?
   public static nameMap = new Map<SectorState, string>( [

@@ -6,43 +6,11 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { blackLineColorProperty, edgesHaveColorsProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, edgesVisibleProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
-import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
+import { TLineCap, TLineJoin } from '../Theme.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
-import _ from '../../workarounds/_.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
-
-// Look-up table, but also support color shifts and matching a target color
-const hueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
-simpleRegionTargetColorProperty.link( () => {
-  const targetColor = simpleRegionTargetColorProperty.value;
-  const okhsl = parseToOKHSL( targetColor.toHexString() );
-
-  const hueForce = targetColor.alpha;
-  const targetHue = okhsl.h;
-
-  // Depending on the alpha of our target color, control the amount we are pulled to the hue of the target color
-  const mapHueDegree = ( hue: number ) => {
-    let hueDelta = hue - targetHue;
-
-    // sanity check wrap
-    if ( hueDelta > 180 ) {
-      hueDelta -= 360;
-    }
-    if ( hueDelta < -180 ) {
-      hueDelta += 360;
-    }
-    hueDelta *= ( 1 - hueForce );
-    hueDelta = Math.round( hueDelta );
-
-    return ( hueDelta + targetHue + 360 ) % 360;
-  };
-
-  for ( let i = 0; i < hueLUT.length; i++ ) {
-    hueLUT[ i ] = okhslToRGBString( mapHueDegree( i ), okhsl.s, okhsl.l );
-  }
-} );
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export class SimpleRegionViewNode extends Node {
 
@@ -57,13 +25,14 @@ export class SimpleRegionViewNode extends Node {
 
   public constructor(
     public readonly board: TBoard,
-    stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>
+    stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>,
+    private readonly style: TPuzzleStyle
   ) {
     super( {
       pickable: false,
 
       // TODO: also kill computation if we are not visible?
-      visibleProperty: edgesVisibleProperty
+      visibleProperty: style.edgesVisibleProperty
     } );
 
     board.faces.forEach( face => {
@@ -134,16 +103,16 @@ export class SimpleRegionViewNode extends Node {
     } );
 
     const updateHueListener = () => this.updateHues();
-    simpleRegionTargetColorProperty.link( updateHueListener );
-    edgesHaveColorsProperty.lazyLink( updateHueListener );
+    style.theme.simpleRegionHueLUTProperty.link( updateHueListener );
+    style.edgesHaveColorsProperty.lazyLink( updateHueListener );
     this.disposeEmitter.addListener( () => {
-      simpleRegionTargetColorProperty.unlink( updateHueListener );
-      edgesHaveColorsProperty.unlink( updateHueListener );
+      style.theme.simpleRegionHueLUTProperty.unlink( updateHueListener );
+      style.edgesHaveColorsProperty.unlink( updateHueListener );
     } );
   }
 
   private addRegion( simpleRegion: TSimpleRegion ): void {
-    const simpleRegionNode = new SimpleRegionNode( simpleRegion );
+    const simpleRegionNode = new SimpleRegionNode( simpleRegion, this.style );
     this.simpleRegionNodeMap.set( simpleRegion, simpleRegionNode );
     this.regionIdMap.set( simpleRegion.id, simpleRegion );
     this.regionContainer.addChild( simpleRegionNode );
@@ -173,7 +142,7 @@ export class SimpleRegionViewNode extends Node {
     const endPoint = edge.end.viewCoordinates;
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: edgeWeirdColorProperty,
+      stroke: this.style.theme.edgeWeirdColorProperty,
       lineCap: 'square'
     } );
     this.weirdEdgeNodeMap.set( edge, line );
@@ -335,12 +304,13 @@ class SimpleRegionNode extends Path {
   public edgeCount: number;
 
   public constructor(
-    public simpleRegion: TSimpleRegion
+    public simpleRegion: TSimpleRegion,
+    public readonly style: TPuzzleStyle
   ) {
     const hueVector = Vector2.createPolar( 1, dotRandom.nextDoubleBetween( 0, 2 * Math.PI ) );
 
     super( SimpleRegionNode.toShape( simpleRegion ), {
-      stroke: SimpleRegionNode.hueVectorToPaint( hueVector ),
+      stroke: SimpleRegionNode.hueVectorToPaint( hueVector, style ),
       lineWidth: 0.1,
       lineCap: 'square',
       lineJoin: 'round'
@@ -352,20 +322,20 @@ class SimpleRegionNode extends Path {
     const joinListener = ( join: TLineJoin ) => {
       this.lineJoin = join;
     };
-    joinedLinesJoinProperty.link( joinListener );
-    this.disposeEmitter.addListener( () => joinedLinesJoinProperty.unlink( joinListener ) );
+    style.joinedLinesJoinProperty.link( joinListener );
+    this.disposeEmitter.addListener( () => style.joinedLinesJoinProperty.unlink( joinListener ) );
 
     const capListener = ( cap: TLineCap ) => {
       // TODO: more cap styles
       this.lineCap = cap;
     };
-    joinedLinesCapProperty.link( capListener );
-    this.disposeEmitter.addListener( () => joinedLinesCapProperty.unlink( capListener ) );
+    style.joinedLinesCapProperty.link( capListener );
+    this.disposeEmitter.addListener( () => style.joinedLinesCapProperty.unlink( capListener ) );
   }
 
   public updateHue(): void {
     // if we have effectively zero magnitude, just use the x-axis
-    this.stroke = SimpleRegionNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT );
+    this.stroke = SimpleRegionNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.style );
   }
 
   public updateRegion( simpleRegion: TSimpleRegion ): void {
@@ -374,13 +344,15 @@ class SimpleRegionNode extends Path {
     this.edgeCount = simpleRegion.edges.length;
   }
 
-  public static hueVectorToPaint( hueVector: Vector2 ): TPaint {
+  public static hueVectorToPaint( hueVector: Vector2, style: TPuzzleStyle ): TPaint {
+    const hueLUT = style.theme.simpleRegionHueLUTProperty.value;
+
     const index = ( Math.round( hueVector.getAngle() * 180 / Math.PI ) + 360 ) % 360;
     assertEnabled() && assert( index >= 0 && index < hueLUT.length );
 
-    const showHues = edgesHaveColorsProperty.value;
+    const showHues = style.edgesHaveColorsProperty.value;
 
-    return showHues ? hueLUT[ index ] : blackLineColorProperty;
+    return showHues ? hueLUT[ index ] : style.theme.blackLineColorProperty;
   }
 
   public static toShape( simpleRegion: TSimpleRegion ): Shape {

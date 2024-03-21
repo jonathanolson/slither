@@ -2,7 +2,7 @@ import { Circle, GridBox, Node, Path } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { faceStateVisibleProperty, faceValueColorProperty, faceValueCompletedColorProperty, puzzleFont } from '../Theme.ts';
+import { puzzleFont } from '../Theme.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceStateData } from '../../model/data/face-state/TFaceStateData.ts';
@@ -10,12 +10,14 @@ import { UIText } from '../UIText.ts';
 import { Shape } from 'phet-lib/kite';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export class FaceStateNode extends Node {
   public constructor(
     public readonly face: TFace,
     stateProperty: TReadOnlyProperty<TState<TFaceStateData & TEdgeStateData>>,
-    isSolvedProperty: TReadOnlyProperty<boolean>
+    isSolvedProperty: TReadOnlyProperty<boolean>,
+    style: TPuzzleStyle
   ) {
     super( {
       translation: face.viewCoordinates
@@ -23,7 +25,7 @@ export class FaceStateNode extends Node {
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      faceStateVisibleProperty
+      style.faceStateVisibleProperty
     ], ( state, isFaceStateVisible ) => {
       this.children = [];
 
@@ -34,7 +36,7 @@ export class FaceStateNode extends Node {
 
         let content: Node;
 
-        const color = faceState.possibilityCount === 1 ? faceValueCompletedColorProperty : faceValueColorProperty;
+        const color = faceState.possibilityCount === 1 ? style.theme.faceValueCompletedColorProperty : style.theme.faceValueColorProperty;
 
         if ( onlyShowCount ) {
           content = new UIText( faceState.possibilityCount, {

@@ -4,7 +4,7 @@ import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColor
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import FaceColorState from '../../model/data/face-color/TFaceColorData.ts';
 import { PuzzleBackgroundNode } from './PuzzleBackgroundNode.ts';
-import { selectedFaceColorHighlightColorProperty } from '../Theme.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type SelectedFaceColorHighlightNodeOptions = {
   useBackgroundOffsetStroke: boolean;
@@ -15,6 +15,7 @@ export class SelectedFaceColorHighlightNode extends Node {
   public constructor(
     public readonly selectedFaceColorHighlight: SelectedFaceColorHighlight,
     board: TBoard,
+    style: TPuzzleStyle,
     options: SelectedFaceColorHighlightNodeOptions
   ) {
 
@@ -41,7 +42,7 @@ export class SelectedFaceColorHighlightNode extends Node {
       }
 
       const colorHighlightNode = new Path( shape.getOffsetShape( -0.07 ).getSimplifiedAreaShape(), {
-        stroke: selectedFaceColorHighlightColorProperty,
+        stroke: style.theme.selectedFaceColorHighlightColorProperty,
         lineWidth: 0.03
       } );
 

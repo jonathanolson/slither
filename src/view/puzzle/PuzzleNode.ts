@@ -122,32 +122,33 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
     puzzle.board.faces.forEach( face => {
-      faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );
-      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty ) );
+      faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
+      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
     } );
 
     const backgroundNode = new PuzzleBackgroundNode(
       puzzle.board.outerBoundary,
       puzzle.board.innerBoundaries,
+      style,
       options
     );
 
     // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
-      vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty ) );
+      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+      vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
     } );
 
     puzzle.board.edges.forEach( edge => {
-      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, options ) );
+      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
     } );
 
     puzzle.board.halfEdges.forEach( sector => {
-      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, options ) );
+      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
     } );
 
-    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty ) );
+    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
     super( combineOptions<BasicPuzzleNodeOptions>( {
       children: [
@@ -172,7 +173,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const hoverListener = ( hoverHighlight: HoverHighlight | null ) => {
       hoverHighlightContainer.children.forEach( child => child.dispose() );
       if ( hoverHighlight ) {
-        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight, options.backgroundOffsetDistance ) ); // no unlink necessary
+        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight, options.backgroundOffsetDistance, style ) ); // no unlink necessary
       }
     };
     options.hoverHighlightProperty.link( hoverListener );
@@ -181,7 +182,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const selectedFaceColorListener = ( selectedFaceColorHighlight: SelectedFaceColorHighlight | null ) => {
       selectedFaceColorHighlightContainer.children.forEach( child => child.dispose() );
       if ( selectedFaceColorHighlight ) {
-        selectedFaceColorHighlightContainer.addChild( new SelectedFaceColorHighlightNode( selectedFaceColorHighlight, puzzle.board, options ) ); // no unlink necessary
+        selectedFaceColorHighlightContainer.addChild( new SelectedFaceColorHighlightNode( selectedFaceColorHighlight, puzzle.board, style, options ) ); // no unlink necessary
       }
     };
     options.selectedFaceColorHighlightProperty.link( selectedFaceColorListener );
@@ -190,7 +191,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const selectedSectorEditListener = ( selectedSectorEdit: SelectedSectorEdit | null ) => {
       selectedSectorEditContainer.children.forEach( child => child.dispose() );
       if ( selectedSectorEdit ) {
-        selectedSectorEditContainer.addChild( new SelectedSectorEditNode( selectedSectorEdit, backgroundNode, options ) ); // no unlink necessary
+        selectedSectorEditContainer.addChild( new SelectedSectorEditNode( selectedSectorEdit, backgroundNode, style, options ) ); // no unlink necessary
       }
     };
     options.selectedSectorEditProperty.link( selectedSectorEditListener );

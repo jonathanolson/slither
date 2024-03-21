@@ -1,8 +1,9 @@
 import { Node, Path } from 'phet-lib/scenery';
 import { HoverHighlight } from '../../model/puzzle/HoverHighlight.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
-import { hoverHighlightColorProperty, showHoverHighlightsProperty } from '../Theme.ts';
+import { showHoverHighlightsProperty } from '../Theme.ts';
 import { SectorNode } from './SectorNode.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 const lineStyles = new LineStyles( {
   lineWidth: 0.2,
@@ -13,7 +14,8 @@ const lineStyles = new LineStyles( {
 export class HoverHighlightNode extends Node {
   public constructor(
     public readonly hoverHighlight: HoverHighlight,
-    backgroundOffsetDistance: number
+    backgroundOffsetDistance: number,
+    style: TPuzzleStyle
   ) {
     let children: Node[];
 
@@ -21,7 +23,7 @@ export class HoverHighlightNode extends Node {
       if ( hoverHighlight.type === 'edge-state' ) {
         const lineShape = new Shape().moveToPoint( hoverHighlight.edge.start.viewCoordinates ).lineToPoint( hoverHighlight.edge.end.viewCoordinates );
         const edgeHighlightNode = new Path( lineShape.getStrokedShape( lineStyles ), {
-          stroke: hoverHighlightColorProperty,
+          stroke: style.theme.hoverHighlightColorProperty,
           lineWidth: 0.02
         } );
 
@@ -31,7 +33,7 @@ export class HoverHighlightNode extends Node {
         if ( hoverHighlight.face ) {
           const faceShape = Shape.polygon( hoverHighlight.face.vertices.map( vertex => vertex.viewCoordinates ) );
           const faceHighlightNode = new Path( faceShape.getOffsetShape( -0.1 ), {
-            stroke: hoverHighlightColorProperty,
+            stroke: style.theme.hoverHighlightColorProperty,
             lineWidth: 0.02
           } );
 
@@ -45,7 +47,7 @@ export class HoverHighlightNode extends Node {
       else if ( hoverHighlight.type === 'sector' ) {
         const sectorShape = SectorNode.getSectorArcShape( hoverHighlight.sector, 0.5 );
         const sectorHighlightNode = new Path( sectorShape.getOffsetShape( 0.05 ), {
-          stroke: hoverHighlightColorProperty,
+          stroke: style.theme.hoverHighlightColorProperty,
           lineWidth: 0.02
         } );
 

@@ -2,13 +2,14 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { Line, Node, Path } from 'phet-lib/scenery';
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { redLineColorProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, TRedLineStyle, whiteLineColorProperty, whiteLineVisibleProperty, xColorProperty } from '../Theme.ts';
+import { TRedLineStyle } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 // TODO: better options pattern!
 export type EdgeNodeOptions = {
@@ -23,6 +24,7 @@ export class EdgeNode extends Node {
     public readonly edge: TEdge,
     stateProperty: TReadOnlyProperty<TState<TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
+    style: TPuzzleStyle,
     options: EdgeNodeOptions
   ) {
     super( {} );
@@ -45,14 +47,14 @@ export class EdgeNode extends Node {
 
     const xVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
-      redXsVisibleProperty
+      style.redXsVisibleProperty
     ], ( isSolved, visible ) => {
       return !isSolved && visible;
     } );
     this.disposeEmitter.addListener( () => xVisibleProperty.dispose() );
 
     const x = new Path( xShape, {
-      stroke: xColorProperty,
+      stroke: style.theme.xColorProperty,
       lineWidth: 0.02,
       center: centerPoint,
       visibleProperty: xVisibleProperty
@@ -60,12 +62,12 @@ export class EdgeNode extends Node {
     const alignListener = ( aligned: boolean ) => {
       x.rotation = aligned ? endPoint.minus( startPoint ).getAngle() : 0;
     };
-    redXsAlignedProperty.link( alignListener );
-    this.disposeEmitter.addListener( () => redXsAlignedProperty.unlink( alignListener ) );
+    style.redXsAlignedProperty.link( alignListener );
+    this.disposeEmitter.addListener( () => style.redXsAlignedProperty.unlink( alignListener ) );
 
     const whiteVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
-      whiteLineVisibleProperty
+      style.whiteLineVisibleProperty
     ], ( isSolved, visible ) => {
       return !isSolved && visible;
     } );
@@ -73,14 +75,14 @@ export class EdgeNode extends Node {
 
     const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.02,
-      stroke: whiteLineColorProperty,
+      stroke: style.theme.whiteLineColorProperty,
       // lineDash: [ 0.05, 0.05 ],
       visibleProperty: whiteVisibleProperty
     } );
 
     const redVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
-      redLineVisibleProperty
+      style.redLineVisibleProperty
     ], ( isSolved, visible ) => {
       // return !isSolved && visible;
       return visible; // TODO: see how this looks, with it displayed during the finish
@@ -90,7 +92,7 @@ export class EdgeNode extends Node {
     // TODO: layer these, or get the "join" correct
     const redLine = new Path( null, {
       lineWidth: 0.02,
-      stroke: redLineColorProperty,
+      stroke: style.theme.redLineColorProperty,
       lineDash: [ 0.03, 0.05 ],
       visibleProperty: redVisibleProperty
     } );
@@ -128,8 +130,8 @@ export class EdgeNode extends Node {
         assertEnabled() && assert( false, `Unknown red line style: ${style}` );
       }
     };
-    redLineStyleProperty.link( redLineStyleListener );
-    this.disposeEmitter.addListener( () => redLineStyleProperty.unlink( redLineStyleListener ) );
+    style.redLineStyleProperty.link( redLineStyleListener );
+    this.disposeEmitter.addListener( () => style.redLineStyleProperty.unlink( redLineStyleListener ) );
 
 
     // TODO: ALLOW DRAGGING TO SET LINES

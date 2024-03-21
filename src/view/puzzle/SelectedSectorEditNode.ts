@@ -4,8 +4,9 @@ import { SectorNode } from './SectorNode.ts';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { Panel, RectangularPushButton } from 'phet-lib/sun';
 import { TSector } from '../../model/data/sector-state/TSector.ts';
-import { rectangularButtonAppearanceStrategy, selectedSectorEditColorProperty, uiBackgroundColorProperty, uiForegroundColorProperty } from '../Theme.ts';
+import { rectangularButtonAppearanceStrategy } from '../Theme.ts';
 import { PuzzleBackgroundNode } from './PuzzleBackgroundNode.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type SelectedSectorEditNodeOptions = {
   sectorSetListener?: ( sector: TSector, state: SectorState ) => void;
@@ -17,6 +18,7 @@ export class SelectedSectorEditNode extends Node {
   public constructor(
     public readonly selectedSectorEdit: SelectedSectorEdit,
     background: PuzzleBackgroundNode,
+    style: TPuzzleStyle,
     options: SelectedSectorEditNodeOptions
   ) {
 
@@ -28,7 +30,7 @@ export class SelectedSectorEditNode extends Node {
 
     const sectorShape = SectorNode.getSectorArcShape( sector, 0.5 );
     const sectorHighlightNode = new Path( sectorShape.getOffsetShape( 0.05 ), {
-      stroke: selectedSectorEditColorProperty,
+      stroke: style.theme.selectedSectorEditColorProperty,
       lineWidth: 0.02
     } );
     children.push( sectorHighlightNode );
@@ -47,7 +49,7 @@ export class SelectedSectorEditNode extends Node {
     if ( availableSectorStates.length ) {
       const buttons = availableSectorStates.map( state => {
 
-        const paint = SectorNode.strokeMap.get( state )!;
+        const paint = SectorNode.getStrokeFromStyle( state, style )!;
 
         return new RectangularPushButton( {
           accessibleName: SectorNode.nameMap.get( state )!,
@@ -78,8 +80,8 @@ export class SelectedSectorEditNode extends Node {
       } ), {
         xMargin: 10,
         yMargin: 10,
-        fill: uiBackgroundColorProperty,
-        stroke: uiForegroundColorProperty,
+        fill: style.theme.uiBackgroundColorProperty,
+        stroke: style.theme.uiForegroundColorProperty,
         scale: 0.01
       } );
       nodesToDispose.push( panel );

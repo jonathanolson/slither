@@ -2,7 +2,6 @@ import { Circle, Node, Path } from 'phet-lib/scenery';
 import { TVertex } from '../../model/board/core/TVertex.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { allVertexStateVisibleProperty, vertexStateBackgroundProperty, vertexStateLineProperty, vertexStateOutlineProperty, vertexStatePointProperty, vertexStateVisibleProperty } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
@@ -10,12 +9,14 @@ import { ConvexHull2, Vector2 } from 'phet-lib/dot';
 import { VertexState } from '../../model/data/vertex-state/VertexState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export class VertexStateNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
     stateProperty: TReadOnlyProperty<TState<TVertexStateData & TEdgeStateData>>,
-    isSolvedProperty: TReadOnlyProperty<boolean>
+    isSolvedProperty: TReadOnlyProperty<boolean>,
+    style: TPuzzleStyle
   ) {
     super( {
       pickable: false
@@ -32,7 +33,7 @@ export class VertexStateNode extends Node {
     const backgroundShape = mainShape.getOffsetShape( -0.05 );
 
     const statePath = new Path( null, {
-      stroke: vertexStateLineProperty,
+      stroke: style.theme.vertexStateLineProperty,
       lineWidth: 0.01
     } );
 
@@ -40,8 +41,8 @@ export class VertexStateNode extends Node {
     const mainPath = new Path( backgroundShape, {
       translation: vertex.viewCoordinates,
 
-      fill: vertexStateBackgroundProperty,
-      stroke: vertexStateOutlineProperty,
+      fill: style.theme.vertexStateBackgroundProperty,
+      stroke: style.theme.vertexStateOutlineProperty,
       lineWidth: 0.01,
 
       children: [
@@ -49,7 +50,7 @@ export class VertexStateNode extends Node {
         ...mainPoints.map( point => new Circle( {
           radius: 0.02,
           translation: point,
-          fill: vertexStatePointProperty
+          fill: style.theme.vertexStatePointProperty
         } ) )
       ]
     } );
@@ -58,8 +59,8 @@ export class VertexStateNode extends Node {
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      vertexStateVisibleProperty,
-      allVertexStateVisibleProperty
+      style.vertexStateVisibleProperty,
+      style.allVertexStateVisibleProperty
     ], ( state, isVertexStateVisible, showAllState ) => {
       const hide = () => { this.children = []; };
 

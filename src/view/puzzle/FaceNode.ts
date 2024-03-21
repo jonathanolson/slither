@@ -2,13 +2,14 @@ import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
-import { faceStateVisibleProperty, faceValueColorProperty, faceValueCompletedColorProperty, faceValueErrorColorProperty, faceValueStyleProperty, puzzleFont } from '../Theme.ts';
+import { puzzleFont } from '../Theme.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
 import { Shape } from 'phet-lib/kite';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type FaceNodeOptions = {
   textOptions?: TextOptions;
@@ -21,6 +22,7 @@ export class FaceNode extends Node {
   public constructor(
     public readonly face: TFace,
     stateProperty: TReadOnlyProperty<TState<TEdgeStateData & TFaceValueData>>,
+    style: TPuzzleStyle,
     providedOptions?: FaceNodeOptions
   ) {
 
@@ -48,11 +50,11 @@ export class FaceNode extends Node {
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      faceValueStyleProperty,
-      faceValueColorProperty,
-      faceValueCompletedColorProperty,
-      faceValueErrorColorProperty,
-      faceStateVisibleProperty
+      style.faceValueStyleProperty,
+      style.theme.faceValueColorProperty,
+      style.theme.faceValueCompletedColorProperty,
+      style.theme.faceValueErrorColorProperty,
+      style.faceStateVisibleProperty
     ], (
       state,
       faceValueStyle,

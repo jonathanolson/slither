@@ -3,11 +3,11 @@ import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
 import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
 import _ from '../../workarounds/_.ts';
-import { playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, puzzleBackgroundStrokeColorProperty } from '../Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { isFaceColorEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;
@@ -20,6 +20,7 @@ export class PuzzleBackgroundNode extends Node {
   public constructor(
     public readonly outerBoundary: THalfEdge[],
     public readonly innerBoundaries: THalfEdge[][],
+    public readonly style: TPuzzleStyle,
     providedOptions?: PuzzleBackgroundNodeOptions
   ) {
 
@@ -81,13 +82,13 @@ export class PuzzleBackgroundNode extends Node {
 
     this.children = [
       new Path( backgroundShape, {
-        fill: puzzleBackgroundColorProperty,
-        stroke: puzzleBackgroundStrokeColorProperty,
+        fill: style.theme.puzzleBackgroundColorProperty,
+        stroke: style.theme.puzzleBackgroundStrokeColorProperty,
         lineWidth: 0.03
       } ),
       ...innerBoundaryShapes.map( shape => new Path( shape, {
-        fill: playAreaBackgroundColorProperty,
-        stroke: puzzleBackgroundStrokeColorProperty,
+        fill: style.theme.playAreaBackgroundColorProperty,
+        stroke: style.theme.puzzleBackgroundStrokeColorProperty,
         lineWidth: 0.03
       } ) )
     ];
