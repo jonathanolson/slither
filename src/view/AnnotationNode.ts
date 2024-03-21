@@ -4,10 +4,14 @@ import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
 import { UIText } from './UIText.ts';
 import _ from '../workarounds/_.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 export class AnnotationNode extends Node {
   public constructor(
-    public readonly annotation: TAnnotation
+    public readonly annotation: TAnnotation,
+
+    // TODO: ... use this for the theme/etc.
+    public readonly style: TPuzzleStyle
   ) {
     let children: Node[];
 

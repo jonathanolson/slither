@@ -5,51 +5,12 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference, Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { faceColorDefaultColorProperty, faceColorInsideColorProperty, faceColorOutsideColorProperty, faceColorBasicTargetColorProperty, faceColorThresholdProperty, faceColorLightTargetColorProperty, faceColorDarkTargetColorProperty } from '../Theme.ts';
-import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
-
-const linkLUT = ( lut: string[], colorProperty: TReadOnlyProperty<Color> ) => {
-  colorProperty.link( targetColor => {
-    const okhsl = parseToOKHSL( targetColor.toHexString() );
-
-    const hueForce = targetColor.alpha;
-    const targetHue = okhsl.h;
-
-    // Depending on the alpha of our target color, control the amount we are pulled to the hue of the target color
-    const mapHueDegree = ( hue: number ) => {
-      let hueDelta = hue - targetHue;
-
-      // sanity check wrap
-      if ( hueDelta > 180 ) {
-        hueDelta -= 360;
-      }
-      if ( hueDelta < -180 ) {
-        hueDelta += 360;
-      }
-      hueDelta *= ( 1 - hueForce );
-      hueDelta = Math.round( hueDelta );
-
-      return ( hueDelta + targetHue + 360 ) % 360;
-    };
-
-    for ( let i = 0; i < basicHueLUT.length; i++ ) {
-      lut[ i ] = okhslToRGBString( mapHueDegree( i ), okhsl.s, okhsl.l );
-    }
-  } );
-};
-
-// Look-up table, but also support color shifts and matching a target color
-const basicHueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
-const lightHueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
-const darkHueLUT = _.range( 0, 360 ).map( hue => okhslToRGBString( hue, 0.7, 0.55 ) );
-linkLUT( basicHueLUT, faceColorBasicTargetColorProperty );
-linkLUT( lightHueLUT, faceColorLightTargetColorProperty );
-linkLUT( darkHueLUT, faceColorDarkTargetColorProperty );
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export class FaceColorViewNode extends Node {
 
@@ -64,7 +25,8 @@ export class FaceColorViewNode extends Node {
 
   public constructor(
     public readonly board: TBoard,
-    private readonly stateProperty: TReadOnlyProperty<TState<TFaceColorData>>
+    private readonly stateProperty: TReadOnlyProperty<TState<TFaceColorData>>,
+    private readonly style: TPuzzleStyle
   ) {
     const faceColorNodeContainer = new Node();
 
@@ -154,27 +116,27 @@ export class FaceColorViewNode extends Node {
     } );
 
     const updateHueListener = () => this.updateHues();
-    faceColorBasicTargetColorProperty.lazyLink( updateHueListener );
-    faceColorLightTargetColorProperty.lazyLink( updateHueListener );
-    faceColorDarkTargetColorProperty.lazyLink( updateHueListener );
-    faceColorInsideColorProperty.lazyLink( updateHueListener );
-    faceColorOutsideColorProperty.lazyLink( updateHueListener );
-    faceColorThresholdProperty.lazyLink( updateHueListener );
-    faceColorDefaultColorProperty.lazyLink( updateHueListener ); // TODO: might not need this link
+    style.theme.faceColorBasicHueLUTProperty.lazyLink( updateHueListener );
+    style.theme.faceColorLightHueLUTProperty.lazyLink( updateHueListener );
+    style.theme.faceColorDarkHueLUTProperty.lazyLink( updateHueListener );
+    style.theme.faceColorInsideColorProperty.lazyLink( updateHueListener );
+    style.theme.faceColorOutsideColorProperty.lazyLink( updateHueListener );
+    style.theme.faceColorDefaultColorProperty.lazyLink( updateHueListener ); // TODO: might not need this link
+    style.faceColorThresholdProperty.lazyLink( updateHueListener );
     this.updateHues();
     this.disposeEmitter.addListener( () => {
-      faceColorBasicTargetColorProperty.unlink( updateHueListener );
-      faceColorLightTargetColorProperty.unlink( updateHueListener );
-      faceColorDarkTargetColorProperty.unlink( updateHueListener );
-      faceColorInsideColorProperty.unlink( updateHueListener );
-      faceColorOutsideColorProperty.unlink( updateHueListener );
-      faceColorThresholdProperty.unlink( updateHueListener );
-      faceColorDefaultColorProperty.unlink( updateHueListener );
+      style.theme.faceColorBasicHueLUTProperty.unlink( updateHueListener );
+      style.theme.faceColorLightHueLUTProperty.unlink( updateHueListener );
+      style.theme.faceColorDarkHueLUTProperty.unlink( updateHueListener );
+      style.theme.faceColorInsideColorProperty.unlink( updateHueListener );
+      style.theme.faceColorOutsideColorProperty.unlink( updateHueListener );
+      style.theme.faceColorDefaultColorProperty.unlink( updateHueListener );
+      style.faceColorThresholdProperty.unlink( updateHueListener );
     } );
   }
 
   private addFaceColor( faceColor: TFaceColor, faces: TFace[] ): void {
-    const faceColorNode = new FaceColorNode( faceColor, faces );
+    const faceColorNode = new FaceColorNode( faceColor, faces, this.style );
     this.faceColorNodeMap.set( faceColor, faceColorNode );
     this.faceColorIdMap.set( faceColor.id, faceColor );
     this.faceColorNodeContainer.addChild( faceColorNode );
@@ -237,10 +199,10 @@ export class FaceColorViewNode extends Node {
         const oppositeFaceColorNode = this.faceColorNodeMap.get( oppositeColor )!;
         assertEnabled() && assert( oppositeFaceColorNode );
 
-        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode, oppositeFaceColorNode ] ) );
+        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode, oppositeFaceColorNode ], this.style ) );
       }
       else {
-        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode ] ) );
+        this.dualColorViews.add( new DualColorView( [ mainFaceColorNode ], this.style ) );
       }
     }
   }
@@ -272,12 +234,12 @@ export class FaceColorViewNode extends Node {
     const dualColorViews = [ ...this.dualColorViews ].filter( dualColorView => {
       // Exclude the inside/outside from colors if they won't be used.
       if ( dualColorView.colorNodes[ 0 ].faceColor.colorState !== FaceColorState.UNDECIDED &&
-           faceColorOutsideColorProperty.value.alpha === 1 &&
-           faceColorInsideColorProperty.value.alpha === 1 ) {
+           this.style.theme.faceColorOutsideColorProperty.value.alpha === 1 &&
+           this.style.theme.faceColorInsideColorProperty.value.alpha === 1 ) {
         return false;
       }
 
-      return dualColorView.faceCount >= faceColorThresholdProperty.value;
+      return dualColorView.faceCount >= this.style.faceColorThresholdProperty.value;
     } );
 
     if ( dualColorViews.length >= 2 ) {
@@ -428,7 +390,8 @@ class DualColorView {
   public faceCount: number;
 
   public constructor(
-    public readonly colorNodes: FaceColorNode[]
+    public readonly colorNodes: FaceColorNode[],
+    public readonly style: TPuzzleStyle
   ) {
     assertEnabled() && assert( colorNodes.length === 1 || colorNodes.length === 2 );
 
@@ -495,7 +458,7 @@ class DualColorView {
     for ( const colorNode of this.colorNodes ) {
       colorNode.hueVector.set( this.hueVector );
 
-      colorNode.updateHue( this.faceCount >= faceColorThresholdProperty.value );
+      colorNode.updateHue( this.faceCount >= this.style.faceColorThresholdProperty.value );
     }
   }
 
@@ -515,7 +478,8 @@ class FaceColorNode extends Path {
 
   public constructor(
     public faceColor: TFaceColor,
-    public faces: TFace[]
+    public faces: TFace[],
+    public readonly style: TPuzzleStyle
   ) {
     const hueVector = Vector2.createPolar( 1, dotRandom.nextDoubleBetween( 0, 2 * Math.PI ) );
 
@@ -528,10 +492,10 @@ class FaceColorNode extends Path {
   public updateHue( passesThreshold: boolean ): void {
     if ( passesThreshold || this.faceColor.colorState !== FaceColorState.UNDECIDED ) {
       // if we have effectively zero magnitude, just use the x-axis
-      this.fill = FaceColorNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.faceColor.colorState, this.type );
+      this.fill = FaceColorNode.hueVectorToPaint( this.hueVector.getMagnitude() > 1e-6 ? this.hueVector : Vector2.X_UNIT, this.faceColor.colorState, this.type, this.style );
     }
     else {
-      this.fill = faceColorDefaultColorProperty; // TODO: should we just use the value, because we are linked?
+      this.fill = this.style.theme.faceColorDefaultColorProperty; // TODO: should we just use the value, because we are linked?
     }
   }
 
@@ -548,8 +512,10 @@ class FaceColorNode extends Path {
     }
   }
 
-  public static hueVectorToPaint( hueVector: Vector2, faceColorState: FaceColorState, type: DualColorType ): TPaint {
-    const table = type === DualColorType.BASIC ? basicHueLUT : type === DualColorType.PRIMARY ? lightHueLUT : darkHueLUT;
+  public static hueVectorToPaint( hueVector: Vector2, faceColorState: FaceColorState, type: DualColorType, style: TPuzzleStyle ): TPaint {
+    const table = type === DualColorType.BASIC ? style.theme.faceColorBasicHueLUTProperty.value
+                                               : type === DualColorType.PRIMARY ? style.theme.faceColorLightHueLUTProperty.value
+                                                                                : style.theme.faceColorDarkHueLUTProperty.value;
 
     const index = ( Math.round( hueVector.getAngle() * 180 / Math.PI ) + 360 ) % 360;
     assertEnabled() && assert( index >= 0 && index < table.length );
@@ -561,7 +527,7 @@ class FaceColorNode extends Path {
       return paint;
     }
     else {
-      const colorProperty = faceColorState === FaceColorState.INSIDE ? faceColorInsideColorProperty : faceColorOutsideColorProperty;
+      const colorProperty = faceColorState === FaceColorState.INSIDE ? style.theme.faceColorInsideColorProperty : style.theme.faceColorOutsideColorProperty;
       const color = colorProperty.value;
       const ratio = color.alpha;
       const paintColor = new Color( paint );

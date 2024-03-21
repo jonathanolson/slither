@@ -40,7 +40,8 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       },
       hoverHighlightProperty: puzzleModel.hoverHighlightProperty,
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
-      selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty
+      selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
+      style: puzzleModel.style
     } );
 
     super( combineOptions<NodeOptions>( {
@@ -62,7 +63,7 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       }
 
       if ( annotation ) {
-        const annotationNode = new AnnotationNode( annotation );
+        const annotationNode = new AnnotationNode( annotation, puzzleModel.style );
         puzzleNode.addAnnotationNode( annotationNode );
         lastAnnotationNode = annotationNode;
       }

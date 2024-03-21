@@ -32,6 +32,7 @@ import { TSector } from '../data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
+import { customPuzzleStyle, TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -74,7 +75,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly selectedSectorEditProperty: TReadOnlyProperty<SelectedSectorEdit | null>;
 
   public constructor(
-    public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>
+    public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
+    public readonly style: TPuzzleStyle = customPuzzleStyle // TODO: see if we can just have a model-based one?
   ) {
     super();
 

@@ -1,7 +1,7 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
 import { DerivedProperty, Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
-import { faceColorsVisibleProperty, puzzleFont } from '../Theme.ts';
+import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
@@ -25,6 +25,7 @@ import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
 import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
+import { customPuzzleStyle, TPuzzleStyle } from './TPuzzleStyle.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -39,6 +40,7 @@ type SelfOptions = {
   hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
+  style?: TPuzzleStyle;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
@@ -73,11 +75,14 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       backgroundOffsetDistance: 0.3,
       hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null ),
-      selectedSectorEditProperty: new Property( null )
+      selectedSectorEditProperty: new Property( null ),
+      style: customPuzzleStyle
     }, providedOptions );
 
+    const style = options.style;
+
     const faceColorContainer = new Node( {
-      visibleProperty: faceColorsVisibleProperty
+      visibleProperty: style.faceColorsVisibleProperty
     } );
     const faceContainer = new Node( {
       pickableProperty: isFaceEditModeProperty
@@ -114,7 +119,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       return regions.length === 1 && regions[ 0 ].isSolved;
     } );
 
-    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty ) );
+    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, options ) );

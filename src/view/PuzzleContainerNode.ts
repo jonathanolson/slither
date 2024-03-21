@@ -2,12 +2,12 @@ import { AnimatedPanZoomListener, LinearGradient, Node, NodeOptions, RadialGradi
 import PuzzleModelNode from './PuzzleModelNode.ts';
 import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
-import { playAreaBackgroundColorProperty, playAreaLinearBottomColorProperty, playAreaLinearMiddleColorProperty, playAreaLinearTopColorProperty, playAreaRadialInsideColorProperty, playAreaRadialOutsideColorProperty } from './Theme';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
+import { customPuzzleStyle, TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 type SelfOptions = {
   topological?: boolean;
@@ -28,6 +28,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
   public constructor(
     public readonly puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null>,
+    public readonly style: TPuzzleStyle = customPuzzleStyle,
     providedOptions?: PuzzleContainerNodeOptions
   ) {
 
@@ -39,7 +40,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     super( options );
 
     this.backgroundRect = new Rectangle( {
-      fill: playAreaBackgroundColorProperty
+      fill: style.theme.playAreaBackgroundColorProperty
     } );
     this.rectangularGradientRect = new Rectangle( {
       // TODO: don't require this
@@ -131,14 +132,14 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
       const distanceToCorner = center.getMagnitude();
 
       this.rectangularGradientRect.fill = new LinearGradient( 0, 0, 0, height )
-        .addColorStop( 0, playAreaLinearTopColorProperty )
-        .addColorStop( 0.5, playAreaLinearMiddleColorProperty )
-        .addColorStop( 1, playAreaLinearBottomColorProperty );
+        .addColorStop( 0, this.style.theme.playAreaLinearTopColorProperty )
+        .addColorStop( 0.5, this.style.theme.playAreaLinearMiddleColorProperty )
+        .addColorStop( 1, this.style.theme.playAreaLinearBottomColorProperty );
 
       this.circularGradientRect.fill = new RadialGradient(
         center.x, center.y, distanceToCorner,
         center.x, center.y, 0
-      ).addColorStop( 0, playAreaRadialOutsideColorProperty ).addColorStop( 1, playAreaRadialInsideColorProperty );
+      ).addColorStop( 0, this.style.theme.playAreaRadialOutsideColorProperty ).addColorStop( 1, this.style.theme.playAreaRadialInsideColorProperty );
 
       this.clipArea = Shape.bounds( bounds );
 

@@ -13,7 +13,7 @@ import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory, TSolver } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
 import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
@@ -69,6 +69,7 @@ export const autoSolveFaceToFaceColorsProperty = new LocalStorageBooleanProperty
 export const autoSolveFaceToVertexProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToVertexProperty', false );
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
+// TODO: deprecate this?!?
 export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new SafeEdgeToSimpleRegionSolver( board, state ),
@@ -77,6 +78,38 @@ export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, 
     new SafeEdgeToSectorSolver( board, state ),
     new SafeEdgeSectorColorToVertexSolver( board, state ),
   ] );
+};
+
+export const getSafeSolverFactory = (
+  faceColors: boolean,
+  sectors: boolean,
+  vertexState: boolean,
+  faceState: boolean,
+) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    const solvers: TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>[] = [
+      new SafeEdgeToSimpleRegionSolver( board, state ),
+      new SafeSolvedEdgeSolver( board, state ),
+    ];
+
+    if ( faceColors || sectors || vertexState || faceState ) {
+      solvers.push( new SafeEdgeToFaceColorSolver( board, state ) );
+
+      if ( sectors || vertexState || faceState ) {
+        solvers.push( new SafeEdgeToSectorSolver( board, state ) );
+
+        if ( vertexState || faceState ) {
+          solvers.push( new SafeEdgeSectorColorToVertexSolver( board, state ) );
+
+          if ( faceState ) {
+            solvers.push( new VertexColorToFaceSolver( board, state ) );
+          }
+        }
+      }
+    }
+
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( solvers );
+  };
 };
 
 // TODO: rename "safe" to "view-specific"?

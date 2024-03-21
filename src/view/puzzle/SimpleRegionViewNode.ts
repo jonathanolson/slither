@@ -6,7 +6,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { blackLineColorProperty, edgeColorsVisibleProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, linesVisibleProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
+import { blackLineColorProperty, edgesHaveColorsProperty, edgeWeirdColorProperty, joinedLinesCapProperty, joinedLinesJoinProperty, edgesVisibleProperty, simpleRegionTargetColorProperty, TLineCap, TLineJoin } from '../Theme.ts';
 import { okhslToRGBString, parseToOKHSL } from '../../util/color.ts';
 import { dotRandom, Vector2 } from 'phet-lib/dot';
 import _ from '../../workarounds/_.ts';
@@ -63,7 +63,7 @@ export class SimpleRegionViewNode extends Node {
       pickable: false,
 
       // TODO: also kill computation if we are not visible?
-      visibleProperty: linesVisibleProperty
+      visibleProperty: edgesVisibleProperty
     } );
 
     board.faces.forEach( face => {
@@ -135,10 +135,10 @@ export class SimpleRegionViewNode extends Node {
 
     const updateHueListener = () => this.updateHues();
     simpleRegionTargetColorProperty.link( updateHueListener );
-    edgeColorsVisibleProperty.lazyLink( updateHueListener );
+    edgesHaveColorsProperty.lazyLink( updateHueListener );
     this.disposeEmitter.addListener( () => {
       simpleRegionTargetColorProperty.unlink( updateHueListener );
-      edgeColorsVisibleProperty.unlink( updateHueListener );
+      edgesHaveColorsProperty.unlink( updateHueListener );
     } );
   }
 
@@ -378,7 +378,7 @@ class SimpleRegionNode extends Path {
     const index = ( Math.round( hueVector.getAngle() * 180 / Math.PI ) + 360 ) % 360;
     assertEnabled() && assert( index >= 0 && index < hueLUT.length );
 
-    const showHues = edgeColorsVisibleProperty.value;
+    const showHues = edgesHaveColorsProperty.value;
 
     return showHues ? hueLUT[ index ] : blackLineColorProperty;
   }
