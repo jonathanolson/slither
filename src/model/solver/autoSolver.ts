@@ -30,6 +30,8 @@ import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
 import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
 
+export const autoSolveEnabledProperty = new LocalStorageBooleanProperty( 'autoSolveEnabledProperty', true );
+
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );
 export const autoSolveSimpleVertexAlmostEmptyToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexAlmostEmptyToRedProperty', true );

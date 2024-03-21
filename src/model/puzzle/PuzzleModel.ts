@@ -1,7 +1,7 @@
 import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
-import { autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
-import { iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
+import { autoSolveEnabledProperty, autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { NoOpAction } from '../data/core/NoOpAction.ts';
@@ -284,7 +284,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
     let delta = state.createDelta();
     try {
-      withSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
+      withSolverFactory( this.getAutoSolverFactory(), this.puzzle.board, delta, () => {
         userAction.apply( delta );
       }, userAction instanceof UserLoadPuzzleAutoSolveAction );
 
@@ -314,10 +314,15 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, userAction, newState, errorDetected ) );
   }
 
+  // TODO: have this be a DerivedProperty on the TPuzzleStyle?
+  private getAutoSolverFactory(): AnnotatedSolverFactory<TStructure, TCompleteData> {
+    return autoSolveEnabledProperty.value ? autoSolverFactoryProperty.value : safeSolverFactory;
+  }
+
   private addAutoSolveDelta(): void {
     const autoSolveDelta = this.puzzle.stateProperty.value.createDelta();
     try {
-      iterateSolverFactory( autoSolverFactoryProperty.value, this.puzzle.board, autoSolveDelta, true );
+      iterateSolverFactory( this.getAutoSolverFactory(), this.puzzle.board, autoSolveDelta, true );
 
       if ( !autoSolveDelta.isEmpty() ) {
         const autoSolveState = this.puzzle.stateProperty.value.clone();

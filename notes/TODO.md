@@ -28,6 +28,12 @@
       - 
       - Hint should skip over annotation types that aren't "shown"
       - 
+      - Create a "SolverConfig"???
+        - NOTE: Can set "SAFE" solver too, BASED ON THE VIEW MODE.
+      - Create a "TPuzzleStyle" object that has the Properties for view modes?
+        - and ability to create safe-solver and auto-solver?
+      - Create a "ThemeStyle" object that has the Properties for themes?
+      - 
       - Classic
         - Lines (without color)
         - NO FACE COLORING
@@ -69,6 +75,17 @@
     - Consider separate view and edit settings?
   - Multi-face solver
   - Better color separation between hues that are close by?
+  - 
+  - Settings
+    - "Control Center" style
+      - Provide quick high-level on-off (ABSwitch?), with "more..." to control details
+        - Auto-solver on/off
+        - Face coloring on/off
+        - ...?
+    - Separate appearance from auto-solver settings 
+      - Tabs? (from joist? eek)
+    - Style preview (demo puzzle)
+      - Include animation previews(!) ---- SHOULD WE DAG THIS? 
   - 
   - Misc Solvers [see solvers.md]
   - Constrain "solve" to actions within a certain region (e.g. zoom in, ask "how does it solve this?")
@@ -145,16 +162,6 @@
     - Consider a texture for "inside" and "outside"
     - Different visualization modes (for face colors)? Where dual nature of borders are highly emphasized?
     - (!!) Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
-  - Settings
-    - "Control Center" style
-      - Provide quick high-level on-off (ABSwitch?), with "more..." to control details
-        - Auto-solver on/off
-        - Face coloring on/off
-        - ...?
-    - Separate appearance from auto-solver settings 
-      - Tabs? (from joist? eek)
-    - Style preview (demo puzzle)
-      - Include animation previews(!) 
   - Improve "line segment ending" and vertex shapes! Give options
     - include white edges and region edges?
   - Aesthetics:
