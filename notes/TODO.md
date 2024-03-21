@@ -19,11 +19,21 @@
     - 
     - View modes (space-efficient drop-downs? check combobox again -- drop-downs show full info and name):
       - 
+      - Top-level auto-solve on/off (default on)
+      - 
+      - View Modes set:
+        - Auto-solve rule set
+        - visibility/colors of things
+        - possible/impossible lines, vertices settings red-X settings
+      - 
+      - Hint should skip over annotation types that aren't "shown"
+      - 
       - Classic
         - Lines (without color)
         - NO FACE COLORING
         - red Xs
         - vertices
+        - ONLY the simplest auto-solving
       - Basic Lines
         - Lines with color
         - Possible line
