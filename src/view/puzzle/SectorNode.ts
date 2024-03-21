@@ -153,6 +153,7 @@ export class SectorNode extends Node {
       let shape: Shape | null = null;
       let stroke: TPaint = null;
       let dash: number[] = [];
+      let lineWidth = 0.01;
 
       if ( nextToEdgesVisible || ( edgeStateA === EdgeState.WHITE && edgeStateB === EdgeState.WHITE ) ) {
         let isTrivial = SectorState.trivialStates.includes( sectorState );
@@ -169,12 +170,16 @@ export class SectorNode extends Node {
           shape = shapeMap.get( sectorState ) ?? null;
           stroke = SectorNode.strokeMap.get( sectorState ) ?? null;
           dash = dashMap.get( sectorState ) ?? [];
+          if ( dash.length ) {
+            lineWidth = 0.015;
+          }
         }
       }
 
       path.shape = shape;
       path.stroke = stroke;
       path.lineDash = dash;
+      path.lineWidth = lineWidth;
     } );
     this.disposeEmitter.addListener( () => multilink.dispose() );
   }
