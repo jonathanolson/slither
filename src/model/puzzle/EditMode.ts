@@ -1,7 +1,7 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { faceColorsVisibleProperty, faceStateVisibleProperty, sectorsVisibleProperty, vertexStateVisibleProperty } from '../../view/Theme.ts';
+import { currentPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
 
 export default class EditMode extends EnumerationValue {
   // TODO: remove unused modes? hmmm
@@ -18,20 +18,21 @@ export default class EditMode extends EnumerationValue {
   public static readonly EDGE_STATE_REVERSED = new EditMode(
     new BooleanProperty( true ) // TODO: consider disabling this on desktop?
   );
+  // TODO: more fine-grained control(!), so we can remove some that would normally be there.
   public static readonly FACE_COLOR_MATCH = new EditMode(
-    faceColorsVisibleProperty
+    currentPuzzleStyle.faceColorsVisibleProperty
   );
   public static readonly FACE_COLOR_OPPOSITE = new EditMode(
-    faceColorsVisibleProperty
+    currentPuzzleStyle.faceColorsVisibleProperty
   );
   public static readonly SECTOR_STATE = new EditMode(
-    sectorsVisibleProperty
+    currentPuzzleStyle.sectorsVisibleProperty
   );
   public static readonly VERTEX_STATE = new EditMode(
-    vertexStateVisibleProperty
+    currentPuzzleStyle.vertexStateVisibleProperty
   );
   public static readonly FACE_STATE = new EditMode(
-    faceStateVisibleProperty
+    currentPuzzleStyle.faceStateVisibleProperty
   );
   public static readonly FACE_VALUE = new EditMode(
     new BooleanProperty( false )

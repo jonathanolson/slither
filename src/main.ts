@@ -22,7 +22,7 @@ import { TAnnotation } from './model/data/core/TAnnotation.ts';
 import { HintTipNode } from './view/HintTipNode.ts';
 import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
-import { customPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -62,14 +62,14 @@ export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.inne
 // TODO: properly support null (it isn't right now)
 const puzzleModelProperty = new TinyProperty<PuzzleModel | null>( getStartupPuzzleModel() );
 
-const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty, customPuzzleStyle, {
+const puzzleContainerNode = new PuzzleContainerNode( puzzleModelProperty, currentPuzzleStyle, {
   layoutOptions: {
     stretch: true,
     grow: 1
   }
 } );
 
-const topologicalContainerNode = new PuzzleContainerNode( puzzleModelProperty, customPuzzleStyle, {
+const topologicalContainerNode = new PuzzleContainerNode( puzzleModelProperty, currentPuzzleStyle, {
   layoutOptions: {
     stretch: true,
     grow: 1

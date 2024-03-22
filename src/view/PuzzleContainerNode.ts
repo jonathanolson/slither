@@ -7,7 +7,7 @@ import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
-import { customPuzzleStyle, TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle, TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 type SelfOptions = {
   topological?: boolean;
@@ -28,7 +28,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
   public constructor(
     public readonly puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null>,
-    public readonly style: TPuzzleStyle = customPuzzleStyle,
+    public readonly style: TPuzzleStyle = currentPuzzleStyle,
     providedOptions?: PuzzleContainerNodeOptions
   ) {
 

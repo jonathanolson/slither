@@ -25,7 +25,7 @@ import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
 import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
-import { customPuzzleStyle, TPuzzleStyle } from './TPuzzleStyle.ts';
+import { currentPuzzleStyle, TPuzzleStyle } from './TPuzzleStyle.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -76,7 +76,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null ),
       selectedSectorEditProperty: new Property( null ),
-      style: customPuzzleStyle
+      style: currentPuzzleStyle
     }, providedOptions );
 
     const style = options.style;

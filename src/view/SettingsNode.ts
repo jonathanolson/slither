@@ -13,6 +13,7 @@ import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
 import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty } from './puzzle/TPuzzleStyle.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -303,11 +304,44 @@ export class SettingsNode extends PopupNode {
       ]
     } );
 
+    const viewStyleNode = getVerticalRadioButtonGroup(
+      'View Style',
+      puzzleStyleProperty,
+      [
+        {
+          value: basicLinesPuzzleStyle,
+          createNode: () => new UIText( 'Basic Lines' ),
+          labelContent: 'Basic Lines'
+        },
+        {
+          value: basicFaceColoringPuzzleStyle,
+          createNode: () => new UIText( 'Basic Face Colors' ),
+          labelContent: 'Basic Face Colors'
+        },
+        {
+          value: pureFaceColorPuzzleStyle,
+          createNode: () => new UIText( 'Pure Face Colors' ),
+          labelContent: 'Pure Face Colors'
+        },
+        {
+          value: classicPuzzleStyle,
+          createNode: () => new UIText( 'Classic' ),
+          labelContent: 'Classic'
+        },
+        {
+          value: customPuzzleStyle,
+          createNode: () => new UIText( 'Custom' ),
+          labelContent: 'Custom'
+        },
+      ]
+    );
+
     super( new VBox( {
       spacing: 20,
       align: 'left',
       children: [
         topLevelNode,
+        viewStyleNode,
         autoSolveNode,
         new HBox( {
           align: 'top',
