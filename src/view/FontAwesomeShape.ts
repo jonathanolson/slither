@@ -12,6 +12,7 @@ export const fontAwesomeStepForwardShape = new Shape( 'M45 -115q-19 -19 -32 -13t
 export const fontAwesomeBackwardShape = new Shape( 'M1619 1395q19 19 32 13t13 -32v-1472q0 -26 -13 -32t-32 13l-710 710q-9 9 -13 19v-710q0 -26 -13 -32t-32 13l-710 710q-19 19 -19 45t19 45l710 710q19 19 32 13t13 -32v-710q4 10 13 19z' ).makeImmutable();
 export const fontAwesomeForwardShape = new Shape( 'M45 -115q-19 -19 -32 -13t-13 32v1472q0 26 13 32t32 -13l710 -710q9 -9 13 -19v710q0 26 13 32t32 -13l710 -710q19 -19 19 -45t-19 -45l-710 -710q-19 -19 -32 -13t-13 32v710q-4 -10 -13 -19z' ).makeImmutable();
 export const fontAwesomeShareShape = new Shape( 'M503.691 189.836L327.687 37.851C312.281 24.546 288 35.347 288 56.015v80.053C127.371 137.907 0 170.1 0 322.326c0 61.441 39.581 122.309 83.333 154.132 13.653 9.931 33.111-2.533 28.077-18.631C66.066 312.814 132.917 274.316 288 272.085V360c0 20.7 24.3 31.453 39.687 18.164l176.004-152c11.071-9.562 11.086-26.753 0-36.328z' ).makeImmutable();
+export const fontAwesomePencilShape = new Shape( 'M363 0l91 91l-235 235l-91 -91v-107h128v-128h107zM886 928q0 22 -22 22q-10 0 -17 -7l-542 -542q-7 -7 -7 -17q0 -22 22 -22q10 0 17 7l542 542q7 7 7 17zM832 1120l416 -416l-832 -832h-416v416zM1515 1024q0 -53 -37 -90l-166 -166l-416 416l166 165q36 38 90 38q53 0 91 -38l235 -234q37 -39 37 -91z' ).makeImmutable();
 
 export const toFontAwesomePath = ( shape: Shape, pathOptions?: PathOptions ): Path => {
   return new Path( shape, combineOptions<PathOptions>( {

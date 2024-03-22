@@ -13,7 +13,7 @@ import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
 import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
-import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -300,6 +300,7 @@ export class SettingsNode extends PopupNode {
           },
           enabledProperty: autoSolveEnabledProperty
         } ),
+        new UITextSwitch( showPuzzleStyleProperty, 'Show View Style Controls' ),
         new UITextSwitch( redLineVisibleProperty, 'Show Impossible Lines' ),
         new UITextSwitch( showUndoRedoAllProperty, 'Show Undo-All / Redo-All', {
           advanced: true

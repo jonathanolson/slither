@@ -4,7 +4,7 @@ import { AnnotatedSolverFactory, CompleteAnnotatedSolverFactory } from '../../mo
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { autoSolverFactoryProperty, autoSolveSimpleLoopsProperty, autoSolveToBlackProperty, getSafeSolverFactory } from '../../model/solver/autoSolver.ts';
-import { LocalStorageProperty } from '../../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageProperty } from '../../util/localStorage.ts';
 import { TAnnotatedAction } from '../../model/data/core/TAnnotatedAction.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TState } from '../../model/data/core/TState.ts';
@@ -521,3 +521,5 @@ export const puzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'puzz
 } );
 
 export const currentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( puzzleStyleProperty );
+
+export const showPuzzleStyleProperty = new LocalStorageBooleanProperty( 'showPuzzleStyleProperty', false );

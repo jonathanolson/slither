@@ -1,17 +1,17 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
-import { RectangularRadioButtonGroup } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
 import { controlBarMargin, currentTheme } from './Theme.ts';
 import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
 import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
+import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 
 export type EditModeBarNodeOptions = {
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };
 
 // TODO: support a background node with more complexity in the future?
-export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMode> {
+export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditMode> {
   public constructor(
     options: EditModeBarNodeOptions
   ) {
@@ -112,27 +112,7 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
           visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty
         }
       }
-    ], {
-      orientation: 'horizontal',
-      touchAreaYDilation: 5,
-      radioButtonOptions: {
-        // buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-        baseColor: currentTheme.uiButtonBaseColorProperty,
-        disabledColor: currentTheme.uiButtonDisabledColorProperty,
-        xMargin: 8 * 1.3,
-        yMargin: 5 * 1.3,
-        buttonAppearanceStrategyOptions: {
-          selectedStroke: currentTheme.uiButtonSelectedStrokeColorProperty, // TODO: create an option JUST for this type of thing
-          deselectedStroke: currentTheme.uiButtonDeselectedStrokeColorProperty
-          // overButtonOpacity: 0.8,
-          // overStroke: null,
-          // selectedLineWidth: 1.5,
-          // selectedButtonOpacity: 1,
-          // deselectedLineWidth: 1,
-          // deselectedButtonOpacity: 0.6
-        }
-      }
-    } );
+    ] );
 
     options.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
