@@ -15,7 +15,7 @@ import { satSolve } from '../solver/SATSolver.ts';
 import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TAction, TSerializedAction } from '../data/core/TAction.ts';
 import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
-import { TAnnotation } from '../data/core/TAnnotation.ts';
+import { isAnnotationDisplayedForStyle, TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
 import { getPressStyle } from './EdgePressStyle.ts';
@@ -603,9 +603,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       const solver = standardSolverFactory( this.puzzle.board, state, true );
 
       try {
-        const action = solver.nextAction();
+        let action = solver.nextAction();
 
-        if ( action ) {
+        while ( action ) {
           const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
           let valid = true;
           try {
@@ -620,14 +620,24 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
             }
           }
 
-          console.log( valid ? 'valid' : 'INVALID', action );
-          this.pendingHintActionProperty.value = action;
+          if ( !valid ) {
+            console.error( 'invalid action', action );
+          }
+          // console.log( valid ? 'valid' : 'INVALID', action );
 
-          // action.apply( state );
+          if ( isAnnotationDisplayedForStyle( action.annotation, this.style ) ) {
+            this.pendingHintActionProperty.value = action;
+            break;
+          }
+          else {
+            action.apply( state );
+            action = solver.nextAction();
+          }
         }
-        else {
-          console.log( 'no action' );
-        }
+
+        // if ( !this.pendingHintActionProperty.value ) {
+        //   console.log( 'no recommended actions' );
+        // }
       }
       catch ( e ) {
         if ( e instanceof InvalidStateError ) {

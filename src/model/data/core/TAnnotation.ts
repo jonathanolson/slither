@@ -1,11 +1,11 @@
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { TAnnotatedAction } from './TAnnotatedAction.ts';
 import { TSector } from '../sector-state/TSector.ts';
 import SectorState from '../sector-state/SectorState.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
 import { FaceState } from '../face-state/FaceState.ts';
+import { TPuzzleStyle } from '../../../view/puzzle/TPuzzleStyle.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';
@@ -242,6 +242,85 @@ export type FaceStateToVertexStateAnnotation = {
   afterStates: VertexState[];
 };
 
+export const annotationSetsEdgeState = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'ForcedLine' ||
+    annotation.type === 'AlmostEmptyToRed' ||
+    annotation.type === 'JointToRed' ||
+    annotation.type === 'FaceSatisfied' ||
+    annotation.type === 'FaceAntiSatisfied' ||
+    annotation.type === 'ForcedSolveLoop' ||
+    annotation.type === 'PrematureForcedLoop' ||
+    annotation.type === 'CompletingEdgesAfterSolve' ||
+    annotation.type === 'FaceColorToBlack' ||
+    annotation.type === 'FaceColorToRed' ||
+    annotation.type === 'FaceColorNoTrivialLoop' ||
+    annotation.type === 'FaceColorMatchToRed' ||
+    annotation.type === 'FaceColorMatchToBlack' ||
+    annotation.type === 'DoubleMinusOneFaces' ||
+    annotation.type === 'ForcedSector' ||
+    annotation.type === 'VertexStateToEdge' ||
+    annotation.type === 'FaceStateToEdge';
+};
+
+export const annotationSetsSimpleRegion = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'SimpleRegions';
+};
+
+export const annotationSetsFaceColor = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'InvalidFaceColoring' ||
+    annotation.type === 'GeneralFaceColoring' ||
+    annotation.type === 'FaceColoringBlackEdge' ||
+    annotation.type === 'FaceColoringRedEdge' ||
+    annotation.type === 'FaceColorBalance' ||
+    annotation.type === 'VertexStateToSameFaceColor' ||
+    annotation.type === 'VertexStateToOppositeFaceColor' ||
+    annotation.type === 'FaceStateToSameFaceColor' ||
+    annotation.type === 'FaceStateToOppositeFaceColor';
+};
+
+export const annotationSetsSectorState = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'SingleEdgeToSector' ||
+    annotation.type === 'DoubleEdgeToSector' ||
+    annotation.type === 'StaticFaceSectors' ||
+    annotation.type === 'VertexStateToSector' ||
+    annotation.type === 'FaceStateToSector';
+};
+
+export const annotationSetsVertexState = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'VertexState' ||
+    annotation.type === 'FaceStateToVertexState';
+};
+
+export const annotationSetsFaceState = ( annotation: TAnnotation ): boolean => {
+  return annotation.type === 'FaceState';
+};
+
+export const isAnnotationDisplayedForStyle = ( annotation: TAnnotation, style: TPuzzleStyle ): boolean => {
+  // TODO: Should we hide these sometimes?
+  if ( annotationSetsEdgeState( annotation ) ) {
+    return true;
+  }
+
+  // NOTE: finite check so we ignore the inside/outside only cases
+  if ( style.faceColorsVisibleProperty.value && isFinite( style.faceColorThresholdProperty.value ) && annotationSetsFaceColor( annotation ) ) {
+    return true;
+  }
+
+  if ( style.sectorsVisibleProperty.value && annotationSetsSectorState( annotation ) ) {
+    return true;
+  }
+
+  if ( style.vertexStateVisibleProperty.value && annotationSetsVertexState( annotation ) ) {
+    return true;
+  }
+
+  if ( style.faceStateVisibleProperty.value && annotationSetsFaceState( annotation ) ) {
+    return true;
+  }
+
+  return false;
+};
+
 export type TAnnotation =
   ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
@@ -278,21 +357,3 @@ export type TAnnotation =
   | FaceStateToSameFaceColorAnnotation
   | FaceStateToOppositeFaceColorAnnotation
   | FaceStateToVertexStateAnnotation;
-
-export const ignoredAnnotationTypes = new Set<TAnnotation[ 'type' ]>( [
-  'SimpleRegions',
-  'InvalidFaceColoring',
-  'GeneralFaceColoring',
-  'FaceColoringBlackEdge',
-  'FaceColoringRedEdge',
-  'SingleEdgeToSector',
-  'DoubleEdgeToSector'
-] as const );
-
-export const isAnnotationIgnored = ( annotation: TAnnotation ): boolean => {
-  return ignoredAnnotationTypes.has( annotation.type );
-};
-
-export const isActionIgnored = ( action: TAnnotatedAction<unknown> ): boolean => {
-  return isAnnotationIgnored( action.annotation );
-};
