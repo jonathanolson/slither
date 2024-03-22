@@ -1,6 +1,6 @@
 import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
-import { autoSolveEnabledProperty, autoSolverFactoryProperty, safeSolve, safeSolverFactory, standardSolverFactory } from '../solver/autoSolver.ts';
+import { autoSolveEnabledProperty, safeSolveWithFactory, standardSolverFactory } from '../solver/autoSolver.ts';
 import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
@@ -74,11 +74,21 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly selectedFaceColorHighlightProperty: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   public readonly selectedSectorEditProperty: TReadOnlyProperty<SelectedSectorEdit | null>;
 
+  private readonly autoSolverFactoryProperty: TReadOnlyProperty<AnnotatedSolverFactory<TStructure, TCompleteData>>;
+
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
     public readonly style: TPuzzleStyle = customPuzzleStyle // TODO: see if we can just have a model-based one?
   ) {
     super();
+
+    this.autoSolverFactoryProperty = new DerivedProperty( [
+      autoSolveEnabledProperty,
+      style.safeSolverFactoryProperty,
+      style.autoSolverFactoryProperty
+    ], ( enabled, safeSolverFactory, autoSolverFactory ) => {
+      return enabled ? autoSolverFactory : safeSolverFactory;
+    } );
 
     this.displayedAnnotationProperty = new DerivedProperty( [ this.pendingHintActionProperty ], action => action ? action.annotation : null );
 
@@ -189,7 +199,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     // Safe-solve our initial state (so things like simple region display works)
     {
       const newState = puzzle.stateProperty.value.clone();
-      safeSolve( puzzle.board, newState );
+      safeSolveWithFactory( puzzle.board, newState, this.style.safeSolverFactoryProperty.value );
       puzzle.stateProperty.value = newState;
     }
 
@@ -237,7 +247,13 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       return position < length - 1;
     } );
 
-    autoSolverFactoryProperty.lazyLink( () => this.onAutoSolveChange() );
+    const solverChangeListener = () => this.onAutoSolveChange();
+    this.autoSolverFactoryProperty.lazyLink( solverChangeListener );
+    this.style.safeSolverFactoryProperty.lazyLink( solverChangeListener );
+    this.disposeEmitter.addListener( () => {
+      this.autoSolverFactoryProperty.unlink( solverChangeListener );
+      this.style.safeSolverFactoryProperty.unlink( solverChangeListener );
+    } );
   }
 
   private updateState(): void {
@@ -286,7 +302,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
     let delta = state.createDelta();
     try {
-      withSolverFactory( this.getAutoSolverFactory(), this.puzzle.board, delta, () => {
+      withSolverFactory( this.autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
         userAction.apply( delta );
       }, userAction instanceof UserLoadPuzzleAutoSolveAction );
 
@@ -301,7 +317,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       if ( e instanceof InvalidStateError ) {
         console.log( 'error' );
         delta = state.createDelta();
-        withSolverFactory( safeSolverFactory, this.puzzle.board, delta, () => {
+        withSolverFactory( this.style.safeSolverFactoryProperty.value, this.puzzle.board, delta, () => {
           userAction.apply( delta );
         }, userAction instanceof UserLoadPuzzleAutoSolveAction );
       }
@@ -316,15 +332,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, userAction, newState, errorDetected ) );
   }
 
-  // TODO: have this be a DerivedProperty on the TPuzzleStyle?
-  private getAutoSolverFactory(): AnnotatedSolverFactory<TStructure, TCompleteData> {
-    return autoSolveEnabledProperty.value ? autoSolverFactoryProperty.value : safeSolverFactory;
-  }
-
   private addAutoSolveDelta(): void {
     const autoSolveDelta = this.puzzle.stateProperty.value.createDelta();
     try {
-      iterateSolverFactory( this.getAutoSolverFactory(), this.puzzle.board, autoSolveDelta, true );
+      iterateSolverFactory( this.autoSolverFactoryProperty.value, this.puzzle.board, autoSolveDelta, true );
 
       if ( !autoSolveDelta.isEmpty() ) {
         const autoSolveState = this.puzzle.stateProperty.value.clone();
@@ -526,7 +537,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
           solutions[ 0 ].forEach( edge => {
             solvedState.setEdgeState( edge, EdgeState.BLACK );
           } );
-          safeSolve( this.puzzle.board, solvedState );
+          safeSolveWithFactory( this.puzzle.board, solvedState, this.style.safeSolverFactoryProperty.value );
 
           this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solvedState, false ) );
           this.updateState();

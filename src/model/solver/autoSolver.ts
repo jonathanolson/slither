@@ -117,6 +117,10 @@ export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
   iterateSolverFactory( safeSolverFactory, board, state, true );
 };
 
+export const safeSolveWithFactory = ( board: TBoard, state: TState<TCompleteData>, factory: AnnotatedSolverFactory<TStructure, TCompleteData> ) => {
+  iterateSolverFactory( factory, board, state, true );
+};
+
 export const finalStateSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     safeSolverFactory( board, state, dirty ),

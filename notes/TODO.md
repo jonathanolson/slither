@@ -21,6 +21,8 @@
       - 
       - Top-level auto-solve on/off (default on)
       - 
+      - Hint should skip over annotation types that aren't "shown"
+      - 
       - View Modes set:
         - Auto-solve rule set
         - visibility/colors of things
