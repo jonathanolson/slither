@@ -30,7 +30,12 @@ import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
 import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
 
+// Top-level setting that controls whether auto-solve is enabled at all
 export const autoSolveEnabledProperty = new LocalStorageBooleanProperty( 'autoSolveEnabledProperty', true );
+
+// Meta-level settings that control properties of the default auto-solvers
+export const autoSolveToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveToBlackProperty', false );
+export const autoSolveSimpleLoopsProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleLoopsProperty', false );
 
 export const autoSolveSimpleVertexJointToRedProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexJointToRedProperty', true );
 export const autoSolveSimpleVertexForcedLineToBlackProperty = new LocalStorageBooleanProperty( 'autoSolveSimpleVertexForcedLineToBlackProperty', true );

@@ -1,10 +1,19 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { allVertexStateVisibleProperty, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, TFaceValueStyle, TLineCap, TLineJoin, TRuntimeTheme, TRedLineStyle, TVertexStyle, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty, themeFromProperty } from '../Theme.ts';
-import { AnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
+import { allVertexStateVisibleProperty, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, TFaceValueStyle, themeFromProperty, TLineCap, TLineJoin, TRedLineStyle, TRuntimeTheme, TVertexStyle, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty } from '../Theme.ts';
+import { AnnotatedSolverFactory, CompleteAnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
-import { autoSolverFactoryProperty, getSafeSolverFactory } from '../../model/solver/autoSolver.ts';
+import { autoSolverFactoryProperty, autoSolveSimpleLoopsProperty, autoSolveToBlackProperty, getSafeSolverFactory } from '../../model/solver/autoSolver.ts';
 import { LocalStorageProperty } from '../../util/localStorage.ts';
+import { TAnnotatedAction } from '../../model/data/core/TAnnotatedAction.ts';
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TState } from '../../model/data/core/TState.ts';
+import { CompositeSolver } from '../../model/solver/CompositeSolver.ts';
+import { SimpleVertexSolver } from '../../model/solver/SimpleVertexSolver.ts';
+import { SimpleFaceSolver } from '../../model/solver/SimpleFaceSolver.ts';
+import { SimpleLoopSolver } from '../../model/solver/SimpleLoopSolver.ts';
+import { SimpleFaceColorSolver } from '../../model/solver/SimpleFaceColorSolver.ts';
+import { StaticSectorSolver } from '../../model/solver/StaticSectorSolver.ts';
 
 export interface TPuzzleModelStyle {
   readonly edgesVisibleProperty: TReadOnlyProperty<boolean>;
@@ -91,27 +100,79 @@ export const customPuzzleStyle: TPuzzleStyle = {
   theme: currentTheme
 };
 
-const getPartialPuzzleStyle = ( faceColors: boolean, sectors: boolean, vertexState: boolean, faceState: boolean ) => {
+const getPartialPuzzleStyle = (
+  faceColors: boolean,
+  sectors: boolean,
+  vertexState: boolean,
+  faceState: boolean,
+  additionalSolverFactoryProperty?: TReadOnlyProperty<CompleteAnnotatedSolverFactory>
+) => {
+  const safeSolverFactory = getSafeSolverFactory( faceColors, sectors, vertexState, faceState );
+
   return {
     faceColorsVisibleProperty: new BooleanProperty( faceColors ),
     sectorsVisibleProperty: new BooleanProperty( sectors ),
     vertexStateVisibleProperty: new BooleanProperty( vertexState ),
     faceStateVisibleProperty: new BooleanProperty( faceState ),
 
-    safeSolverFactoryProperty: new Property( getSafeSolverFactory( faceColors, sectors, vertexState, faceState ) ),
+    safeSolverFactoryProperty: new Property( safeSolverFactory ),
+    autoSolverFactoryProperty: additionalSolverFactoryProperty ? new DerivedProperty( [ additionalSolverFactoryProperty ], factory => {
+      return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+        return new CompositeSolver( [
+          safeSolverFactory( board, state, dirty ),
+          factory( board, state, dirty )
+        ] );
+      };
+    } ) : new Property( safeSolverFactory ),
   };
 };
 
+const basicSolverFactoryProperty = new DerivedProperty( [
+  autoSolveToBlackProperty,
+  autoSolveSimpleLoopsProperty
+], ( toBlack, simpleLoops ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      new SimpleVertexSolver( board, state, {
+        solveJointToRed: true,
+        solveForcedLineToBlack: toBlack,
+        solveAlmostEmptyToRed: true
+      }, dirty ? undefined : [] ),
+      new SimpleFaceSolver( board, state, {
+        solveToRed: true,
+        solveToBlack: toBlack,
+      }, dirty ? undefined : [] ),
+      ...( simpleLoops ? [
+        new SimpleLoopSolver( board, state, {
+          solveToRed: true,
+          solveToBlack: toBlack,
+          resolveAllRegions: false // TODO: for full better exhaustive solvers, have true
+        }, dirty ? undefined : [] )
+      ] : [] )
+    ] );
+  };
+} );
+
+const sectorSolverFactoryProperty = new DerivedProperty( [
+  basicSolverFactoryProperty
+], ( basicSolverFactory ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      basicSolverFactory( board, state, dirty ),
+
+      // TODO: create a new "sector"-only solver?
+      new StaticSectorSolver( board, state ) // TODO: NOTE WE ARE FORCING DIRTY HERE, because it might get enabled?
+    ] );
+  };
+} );
+
 export const basicLinesPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, false, false ),
+  ...getPartialPuzzleStyle( true, false, false, false, basicSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
 
   // TODO: Dynamically update what edit bar actions are available to match
-
-  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( true ),
@@ -143,10 +204,8 @@ export const basicLinesPuzzleStyle: TPuzzleStyle = {
 };
 
 export const basicFaceColoringPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, false, false ),
+  ...getPartialPuzzleStyle( true, false, false, false, basicSolverFactoryProperty ),
   theme: currentTheme,
-
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( false ),
@@ -177,10 +236,15 @@ export const basicFaceColoringPuzzleStyle: TPuzzleStyle = {
 };
 
 export const pureFaceColorPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, false, false ),
+  ...getPartialPuzzleStyle( true, false, false, false, new Property( ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      new SimpleFaceColorSolver( board, state, {
+        solveToRed: true,
+        solveToBlack: true
+      }, dirty ? undefined : [] )
+    ] );
+  } ) ),
   theme: currentTheme,
-
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( false ),
   edgesHaveColorsProperty: new TinyProperty( false ),
@@ -211,10 +275,8 @@ export const pureFaceColorPuzzleStyle: TPuzzleStyle = {
 };
 
 export const classicPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( false, false, false, false ),
+  ...getPartialPuzzleStyle( false, false, false, false, basicSolverFactoryProperty ),
   theme: currentTheme,
-
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( false ),
@@ -245,15 +307,13 @@ export const classicPuzzleStyle: TPuzzleStyle = {
 };
 
 export const basicSectorsPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, true, false, false ),
+  ...getPartialPuzzleStyle( true, true, false, false, sectorSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
 
   // TODO: Dynamically update what edit bar actions are available to match
 
-  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( true ),
@@ -285,15 +345,13 @@ export const basicSectorsPuzzleStyle: TPuzzleStyle = {
 };
 
 export const sectorsWithColorsPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, true, false, false ),
+  ...getPartialPuzzleStyle( true, true, false, false, sectorSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
 
   // TODO: Dynamically update what edit bar actions are available to match
 
-  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( false ),
@@ -325,15 +383,13 @@ export const sectorsWithColorsPuzzleStyle: TPuzzleStyle = {
 };
 
 export const vertexStatePuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, true, false ),
+  ...getPartialPuzzleStyle( true, false, true, false, basicSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
 
   // TODO: Dynamically update what edit bar actions are available to match
 
-  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( false ),
@@ -365,15 +421,13 @@ export const vertexStatePuzzleStyle: TPuzzleStyle = {
 };
 
 export const faceStatePuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, false, true ),
+  ...getPartialPuzzleStyle( true, false, false, true, basicSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
 
   // TODO: Dynamically update what edit bar actions are available to match
 
-  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
-  autoSolverFactoryProperty: autoSolverFactoryProperty,
 
   edgesVisibleProperty: new TinyProperty( true ),
   edgesHaveColorsProperty: new TinyProperty( false ),

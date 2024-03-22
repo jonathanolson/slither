@@ -25,7 +25,9 @@
       - Top-level option for a "view mode" bar --- yes definitely!!!
       - Move "Face Value Style" setting top-level?
       - 
+      - 
       - Hint should skip over annotation types that aren't "shown"
+        - Allow adjustment of the hints that you get (what solvers are used?)
       - 
       - View Modes set:
         - Auto-solve rule set

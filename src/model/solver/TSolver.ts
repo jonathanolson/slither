@@ -4,6 +4,7 @@ import { TAction } from '../data/core/TAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 
 export interface TSolver<Data, Action extends TAction<Data>> {
   // If there is a chance nextAction will return an action
@@ -22,6 +23,8 @@ export interface TSolver<Data, Action extends TAction<Data>> {
   dispose(): void;
 }
 
+export type CompleteAnnotatedSolver = TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
+
 export type SolverFactory<Structure extends TStructure, Data> = (
   board: TBoard<Structure>,
   state: TState<Data>,
@@ -33,6 +36,8 @@ export type AnnotatedSolverFactory<Structure extends TStructure, Data> = (
   state: TState<Data>,
   dirty?: boolean
 ) => TSolver<Data, TAnnotatedAction<Data>>;
+
+export type CompleteAnnotatedSolverFactory = AnnotatedSolverFactory<TStructure, TCompleteData>;
 
 export const iterateSolver = <Data, Action extends TAction<Data>>(
   solver: TSolver<Data, Action>,
