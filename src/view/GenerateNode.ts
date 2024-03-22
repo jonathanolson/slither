@@ -344,11 +344,11 @@ export const penroseTilingGenerator: PolygonGenerator = {
 };
 
 export const polygonGenerators: PolygonGenerator[] = [
+  squarePolygonGenerator,
   getPeriodicTilingGenerator( rhombilleTiling, {
     width: 8,
     height: 8
   } ),
-  squarePolygonGenerator,
   hexagonalPolygonGenerator,
   getPeriodicTilingGenerator( cairoPentagonalTiling, {
     // TODO: get more aesthetic options!
