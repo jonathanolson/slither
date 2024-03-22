@@ -1,4 +1,4 @@
-import { BooleanProperty, DerivedProperty, DynamicProperty, isTReadOnlyProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
 import { LocalStorageBooleanProperty, LocalStorageNumberProperty, LocalStorageProperty, LocalStorageStringProperty } from '../util/localStorage.ts';
 import { RectangularButton } from 'phet-lib/sun';
@@ -14,136 +14,156 @@ mediaQueryList.addEventListener( 'change', e => {
   isOSDarkModeProperty.value = e.matches;
 } );
 
-export interface TReadOnlyTheme {
-  navbarBackgroundColorProperty: TReadOnlyProperty<Color>;
-  navbarErrorBackgroundColorProperty: TReadOnlyProperty<Color>;
-  playAreaBackgroundColorProperty: TReadOnlyProperty<Color>;
-  playAreaLinearTopColorProperty: TReadOnlyProperty<Color>;
-  playAreaLinearMiddleColorProperty: TReadOnlyProperty<Color>;
-  playAreaLinearBottomColorProperty: TReadOnlyProperty<Color>;
-  playAreaRadialInsideColorProperty: TReadOnlyProperty<Color>;
-  playAreaRadialOutsideColorProperty: TReadOnlyProperty<Color>;
-  puzzleBackgroundColorProperty: TReadOnlyProperty<Color>;
-  puzzleBackgroundStrokeColorProperty: TReadOnlyProperty<Color>;
-  vertexColorProperty: TReadOnlyProperty<Color>;
-  xColorProperty: TReadOnlyProperty<Color>;
-  blackLineColorProperty: TReadOnlyProperty<Color>;
-  redLineColorProperty: TReadOnlyProperty<Color>;
-  whiteLineColorProperty: TReadOnlyProperty<Color>;
-  selectedFaceColorHighlightColorProperty: TReadOnlyProperty<Color>;
-  selectedSectorEditColorProperty: TReadOnlyProperty<Color>;
-  hoverHighlightColorProperty: TReadOnlyProperty<Color>;
+export const themeColorPropertyNames = [
+  'navbarBackgroundColorProperty',
+  'navbarErrorBackgroundColorProperty',
+  'playAreaBackgroundColorProperty',
+  'playAreaLinearTopColorProperty',
+  'playAreaLinearMiddleColorProperty',
+  'playAreaLinearBottomColorProperty',
+  'playAreaRadialInsideColorProperty',
+  'playAreaRadialOutsideColorProperty',
+  'puzzleBackgroundColorProperty',
+  'puzzleBackgroundStrokeColorProperty',
+  'vertexColorProperty',
+  'xColorProperty',
+  'blackLineColorProperty',
+  'redLineColorProperty',
+  'whiteLineColorProperty',
+  'selectedFaceColorHighlightColorProperty',
+  'selectedSectorEditColorProperty',
+  'hoverHighlightColorProperty',
 
   // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
-  simpleRegionTargetColorProperty: TReadOnlyProperty<Color>;
+  'simpleRegionTargetColorProperty',
 
   // TODO: describe the effects of alpha here
-  faceColorBasicTargetColorProperty: TReadOnlyProperty<Color>;
-  faceColorLightTargetColorProperty: TReadOnlyProperty<Color>;
-  faceColorDarkTargetColorProperty: TReadOnlyProperty<Color>;
-  faceColorOutsideColorProperty: TReadOnlyProperty<Color>;
-  faceColorInsideColorProperty: TReadOnlyProperty<Color>;
-  faceColorDefaultColorProperty: TReadOnlyProperty<Color>;
+  'faceColorBasicTargetColorProperty',
+  'faceColorLightTargetColorProperty',
+  'faceColorDarkTargetColorProperty',
+  'faceColorOutsideColorProperty',
+  'faceColorInsideColorProperty',
+  'faceColorDefaultColorProperty',
 
-  sectorOnlyOneColorProperty: TReadOnlyProperty<Color>;
-  sectorNotOneColorProperty: TReadOnlyProperty<Color>;
-  sectorNotZeroColorProperty: TReadOnlyProperty<Color>;
-  sectorNotTwoColorProperty: TReadOnlyProperty<Color>;
-  sectorOtherColorProperty: TReadOnlyProperty<Color>;
+  'sectorOnlyOneColorProperty',
+  'sectorNotOneColorProperty',
+  'sectorNotZeroColorProperty',
+  'sectorNotTwoColorProperty',
+  'sectorOtherColorProperty',
 
-  vertexStateLineProperty: TReadOnlyProperty<Color>;
-  vertexStateBackgroundProperty: TReadOnlyProperty<Color>;
-  vertexStateOutlineProperty: TReadOnlyProperty<Color>;
-  vertexStatePointProperty: TReadOnlyProperty<Color>;
+  'vertexStateLineProperty',
+  'vertexStateBackgroundProperty',
+  'vertexStateOutlineProperty',
+  'vertexStatePointProperty',
 
-  faceValueColorProperty: TReadOnlyProperty<Color>;
-  faceValueCompletedColorProperty: TReadOnlyProperty<Color>;
-  faceValueErrorColorProperty: TReadOnlyProperty<Color>;
-  edgeWeirdColorProperty: TReadOnlyProperty<Color>;
-  uiForegroundColorProperty: TReadOnlyProperty<Color>;
-  uiBackgroundColorProperty: TReadOnlyProperty<Color>;
-  uiButtonForegroundProperty: TReadOnlyProperty<Color>;
-  uiButtonBaseColorProperty: TReadOnlyProperty<Color>;
-  uiButtonDisabledColorProperty: TReadOnlyProperty<Color>;
-  uiButtonSelectedStrokeColorProperty: TReadOnlyProperty<Color>;
-  uiButtonDeselectedStrokeColorProperty: TReadOnlyProperty<Color>;
-  barrierColorProperty: TReadOnlyProperty<Color>;
-  generateAddedFaceColorProperty: TReadOnlyProperty<Color>;
-  generateMinimizedFaceColorProperty: TReadOnlyProperty<Color>;
+  'faceValueColorProperty',
+  'faceValueCompletedColorProperty',
+  'faceValueErrorColorProperty',
+  'edgeWeirdColorProperty',
+  'uiForegroundColorProperty',
+  'uiBackgroundColorProperty',
+  'uiButtonForegroundProperty',
+  'uiButtonBaseColorProperty',
+  'uiButtonDisabledColorProperty',
+  'uiButtonSelectedStrokeColorProperty',
+  'uiButtonDeselectedStrokeColorProperty',
+  'barrierColorProperty',
+  'generateAddedFaceColorProperty',
+  'generateMinimizedFaceColorProperty',
 
-  simpleRegionHueLUTProperty: TReadOnlyProperty<string[]>;
-  faceColorBasicHueLUTProperty: TReadOnlyProperty<string[]>;
-  faceColorLightHueLUTProperty: TReadOnlyProperty<string[]>;
-  faceColorDarkHueLUTProperty: TReadOnlyProperty<string[]>;
-}
-
-export interface TTheme {
-  name: string;
-  isEditable: boolean;
-  navbarBackgroundColorProperty: PaintColorProperty;
-  navbarErrorBackgroundColorProperty: PaintColorProperty;
-  playAreaBackgroundColorProperty: PaintColorProperty;
-  playAreaLinearTopColorProperty: PaintColorProperty;
-  playAreaLinearMiddleColorProperty: PaintColorProperty;
-  playAreaLinearBottomColorProperty: PaintColorProperty;
-  playAreaRadialInsideColorProperty: PaintColorProperty;
-  playAreaRadialOutsideColorProperty: PaintColorProperty;
-  puzzleBackgroundColorProperty: PaintColorProperty;
-  puzzleBackgroundStrokeColorProperty: PaintColorProperty;
-  vertexColorProperty: PaintColorProperty;
-  xColorProperty: PaintColorProperty;
-  blackLineColorProperty: PaintColorProperty;
-  redLineColorProperty: PaintColorProperty;
-  whiteLineColorProperty: PaintColorProperty;
-  selectedFaceColorHighlightColorProperty: PaintColorProperty;
-  selectedSectorEditColorProperty: PaintColorProperty;
-  hoverHighlightColorProperty: PaintColorProperty;
-
-  // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
-  simpleRegionTargetColorProperty: PaintColorProperty;
-
-  // TODO: describe the effects of alpha here
-  faceColorBasicTargetColorProperty: PaintColorProperty;
-  faceColorLightTargetColorProperty: PaintColorProperty;
-  faceColorDarkTargetColorProperty: PaintColorProperty;
-  faceColorOutsideColorProperty: PaintColorProperty;
-  faceColorInsideColorProperty: PaintColorProperty;
-  faceColorDefaultColorProperty: PaintColorProperty;
-
-  sectorOnlyOneColorProperty: PaintColorProperty;
-  sectorNotOneColorProperty: PaintColorProperty;
-  sectorNotZeroColorProperty: PaintColorProperty;
-  sectorNotTwoColorProperty: PaintColorProperty;
-  sectorOtherColorProperty: PaintColorProperty;
-
-  vertexStateLineProperty: PaintColorProperty;
-  vertexStateBackgroundProperty: PaintColorProperty;
-  vertexStateOutlineProperty: PaintColorProperty;
-  vertexStatePointProperty: PaintColorProperty;
-
-  faceValueColorProperty: PaintColorProperty;
-  faceValueCompletedColorProperty: PaintColorProperty;
-  faceValueErrorColorProperty: PaintColorProperty;
-  edgeWeirdColorProperty: PaintColorProperty;
-  uiForegroundColorProperty: PaintColorProperty;
-  uiBackgroundColorProperty: PaintColorProperty;
-  uiButtonForegroundProperty: PaintColorProperty;
-  uiButtonBaseColorProperty: PaintColorProperty;
-  uiButtonDisabledColorProperty: PaintColorProperty;
-  uiButtonSelectedStrokeColorProperty: PaintColorProperty;
-  uiButtonDeselectedStrokeColorProperty: PaintColorProperty;
-  barrierColorProperty: PaintColorProperty;
-  generateAddedFaceColorProperty: PaintColorProperty;
-  generateMinimizedFaceColorProperty: PaintColorProperty;
 
   // TODO: can we actually use rainbow colors (culori-based) for the UI button colors?!? ZOMG
 
   // TODO: properties for UI color generation (and whether we should use regions or not)
-}
+] as const;
+export type ThemeColorPropertyName = typeof themeColorPropertyNames[ number ];
+
+export const themeLUTPropertyNames = [
+  'simpleRegionHueLUTProperty',
+  'faceColorBasicHueLUTProperty',
+  'faceColorLightHueLUTProperty',
+  'faceColorDarkHueLUTProperty',
+] as const;
+export type ThemeLUTPropertyName = typeof themeLUTPropertyNames[ number ];
+
+export type TThemeInfo = {
+  name: string;
+  isEditable: boolean;
+
+  // TODO: an identifier, for serialization that isn't for display
+};
+
+export type TTheme = TThemeInfo & {
+  [ key in ThemeColorPropertyName ]: PaintColorProperty;
+};
+
+export type TRuntimeTheme = {
+  [ key in ThemeColorPropertyName ]: TReadOnlyProperty<Color>;
+} & {
+  [ key in ThemeLUTPropertyName ]: TReadOnlyProperty<string[]>;
+};
+
+export type TFullTheme = TTheme & TRuntimeTheme;
+
+export const themeFromProperty = ( themeProperty: TReadOnlyProperty<TRuntimeTheme> ): TRuntimeTheme => {
+  const theme = {} as TRuntimeTheme;
+  for ( const key of themeColorPropertyNames ) {
+    theme[ key ] = new DynamicProperty( themeProperty, {
+      derive: key
+    } ) as TReadOnlyProperty<Color>;
+  }
+  for ( const key of themeLUTPropertyNames ) {
+    theme[ key ] = new DynamicProperty( themeProperty, {
+      derive: key
+    } ) as TReadOnlyProperty<string[]>;
+  }
+  return theme;
+};
+
+const getLUTProperty = ( colorProperty: TReadOnlyProperty<Color> ): TReadOnlyProperty<string[]> => {
+  return new DerivedProperty( [ colorProperty ], targetColor => {
+    const okhsl = parseToOKHSL( targetColor.toHexString() );
+
+    const hueForce = targetColor.alpha;
+    const targetHue = okhsl.h;
+
+    // Depending on the alpha of our target color, control the amount we are pulled to the hue of the target color
+    const mapHueDegree = ( hue: number ) => {
+      let hueDelta = hue - targetHue;
+
+      // sanity check wrap
+      if ( hueDelta > 180 ) {
+        hueDelta -= 360;
+      }
+      if ( hueDelta < -180 ) {
+        hueDelta += 360;
+      }
+      hueDelta *= ( 1 - hueForce );
+      hueDelta = Math.round( hueDelta );
+
+      return ( hueDelta + targetHue + 360 ) % 360;
+    };
+
+    return _.range( 0, 360 ).map( i => {
+      return okhslToRGBString( mapHueDegree( i ), okhsl.s, okhsl.l );
+    } );
+  } );
+};
+
+export const addThemeLUT = ( theme: TTheme ): TFullTheme => {
+  const readOnlyTheme = {
+    ...theme
+  } as unknown as TFullTheme;
+  readOnlyTheme.simpleRegionHueLUTProperty = getLUTProperty( theme.simpleRegionTargetColorProperty );
+  readOnlyTheme.faceColorBasicHueLUTProperty = getLUTProperty( theme.faceColorBasicTargetColorProperty );
+  readOnlyTheme.faceColorLightHueLUTProperty = getLUTProperty( theme.faceColorLightTargetColorProperty );
+  readOnlyTheme.faceColorDarkHueLUTProperty = getLUTProperty( theme.faceColorDarkTargetColorProperty );
+  return readOnlyTheme;
+};
 
 // TODO: the region/not switch SHOULD be actually an independent LocalStorageProperty.
 
-export const lightTheme = {
+export const lightTheme = addThemeLUT( {
   name: 'Light',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(238,238,238)' ),
@@ -194,9 +214,9 @@ export const lightTheme = {
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
-};
+} );
 
-export const darkTheme = {
+export const darkTheme = addThemeLUT( {
   name: 'Dark',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(17,17,17)' ),
@@ -247,9 +267,9 @@ export const darkTheme = {
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
-};
+} );
 
-export const fadeLightTheme = {
+export const fadeLightTheme = addThemeLUT( {
   ...lightTheme,
   name: 'Fade Light',
   isEditable: true,
@@ -261,9 +281,9 @@ export const fadeLightTheme = {
   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.79000000000000003553)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(148,148,148)' ),
-};
+} );
 
-export const fadeDarkTheme = {
+export const fadeDarkTheme = addThemeLUT( {
   ...darkTheme,
   name: 'Fade Dark',
   isEditable: true,
@@ -277,164 +297,37 @@ export const fadeDarkTheme = {
   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(24,23,22)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(92,51,40)' ),
   whiteLineColorProperty: new PaintColorProperty( 'rgb(78,73,70)' ),
-};
-
-// export const purplesDarkTheme = {
-//   name: 'Purples Dark',
-//   isEditable: true,
-//   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
-//   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(115,44,34)' ),
-//   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(51,51,51)' ),
-//   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgb(97,67,133)' ),
-//   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgb(89,84,142)' ),
-//   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgb(81,99,149)' ),
-//   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.42999999999999999334)' ),
-//   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-//   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-//   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(153,142,180)' ),
-//   vertexColorProperty: new PaintColorProperty( 'rgb(119,119,119)' ),
-//   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-//   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-//   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
-//   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
-//   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(163,79,232,0.56000000000000005329)' ),
-//   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
-//   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
-//   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
-//   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
-//   sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
-//   sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
-//   sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
-//   sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
-//   sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
-//   vertexStateLineProperty: new PaintColorProperty( 'red' ),
-//   vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
-//   vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
-//   vertexStatePointProperty: new PaintColorProperty( 'black' ),
-//   faceValueColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-//   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
-//   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-//   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(136,136,136)' ),
-//   uiForegroundColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
-//   uiBackgroundColorProperty: new PaintColorProperty( 'rgb(34,34,34)' ),
-//   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-//   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(95,129,196)' ),
-//   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
-//   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
-//   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
-//   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
-// };
-//
-// export const nightVisionTheme = {
-//   name: 'Night Vision',
-//   isEditable: true,
-//   navbarBackgroundColorProperty: new PaintColorProperty( 'rgb(31,0,2)' ),
-//   navbarErrorBackgroundColorProperty: new PaintColorProperty( 'rgb(103,39,4)' ),
-//   playAreaBackgroundColorProperty: new PaintColorProperty( 'rgb(28,0,0)' ),
-//   playAreaLinearTopColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-//   playAreaLinearMiddleColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-//   playAreaLinearBottomColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-//   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(66,66,66,0)' ),
-//   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(0,0,0,0)' ),
-//   puzzleBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-//   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(68,18,18)' ),
-//   vertexColorProperty: new PaintColorProperty( 'rgb(117,0,0)' ),
-//   xColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-//   blackLineColorProperty: new PaintColorProperty( 'rgb(170,170,170)' ),
-//   redLineColorProperty: new PaintColorProperty( 'rgb(68,68,68)' ),
-//   whiteLineColorProperty: new PaintColorProperty( 'rgb(117,60,41)' ),
-//   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(189,0,0,0.64000000000000001332)' ),
-//   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(40,0,0,0)' ),
-//   faceColorOutsideColorProperty: new PaintColorProperty( 'rgba(15,15,15,1)' ),
-//   faceColorInsideColorProperty: new PaintColorProperty( 'rgba(50,50,50,1)' ),
-//   faceColorDefaultColorProperty: new PaintColorProperty( 'rgb(31,31,31)' ),
-//   sectorOnlyOneColorProperty: new PaintColorProperty( 'red' ),
-//   sectorNotOneColorProperty: new PaintColorProperty( 'blue' ),
-//   sectorNotZeroColorProperty: new PaintColorProperty( 'green' ),
-//   sectorNotTwoColorProperty: new PaintColorProperty( 'orange' ),
-//   sectorOtherColorProperty: new PaintColorProperty( 'cyan' ),
-//   vertexStateLineProperty: new PaintColorProperty( 'red' ),
-//   vertexStateBackgroundProperty: new PaintColorProperty( 'white' ),
-//   vertexStateOutlineProperty: new PaintColorProperty( 'black' ),
-//   vertexStatePointProperty: new PaintColorProperty( 'black' ),
-//   faceValueColorProperty: new PaintColorProperty( 'rgb(179,0,0)' ),
-//   faceValueCompletedColorProperty: new PaintColorProperty( 'rgb(46,0,0)' ),
-//   faceValueErrorColorProperty: new PaintColorProperty( 'rgb(255,0,0)' ),
-//   edgeWeirdColorProperty: new PaintColorProperty( 'rgb(75,58,58)' ),
-//   uiForegroundColorProperty: new PaintColorProperty( 'rgb(163,0,0)' ),
-//   uiBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-//   uiButtonForegroundProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-//   uiButtonBaseColorProperty: new PaintColorProperty( 'rgb(153,0,0)' ),
-//   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
-//   barrierColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.69999999999999995559)' ),
-//   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
-//   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
-// };
+} );
 
 export const autoTheme = {
   name: 'Auto',
-  isEditable: false
-} as TTheme;
-Object.keys( lightTheme ).forEach( key => {
-  // @ts-expect-error
-  if ( isTReadOnlyProperty( lightTheme[ key ] ) ) {
-    // @ts-expect-error
-    autoTheme[ key ] = new DerivedProperty( [
-      isOSDarkModeProperty,
-      // @ts-expect-error
-      lightTheme[ key ],
-      // @ts-expect-error
-      darkTheme[ key ]
-    ], ( isDark: boolean, light: Color, dark: Color ) => isDark ? dark : light );
-
-    // TODO: this is somehow giving null.... sign of a bigger bug?
-    // autoTheme[ key ] = new DynamicProperty( isOSDarkModeProperty, {
-    //   // derive: ( isDark: boolean ) => isDark ? darkTheme[ key ] : lightTheme[ key ]
-    //   derive: ( isDark: boolean ) => {
-    //     const prop = isDark ? darkTheme[ key ] : lightTheme[ key ];
-    //     if ( !( prop instanceof Property ) ) {
-    //       debugger;
-    //     }
-    //     return prop;
-    //   }
-    // } );
-  }
-} );
+  isEditable: false,
+  ...themeFromProperty( new DerivedProperty( [
+    isOSDarkModeProperty
+  ], isDark => isDark ? darkTheme : lightTheme ) )
+} as TFullTheme; // we pretend, it has read-only Properties though;
 
 // Mostly so we get type checking
-export const availableThemes: TTheme[] = [
+export const availableThemes: TFullTheme[] = [
   lightTheme,
   darkTheme,
   autoTheme,
   fadeLightTheme,
-  fadeDarkTheme,
-  // purplesDarkTheme,
-  // nightVisionTheme
+  fadeDarkTheme
 ];
 
-// TODO: auto theme based on system settings (keep EVERYTHING basically a Property)
-
-export const themeProperty = new LocalStorageProperty<TTheme>( 'theme', {
+export const themeProperty = new LocalStorageProperty<TFullTheme>( 'theme', {
   serialize: theme => theme.name,
   deserialize: name => availableThemes.find( theme => theme.name === name ) ?? autoTheme
 } );
-// @ts-expect-error - Allow this globally
-window.themeProperty = themeProperty;
 
 export const themeToJS = ( theme: TTheme ) => {
   const keyValueStringMap: Record<string, string> = {};
-  Object.keys( theme ).forEach( key => {
-    const prop = theme[ key as keyof TTheme ];
-    if ( prop instanceof PaintColorProperty ) {
-      keyValueStringMap[ key ] = `new PaintColorProperty( '${prop.value.toCSS()}' )`;
-    }
-    else if ( typeof prop === 'string' ) {
-      keyValueStringMap[ key ] = `'${prop}'`;
-    }
-    else {
-      // TODO: better support?
-      keyValueStringMap[ key ] = JSON.stringify( prop, null, 2 );
-    }
+
+  keyValueStringMap.name = `'${theme.name}'`;
+  keyValueStringMap.isEditable = `${theme.isEditable}`;
+  themeColorPropertyNames.forEach( key => {
+    keyValueStringMap[ key ] = `new PaintColorProperty( '${theme[ key ].value.toCSS()}' )`;
   } );
 
   return `{\n${Object.keys( keyValueStringMap ).map( key => `  ${key}: ${keyValueStringMap[ key ]}` ).join( ',\n' )}\n}`;
@@ -715,91 +608,7 @@ export const generateMinimizedFaceColorProperty = new DynamicProperty( themeProp
   derive: 'generateMinimizedFaceColorProperty'
 } ) as TReadOnlyProperty<Color>;
 
-const getLUTProperty = ( colorProperty: TReadOnlyProperty<Color> ): TReadOnlyProperty<string[]> => {
-  return new DerivedProperty( [ colorProperty ], targetColor => {
-    const okhsl = parseToOKHSL( targetColor.toHexString() );
-
-    const hueForce = targetColor.alpha;
-    const targetHue = okhsl.h;
-
-    // Depending on the alpha of our target color, control the amount we are pulled to the hue of the target color
-    const mapHueDegree = ( hue: number ) => {
-      let hueDelta = hue - targetHue;
-
-      // sanity check wrap
-      if ( hueDelta > 180 ) {
-        hueDelta -= 360;
-      }
-      if ( hueDelta < -180 ) {
-        hueDelta += 360;
-      }
-      hueDelta *= ( 1 - hueForce );
-      hueDelta = Math.round( hueDelta );
-
-      return ( hueDelta + targetHue + 360 ) % 360;
-    };
-
-    return _.range( 0, 360 ).map( i => {
-      return okhslToRGBString( mapHueDegree( i ), okhsl.s, okhsl.l );
-    } );
-  } );
-};
-
-export const currentTheme: TReadOnlyTheme = {
-  navbarBackgroundColorProperty: navbarBackgroundColorProperty,
-  navbarErrorBackgroundColorProperty: navbarErrorBackgroundColorProperty,
-  playAreaBackgroundColorProperty: playAreaBackgroundColorProperty,
-  playAreaLinearTopColorProperty: playAreaLinearTopColorProperty,
-  playAreaLinearMiddleColorProperty: playAreaLinearMiddleColorProperty,
-  playAreaLinearBottomColorProperty: playAreaLinearBottomColorProperty,
-  playAreaRadialInsideColorProperty: playAreaRadialInsideColorProperty,
-  playAreaRadialOutsideColorProperty: playAreaRadialOutsideColorProperty,
-  puzzleBackgroundColorProperty: puzzleBackgroundColorProperty,
-  puzzleBackgroundStrokeColorProperty: puzzleBackgroundStrokeColorProperty,
-  vertexColorProperty: vertexColorProperty,
-  xColorProperty: xColorProperty,
-  blackLineColorProperty: blackLineColorProperty,
-  redLineColorProperty: redLineColorProperty,
-  whiteLineColorProperty: whiteLineColorProperty,
-  selectedFaceColorHighlightColorProperty: selectedFaceColorHighlightColorProperty,
-  selectedSectorEditColorProperty: selectedSectorEditColorProperty,
-  hoverHighlightColorProperty: hoverHighlightColorProperty,
-  simpleRegionTargetColorProperty: simpleRegionTargetColorProperty,
-  faceColorBasicTargetColorProperty: faceColorBasicTargetColorProperty,
-  faceColorLightTargetColorProperty: faceColorLightTargetColorProperty,
-  faceColorDarkTargetColorProperty: faceColorDarkTargetColorProperty,
-  faceColorOutsideColorProperty: faceColorOutsideColorProperty,
-  faceColorInsideColorProperty: faceColorInsideColorProperty,
-  faceColorDefaultColorProperty: faceColorDefaultColorProperty,
-  sectorOnlyOneColorProperty: sectorOnlyOneColorProperty,
-  sectorNotOneColorProperty: sectorNotOneColorProperty,
-  sectorNotZeroColorProperty: sectorNotZeroColorProperty,
-  sectorNotTwoColorProperty: sectorNotTwoColorProperty,
-  sectorOtherColorProperty: sectorOtherColorProperty,
-  vertexStateLineProperty: vertexStateLineProperty,
-  vertexStateBackgroundProperty: vertexStateBackgroundProperty,
-  vertexStateOutlineProperty: vertexStateOutlineProperty,
-  vertexStatePointProperty: vertexStatePointProperty,
-  faceValueColorProperty: faceValueColorProperty,
-  faceValueCompletedColorProperty: faceValueCompletedColorProperty,
-  faceValueErrorColorProperty: faceValueErrorColorProperty,
-  edgeWeirdColorProperty: edgeWeirdColorProperty,
-  uiForegroundColorProperty: uiForegroundColorProperty,
-  uiBackgroundColorProperty: uiBackgroundColorProperty,
-  uiButtonForegroundProperty: uiButtonForegroundProperty,
-  uiButtonBaseColorProperty: uiButtonBaseColorProperty,
-  uiButtonDisabledColorProperty: uiButtonDisabledColorProperty,
-  uiButtonSelectedStrokeColorProperty: uiButtonSelectedStrokeColorProperty,
-  uiButtonDeselectedStrokeColorProperty: uiButtonDeselectedStrokeColorProperty,
-  barrierColorProperty: barrierColorProperty,
-  generateAddedFaceColorProperty: generateAddedFaceColorProperty,
-  generateMinimizedFaceColorProperty: generateMinimizedFaceColorProperty,
-
-  simpleRegionHueLUTProperty: getLUTProperty( simpleRegionTargetColorProperty ),
-  faceColorBasicHueLUTProperty: getLUTProperty( faceColorBasicTargetColorProperty ),
-  faceColorLightHueLUTProperty: getLUTProperty( faceColorLightTargetColorProperty ),
-  faceColorDarkHueLUTProperty: getLUTProperty( faceColorDarkTargetColorProperty ),
-};
+export const currentTheme: TRuntimeTheme = themeFromProperty( themeProperty );
 
 const useFlatButtons = true;
 export const rectangularButtonAppearanceStrategy = useFlatButtons ? RectangularButton.FlatAppearanceStrategy : RectangularButton.ThreeDAppearanceStrategy;

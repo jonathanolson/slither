@@ -1,5 +1,5 @@
 import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { allVertexStateVisibleProperty, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, TFaceValueStyle, TLineCap, TLineJoin, TReadOnlyTheme, TRedLineStyle, TVertexStyle, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty } from '../Theme.ts';
+import { allVertexStateVisibleProperty, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, TFaceValueStyle, TLineCap, TLineJoin, TRuntimeTheme, TRedLineStyle, TVertexStyle, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty } from '../Theme.ts';
 import { AnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
@@ -43,7 +43,7 @@ export interface TPuzzleStyle extends TPuzzleModelStyle {
   readonly joinedLinesJoinProperty: TReadOnlyProperty<TLineJoin>;
   readonly joinedLinesCapProperty: TReadOnlyProperty<TLineCap>;
 
-  readonly theme: TReadOnlyTheme;
+  readonly theme: TRuntimeTheme;
 }
 
 export const customPuzzleStyle: TPuzzleStyle = {
@@ -89,3 +89,7 @@ export const customPuzzleStyle: TPuzzleStyle = {
 
   theme: currentTheme
 };
+
+// export const puzzleStyleFromProperty = ( puzzleStyleProperty: TReadOnlyProperty<TPuzzleStyle> ): TPuzzleStyle => {
+//   // TODO: a more concise way?
+// };
