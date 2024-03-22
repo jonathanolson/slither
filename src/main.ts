@@ -8,7 +8,7 @@ import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
-import { controlBarMargin, navbarBackgroundColorProperty, navbarErrorBackgroundColorProperty } from './view/Theme.ts';
+import { controlBarMargin, currentTheme } from './view/Theme.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
 import { TPropertyPuzzle } from './model/puzzle/TPuzzle.ts';
 import { TCompleteData } from './model/data/combined/TCompleteData.ts';
@@ -93,8 +93,8 @@ const displayedAnnotationProperty = new DynamicProperty( puzzleModelProperty, {
 // TODO: better place to handle this type of logic...
 Multilink.multilink( [
   hasErrorProperty,
-  navbarBackgroundColorProperty,
-  navbarErrorBackgroundColorProperty
+  currentTheme.navbarBackgroundColorProperty,
+  currentTheme.navbarErrorBackgroundColorProperty
 ], ( hasError, color, errorColor ) => {
   display.backgroundColor = hasError ? errorColor : color;
 } );

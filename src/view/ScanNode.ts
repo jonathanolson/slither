@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Image, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
-import { uiFont, uiForegroundColorProperty } from './Theme.ts';
+import { currentTheme, uiFont } from './Theme.ts';
 import { ScanOptions } from '../scan/scanURL.ts';
 import { Contour } from '../scan/Contour.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -54,7 +54,7 @@ export class ScanNode extends PopupNode {
       children: [
         new Text( 'Loading image...', {
           font: uiFont,
-          fill: uiForegroundColorProperty
+          fill: currentTheme.uiForegroundColorProperty
         } )
       ]
     } );

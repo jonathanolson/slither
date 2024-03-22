@@ -6,7 +6,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import _ from '../workarounds/_.ts';
 import { BooleanProperty, Multilink, NumberProperty, Property, TinyEmitter, TinyProperty } from 'phet-lib/axon';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { blackLineColorProperty, faceValueColorProperty, generateAddedFaceColorProperty, generateButtonFont, generateMinimizedFaceColorProperty, playAreaBackgroundColorProperty, puzzleBackgroundColorProperty, uiFont, uiForegroundColorProperty } from './Theme.ts';
+import { currentTheme, generateButtonFont, uiFont } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
 import { UITextCheckbox } from './UITextCheckbox.ts';
@@ -455,7 +455,7 @@ export class GenerateNode extends HBox {
         value: generator,
         createNode: () => new Text( generator.name, {
           font: uiFont,
-          fill: uiForegroundColorProperty
+          fill: currentTheme.uiForegroundColorProperty
         } ),
         labelContent: generator.name
       };
@@ -536,8 +536,8 @@ export class GenerateNode extends HBox {
       polygons.forEach( polygon => shape.polygon( polygon ) );
       previewBoardNode.children = [
         new Path( shape, {
-          fill: puzzleBackgroundColorProperty,
-          stroke: blackLineColorProperty,
+          fill: currentTheme.puzzleBackgroundColorProperty,
+          stroke: currentTheme.blackLineColorProperty,
           lineWidth: 0.05
         } )
       ];
@@ -581,7 +581,7 @@ export class GenerateNode extends HBox {
             layoutFunction: NumberControl.createLayoutFunction4(),
             titleNodeOptions: {
               font: uiFont,
-              fill: uiForegroundColorProperty
+              fill: currentTheme.uiForegroundColorProperty
             },
             sliderOptions : {
               trackSize: new Dimension2( 100, 5 ),
@@ -610,7 +610,7 @@ export class GenerateNode extends HBox {
             layoutFunction: NumberControl.createLayoutFunction4(),
             titleNodeOptions: {
               font: uiFont,
-              fill: uiForegroundColorProperty
+              fill: currentTheme.uiForegroundColorProperty
             },
             sliderOptions : {
               trackSize: new Dimension2( 100, 5 ),
@@ -648,7 +648,7 @@ export class GenerateNode extends HBox {
               value: choice.value,
               createNode: () => new Text( choice.label, {
                 font: uiFont,
-                fill: uiForegroundColorProperty
+                fill: currentTheme.uiForegroundColorProperty
               } ),
               labelContent: choice.label
             };
@@ -690,14 +690,14 @@ export class GenerateNode extends HBox {
 
           faceDefineEmitter.addListener( ( index, state ) => {
             previewGeneratedNode.addChild( new Path( Shape.polygon( polygons[ index ] ), {
-              fill: generateAddedFaceColorProperty,
-              stroke: blackLineColorProperty,
+              fill: currentTheme.generateAddedFaceColorProperty,
+              stroke: currentTheme.blackLineColorProperty,
               lineWidth: 0.05
             } ) );
             if ( state !== null ) {
               previewGeneratedNode.addChild( new Text( `${state}`, {
                 font: generateButtonFont,
-                fill: faceValueColorProperty,
+                fill: currentTheme.faceValueColorProperty,
                 maxWidth: 0.9,
                 maxHeight: 0.9,
                 center: getCentroid( polygons[ index ] )
@@ -707,14 +707,14 @@ export class GenerateNode extends HBox {
 
           faceMinimizeEmitter.addListener( ( index, state ) => {
             previewGeneratedNode.addChild( new Path( Shape.polygon( polygons[ index ] ), {
-              fill: generateMinimizedFaceColorProperty,
-              stroke: blackLineColorProperty,
+              fill: currentTheme.generateMinimizedFaceColorProperty,
+              stroke: currentTheme.blackLineColorProperty,
               lineWidth: 0.05
             } ) );
             if ( state !== null ) {
               previewGeneratedNode.addChild( new Text( `${state}`, {
                 font: generateButtonFont,
-                fill: faceValueColorProperty,
+                fill: currentTheme.faceValueColorProperty,
                 maxWidth: 0.9,
                 maxHeight: 0.9,
                 center: getCentroid( polygons[ index ] )
@@ -778,7 +778,7 @@ export class GenerateNode extends HBox {
     } );
 
     const previewRectangle = new Rectangle( {
-      fill: playAreaBackgroundColorProperty,
+      fill: currentTheme.playAreaBackgroundColorProperty,
       sizable: true,
       layoutOptions: {
         grow: 1

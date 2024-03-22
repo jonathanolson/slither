@@ -1,6 +1,6 @@
 import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
-import { uiFont, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonForegroundProperty } from './Theme.ts';
+import { uiFont, rectangularButtonAppearanceStrategy, currentTheme } from './Theme.ts';
 
 type SelfOptions = EmptySelfOptions;
 
@@ -13,8 +13,8 @@ export class UITextPushButton extends TextPushButton {
   ) {
 
     const options = optionize<UITextPushButtonOptions, SelfOptions, TextPushButtonOptions>()( {
-      textFill: uiButtonForegroundProperty,
-      baseColor: uiButtonBaseColorProperty,
+      textFill: currentTheme.uiButtonForegroundProperty,
+      baseColor: currentTheme.uiButtonBaseColorProperty,
       xMargin: 5,
       yMargin: 5,
       font: uiFont,

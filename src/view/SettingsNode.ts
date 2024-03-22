@@ -2,7 +2,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveDoubleMinusOneFacesProperty, autoSolveEnabledProperty, autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToFaceColorsProperty, autoSolveFaceToRedProperty, autoSolveFaceToSectorsProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleSectorProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexColorToFaceProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToSectorsProperty } from '../model/solver/autoSolver';
-import { allVertexStateVisibleProperty, availableThemes, edgesHaveColorsProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, edgesVisibleProperty, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, showHoverHighlightsProperty, smallVertexProperty, themeProperty, uiFont, uiForegroundColorProperty, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
+import { allVertexStateVisibleProperty, availableThemes, edgesHaveColorsProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, edgesVisibleProperty, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, showHoverHighlightsProperty, smallVertexProperty, themeProperty, uiFont, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, currentTheme } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -29,7 +29,7 @@ export class SettingsNode extends PopupNode {
       children: [
         new Text( 'Solve After Every Move', {
           font: uiHeaderFont,
-          fill: uiForegroundColorProperty
+          fill: currentTheme.uiForegroundColorProperty
         } ),
         new GridBox( {
           xAlign: 'left',
@@ -92,7 +92,7 @@ export class SettingsNode extends PopupNode {
           value: theme,
           createNode: () => new Text( theme.name, {
             font: uiFont,
-            fill: uiForegroundColorProperty
+            fill: currentTheme.uiForegroundColorProperty
           } ),
           a11yName: theme.name
         };
@@ -117,7 +117,7 @@ export class SettingsNode extends PopupNode {
       children: [
         new Text( 'Puzzle Display', {
           font: uiHeaderFont,
-          fill: uiForegroundColorProperty
+          fill: currentTheme.uiForegroundColorProperty
         } ),
         new GridBox( {
           xAlign: 'left',
@@ -190,7 +190,7 @@ export class SettingsNode extends PopupNode {
                   value: join,
                   createNode: () => new Text( join, {
                     font: uiFont,
-                    fill: uiForegroundColorProperty
+                    fill: currentTheme.uiForegroundColorProperty
                   } ),
                   labelContent: join
                 };
@@ -204,7 +204,7 @@ export class SettingsNode extends PopupNode {
                   value: cap,
                   createNode: () => new Text( cap, {
                     font: uiFont,
-                    fill: uiForegroundColorProperty
+                    fill: currentTheme.uiForegroundColorProperty
                   } ),
                   labelContent: cap
                 };
@@ -218,7 +218,7 @@ export class SettingsNode extends PopupNode {
                   value: vertexStyle,
                   createNode: () => new Text( vertexStyle, {
                     font: uiFont,
-                    fill: uiForegroundColorProperty
+                    fill: currentTheme.uiForegroundColorProperty
                   } ),
                   labelContent: vertexStyle
                 };
@@ -232,7 +232,7 @@ export class SettingsNode extends PopupNode {
                   value: redLineStyle,
                   createNode: () => new Text( redLineStyle, {
                     font: uiFont,
-                    fill: uiForegroundColorProperty
+                    fill: currentTheme.uiForegroundColorProperty
                   } ),
                   labelContent: redLineStyle
                 };
@@ -246,7 +246,7 @@ export class SettingsNode extends PopupNode {
                   value: faceValueStyle,
                   createNode: () => new Text( faceValueStyle, {
                     font: uiFont,
-                    fill: uiForegroundColorProperty
+                    fill: currentTheme.uiForegroundColorProperty
                   } ),
                   labelContent: faceValueStyle
                 };

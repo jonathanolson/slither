@@ -1,7 +1,7 @@
 import { Property } from 'phet-lib/axon';
 import { AquaRadioButtonGroupItem, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
-import { uiBackgroundColorProperty, uiButtonBaseColorProperty, uiForegroundColorProperty, uiHeaderFont } from './Theme.ts';
+import { currentTheme, uiHeaderFont } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 
 export const getVerticalRadioButtonGroup = <T>( label: string, property: Property<T>, items: AquaRadioButtonGroupItem<T>[], providedOptions?: VBoxOptions ) => {
@@ -9,9 +9,9 @@ export const getVerticalRadioButtonGroup = <T>( label: string, property: Propert
   const radioButtonGroup = new VerticalAquaRadioButtonGroup( property, items, {
     spacing: 8,
     radioButtonOptions: {
-      selectedColor: uiButtonBaseColorProperty,
-      deselectedColor: uiBackgroundColorProperty,
-      stroke: uiForegroundColorProperty
+      selectedColor: currentTheme.uiButtonBaseColorProperty,
+      deselectedColor: currentTheme.uiBackgroundColorProperty,
+      stroke: currentTheme.uiForegroundColorProperty
     }
   } );
 
@@ -22,7 +22,7 @@ export const getVerticalRadioButtonGroup = <T>( label: string, property: Propert
     children: [
       new Text( label, {
         font: uiHeaderFont,
-        fill: uiForegroundColorProperty
+        fill: currentTheme.uiForegroundColorProperty
       } ),
       radioButtonGroup
     ]

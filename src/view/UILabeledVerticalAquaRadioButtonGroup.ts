@@ -3,7 +3,7 @@ import { UIAquaRadioButtonGroup, UIAquaRadioButtonGroupOptions } from './UIAquaR
 import { Property } from 'phet-lib/axon';
 import { AquaRadioButtonGroupItem } from 'phet-lib/sun';
 import { optionize } from 'phet-lib/phet-core';
-import { uiForegroundColorProperty, uiHeaderFont } from './Theme.ts';
+import { currentTheme, uiHeaderFont } from './Theme.ts';
 
 type SelfOptions = {
   radioButtonGroupOptions?: UIAquaRadioButtonGroupOptions;
@@ -34,7 +34,7 @@ export class UILabeledVerticalAquaRadioButtonGroup<T> extends VBox {
     options.children = [
       new Text( label, {
         font: uiHeaderFont,
-        fill: uiForegroundColorProperty
+        fill: currentTheme.uiForegroundColorProperty
       } ),
       radioButtonGroup
     ];

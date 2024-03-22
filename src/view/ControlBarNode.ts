@@ -6,7 +6,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { controlBarFont, controlBarMargin, rectangularButtonAppearanceStrategy, uiButtonBaseColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty } from './Theme.ts';
+import { controlBarFont, controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -48,8 +48,8 @@ export default class ControlBarNode extends HBox {
 
     const commonButtonOptions = {
       buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-      baseColor: uiButtonBaseColorProperty,
-      disabledColor: uiButtonDisabledColorProperty,
+      baseColor: currentTheme.uiButtonBaseColorProperty,
+      disabledColor: currentTheme.uiButtonDisabledColorProperty,
       xMargin: 8 * 1.3,
       yMargin: 5 * 1.3,
 
@@ -73,8 +73,8 @@ export default class ControlBarNode extends HBox {
 
             genNode.show();
           },
-          textFill: uiButtonForegroundProperty,
-          baseColor: uiButtonBaseColorProperty,
+          textFill: currentTheme.uiButtonForegroundProperty,
+          baseColor: currentTheme.uiButtonBaseColorProperty,
           xMargin: 5,
           yMargin: 5,
           font: controlBarFont,
@@ -158,8 +158,8 @@ export default class ControlBarNode extends HBox {
           // TODO: enabledProperty
 
           // TODO: factor these out
-          textFill: uiButtonForegroundProperty,
-          baseColor: uiButtonBaseColorProperty,
+          textFill: currentTheme.uiButtonForegroundProperty,
+          baseColor: currentTheme.uiButtonBaseColorProperty,
           xMargin: 5,
           yMargin: 5,
           font: controlBarFont,
@@ -176,8 +176,8 @@ export default class ControlBarNode extends HBox {
           // TODO: enabledProperty
 
           // TODO: factor these out
-          textFill: uiButtonForegroundProperty,
-          baseColor: uiButtonBaseColorProperty,
+          textFill: currentTheme.uiButtonForegroundProperty,
+          baseColor: currentTheme.uiButtonBaseColorProperty,
           xMargin: 5,
           yMargin: 5,
           font: controlBarFont,

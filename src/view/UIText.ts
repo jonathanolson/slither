@@ -1,6 +1,6 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Text, TextOptions } from 'phet-lib/scenery';
-import { uiFont, uiForegroundColorProperty } from './Theme.ts';
+import { currentTheme, uiFont } from './Theme.ts';
 import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
 
 export type UITextOptions = TextOptions;
@@ -14,7 +14,7 @@ export class UIText extends Text {
 
     const options = optionize<UITextOptions, EmptySelfOptions, TextOptions>()( {
       font: uiFont,
-      fill: uiForegroundColorProperty
+      fill: currentTheme.uiForegroundColorProperty
     }, providedOptions );
 
     super( string, options );

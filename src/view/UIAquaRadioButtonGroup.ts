@@ -1,7 +1,7 @@
 import { Property } from 'phet-lib/axon';
 import { AquaRadioButtonGroup, AquaRadioButtonGroupItem, AquaRadioButtonGroupOptions } from 'phet-lib/sun';
-import { uiBackgroundColorProperty, uiButtonBaseColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
+import { currentTheme } from './Theme.ts';
 
 export type UIAquaRadioButtonGroupOptions = AquaRadioButtonGroupOptions;
 
@@ -14,9 +14,9 @@ export class UIAquaRadioButtonGroup<T> extends AquaRadioButtonGroup<T> {
     const options = optionize<AquaRadioButtonGroupOptions, EmptySelfOptions>()( {
       spacing: 8,
       radioButtonOptions: {
-        selectedColor: uiButtonBaseColorProperty,
-        deselectedColor: uiBackgroundColorProperty,
-        stroke: uiForegroundColorProperty
+        selectedColor: currentTheme.uiButtonBaseColorProperty,
+        deselectedColor: currentTheme.uiBackgroundColorProperty,
+        stroke: currentTheme.uiForegroundColorProperty
       }
     }, providedOptions );
 

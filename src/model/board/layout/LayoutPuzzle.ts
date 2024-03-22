@@ -16,7 +16,7 @@ import _ from '../../../workarounds/_.ts';
 import { Vector2 } from 'phet-lib/dot';
 import { LayoutDerivative } from './LayoutDerivative.ts';
 import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
-import { blackLineColorProperty, faceValueColorProperty } from '../../../view/Theme.ts';
+import { currentTheme } from '../../../view/Theme.ts';
 import { Shape } from 'phet-lib/kite';
 import { LayoutEdge, LayoutExternalZone, LayoutFace, LayoutHalfEdge, LayoutInternalZone, LayoutStructure, LayoutVertex } from './layout.ts';
 import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
@@ -717,7 +717,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       let lineWidth: number;
       const edgeState = this.edgeStateMap.get( edge );
       if ( edgeState === EdgeState.WHITE ) {
-        stroke = blackLineColorProperty;
+        stroke = currentTheme.blackLineColorProperty;
         lineWidth = 0.02;
       }
       else if ( edgeState === EdgeState.BLACK ) {
@@ -750,7 +750,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
         debugNode.addChild( new Circle( 0.1, {
           x: vertex.viewCoordinates.x,
           y: vertex.viewCoordinates.y,
-          fill: blackLineColorProperty
+          fill: currentTheme.blackLineColorProperty
         } ) );
       } );
     }
@@ -763,7 +763,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
           maxWidth: 0.9,
           maxHeight: 0.9,
           center: face.viewCoordinates,
-          fill: faceValueColorProperty
+          fill: currentTheme.faceValueColorProperty
         } ) );
       }
     } );

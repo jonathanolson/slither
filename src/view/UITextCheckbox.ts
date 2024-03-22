@@ -1,7 +1,7 @@
 import { Property } from 'phet-lib/axon';
 import { Checkbox, CheckboxOptions } from 'phet-lib/sun';
 import { Text } from 'phet-lib/scenery';
-import { uiFont, uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
+import { currentTheme, uiFont } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 
@@ -22,13 +22,13 @@ export class UITextCheckbox extends Checkbox {
     const options = optionize<UITextCheckboxOptions, SelfOptions, CheckboxOptions>()( {
       advanced: false,
       accessibleName: label,
-      checkboxColor: uiForegroundColorProperty,
-      checkboxColorBackground: uiBackgroundColorProperty
+      checkboxColor: currentTheme.uiForegroundColorProperty,
+      checkboxColorBackground: currentTheme.uiBackgroundColorProperty
     }, providedOptions );
 
     const labelNode = new Text( label, {
       font: uiFont,
-      fill: uiForegroundColorProperty
+      fill: currentTheme.uiForegroundColorProperty
     } );
 
     // TODO: we'll need to dispose of this...

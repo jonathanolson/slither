@@ -3,7 +3,7 @@ import { OnOffSwitch, OnOffSwitchOptions } from 'phet-lib/sun';
 import { HBox, HBoxOptions, Node } from 'phet-lib/scenery';
 import { optionize } from 'phet-lib/phet-core';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
-import { uiButtonBaseColorProperty, uiButtonDisabledColorProperty } from './Theme.ts';
+import { currentTheme } from './Theme.ts';
 import { Dimension2 } from 'phet-lib/dot';
 
 type SelfOptions = {
@@ -29,8 +29,8 @@ export class UISwitch extends HBox {
       // checkboxColorBackground: uiBackgroundColorProperty,
       onOffSwitchOptions: {
         size: new Dimension2( 40, 20 ),
-        trackFillLeft: uiButtonDisabledColorProperty,
-        trackFillRight: uiButtonBaseColorProperty,
+        trackFillLeft: currentTheme.uiButtonDisabledColorProperty,
+        trackFillRight: currentTheme.uiButtonBaseColorProperty,
         accessibleName: name,
       },
     }, providedOptions );

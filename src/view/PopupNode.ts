@@ -2,8 +2,8 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
 import { Panel, PanelOptions } from 'phet-lib/sun';
-import { barrierColorProperty, uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
 import { optionize } from 'phet-lib/phet-core';
+import { currentTheme } from './Theme.ts';
 
 export type PopupNodeOptions = {
   allowBarrierClickToHide?: boolean;
@@ -23,8 +23,8 @@ export class PopupNode extends Node {
       panelOptions: {
         xMargin: 15,
         yMargin: 15,
-        fill: uiBackgroundColorProperty,
-        stroke: uiForegroundColorProperty
+        fill: currentTheme.uiBackgroundColorProperty,
+        stroke: currentTheme.uiForegroundColorProperty
       }
     }, providedOptions );
 
@@ -32,7 +32,7 @@ export class PopupNode extends Node {
 
     // TODO: pass-through more options
 
-    const barrier = new Rectangle( { fill: barrierColorProperty } );
+    const barrier = new Rectangle( { fill: currentTheme.barrierColorProperty } );
     this.addChild( barrier );
     layoutBoundsProperty.link( layoutBounds => {
       barrier.rectBounds = layoutBounds;

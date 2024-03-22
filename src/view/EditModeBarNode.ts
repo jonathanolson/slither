@@ -1,7 +1,7 @@
 import { TReadOnlyProperty } from 'phet-lib/axon';
 import { RectangularRadioButtonGroup } from 'phet-lib/sun';
 import { Bounds2 } from 'phet-lib/dot';
-import { controlBarMargin, uiBackgroundColorProperty, uiButtonBaseColorProperty, uiButtonDeselectedStrokeColorProperty, uiButtonDisabledColorProperty, uiButtonForegroundProperty, uiButtonSelectedStrokeColorProperty, uiForegroundColorProperty } from './Theme.ts';
+import { controlBarMargin, currentTheme } from './Theme.ts';
 import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
 import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
@@ -17,7 +17,7 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
   ) {
 
     const edgeIcon = new Line( 0, 0, 15, 0, {
-      stroke: uiButtonForegroundProperty,
+      stroke: currentTheme.uiButtonForegroundProperty,
       lineWidth: 4,
       lineCap: 'round'
     } );
@@ -30,19 +30,19 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
       .lineTo( halfSize, -halfSize );
 
     const edgeReversedIcon = new Path( xShape, {
-      stroke: uiButtonForegroundProperty,
+      stroke: currentTheme.uiButtonForegroundProperty,
       lineWidth: 2
     } );
 
     const faceColorMatchIcon = new Node( {
       children: [
         new Rectangle( 0, 0, 7, 7, {
-          stroke: uiButtonForegroundProperty,
-          fill: uiForegroundColorProperty
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty
         } ),
         new Rectangle( 7, 7, 7, 7, {
-          stroke: uiButtonForegroundProperty,
-          fill: uiForegroundColorProperty
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty
         } ),
       ]
     } );
@@ -50,12 +50,12 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
     const faceColorOppositeIcon = new Node( {
       children: [
         new Rectangle( 0, 0, 7, 7, {
-          stroke: uiButtonForegroundProperty,
-          fill: uiForegroundColorProperty
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty
         } ),
         new Rectangle( 7, 7, 7, 7, {
-          stroke: uiButtonForegroundProperty,
-          fill: uiBackgroundColorProperty
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiBackgroundColorProperty
         } ),
       ]
     } );
@@ -63,10 +63,10 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
     const sectorIcon = new Node( {
       children: [
         new Path( new Shape().moveTo( 0, 14 ).lineTo( 0, 0 ).lineTo( 14, 0 ), {
-          stroke: uiButtonForegroundProperty
+          stroke: currentTheme.uiButtonForegroundProperty
         }  ),
         new Path( new Shape().arc( 0, 0, 7, 0, Math.PI / 2, false ), {
-          stroke: uiButtonForegroundProperty
+          stroke: currentTheme.uiButtonForegroundProperty
         } )
       ]
     } );
@@ -117,13 +117,13 @@ export default class EditModeBarNode extends RectangularRadioButtonGroup<EditMod
       touchAreaYDilation: 5,
       radioButtonOptions: {
         // buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-        baseColor: uiButtonBaseColorProperty,
-        disabledColor: uiButtonDisabledColorProperty,
+        baseColor: currentTheme.uiButtonBaseColorProperty,
+        disabledColor: currentTheme.uiButtonDisabledColorProperty,
         xMargin: 8 * 1.3,
         yMargin: 5 * 1.3,
         buttonAppearanceStrategyOptions: {
-          selectedStroke: uiButtonSelectedStrokeColorProperty, // TODO: create an option JUST for this type of thing
-          deselectedStroke: uiButtonDeselectedStrokeColorProperty
+          selectedStroke: currentTheme.uiButtonSelectedStrokeColorProperty, // TODO: create an option JUST for this type of thing
+          deselectedStroke: currentTheme.uiButtonDeselectedStrokeColorProperty
           // overButtonOpacity: 0.8,
           // overStroke: null,
           // selectedLineWidth: 1.5,

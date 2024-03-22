@@ -3,7 +3,7 @@ import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { Panel } from 'phet-lib/sun';
 import { AnnotationNode } from './AnnotationNode.ts';
-import { uiBackgroundColorProperty, uiForegroundColorProperty } from './Theme.ts';
+import { currentTheme } from './Theme.ts';
 
 export class HintTipNode extends Node {
   public constructor(
@@ -21,8 +21,8 @@ export class HintTipNode extends Node {
         this.addChild( new Panel( AnnotationNode.getHintNode( annotation ), {
           xMargin: 5,
           yMargin: 5,
-          fill: uiBackgroundColorProperty,
-          stroke: uiForegroundColorProperty
+          fill: currentTheme.uiBackgroundColorProperty,
+          stroke: currentTheme.uiForegroundColorProperty
         } ) );
       }
     } );
