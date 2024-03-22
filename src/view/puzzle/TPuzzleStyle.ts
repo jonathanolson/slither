@@ -125,7 +125,7 @@ export const basicLinesPuzzleStyle: TPuzzleStyle = {
 
   whiteLineVisibleProperty: new TinyProperty( true ),
 
-  redLineVisibleProperty: new TinyProperty( false ),
+  redLineVisibleProperty: redLineVisibleProperty,
 
   verticesVisibleProperty: new TinyProperty( false ),
   smallVertexProperty: new TinyProperty( false ),
@@ -160,7 +160,7 @@ export const basicFaceColoringPuzzleStyle: TPuzzleStyle = {
 
   whiteLineVisibleProperty: new TinyProperty( true ),
 
-  redLineVisibleProperty: new TinyProperty( false ),
+  redLineVisibleProperty: redLineVisibleProperty,
 
   verticesVisibleProperty: new TinyProperty( false ),
   smallVertexProperty: new TinyProperty( false ),
@@ -194,7 +194,7 @@ export const pureFaceColorPuzzleStyle: TPuzzleStyle = {
 
   whiteLineVisibleProperty: new TinyProperty( false ),
 
-  redLineVisibleProperty: new TinyProperty( false ),
+  redLineVisibleProperty: redLineVisibleProperty,
 
   verticesVisibleProperty: new TinyProperty( false ),
   smallVertexProperty: new TinyProperty( false ),
@@ -228,7 +228,7 @@ export const classicPuzzleStyle: TPuzzleStyle = {
 
   whiteLineVisibleProperty: new TinyProperty( false ),
 
-  redLineVisibleProperty: new TinyProperty( false ),
+  redLineVisibleProperty: redLineVisibleProperty,
 
   verticesVisibleProperty: new TinyProperty( true ),
   smallVertexProperty: new TinyProperty( false ),
@@ -244,11 +244,175 @@ export const classicPuzzleStyle: TPuzzleStyle = {
   joinedLinesCapProperty: new TinyProperty( 'square' ),
 };
 
+export const basicSectorsPuzzleStyle: TPuzzleStyle = {
+  ...getPartialPuzzleStyle( true, true, false, false ),
+  theme: currentTheme,
+
+  // TODO: Control directly what "edit bar" options are available
+
+  // TODO: Dynamically update what edit bar actions are available to match
+
+  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
+  autoSolverFactoryProperty: autoSolverFactoryProperty,
+
+  edgesVisibleProperty: new TinyProperty( true ),
+  edgesHaveColorsProperty: new TinyProperty( true ),
+
+  faceColorThresholdProperty: new TinyProperty( Number.POSITIVE_INFINITY ),
+
+  sectorsNextToEdgesVisibleProperty: new TinyProperty( false ),
+  sectorsTrivialVisibleProperty: new TinyProperty( false ),
+  allVertexStateVisibleProperty: new TinyProperty( false ),
+
+
+  whiteLineVisibleProperty: new TinyProperty( true ),
+
+  redLineVisibleProperty: redLineVisibleProperty,
+
+  verticesVisibleProperty: new TinyProperty( false ),
+  smallVertexProperty: new TinyProperty( false ),
+
+  redXsVisibleProperty: new TinyProperty( false ),
+  redXsAlignedProperty: new TinyProperty( false ),
+
+  // TODO: fix this, we should reference a dynamic global property
+  faceValueStyleProperty: faceValueStyleProperty,
+
+  redLineStyleProperty: new TinyProperty( 'middle' ),
+  vertexStyleProperty: new TinyProperty( 'round' ),
+  joinedLinesJoinProperty: new TinyProperty( 'round' ),
+  joinedLinesCapProperty: new TinyProperty( 'round' ),
+};
+
+export const sectorsWithColorsPuzzleStyle: TPuzzleStyle = {
+  ...getPartialPuzzleStyle( true, true, false, false ),
+  theme: currentTheme,
+
+  // TODO: Control directly what "edit bar" options are available
+
+  // TODO: Dynamically update what edit bar actions are available to match
+
+  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
+  autoSolverFactoryProperty: autoSolverFactoryProperty,
+
+  edgesVisibleProperty: new TinyProperty( true ),
+  edgesHaveColorsProperty: new TinyProperty( false ),
+
+  faceColorThresholdProperty: new TinyProperty( 2 ),
+
+  sectorsNextToEdgesVisibleProperty: new TinyProperty( false ),
+  sectorsTrivialVisibleProperty: new TinyProperty( false ),
+  allVertexStateVisibleProperty: new TinyProperty( false ),
+
+
+  whiteLineVisibleProperty: new TinyProperty( true ),
+
+  redLineVisibleProperty: redLineVisibleProperty,
+
+  verticesVisibleProperty: new TinyProperty( false ),
+  smallVertexProperty: new TinyProperty( false ),
+
+  redXsVisibleProperty: new TinyProperty( false ),
+  redXsAlignedProperty: new TinyProperty( false ),
+
+  // TODO: fix this, we should reference a dynamic global property
+  faceValueStyleProperty: faceValueStyleProperty,
+
+  redLineStyleProperty: new TinyProperty( 'middle' ),
+  vertexStyleProperty: new TinyProperty( 'round' ),
+  joinedLinesJoinProperty: new TinyProperty( 'round' ),
+  joinedLinesCapProperty: new TinyProperty( 'round' ),
+};
+
+export const vertexStatePuzzleStyle: TPuzzleStyle = {
+  ...getPartialPuzzleStyle( true, false, true, false ),
+  theme: currentTheme,
+
+  // TODO: Control directly what "edit bar" options are available
+
+  // TODO: Dynamically update what edit bar actions are available to match
+
+  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
+  autoSolverFactoryProperty: autoSolverFactoryProperty,
+
+  edgesVisibleProperty: new TinyProperty( true ),
+  edgesHaveColorsProperty: new TinyProperty( false ),
+
+  faceColorThresholdProperty: new TinyProperty( 2 ),
+
+  sectorsNextToEdgesVisibleProperty: new TinyProperty( false ),
+  sectorsTrivialVisibleProperty: new TinyProperty( false ),
+  allVertexStateVisibleProperty: new TinyProperty( false ),
+
+
+  whiteLineVisibleProperty: new TinyProperty( true ),
+
+  redLineVisibleProperty: redLineVisibleProperty,
+
+  verticesVisibleProperty: new TinyProperty( false ),
+  smallVertexProperty: new TinyProperty( false ),
+
+  redXsVisibleProperty: new TinyProperty( false ),
+  redXsAlignedProperty: new TinyProperty( false ),
+
+  // TODO: fix this, we should reference a dynamic global property
+  faceValueStyleProperty: faceValueStyleProperty,
+
+  redLineStyleProperty: new TinyProperty( 'middle' ),
+  vertexStyleProperty: new TinyProperty( 'round' ),
+  joinedLinesJoinProperty: new TinyProperty( 'round' ),
+  joinedLinesCapProperty: new TinyProperty( 'round' ),
+};
+
+export const faceStatePuzzleStyle: TPuzzleStyle = {
+  ...getPartialPuzzleStyle( true, false, false, true ),
+  theme: currentTheme,
+
+  // TODO: Control directly what "edit bar" options are available
+
+  // TODO: Dynamically update what edit bar actions are available to match
+
+  // TODO: FIX THIS, it looks like we mis-typed it (shouldn't be the annotated type)
+  autoSolverFactoryProperty: autoSolverFactoryProperty,
+
+  edgesVisibleProperty: new TinyProperty( true ),
+  edgesHaveColorsProperty: new TinyProperty( false ),
+
+  faceColorThresholdProperty: new TinyProperty( 2 ),
+
+  sectorsNextToEdgesVisibleProperty: new TinyProperty( false ),
+  sectorsTrivialVisibleProperty: new TinyProperty( false ),
+  allVertexStateVisibleProperty: new TinyProperty( false ),
+
+
+  whiteLineVisibleProperty: new TinyProperty( true ),
+
+  redLineVisibleProperty: redLineVisibleProperty,
+
+  verticesVisibleProperty: new TinyProperty( false ),
+  smallVertexProperty: new TinyProperty( false ),
+
+  redXsVisibleProperty: new TinyProperty( false ),
+  redXsAlignedProperty: new TinyProperty( false ),
+
+  // TODO: fix this, we should reference a dynamic global property
+  faceValueStyleProperty: faceValueStyleProperty,
+
+  redLineStyleProperty: new TinyProperty( 'middle' ),
+  vertexStyleProperty: new TinyProperty( 'round' ),
+  joinedLinesJoinProperty: new TinyProperty( 'round' ),
+  joinedLinesCapProperty: new TinyProperty( 'round' ),
+};
+
 export const puzzleStyleMap = {
   basicLines: basicLinesPuzzleStyle,
   basicFaceColoring: basicFaceColoringPuzzleStyle,
   pureFaceColor: pureFaceColorPuzzleStyle,
   classic: classicPuzzleStyle,
+  basicSectors: basicSectorsPuzzleStyle,
+  sectorsWithColors: sectorsWithColorsPuzzleStyle,
+  vertexState: vertexStatePuzzleStyle,
+  faceState: faceStatePuzzleStyle,
   custom: customPuzzleStyle
 };
 export const defaultPuzzleStyle = basicLinesPuzzleStyle;

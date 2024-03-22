@@ -19,7 +19,11 @@
     - 
     - View modes (space-efficient drop-downs? check combobox again -- drop-downs show full info and name):
       - 
-      - Top-level auto-solve on/off (default on)
+      - FIX FIX FIX --- the autosolve setup, so we can set up different auto solves
+        - Adjust auto-solves for the various levels
+        - PURE COLOR SOLVER SET
+      - Top-level option for a "view mode" bar
+      - Move "Face Value Style" setting top-level?
       - 
       - Hint should skip over annotation types that aren't "shown"
       - 
@@ -32,35 +36,6 @@
       - 
       - Create a "SolverConfig"???
         - NOTE: Can set "SAFE" solver too, BASED ON THE VIEW MODE.
-      - Create a "TPuzzleStyle" object that has the Properties for view modes?
-        - and ability to create safe-solver and auto-solver?
-      - Create a "ThemeStyle" object that has the Properties for themes?
-      - 
-      - Classic
-        - Lines (without color)
-        - NO FACE COLORING
-        - red Xs
-        - vertices
-        - ONLY the simplest auto-solving
-      - Basic Lines
-        - Lines with color
-        - Possible line
-        - Face colors with "only outside"
-      - Basic Face Coloring
-        - Lines (without color)
-        - Possible line
-        - Face colors with 2+
-      - Pure Color (solving rules should have face color => edge)
-        - No lines visible
-        - No possible line visible
-        - Ideally different solver set (color => x, color => lines)
-      - Sectors
-        - Lines (???)
-        - Possible line
-        - Face colors with 2+? or "only outside"?
-        - Sectors visible and editable
-      - Custom
-        - (allow all of the possibilities)
       - 
       - Face values (regular value / remaining / fraction / face-state)
         - TODO: Actually, just have a "basic" face-state safe solver that will handle cases where edges are red/black...

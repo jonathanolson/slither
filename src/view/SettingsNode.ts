@@ -13,7 +13,7 @@ import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
 import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
-import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty } from './puzzle/TPuzzleStyle.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -245,13 +245,6 @@ export class SettingsNode extends PopupNode {
               } )
             )
           ]
-        } ),
-        new UITextPushButton( 'Reload to Defaults', {
-          listener: () => {
-            localStorage.clear();
-
-            window.location.reload();
-          }
         } )
       ]
     } );
@@ -295,6 +288,7 @@ export class SettingsNode extends PopupNode {
       stretch: true,
       children: [
         new UITextSwitch( autoSolveEnabledProperty, 'Auto-Solve' ),
+        new UITextSwitch( redLineVisibleProperty, 'Show Impossible Lines' ),
         new UITextSwitch( showUndoRedoAllProperty, 'Show Undo-All / Redo-All', {
           advanced: true
         } ),
@@ -337,6 +331,38 @@ export class SettingsNode extends PopupNode {
           labelContent: 'Classic'
         },
         {
+          value: basicSectorsPuzzleStyle,
+          createNode: () => new UIText( 'Basic Sectors' ),
+          labelContent: 'Basic Sectors',
+          options: {
+            visibleProperty: advancedSettingsVisibleProperty
+          }
+        },
+        {
+          value: sectorsWithColorsPuzzleStyle,
+          createNode: () => new UIText( 'Sectors With Colors' ),
+          labelContent: 'Sectors With Colors',
+          options: {
+            visibleProperty: advancedSettingsVisibleProperty
+          }
+        },
+        {
+          value: vertexStatePuzzleStyle,
+          createNode: () => new UIText( 'Vertex State' ),
+          labelContent: 'Sectors With Colors',
+          options: {
+            visibleProperty: advancedSettingsVisibleProperty
+          }
+        },
+        {
+          value: faceStatePuzzleStyle,
+          createNode: () => new UIText( 'Face State' ),
+          labelContent: 'Sectors With Colors',
+          options: {
+            visibleProperty: advancedSettingsVisibleProperty
+          }
+        },
+        {
           // TODO: only show this when custom is enabled!!!
           value: customPuzzleStyle,
           createNode: () => new UIText( 'Custom' ),
@@ -368,6 +394,15 @@ export class SettingsNode extends PopupNode {
       visibleProperty: showCustomProperty
     } );
 
+    const reloadToDefaultsButton = new UITextPushButton( 'Reload to Defaults', {
+      listener: () => {
+        localStorage.clear();
+
+        window.location.reload();
+      },
+      advanced: true
+    } );
+
     super( new VBox( {
       spacing: 20,
       align: 'left',
@@ -385,6 +420,7 @@ export class SettingsNode extends PopupNode {
         } ),
         customSwitch,
         customAccordionContent,
+        reloadToDefaultsButton,
         new UITextSwitch( advancedSettingsVisibleProperty, 'Show Advanced Settings' )
       ]
     } ), glassPane, layoutBoundsProperty );
