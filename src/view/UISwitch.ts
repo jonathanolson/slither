@@ -33,22 +33,19 @@ export class UISwitch extends HBox {
         trackFillRight: currentTheme.uiButtonBaseColorProperty,
         accessibleName: name,
       },
+
+      spacing: 10,
     }, providedOptions );
 
     const onOffSwitch = new OnOffSwitch( property, options.onOffSwitchOptions );
+
+    options.children = [ content, onOffSwitch ];
 
     // TODO: we'll need to dispose of this...
     if ( options.advanced ) {
       options.visibleProperty = advancedSettingsVisibleProperty;
     }
 
-    super( {
-      spacing: 10,
-      children: [
-        // TODO: consider other orders?
-        content,
-        onOffSwitch
-      ]
-    } );
+    super( options );
   }
 }

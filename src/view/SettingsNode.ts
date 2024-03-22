@@ -1,8 +1,8 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveDoubleMinusOneFacesProperty, autoSolveEnabledProperty, autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToFaceColorsProperty, autoSolveFaceToRedProperty, autoSolveFaceToSectorsProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleSectorProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveStaticFaceSectorProperty, autoSolveVertexColorToFaceProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToSectorsProperty } from '../model/solver/autoSolver';
-import { allVertexStateVisibleProperty, availableThemes, edgesHaveColorsProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, edgesVisibleProperty, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, showHoverHighlightsProperty, smallVertexProperty, themeProperty, uiFont, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty, currentTheme } from './Theme.ts';
+import { allVertexStateVisibleProperty, availableThemes, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, showHoverHighlightsProperty, smallVertexProperty, themeProperty, uiFont, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
 import { PopupNode } from './PopupNode.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
@@ -167,15 +167,6 @@ export class SettingsNode extends PopupNode {
             new UITextCheckbox( 'Vertices Small', smallVertexProperty ),
             new UITextCheckbox( 'Red X Visible', redXsVisibleProperty ),
             new UITextCheckbox( 'Red X Aligned', redXsAlignedProperty ),
-
-            new UITextCheckbox( 'Show Undo-All / Redo-All', showUndoRedoAllProperty ),
-            new UITextCheckbox( 'Show Hover Highlights', showHoverHighlightsProperty ), // TODO: themify!!!
-            new UITextCheckbox( 'Show Layout Test', showLayoutTestProperty, {
-              advanced: true
-            } ),
-            new UITextCheckbox( 'Solve Uses Built-In', uiHintUsesBuiltInSolveProperty, {
-              advanced: true
-            } ),
           ] ]
         } ),
 
@@ -299,10 +290,27 @@ export class SettingsNode extends PopupNode {
     ] );
 
     const topLevelNode = new VBox( {
+      spacing: 8,
+      align: 'left',
+      stretch: true,
       children: [
-        new UITextSwitch( autoSolveEnabledProperty, 'Auto-Solve', )
+        new UITextSwitch( autoSolveEnabledProperty, 'Auto-Solve' ),
+        new UITextSwitch( showUndoRedoAllProperty, 'Show Undo-All / Redo-All', {
+          advanced: true
+        } ),
+        new UITextSwitch( showHoverHighlightsProperty, 'Show Hover Highlights', {
+          advanced: true
+        } ), // TODO: themify!!!
+        new UITextSwitch( showLayoutTestProperty, 'Show Layout Test', {
+          advanced: true
+        } ),
+        new UITextSwitch( uiHintUsesBuiltInSolveProperty, 'Solve Uses Built-In', {
+          advanced: true
+        } ),
       ]
     } );
+
+    const showCustomProperty = new BooleanProperty( false );
 
     const viewStyleNode = getVerticalRadioButtonGroup(
       'View Style',
@@ -329,31 +337,55 @@ export class SettingsNode extends PopupNode {
           labelContent: 'Classic'
         },
         {
+          // TODO: only show this when custom is enabled!!!
           value: customPuzzleStyle,
           createNode: () => new UIText( 'Custom' ),
-          labelContent: 'Custom'
+          labelContent: 'Custom',
+          options: {
+            visibleProperty: advancedSettingsVisibleProperty
+          }
         },
       ]
     );
 
-    super( new VBox( {
+    const customSwitch = new UITextSwitch( showCustomProperty, 'Show Custom Options', {
+      advanced: true
+    } );
+
+    const customAccordionContent = new VBox( {
       spacing: 20,
       align: 'left',
       children: [
+        new HBox( {
+          spacing: 20,
+          children: [
+            autoSolveNode,
+            faceColorThresholdNode,
+          ]
+        } ),
+        displayNode,
+      ],
+      visibleProperty: showCustomProperty
+    } );
+
+    super( new VBox( {
+      spacing: 20,
+      align: 'left',
+      stretch: true,
+      children: [
         topLevelNode,
-        viewStyleNode,
-        autoSolveNode,
         new HBox( {
           align: 'top',
           spacing: 30,
           children: [
+            viewStyleNode,
             themeNode,
-            themeEditButtons,
-            faceColorThresholdNode
+            themeEditButtons
           ]
         } ),
-        displayNode,
-        new UITextCheckbox( 'Advanced Settings Visible', advancedSettingsVisibleProperty )
+        customSwitch,
+        customAccordionContent,
+        new UITextSwitch( advancedSettingsVisibleProperty, 'Show Advanced Settings' )
       ]
     } ), glassPane, layoutBoundsProperty );
   }
