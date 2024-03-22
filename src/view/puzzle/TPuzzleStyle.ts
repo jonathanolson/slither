@@ -161,7 +161,7 @@ const sectorSolverFactoryProperty = new DerivedProperty( [
       basicSolverFactory( board, state, dirty ),
 
       // TODO: create a new "sector"-only solver?
-      new StaticSectorSolver( board, state ) // TODO: NOTE WE ARE FORCING DIRTY HERE, because it might get enabled?
+      new StaticSectorSolver( board, state, dirty ? undefined : [] )
     ] );
   };
 } );

@@ -281,10 +281,15 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   private applyUserActionToStack(
     userAction: PuzzleModelUserAction,
-    checkAutoSolve?: ( state: TState<Data> ) => boolean
+    options?: {
+      checkAutoSolve?: ( state: TState<Data> ) => boolean;
+      forceDirty?: boolean;
+    }
   ): void {
     // TODO: have a way of creating a "solid" state from a delta?
     // TODO: we need to better figure this out(!)
+
+    const dirty = options?.forceDirty || userAction instanceof UserLoadPuzzleAutoSolveAction;
 
     const lastTransition = this.stack[ this.stackPositionProperty.value ];
     const state = lastTransition.state;
@@ -304,11 +309,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     try {
       withSolverFactory( this.autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
         userAction.apply( delta );
-      }, userAction instanceof UserLoadPuzzleAutoSolveAction );
+      }, dirty );
 
       // Hah, if we try to white out something, don't immediately solve it back!
       // TODO: why the cast here?
-      if ( checkAutoSolve && !checkAutoSolve( delta as unknown as TState<Data> ) ) {
+      if ( options?.checkAutoSolve && !options?.checkAutoSolve( delta as unknown as TState<Data> ) ) {
         throw new InvalidStateError( 'Auto-solver did not respect user action' );
       }
     }
@@ -319,7 +324,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
         delta = state.createDelta();
         withSolverFactory( this.style.safeSolverFactoryProperty.value, this.puzzle.board, delta, () => {
           userAction.apply( delta );
-        }, userAction instanceof UserLoadPuzzleAutoSolveAction );
+        }, dirty );
       }
       else {
         throw e;
@@ -362,7 +367,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       this.stackPositionProperty.value--;
     }
 
-    this.applyUserActionToStack( lastTransition.action || new UserLoadPuzzleAutoSolveAction() );
+    this.applyUserActionToStack( lastTransition.action || new UserLoadPuzzleAutoSolveAction(), {
+      forceDirty: true
+    } );
 
     this.updateState();
   }
@@ -422,7 +429,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       }
 
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
-      this.applyUserActionToStack( userAction, state => state.getEdgeState( edge ) === newEdgeState );
+      this.applyUserActionToStack( userAction, {
+        checkAutoSolve: state => state.getEdgeState( edge ) === newEdgeState
+      } );
 
       this.updateState();
     }
