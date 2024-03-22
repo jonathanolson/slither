@@ -22,7 +22,7 @@
       - FIX FIX FIX --- the autosolve setup, so we can set up different auto solves
         - Adjust auto-solves for the various levels
         - PURE COLOR SOLVER SET
-      - Top-level option for a "view mode" bar
+      - Top-level option for a "view mode" bar --- yes definitely!!!
       - Move "Face Value Style" setting top-level?
       - 
       - Hint should skip over annotation types that aren't "shown"
