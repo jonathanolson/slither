@@ -14,6 +14,7 @@ import { UIText } from './UIText.ts';
 import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import ViewStyleBarNode from './ViewStyleBarNode.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -319,33 +320,42 @@ export class SettingsNode extends PopupNode {
 
     const showCustomProperty = new BooleanProperty( false );
 
+    const viewStyleIcons = ViewStyleBarNode.getIcons();
+    const getViewLabel = ( icon: Node, text: string ) => new HBox( {
+      spacing: 5,
+      children: [
+        new UIText( text ),
+        icon,
+      ]
+    } );
+
     const viewStyleNode = getVerticalRadioButtonGroup(
       'View Style',
       puzzleStyleProperty,
       [
         {
           value: basicLinesPuzzleStyle,
-          createNode: () => new UIText( 'Basic Lines' ),
+          createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
           labelContent: 'Basic Lines'
         },
         {
           value: basicFaceColoringPuzzleStyle,
-          createNode: () => new UIText( 'Basic Face Colors' ),
+          createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
           labelContent: 'Basic Face Colors'
         },
         {
           value: pureFaceColorPuzzleStyle,
-          createNode: () => new UIText( 'Pure Face Colors' ),
+          createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
           labelContent: 'Pure Face Colors'
         },
         {
           value: classicPuzzleStyle,
-          createNode: () => new UIText( 'Classic' ),
+          createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
           labelContent: 'Classic'
         },
         {
           value: basicSectorsPuzzleStyle,
-          createNode: () => new UIText( 'Basic Sectors' ),
+          createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Basic Sectors' ),
           labelContent: 'Basic Sectors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
@@ -353,7 +363,7 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: sectorsWithColorsPuzzleStyle,
-          createNode: () => new UIText( 'Sectors With Colors' ),
+          createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Sectors With Colors' ),
           labelContent: 'Sectors With Colors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
@@ -361,7 +371,7 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: vertexStatePuzzleStyle,
-          createNode: () => new UIText( 'Vertex State' ),
+          createNode: () => getViewLabel( viewStyleIcons.vertexStateIcon, 'Vertex State' ),
           labelContent: 'Sectors With Colors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
@@ -369,7 +379,7 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: faceStatePuzzleStyle,
-          createNode: () => new UIText( 'Face State' ),
+          createNode: () => getViewLabel( viewStyleIcons.faceStateIcon, 'Face State' ),
           labelContent: 'Sectors With Colors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
@@ -378,7 +388,7 @@ export class SettingsNode extends PopupNode {
         {
           // TODO: only show this when custom is enabled!!!
           value: customPuzzleStyle,
-          createNode: () => new UIText( 'Custom' ),
+          createNode: () => getViewLabel( viewStyleIcons.customIcon, 'Custom' ),
           labelContent: 'Custom',
           options: {
             visibleProperty: advancedSettingsVisibleProperty

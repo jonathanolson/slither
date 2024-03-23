@@ -1,7 +1,7 @@
 import { DerivedProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2, Matrix3 } from 'phet-lib/dot';
 import { controlBarMargin, currentTheme } from './Theme.ts';
-import { Node, Path, Rectangle } from 'phet-lib/scenery';
+import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, TPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
@@ -20,6 +20,88 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
   public constructor(
     options: ViewStyleBarNodeOptions
   ) {
+    const {
+      basicLinesIcon,
+      basicFaceColoringIcon,
+      pureFaceColoringIcon,
+      classicIcon,
+      basicSectorsIcon,
+      sectorsWithColorsIcon,
+      vertexStateIcon,
+      faceStateIcon,
+      customIcon
+    } = ViewStyleBarNode.getIcons();
+
+    // TODO: deduplicate with the bit in Settings?
+    super( puzzleStyleProperty, [
+      {
+        value: basicLinesPuzzleStyle,
+        createNode: () => basicLinesIcon,
+        labelContent: 'Basic Lines'
+      },
+      {
+        value: basicFaceColoringPuzzleStyle,
+        createNode: () => basicFaceColoringIcon,
+        labelContent: 'Basic Face Colors'
+      },
+      {
+        value: pureFaceColorPuzzleStyle,
+        createNode: () => pureFaceColoringIcon,
+        labelContent: 'Pure Face Colors'
+      },
+      {
+        value: classicPuzzleStyle,
+        createNode: () => classicIcon,
+        labelContent: 'Classic'
+      },
+      {
+        value: basicSectorsPuzzleStyle,
+        createNode: () => basicSectorsIcon,
+        labelContent: 'Basic Sectors',
+        options: {
+          visibleProperty: advancedSettingsVisibleProperty
+        }
+      },
+      {
+        value: sectorsWithColorsPuzzleStyle,
+        createNode: () => sectorsWithColorsIcon,
+        labelContent: 'Sectors With Colors',
+        options: {
+          visibleProperty: advancedSettingsVisibleProperty
+        }
+      },
+      {
+        value: vertexStatePuzzleStyle,
+        createNode: () => vertexStateIcon,
+        labelContent: 'Sectors With Colors',
+        options: {
+          visibleProperty: advancedSettingsVisibleProperty
+        }
+      },
+      {
+        value: faceStatePuzzleStyle,
+        createNode: () => faceStateIcon,
+        labelContent: 'Sectors With Colors',
+        options: {
+          visibleProperty: advancedSettingsVisibleProperty
+        }
+      },
+      {
+        value: customPuzzleStyle,
+        createNode: () => customIcon,
+        labelContent: 'Custom',
+        options: {
+          visibleProperty: advancedSettingsVisibleProperty
+        }
+      }
+    ] );
+
+    options.layoutBoundsProperty.link( bounds => {
+      this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
+    } );
+  }
+
+  public static getIcons() {
 
     const uncoloredBackground = new Rectangle( 0, 0, 15, 15, {
       stroke: currentTheme.whiteLineColorProperty,
@@ -64,7 +146,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
     const pureFaceColoringIcon = new Node( {
       children: [
         new Rectangle( 0, 0, 15, 15, {
-          fill: currentTheme.uiButtonForegroundProperty
+          fill: currentTheme.uiForegroundColorProperty
         } )
       ]
     } );
@@ -135,80 +217,27 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
       scale: 30
     } );
 
-    // TODO: deduplicate with the bit in Settings?
-    super( puzzleStyleProperty, [
-      {
-        value: basicLinesPuzzleStyle,
-        createNode: () => basicLinesIcon,
-        labelContent: 'Basic Lines'
-      },
-      {
-        value: basicFaceColoringPuzzleStyle,
-        createNode: () => basicFaceColoringIcon,
-        labelContent: 'Basic Face Colors'
-      },
-      {
-        value: pureFaceColorPuzzleStyle,
-        createNode: () => pureFaceColoringIcon,
-        labelContent: 'Pure Face Colors'
-      },
-      {
-        value: classicPuzzleStyle,
-        createNode: () => classicIcon,
-        labelContent: 'Classic'
-      },
-      {
-        value: basicSectorsPuzzleStyle,
-        createNode: () => basicSectorsIcon,
-        labelContent: 'Basic Sectors',
-        options: {
-          visibleProperty: advancedSettingsVisibleProperty
-        }
-      },
-      {
-        value: sectorsWithColorsPuzzleStyle,
-        createNode: () => sectorsWithColorsIcon,
-        labelContent: 'Sectors With Colors',
-        options: {
-          visibleProperty: advancedSettingsVisibleProperty
-        }
-      },
-      {
-        value: vertexStatePuzzleStyle,
-        createNode: () => vertexStateIcon,
-        labelContent: 'Sectors With Colors',
-        options: {
-          visibleProperty: advancedSettingsVisibleProperty
-        }
-      },
-      {
-        value: faceStatePuzzleStyle,
-        createNode: () => faceStateIcon,
-        labelContent: 'Sectors With Colors',
-        options: {
-          visibleProperty: advancedSettingsVisibleProperty
-        }
-      },
-      {
-        // TODO: only show this when custom is enabled!!!
-        value: customPuzzleStyle,
-        createNode: () => toFontAwesomePath( fontAwesomePencilShape, {
-          fill: currentTheme.uiButtonForegroundProperty,
-          matrix: new Matrix3().rowMajor(
-            0.75, 0, 0,
-            0, -0.75, 0,
-            0, 0, 1
-          )
-        } ),
-        labelContent: 'Custom',
-        options: {
-          visibleProperty: advancedSettingsVisibleProperty
-        }
-      }
-    ] );
-
-    options.layoutBoundsProperty.link( bounds => {
-      this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
+    const customIcon = toFontAwesomePath( fontAwesomePencilShape, {
+      fill: currentTheme.uiForegroundColorProperty,
+      matrix: new Matrix3().rowMajor(
+        0.75, 0, 0,
+        0, -0.75, 0,
+        0, 0, 1
+      )
     } );
+
+    const alignGroup = new AlignGroup();
+
+    return {
+      basicLinesIcon: alignGroup.createBox( basicLinesIcon ),
+      basicFaceColoringIcon: alignGroup.createBox( basicFaceColoringIcon ),
+      pureFaceColoringIcon: alignGroup.createBox( pureFaceColoringIcon ),
+      classicIcon: alignGroup.createBox( classicIcon ),
+      basicSectorsIcon: alignGroup.createBox( basicSectorsIcon ),
+      sectorsWithColorsIcon: alignGroup.createBox( sectorsWithColorsIcon ),
+      vertexStateIcon: alignGroup.createBox( vertexStateIcon ),
+      faceStateIcon: alignGroup.createBox( faceStateIcon ),
+      customIcon: alignGroup.createBox( customIcon ),
+    };
   }
 }
