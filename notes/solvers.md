@@ -12,6 +12,10 @@
     - dynamic sector solver? why is face state failing here?
       - Yes, but SOMETHING IS FAILING FIRST HERE
 
+- What we are "missing" that I can solve:
+  - Trivial 3-loop patterns? (and other loops) --- but also.... FULL REGIONS
+  - Highlander patterns
+
 - Multi-face (**) adjacent faces
   - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
     - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
