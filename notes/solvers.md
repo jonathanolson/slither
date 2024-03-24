@@ -17,6 +17,7 @@
   - Highlander patterns
 
 - Multi-face (**) adjacent faces
+  - [defer] - this sounds good, BUT we don't need it for current purposes yet (or ever?) 
   - Cases where we can "take" a shared edge and DO things with both ends, e.g.:
     - Classic "take edge AND both adjacent edges" - solves the 2-3 in corner case
     - take + reject both, or take + split permutations also possibilities
@@ -27,6 +28,7 @@
   - Just using the simple "forced" bits? (maybe face values optionally?)
   - Consider "advanced" coalescing of on/off state?
   - HEY HEY - how to detect if we CUT OFF a region?
+  - (test and coalesce sectors/vertex state/ face state, colors, etc.)
 
 - Dual-Face Binary Combinations
   - Pair of duals, have two ways to combine.
@@ -37,6 +39,7 @@
     - THINK on how to handle "corners"
 
 - Binary sets (Edge or Face):
+  - [important] --- WHAT IS THE REAL DIFFERENCE with this and how we would handle simple backtracking? Seems similar 
   - WE CAN VISUALIZE THESE with coloring!!!
   - Edge case:
     - for each edge included, it has a primary and secondary state (e.g. we can separate into "on" and "off")
