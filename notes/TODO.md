@@ -45,7 +45,7 @@
   - 
   - Edit modes (row for all of this?):
     - Modes:
-      - Drag-based edge mode?
+      - Drag-based edge mode?  (can we reverse back through a line to undo parts?)
       - [IF vertex-state] Vertex state (pop up ... some view of options?)
       - [IF face-state] Face state (pop up view with on/off for each?)
   - 
@@ -126,7 +126,6 @@
         - NO, just use our force-directed style
     - Consider a texture for "inside" and "outside"
     - Different visualization modes (for face colors)? Where dual nature of borders are highly emphasized?
-    - (!!) Allow manual face coloring ... would "drag from one face to another" work? (PAN/ZOOM messed up by that?)
   - Interface:
     - Possibilities
       - Minimap when zoomed in (DAG it, but unpickable)... 
@@ -162,8 +161,6 @@
         - What about "quick double press" for x?
       - If RED on all 4 of a vertex, perhaps we can remove vertex dot?
       - Have PatternExplainers that we can display to show what we can deduce next
-      - Have a "solve a single bit" button
-      - Allow finger drag to put down multiple lines? (can we reverse back through a line to undo parts?) 
       - IDEALLY we should have a good way for "touch" to input Xs. Maybe a "shift"-equivalent button? 
         - An "inverse" or "X" sticky button at the top? 
       - Vertex interaction (note incident or spike? - or any of possible vertex states?)
@@ -229,7 +226,7 @@
     - OR detect fingers/mouse and apply different rules for them?
     - BASICALLY just try out both a bunch (phone, touch-pad, mouse)
   - Accessibility
-    - Fix up modal a11y, see how it works/looks
+    - Fix up modal a11y, see how it works/looks (look into dialog/popupable, see what they give it)
     - Let's get accessibility highlights a bit more refined-acceptable looking? 
     - Keyboard
       - Keyboard + Accessibility is first-class? (Could be fast for input on a computer) 
