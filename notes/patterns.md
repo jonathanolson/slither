@@ -6,6 +6,8 @@ Have consistent geometry for now (for storing/representing rules) - WILL have th
 !!! If we're using the SAT solver, we can continually constrain it to say "don't give us realizations we already know"?
   Wait is this consistent?
 
+- !! First we need efficient serialization of state, so we can nicely serialize rules, no?
+
 - We have a set of potential booleans that represent "is it possible in a solution"
   - Edge:
     - Black in solution?
@@ -23,6 +25,17 @@ Have consistent geometry for now (for storing/representing rules) - WILL have th
     - Boolean for each possibility
 
 - Inputs are the board (primary and expanded), and the booleans where are marked as "IMPOSSIBLE" (also face values?)
+- Explicitly model symmetries when constructing patterns?
+
+- "Registration Vertex"
+  - If we have face values, it is on one of the faces
+  - Essentially, try to make sure it "exists" in a final puzzle where we are using it
+- OR
+- "Match faces???"
+- WAIT WAIT ---- we can swap planarity of PART of the pattern, and it still applies!
+  - Can we go for an inefficient "match" where pattern vertices/edges/faces might go to "nothing"?
+    - Just think about "vertex" assignments hmmm
+    - LOOK UP graph pattern matching?
 
 - Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
 
