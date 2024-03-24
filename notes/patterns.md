@@ -1,6 +1,53 @@
 
 # Patterns
 
+Have consistent geometry for now (for storing/representing rules) - WILL have the ability to generalize later
+
+!!! If we're using the SAT solver, we can continually constrain it to say "don't give us realizations we already know"?
+  Wait is this consistent?
+
+- We have a set of potential booleans that represent "is it possible in a solution"
+  - Edge:
+    - Black in solution?
+    - Red in solution?
+  - Face Color pair:
+    - Same in solution?
+    - Opposite in solution?
+  - Sector:
+    - Has 0 in solution?
+    - Has 1 in solution?
+    - Has 2 in solution?
+  - Vertex State:
+    - Boolean for each possibility
+  - Face State:
+    - Boolean for each possibility
+
+- Inputs are the board (primary and expanded), and the booleans where are marked as "IMPOSSIBLE" (also face values?)
+
+- Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
+
+- Each boolean will be on a state:
+  - NOT_FOUND (initial state)
+  - POSSIBLE
+  - IMPOSSIBLE
+
+- Running through all SAT solutions is possible, but can do better
+  - Keep a running list of loops (that will always be negated)
+  - FIRST find a no-added-constraint no-loop solution
+    - IF none, then the pattern won't occur in a valid puzzle
+  - If a no-loop solution is found, mark all of the POSSIBLE things immediately.
+  - After we have one solution, we can:
+    - Find a NOT_FOUND boolean, restart with a constraint that it must be possible, and see if we can find a solution:
+      - If we can't, mark it IMPOSSIBLE
+      - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
+    - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
+
+- Keep patterns on detecting "invalidity"?
+
+- Highlander?
+  - DO the exit points "connect" in the same way?
+
+
 Symmetries:
 - Patterns have symmetries (and more than... reflection).
 - Handle symmetries (canonicalize?) - ask GPT?
