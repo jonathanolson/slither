@@ -16,14 +16,20 @@
           - For each action, apply safe-solve after it (to rule out potential states?)
     - 3 solver bits:
       - Region (it's the most-often used one)
-      - Patterns:
+      - Patterns: (search, make library and iterate)
         - Normal
         - Highlander
         - (difficulty, for generation/etc.)
       - Low-depth backtrack? (with current things + regions + patterns, we handle everything, stop making tiny solvers)
+        - Examine all cases, see what uses "less difficulty" (simpler rules)
+        - Include difficulty from solvers
     - Explanations on my patterns and solution methods
       - Sector and face-color rules for common topologies? (catalogue sector rules!)
+      - HTML with embedded Displays (for patterns, etc.)
+        - Wait... CAN WE use this for the "learning" part? (e.g. teaching/tutorial?)
+          - YES
     - Annotation display improvements (better explanations)
+      - Themify! Text for descriptions (NEED RICH TEXT ideally)
     - Puzzle Editor (separate... page?)
       - Highlight the "forced parts of the solution" when creating?
       - Ability to "auto-complete" faces, ... or other bits?
@@ -33,6 +39,8 @@
         - number to place a number?
         - Delete face?
     - Bolder colors in face-color-only mode?
+    - Undo/redo larger (and at the bottom, with edit modes?)
+    - REVIEW SLITHERLINK DISCORD (PuzzleTeam, slither-link channel)
   - 
   - 
   - Edit modes (row for all of this?):
@@ -161,6 +169,8 @@
       - Vertex interaction (note incident or spike? - or any of possible vertex states?)
         - Allow a "mark save point" (that can be jumped back to)
       - 3d appearance visual style? Add some depth (edges/lines as walls?)
+      - Highlights of vertex ends of regions?
+      - Long-press behavior somehow?
   - Share URL size:
     - Store "board generation string" on a TBoard
       - Consists generally of "which generator" + "which parameters", but also our scanner will need to output (e.g. square?)
@@ -275,7 +285,7 @@
     - face coloring
   - Improved name:
     - Looperoo?
-      - (slitherlink-inspired)
+      - (slitherlink-inspired), lichess of slitherlink?
 
 - Write up:
   - Force-directed graph layout (techniques for planarity?)

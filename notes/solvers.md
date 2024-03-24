@@ -48,6 +48,7 @@
     - POWERFUL!!!!
   - Solvers:
     - Binary Sets constrain FaceState
+  - could detect from backtrack perhaps?
 
 - Full Region (!) seems powerful too, particularly the ordering bits?
   - Perhaps start across "spiked 2" type things? hmmm
