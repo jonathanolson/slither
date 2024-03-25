@@ -8,6 +8,26 @@ Have consistent geometry for now (for storing/representing rules) - WILL have th
 
 - !! First we need efficient serialization of state, so we can nicely serialize rules, no?
 
+- !!!#!#!#!
+  - What about patterns where "we can't connect two points in space" (e.g. simple-region premature?)
+
+(for good serialization, store the face values in the SAME visual order ())
+
+https://github.com/timhutton/slinker ---> has the "solving rules"
+Generation from rules: https://github.com/timhutton/slinker/blob/main/growth_rules.txt
+Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
+
+--- ALSO during puzzle generation --- if we hit a "subset" of solved state, we can STOP there because we know it is solvable?
+  Doesn't measure difficulty
+
+- Map vertices from puzzle INTO pattern. Valid if:
+  - Injection
+  - 
+  - ...
+- Use subgraph isomorphism algorithms to prune efficiently?
+- Use isomprphism to see if rules are equivalent
+- Don't create variable-vertex-order rules by default, we'll duplicate these
+
 - We have a set of potential booleans that represent "is it possible in a solution"
   - Edge:
     - Black in solution?
