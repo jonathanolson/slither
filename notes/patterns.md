@@ -1,6 +1,24 @@
 
 # Patterns
 
+- OK OK
+  - We generate topology-invariant patterns (technically)
+    - First, just a vertex with increasing amounts of edges (to match the order we're going up to)
+    - Then single face
+    - Then two faces (adjacent)
+    - Then two faces (corner-adjacent)
+    - Then ... slowly increase (based on a specific board)
+      - HEY HEY!!!!!! For a slowly increasing "adjacency radius":
+        - We should examine patterns for ... each combination of faces that has adjacency (or maybe corner-adjacency?)
+          - If all neighbors of a face are included, IT SHOULD be included
+  - FOR VERTEX:
+  - FOR FACES:
+    - There is a single boundary. Each boundary vertex might have an exit or not (that is all the generality we need)
+    - Vary whether things have exits or not
+      - If we have an exit, sectors/vertex-state/etc. can include that exit (it will apply to... any edge if it is there?)
+- For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
+  - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
+
 Have consistent geometry for now (for storing/representing rules) - WILL have the ability to generalize later
 
 !!! If we're using the SAT solver, we can continually constrain it to say "don't give us realizations we already know"?
@@ -16,9 +34,13 @@ Have consistent geometry for now (for storing/representing rules) - WILL have th
 https://github.com/timhutton/slinker ---> has the "solving rules"
 Generation from rules: https://github.com/timhutton/slinker/blob/main/growth_rules.txt
 Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
+https://kwontomloop.com/var/forum.php?a=topic&topic_id=308&pg=1
 
 --- ALSO during puzzle generation --- if we hit a "subset" of solved state, we can STOP there because we know it is solvable?
   Doesn't measure difficulty
+
+- Have a target part of "topology" that is an induced subgraph.
+- "Exits" can either be 0, 1, or ...?
 
 - Map vertices from puzzle INTO pattern. Valid if:
   - Injection
