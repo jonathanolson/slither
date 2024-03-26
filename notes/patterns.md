@@ -1,12 +1,29 @@
 
 # Patterns
 
+- Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
+- We have a set of potential booleans that represent "is it possible in a solution"
+  - Edge:
+    - Black in solution?
+    - Red in solution?
+  - Face Color pair:
+    - Same in solution?
+    - Opposite in solution?
+  - Sector:
+    - Has 0 in solution?
+    - Has 1 in solution?
+    - Has 2 in solution?
+  - Vertex State:
+    - Boolean for each possibility
+  - Face State:
+    - Boolean for each possibility
+
 - Flexible BUT NOT TOPO-invariant (no red edge removal, but we generate face combinations):
   - VertexRule
     - A center vertex, with N edges around it
     - State for edge/face-color/sector/vertex (NOT face)
+    - Order 6 typical, but order 12 for Triakis Triangular / Bisected Hexagonal... 8 for Tetrakis Square
   - FaceRule
-    - An "origin" vertex (fairly arbitrary)
     - Set of vertices
       - Flag: boundary? (IF SO, flag: allow exit?) --- TODO, put this into one concept?
         - NOTE: there is a "single" boundary, BUT there might be "cut vertices" that the pattern can "twist" at.
@@ -38,11 +55,21 @@
       - Prevent combinations where... a face isn't included but all of its neighbors are? (or perhaps... if all its vertices are included, include it?) THINK
       - Slowly iterate adding more faces. IF we reach a null face (exterior) of our demo board... do we exit? NO, presumably keep going
       - This will create "generations" of faces
+    - Canonicalize:
+      - Find the vertex permutation that gives us the lexicographically smallest order of states.
+      - Then we can use equality to check isomorphism (and we can store this in a hash table)
     - FaceRule application to:
       - A puzzle (with a board)
       - A FaceRule state(!) so we can directly see what rules "dominate" others, and construct a minimal set of rules.
+        - OR... we just have things create a matching puzzle (board+state), and then apply to that board?
+          - Padding is complicated.... nah
+        - Yeah, just find subgraph isomorphisms and check?
+    - Matching:
+      - Similar to induced subgraph isomorphism.
     - For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
       - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
+    - If rules have isomorphic topologies, check these (multiple?) isomorphisms to see if they are isomorphic rules(!)
+    - "FlexBoard" should be memoized, so that we can store computed automorphisms (and subgraph isomorphisms)
 
 Have consistent geometry for now (for storing/representing rules) - WILL have the ability to generalize later
 
@@ -67,44 +94,10 @@ https://kwontomloop.com/var/forum.php?a=topic&topic_id=308&pg=1
 - Have a target part of "topology" that is an induced subgraph.
 - "Exits" can either be 0, 1, or ...?
 
-- Map vertices from puzzle INTO pattern. Valid if:
-  - Injection
-  - 
-  - ...
-- Use subgraph isomorphism algorithms to prune efficiently?
-- Use isomprphism to see if rules are equivalent
 - Don't create variable-vertex-order rules by default, we'll duplicate these
-
-- We have a set of potential booleans that represent "is it possible in a solution"
-  - Edge:
-    - Black in solution?
-    - Red in solution?
-  - Face Color pair:
-    - Same in solution?
-    - Opposite in solution?
-  - Sector:
-    - Has 0 in solution?
-    - Has 1 in solution?
-    - Has 2 in solution?
-  - Vertex State:
-    - Boolean for each possibility
-  - Face State:
-    - Boolean for each possibility
 
 - Inputs are the board (primary and expanded), and the booleans where are marked as "IMPOSSIBLE" (also face values?)
 - Explicitly model symmetries when constructing patterns?
-
-- "Registration Vertex"
-  - If we have face values, it is on one of the faces
-  - Essentially, try to make sure it "exists" in a final puzzle where we are using it
-- OR
-- "Match faces???"
-- WAIT WAIT ---- we can swap planarity of PART of the pattern, and it still applies!
-  - Can we go for an inefficient "match" where pattern vertices/edges/faces might go to "nothing"?
-    - Just think about "vertex" assignments hmmm
-    - LOOK UP graph pattern matching?
-
-- Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
 
 - Each boolean will be on a state:
   - NOT_FOUND (initial state)
