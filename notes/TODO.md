@@ -14,6 +14,10 @@
       - For state... solve this incrementally:
         - Apply safe solvers, only store delta between them?
           - For each action, apply safe-solve after it (to rule out potential states?)
+      - SERIALIZATION IMPROVEMENTS:
+        - (for good serialization, store the face values in the SAME visual order ())
+          - top "row" first, left-to-right, then next row, etc.
+          - Use epsilons for face centroid comparisons to see what rows we have? (or do an almost-imperceptible rotation, then just inspect Y?)
     - 3 solver bits:
       - Region (it's the most-often used one)
       - Patterns: (search, make library and iterate)

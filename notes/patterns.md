@@ -1,7 +1,12 @@
 
 # Patterns
 
+- ? Questions (first)
+  - Highlander? - do exit points connect in the same way?
+  - ? Keep patterns on detecting "invalidity"?
+
 - Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
+
 - We have a set of potential booleans that represent "is it possible in a solution"
   - Edge:
     - Black in solution?
@@ -18,7 +23,25 @@
   - Face State:
     - Boolean for each possibility
 
+- Each boolean will be on a state:
+  - NOT_FOUND (initial state)
+  - POSSIBLE
+  - IMPOSSIBLE
+
+- Running through all SAT solutions is possible, but can do better
+  - First, do pre-checks (quick) to see if the pattern is clearly impossible 
+  - Keep a running list of loops (that will always be negated)
+  - FIRST find a no-added-constraint no-loop solution
+    - IF none, then the pattern won't occur in a valid puzzle
+  - If a no-loop solution is found, mark all of the POSSIBLE things immediately.
+  - After we have one solution, we can:
+    - Find a NOT_FOUND boolean, restart with a constraint that it must be possible, and see if we can find a solution:
+      - If we can't, mark it IMPOSSIBLE
+      - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
+    - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
+
 - Flexible BUT NOT TOPO-invariant (no red edge removal, but we generate face combinations):
+  - (NOT variable-vertex-order for non-boundary parts) 
   - VertexRule
     - A center vertex, with N edges around it
     - State for edge/face-color/sector/vertex (NOT face)
@@ -71,62 +94,19 @@
     - If rules have isomorphic topologies, check these (multiple?) isomorphisms to see if they are isomorphic rules(!)
     - "FlexBoard" should be memoized, so that we can store computed automorphisms (and subgraph isomorphisms)
 
-Have consistent geometry for now (for storing/representing rules) - WILL have the ability to generalize later
-
-!!! If we're using the SAT solver, we can continually constrain it to say "don't give us realizations we already know"?
-  Wait is this consistent?
-
-- !! First we need efficient serialization of state, so we can nicely serialize rules, no?
+- [NO] !! First we need efficient serialization of state, so we can nicely serialize rules, no?
+  - NO, we have different (compact) representation. We should still do that though
 
 - !!!#!#!#!
   - What about patterns where "we can't connect two points in space" (e.g. simple-region premature?)
 
-(for good serialization, store the face values in the SAME visual order ())
-
 https://github.com/timhutton/slinker ---> has the "solving rules"
-Generation from rules: https://github.com/timhutton/slinker/blob/main/growth_rules.txt
 Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
-https://kwontomloop.com/var/forum.php?a=topic&topic_id=308&pg=1
-
---- ALSO during puzzle generation --- if we hit a "subset" of solved state, we can STOP there because we know it is solvable?
-  Doesn't measure difficulty
-
-- Have a target part of "topology" that is an induced subgraph.
-- "Exits" can either be 0, 1, or ...?
-
-- Don't create variable-vertex-order rules by default, we'll duplicate these
 
 - Inputs are the board (primary and expanded), and the booleans where are marked as "IMPOSSIBLE" (also face values?)
 - Explicitly model symmetries when constructing patterns?
 
-- Each boolean will be on a state:
-  - NOT_FOUND (initial state)
-  - POSSIBLE
-  - IMPOSSIBLE
 
-- Running through all SAT solutions is possible, but can do better
-  - Keep a running list of loops (that will always be negated)
-  - FIRST find a no-added-constraint no-loop solution
-    - IF none, then the pattern won't occur in a valid puzzle
-  - If a no-loop solution is found, mark all of the POSSIBLE things immediately.
-  - After we have one solution, we can:
-    - Find a NOT_FOUND boolean, restart with a constraint that it must be possible, and see if we can find a solution:
-      - If we can't, mark it IMPOSSIBLE
-      - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
-    - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
-
-- Keep patterns on detecting "invalidity"?
-
-- Highlander?
-  - DO the exit points "connect" in the same way?
-
-
-Symmetries:
-- Patterns have symmetries (and more than... reflection).
-- Handle symmetries (canonicalize?) - ask GPT?
-
-TODO
-- Hand-design example topo-invariant patterns (especially ones with fun symmetries?)
 
 [this is mostly old, refresh it]:
 

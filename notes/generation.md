@@ -7,6 +7,9 @@
 - Explicitly list out the "rules" for a given difficulty level in the future?
 - Show the user (for a given puzzle) how much of certain techniques it takes. Estimate difficulty
 
+- Maybe have a measure for "how advanced" a technique is, and also "how much work" it would be to find?
+  - (like some vertex state techniques are "easy" but require thinking or annotating things differently ... string of 2s isn't hard)
+
 # Importance of Technique
 
 - Look at what combinations of techniques will solve (completely or %) a random sampling of puzzles.
@@ -14,6 +17,15 @@
 
 # Puzzle generation
  
+- Growth rules?
+  - https://kwontomloop.com/var/forum.php?a=topic&topic_id=308&pg=1
+  - https://github.com/timhutton/slinker/blob/main/growth_rules.txt
+
+- Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp
+
+- When we are "removing faces" during generation, can we cache hashes of "we can solve it from here" states, so we are not duplicating effort?
+  - We would need to measure difficulty here
+
 - Generation: how do we get the CONSISTENCY of difficulty?
   - -- forward generation, right?
   - greedy checks for face minimization? (check all faces, and for each removed, CHECK ALL AGAIN to see which face removal still allows the most removals)
