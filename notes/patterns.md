@@ -1,23 +1,48 @@
 
 # Patterns
 
-- OK OK
-  - We generate topology-invariant patterns (technically)
-    - First, just a vertex with increasing amounts of edges (to match the order we're going up to)
-    - Then single face
-    - Then two faces (adjacent)
-    - Then two faces (corner-adjacent)
-    - Then ... slowly increase (based on a specific board)
-      - HEY HEY!!!!!! For a slowly increasing "adjacency radius":
-        - We should examine patterns for ... each combination of faces that has adjacency (or maybe corner-adjacency?)
-          - If all neighbors of a face are included, IT SHOULD be included
-  - FOR VERTEX:
-  - FOR FACES:
-    - There is a single boundary. Each boundary vertex might have an exit or not (that is all the generality we need)
-    - Vary whether things have exits or not
-      - If we have an exit, sectors/vertex-state/etc. can include that exit (it will apply to... any edge if it is there?)
-- For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
-  - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
+- Flexible BUT NOT TOPO-invariant (no red edge removal, but we generate face combinations):
+  - VertexRule
+    - A center vertex, with N edges around it
+    - State for edge/face-color/sector/vertex (NOT face)
+  - FaceRule
+    - An "origin" vertex (fairly arbitrary)
+    - Set of vertices
+      - Flag: boundary? (IF SO, flag: allow exit?) --- TODO, put this into one concept?
+        - NOTE: there is a "single" boundary, BUT there might be "cut vertices" that the pattern can "twist" at.
+        - We will iterate through the boundary vertices allowing exits.
+    - Set of faces
+      - Vertex list (can reconstruct all edges from this)
+      - face value | null
+    - (optional): a board that this was generated from (and it applies to), with an injection
+    - Edge state for all edges (AND exits)
+    - Face color state for internal faces AND adjacent faces (treat every boundary edge as having a different face, might be true in some cases)
+    - Sector state:
+      - for all "internal to our faces"
+      - IF an exit, have a sector state for both of the neighbor edges AND the "exit" edge (will generalize)
+    - Vertex State for all vertices:
+      - Treat exit edge as a possible edge for this (will generalize)
+    - Face State for all faces
+    - MATCHES if:
+      - Injective function from rule vertices to puzzle vertices
+      - Puzzle has no edges touching a "non-boundary" vertex (or a non-allow-exit boundary vertex) that isn't an edge in the rule
+      - Puzzle has every edge that the rule has
+    - Generate:
+      - Pick a board (or boards) to generate from
+      - Have a set of "topologies" that we have generated rules with (e.g. board + face set)
+        - Check these against isomorphism for any NEW topology before generating rules from it
+      - First, process all unique-order faces as its own topology (or faces in unique positions)
+        - Oh my... this will generate rules for... PENROSE!!!!
+      - Then, start adding at-least-corner-adjacent faces, checking isomorphism (think of good ways to do this)
+        - So we'll explore corner-adjacent and full-adjacent (to any face in existing combos), guard isomorphic
+      - Prevent combinations where... a face isn't included but all of its neighbors are? (or perhaps... if all its vertices are included, include it?) THINK
+      - Slowly iterate adding more faces. IF we reach a null face (exterior) of our demo board... do we exit? NO, presumably keep going
+      - This will create "generations" of faces
+    - FaceRule application to:
+      - A puzzle (with a board)
+      - A FaceRule state(!) so we can directly see what rules "dominate" others, and construct a minimal set of rules.
+    - For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
+      - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
 
 Have consistent geometry for now (for storing/representing rules) - WILL have the ability to generalize later
 
