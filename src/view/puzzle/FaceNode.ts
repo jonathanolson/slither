@@ -1,4 +1,4 @@
-import { Node, TColor, Text, TextOptions } from 'phet-lib/scenery';
+import { Node, RichText, RichTextOptions, TColor } from 'phet-lib/scenery';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
@@ -12,7 +12,7 @@ import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type FaceNodeOptions = {
-  textOptions?: TextOptions;
+  textOptions?: RichTextOptions;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
   faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
 };
@@ -44,8 +44,8 @@ export class FaceNode extends Node {
 
     hookPuzzleListeners( face, this, options.facePressListener, options.faceHoverListener );
 
-    const text = new Text( '', combineOptions<TextOptions>( {
-
+    const text = new RichText( '', combineOptions<RichTextOptions>( {
+      subScale: 0.7
     }, options?.textOptions ) );
 
     const multilink = Multilink.multilink( [
@@ -54,6 +54,7 @@ export class FaceNode extends Node {
       style.theme.faceValueColorProperty,
       style.theme.faceValueCompletedColorProperty,
       style.theme.faceValueErrorColorProperty,
+      style.theme.faceValueRatioColorProperty,
       style.faceStateVisibleProperty
     ], (
       state,
@@ -61,6 +62,7 @@ export class FaceNode extends Node {
       color,
       completedColor,
       errorColor,
+      ratioColor,
       faceStateVisible
     ) => {
       const faceValue = state.getFaceValue( face );
@@ -106,7 +108,7 @@ export class FaceNode extends Node {
           }
           else {
             // TODO: rich text broken, testing this instead
-            string = `${faceValue - blackCount}/${whiteCount}`;
+            string = `${faceValue - blackCount}<sub style="color: ${ratioColor.toCSS()};">/<sub>${whiteCount}</sub></sub>`;
             usingRatio = true;
           }
           usingRemaining = blackCount > 0;
