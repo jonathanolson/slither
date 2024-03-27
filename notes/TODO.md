@@ -1,7 +1,6 @@
 
 - PhET bugginess:
   - How to get text entry (DOM node?) - can we focus it on detecting a click? NO we NEED to pass events through
-  - RichText broken somehow... with rollup?
   - Get CAG fixed, using Alpenglow's robust option
     - Get alpenglow into a usable state in phet-lib
 
