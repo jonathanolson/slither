@@ -88,13 +88,13 @@
           - Padding is complicated.... nah
         - Yeah, just find subgraph isomorphisms and check?
     - Exit edge state handling:
-      - FIND SYMMETRIES for the input data(!)
-        - Find all unique combinations of all of the "black exit edges" (whether they are there or not)
-          - e.g. for a 3-face with one "no-exit" vertex (causing incident opposite):
-            - We have a "rule" for that face where there are multiple matched exits (no edges set)
-              - (2 matched exits - incident!)
-              - (3 matched exits - no data besides vertex state)
-            - We have a "rule" for that face where there is a single matched exit (edge set to black)
+      - FIND SYMMETRIES for the input data(!?)
+      - Find all unique combinations of all of the "black exit edges" (whether they are there or not)
+        - e.g. for a 3-face with one "no-exit" vertex (causing incident opposite):
+          - We have a "rule" for that face where there are multiple matched exits (no edges set)
+            - (2 matched exits - incident!)
+            - (3 matched exits - no data besides vertex state)
+          - We have a "rule" for that face where there is a single matched exit (edge set to black)
       - Edge state:
         - red-or-black / red-only exit: separate "pattern" for N of matched exit vertices
         - black exit:
