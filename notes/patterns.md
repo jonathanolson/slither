@@ -87,12 +87,38 @@
         - OR... we just have things create a matching puzzle (board+state), and then apply to that board?
           - Padding is complicated.... nah
         - Yeah, just find subgraph isomorphisms and check?
+    - Exit edge state handling:
+      - FIND SYMMETRIES for the input data(!)
+        - Find all unique combinations of all of the "black exit edges" (whether they are there or not)
+          - e.g. for a 3-face with one "no-exit" vertex (causing incident opposite):
+            - We have a "rule" for that face where there are multiple matched exits (no edges set)
+              - (2 matched exits - incident!)
+              - (3 matched exits - no data besides vertex state)
+            - We have a "rule" for that face where there is a single matched exit (edge set to black)
+      - Edge state:
+        - red-or-black / red-only exit: separate "pattern" for N of matched exit vertices
+        - black exit:
+          - 1 edge
+          - 2 edges (one red, one white) - each orientation?
+          - 3 edges (two red, one white) - each orientation?
+      - Sector state:
+        - ...
     - Matching:
       - Similar to induced subgraph isomorphism.
-    - For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
-      - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
+    - Visualization
+      - Direct (the pattern data itself)
+        - How to show "exit" edges for "twist" vertices?
+      - Indirect (examples on a board)
+        - For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
+          - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
     - If rules have isomorphic topologies, check these (multiple?) isomorphisms to see if they are isomorphic rules(!)
     - "FlexBoard" should be memoized, so that we can store computed automorphisms (and subgraph isomorphisms)
+      - And... SHARED between rules!
+      - Automorphisms (can be used be rules to see if they have symmetries in input)
+      - List all of the potential features (boolean values)
+        - (follow "state" boolean conventions, true means "this configuration is possible")
+        - Feature
+          - Ability to add SAT condition
 
 - [NO] !! First we need efficient serialization of state, so we can nicely serialize rules, no?
   - NO, we have different (compact) representation. We should still do that though
