@@ -22,11 +22,20 @@
     - Boolean for each possibility
   - Face State:
     - Boolean for each possibility
+  - Face-Region:
+    - [NO - not composable]? 
+    - Can have pair of faces (or exit faces) that have same-color connection path together through our area?
 
 - Each boolean will be on a state:
   - NOT_FOUND (initial state)
   - POSSIBLE
   - IMPOSSIBLE
+
+- Flexiboards
+  - Isomorphism
+    - Automorphisms TREATING exit vertices as different than non-exit vertices
+    - Arbitrary vertex, edge, face:
+      - flexiboard X => other flexiboard Y / board Y, etc.
 
 - Running through all SAT solutions is possible, but can do better
   - First, do pre-checks (quick) to see if the pattern is clearly impossible 
