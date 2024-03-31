@@ -36,6 +36,8 @@
     - Automorphisms TREATING exit vertices as different than non-exit vertices
     - Arbitrary vertex, edge, face:
       - flexiboard X => other flexiboard Y / board Y, etc.
+  - Find embeddings in boards:
+    - Do in somewhat face-based (should be FAST)
 
 - Running through all SAT solutions is possible, but can do better
   - First, do pre-checks (quick) to see if the pattern is clearly impossible 
