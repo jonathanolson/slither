@@ -32,6 +32,8 @@
   - IMPOSSIBLE
 
 - Flexiboards
+  - Logical edges: "internal", "boundary", "exit vertex"
+  - Logical faces: "faces", "exit faces"
   - Isomorphism
     - Automorphisms TREATING exit vertices as different than non-exit vertices
     - Arbitrary vertex, edge, face:
