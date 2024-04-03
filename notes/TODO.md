@@ -48,6 +48,7 @@
     - Bolder colors in face-color-only mode?
     - Undo/redo larger (and at the bottom, with edit modes?)
     - REVIEW SLITHERLINK DISCORD (PuzzleTeam, slither-link channel)
+    - "Automatic" auto-solve icon
   - 
   - 
   - Edit modes (row for all of this?):
@@ -175,6 +176,7 @@
       - 3d appearance visual style? Add some depth (edges/lines as walls?)
       - Highlights of vertex ends of regions?
       - Long-press behavior somehow?
+      - Highlight errors with "what went wrong"
   - Share URL size:
     - Store "board generation string" on a TBoard
       - Consists generally of "which generator" + "which parameters", but also our scanner will need to output (e.g. square?)
