@@ -1,5 +1,6 @@
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import _ from '../../workarounds/_.ts';
+import { TTopology } from './TTopology.ts';
 
 export type NumberVertex = number;
 export type NumberEdge = number;
@@ -15,7 +16,7 @@ export type NumberFace = number;
     - (implicit) Set of edges (labeled 0 ... E-1)
       - Ordered list of vertices (using labels above)
  */
-export class FaceTopology {
+export class FaceTopology implements TTopology {
 
   public readonly numFaces: number;
   public readonly numEdges: number;

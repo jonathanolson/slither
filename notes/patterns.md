@@ -1,11 +1,25 @@
 
 # Patterns
 
+- TODO
+  - Vertex topology updates to be... like there are "face portions" and non-face portions
+    - [no] WAIT, are most "vertex" rules... really "face" rules???
+      - NO NO, we really DO have vertex topology setups 
+
+- We are able to apply patterns without OR WITH the "topological simplification"(!)
+  - Ooo, this might be good for generating puzzles?
+
 - ? Questions (first)
   - Highlander? - do exit points connect in the same way?
   - ? Keep patterns on detecting "invalidity"?
 
+- Have "nonzero-crossing" and "2+ crossing"?
+  - We can have cases where "we have a 0-crossing loop to two faces" (and will need a 2+ crossing), or "we have a 1-crossing loop to two faces" (and will need a nonzero-crossing)
+
 - Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
+
+[API needs to be compatible with boards, maybe with adapter]
+  - Can we put an 'index' on everything in a board?
 
 - We have a set of potential booleans that represent "is it possible in a solution"
   - Edge:
