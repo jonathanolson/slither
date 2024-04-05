@@ -26,7 +26,8 @@ export default defineConfig( {
       input: {
         main: '/index.html',
         'scan-test': '/scan-test.html',
-        'solver-fuzz': '/solver-fuzz.html'
+        'solver-fuzz': '/solver-fuzz.html',
+        'discover-rules': '/discover-rules.html',
       },
       plugins: [
         unassert( {

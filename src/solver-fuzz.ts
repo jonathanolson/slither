@@ -16,6 +16,7 @@ import assert, { assertEnabled } from './workarounds/assert.ts';
 import { PolygonalBoard } from './model/board/core/TiledBoard.ts';
 import { PolygonGenerator, polygonGenerators } from './view/GenerateNode.ts';
 import { AnnotationNode } from './view/AnnotationNode.ts';
+import { currentPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 
 // Load with `http://localhost:5173/solver-fuzz.html?debugger`
 
@@ -113,7 +114,7 @@ const boards = [
       if ( action ) {
         console.log( action );
         const validator = new CompleteValidator( board, state, solvedState );
-        puzzleNode.addAnnotationNode( new AnnotationNode( action.annotation ) );
+        puzzleNode.addAnnotationNode( new AnnotationNode( action.annotation, currentPuzzleStyle ) );
         updateView();
         await sleep( 0 );
         try {
@@ -135,7 +136,7 @@ const boards = [
         const freshSolver = standardSolverFactory( board, state, true );
         const freshSolverAction = freshSolver.nextAction();
         if ( freshSolverAction ) {
-          puzzleNode.addAnnotationNode( new AnnotationNode( freshSolverAction.annotation ) );
+          puzzleNode.addAnnotationNode( new AnnotationNode( freshSolverAction.annotation, currentPuzzleStyle ) );
           updateView();
           await sleep( 0 );
           throw new Error( 'Fresh solver should not have any actions' );
