@@ -3,7 +3,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import _ from '../../workarounds/_.ts';
 import { Formula } from '../logic/Formula.ts';
 import { Term } from '../logic/Term.ts';
-import { logicAnd, logicExactlyN, logicNot, logicNotAll, logicOr, logicZeroOrTwo } from '../logic/operations.ts';
+import { logicAnd, logicExactlyN, logicExactlyOne, logicNot, logicNot1, logicNotAll, logicOr, logicZeroOrTwo } from '../logic/operations.ts';
 
 export type TFeature = {
   isPossibleWith(
@@ -33,6 +33,10 @@ export type TFeature = {
   faceB: FlexiFace;
 } | {
   type: 'sector-zero' | 'sector-one' | 'sector-two';
+  edgeA: FlexiEdge;
+  edgeB: FlexiEdge;
+} | {
+  type: 'sector-only-one' | 'sector-not-one' | 'sector-not-zero' | 'sector-not-two';
   edgeA: FlexiEdge;
   edgeB: FlexiEdge;
 } | {
@@ -154,10 +158,48 @@ export class SectorStateFeature {
       return logicAnd( [ logicNot( isBlackA ), logicNot( isBlackB ) ] );
     }
     else if ( this.blackCount === 1 ) {
-      return logicExactlyN( [ isBlackA, isBlackB ], 1 );
+      return logicExactlyOne( [ isBlackA, isBlackB ] );
     }
     else {
       return logicAnd( [ isBlackA, isBlackB ] );
+    }
+  }
+}
+
+export class SectorSimpleFeature {
+
+  public constructor(
+    public readonly edgeA: FlexiEdge,
+    public readonly edgeB: FlexiEdge,
+    public readonly type: 'sector-only-one' | 'sector-not-one' | 'sector-not-zero' | 'sector-not-two'
+  ) {}
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: FlexiEdge ) => boolean
+  ): boolean {
+    const blackCount = ( isEdgeBlack( this.edgeA ) ? 1 : 0 ) + ( isEdgeBlack( this.edgeB ) ? 1 : 0 );
+
+    switch ( this.type ) {
+      case 'sector-only-one': return blackCount === 1;
+      case 'sector-not-one': return blackCount !== 1;
+      case 'sector-not-zero': return blackCount !== 0;
+      case 'sector-not-two': return blackCount !== 2;
+      default: throw new Error( 'Invalid type' );
+    }
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: FlexiEdge ) => Term<FlexiEdge>
+  ): Formula<FlexiEdge> {
+    const isBlackA = getFormula( this.edgeA );
+    const isBlackB = getFormula( this.edgeB );
+
+    switch ( this.type ) {
+      case 'sector-only-one': return logicExactlyOne( [ isBlackA, isBlackB ] );
+      case 'sector-not-one': return logicNot1( [ isBlackA, isBlackB ] );
+      case 'sector-not-zero': return logicOr( [ isBlackA, isBlackB ] );
+      case 'sector-not-two': return logicOr( [ logicNot( isBlackA ), logicNot( isBlackB ) ] );
+      default: throw new Error( 'Invalid type' );
     }
   }
 }
