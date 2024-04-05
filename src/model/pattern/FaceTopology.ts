@@ -1,9 +1,9 @@
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import _ from '../../workarounds/_.ts';
 
-export type FlexiVertex = number;
-export type FlexiEdge = number;
-export type FlexiFace = number;
+export type NumberVertex = number;
+export type NumberEdge = number;
+export type NumberFace = number;
 
 /**
   - Description
@@ -15,7 +15,7 @@ export type FlexiFace = number;
     - (implicit) Set of edges (labeled 0 ... E-1)
       - Ordered list of vertices (using labels above)
  */
-export class Flexiboard {
+export class FaceTopology {
 
   public readonly numFaces: number;
   public readonly numEdges: number;
@@ -84,35 +84,35 @@ export class Flexiboard {
     this.numBoundaryEdges = this.boundaryEdges.length;
   }
 
-  public isExitVertex( vertex: FlexiVertex ): boolean {
+  public isExitVertex( vertex: NumberVertex ): boolean {
     assertEnabled() && assert( vertex >= 0 && vertex < this.numVertices );
 
     return vertex < this.numExitVertices;
   }
 
-  public isBoundaryEdge( edge: FlexiEdge ): boolean {
+  public isBoundaryEdge( edge: NumberEdge ): boolean {
     assertEnabled() && assert( edge >= 0 && edge < this.numEdges );
 
     return edge < this.numBoundaryEdges;
   }
 
-  public getVertexOrder( vertex: FlexiVertex ): number {
+  public getVertexOrder( vertex: NumberVertex ): number {
     assertEnabled() && assert( vertex >= 0 && vertex < this.numVertices );
 
     return this.vertexEdges[ vertex ].length;
   }
 
-  public getVertexEdges( vertex: FlexiVertex ): FlexiEdge[] {
+  public getVertexEdges( vertex: NumberVertex ): NumberEdge[] {
     assertEnabled() && assert( vertex >= 0 && vertex < this.numVertices );
 
     // TODO: should we allow direct access somehow?
     return this.vertexEdges[ vertex ].map( edge => edge.index );
   }
 
-  public getVertexFaces( vertex: FlexiVertex ): FlexiFace[] {
+  public getVertexFaces( vertex: NumberVertex ): NumberFace[] {
     assertEnabled() && assert( vertex >= 0 && vertex < this.numVertices );
 
-    const faces: FlexiFace[] = [];
+    const faces: NumberFace[] = [];
     const faceIndices = this.faceIndexMatrix[ vertex ];
 
     for ( let i = 0; i < faceIndices.length; i++ ) {
@@ -124,7 +124,7 @@ export class Flexiboard {
     return faceIndices;
   }
 
-  public getFaceVertices( face: FlexiFace ): FlexiVertex[] {
+  public getFaceVertices( face: NumberFace ): NumberVertex[] {
     assertEnabled() && assert( face >= 0 && face < this.numFaces );
 
     return this.faceIndices[ face ];
