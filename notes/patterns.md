@@ -2,9 +2,28 @@
 # Patterns
 
 - TODO
+  - How do we map "exit edges" to multiple things?
+    - The isomorphism of an embedding... won't store that? We'll need to extract it out
+    - !! Have an "Embedding" type? (Could contain an isomorphism?)
+      - Vertices: ALL 1-to-1
+      - Edges:
+        - non-exit 1-to-1
+        - exit 1-to-0+ (separate out!)
+      - Sectors:
+        - non-exit 1-to-1
+        - exit 1-to-(0 or 1) -- will match in "vertex state" (separate out!)
+      - Faces:
+        - non-exit 1-to-1
+        - exit 1-to-1+ (many?) (also can be null) (separate out!)
+  - !!!!!!!!!
+  - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
+  - !!!!! THEN GET the "current features/state" of it (from the board+puzzle=state) => "featured board" so we can scan efficiently
+  - !!! (extract features from board+state, into a featured board)
+  - !!!!!!!!!
   - Vertex topology updates to be... like there are "face portions" and non-face portions
     - [no] WAIT, are most "vertex" rules... really "face" rules???
       - NO NO, we really DO have vertex topology setups 
+  - [ignore, we will not infer in invalid puzzle] How to "pattern match" an "exit edge" if it will contain... 2 black? (patterns will not really apply well)
 
 - We are able to apply patterns without OR WITH the "topological simplification"(!)
   - Ooo, this might be good for generating puzzles?
