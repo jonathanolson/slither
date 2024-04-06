@@ -3,7 +3,7 @@ import { TPatternVertex } from './TPatternVertex.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
-import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
+import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor, TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import { BasePatternVertex } from './BasePatternVertex.ts';
 import _ from '../../workarounds/_.ts';
 import { BasePatternEdge } from './BasePatternEdge.ts';
@@ -302,5 +302,13 @@ export class BasePatternBoard implements TPatternBoard {
     this.edges = edges;
     this.sectors = sectors;
     this.faces = faces;
+  }
+
+  public serialize(): string {
+    return serializePatternBoardDescriptor( this.descriptor );
+  }
+
+  public static deserialize( serialized: string ): BasePatternBoard {
+    return new BasePatternBoard( deserializePatternBoardDescriptor( serialized ) );
   }
 }

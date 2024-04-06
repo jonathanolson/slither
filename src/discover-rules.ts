@@ -3,6 +3,7 @@ import { FormulaSolver } from './model/logic/FormulaSolver.ts';
 import { logicOr } from './model/logic/operations.ts';
 import { Term } from './model/logic/Term.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
+import { serializePatternBoardDescriptor } from './model/pattern/TPatternBoardDescriptor.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -50,6 +51,7 @@ console.log( 'test' );
     type: 'edge'
   } );
   console.log( 'edgeBoard', edgeBoard );
+  console.log( serializePatternBoardDescriptor( edgeBoard.descriptor ) );
 
   const nonExitVertexBoard = new BasePatternBoard( {
     numNonExitVertices: 1,
@@ -58,6 +60,7 @@ console.log( 'test' );
     edgeCount: 3
   } );
   console.log( 'nonExitVertexBoard', nonExitVertexBoard );
+  console.log( serializePatternBoardDescriptor( nonExitVertexBoard.descriptor ) );
 
   const exitVertexBoard = new BasePatternBoard( {
     numNonExitVertices: 0,
@@ -67,6 +70,7 @@ console.log( 'test' );
     spans: [ 1, 1 ]
   } );
   console.log( 'exitVertexBoard', exitVertexBoard );
+  console.log( serializePatternBoardDescriptor( exitVertexBoard.descriptor ) );
 
   const facesBoard = new BasePatternBoard( {
     numNonExitVertices: 0,
@@ -75,13 +79,15 @@ console.log( 'test' );
     vertexLists: [ [ 0, 1, 2 ] ]
   } );
   console.log( 'facesBoard', facesBoard );
+  console.log( serializePatternBoardDescriptor( facesBoard.descriptor ) );
 
-  // const facesBoard2 = new BasePatternBoard( {
-  //   numNonExitVertices: 2,
-  //   numExitVertices: 2,
-  //   type: 'faces',
-  //   vertexLists: [ [ 0, 1, 2 ], [ 0, 1, 3 ] ]
-  // } );
-  // console.log( 'facesBoard2', facesBoard2 );
+  const facesBoard2 = new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 4,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2 ], [ 0, 1, 3 ] ]
+  } );
+  console.log( 'facesBoard2', facesBoard2 );
+  console.log( serializePatternBoardDescriptor( facesBoard2.descriptor ) );
 
 } )();
