@@ -2,6 +2,7 @@ import { Display, Node } from 'phet-lib/scenery';
 import { FormulaSolver } from './model/logic/FormulaSolver.ts';
 import { logicOr } from './model/logic/operations.ts';
 import { Term } from './model/logic/Term.ts';
+import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -35,16 +36,52 @@ console.log( 'test' );
 
   solver.addFormula( logicOr( [ a, b, c ] ) );
 
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
-  console.log( solver.getNextSolution() );
+  let solution: string[] | null;
+
+  do {
+    solution = solver.getNextSolution();
+    console.log( solution );
+  }
+  while ( solution !== null );
+
+  const edgeBoard = new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 0,
+    type: 'edge'
+  } );
+  console.log( 'edgeBoard', edgeBoard );
+
+  const nonExitVertexBoard = new BasePatternBoard( {
+    numNonExitVertices: 1,
+    numExitVertices: 0,
+    type: 'non-exit-vertex',
+    edgeCount: 3
+  } );
+  console.log( 'nonExitVertexBoard', nonExitVertexBoard );
+
+  const exitVertexBoard = new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 4,
+    spans: [ 1, 1 ]
+  } );
+  console.log( 'exitVertexBoard', exitVertexBoard );
+
+  const facesBoard = new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 3,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2 ] ]
+  } );
+  console.log( 'facesBoard', facesBoard );
+
+  // const facesBoard2 = new BasePatternBoard( {
+  //   numNonExitVertices: 2,
+  //   numExitVertices: 2,
+  //   type: 'faces',
+  //   vertexLists: [ [ 0, 1, 2 ], [ 0, 1, 3 ] ]
+  // } );
+  // console.log( 'facesBoard2', facesBoard2 );
+
 } )();
