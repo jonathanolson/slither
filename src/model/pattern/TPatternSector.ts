@@ -5,9 +5,7 @@ import { TPatternFace } from './TPatternFace.ts';
 export interface TPatternSector {
   index: number;
   vertex: TPatternVertex;
-  isExit: boolean;
-  exitEdge: TPatternEdge | null; // defined if isExit:true
-  face: TPatternFace | null; // defined if isExit:false
+  face: TPatternFace;
 
   edges: TPatternEdge[];
 }

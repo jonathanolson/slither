@@ -67,8 +67,6 @@ export class BasePatternBoard implements TPatternBoard {
           const sector = new BasePatternSector(
             sectors.length,
             vertex,
-            false,
-            null,
             [ edge, nextEdge ]
           );
           sectors.push( sector );
@@ -127,19 +125,6 @@ export class BasePatternBoard implements TPatternBoard {
         if ( vertex.isExit ) {
           const exitEdge = new BasePatternEdge( edges.length, true, vertex ); // auto-adds exit vertex
           edges.push( exitEdge );
-          // TODO: add the exit sectors?
-
-          for ( const edge of vertex.edges ) {
-            if ( edge === exitEdge ) {
-              continue;
-            }
-
-            const exitSector = new BasePatternSector( sectors.length, vertex, true, exitEdge, [ edge, exitEdge ] );
-            sectors.push( exitSector );
-            edge.sectors.push( exitSector );
-            exitEdge.sectors.push( exitSector );
-            vertex.sectors.push( exitSector );
-          }
 
           vertex.edges.push( exitEdge );
           vertex.exitEdge = exitEdge;
@@ -178,7 +163,7 @@ export class BasePatternBoard implements TPatternBoard {
       } ) );
 
       sectors.push( ..._.range( 0, descriptor.edgeCount ).map( i => {
-        const sector = new BasePatternSector( i, vertex, false, null, [
+        const sector = new BasePatternSector( i, vertex, [
           edges[ i ],
           edges[ ( i + 1 ) % descriptor.edgeCount ]
         ] );
@@ -247,7 +232,7 @@ export class BasePatternBoard implements TPatternBoard {
           const edge = spanEdges[ i ];
           const nextEdge = spanEdges[ i + 1 ];
 
-          const sector = new BasePatternSector( sectors.length, vertex, false, null, [ edge, nextEdge ] );
+          const sector = new BasePatternSector( sectors.length, vertex, [ edge, nextEdge ] );
           sectors.push( sector );
 
           edge.sectors.push( sector );
@@ -261,18 +246,6 @@ export class BasePatternBoard implements TPatternBoard {
           edge.faces.push( face );
           nextEdge.faces.push( face );
           sector.face = face;
-        }
-      } );
-
-      // exit sectors
-      edges.forEach( edge => {
-        if ( edge !== exitEdge ) {
-          const exitSector = new BasePatternSector( sectors.length, vertex, true, exitEdge, [ edge, exitEdge ] );
-          sectors.push( exitSector );
-
-          edge.sectors.push( exitSector );
-          exitEdge.sectors.push( exitSector );
-          vertex.sectors.push( exitSector );
         }
       } );
 

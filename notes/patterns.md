@@ -9,17 +9,16 @@
       - Edges:
         - non-exit 1-to-1
         - exit 1-to-0+ (separate out!)
-      - Sectors:
-        - non-exit 1-to-1
-        - exit 1-to-(0 or 1) -- will match in "vertex state" (separate out!)
+      - Sectors: ALL 1-to-1
       - Faces:
         - non-exit 1-to-1
-        - exit 1-to-1+ (many?) (also can be null) (separate out!)
+        - exit many-to-(null | 1) (separate out!)
   - !!!!!!!!!
   - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
   - !!!!! THEN GET the "current features/state" of it (from the board+puzzle=state) => "featured board" so we can scan efficiently
   - !!! (extract features from board+state, into a featured board)
   - !!!!!!!!!
+  - We do NOT apply "black exit edges" with the pattern, or exit sectors, etc. Keep things simpler, rely in "larger" patterns for those
   - Vertex topology updates to be... like there are "face portions" and non-face portions
     - [no] WAIT, are most "vertex" rules... really "face" rules???
       - NO NO, we really DO have vertex topology setups 
@@ -29,6 +28,7 @@
   - Ooo, this might be good for generating puzzles?
 
 - ? Questions (first)
+  - Exit sectors... WHY?!?!? 
   - Highlander? - do exit points connect in the same way?
   - ? Keep patterns on detecting "invalidity"?
 
@@ -39,25 +39,6 @@
 
 [API needs to be compatible with boards, maybe with adapter]
   - Can we put an 'index' on everything in a board?
-
-- We have a set of potential booleans that represent "is it possible in a solution"
-  - Edge:
-    - Black in solution?
-    - Red in solution?
-  - Face Color pair:
-    - Same in solution?
-    - Opposite in solution?
-  - Sector:
-    - Has 0 in solution?
-    - Has 1 in solution?
-    - Has 2 in solution?
-  - Vertex State:
-    - Boolean for each possibility
-  - Face State:
-    - Boolean for each possibility
-  - Face-Region:
-    - [NO - not composable]? 
-    - Can have pair of faces (or exit faces) that have same-color connection path together through our area?
 
 - Each boolean will be on a state:
   - NOT_FOUND (initial state)
