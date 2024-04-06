@@ -4,6 +4,8 @@ import { logicOr } from './model/logic/operations.ts';
 import { Term } from './model/logic/Term.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { serializePatternBoardDescriptor } from './model/pattern/TPatternBoardDescriptor.ts';
+import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
+import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -89,5 +91,10 @@ console.log( 'test' );
   } );
   console.log( 'facesBoard2', facesBoard2 );
   console.log( serializePatternBoardDescriptor( facesBoard2.descriptor ) );
+
+  const puzzle = BasicPuzzle.loadDefaultPuzzle();
+  const boardPatternBoard = new BoardPatternBoard( puzzle.board );
+  console.log( 'boardPatternBoard', boardPatternBoard );
+  console.log( serializePatternBoardDescriptor( boardPatternBoard.descriptor ) );
 
 } )();
