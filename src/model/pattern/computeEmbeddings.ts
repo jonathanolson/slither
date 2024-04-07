@@ -131,8 +131,12 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
         rootMappingMap.set( firstFace, firstMapping );
         rootFaceMap.set( firstFace, firstTargetFace );
+        rootFaceInverseMap.set( firstTargetFace, firstFace );
         for ( let i = 0; i < firstFace.vertices.length; i++ ) {
-          rootVertexMap.set( firstFace.vertices[ i ], firstTargetFace.vertices[ firstMapping.mapVertexIndex( i ) ] );
+          const patternVertex = firstFace.vertices[ i ];
+          const targetVertex = firstTargetFace.vertices[ firstMapping.mapVertexIndex( i ) ];
+          rootVertexMap.set( patternVertex, targetVertex );
+          rootVertexInverseMap.set( targetVertex, patternVertex );
         }
 
         const recur = (
@@ -143,6 +147,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
           vertexMap: Map<TPatternVertex, TPatternVertex>,
           vertexInverseMap: Map<TPatternVertex, TPatternVertex>,
         ): void => {
+          assertEnabled() && assert( vertexMap.size === vertexInverseMap.size );
+
           if ( orderedFacesIndex === orderedFaces.length ) {
             // We found one!!!
 
@@ -279,6 +285,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               // Process face
               faceMap.set( patternFace, targetFace );
               faceInverseMap.set( targetFace, patternFace );
+              if ( faceMap.size !== faceInverseMap.size ) {
+                return;
+              }
 
               // Check and process vertices
               for ( let i = 0; i < patternFace.vertices.length; i++ ) {
@@ -301,6 +310,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                 else {
                   vertexInverseMap.set( targetVertex, patternVertex );
                 }
+
+                assertEnabled() && assert( vertexMap.size === vertexInverseMap.size );
               }
 
               mappingMap.set( patternFace, mapping );
@@ -363,6 +374,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                     else {
                       newVertexInverseMap.set( targetVertex, patternVertex );
                     }
+
+                    assertEnabled() && assert( newVertexMap.size === newVertexInverseMap.size );
                   }
 
                   const newFaceMap = new Map( faceMap );
@@ -371,6 +384,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                   // Process face
                   newFaceMap.set( patternFace, targetFace );
                   newFaceInverseMap.set( targetFace, patternFace );
+                  if ( newFaceMap.size !== newFaceInverseMap.size ) {
+                    return;
+                  }
 
                   const newMappingMap = new Map( mappingMap );
                   newMappingMap.set( patternFace, mapping );
