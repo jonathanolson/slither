@@ -64,4 +64,14 @@ export class Embedding {
       Array.from( this.faceMap ).every( ( [ face, mappedFace ] ) => embedding.faceMap.get( face ) === mappedFace )
     );
   }
+
+  public toString(): string {
+    return `Embedding(\n` +
+      `  vertexMap: ${[ ...this.vertexMap ].map( pair => `${pair[ 0 ].index} ${pair[ 0 ].isExit ? '->' : '=>' } ${pair[ 1 ].index}` ).join( ', ' )}\n` +
+      `  nonExitEdgeMap: ${[ ...this.nonExitEdgeMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}\n` +
+      `  exitEdgeMap: ${[ ...this.exitEdgeMap ].map( pair => `${pair[ 0 ].index} => [${pair[ 1 ].map( edge => edge.index ).join( ', ' )}]` ).join( ', ' )}\n` +
+      `  sectorMap: ${[ ...this.sectorMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}\n` +
+      `  faceMap: ${[ ...this.faceMap ].map( pair => `${pair[ 0 ].index} ${pair[ 0 ].isExit ? '->' : '=>' } ${pair[ 1 ].index}` ).join( ', ' )}\n` +
+      `)`;
+  }
 }

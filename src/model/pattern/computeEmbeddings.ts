@@ -110,16 +110,22 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
     };
 
     for ( const firstTargetFace of board.faces ) {
+      // console.log( 'firstFace', firstTargetFace.index );
+
       if ( firstTargetFace.isExit ) {
+        // console.log( 'abort isExit' );
         continue;
       }
 
       if ( firstTargetFace.edges.length !== firstFace.edges.length ) {
+        // console.log( 'abort length mismatch' );
         continue;
       }
 
       for ( const firstMapping of FaceMapping.allForOrder( firstTargetFace.edges.length ) ) {
+        // console.log( `  firstMapping: ${firstMapping}` );
         if ( !checkMappingAdjacencyOrders( firstFace, firstTargetFace, firstMapping ) ) {
+          // console.log( '  abort adjacency' );
           continue;
         }
 
@@ -220,6 +226,14 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
               sectorMap.set( patternSector, targetSector );
             }
+
+            // console.log( new Embedding(
+            //   vertexMap,
+            //   nonExitEdgeMap,
+            //   exitEdgeMap,
+            //   sectorMap,
+            //   faceMap,
+            // ).toString() );
 
             embeddings.push( new Embedding(
               vertexMap,
@@ -329,10 +343,16 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               const patternVertex = patternFace.vertices[ matchingVertexIndex ];
               const targetVertex = vertexMap.get( patternVertex )!;
 
+              // console.log( `    vertex ${patternVertex.index} -> ${targetVertex.index}` );
+
+              // console.log( `      non-exit faces: ${targetVertex.faces.filter( face => !face.isExit ).map( face => face.index ).join( ', ' )}` );
+              // console.log( `      faceInverseMap keys: ${[ ...faceInverseMap.keys() ].map( face => face.index ).join( ', ' )}` );
+
               // NOTE: so we can avoid other checks, we'll just check all of the non-mapped faces for a match
               const candidateTargetFaces = targetVertex.faces.filter( face => !face.isExit && !faceInverseMap.has( face ) );
 
               for ( const targetFace of candidateTargetFaces ) {
+                // console.log( `      candidate face ${targetFace.index}` );
                 const patternVertexIndex = patternFace.vertices.indexOf( patternVertex );
                 const targetVertexIndex = targetFace.vertices.indexOf( targetVertex );
 
@@ -348,6 +368,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                     continue;
                   }
 
+                  // TODO: isolate things into functions, so we COULD just do a "return"
+                  let success = true;
 
                   const newVertexMap = new Map( vertexMap );
                   const newVertexInverseMap = new Map( vertexInverseMap );
@@ -360,7 +382,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
                     if ( newVertexMap.has( patternVertex ) ) {
                       if ( newVertexMap.get( patternVertex ) !== targetVertex ) {
-                        return;
+                        success = false;
+                        break;
                       }
                     }
                     else {
@@ -368,7 +391,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                     }
                     if ( newVertexInverseMap.has( targetVertex ) ) {
                       if ( newVertexInverseMap.get( targetVertex ) !== patternVertex ) {
-                        return;
+                        success = false;
+                        break;
                       }
                     }
                     else {
@@ -376,6 +400,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                     }
 
                     assertEnabled() && assert( newVertexMap.size === newVertexInverseMap.size );
+                  }
+                  if ( !success ) {
+                    continue;
                   }
 
                   const newFaceMap = new Map( faceMap );
@@ -385,7 +412,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                   newFaceMap.set( patternFace, targetFace );
                   newFaceInverseMap.set( targetFace, patternFace );
                   if ( newFaceMap.size !== newFaceInverseMap.size ) {
-                    return;
+                    continue;
                   }
 
                   const newMappingMap = new Map( mappingMap );
@@ -606,6 +633,10 @@ class FaceMapping {
       // 2x edgeCount just to ensure positive
       return ( this.offset - i - 1 + 2 * this.edgeCount ) % this.edgeCount;
     }
+  }
+
+  public toString(): string {
+    return `FaceMapping( edgeCount=${this.edgeCount}, offset=${this.offset}, direction=${this.direction} )`;
   }
 
   public static allForOrder( edgeCount: number ): FaceMapping[] {
