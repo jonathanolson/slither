@@ -1,5 +1,8 @@
 import { NumberEdge, NumberVertex } from './FaceTopology.ts';
 
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
 export interface TTopology {
   // TODO: ... do we want ... these?
   numFaces: number;

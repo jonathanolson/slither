@@ -4,6 +4,7 @@ import { TTopology } from './TTopology.ts';
 
 export type NumberVertex = number;
 export type NumberEdge = number;
+export type NumberSector = number;
 export type NumberFace = number;
 
 /**
@@ -16,6 +17,9 @@ export type NumberFace = number;
     - (implicit) Set of edges (labeled 0 ... E-1)
       - Ordered list of vertices (using labels above)
  */
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
 export class FaceTopology implements TTopology {
 
   public readonly numFaces: number;

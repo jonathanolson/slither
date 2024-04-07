@@ -7,6 +7,9 @@ import { TTopology } from './TTopology.ts';
 
 // TODO: actually, think how vertex stuff works FOR REAL in our face topologies. We need to consider different face structures, where we ONLY have sectors for "in a face" parts
 
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
+// TODO: deprecate, and remove?
 export class VertexTopology implements TTopology {
 
   // Face N is adjacent to edge N and edge N+1

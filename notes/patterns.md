@@ -10,9 +10,7 @@
         - non-exit 1-to-1
         - exit 1-to-0+ (separate out!)
       - Sectors: ALL 1-to-1
-      - Faces:
-        - non-exit 1-to-1
-        - exit many-to-(null | 1) (separate out!)
+      - Faces: (can store map to TPatternFace - won't be null for "outside")
   - !!!!!!!!!
   - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
   - !!!!! THEN GET the "current features/state" of it (from the board+puzzle=state) => "featured board" so we can scan efficiently
