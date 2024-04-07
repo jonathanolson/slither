@@ -219,9 +219,6 @@ class EmbeddingNode extends Node {
   console.log( 'boardPatternBoard', boardPatternBoard );
   console.log( serializePatternBoardDescriptor( boardPatternBoard.descriptor ) );
 
-
-  console.log( '----------' );
-
   const simpleBoard = new SquareBoard( 2, 3 );
   const simplePatternBoard = new BoardPatternBoard( simpleBoard );
   console.log( 'simplePatternBoard', simplePatternBoard );
@@ -235,6 +232,7 @@ class EmbeddingNode extends Node {
   scene.addChild( container );
 
   const testPattern = ( name: string, pattern: BasePatternBoard ) => {
+    console.log( '----------' );
     console.log( name );
 
     console.log( 'pattern', serializePatternBoardDescriptor( pattern.descriptor ), pattern );
@@ -274,6 +272,7 @@ class EmbeddingNode extends Node {
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ] ]
   } ) );
 
+  /*
   testPattern( '2-count non-exit-vertex', new BasePatternBoard( {
     numNonExitVertices: 1,
     numExitVertices: 0,
@@ -302,7 +301,7 @@ class EmbeddingNode extends Node {
     edgeCount: 2,
     spans: [ 1 ]
   } ) );
-
+*/
   display.setWidthHeight(
     Math.ceil( scene.right + 10 ),
     Math.ceil( scene.bottom + 10 )

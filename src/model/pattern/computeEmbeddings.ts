@@ -11,9 +11,9 @@ import { TPatternSector } from './TPatternSector.ts';
 export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard ): Embedding[] => {
   // Can't stuff bigger patterns into smaller boards
   if (
-    pattern.faces.length > board.faces.length ||
+    pattern.faces.filter( face => !face.isExit ).length > board.faces.filter( face => !face.isExit ).length ||
     pattern.sectors.length > board.sectors.length ||
-    pattern.edges.length > board.edges.length ||
+    pattern.edges.filter( face => !face.isExit ).length > board.edges.filter( face => !face.isExit ).length ||
     pattern.vertices.length > board.vertices.length
   ) {
     return [];
