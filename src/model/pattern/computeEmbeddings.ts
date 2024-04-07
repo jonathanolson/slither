@@ -146,8 +146,6 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
           if ( orderedFacesIndex === orderedFaces.length ) {
             // We found one!!!
 
-            // TODO: create the Embedding (is it that hard?)
-
             assertEnabled() && assert( vertexMap.size === pattern.vertices.length );
 
             // Non-exit edges
@@ -389,12 +387,178 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
   }
   else if ( pattern.vertices.length === 1 ) {
 
-    // TODO: is it an exit vertex or not? we need to do "sector" matching for both, since we don't have edge orders around a vertex
+    const patternVertex = pattern.vertices[ 0 ];
+    assertEnabled() && assert( patternVertex.edges.length === pattern.edges.length );
 
-    throw new Error( 'unimplemented' ); // TODO: complete!!!
+    const realEdges = patternVertex.edges.filter( edge => !edge.isExit );
+    const patternOrder = patternVertex.edges.filter( edge => !edge.isExit ).length;
+    const isExit = patternVertex.isExit;
+
+    // We'll scan in-pattern-edge-order. We'll store the "completed" sectors at each index (where we will have assigned
+    // both edges of a sector at a given point) so we can prune the search space.
+    const completedSectors: TPatternSector[][] = _.range( 0, patternOrder ).map( i => {
+      const edge = realEdges[ i ];
+      const edges = realEdges.slice( 0, i );
+
+      // The sector both (a) has the newest edge, and (b) all edges in the sector have been discovered so far.
+      return patternVertex.sectors.filter( sector => {
+        return sector.edges.includes( edge ) && sector.edges.every( otherEdge => edges.includes( otherEdge ) );
+      } );
+    } );
+
+    if ( assertEnabled() ) {
+      // Checks some assumptions we make about how the pattern boards are created (allows efficiency below)
+      if ( patternVertex.isExit ) {
+        assert( patternVertex.sectors.length === patternOrder );
+
+        for ( let i = 0; i < patternOrder; i++ ) {
+          const startEdge = patternVertex.edges[ i ];
+          const endEdge = patternVertex.edges[ ( i + 1 ) % patternOrder ];
+
+          const sector = patternVertex.sectors[ i ];
+          const face = patternVertex.faces[ i ];
+
+          assert( sector.edges.includes( startEdge ) );
+          assert( sector.edges.includes( endEdge ) );
+          assert( sector.face === face );
+        }
+      }
+    }
+
+    for ( const targetVertex of board.vertices ) {
+      if ( isExit ) {
+        // We'll still need enough edges and sectors
+        if ( targetVertex.edges.length < patternOrder || targetVertex.sectors.length < patternVertex.sectors.length ) {
+          continue;
+        }
+      }
+      else {
+        if ( targetVertex.isExit || targetVertex.edges.length !== patternOrder ) {
+          continue;
+        }
+        assertEnabled() && assert( targetVertex.sectors.length === patternOrder );
+      }
+
+      const vertexMap = new Map( [ [ patternVertex, targetVertex ] ] );
+
+      const recur = (
+        edgeIndex: number,
+        edgeMap: Map<TPatternEdge, TPatternEdge>,
+        sectorMap: Map<TPatternSector, TPatternSector>,
+        usedTargetEdges: Set<TPatternEdge>,
+      ) => {
+        if ( edgeIndex === patternOrder ) {
+          // We found one!!!
+
+          assertEnabled() && assert( edgeMap.size === realEdges.length );
+          assertEnabled() && assert( sectorMap.size === pattern.sectors.length );
+
+          const exitEdgeMap: Map<TPatternEdge, TPatternEdge[]> = isExit ? new Map( [
+            [ patternVertex.exitEdge!, targetVertex.edges.filter( edge => !usedTargetEdges.has( edge ) ) ],
+          ] ) : new Map();
+
+          // Initialize with face mapping from sectors (e.g. non-exit faces)
+          const faceMap = new Map( [ ...sectorMap.keys() ].map( sector => {
+            return [ sector.face, sectorMap.get( sector )!.face ];
+          } ) );
+
+          // Handle exit faces
+          for ( const exitFace of pattern.faces.filter( face => face.isExit ) ) {
+            const patternEdge = exitFace.edges[ 0 ];
+            assertEnabled() && assert( patternEdge && exitFace.edges.length === 1 );
+
+            const targetEdge = edgeMap.get( patternEdge )!;
+            assertEnabled() && assert( targetEdge );
+
+            const otherPatternFace = patternEdge.faces[ 0 ] === exitFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
+            const otherTargetFace = faceMap.get( otherPatternFace )!;
+            assertEnabled() && assert( otherTargetFace );
+
+            const exitTargetFace = targetEdge.faces[ 0 ] === otherTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
+            assertEnabled() && assert( exitTargetFace );
+
+            faceMap.set( exitFace, exitTargetFace );
+          }
+
+          return new Embedding(
+            vertexMap,
+            edgeMap,
+            exitEdgeMap,
+            sectorMap,
+            faceMap
+          );
+        }
+        else {
+          const patternEdge = realEdges[ edgeIndex ];
+          const patternSectors = completedSectors[ edgeIndex ];
+
+          for ( const targetEdge of targetVertex.edges ) {
+            // We ignore exit edges so we don't map a "real" edge to an "exit"
+            if ( targetEdge.isExit || usedTargetEdges.has( targetEdge ) ) {
+              continue;
+            }
+
+            const targetSectors: TPatternSector[] = [];
+            let success = true;
+
+            for ( const patternSector of patternSectors ) {
+              const patternEdgeA = patternSector.edges[ 0 ];
+              const patternEdgeB = patternSector.edges[ 1 ];
+
+              const targetEdgeA = patternEdgeA === patternEdge ? targetEdge : edgeMap.get( patternEdgeA )!;
+              const targetEdgeB = patternEdgeB === patternEdge ? targetEdge : edgeMap.get( patternEdgeB )!;
+              assertEnabled() && assert( targetEdgeA && targetEdgeB );
+
+              const targetSector = targetVertex.sectors.find( sector => {
+                return sector.edges.includes( targetEdgeA ) && sector.edges.includes( targetEdgeB );
+              } ) ?? null;
+              if ( targetSector ) {
+                targetSectors.push( targetSector );
+              }
+              else {
+                success = false;
+                break;
+              }
+            }
+
+            if ( success ) {
+              const newEdgeMap = new Map( edgeMap );
+              newEdgeMap.set( patternEdge, targetEdge );
+
+              const newSectorMap = new Map( sectorMap );
+              for ( let i = 0; i < patternSectors.length; i++ ) {
+                newSectorMap.set( patternSectors[ i ], targetSectors[ i ] );
+              }
+
+              const newUsedTargetEdges = new Set( usedTargetEdges );
+              newUsedTargetEdges.add( targetEdge );
+
+              recur( edgeIndex + 1, newEdgeMap, newSectorMap, newUsedTargetEdges );
+            }
+          }
+        }
+      };
+
+      recur( 0, new Map(), new Map(), new Set() );
+    }
   }
   else if ( pattern.vertices.length === 0 && pattern.edges.length === 1 ) {
-    throw new Error( 'unimplemented' ); // TODO: complete!!!
+    // NOTE: we only find one embedding per edge here, because rules and symmetry. There are actually two embeddings
+
+    const patternEdge = pattern.edges[ 0 ];
+
+    for ( const targetEdge of board.edges.filter( boardEdge => !boardEdge.isExit ) ) {
+      embeddings.push( new Embedding(
+        new Map(),
+        new Map( [ [ patternEdge, targetEdge ] ] ),
+        new Map(),
+        new Map(),
+        new Map( [
+          [ patternEdge.faces[ 0 ], targetEdge.faces[ 0 ] ],
+          [ patternEdge.faces[ 1 ], targetEdge.faces[ 1 ] ],
+        ] )
+      ) );
+    }
   }
   else {
     throw new Error( 'pattern search not implemented generally yet' );
