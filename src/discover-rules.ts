@@ -272,7 +272,20 @@ class EmbeddingNode extends Node {
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ] ]
   } ) );
 
-  /*
+  testPattern( 'L square pattern', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 8,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 3, 4, 5 ], [ 0, 5, 6, 7 ] ]
+  } ) );
+
+  testPattern( '4-square pattern', new BasePatternBoard( {
+    numNonExitVertices: 1,
+    numExitVertices: 8,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 3, 4, 5 ], [ 0, 5, 6, 7 ], [ 0, 7, 8, 1 ] ]
+  } ) );
+
   testPattern( '2-count non-exit-vertex', new BasePatternBoard( {
     numNonExitVertices: 1,
     numExitVertices: 0,
@@ -294,6 +307,7 @@ class EmbeddingNode extends Node {
     edgeCount: 4
   } ) );
 
+  /*
   testPattern( '2-count exit-vertex (one span)', new BasePatternBoard( {
     numNonExitVertices: 0,
     numExitVertices: 1,
