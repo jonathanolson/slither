@@ -451,7 +451,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
     if ( assertEnabled() ) {
       // Checks some assumptions we make about how the pattern boards are created (allows efficiency below)
-      if ( patternVertex.isExit ) {
+      if ( !patternVertex.isExit ) {
         assert( patternVertex.sectors.length === patternOrder );
 
         for ( let i = 0; i < patternOrder; i++ ) {
@@ -505,23 +505,38 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             return [ sector.face, sectorMap.get( sector )!.face ];
           } ) );
 
-          // Handle exit faces
-          for ( const exitFace of pattern.faces.filter( face => face.isExit ) ) {
-            const patternEdge = exitFace.edges[ 0 ];
-            assertEnabled() && assert( patternEdge && exitFace.edges.length === 1 );
+          if ( patternVertex.sectors.length === 0 ) {
+            // If we have no sectors, we'll arbitrarily assign exit faces
+            for ( const [ patternEdge, targetEdge ] of edgeMap ) {
+              const patternExitFaceA = patternEdge.faces[ 0 ];
+              const patternExitFaceB = patternEdge.faces[ 1 ];
 
-            const targetEdge = edgeMap.get( patternEdge )!;
-            assertEnabled() && assert( targetEdge );
+              assertEnabled() && assert( patternExitFaceA.isExit && patternExitFaceB.isExit );
 
-            const otherPatternFace = patternEdge.faces[ 0 ] === exitFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
-            const otherTargetFace = faceMap.get( otherPatternFace )!;
-            assertEnabled() && assert( otherTargetFace );
-
-            const exitTargetFace = targetEdge.faces[ 0 ] === otherTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
-            assertEnabled() && assert( exitTargetFace );
-
-            faceMap.set( exitFace, exitTargetFace );
+              faceMap.set( patternExitFaceA, targetEdge.faces[ 0 ] );
+              faceMap.set( patternExitFaceB, targetEdge.faces[ 1 ] );
+            }
           }
+          else {
+            // Handle exit faces
+            for ( const exitFace of pattern.faces.filter( face => face.isExit ) ) {
+              const patternEdge = exitFace.edges[ 0 ];
+              assertEnabled() && assert( patternEdge && exitFace.edges.length === 1 );
+
+              const targetEdge = edgeMap.get( patternEdge )!;
+              assertEnabled() && assert( targetEdge );
+
+              const otherPatternFace = patternEdge.faces[ 0 ] === exitFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
+              const otherTargetFace = faceMap.get( otherPatternFace )!;
+              assertEnabled() && assert( otherTargetFace );
+
+              const exitTargetFace = targetEdge.faces[ 0 ] === otherTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
+              assertEnabled() && assert( exitTargetFace );
+
+              faceMap.set( exitFace, exitTargetFace );
+            }
+          }
+
 
           return new Embedding(
             vertexMap,

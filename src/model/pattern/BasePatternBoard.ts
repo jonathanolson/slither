@@ -214,58 +214,85 @@ export class BasePatternBoard implements TPatternBoard {
 
       const exitEdge = new BasePatternEdge( edges.length, true, vertex );
       edges.push( exitEdge );
+      vertex.edges.push( exitEdge );
 
-      const spanEdgeLists: BasePatternEdge[][] = [];
-      let nextEdgeIndex = 0;
-      descriptor.spans.forEach( ( span, i ) => {
-        const startEdgeIndex = nextEdgeIndex;
-        const endEdgeIndex = startEdgeIndex + span;
-        nextEdgeIndex = endEdgeIndex + 1;
+      if ( descriptor.spans.length ) {
+        const spanEdgeLists: BasePatternEdge[][] = [];
+        let nextEdgeIndex = 0;
+        descriptor.spans.forEach( ( span, i ) => {
+          const startEdgeIndex = nextEdgeIndex;
+          const endEdgeIndex = startEdgeIndex + span;
+          nextEdgeIndex = endEdgeIndex + 1;
 
-        spanEdgeLists.push( _.range( startEdgeIndex, endEdgeIndex + 1 ).map( i => edges[ i ] ) );
-      } );
-      assertEnabled() && assert( nextEdgeIndex === descriptor.edgeCount );
+          spanEdgeLists.push( _.range( startEdgeIndex, endEdgeIndex + 1 ).map( i => edges[ i ] ) );
+        } );
+        assertEnabled() && assert( nextEdgeIndex === descriptor.edgeCount );
 
-      // internal sectors and faces
-      spanEdgeLists.forEach( spanEdges => {
-        for ( let i = 0; i < spanEdges.length - 1; i++ ) {
-          const edge = spanEdges[ i ];
-          const nextEdge = spanEdges[ i + 1 ];
+        // internal sectors and faces
+        spanEdgeLists.forEach( spanEdges => {
+          for ( let i = 0; i < spanEdges.length - 1; i++ ) {
+            const edge = spanEdges[ i ];
+            const nextEdge = spanEdges[ i + 1 ];
 
-          const sector = new BasePatternSector( sectors.length, vertex, [ edge, nextEdge ] );
-          sectors.push( sector );
+            const sector = new BasePatternSector( sectors.length, vertex, [ edge, nextEdge ] );
+            sectors.push( sector );
 
-          edge.sectors.push( sector );
-          nextEdge.sectors.push( sector );
-          vertex.sectors.push( sector );
+            edge.sectors.push( sector );
+            nextEdge.sectors.push( sector );
+            vertex.sectors.push( sector );
 
-          const face = new BasePatternFace( faces.length, false, [ vertex ], [ edge, nextEdge ], [ sector ] );
-          faces.push( face );
+            const face = new BasePatternFace( faces.length, false, [ vertex ], [ edge, nextEdge ], [ sector ] );
+            faces.push( face );
 
-          vertex.faces.push( face );
-          edge.faces.push( face );
-          nextEdge.faces.push( face );
-          sector.face = face;
-        }
-      } );
+            vertex.faces.push( face );
+            edge.faces.push( face );
+            nextEdge.faces.push( face );
+            sector.face = face;
+          }
+        } );
 
-      // exit faces
-      spanEdgeLists.forEach( spanEdges => {
-        const startEdge = spanEdges[ 0 ];
-        const endEdge = spanEdges[ spanEdges.length - 1 ];
+        // exit faces
+        spanEdgeLists.forEach( spanEdges => {
+          const startEdge = spanEdges[ 0 ];
+          const endEdge = spanEdges[ spanEdges.length - 1 ];
 
-        const exitStartFace = new BasePatternFace( faces.length, true, [ vertex ], [ startEdge, exitEdge ], [] );
-        faces.push( exitStartFace );
+          const exitStartFace = new BasePatternFace( faces.length, true, [ vertex ], [ startEdge ], [] );
+          faces.push( exitStartFace );
 
-        startEdge.faces.push( exitStartFace );
-        vertex.faces.push( exitStartFace );
+          startEdge.faces.push( exitStartFace );
+          vertex.faces.push( exitStartFace );
 
-        const exitEndFace = new BasePatternFace( faces.length, true, [ vertex ], [ exitEdge, endEdge ], [] );
-        faces.push( exitEndFace );
+          const exitEndFace = new BasePatternFace( faces.length, true, [ vertex ], [ endEdge ], [] );
+          faces.push( exitEndFace );
 
-        endEdge.faces.push( exitEndFace );
-        vertex.faces.push( exitEndFace );
-      } );
+          endEdge.faces.push( exitEndFace );
+          vertex.faces.push( exitEndFace );
+        } );
+      }
+      else {
+        // The case where we have no sectors, and just two edges
+        assertEnabled() && assert( descriptor.edgeCount === 2 );
+
+        // exit faces
+        const edgeA = edges[ 0 ];
+        const edgeB = edges[ 1 ];
+        const exitFaceA1 = new BasePatternFace( faces.length, true, [ vertex ], [ edgeA ], [] );
+        faces.push( exitFaceA1 );
+        edgeA.faces.push( exitFaceA1 );
+        vertex.faces.push( exitFaceA1 );
+        const exitFaceA2 = new BasePatternFace( faces.length, true, [ vertex ], [ edgeA ], [] );
+        faces.push( exitFaceA2 );
+        edgeA.faces.push( exitFaceA2 );
+        vertex.faces.push( exitFaceA2 );
+        const exitFaceB1 = new BasePatternFace( faces.length, true, [ vertex ], [ edgeB ], [] );
+        faces.push( exitFaceB1 );
+        edgeB.faces.push( exitFaceB1 );
+        vertex.faces.push( exitFaceB1 );
+        const exitFaceB2 = new BasePatternFace( faces.length, true, [ vertex ], [ edgeB ], [] );
+        faces.push( exitFaceB2 );
+        edgeB.faces.push( exitFaceB2 );
+        vertex.faces.push( exitFaceB2 );
+      }
     }
     else {
       throw new Error( `Invalid descriptor: ${descriptor}` );

@@ -286,6 +286,14 @@ class EmbeddingNode extends Node {
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 3, 4, 5 ], [ 0, 5, 6, 7 ], [ 0, 7, 8, 1 ] ]
   } ) );
 
+  testPattern( '2-count exit-vertex no sectors', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 2,
+    spans: []
+  } ) );
+
   testPattern( '2-count non-exit-vertex', new BasePatternBoard( {
     numNonExitVertices: 1,
     numExitVertices: 0,
