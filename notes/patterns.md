@@ -2,6 +2,9 @@
 # Patterns
 
 - TODO
+  - Allow a 2-edge single-vertex (+ exit) pattern, for our 2-black-edge red-exit case
+  - Debug the vertex rule matching
+  - 
   - How do we map "exit edges" to multiple things?
     - The isomorphism of an embedding... won't store that? We'll need to extract it out
     - !! Have an "Embedding" type? (Could contain an isomorphism?)
