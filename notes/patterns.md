@@ -2,7 +2,9 @@
 # Patterns
 
 - TODO
-  - Allow a 2-edge single-vertex (+ exit) pattern, for our 2-black-edge red-exit case
+  - Visualize embedded sectors (and test out all of the vertex rule boards)
+  - Visualize embeddings WITHIN pattern boards(!)
+  - 
   - Debug the vertex rule matching
   - Pattern = pattern-board + pattern-state (features?)
     - Face values are part of the pattern/features, no? 

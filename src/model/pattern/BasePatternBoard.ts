@@ -181,7 +181,7 @@ export class BasePatternBoard implements TPatternBoard {
 
         const face = new BasePatternFace(
           i,
-          false,
+          true,
           [ vertex ],
           [ edges[ i ], edges[ ( i + 1 ) % descriptor.edgeCount ] ],
           [ sector ]
@@ -215,6 +215,7 @@ export class BasePatternBoard implements TPatternBoard {
       const exitEdge = new BasePatternEdge( edges.length, true, vertex );
       edges.push( exitEdge );
       vertex.edges.push( exitEdge );
+      vertex.exitEdge = exitEdge;
 
       if ( descriptor.spans.length ) {
         const spanEdgeLists: BasePatternEdge[][] = [];
@@ -241,7 +242,7 @@ export class BasePatternBoard implements TPatternBoard {
             nextEdge.sectors.push( sector );
             vertex.sectors.push( sector );
 
-            const face = new BasePatternFace( faces.length, false, [ vertex ], [ edge, nextEdge ], [ sector ] );
+            const face = new BasePatternFace( faces.length, true, [ vertex ], [ edge, nextEdge ], [ sector ] );
             faces.push( face );
 
             vertex.faces.push( face );

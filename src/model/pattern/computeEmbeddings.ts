@@ -28,6 +28,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
   // If we have faces, we'll find embeddings based on this
   if ( realFaces.length ) {
+    // console.log( 'face matching' );
     // TODO: consider preprocessing things so this isn't needed every time
 
     const firstFace = realFaces[ 0 ];
@@ -430,6 +431,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
   }
   else if ( pattern.vertices.length === 1 ) {
 
+    // console.log( 'vertex matching' );
+
     const patternVertex = pattern.vertices[ 0 ];
     assertEnabled() && assert( patternVertex.edges.length === pattern.edges.length );
 
@@ -441,13 +444,15 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
     // both edges of a sector at a given point) so we can prune the search space.
     const completedSectors: TPatternSector[][] = _.range( 0, patternOrder ).map( i => {
       const edge = realEdges[ i ];
-      const edges = realEdges.slice( 0, i );
+      const edges = realEdges.slice( 0, i + 1 );
 
       // The sector both (a) has the newest edge, and (b) all edges in the sector have been discovered so far.
       return patternVertex.sectors.filter( sector => {
         return sector.edges.includes( edge ) && sector.edges.every( otherEdge => edges.includes( otherEdge ) );
       } );
     } );
+
+    assertEnabled() && assert( completedSectors.flat().length === patternVertex.sectors.length );
 
     if ( assertEnabled() ) {
       // Checks some assumptions we make about how the pattern boards are created (allows efficiency below)
@@ -469,14 +474,17 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
     }
 
     for ( const targetVertex of board.vertices ) {
+      // console.log( `Vertex ${targetVertex.index}` );
       if ( isExit ) {
         // We'll still need enough edges and sectors
         if ( targetVertex.edges.length < patternOrder || targetVertex.sectors.length < patternVertex.sectors.length ) {
+          // console.log( 'not enough edges or sectors' );
           continue;
         }
       }
       else {
         if ( targetVertex.isExit || targetVertex.edges.length !== patternOrder ) {
+          // console.log( 'exit or does not match vertex order' );
           continue;
         }
         assertEnabled() && assert( targetVertex.sectors.length === patternOrder );
@@ -490,6 +498,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
         sectorMap: Map<TPatternSector, TPatternSector>,
         usedTargetEdges: Set<TPatternEdge>,
       ) => {
+        // console.log( `  ${_.repeat( '  ', edgeIndex )}edgeIndex: ${edgeIndex}` );
+        // console.log( `  ${_.repeat( '  ', edgeIndex )}edgeMap: ${[ ...edgeMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}` );
+        // console.log( `  ${_.repeat( '  ', edgeIndex )}usedTargetEdges: ${[ ...usedTargetEdges ].map( targetEdge => targetEdge.index ).join( ', ' )}` );
         if ( edgeIndex === patternOrder ) {
           // We found one!!!
 
@@ -518,37 +529,40 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             }
           }
           else {
-            // Handle exit faces
+            // Handle single-edge exit faces
             for ( const exitFace of pattern.faces.filter( face => face.isExit ) ) {
-              const patternEdge = exitFace.edges[ 0 ];
-              assertEnabled() && assert( patternEdge && exitFace.edges.length === 1 );
+              if ( exitFace.edges.length === 1 ) {
+                const patternEdge = exitFace.edges[ 0 ];
+                assertEnabled() && assert( patternEdge && exitFace.edges.length === 1 );
 
-              const targetEdge = edgeMap.get( patternEdge )!;
-              assertEnabled() && assert( targetEdge );
+                const targetEdge = edgeMap.get( patternEdge )!;
+                assertEnabled() && assert( targetEdge );
 
-              const otherPatternFace = patternEdge.faces[ 0 ] === exitFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
-              const otherTargetFace = faceMap.get( otherPatternFace )!;
-              assertEnabled() && assert( otherTargetFace );
+                const otherPatternFace = patternEdge.faces[ 0 ] === exitFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
+                const otherTargetFace = faceMap.get( otherPatternFace )!;
+                assertEnabled() && assert( otherTargetFace );
 
-              const exitTargetFace = targetEdge.faces[ 0 ] === otherTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
-              assertEnabled() && assert( exitTargetFace );
+                const exitTargetFace = targetEdge.faces[ 0 ] === otherTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
+                assertEnabled() && assert( exitTargetFace );
 
-              faceMap.set( exitFace, exitTargetFace );
+                faceMap.set( exitFace, exitTargetFace );
+              }
             }
           }
 
-
-          return new Embedding(
+          embeddings.push( new Embedding(
             vertexMap,
             edgeMap,
             exitEdgeMap,
             sectorMap,
             faceMap
-          );
+          ) );
         }
         else {
           const patternEdge = realEdges[ edgeIndex ];
           const patternSectors = completedSectors[ edgeIndex ];
+
+          // console.log( `  ${_.repeat( '  ', edgeIndex )}patternEdge: ${patternEdge.index}` );
 
           for ( const targetEdge of targetVertex.edges ) {
             // We ignore exit edges so we don't map a "real" edge to an "exit"

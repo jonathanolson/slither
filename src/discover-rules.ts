@@ -251,6 +251,67 @@ class EmbeddingNode extends Node {
     type: 'edge'
   } ) );
 
+  testPattern( '2-count exit-vertex no sectors', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 2,
+    spans: []
+  } ) );
+
+  testPattern( '2-count exit-vertex one sector', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 2,
+    spans: [ 1 ]
+  } ) );
+
+  testPattern( '3-count exit-vertex two adjacent sectors', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 3,
+    spans: [ 2 ]
+  } ) );
+
+  testPattern( '4-count exit-vertex two opposite sectors', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 4,
+    spans: [ 1, 1 ]
+  } ) );
+
+  testPattern( '4-count exit-vertex three-adjacent sectors', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 1,
+    type: 'exit-vertex',
+    edgeCount: 4,
+    spans: [ 3 ]
+  } ) );
+
+  testPattern( '2-count non-exit-vertex', new BasePatternBoard( {
+    numNonExitVertices: 1,
+    numExitVertices: 0,
+    type: 'non-exit-vertex',
+    edgeCount: 2
+  } ) );
+
+  testPattern( '3-count non-exit-vertex', new BasePatternBoard( {
+    numNonExitVertices: 1,
+    numExitVertices: 0,
+    type: 'non-exit-vertex',
+    edgeCount: 3
+  } ) );
+
+  testPattern( '4-count non-exit-vertex', new BasePatternBoard( {
+    numNonExitVertices: 1,
+    numExitVertices: 0,
+    type: 'non-exit-vertex',
+    edgeCount: 4
+  } ) );
+
   testPattern( 'square pattern', new BasePatternBoard( {
     numNonExitVertices: 0,
     numExitVertices: 4,
@@ -284,35 +345,6 @@ class EmbeddingNode extends Node {
     numExitVertices: 8,
     type: 'faces',
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 3, 4, 5 ], [ 0, 5, 6, 7 ], [ 0, 7, 8, 1 ] ]
-  } ) );
-
-  testPattern( '2-count exit-vertex no sectors', new BasePatternBoard( {
-    numNonExitVertices: 0,
-    numExitVertices: 1,
-    type: 'exit-vertex',
-    edgeCount: 2,
-    spans: []
-  } ) );
-
-  testPattern( '2-count non-exit-vertex', new BasePatternBoard( {
-    numNonExitVertices: 1,
-    numExitVertices: 0,
-    type: 'non-exit-vertex',
-    edgeCount: 2
-  } ) );
-
-  testPattern( '3-count non-exit-vertex', new BasePatternBoard( {
-    numNonExitVertices: 1,
-    numExitVertices: 0,
-    type: 'non-exit-vertex',
-    edgeCount: 3
-  } ) );
-
-  testPattern( '4-count non-exit-vertex', new BasePatternBoard( {
-    numNonExitVertices: 1,
-    numExitVertices: 0,
-    type: 'non-exit-vertex',
-    edgeCount: 4
   } ) );
 
   /*
