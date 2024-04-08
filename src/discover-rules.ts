@@ -18,8 +18,8 @@ import { TFace } from './model/board/core/TFace.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
-import { getPeriodicTilingGenerator } from './view/GenerateNode.ts';
-import { PolygonalBoard, rhombilleTiling } from './model/board/core/TiledBoard.ts';
+import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
+import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -526,22 +526,40 @@ console.log( 'test' );
         } );
       };
 
-      const getSingleInitialFacesPatternBoard = ( board: TBoard ): FacesPatternBoard => {
-        const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
-        const centermostFace = _.minBy( board.faces, face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
-        assertEnabled() && assert( centermostFace );
+      const getFirstGeneration = ( board: TBoard ): FacesPatternBoard[] => {
+        const orders = _.uniq( board.faces.map( face => face.vertices.length ) );
 
-        return new FacesPatternBoard( board, [ centermostFace ] );
+        const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
+
+        return orders.map( order => {
+          const centermostFace = _.minBy( board.faces.filter( face => face.vertices.length === order ), face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
+          assertEnabled() && assert( centermostFace );
+
+          return new FacesPatternBoard( board, [ centermostFace ] );
+        } );
       };
 
       const getFirstNGenerations = ( board: TBoard, n: number ): FacesPatternBoard[][] => {
-        const firstPatternBoard = getSingleInitialFacesPatternBoard( board );
+        const firstGeneration = getFirstGeneration( board );
 
-        const generations: FacesPatternBoard[][] = [ [ firstPatternBoard ] ];
+        const generations: FacesPatternBoard[][] = [ firstGeneration ];
         for ( let i = 0; i < n - 1; i++ ) {
           generations.push( getNextGeneration( generations[ generations.length - 1 ] ) );
         }
         return generations;
+      };
+
+      const getUniformTilingGenerations = ( generator: PolygonGenerator, n: number ): FacesPatternBoard[][] => {
+        // TODO: simplify this board generation
+        const polygons = generator.generate( {
+          // TODO: make this variable
+          width: 15,
+          height: 15
+        } );
+
+        const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
+
+        return getFirstNGenerations( board, n );
       };
 
       const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
@@ -550,23 +568,38 @@ console.log( 'test' );
       const hexGenerations = getFirstNGenerations( new HexagonalBoard( 5, 1, true ), 4 );
       container.addChild( getGenerationsNode( hexGenerations ) );
 
-      {
-        // TODO: simplify this board generation
-        const polygonGenerator = getPeriodicTilingGenerator( rhombilleTiling, {
-          width: 8,
-          height: 8
-        } );
+      const rhombilleGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( rhombilleTiling, {
+        width: 8,
+        height: 8
+      } ), 4 );
+      container.addChild( getGenerationsNode( rhombilleGenerations ) );
 
-        const polygons = polygonGenerator.generate( {
-          width: 15,
-          height: 15
-        } );
+      const cairoGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( cairoPentagonalTiling, {
+        width: 8,
+        height: 8,
+        squareRegion: true
+      } ), 4 );
+      container.addChild( getGenerationsNode( cairoGenerations ) );
 
-        const board = new PolygonalBoard( polygons, polygonGenerator.scale ?? 1 );
+      const triangularGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( triangularTiling, {
+        width: 6,
+        height: 5
+      } ), 4 );
+      container.addChild( getGenerationsNode( triangularGenerations ) );
 
-        const rhombilleGenerations = getFirstNGenerations( board, 4 );
-        container.addChild( getGenerationsNode( rhombilleGenerations ) );
-      }
+      const snubSquareGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( snubSquareTiling, {
+        width: 5,
+        height: 6,
+        squareRegion: true
+      } ), 4 );
+      container.addChild( getGenerationsNode( snubSquareGenerations ) );
+
+      const trihexagonalGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( trihexagonalTiling, {
+        width: 9,
+        height: 9
+      } ), 4 );
+      container.addChild( getGenerationsNode( trihexagonalGenerations ) );
+
     }
   }
 

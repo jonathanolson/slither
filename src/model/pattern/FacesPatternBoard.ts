@@ -18,8 +18,6 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
   public readonly patternBoard: this;
   public readonly planarPatternMap: TPlanarPatternMap;
 
-  // TODO: identify each "unique" type of face in a source board, then start building from there
-  // TODO: serialize our TPlanarPatternMap(!)
   public constructor(
     public readonly originalBoard: TBoard,
     public readonly originalBoardFaces: TFace[]
