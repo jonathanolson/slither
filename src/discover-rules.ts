@@ -1,4 +1,4 @@
-import { Display, HBox, Line, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { FormulaSolver } from './model/logic/FormulaSolver.ts';
 import { logicOr } from './model/logic/operations.ts';
 import { Term } from './model/logic/Term.ts';
@@ -7,11 +7,10 @@ import { serializePatternBoardDescriptor } from './model/pattern/TPatternBoardDe
 import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
 import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
-import { Embedding } from './model/pattern/Embedding.ts';
 import { computeEmbeddings } from './model/pattern/computeEmbeddings.ts';
-import { Shape } from 'phet-lib/kite';
-import { puzzleFont } from './view/Theme.ts';
+import { EmbeddingNode } from './view/pattern/EmbeddingNode.ts';
+import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
+import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -35,122 +34,6 @@ document.body.appendChild( display.domElement );
 display.setWidthHeight( window.innerWidth, window.innerHeight );
 
 console.log( 'test' );
-
-class EmbeddingNode extends Node {
-  public constructor(
-    public readonly pattern: TPatternBoard,
-    public readonly targetBoard: BoardPatternBoard,
-    public readonly embedding: Embedding
-  ) {
-    super();
-
-    const boardNode = new Node( {
-      scale: 30
-    } );
-    this.addChild( boardNode );
-
-    targetBoard.board.faces.forEach( face => {
-      boardNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
-        stroke: '#888',
-        lineWidth: 0.02
-      } ) );
-    } );
-
-    const outsideBounds = boardNode.localBounds;
-
-    // Add a transparent expansion, so our labels and expanded strokes don't throw off layout
-    this.addChild( Rectangle.bounds( boardNode.bounds.dilated( 5 ) ) );
-
-    // Exit edges
-    for ( const [ patternEdge, targetEdges ] of embedding.exitEdgeMap ) {
-      const index = patternEdge.index;
-      for ( const targetEdge of targetEdges ) {
-        const edge = targetBoard.getEdge( targetEdge );
-
-        const path = new Line( edge.vertices[ 0 ].viewCoordinates, edge.vertices[ 1 ].viewCoordinates, {
-          stroke: '#066',
-          lineWidth: 0.03
-        } );
-        boardNode.addChild( path );
-
-        const label = new Text( index, {
-          font: puzzleFont,
-          maxWidth: 0.4,
-          maxHeight: 0.4,
-          center: edge.vertices[ 0 ].viewCoordinates.average( edge.vertices[ 1 ].viewCoordinates ),
-          fill: 'rgba(128,255,255,0.5)'
-        } );
-        boardNode.addChild( label );
-      }
-    }
-
-    // Non-exit edges
-    for ( const [ patternEdge, targetEdge ] of embedding.nonExitEdgeMap ) {
-      const edge = targetBoard.getEdge( targetEdge );
-      const index = patternEdge.index;
-
-      const path = new Line( edge.vertices[ 0 ].viewCoordinates, edge.vertices[ 1 ].viewCoordinates, {
-        stroke: '#f00',
-        lineWidth: 0.03
-      } );
-      boardNode.addChild( path );
-
-      const label = new Text( index, {
-        font: puzzleFont,
-        maxWidth: 0.4,
-        maxHeight: 0.4,
-        center: edge.vertices[ 0 ].viewCoordinates.average( edge.vertices[ 1 ].viewCoordinates ),
-        fill: '#fff'
-      } );
-      boardNode.addChild( label );
-    }
-
-    for ( const [ patternFace, targetFace ] of embedding.faceMap ) {
-      const face = targetBoard.getFace( targetFace );
-      const index = patternFace.index;
-      const isExit = patternFace.isExit;
-
-      const shape = face ? Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ) : Shape.bounds( outsideBounds.dilated( 0.13 ) ).shapeDifference( Shape.bounds( outsideBounds ) );
-
-      const path = new Path( shape, {
-        fill: isExit ? 'rgba(0,0,0,0.2)' : 'rgba(50,0,0,0.5)'
-      } );
-
-      boardNode.addChild( path );
-
-      if ( face ) {
-        const getExitLocation = () => {
-          const vertexPositions = targetBoard.getEdge( embedding.nonExitEdgeMap.get( patternFace.edges[ 0 ] )! ).vertices.map( v => v.viewCoordinates );
-          return face.viewCoordinates.average( vertexPositions[ 0 ].average( vertexPositions[ 1 ] ) );
-        };
-
-        const label = new Text( index, {
-          font: puzzleFont,
-          maxWidth: 0.4,
-          maxHeight: 0.4,
-          center: isExit ? getExitLocation() : face.viewCoordinates,
-          fill: isExit ? '#f88' : '#8f8'
-        } );
-        boardNode.addChild( label );
-      }
-    }
-
-    for ( const [ patternVertex, targetVertex ] of embedding.vertexMap ) {
-      const vertex = targetBoard.getVertex( targetVertex );
-      const index = patternVertex.index;
-      const isExit = patternVertex.isExit;
-
-      const label = new Text( index, {
-        font: puzzleFont,
-        maxWidth: 0.4,
-        maxHeight: 0.4,
-        center: vertex.viewCoordinates,
-        fill: isExit ? '#0ff' : '#88f'
-      } );
-      boardNode.addChild( label );
-    }
-  }
-}
 
 ( async () => {
   const solver = new FormulaSolver<string>();
@@ -360,6 +243,212 @@ class EmbeddingNode extends Node {
     type: 'faces',
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ], [ 4, 7, 8, 9 ] ]
   } ) );
+
+  {
+    const edgePattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 0,
+      type: 'edge'
+    } );
+
+    const vertexExit2NoSectorsPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 2,
+      spans: []
+    } );
+
+    const vertexExit2OneSectorPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 2,
+      spans: [ 1 ]
+    } );
+
+    const vertexExit3TwoAdjacentSectorsPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 3,
+      spans: [ 2 ]
+    } );
+
+    const vertexExit4TwoOppositeSectorsPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 4,
+      spans: [ 1, 1 ]
+    } );
+
+    const vertexExit4ThreeAdjacentSectorsPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 4,
+      spans: [ 3 ]
+    } );
+
+    const vertexExit5TwoOnePattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 5,
+      spans: [ 2, 1 ]
+    } );
+
+    const vertexExit5FourPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 5,
+      spans: [ 4 ]
+    } );
+
+    const vertexExit6TriplePattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 6,
+      spans: [ 1, 1, 1 ]
+    } );
+
+    const vertexExit6TwoTwoPattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 6,
+      spans: [ 2, 2 ]
+    } );
+
+    const vertexExit6ThreeOnePattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 6,
+      spans: [ 3, 1 ]
+    } );
+
+    const vertexExit6FivePattern = new BasePatternBoard( {
+      numNonExitVertices: 0,
+      numExitVertices: 1,
+      type: 'exit-vertex',
+      edgeCount: 6,
+      spans: [ 5 ]
+    } );
+
+    const vertexNonExit2Pattern = new BasePatternBoard( {
+      numNonExitVertices: 1,
+      numExitVertices: 0,
+      type: 'non-exit-vertex',
+      edgeCount: 2
+    } );
+
+    const vertexNonExit3Pattern = new BasePatternBoard( {
+      numNonExitVertices: 1,
+      numExitVertices: 0,
+      type: 'non-exit-vertex',
+      edgeCount: 3
+    } );
+
+    const vertexNonExit4Pattern = new BasePatternBoard( {
+      numNonExitVertices: 1,
+      numExitVertices: 0,
+      type: 'non-exit-vertex',
+      edgeCount: 4
+    } );
+
+    const vertexNonExit5Pattern = new BasePatternBoard( {
+      numNonExitVertices: 1,
+      numExitVertices: 0,
+      type: 'non-exit-vertex',
+      edgeCount: 5
+    } );
+
+    const vertexNonExit6Pattern = new BasePatternBoard( {
+      numNonExitVertices: 1,
+      numExitVertices: 0,
+      type: 'non-exit-vertex',
+      edgeCount: 6
+    } );
+
+    container.addChild( new AlignBox( new HBox( {
+      spacing: 10,
+      align: 'origin',
+      children: [
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: edgePattern,
+          planarPatternMap: getSingleEdgePlanarPatternMap( edgePattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit2NoSectorsPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit2NoSectorsPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit2OneSectorPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit2OneSectorPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit3TwoAdjacentSectorsPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit3TwoAdjacentSectorsPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit4TwoOppositeSectorsPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit4TwoOppositeSectorsPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit4ThreeAdjacentSectorsPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit4ThreeAdjacentSectorsPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit5TwoOnePattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit5TwoOnePattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit5FourPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit5FourPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit6TriplePattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit6TriplePattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit6TwoTwoPattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit6TwoTwoPattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit6ThreeOnePattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit6ThreeOnePattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexExit6FivePattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexExit6FivePattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexNonExit2Pattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexNonExit2Pattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexNonExit3Pattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexNonExit3Pattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexNonExit4Pattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexNonExit4Pattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexNonExit5Pattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexNonExit5Pattern ),
+        } ),
+        new PlanarMappedPatternBoardNode( {
+          patternBoard: vertexNonExit6Pattern,
+          planarPatternMap: getVertexPlanarPatternMap( vertexNonExit6Pattern ),
+        } )
+      ]
+    } ), { margin: 10 } ) );
+  }
 
   display.setWidthHeight(
     Math.ceil( scene.right + 10 ),
