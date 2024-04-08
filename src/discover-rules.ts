@@ -17,6 +17,7 @@ import { TBoard } from './model/board/core/TBoard.ts';
 import { TFace } from './model/board/core/TFace.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -508,6 +509,21 @@ console.log( 'test' );
         return nextGeneration;
       };
 
+      const getGenerationNode = ( generation: FacesPatternBoard[] ): Node => {
+        return new AlignBox( new HBox( {
+          spacing: 10,
+          children: generation.map( patternBoard => new PlanarMappedPatternBoardNode( patternBoard ) )
+        } ), { margin: 5 } );
+      };
+
+      const getGenerationsNode = ( generations: FacesPatternBoard[][] ): Node => {
+        return new VBox( {
+          spacing: 10,
+          align: 'left',
+          children: generations.map( generation => getGenerationNode( generation ) )
+        } );
+      };
+
       const getSingleInitialFacesPatternBoard = ( board: TBoard ): FacesPatternBoard => {
         const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
         const centermostFace = _.minBy( board.faces, face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
@@ -516,24 +532,22 @@ console.log( 'test' );
         return new FacesPatternBoard( board, [ centermostFace ] );
       };
 
-      const firstPatternBoard = getSingleInitialFacesPatternBoard( new SquareBoard( 20, 20 ) );
+      const getFirstNGenerations = ( board: TBoard, n: number ): FacesPatternBoard[][] => {
+        const firstPatternBoard = getSingleInitialFacesPatternBoard( board );
 
-      const firstGeneration = [ firstPatternBoard ];
-      const secondGeneration = getNextGeneration( firstGeneration );
-      const thirdGeneration = getNextGeneration( secondGeneration );
-      const fourthGeneration = getNextGeneration( thirdGeneration );
-
-      const getGenerationNode = ( generation: FacesPatternBoard[] ): Node => {
-        return new AlignBox( new HBox( {
-          spacing: 10,
-          children: generation.map( patternBoard => new PlanarMappedPatternBoardNode( patternBoard ) )
-        } ), { margin: 5 } );
+        const generations: FacesPatternBoard[][] = [ [ firstPatternBoard ] ];
+        for ( let i = 0; i < n - 1; i++ ) {
+          generations.push( getNextGeneration( generations[ generations.length - 1 ] ) );
+        }
+        return generations;
       };
 
-      container.addChild( getGenerationNode( firstGeneration ) );
-      container.addChild( getGenerationNode( secondGeneration ) );
-      container.addChild( getGenerationNode( thirdGeneration ) );
-      container.addChild( getGenerationNode( fourthGeneration ) );
+      const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
+      container.addChild( getGenerationsNode( squareGenerations ) );
+
+      const hexGenerations = getFirstNGenerations( new HexagonalBoard( 5, 1, true ), 4 );
+      container.addChild( getGenerationsNode( hexGenerations ) );
+
     }
   }
 
