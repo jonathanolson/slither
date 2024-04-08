@@ -347,15 +347,20 @@ class EmbeddingNode extends Node {
     vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 3, 4, 5 ], [ 0, 5, 6, 7 ], [ 0, 7, 8, 1 ] ]
   } ) );
 
-  /*
-  testPattern( '2-count exit-vertex (one span)', new BasePatternBoard( {
+  testPattern( '3 diagonal squares pattern', new BasePatternBoard( {
     numNonExitVertices: 0,
-    numExitVertices: 1,
-    type: 'exit-vertex',
-    edgeCount: 2,
-    spans: [ 1 ]
+    numExitVertices: 10,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ], [ 5, 7, 8, 9 ] ]
   } ) );
-*/
+
+  testPattern( '3 semi-diagonal squares pattern', new BasePatternBoard( {
+    numNonExitVertices: 0,
+    numExitVertices: 10,
+    type: 'faces',
+    vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ], [ 4, 7, 8, 9 ] ]
+  } ) );
+
   display.setWidthHeight(
     Math.ceil( scene.right + 10 ),
     Math.ceil( scene.bottom + 10 )

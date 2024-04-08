@@ -3,6 +3,7 @@
 
 - TODO
   - Visualize embedded sectors (and test out all of the vertex rule boards)
+  - Visualize embeddings with different board shapes
   - Visualize embeddings WITHIN pattern boards(!)
   - 
   - Debug the vertex rule matching

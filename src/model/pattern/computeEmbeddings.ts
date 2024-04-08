@@ -528,6 +528,16 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               faceMap.set( patternExitFaceB, targetEdge.faces[ 1 ] );
             }
           }
+          else if ( !isExit ) {
+            // Assign faces based on the sectors
+            for ( const patternSector of pattern.sectors ) {
+              const patternFace = patternSector.face;
+              const targetSector = sectorMap.get( patternSector )!;
+              const targetFace = targetSector.face;
+
+              faceMap.set( patternFace, targetFace );
+            }
+          }
           else {
             // Handle single-edge exit faces
             for ( const exitFace of pattern.faces.filter( face => face.isExit ) ) {
@@ -582,7 +592,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               assertEnabled() && assert( targetEdgeA && targetEdgeB );
 
               const targetSector = targetVertex.sectors.find( sector => {
-                return sector.edges.includes( targetEdgeA ) && sector.edges.includes( targetEdgeB );
+                // For 2-order vertices, we need to also filter to not get duplicate sectors (since both sectors have equivalent edges).
+                return sector.edges.includes( targetEdgeA ) && sector.edges.includes( targetEdgeB ) && ( patternOrder > 2 || !targetSectors.includes( sector ) );
               } ) ?? null;
               if ( targetSector ) {
                 targetSectors.push( targetSector );
