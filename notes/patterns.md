@@ -2,6 +2,21 @@
 # Patterns
 
 - TODO
+  - FAILURE BUG in embedding/isomorphic code?
+  - naming:
+    - 4x3,..., other props
+  - 
+  - PatternEmbeddingNode - PatternBoard in PatternBoard
+  - 
+  - Feature sets (enumeration)
+    - Face values (optionally include blank as possibility)
+    - Edges (include red exit, but NOT black exit)
+    - Face Color (binary same/opposite)
+    - Sector simplified (only-one/not-one/not-zero/not-two)
+    - TODO: vertex/face state, nonzero-crossing
+  - 
+  - 
+  - 
   - Visualize embedded sectors (and test out all of the vertex rule boards)
   - Visualize embeddings with different board shapes
   - Visualize embeddings WITHIN pattern boards(!)

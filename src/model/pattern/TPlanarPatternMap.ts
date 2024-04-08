@@ -5,6 +5,7 @@ import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import _ from '../../workarounds/_.ts';
 
 export interface TPlanarPatternMap {
   vertexMap: Map<TPatternVertex, Vector2>;
@@ -120,6 +121,108 @@ export const getVertexPlanarPatternMap = ( patternBoard: TPatternBoard ): TPlana
       }
     } );
   }
+
+  return { vertexMap, edgeMap, sectorMap, faceMap };
+};
+
+export const serializePlanarPatternMap = ( map: TPlanarPatternMap ): string => {
+
+  if ( assertEnabled() ) {
+    const verifyOrder = ( array: ( TPatternVertex | TPatternEdge | TPatternSector | TPatternFace )[] ) => {
+      assert( array.every( item => item.index < array.length ) );
+    };
+    verifyOrder( [ ...map.vertexMap.keys() ] );
+    verifyOrder( [ ...map.edgeMap.keys() ] );
+    verifyOrder( [ ...map.sectorMap.keys() ] );
+    verifyOrder( [ ...map.faceMap.keys() ] );
+  }
+
+  const orderedVertices = _.sortBy( [ ...map.vertexMap.keys() ], vertex => vertex.index );
+  const orderedEdges = _.sortBy( [ ...map.edgeMap.keys() ], edge => edge.index );
+  const orderedSectors = _.sortBy( [ ...map.sectorMap.keys() ], sector => sector.index );
+  const orderedFaces = _.sortBy( [ ...map.faceMap.keys() ], face => face.index );
+
+  const pointToArray = ( point: Vector2 ) => [ point.x, point.y ];
+  const pointToArrayOrIndex = ( point: Vector2 ) => {
+    for ( let i = 0; i < orderedVertices.length; i++ ) {
+      if ( map.vertexMap.get( orderedVertices[ i ] )!.equals( point ) ) {
+        return i;
+      }
+    }
+    return pointToArray( point );
+  };
+
+  const result = JSON.stringify( [
+    orderedVertices.map( vertex => pointToArray( map.vertexMap.get( vertex )! ) ),
+    orderedEdges.map( edge => map.edgeMap.get( edge )!.map( pointToArrayOrIndex ) ),
+    orderedSectors.map( sector => map.sectorMap.get( sector )!.map( pointToArray ) ),
+    orderedFaces.map( face => map.faceMap.get( face )!.map( pointToArray ) )
+  ] );
+
+  if ( assertEnabled() ) {
+    const deserialized = deserializePlanarPatternMap( result, { vertices: orderedVertices, edges: orderedEdges, sectors: orderedSectors, faces: orderedFaces } );
+
+    const vectorArrayEqual = ( a: Vector2[], b: Vector2[] ): boolean => {
+      if ( a.length !== b.length ) {
+        return false;
+      }
+
+      for ( let i = 0; i < a.length; i++ ) {
+        if ( !a[ i ].equals( b[ i ] ) ) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+    orderedVertices.forEach( vertex => assert( map.vertexMap.get( vertex )!.equals( deserialized.vertexMap.get( vertex )! ) ) );
+    orderedEdges.forEach( edge => assert( vectorArrayEqual( map.edgeMap.get( edge )!, deserialized.edgeMap.get( edge )! ) ) );
+    orderedSectors.forEach( sector => assert( vectorArrayEqual( map.sectorMap.get( sector )!, deserialized.sectorMap.get( sector )! ) ) );
+    orderedFaces.forEach( face => assert( vectorArrayEqual( map.faceMap.get( face )!, deserialized.faceMap.get( face )! ) ) );
+  }
+
+  return result;
+};
+
+export const deserializePlanarPatternMap = ( string: string, patternBoard: TPatternBoard ): TPlanarPatternMap => {
+
+  const data = JSON.parse( string );
+
+  const vertexData = data[ 0 ];
+  const edgeData = data[ 1 ];
+  const sectorData = data[ 2 ];
+  const faceData = data[ 3 ];
+
+  const vertexMap = new Map<TPatternVertex, Vector2>();
+  const edgeMap = new Map<TPatternEdge, [ Vector2, Vector2 ]>();
+  const sectorMap = new Map<TPatternSector, [ Vector2, Vector2, Vector2 ]>();
+  const faceMap = new Map<TPatternFace, Vector2[]>();
+
+  vertexData.forEach( ( point: any, index: number ) => {
+    vertexMap.set( patternBoard.vertices[ index ], new Vector2( point[ 0 ], point[ 1 ] ) );
+  } );
+
+  const toPoint = ( point: number | [ number, number ] ) => {
+    if ( typeof point === 'number' ) {
+      return vertexMap.get( patternBoard.vertices[ point ] )!;
+    }
+    else {
+      return new Vector2( point[ 0 ], point[ 1 ] );
+    }
+  };
+
+  edgeData.forEach( ( points: any, index: number ) => {
+    edgeMap.set( patternBoard.edges[ index ], [ toPoint( points[ 0 ] ), toPoint( points[ 1 ] ) ] );
+  } );
+
+  sectorData.forEach( ( points: any, index: number ) => {
+    sectorMap.set( patternBoard.sectors[ index ], [ toPoint( points[ 0 ] ), toPoint( points[ 1 ] ), toPoint( points[ 2 ] ) ] );
+  } );
+
+  faceData.forEach( ( points: any, index: number ) => {
+    faceMap.set( patternBoard.faces[ index ], points.map( ( point: any ) => new Vector2( point[ 0 ], point[ 1 ] ) ) );
+  } );
 
   return { vertexMap, edgeMap, sectorMap, faceMap };
 };

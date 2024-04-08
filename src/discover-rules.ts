@@ -20,6 +20,7 @@ import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
+import { serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -562,17 +563,31 @@ console.log( 'test' );
         return getFirstNGenerations( board, n );
       };
 
+      console.log( '---- square ----' );
+
       const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
       container.addChild( getGenerationsNode( squareGenerations ) );
+      squareGenerations.forEach( ( generation, index ) => {
+        console.log( `-- ${index} --` );
+        generation.forEach( patternBoard => {
+          console.log( serializePlanarMappedPatternBoard( patternBoard ) );
+        } );
+      } );
+
+      console.log( '---- hex ----' );
 
       const hexGenerations = getFirstNGenerations( new HexagonalBoard( 5, 1, true ), 4 );
       container.addChild( getGenerationsNode( hexGenerations ) );
+
+      console.log( '---- rhombille ----' );
 
       const rhombilleGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( rhombilleTiling, {
         width: 8,
         height: 8
       } ), 4 );
       container.addChild( getGenerationsNode( rhombilleGenerations ) );
+
+      console.log( '---- cairo ----' );
 
       const cairoGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( cairoPentagonalTiling, {
         width: 8,
@@ -581,11 +596,15 @@ console.log( 'test' );
       } ), 4 );
       container.addChild( getGenerationsNode( cairoGenerations ) );
 
+      console.log( '---- triangular ----' );
+
       const triangularGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( triangularTiling, {
         width: 6,
         height: 5
       } ), 4 );
       container.addChild( getGenerationsNode( triangularGenerations ) );
+
+      console.log( '---- snub square ----' );
 
       const snubSquareGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( snubSquareTiling, {
         width: 5,
@@ -593,6 +612,8 @@ console.log( 'test' );
         squareRegion: true
       } ), 4 );
       container.addChild( getGenerationsNode( snubSquareGenerations ) );
+
+      console.log( '---- trihexagonal ----' );
 
       const trihexagonalGenerations = getUniformTilingGenerations( getPeriodicTilingGenerator( trihexagonalTiling, {
         width: 9,

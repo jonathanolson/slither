@@ -10,8 +10,9 @@ import { BasePatternEdge } from './BasePatternEdge.ts';
 import { BasePatternSector } from './BasePatternSector.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { BasePatternFace } from './BasePatternFace.ts';
+import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 
-export class BasePatternBoard implements TPatternBoard {
+export class BasePatternBoard implements TPatternBoard, TDescribedPatternBoard {
 
   public readonly vertices: TPatternVertex[];
   public readonly edges: TPatternEdge[];
