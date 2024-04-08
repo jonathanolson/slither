@@ -156,6 +156,11 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
         ): void => {
           assertEnabled() && assert( vertexMap.size === vertexInverseMap.size );
 
+          // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}orderedFacesIndex: ${orderedFacesIndex}` );
+          // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}mappingMap: ${[ ...mappingMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ]}` ).join( ', ' )}` );
+          // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}faceMap: ${[ ...faceMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}` );
+          // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}vertexMap: ${[ ...vertexMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}` );
+
           if ( orderedFacesIndex === orderedFaces.length ) {
             // We found one!!!
 
@@ -249,15 +254,23 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             const matchingEdgeIndex = matchingEdgeIndices[ orderedFacesIndex - 1 ];
             const matchingVertexIndex = matchingVertexIndices[ orderedFacesIndex - 1 ];
 
+            // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}patternFace: ${patternFace.index}` );
+            // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}matchingEdgeIndex: ${matchingEdgeIndex}` );
+            // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}matchingVertexIndex: ${matchingVertexIndex}` );
+
             if ( matchingEdgeIndex >= 0 ) {
               // Yay, we share an edge with a previous face! We have a FIXED face with a FIXED mapping (if it is valid at all)
               // We'll reuse faceMap/vertexMap, since if we fail here, we will fail for other mappings where no copies are made.
+
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}edge-match` );
 
               const patternEdge = patternFace.edges[ matchingEdgeIndex ];
               const patternVertexA = patternEdge.vertices[ 0 ];
               const patternVertexB = patternEdge.vertices[ 1 ];
               const targetVertexA = vertexMap.get( patternVertexA )!;
               const targetVertexB = vertexMap.get( patternVertexB )!;
+
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}connecting pattern vertices ${patternVertexA.index},${patternVertexB.index} and equivalent ${targetVertexA.index},${targetVertexB.index}` );
 
               const previousPatternFace = patternEdge.faces[ 0 ] === patternFace ? patternEdge.faces[ 1 ] : patternEdge.faces[ 0 ];
               const previousTargetFace = faceMap.get( previousPatternFace )!;
@@ -268,13 +281,17 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
               const targetFace = targetEdge.faces[ 0 ] === previousTargetFace ? targetEdge.faces[ 1 ] : targetEdge.faces[ 0 ];
 
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}targetFace: ${targetFace.index}` );
+
               // Bail if our target face is an exit face
               if ( targetFace.isExit ) {
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}IS_EXIT bail` );
                 return;
               }
 
               // Bail if we've already mapped this face (can't have duplicates)
               if ( faceInverseMap.has( targetFace ) ) {
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}DUPLICATE bail` );
                 return;
               }
 
@@ -284,16 +301,34 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               const targetVertexAIndex = targetFace.vertices.indexOf( targetVertexA );
               const targetVertexBIndex = targetFace.vertices.indexOf( targetVertexB );
 
+              // TODO: inspect the mapping we are creating, our adjacency check is failing below.
               const isPatternForward = ( ( patternVertexAIndex + 1 ) % patternFace.vertices.length ) === patternVertexBIndex;
               const isTargetForward = ( ( targetVertexAIndex + 1 ) % targetFace.vertices.length ) === targetVertexBIndex;
 
               const direction = isPatternForward === isTargetForward ? 1 : -1;
-              const offset = ( targetVertexAIndex - patternVertexAIndex + patternFace.vertices.length ) % patternFace.vertices.length;
+              // const offset = ( targetVertexAIndex - patternVertexAIndex + patternFace.vertices.length ) % patternFace.vertices.length;
+              const offset = ( targetVertexAIndex - patternVertexAIndex * direction + patternFace.vertices.length ) % patternFace.vertices.length;
 
               const mapping = new FaceMapping( patternFace.vertices.length, offset, direction );
 
+              // console.log( 'patternVertexAIndex', patternVertexAIndex );
+              // console.log( 'patternVertexBIndex', patternVertexBIndex );
+              // console.log( 'targetVertexAIndex', targetVertexAIndex );
+              // console.log( 'targetVertexBIndex', targetVertexBIndex );
+              // console.log( 'isPatternForward', isPatternForward );
+              // console.log( 'isTargetForward', isTargetForward );
+              // console.log( 'direction', direction );
+              // console.log( 'offset', offset );
+              // console.log( 'mapping.mapVertexIndex( patternVertexAIndex )', mapping.mapVertexIndex( patternVertexAIndex ) );
+              // console.log( 'mapping.mapVertexIndex( patternVertexBIndex )', mapping.mapVertexIndex( patternVertexBIndex ) );
+              assertEnabled() && assert( mapping.mapVertexIndex( patternVertexAIndex ) === targetVertexAIndex );
+              assertEnabled() && assert( mapping.mapVertexIndex( patternVertexBIndex ) === targetVertexBIndex );
+
               // Check adjacent face orders and exit status
               if ( !checkMappingAdjacencyOrders( patternFace, targetFace, mapping ) ) {
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}ADJANCENCY bail` );
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}mapping ${mapping.toString()}` );
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}mapping info ${mapping.toDetailedString( patternFace, targetFace )}` );
                 return;
               }
 
@@ -301,6 +336,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               faceMap.set( patternFace, targetFace );
               faceInverseMap.set( targetFace, patternFace );
               if ( faceMap.size !== faceInverseMap.size ) {
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}FACE MAP SIZE bail` );
                 return;
               }
 
@@ -311,6 +347,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
                 if ( vertexMap.has( patternVertex ) ) {
                   if ( vertexMap.get( patternVertex ) !== targetVertex ) {
+                    // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}VERTEX FORWARD BAIL: ${patternVertex.index} => ${targetVertex.index}, but already have ${vertexMap.get( patternVertex )?.index}` );
                     return;
                   }
                 }
@@ -319,6 +356,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                 }
                 if ( vertexInverseMap.has( targetVertex ) ) {
                   if ( vertexInverseMap.get( targetVertex ) !== patternVertex ) {
+                    // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}VERTEX INVERSE BAIL: ${targetVertex.index} => ${patternVertex.index}, but already have ${vertexInverseMap.get( targetVertex )?.index}` );
                     return;
                   }
                 }
@@ -339,10 +377,15 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
               assertEnabled() && assert( matchingVertexIndex >= 0, 'If this is not satisfied, we have disconnected components OR orderedFaces order is bad' );
 
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}vertex-match` );
+
               // NOTE: we can avoid previously-mapped faces AND we can avoid faces adjacent to those (since they would have a shared edge).
 
               const patternVertex = patternFace.vertices[ matchingVertexIndex ];
               const targetVertex = vertexMap.get( patternVertex )!;
+
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}patternVertex: ${patternVertex.index}` );
+              // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}targetVertex: ${targetVertex.index}` );
 
               // console.log( `    vertex ${patternVertex.index} -> ${targetVertex.index}` );
 
@@ -353,19 +396,31 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               const candidateTargetFaces = targetVertex.faces.filter( face => !face.isExit && !faceInverseMap.has( face ) );
 
               for ( const targetFace of candidateTargetFaces ) {
+
+                // console.log( `  ${_.repeat( '  ', orderedFacesIndex )}targetFace: ${targetFace.index}` );
+
                 // console.log( `      candidate face ${targetFace.index}` );
                 const patternVertexIndex = patternFace.vertices.indexOf( patternVertex );
                 const targetVertexIndex = targetFace.vertices.indexOf( targetVertex );
 
+                // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}patternVertexIndex: ${patternVertexIndex}` );
+                // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}targetVertexIndex: ${targetVertexIndex}` );
+
                 assertEnabled() && assert( patternVertexIndex >= 0 );
                 assertEnabled() && assert( targetVertexIndex >= 0 );
 
-                const offset = ( targetVertexIndex - patternVertexIndex + patternFace.vertices.length ) % patternFace.vertices.length;
-
                 for ( const direction of [ 1, -1 ] as const ) {
+
+                  // const offset = ( targetVertexIndex - patternVertexIndex + patternFace.vertices.length ) % patternFace.vertices.length;
+                  const offset = ( targetVertexIndex - patternVertexIndex * direction + patternFace.vertices.length ) % patternFace.vertices.length;
+
+                  // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}offset: ${offset}` );
+
+                  // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}direction: ${direction}` );
                   const mapping = new FaceMapping( patternFace.vertices.length, offset, direction );
 
                   if ( !checkMappingAdjacencyOrders( patternFace, targetFace, mapping ) ) {
+                    // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}FAIL ADJACENCY BAIL` );
                     continue;
                   }
 
@@ -383,6 +438,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
                     if ( newVertexMap.has( patternVertex ) ) {
                       if ( newVertexMap.get( patternVertex ) !== targetVertex ) {
+                        // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}FAIL VERTEX FORWARD BAIL: ${patternVertex.index} => ${targetVertex.index}, but already have ${newVertexMap.get( patternVertex )?.index}` );
                         success = false;
                         break;
                       }
@@ -392,6 +448,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                     }
                     if ( newVertexInverseMap.has( targetVertex ) ) {
                       if ( newVertexInverseMap.get( targetVertex ) !== patternVertex ) {
+                        // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}FAIL VERTEX INVERSE BAIL: ${targetVertex.index} => ${patternVertex.index}, but already have ${newVertexInverseMap.get( targetVertex )?.index}` );
                         success = false;
                         break;
                       }
@@ -413,6 +470,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                   newFaceMap.set( patternFace, targetFace );
                   newFaceInverseMap.set( targetFace, patternFace );
                   if ( newFaceMap.size !== newFaceInverseMap.size ) {
+                    // console.log( `   ${_.repeat( '  ', orderedFacesIndex )}FAIL FACE MAP SIZE BAIL` );
                     continue;
                   }
 
@@ -677,6 +735,16 @@ class FaceMapping {
 
   public toString(): string {
     return `FaceMapping( edgeCount=${this.edgeCount}, offset=${this.offset}, direction=${this.direction} )`;
+  }
+
+  public toDetailedString( patternFace: TPatternFace, targetFace: TPatternFace ): string {
+    return `FaceMapping( vertices: ${_.range( 0, this.edgeCount ).map( i => {
+      return `${patternFace.vertices[ i ].index} => ${targetFace.vertices[ this.mapVertexIndex( i ) ].index}`;
+    } ).join( ', ' )}, edges: ${_.range( 0, this.edgeCount ).map( i => {
+      const patternEdge = patternFace.edges[ i ];
+      const targetEdge = targetFace.edges[ this.mapEdgeIndex( i ) ];
+      return `#${patternEdge.index} (${patternEdge.vertices.map( v => v.index ).join( ',' )}) => #${targetEdge.index} (${targetEdge.vertices.map( v => v.index ).join( ',' )})`;
+    } ).join( ', ' )} )`;
   }
 
   public static allForOrder( edgeCount: number ): FaceMapping[] {

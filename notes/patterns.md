@@ -2,7 +2,6 @@
 # Patterns
 
 - TODO
-  - FAILURE BUG in embedding/isomorphic code?
   - naming:
     - 4x3,..., other props
   - 
@@ -24,7 +23,6 @@
   - Debug potential... bad isomorphic checks... see trihexagonal duplications? (is that based on multiple different starting patterns in 1st generation?)
   - Serialize our TPlanarPatternMap
   - 
-  - Debug the vertex rule matching
   - Pattern = pattern-board + pattern-state (features?)
     - Face values are part of the pattern/features, no? 
     - How to think of highlander?

@@ -20,7 +20,7 @@ import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
-import { serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
+import { deserializePlanarMappedPatternBoard, serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -565,12 +565,26 @@ console.log( 'test' );
 
       console.log( '---- square ----' );
 
+      // TODO: terminology omg!
+      const a = deserializePlanarMappedPatternBoard( "{\"patternBoard\":\"[0,9,\\\"faces\\\",[[0,1,2,3],[4,5,0,6],[1,7,8,2]]]\",\"planarPatternMap\":\"[[[9,9],[10,9],[10,10],[9,10],[8,8],[9,8],[8,9],[11,9],[11,10]],[[0,1],[1,2],[2,3],[0,3],[4,5],[0,5],[0,6],[4,6],[1,7],[7,8],[2,8]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]],[[8,8],[9,8],[9,9]],[[9,8],[9,9],[8,9]],[[9,9],[8,9],[8,8]],[[8,9],[8,8],[9,8]],[[10,9],[11,9],[11,10]],[[11,9],[11,10],[10,10]],[[11,10],[10,10],[10,9]],[[10,10],[10,9],[11,9]]],[[[9,9],[10,9],[10,10],[9,10]],[[8,8],[9,8],[9,9],[8,9]],[[10,9],[11,9],[11,10],[10,10]],[[9,9],[10,9],[9.5,8.75]],[[10,10],[9,10],[9.5,10.25]],[[9,9],[9,10],[8.75,9.5]],[[8,8],[9,8],[8.5,7.75]],[[9,9],[9,8],[9.25,8.5]],[[9,9],[8,9],[8.5,9.25]],[[8,8],[8,9],[7.75,8.5]],[[10,9],[11,9],[10.5,8.75]],[[11,9],[11,10],[11.25,9.5]],[[10,10],[11,10],[10.5,10.25]]]]\"}" );
+      const b = deserializePlanarMappedPatternBoard( "{\"patternBoard\":\"[0,9,\\\"faces\\\",[[0,1,2,3],[4,5,0,6],[3,2,7,8]]]\",\"planarPatternMap\":\"[[[9,9],[10,9],[10,10],[9,10],[8,8],[9,8],[8,9],[10,11],[9,11]],[[0,1],[1,2],[2,3],[0,3],[4,5],[0,5],[0,6],[4,6],[2,7],[7,8],[3,8]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]],[[8,8],[9,8],[9,9]],[[9,8],[9,9],[8,9]],[[9,9],[8,9],[8,8]],[[8,9],[8,8],[9,8]],[[9,10],[10,10],[10,11]],[[10,10],[10,11],[9,11]],[[10,11],[9,11],[9,10]],[[9,11],[9,10],[10,10]]],[[[9,9],[10,9],[10,10],[9,10]],[[8,8],[9,8],[9,9],[8,9]],[[9,10],[10,10],[10,11],[9,11]],[[9,9],[10,9],[9.5,8.75]],[[10,9],[10,10],[10.25,9.5]],[[9,9],[9,10],[8.75,9.5]],[[8,8],[9,8],[8.5,7.75]],[[9,9],[9,8],[9.25,8.5]],[[9,9],[8,9],[8.5,9.25]],[[8,8],[8,9],[7.75,8.5]],[[10,10],[10,11],[10.25,10.5]],[[10,11],[9,11],[9.5,11.25]],[[9,10],[9,11],[8.75,10.5]]]]\"}" );
+
+      container.addChild( new HBox( {
+        spacing: 10,
+        children: [
+          new PlanarMappedPatternBoardNode( a, { labels: true } ),
+          new PlanarMappedPatternBoardNode( b, { labels: true } )
+        ]
+      } ) );
+
+      console.log( sketchyIsIsomorphic( a.patternBoard, b.patternBoard ) );
+
       const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
       container.addChild( getGenerationsNode( squareGenerations ) );
       squareGenerations.forEach( ( generation, index ) => {
         console.log( `-- ${index} --` );
         generation.forEach( patternBoard => {
-          console.log( serializePlanarMappedPatternBoard( patternBoard ) );
+          console.log( JSON.stringify( serializePlanarMappedPatternBoard( patternBoard ) ) );
         } );
       } );
 

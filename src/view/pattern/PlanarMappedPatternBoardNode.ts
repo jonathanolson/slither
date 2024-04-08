@@ -1,11 +1,24 @@
-import { Circle, Line, Node, Path } from 'phet-lib/scenery';
+import { Circle, Line, Node, Path, Text } from 'phet-lib/scenery';
 import { TPlanarMappedPatternBoard } from '../../model/pattern/TPlanarMappedPatternBoard.ts';
 import { Shape } from 'phet-lib/kite';
+import { optionize } from 'phet-lib/phet-core';
+import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
+import { puzzleFont } from '../Theme.ts';
+
+export type PlanarMappedPatternBoardNodeOptions = {
+  labels?: boolean;
+};
 
 export class PlanarMappedPatternBoardNode extends Node {
   public constructor(
-    public readonly planarMappedPatternBoard: TPlanarMappedPatternBoard
+    public readonly planarMappedPatternBoard: TPlanarMappedPatternBoard,
+    providedOptions?: PlanarMappedPatternBoardNodeOptions
   ) {
+
+    const options = optionize<PlanarMappedPatternBoardNodeOptions>()( {
+      labels: false
+    }, providedOptions );
+
     const patternBoard = planarMappedPatternBoard.patternBoard;
     const planarPatternMap = planarMappedPatternBoard.planarPatternMap;
 
@@ -84,6 +97,35 @@ export class PlanarMappedPatternBoardNode extends Node {
         fill: isExit ? '#222' : '#ccc'
       } ) );
     } );
+
+    if ( options.labels ) {
+      patternBoard.faces.forEach( face => {
+        const isExit = face.isExit;
+
+        const points = planarPatternMap.faceMap.get( face )!;
+        const centroid = getCentroid( points );
+
+        container.addChild( new Text( face.index, {
+          font: puzzleFont,
+          center: centroid,
+          fill: isExit ? '#0ff' : '#0f0',
+          maxWidth: 0.5,
+          maxHeight: 0.5
+        } ) );
+      } );
+
+      patternBoard.vertices.forEach( vertex => {
+        const point = planarPatternMap.vertexMap.get( vertex )!;
+
+        container.addChild( new Text( vertex.index, {
+          font: puzzleFont,
+          center: point,
+          fill: '#fff',
+          maxWidth: 0.5,
+          maxHeight: 0.5
+        } ) );
+      } );
+    }
 
     super( {
       children: [ container ]
