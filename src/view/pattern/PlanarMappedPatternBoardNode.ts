@@ -47,7 +47,7 @@ export class PlanarMappedPatternBoardNode extends Node {
         endAngle += 2 * Math.PI;
       }
 
-      const radius = 0.3;
+      const radius = 0.25;
       const shape = new Shape()
         .moveToPoint( vertexPoint )
         .lineToPoint( startUnit.timesScalar( radius ).plus( vertexPoint ) )

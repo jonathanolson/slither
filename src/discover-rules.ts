@@ -18,6 +18,8 @@ import { TFace } from './model/board/core/TFace.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
+import { getPeriodicTilingGenerator } from './view/GenerateNode.ts';
+import { PolygonalBoard, rhombilleTiling } from './model/board/core/TiledBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -548,6 +550,23 @@ console.log( 'test' );
       const hexGenerations = getFirstNGenerations( new HexagonalBoard( 5, 1, true ), 4 );
       container.addChild( getGenerationsNode( hexGenerations ) );
 
+      {
+        // TODO: simplify this board generation
+        const polygonGenerator = getPeriodicTilingGenerator( rhombilleTiling, {
+          width: 8,
+          height: 8
+        } );
+
+        const polygons = polygonGenerator.generate( {
+          width: 15,
+          height: 15
+        } );
+
+        const board = new PolygonalBoard( polygons, polygonGenerator.scale ?? 1 );
+
+        const rhombilleGenerations = getFirstNGenerations( board, 4 );
+        container.addChild( getGenerationsNode( rhombilleGenerations ) );
+      }
     }
   }
 
