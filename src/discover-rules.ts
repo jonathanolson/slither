@@ -11,6 +11,12 @@ import { computeEmbeddings } from './model/pattern/computeEmbeddings.ts';
 import { EmbeddingNode } from './view/pattern/EmbeddingNode.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
+import _ from './workarounds/_.ts';
+import assert, { assertEnabled } from './workarounds/assert.ts';
+import { TBoard } from './model/board/core/TBoard.ts';
+import { TFace } from './model/board/core/TFace.ts';
+import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
+import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -448,6 +454,87 @@ console.log( 'test' );
         } )
       ]
     } ), { margin: 10 } ) );
+
+    {
+
+      const getSemiAdjacentFaces = ( board: TBoard, face: TFace ): Set<TFace> => {
+        const set = new Set<TFace>();
+        face.vertices.forEach( vertex => {
+          vertex.faces.forEach( f => {
+            if ( f !== face ) {
+              set.add( f );
+            }
+          } );
+        } );
+        return set;
+      };
+
+      const sketchyIsIsomorphic = ( a: TPatternBoard, b: TPatternBoard ): boolean => {
+        if (
+          a.vertices.length !== b.vertices.length ||
+          a.edges.length !== b.edges.length ||
+          a.faces.length !== b.faces.length ||
+          a.sectors.length !== b.sectors.length ||
+          a.vertices.filter( v => v.isExit ).length !== b.vertices.filter( v => v.isExit ).length ||
+          a.edges.filter( e => e.isExit ).length !== b.edges.filter( e => e.isExit ).length ||
+          a.faces.filter( f => f.isExit ).length !== b.faces.filter( f => f.isExit ).length
+        ) {
+          return false;
+        }
+
+        return computeEmbeddings( a, b ).length > 0 && computeEmbeddings( b, a ).length > 0;
+      };
+
+      const getNextGeneration = ( patternBoards: FacesPatternBoard[] ): FacesPatternBoard[] => {
+        const nextGeneration: FacesPatternBoard[] = [];
+        patternBoards.forEach( patternBoard => {
+          const potentialFaces = new Set<TFace>();
+          patternBoard.originalBoardFaces.forEach( face => {
+            getSemiAdjacentFaces( patternBoard.originalBoard, face ).forEach( f => {
+              if ( !patternBoard.originalBoardFaces.includes( f ) ) {
+                potentialFaces.add( f );
+              }
+            } );
+          } );
+
+          potentialFaces.forEach( face => {
+            const newFaces = [ ...patternBoard.originalBoardFaces, face ];
+            const newPatternBoard = new FacesPatternBoard( patternBoard.originalBoard, newFaces );
+            if ( !nextGeneration.some( p => sketchyIsIsomorphic( p, newPatternBoard ) ) ) {
+              nextGeneration.push( newPatternBoard );
+            }
+          } );
+        } );
+        return nextGeneration;
+      };
+
+      const getSingleInitialFacesPatternBoard = ( board: TBoard ): FacesPatternBoard => {
+        const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
+        const centermostFace = _.minBy( board.faces, face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
+        assertEnabled() && assert( centermostFace );
+
+        return new FacesPatternBoard( board, [ centermostFace ] );
+      };
+
+      const firstPatternBoard = getSingleInitialFacesPatternBoard( new SquareBoard( 20, 20 ) );
+
+      const firstGeneration = [ firstPatternBoard ];
+      const secondGeneration = getNextGeneration( firstGeneration );
+      const thirdGeneration = getNextGeneration( secondGeneration );
+      const fourthGeneration = getNextGeneration( thirdGeneration );
+
+      const getGenerationNode = ( generation: FacesPatternBoard[] ): Node => {
+        return new AlignBox( new HBox( {
+          spacing: 10,
+          children: generation.map( patternBoard => new PlanarMappedPatternBoardNode( patternBoard ) )
+        } ), { margin: 5 } );
+      };
+
+      container.addChild( getGenerationNode( firstGeneration ) );
+      container.addChild( getGenerationNode( secondGeneration ) );
+      container.addChild( getGenerationNode( thirdGeneration ) );
+      container.addChild( getGenerationNode( fourthGeneration ) );
+    }
   }
 
   display.setWidthHeight(
