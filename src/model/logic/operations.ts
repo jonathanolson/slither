@@ -3,6 +3,7 @@ import { Formula } from './Formula.ts';
 import Logic from '../solver/logic-solver/logic-solver.js';
 import { Term } from './Term.ts';
 import { Combination } from 'phet-lib/dot';
+import _ from '../../workarounds/_.ts';
 
 const toLogicParameter = <T>( parameter: Formula<T> ): unknown => {
   if ( parameter instanceof Term ) {
@@ -123,3 +124,24 @@ export const logicExactlyN = <T>( formulas: Formula<T>[], n: number ): Formula<T
   }
 };
 
+export const logicPossibleCounts = <T>( formulas: Formula<T>[], possibleCounts: number[] ): Formula<T> => {
+  return logicOr( possibleCounts.map( count => {
+    if ( count === 0 ) {
+      return logicAnd( formulas.map( formula => logicNot( formula ) ) );
+    }
+    else if ( count === formulas.length ) {
+      return logicAnd( formulas );
+    }
+    else {
+      return logicExactlyN( formulas, count );
+    }
+  } ) );
+};
+
+export const logicEven = <T>( formulas: Formula<T>[] ): Formula<T> => {
+  return logicPossibleCounts( formulas, _.range( 0, formulas.length + 1 ).filter( count => count % 2 === 0 ) );
+};
+
+export const logicOdd = <T>( formulas: Formula<T>[] ): Formula<T> => {
+  return logicPossibleCounts( formulas, _.range( 0, formulas.length + 1 ).filter( count => count % 2 === 1 ) );
+};

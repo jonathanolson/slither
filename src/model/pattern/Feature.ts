@@ -1,13 +1,113 @@
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { Formula } from '../logic/Formula.ts';
 import { Term } from '../logic/Term.ts';
-import { logicExactlyN, logicExactlyOne, logicNot, logicNot1, logicOr, logicTrue } from '../logic/operations.ts';
+import { logicAnd, logicEven, logicExactlyN, logicExactlyOne, logicNot, logicNot1, logicNotAll, logicOdd, logicOr, logicTrue, logicZeroOrTwo } from '../logic/operations.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { TPatternSector } from './TPatternSector.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
 
-export class FaceFeature {
+export interface TFeature {
+  isPossibleWith( isEdgeBlack: ( edge: TPatternEdge ) => boolean ): boolean;
+  getPossibleFormula( getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge> ): Formula<TPatternEdge>;
+}
+
+export class VertexFeature implements TFeature {
+
+  public constructor(
+    public readonly edges: TPatternEdge[]
+  ) {}
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    const blackCount = this.edges.filter( edge => isEdgeBlack( edge ) ).length;
+    return blackCount === 0 || blackCount === 2;
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicZeroOrTwo( this.edges.map( edge => getFormula( edge ) ) );
+  }
+}
+
+export class NoLoopsFeature implements TFeature {
+
+  public readonly possibleLoops: TPatternEdge[][];
+
+  public constructor(
+    public readonly patternBoard: TPatternBoard
+  ) {
+    this.possibleLoops = NoLoopsFeature.findLoops( patternBoard.edges, patternBoard.vertices ).map( set => [ ...set ] );
+  }
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    return this.possibleLoops.every( loop => loop.some( edge => !isEdgeBlack( edge ) ) );
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicAnd( this.possibleLoops.map( loop => logicNotAll( loop.map( edge => getFormula( edge ) ) ) ) );
+  }
+
+  public static findLoops( edges: TPatternEdge[], vertices: TPatternVertex[] ): Set<TPatternEdge>[] {
+    const loops: Set<TPatternEdge>[] = [];
+    const loopIdentifiers = new Set<string>();
+
+    const visitedVertices = new Set<TPatternVertex>();
+    const path: TPatternEdge[] = [];
+
+    const recur = ( currentVertex: TPatternVertex, startVertex: TPatternVertex ) => {
+      for ( const edge of currentVertex.edges ) {
+        if ( edge.vertices.length < 2 ) {
+          continue;
+        }
+
+        const nextVertex = edge.vertices.find( v => v !== currentVertex )!;
+        assertEnabled() && assert( nextVertex );
+
+        if ( visitedVertices.has( nextVertex ) ) {
+          continue;
+        }
+
+        if ( nextVertex === startVertex ) {
+          assertEnabled() && assert( path.length >= 3 );
+
+          const loop = [ ...path, edge ];
+
+          const loopIdentifier = loop.map( edge => edge.index ).sort().join( ',' );
+          if ( !loopIdentifiers.has( loopIdentifier ) ) {
+            loopIdentifiers.add( loopIdentifier );
+            loops.push( new Set( loop ) );
+          }
+        }
+        else {
+          visitedVertices.add( nextVertex );
+
+          path.push( edge );
+          recur( nextVertex, startVertex );
+          path.pop();
+
+          visitedVertices.delete( nextVertex );
+        }
+      }
+    };
+
+    for ( const vertex of vertices ) {
+      recur( vertex, vertex );
+    }
+
+    return loops;
+  }
+}
+
+export class FaceFeature implements TFeature {
 
   public constructor(
     public readonly face: TPatternFace,
@@ -33,7 +133,7 @@ export class FaceFeature {
   }
 }
 
-export class EdgeBlackFeature {
+export class EdgeBlackFeature implements TFeature {
   public constructor(
     public readonly edge: TPatternEdge
   ) {}
@@ -51,7 +151,7 @@ export class EdgeBlackFeature {
   }
 }
 
-export class EdgeRedFeature {
+export class EdgeRedFeature implements TFeature {
   public constructor(
     public readonly edge: TPatternEdge
   ) {}
@@ -69,10 +169,11 @@ export class EdgeRedFeature {
   }
 }
 
-export class FaceColorDualFeature {
+export class FaceColorDualFeature implements TFeature {
 
   public readonly sameColorPaths: TPatternEdge[][] = [];
   public readonly oppositeColorPaths: TPatternEdge[][] = [];
+  public readonly allFaces: Set<TPatternFace> = new Set();
 
   public constructor(
     public readonly primaryFaces: TPatternFace[],
@@ -82,49 +183,87 @@ export class FaceColorDualFeature {
     assertEnabled() && assert( primaryFaces.length );
 
     const allFaces = new Set( [ ...primaryFaces, ...secondaryFaces ] );
+    this.allFaces = allFaces;
     const firstFace = primaryFaces[ 0 ];
     const visitedFaces = new Set( [ firstFace ] );
 
-    while ( visitedFaces.size < allFaces.size ) {
+    for ( let hops = 1; visitedFaces.size < allFaces.size; hops++ ) {
+      const recur = ( face: TPatternFace, path: TPatternEdge[], initialFace: TPatternFace ) => {
+        for ( const edge of face.edges ) {
 
+          if ( edge.faces.length !== 2 ) {
+            continue;
+          }
+
+          if ( path.includes( edge ) ) {
+            continue;
+          }
+
+          const nextFace = edge.faces.find( f => f !== face )!;
+          assertEnabled() && assert( nextFace );
+
+          if ( visitedFaces.has( nextFace ) ) {
+            continue;
+          }
+
+          if ( allFaces.has( nextFace ) ) {
+            // Made a connection!!!!
+            const completePath = [ ...path, edge ];
+
+            const startFace = initialFace;
+            const endFace = nextFace;
+
+            const isSameColor = primaryFaces.includes( startFace ) === primaryFaces.includes( endFace );
+
+            if ( isSameColor ) {
+              this.sameColorPaths.push( completePath );
+            }
+            else {
+              this.oppositeColorPaths.push( completePath );
+            }
+
+            // IMPORTANT: mark this face as solved!
+            visitedFaces.add( nextFace );
+          }
+          else {
+            recur( nextFace, [ ...path, edge ], initialFace );
+          }
+        }
+      };
+
+      [ ...visitedFaces ].forEach( face => recur( face, [], face ) );
     }
   }
-  //
-  // public isPossibleWith(
-  //   isEdgeBlack: ( edge: NumberEdge ) => boolean
-  // ): boolean {
-  //   let blackCount = 0;
-  //   for ( let i = 0; i < this.edgesBetween.length; i++ ) {
-  //     if ( isEdgeBlack( this.edgesBetween[ i ] ) ) {
-  //       blackCount++;
-  //     }
-  //   }
-  //
-  //   return ( blackCount % 2 === 0 ) === this.areFacesSameColor;
-  // }
-  //
-  // public getPossibleFormula(
-  //   getFormula: ( edge: NumberEdge ) => Term<NumberEdge>
-  // ): Formula<NumberEdge> {
-  //   const formulas = this.edgesBetween.map( edge => getFormula( edge ) );
-  //
-  //   const possibleCounts = _.range( 0, formulas.length + 1 ).filter( count => ( count % 2 === 0 ) === this.areFacesSameColor );
-  //
-  //   return logicOr( possibleCounts.map( count => {
-  //     if ( count === 0 ) {
-  //       return logicAnd( formulas.map( formula => logicNot( formula ) ) );
-  //     }
-  //     else if ( count === formulas.length ) {
-  //       return logicAnd( formulas );
-  //     }
-  //     else {
-  //       return logicExactlyN( formulas, count );
-  //     }
-  //   } ) );
-  // }
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    for ( const path of this.sameColorPaths ) {
+      if ( path.filter( edge => isEdgeBlack( edge ) ).length % 2 !== 0 ) {
+        return false;
+      }
+    }
+
+    for ( const path of this.oppositeColorPaths ) {
+      if ( path.filter( edge => isEdgeBlack( edge ) ).length % 2 === 0 ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicAnd( [
+      ...this.sameColorPaths.map( path => logicEven( path.map( edge => getFormula( edge ) ) ) ),
+      ...this.oppositeColorPaths.map( path => logicOdd( path.map( edge => getFormula( edge ) ) ) )
+    ] );
+  }
 }
 
-export class SectorOnlyOneFeature {
+export class SectorOnlyOneFeature implements TFeature {
   public constructor(
     public readonly sector: TPatternSector
   ) {}
@@ -143,7 +282,7 @@ export class SectorOnlyOneFeature {
   }
 }
 
-export class SectorNotOneFeature {
+export class SectorNotOneFeature implements TFeature {
   public constructor(
     public readonly sector: TPatternSector
   ) {}
@@ -162,7 +301,7 @@ export class SectorNotOneFeature {
   }
 }
 
-export class SectorNotZeroFeature {
+export class SectorNotZeroFeature implements TFeature {
   public constructor(
     public readonly sector: TPatternSector
   ) {}
@@ -181,7 +320,7 @@ export class SectorNotZeroFeature {
   }
 }
 
-export class SectorNotTwoFeature {
+export class SectorNotTwoFeature implements TFeature {
   public constructor(
     public readonly sector: TPatternSector
   ) {}
@@ -200,7 +339,7 @@ export class SectorNotTwoFeature {
   }
 }
 
-// export class VertexStateFeature {
+// export class VertexStateFeature implements TFeature {
 //
 //   public readonly type = 'vertex-state';
 //
@@ -236,7 +375,7 @@ export class SectorNotTwoFeature {
 //   }
 // }
 //
-// export class FaceStateFeature {
+// export class FaceStateFeature implements TFeature {
 //
 //   public readonly type = 'face-state';
 //
@@ -272,7 +411,7 @@ export class SectorNotTwoFeature {
 //   }
 // }
 //
-// export class NonzeroCrossingFeature {
+// export class NonzeroCrossingFeature implements TFeature {
 //
 //   public readonly type = 'nonzero-crossing';
 //
@@ -301,96 +440,3 @@ export class SectorNotTwoFeature {
 //   }
 // }
 //
-// export class VertexFeature {
-//
-//   public readonly type = 'vertex';
-//
-//   public constructor(
-//     public readonly edges: NumberEdge[]
-//   ) {}
-//
-//   public isPossibleWith(
-//     isEdgeBlack: ( edge: NumberEdge ) => boolean
-//   ): boolean {
-//     const blackCount = this.edges.filter( edge => isEdgeBlack( edge ) ).length;
-//     return blackCount === 0 || blackCount === 2;
-//   }
-//
-//   public getPossibleFormula(
-//     getFormula: ( edge: NumberEdge ) => Term<NumberEdge>
-//   ): Formula<NumberEdge> {
-//     return logicZeroOrTwo( this.edges.map( edge => getFormula( edge ) ) );
-//   }
-// }
-//
-// export class NoLoopsFeature {
-//
-//   public readonly type = 'no-loops';
-//
-//   public constructor(
-//     public readonly possibleLoops: NumberEdge[][]
-//   ) {}
-//
-//   public isPossibleWith(
-//     isEdgeBlack: ( edge: NumberEdge ) => boolean
-//   ): boolean {
-//     return this.possibleLoops.every( loop => loop.some( edge => !isEdgeBlack( edge ) ) );
-//   }
-//
-//   public getPossibleFormula(
-//     getFormula: ( edge: NumberEdge ) => Term<NumberEdge>
-//   ): Formula<NumberEdge> {
-//     return logicAnd( this.possibleLoops.map( loop => logicNotAll( loop.map( edge => getFormula( edge ) ) ) ) );
-//   }
-// }
-
-// export type TFeature = {
-//   isPossibleWith(
-//     isEdgeBlack: ( edge: TPatternEdge ) => boolean
-//   ): boolean;
-//
-//   getPossibleFormula(
-//     getFormula: ( edge: TPatternEdge ) => Formula<TPatternEdge>
-//   ): Formula<TPatternEdge>;
-// } & ( {
-//   type: 'vertex';
-//   edges: TPatternEdge[];
-// } | {
-//   type: 'face';
-//   face: TPatternFace;
-//   value: number; // NOTE! TODO! We need a way of specifying a "blank" face for highlander rules
-//   edges: TPatternEdge[];
-// } | {
-//   type: 'no-loops';
-//   possibleLoops: TPatternEdge[][];
-// } | {
-//   type: 'edge-black' | 'edge-red';
-//   edge: TPatternEdge;
-// } | {
-//   type: 'faces-same-color' | 'faces-opposite-color';
-//   faceA: TPatternFace;
-//   faceB: TPatternFace;
-// } | {
-//   type: 'sector-zero' | 'sector-one' | 'sector-two';
-//   edgeA: TPatternEdge;
-//   edgeB: TPatternEdge;
-// } | {
-//   type: 'sector-only-one' | 'sector-not-one' | 'sector-not-zero' | 'sector-not-two';
-//   edgeA: TPatternEdge;
-//   edgeB: TPatternEdge;
-// } | {
-//   type: 'vertex-state';
-//   vertex: TPatternVertex;
-//   blackEdges: TPatternEdge[];
-//   redEdges: TPatternEdge[];
-// } | {
-//   type: 'face-state';
-//   face: TPatternFace;
-//   blackEdges: TPatternEdge[];
-//   redEdges: TPatternEdge[];
-// } | {
-//   type: 'nonzero-crossing';
-//   faceA: TPatternFace;
-//   faceB: TPatternFace;
-//   possiblePaths: TPatternEdge[][];
-// } );
