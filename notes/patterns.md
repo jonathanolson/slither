@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - NOTE: Handle FaceColorDualFeature differently, no redundancy checking
+  - 
   - Face Color Annoyance:
     - DO SMART FACE COLOR DUAL features? (not... named?)
       - Storing duals means:
