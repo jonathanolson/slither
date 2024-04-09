@@ -20,6 +20,27 @@
   - Features are either "composable" or not.
     - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
   - 
+  - "Constraints" vs "Features"
+    - Constraints: We add constraints at the start of solving, and they don't change
+      - (can use Feature interface for adding solving constraints) 
+      - Highlander
+      - Nonzero-crossing
+      - Vertex 0-or-2 rules
+      - Face values (including blank)
+    - Features:
+      - .. All the other things we are used to
+  - 
+  - Highlander:
+    - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
+    - Q: Do we need to iterate through all solutions for highlander?
+      - Can "hash" highlander solutions by:
+        - (a) string of booleans (one per indeterminate edge)
+        - (b) lexicographically ordered "exit vertex (or edge) index pairs that are connected", e.g. 0-5, 2-3, etc. (exit vertex 0 connects to exit vertex 5)
+    - Edges that are adjacent to an exit-face OR non-valued (non-blank) face are "indeterminate" edges (exit edges are indeterminate)
+    - Two solutions with the same values on indeterminate edges AND same exit connections are both excluded in highlander rules
+    - NOTE(!) Highlander rules might NOT require blank faces (especially once sectors and colors are in play)
+      - (we will have highlander color rules)
+    - How to mark/display these? question marks on unspecified faces?
   - 
   - Visualize embedded sectors (and test out all of the vertex rule boards)
   - Visualize embeddings with different board shapes

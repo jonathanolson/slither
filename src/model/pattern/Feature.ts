@@ -19,7 +19,7 @@ export type TFeature = {
 } | {
   type: 'face';
   face: NumberFace;
-  value: number;
+  value: number; // NOTE! TODO! We need a way of specifying a "blank" face for highlander rules
   edges: NumberEdge[];
 } | {
   type: 'no-loops';
