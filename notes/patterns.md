@@ -4,6 +4,7 @@
 - TODO
   - 
   - NOTE: Handle FaceColorDualFeature differently, no redundancy checking
+  - NOTE: Handle SectorOnlyOneFeature ... differently, since not-two/not-zero combine into it?
   - 
   - Face Color Annoyance:
     - DO SMART FACE COLOR DUAL features? (not... named?)
