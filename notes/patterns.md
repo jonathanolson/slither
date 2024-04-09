@@ -4,6 +4,9 @@
 - TODO
   - naming:
     - 4x3,..., other props
+  - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
+    - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
+      - Would we need to "remap" patterns/rules?
   - 
   - PatternEmbeddingNode - PatternBoard in PatternBoard
   - 
@@ -13,7 +16,9 @@
     - Face Color (binary same/opposite)
     - Sector simplified (only-one/not-one/not-zero/not-two)
     - TODO: vertex/face state, nonzero-crossing
-  - 
+  - Features might use more than one "state" to check (nonzero-crossing checking multiple edges)
+  - Features are either "composable" or not.
+    - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
   - 
   - 
   - Visualize embedded sectors (and test out all of the vertex rule boards)
