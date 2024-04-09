@@ -23,10 +23,16 @@
   - Features are either "composable" or not.
     - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
   - 
-  - State in:
-    - "input pattern" (possibly a list of "false" features only)
-    - "output pattern" (possibly a list of "false" features in addition to the input false features)
-    - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
+  - Features
+    - Name them (based on their indices), e.g.
+      - b0 (black edge 0)
+      - f0,1 or F0,1 (opposite or same face colors, for two face indices?)
+      - etc.
+      - Thus we can quickly "rename" them with an embedding and see if it exists in a state-feature collection.
+    - State in:
+      - "input pattern" (possibly a list of "false" features only)
+      - "output pattern" (possibly a list of "false" features in addition to the input false features)
+      - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
   - 
   - "Constraints" vs "Features"
     - Constraints: We add constraints at the start of solving, and they don't change
@@ -40,8 +46,15 @@
       - .. All the other things we are used to
   - 
   - Face Color Annoyance:
-    - Our booleans are VERY overspecified. Are dual-color with faces representations possible?
+    - DO SMART FACE COLOR DUAL features? (not... named?)
+      - Storing duals means:
+        - (1) FASTER matching (since we don't do O(n^2) checks for large regions)
+        - (2) Can provide the exhaustive O(n^2) for computing all solutions and analyzing
+        - (3) our "output" state change can be a "list of the face color actions needed to be done"
+    - Our booleans are VERY over-specified. Are dual-color with faces representations possible?
       - (though this is... so simple)
+      - HEY this causes our logic-solver to get a LOT of complicated rules that it probably doesn't need(!), O(n^2)
+        - O(n^2)!!!!!!!!!!!!! 
       - Could just be consistent and compute duals, and:
         - (a) fully specify all color relations based on the relationships (fill them out)
         - (b) minimize them when we actually... scan for patterns?
