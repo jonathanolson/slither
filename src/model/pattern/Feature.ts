@@ -16,13 +16,77 @@ export interface TFeature {
 }
 
 export interface TEmbeddableFeature extends TFeature {
+
   applyEmbedding( embedding: Embedding ): TFeature[];
+
   isRedundant( otherFeatures: TFeature[] ): boolean;
+
   equals( other: TFeature ): boolean;
+
   indexEquals( other: TFeature ): boolean;
 
-  // TODO: serialization(?)!!!
+  serialize(): TSerializedEmbeddableFeature;
 }
+
+export type TSerializedEmbeddableFeature = {
+  type: 'face';
+  face: number;
+  value: number | null;
+} | {
+  type: 'black-edge';
+  edge: number;
+} | {
+  type: 'red-edge';
+  edge: number;
+} | {
+  type: 'face-color-dual';
+  primaryFaces: number[];
+  secondaryFaces: number[];
+  sameColorPaths: number[][];
+  oppositeColorPaths: number[][];
+} | {
+  type: 'sector-only-one';
+  sector: number;
+} | {
+  type: 'sector-not-one';
+  sector: number;
+} | {
+  type: 'sector-not-zero';
+  sector: number;
+} | {
+  type: 'sector-not-two';
+  sector: number;
+} | {
+  type: 'vertex-not-empty';
+  vertex: number;
+} | {
+  type: 'vertex-not-pair';
+  vertex: number;
+  edgeA: number;
+  edgeB: number;
+} | {
+  type: 'face-not-state';
+  face: number;
+  blackEdges: number[];
+  redEdges: number[];
+};
+
+export const deserializeEmbeddableFeature = ( serialized: TSerializedEmbeddableFeature, patternBoard: TPatternBoard ): TEmbeddableFeature => {
+  switch ( serialized.type ) {
+    case 'face': return FaceFeature.deserialize( serialized, patternBoard );
+    case 'black-edge': return BlackEdgeFeature.deserialize( serialized, patternBoard );
+    case 'red-edge': return RedEdgeFeature.deserialize( serialized, patternBoard );
+    case 'face-color-dual': return FaceColorDualFeature.deserialize( serialized, patternBoard );
+    case 'sector-only-one': return SectorOnlyOneFeature.deserialize( serialized, patternBoard );
+    case 'sector-not-one': return SectorNotOneFeature.deserialize( serialized, patternBoard );
+    case 'sector-not-zero': return SectorNotZeroFeature.deserialize( serialized, patternBoard );
+    case 'sector-not-two': return SectorNotTwoFeature.deserialize( serialized, patternBoard );
+    case 'vertex-not-empty': return VertexNotEmptyFeature.deserialize( serialized, patternBoard );
+    case 'vertex-not-pair': return VertexNotPairFeature.deserialize( serialized, patternBoard );
+    case 'face-not-state': return FaceNotStateFeature.deserialize( serialized, patternBoard );
+    default: throw new Error( `Unknown serialized feature: ${ serialized }` );
+  }
+};
 
 export class VertexFeature implements TFeature {
 
@@ -157,6 +221,18 @@ export class FaceFeature implements TEmbeddableFeature {
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) );
   }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'face',
+      face: this.face.index,
+      value: this.value,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'face' }, patternBoard: TPatternBoard ): FaceFeature {
+    return new FaceFeature( patternBoard.faces[ serialized.face ], serialized.value );
+  }
 }
 
 export class BlackEdgeFeature implements TEmbeddableFeature {
@@ -197,6 +273,17 @@ export class BlackEdgeFeature implements TEmbeddableFeature {
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) );
   }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'black-edge',
+      edge: this.edge.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'black-edge' }, patternBoard: TPatternBoard ): BlackEdgeFeature {
+    return new BlackEdgeFeature( patternBoard.edges[ serialized.edge ] );
+  }
 }
 
 export class RedEdgeFeature implements TEmbeddableFeature {
@@ -236,6 +323,17 @@ export class RedEdgeFeature implements TEmbeddableFeature {
 
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'red-edge',
+      edge: this.edge.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'red-edge' }, patternBoard: TPatternBoard ): RedEdgeFeature {
+    return new RedEdgeFeature( patternBoard.edges[ serialized.edge ] );
   }
 }
 
@@ -330,6 +428,25 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     // TODO: See if we... subset any? Hmmm?
     return otherFeatures.some( feature => this.equals( feature ) );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'face-color-dual',
+      primaryFaces: this.primaryFaces.map( face => face.index ),
+      secondaryFaces: this.secondaryFaces.map( face => face.index ),
+      sameColorPaths: this.sameColorPaths.map( path => path.map( edge => edge.index ) ),
+      oppositeColorPaths: this.oppositeColorPaths.map( path => path.map( edge => edge.index ) ),
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'face-color-dual' }, patternBoard: TPatternBoard ): FaceColorDualFeature {
+    return new FaceColorDualFeature(
+      serialized.primaryFaces.map( index => patternBoard.faces[ index ] ),
+      serialized.secondaryFaces.map( index => patternBoard.faces[ index ] ),
+      serialized.sameColorPaths.map( path => path.map( index => patternBoard.edges[ index ] ) ),
+      serialized.oppositeColorPaths.map( path => path.map( index => patternBoard.edges[ index ] ) )
+    );
   }
 
   public static fromPrimarySecondaryFaces( primaryFaces: TPatternFace[], secondaryFaces: TPatternFace[] ): FaceColorDualFeature {
@@ -443,6 +560,17 @@ export class SectorOnlyOneFeature implements TEmbeddableFeature {
 
     return hasBlack && hasRed;
   }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'sector-only-one',
+      sector: this.sector.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'sector-only-one' }, patternBoard: TPatternBoard ): SectorOnlyOneFeature {
+    return new SectorOnlyOneFeature( patternBoard.sectors[ serialized.sector ] );
+  }
 }
 
 export class SectorNotOneFeature implements TEmbeddableFeature {
@@ -510,6 +638,17 @@ export class SectorNotOneFeature implements TEmbeddableFeature {
 
     return ( firstEdgeBlack && secondEdgeBlack ) || ( firstEdgeRed && secondEdgeRed );
   }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'sector-not-one',
+      sector: this.sector.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'sector-not-one' }, patternBoard: TPatternBoard ): SectorNotOneFeature {
+    return new SectorNotOneFeature( patternBoard.sectors[ serialized.sector ] );
+  }
 }
 
 export class SectorNotZeroFeature implements TEmbeddableFeature {
@@ -546,6 +685,17 @@ export class SectorNotZeroFeature implements TEmbeddableFeature {
     return otherFeatures.some( feature => {
       return this.equals( feature ) || ( feature instanceof BlackEdgeFeature && this.sector.edges.includes( feature.edge ) );
     } );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'sector-not-zero',
+      sector: this.sector.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'sector-not-zero' }, patternBoard: TPatternBoard ): SectorNotZeroFeature {
+    return new SectorNotZeroFeature( patternBoard.sectors[ serialized.sector ] );
   }
 }
 
@@ -585,6 +735,17 @@ export class SectorNotTwoFeature implements TEmbeddableFeature {
       return this.equals( feature ) || ( feature instanceof RedEdgeFeature && this.sector.edges.includes( feature.edge ) );
     } );
   }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'sector-not-two',
+      sector: this.sector.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'sector-not-two' }, patternBoard: TPatternBoard ): SectorNotTwoFeature {
+    return new SectorNotTwoFeature( patternBoard.sectors[ serialized.sector ] );
+  }
 }
 
 export class VertexNotEmptyFeature implements TEmbeddableFeature {
@@ -618,6 +779,17 @@ export class VertexNotEmptyFeature implements TEmbeddableFeature {
 
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) || ( feature instanceof BlackEdgeFeature && feature.edge.vertices.includes( this.vertex ) ) );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'vertex-not-empty',
+      vertex: this.vertex.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'vertex-not-empty' }, patternBoard: TPatternBoard ): VertexNotEmptyFeature {
+    return new VertexNotEmptyFeature( patternBoard.vertices[ serialized.vertex ] );
   }
 }
 
@@ -674,6 +846,23 @@ export class VertexNotPairFeature implements TEmbeddableFeature {
     ) || (
       feature instanceof RedEdgeFeature && ( feature.edge === this.edgeA || feature.edge === this.edgeB )
     ) );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'vertex-not-pair',
+      vertex: this.vertex.index,
+      edgeA: this.edgeA.index,
+      edgeB: this.edgeB.index,
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'vertex-not-pair' }, patternBoard: TPatternBoard ): VertexNotPairFeature {
+    return new VertexNotPairFeature(
+      patternBoard.vertices[ serialized.vertex ],
+      patternBoard.edges[ serialized.edgeA ],
+      patternBoard.edges[ serialized.edgeB ]
+    );
   }
 }
 
@@ -739,6 +928,23 @@ export class FaceNotStateFeature implements TEmbeddableFeature {
     ) || (
       feature instanceof RedEdgeFeature && this.blackEdges.includes( feature.edge )
     ) );
+  }
+
+  public serialize(): TSerializedEmbeddableFeature {
+    return {
+      type: 'face-not-state',
+      face: this.face.index,
+      blackEdges: this.blackEdges.map( edge => edge.index ),
+      redEdges: this.redEdges.map( edge => edge.index ),
+    };
+  }
+
+  public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'face-not-state' }, patternBoard: TPatternBoard ): FaceNotStateFeature {
+    return new FaceNotStateFeature(
+      patternBoard.faces[ serialized.face ],
+      serialized.blackEdges.map( index => patternBoard.edges[ index ] ),
+      serialized.redEdges.map( index => patternBoard.edges[ index ] )
+    );
   }
 }
 
