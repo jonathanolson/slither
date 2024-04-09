@@ -339,78 +339,77 @@ export class SectorNotTwoFeature implements TFeature {
   }
 }
 
-// export class VertexStateFeature implements TFeature {
-//
-//   public readonly type = 'vertex-state';
-//
-//   public constructor(
-//     public readonly vertex: NumberVertex,
-//     public readonly blackEdges: NumberEdge[],
-//     public readonly redEdges: NumberEdge[]
-//   ) {}
-//
-//   public isPossibleWith(
-//     isEdgeBlack: ( edge: NumberEdge ) => boolean
-//   ): boolean {
-//     for ( const blackEdge of this.blackEdges ) {
-//       if ( !isEdgeBlack( blackEdge ) ) {
-//         return false;
-//       }
-//     }
-//     for ( const redEdge of this.redEdges ) {
-//       if ( isEdgeBlack( redEdge ) ) {
-//         return false;
-//       }
-//     }
-//     return true;
-//   }
-//
-//   public getPossibleFormula(
-//     getFormula: ( edge: NumberEdge ) => Term<NumberEdge>
-//   ): Formula<NumberEdge> {
-//     return logicAnd( [
-//       ...this.blackEdges.map( edge => getFormula( edge ) ),
-//       ...this.redEdges.map( edge => logicNot( getFormula( edge ) ) )
-//     ] );
-//   }
-// }
-//
-// export class FaceStateFeature implements TFeature {
-//
-//   public readonly type = 'face-state';
-//
-//   public constructor(
-//     public readonly face: NumberFace,
-//     public readonly blackEdges: NumberEdge[],
-//     public readonly redEdges: NumberEdge[]
-//   ) {}
-//
-//   public isPossibleWith(
-//     isEdgeBlack: ( edge: NumberEdge ) => boolean
-//   ): boolean {
-//     for ( const blackEdge of this.blackEdges ) {
-//       if ( !isEdgeBlack( blackEdge ) ) {
-//         return false;
-//       }
-//     }
-//     for ( const redEdge of this.redEdges ) {
-//       if ( isEdgeBlack( redEdge ) ) {
-//         return false;
-//       }
-//     }
-//     return true;
-//   }
-//
-//   public getPossibleFormula(
-//     getFormula: ( edge: NumberEdge ) => Term<NumberEdge>
-//   ): Formula<NumberEdge> {
-//     return logicAnd( [
-//       ...this.blackEdges.map( edge => getFormula( edge ) ),
-//       ...this.redEdges.map( edge => logicNot( getFormula( edge ) ) )
-//     ] );
-//   }
-// }
-//
+export class VertexNotEmptyFeature implements TFeature {
+  public constructor(
+    public readonly vertex: TPatternVertex
+  ) {}
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    return this.vertex.edges.some( edge => isEdgeBlack( edge ) );
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicOr( this.vertex.edges.map( edge => getFormula( edge ) ) );
+  }
+}
+
+export class VertexNotPairFeature implements TFeature {
+  public constructor(
+    public readonly vertex: TPatternVertex,
+    public readonly edgeA: TPatternEdge,
+    public readonly edgeB: TPatternEdge
+  ) {}
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    return isEdgeBlack( this.edgeA ) || isEdgeBlack( this.edgeB );
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicNotAll( [ getFormula( this.edgeA ), getFormula( this.edgeB ) ] );
+  }
+}
+
+export class FaceNotStateFeature implements TFeature {
+  public constructor(
+    public readonly face: TPatternFace,
+    public readonly blackEdges: TPatternEdge[],
+    public readonly redEdges: TPatternEdge[]
+  ) {}
+
+  public isPossibleWith(
+    isEdgeBlack: ( edge: TPatternEdge ) => boolean
+  ): boolean {
+    for ( const blackEdge of this.blackEdges ) {
+      if ( !isEdgeBlack( blackEdge ) ) {
+        return true;
+      }
+    }
+    for ( const redEdge of this.redEdges ) {
+      if ( isEdgeBlack( redEdge ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public getPossibleFormula(
+    getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
+  ): Formula<TPatternEdge> {
+    return logicOr( [
+      ...this.blackEdges.map( edge => logicNot( getFormula( edge ) ) ),
+      ...this.redEdges.map( edge => getFormula( edge ) )
+    ] );
+  }
+}
+
 // export class NonzeroCrossingFeature implements TFeature {
 //
 //   public readonly type = 'nonzero-crossing';
