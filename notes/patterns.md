@@ -2,11 +2,14 @@
 # Patterns
 
 - TODO
-  - naming:
-    - 4x3,..., other props
-  - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
-    - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
-      - Would we need to "remap" patterns/rules?
+  - Storage/Serialization of patternboards / patterns / rules
+    - PatternBoard
+      - Naming prefixes? square, "4x4" for "there are four 4-order faces"? not sure how we would disambiguate
+        - Actually, fixed strings for the "edge/vertex" ones, and... STORE the face indices in a string for the face ones?
+    - We want to consolidate references to PatternBoards, so that the embeddings computation is "spread across all the rules"
+    - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
+      - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
+        - Would we need to "remap" patterns/rules?
   - 
   - PatternEmbeddingNode - PatternBoard in PatternBoard
   - 
@@ -20,6 +23,11 @@
   - Features are either "composable" or not.
     - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
   - 
+  - State in:
+    - "input pattern" (possibly a list of "false" features only)
+    - "output pattern" (possibly a list of "false" features in addition to the input false features)
+    - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
+  - 
   - "Constraints" vs "Features"
     - Constraints: We add constraints at the start of solving, and they don't change
       - (can use Feature interface for adding solving constraints) 
@@ -29,6 +37,13 @@
       - Face values (including blank)
     - Features:
       - .. All the other things we are used to
+  - 
+  - Face Color Annoyance:
+    - Our booleans are VERY overspecified. Are dual-color with faces representations possible?
+      - (though this is... so simple)
+      - Could just be consistent and compute duals, and:
+        - (a) fully specify all color relations based on the relationships (fill them out)
+        - (b) minimize them when we actually... scan for patterns?
   - 
   - Highlander:
     - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
