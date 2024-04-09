@@ -78,6 +78,8 @@
     - Face values are part of the pattern/features, no? 
     - How to think of highlander?
   - 
+  - [defer] Nonzero (or 2+) crossing type - compute possible paths
+  - 
   - !!!!!!!!!
   - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
   - !!!!! THEN GET the "current features/state" of it (from the board+puzzle=state) => "featured board" so we can scan efficiently
