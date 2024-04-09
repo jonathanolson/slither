@@ -10,6 +10,7 @@ import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './RedEdgeFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
+import _ from '../../../workarounds/_.ts';
 
 export class FaceNotStateFeature implements TEmbeddableFeature {
   public constructor(
@@ -17,6 +18,10 @@ export class FaceNotStateFeature implements TEmbeddableFeature {
     public readonly blackEdges: TPatternEdge[],
     public readonly redEdges: TPatternEdge[]
   ) {}
+
+  public getCanonicalString(): string {
+    return `face-not-state-${this.face.index}-${_.sortBy( this.blackEdges.map( edge => edge.index ) ).join( ',' )}-${_.sortBy( this.redEdges.map( edge => edge.index ) ).join( ',' )}`;
+  }
 
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean

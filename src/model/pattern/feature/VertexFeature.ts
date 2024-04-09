@@ -5,6 +5,7 @@ import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
 import { logicZeroOrTwo } from '../../logic/operations.ts';
 
+// Either 0 or 2 edges connected to a vertex will be black.
 export class VertexFeature implements TFeature {
 
   public constructor(

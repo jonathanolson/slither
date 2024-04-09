@@ -13,6 +13,10 @@ export class RedEdgeFeature implements TEmbeddableFeature {
     public readonly edge: TPatternEdge
   ) {}
 
+  public getCanonicalString(): string {
+    return `red-${this.edge.index}`;
+  }
+
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {

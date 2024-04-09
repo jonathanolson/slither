@@ -21,6 +21,7 @@ import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
 import { deserializePlanarMappedPatternBoard, serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
+import { generateAllDisjointNonSingleSubsets } from './model/pattern/feature/getFaceFeatureCombinations.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -635,6 +636,7 @@ console.log( 'test' );
       } ), 4 );
       container.addChild( getGenerationsNode( trihexagonalGenerations ) );
 
+      console.log( generateAllDisjointNonSingleSubsets( 5 ).map( arr => JSON.stringify( arr ) ) );
     }
   }
 

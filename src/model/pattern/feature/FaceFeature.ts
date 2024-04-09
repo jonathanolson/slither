@@ -17,6 +17,10 @@ export class FaceFeature implements TEmbeddableFeature {
     public readonly value: FaceValue
   ) {}
 
+  public getCanonicalString(): string {
+    return `face-${this.face.index}-${this.value ?? 'blank'}`;
+  }
+
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {

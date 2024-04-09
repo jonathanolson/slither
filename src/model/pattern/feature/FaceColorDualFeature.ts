@@ -9,6 +9,7 @@ import { Embedding } from '../Embedding.ts';
 import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
+import _ from '../../../workarounds/_.ts';
 
 export class FaceColorDualFeature implements TEmbeddableFeature {
 
@@ -24,6 +25,18 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     assertEnabled() && assert( primaryFaces.length );
 
     this.allFaces = new Set( [ ...primaryFaces, ...secondaryFaces ] );
+  }
+
+  public getCanonicalString(): string {
+    const primaryIndices = _.sortBy( this.primaryFaces.map( face => face.index ) );
+    const secondaryIndices = _.sortBy( this.secondaryFaces.map( face => face.index ) );
+
+    const isPrimaryFirst = primaryIndices.length > secondaryIndices.length || ( primaryIndices.length === secondaryIndices.length && primaryIndices[ 0 ] < secondaryIndices[ 0 ] );
+
+    const firstIndices = isPrimaryFirst ? primaryIndices : secondaryIndices;
+    const secondIndices = isPrimaryFirst ? secondaryIndices : primaryIndices;
+
+    return `face-color-dual-${firstIndices.join( ',' )}-${secondIndices.join( ',' )}`;
   }
 
   public isPossibleWith(

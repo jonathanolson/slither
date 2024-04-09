@@ -18,6 +18,12 @@ export class VertexNotPairFeature implements TEmbeddableFeature {
     public readonly edgeB: TPatternEdge
   ) {}
 
+  public getCanonicalString(): string {
+    const minEdge = Math.min( this.edgeA.index, this.edgeB.index );
+    const maxEdge = Math.max( this.edgeA.index, this.edgeB.index );
+    return `vertex-not-pair-${this.vertex.index}-${minEdge}-${maxEdge}`;
+  }
+
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {

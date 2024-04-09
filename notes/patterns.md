@@ -3,6 +3,9 @@
 
 - TODO
   - 
+  - !!!! When we have a set of features we are adding, we can potentially RULE OUT other features (intelligent exploration)
+    - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
+  - 
   - Add "feature creation" from pattern board
   - 
   - NOTE: Handle FaceColorDualFeature differently, no redundancy checking

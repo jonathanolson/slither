@@ -16,6 +16,10 @@ export class SectorNotOneFeature implements TEmbeddableFeature {
     public readonly sector: TPatternSector
   ) {}
 
+  public getCanonicalString(): string {
+    return `sector-not-one-${this.sector.index}`;
+  }
+
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {

@@ -15,6 +15,10 @@ export class VertexNotEmptyFeature implements TEmbeddableFeature {
     public readonly vertex: TPatternVertex
   ) {}
 
+  public getCanonicalString(): string {
+    return `vertex-not-empty-${this.vertex.index}`;
+  }
+
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {
