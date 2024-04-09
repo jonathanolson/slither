@@ -2,48 +2,6 @@
 # Patterns
 
 - TODO
-  - Storage/Serialization of patternboards / patterns / rules
-    - PatternBoard
-      - Naming prefixes? square, "4x4" for "there are four 4-order faces"? not sure how we would disambiguate
-        - Actually, fixed strings for the "edge/vertex" ones, and... STORE the face indices in a string for the face ones?
-    - We want to consolidate references to PatternBoards, so that the embeddings computation is "spread across all the rules"
-    - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
-      - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
-        - Would we need to "remap" patterns/rules?
-  - 
-  - PatternEmbeddingNode - PatternBoard in PatternBoard (without state at first)
-  - 
-  - Feature sets (enumeration)
-    - Face values (optionally include blank as possibility)
-    - Edges (include red exit, but NOT black exit)
-    - Face Color (binary same/opposite)
-    - Sector simplified (only-one/not-one/not-zero/not-two)
-    - TODO: vertex/face state, nonzero-crossing
-  - Features might use more than one "state" to check (nonzero-crossing checking multiple edges)
-  - Features are either "composable" or not.
-    - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
-  - 
-  - Features
-    - Name them (based on their indices), e.g.
-      - b0 (black edge 0)
-      - f0,1 or F0,1 (opposite or same face colors, for two face indices?)
-      - etc.
-      - Thus we can quickly "rename" them with an embedding and see if it exists in a state-feature collection.
-    - State in:
-      - "input pattern" (possibly a list of "false" features only)
-      - "output pattern" (possibly a list of "false" features in addition to the input false features)
-      - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
-  - 
-  - "Constraints" vs "Features"
-    - Constraints: We add constraints at the start of solving, and they don't change
-      - (can use Feature interface for adding solving constraints) 
-      - Highlander
-      - [defer] Nonzero-crossing (NEW: 2+ crossing) - both could be used in the future
-      - [defer] NEW: certain exit vertices NEED to connect together? Or need NOT to?
-      - Vertex 0-or-2 rules
-      - Face values (including blank)
-    - Features:
-      - .. All the other things we are used to
   - 
   - Face Color Annoyance:
     - DO SMART FACE COLOR DUAL features? (not... named?)
@@ -59,6 +17,38 @@
         - (a) fully specify all color relations based on the relationships (fill them out)
         - (b) minimize them when we actually... scan for patterns?
   - 
+  - "Constraints" vs "Features"
+    - Constraints: We add constraints at the start of solving, and they don't change
+      - (can use Feature interface for adding solving constraints) 
+      - Highlander
+      - [defer] Nonzero-crossing (NEW: 2+ crossing) - both could be used in the future
+      - [defer] NEW: certain exit vertices NEED to connect together? Or need NOT to?
+      - Vertex 0-or-2 rules
+      - Face values (including blank)
+    - Features:
+      - .. All the other things we are used to
+  - 
+  - Features
+    - Name them (based on their indices), e.g.
+      - b0 (black edge 0)
+      - f0,1 or F0,1 (opposite or same face colors, for two face indices?)
+      - etc.
+      - Thus we can quickly "rename" them with an embedding and see if it exists in a state-feature collection.
+    - State in:
+      - "input pattern" (possibly a list of "false" features only)
+      - "output pattern" (possibly a list of "false" features in addition to the input false features)
+      - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
+  - 
+  - Feature sets (enumeration)
+    - Face values (optionally include blank as possibility)
+    - Edges (include red exit, but NOT black exit)
+    - Face Color (binary same/opposite)
+    - Sector simplified (only-one/not-one/not-zero/not-two)
+    - TODO: vertex/face state, nonzero-crossing
+  - Features might use more than one "state" to check (nonzero-crossing checking multiple edges)
+  - Features are either "composable" or not.
+    - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
+  - 
   - Highlander:
     - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
     - Q: Do we need to iterate through all solutions for highlander?
@@ -70,6 +60,17 @@
     - NOTE(!) Highlander rules might NOT require blank faces (especially once sectors and colors are in play)
       - (we will have highlander color rules)
     - How to mark/display these? question marks on unspecified faces?
+  - 
+  - Storage/Serialization of patternboards / patterns / rules
+    - PatternBoard
+      - Naming prefixes? square, "4x4" for "there are four 4-order faces"? not sure how we would disambiguate
+        - Actually, fixed strings for the "edge/vertex" ones, and... STORE the face indices in a string for the face ones?
+    - We want to consolidate references to PatternBoards, so that the embeddings computation is "spread across all the rules"
+    - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
+      - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
+        - Would we need to "remap" patterns/rules?
+  - 
+  - PatternEmbeddingNode - PatternBoard in PatternBoard (without state at first)
   - 
   - Pattern = pattern-board + pattern-state (features?)
     - Face values are part of the pattern/features, no? 
