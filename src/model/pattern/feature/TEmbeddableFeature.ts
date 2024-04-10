@@ -21,5 +21,6 @@ export interface TEmbeddableFeature extends TFeature {
   serialize(): TSerializedEmbeddableFeature;
 
   // A canonical string representation of the feature (to act as a "hash" for the feature for lookups, but also debugging)
+  // TODO: rename toCanonicalString?
   getCanonicalString(): string;
 }

@@ -4,7 +4,10 @@
 - TODO
   - 
   - !!! Only "red exit edge" if there are always 2 black edges INSIDE our pattern for that vertex!!!
+    - (... OR it was in the original pattern)
     - think "in-between diagonal 3" is a non-trivial case.
+  - 
+  - !!! Match exit edges (red) with either absense or just red edges. no white/black!
   - 
   - Get automorphisms from a pattern board
   - Get all edge features

@@ -32,6 +32,8 @@ import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature
 import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
+import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';
+import { solveBasicPattern } from './model/pattern/solveBasicPattern.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -727,6 +729,58 @@ console.log( 'test' );
             children: solutions.map( solution => PatternNode.fromEdgeSolution( squarePatternBoard, solution ) )
           } ), { margin: 5 } ) );
         } );
+
+        // TODO: other features
+        const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
+          const outputFeatures = solveBasicPattern( board, inputFeatures, solveEdges, solveFaceColors, solveSectors );
+
+          console.log( 'solve', JSON.stringify( board.descriptor ) );
+          console.log( 'inputFeatures', inputFeatures.map( feature => feature.getCanonicalString() ) );
+          console.log( 'outputFeatures', outputFeatures.map( feature => feature.getCanonicalString() ) );
+
+          // TODO: console.log
+
+          return new AlignBox( new HBox( {
+            spacing: 10,
+            children: [
+              new PatternNode( {
+                patternBoard: board,
+                features: inputFeatures,
+                planarPatternMap: board.planarPatternMap
+              } ),
+              new PatternNode( {
+                patternBoard: board,
+                features: outputFeatures,
+                planarPatternMap: board.planarPatternMap
+              } )
+            ]
+          } ), { margin: 5 } );
+        };
+
+        container.addChild( getRuleNode( squarePatternBoard, [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
+          new RedEdgeFeature( squarePatternBoard.edges[ 0 ] ),
+        ], true, false, false ) );
+
+        container.addChild( getRuleNode( squarePatternBoard, [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
+          FaceColorDualFeature.fromPrimarySecondaryFaces( [ squarePatternBoard.faces[ 0 ], squarePatternBoard.faces[ 1 ] ], [] ),
+        ], false, true, false ) );
+
+        container.addChild( getRuleNode( squarePatternBoard, [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
+          new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
+        ], true, false, true ) );
+
+        container.addChild( getRuleNode( squarePatternBoard, [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
+          new SectorNotZeroFeature( squarePatternBoard.sectors[ 0 ] ),
+        ], false, false, true ) );
+
+        container.addChild( getRuleNode( squarePatternBoard, [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
+          new SectorOnlyOneFeature( squarePatternBoard.sectors[ 0 ] ),
+        ], false, false, true ) );
       }
     }
   }
