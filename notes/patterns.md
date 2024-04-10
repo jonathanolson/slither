@@ -7,6 +7,14 @@
     - !!! Match exit edges (red) with either absence or just red edges. no white/black!
     - ... Almost everything else needs to have an exact analogue? (sectors, face colors, non-exit edge features, etc.)
   - 
+  - !!! For feature equality (of a list that is nonredundant) - just get canonical strings, sort, append, compare!
+    - NOTE: We can't exactly deduplicate embeddings with this, due to FACE COLOR DUALS that start to "overlap"
+      - HEY, for embeddings, COMBINE FACE COLOR DUALS that have overlap(!)
+        - embedFeatures( features ) => features, handles overlapping things (face color duals) and removes redundancies
+          - then sort to "canonical order"?
+  - 
+  - Ordering of getFaceFeatureCombinations (fewer duals first, then fewer faces in duals, etc.)
+  - 
   - Get automorphisms from a pattern board
   - Get all edge features
   - Get all face color dual feature combinations
