@@ -3,6 +3,15 @@
 
 - TODO
   - 
+  - FaceColorDualFeature ... we need to check to see IF ONE IS A SUBSET OF ANOTHER(!)(!)
+  - 
+  - Organization:
+    - PatternBoard (without description)?!?
+    - WITH DESCRIPTION
+    - WITH MAPPING (?) less important
+    - --- with automorphisms?
+      - Later, for solving... finding valid embeddings(!) 
+  - 
   - Highlander canonical:
     - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
       - Easily allows searching for highlander-duplicates
