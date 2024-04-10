@@ -3,8 +3,6 @@
 
 - TODO
   - 
-  - FaceColorDualFeature ... we need to check to see IF ONE IS A SUBSET OF ANOTHER(!)(!)
-  - 
   - Organization:
     - PatternBoard (without description)?!?
     - WITH DESCRIPTION

@@ -43,6 +43,10 @@ export class VertexNotEmptyFeature implements TEmbeddableFeature {
     return other instanceof VertexNotEmptyFeature && other.vertex.index === this.vertex.index;
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) || ( feature instanceof BlackEdgeFeature && feature.edge.vertices.includes( this.vertex ) ) );
   }

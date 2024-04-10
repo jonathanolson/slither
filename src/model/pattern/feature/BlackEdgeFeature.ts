@@ -46,6 +46,10 @@ export class BlackEdgeFeature implements TEmbeddableFeature {
     return other instanceof BlackEdgeFeature && other.edge.index === this.edge.index;
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) );
   }

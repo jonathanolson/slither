@@ -25,8 +25,6 @@ export class PatternRule {
   }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
-    // TODO: WHAT if our FaceColorDual is MORE CONSTRAINED than the inputFeatureSet??
-    // TODO: e.g. has faces outside of this?!?
     return this.inputFeatureSet.isSubsetOf( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
   }
 

@@ -51,6 +51,10 @@ export class FaceFeature implements TEmbeddableFeature {
     return other instanceof FaceFeature && other.face.index === this.face.index && other.value === this.value;
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) );
   }

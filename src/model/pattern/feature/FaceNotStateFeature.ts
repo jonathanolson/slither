@@ -72,6 +72,10 @@ export class FaceNotStateFeature implements TEmbeddableFeature {
            this.redEdges.every( edge => other.redEdges.some( otherEdge => otherEdge.index === edge.index ) );
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => this.equals( feature ) || (
       feature instanceof BlackEdgeFeature && this.redEdges.includes( feature.edge )

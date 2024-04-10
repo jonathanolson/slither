@@ -19,6 +19,7 @@ export class FeatureSet {
   public map: Map<string, TEmbeddableFeature> = new Map();
 
   public constructor(
+    // TODO: can we make this NOT public, so we can change things in the future?
     public features: TEmbeddableFeature[]
   ) {
     assertEnabled() && assert( filterRedundantFeatures( features ).length === features.length );
@@ -28,6 +29,19 @@ export class FeatureSet {
     }
 
     assertEnabled() && assert( this.map.size === features.length );
+  }
+
+  public hasExactFeature( feature: TEmbeddableFeature ): boolean {
+    return this.map.has( feature.getCanonicalString() );
+  }
+
+  public impliesFeature( feature: TEmbeddableFeature ): boolean {
+    if ( feature instanceof FaceColorDualFeature ) {
+      return this.features.some( otherFeature => feature.isSubsetOf( otherFeature ) );
+    }
+    else {
+      return this.hasExactFeature( feature );
+    }
   }
 
   // returns null if the embedding is incompatible with the features (e.g. invalid face coloring of exit faces)
@@ -100,7 +114,7 @@ export class FeatureSet {
 
   public isSubsetOf( other: FeatureSet ): boolean {
     for ( const feature of this.features ) {
-      if ( !other.map.has( feature.getCanonicalString() ) ) {
+      if ( !other.impliesFeature( feature ) ) {
         return false;
       }
     }

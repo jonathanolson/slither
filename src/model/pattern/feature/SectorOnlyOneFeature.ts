@@ -45,6 +45,10 @@ export class SectorOnlyOneFeature implements TEmbeddableFeature {
     return other instanceof SectorOnlyOneFeature && other.sector.index === this.sector.index;
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     if ( otherFeatures.some( feature => this.equals( feature ) ) ) {
       return true;

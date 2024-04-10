@@ -111,6 +111,32 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
            ( equalArray( this.primaryFaces, other.secondaryFaces ) && equalArray( this.secondaryFaces, other.primaryFaces ) );
   }
 
+  // TODO: We aren't requiring compatibility, is that correct
+  public isSubsetOf( other: TFeature ): boolean {
+    if ( !( other instanceof FaceColorDualFeature ) ) {
+      return false;
+    }
+
+    if ( this.allFaces.size > other.allFaces.size ) {
+      return false;
+    }
+
+    for ( const face of this.allFaces.values() ) {
+      if ( !other.allFaces.has( face ) ) {
+        return false;
+      }
+    }
+
+    const isSame = other.primaryFaces.includes( this.primaryFaces[ 0 ] );
+
+    if ( isSame ) {
+      return this.primaryFaces.every( face => other.primaryFaces.includes( face ) ) && this.secondaryFaces.every( face => other.secondaryFaces.includes( face ) );
+    }
+    else {
+      return this.primaryFaces.every( face => other.secondaryFaces.includes( face ) ) && this.secondaryFaces.every( face => other.primaryFaces.includes( face ) );
+    }
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     // TODO: See if we... subset any? Hmmm?
     return otherFeatures.some( feature => this.equals( feature ) );
@@ -124,6 +150,39 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
       sameColorPaths: this.sameColorPaths.map( path => path.map( edge => edge.index ) ),
       oppositeColorPaths: this.oppositeColorPaths.map( path => path.map( edge => edge.index ) )
     };
+  }
+
+  public isCompatibleWith( other: FaceColorDualFeature ): boolean {
+    let hasSame = false;
+    let hasOpposite = false;
+
+    const sharedFaces = new Set( [ ...this.allFaces ].filter( face => other.allFaces.has( face ) ) );
+
+    // TODO: could be optimized? (should we store sets for primary/secondary?
+
+    for ( const face of this.primaryFaces ) {
+      if ( sharedFaces.has( face ) ) {
+        if ( other.primaryFaces.includes( face ) ) {
+          hasSame = true;
+        }
+        if ( other.secondaryFaces.includes( face ) ) {
+          hasOpposite = true;
+        }
+      }
+    }
+
+    for ( const face of this.secondaryFaces ) {
+      if ( sharedFaces.has( face ) ) {
+        if ( other.primaryFaces.includes( face ) ) {
+          hasOpposite = true;
+        }
+        if ( other.secondaryFaces.includes( face ) ) {
+          hasSame = true;
+        }
+      }
+    }
+
+    return !hasSame || !hasOpposite;
   }
 
   public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'face-color-dual' }, patternBoard: TPatternBoard ): FaceColorDualFeature {

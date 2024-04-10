@@ -18,6 +18,9 @@ export interface TEmbeddableFeature extends TFeature {
   // Equality based on index-equality for pattern board objects.
   indexEquals( other: TFeature ): boolean;
 
+  // Whether this feature is a subset of the other feature (the other feature implies this feature)
+  isSubsetOf( other: TFeature ): boolean;
+
   serialize(): TSerializedEmbeddableFeature;
 
   // A canonical string representation of the feature (to act as a "hash" for the feature for lookups, but also debugging)

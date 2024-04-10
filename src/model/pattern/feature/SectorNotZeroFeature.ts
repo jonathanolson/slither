@@ -44,6 +44,10 @@ export class SectorNotZeroFeature implements TEmbeddableFeature {
     return other instanceof SectorNotZeroFeature && other.sector.index === this.sector.index;
   }
 
+  public isSubsetOf( other: TFeature ): boolean {
+    return this.equals( other );
+  }
+
   public isRedundant( otherFeatures: TFeature[] ): boolean {
     return otherFeatures.some( feature => {
       return this.equals( feature ) || ( feature instanceof BlackEdgeFeature && this.sector.edges.includes( feature.edge ) );
