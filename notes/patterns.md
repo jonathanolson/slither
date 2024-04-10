@@ -12,7 +12,8 @@
       - Yeah, just have it return null if we can't discover anything -
         - NO THRESHOLD, we should do BFS and increase the set of faces we search each time? if count stays the same, bail?
   - Matching!!!
-    - !!! Match exit edges (red) with either absense or just red edges. no white/black!
+    - !!! Match exit edges (red) with either absence or just red edges. no white/black!
+    - ... Almost everything else needs to have an exact analogue? (sectors, face colors, non-exit edge features, etc.)
   - 
   - Get automorphisms from a pattern board
   - Get all edge features
