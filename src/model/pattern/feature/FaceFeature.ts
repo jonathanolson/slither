@@ -39,7 +39,7 @@ export class FaceFeature implements TEmbeddableFeature {
     }
   }
 
-  public applyEmbedding( embedding: Embedding ): TFeature[] {
+  public applyEmbedding( embedding: Embedding ): FaceFeature[] {
     return [ new FaceFeature( embedding.mapFace( this.face ), this.value ) ];
   }
 

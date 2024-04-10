@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Serialization of FeatureSet
+  - 
   - Highlander canonical:
     - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
       - Easily allows searching for highlander-duplicates
@@ -18,6 +20,11 @@
       - HEY, for embeddings, COMBINE FACE COLOR DUALS that have overlap(!)
         - embedFeatures( features ) => features, handles overlapping things (face color duals) and removes redundancies
           - then sort to "canonical order"?
+  - 
+  - Database of pattern boards (with mappings).
+    - So we can manually create a pattern board and FIND an equivalent mapping through it(!)
+    - CANONICALIZATION somehow? or just scan for isomorphisms?
+    - move out sketchyIsIsomorphic into a function in code
   - 
   - Ordering of getFaceFeatureCombinations (fewer duals first, then fewer faces in duals, etc.)
   - 

@@ -33,7 +33,7 @@ export class SectorNotTwoFeature implements TEmbeddableFeature {
   }
 
 
-  public applyEmbedding( embedding: Embedding ): TFeature[] {
+  public applyEmbedding( embedding: Embedding ): SectorNotTwoFeature[] {
     return [ new SectorNotTwoFeature( embedding.mapSector( this.sector ) ) ];
   }
 
