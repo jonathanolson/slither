@@ -667,6 +667,7 @@ console.log( 'test' );
       {
         const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
         const diagonalPatternBoard = getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
+        const doubleSquarePatternBoard = getNextGeneration( getNextGeneration( getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) ) ) )[ 0 ];
 
         container.addChild( new PatternNode( {
           patternBoard: squarePatternBoard,
@@ -753,6 +754,8 @@ console.log( 'test' );
                 patternBoard: board,
                 features: outputFeatures,
                 planarPatternMap: board.planarPatternMap
+              }, {
+                // showQuestionMarks: false
               } )
             ]
           } ), { margin: 5 } );
@@ -786,7 +789,18 @@ console.log( 'test' );
         container.addChild( getRuleNode( diagonalPatternBoard, [
           new FaceFeature( diagonalPatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( diagonalPatternBoard.faces[ 1 ], 3 ),
-        ], true, false, true ) );
+        ], true, true, true ) );
+
+        container.addChild( getRuleNode( doubleSquarePatternBoard, [
+          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
+          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
+        ], true, true, true ) );
+
+        container.addChild( getRuleNode( doubleSquarePatternBoard, [
+          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
+          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
+          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 7 ] ),
+        ], true, true, true ) );
       }
     }
   }

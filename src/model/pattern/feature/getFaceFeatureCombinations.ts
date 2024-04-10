@@ -1,8 +1,13 @@
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
+import { getEdgeConnectedComponentFaces } from '../getEdgeConnectedComponentFaces.ts';
+import { TPatternFace } from '../TPatternFace.ts';
 
 export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceColorDualFeature[][] => {
   const featureMap = new Map<string, FaceColorDualFeature>();
+
+  const edgeConnectedComponentFaces = getEdgeConnectedComponentFaces( patternBoard );
+  const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
 
   // Memoize features, since (a) we want to share them, and (b) sometimes they are slightly expensive to create.
   const getFeature = ( primaryIndices: number[], secondaryIndices: number[] ): FaceColorDualFeature => {
@@ -29,6 +34,14 @@ export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceC
 
   return generateAllDisjointNonSingleSubsets( numFaces ).flatMap( disjointIndexSets => {
     const result: FaceColorDualFeature[][] = [];
+
+    // See if the disjoint index sets are each individually part of the same edge-connected component
+    if ( disjointIndexSets.some( indexSet => {
+      const componentIndices = indexSet.map( index => getComponentIndex( patternBoard.faces[ index ] ) );
+      return componentIndices.some( index => index !== componentIndices[ 0 ] );
+    } ) ) {
+      return result;
+    }
 
     // Turns each index set into a set of features (we'll pick one of them each)
     const setToDualPermutationFeatures = disjointIndexSets.map( indexSet => {

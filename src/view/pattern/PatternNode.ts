@@ -18,8 +18,9 @@ import { TPatternEdge } from '../../model/pattern/TPatternEdge.ts';
 import { TEmbeddableFeature } from '../../model/pattern/feature/TEmbeddableFeature.ts';
 
 export type PatternNodeOptions = {
+  showQuestionMarks?: boolean;
+
   // TODO: face color matching for a previous patternnode
-  placeholder?: boolean;
 };
 
 export class PatternNode extends Node {
@@ -29,13 +30,8 @@ export class PatternNode extends Node {
   ) {
 
     const options = optionize<PatternNodeOptions>()( {
-      // TODO
-      placeholder: true
+      showQuestionMarks: true
     }, providedOptions );
-
-    if ( !options.placeholder ) {
-      console.log( 'hah' );
-    }
 
     const patternBoard = pattern.patternBoard;
     const features = pattern.features;
@@ -64,7 +60,7 @@ export class PatternNode extends Node {
 
     // Face Color Features
     ( features.filter( f => f instanceof FaceColorDualFeature ) as FaceColorDualFeature[] ).forEach( ( feature, i ) => {
-      const hueLUT = [ 255, 160, 20, 230, 96, 70, 0 ];
+      const hueLUT = [ 255, 160, 20, 96, 70, 230, 0 ];
       const hue = hueLUT[ i % hueLUT.length ];
       const primaryColor = darkTheme.faceColorLightHueLUTProperty.value[ hue ];
       const secondaryColor = darkTheme.faceColorDarkHueLUTProperty.value[ hue ];
@@ -182,18 +178,20 @@ export class PatternNode extends Node {
         const faceFeature = ( features.find( feature => feature instanceof FaceFeature && feature.face === face ) ?? null ) as FaceFeature | null;
 
         if ( !faceFeature || faceFeature.value !== null ) {
-          const string = faceFeature ? faceFeature.value!.toString() : '?';
-          const points = planarPatternMap.faceMap.get( face )!;
-          const centroid = getCentroid( points );
-          const text = new Text( string, {
-            font: puzzleFont,
-            centerX: centroid.x,
-            centerY: centroid.y,
-            fill: faceFeature ? '#ccc' : '#555',
-            maxWidth: 0.9,
-            maxHeight: 0.9
-          } );
-          container.addChild( text );
+          const string = faceFeature ? faceFeature.value!.toString() : ( options.showQuestionMarks ? '?' : '' );
+          if ( string.length ) {
+            const points = planarPatternMap.faceMap.get( face )!;
+            const centroid = getCentroid( points );
+            const text = new Text( string, {
+              font: puzzleFont,
+              centerX: centroid.x,
+              centerY: centroid.y,
+              fill: faceFeature ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)',
+              maxWidth: 0.9,
+              maxHeight: 0.9
+            } );
+            container.addChild( text );
+          }
         }
       }
     } );

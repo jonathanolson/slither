@@ -3,14 +3,6 @@
 
 - TODO
   - 
-  - Bug:
-    - Replace FaceColorDualFeature (fromPrimarySecondaryFaces) with a better search (it fails on diagonal-vertex-connected faces)
-      - HEY, we should reset hops to 0 when we actually increment? Hmm
-      - !!! Actually... we need to give it different input data! It is trying to find paths between faces that
-        !!! HAVE NO PATHS!!! NO PATHS!
-      - We can have a threshold, and FAIL OUT, right?
-      - Yeah, just have it return null if we can't discover anything -
-        - NO THRESHOLD, we should do BFS and increase the set of faces we search each time? if count stays the same, bail?
   - Matching!!!
     - !!! Match exit edges (red) with either absence or just red edges. no white/black!
     - ... Almost everything else needs to have an exact analogue? (sectors, face colors, non-exit edge features, etc.)

@@ -3,6 +3,7 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
+import { getEdgeConnectedComponentFaces } from './getEdgeConnectedComponentFaces.ts';
 
 // TODO: performance!!!!
 export const coalesceFaceColorFeatures = ( patternBoard: TPatternBoard, solutions: TPatternEdge[][] ): FaceColorDualFeature[] => {
@@ -11,13 +12,19 @@ export const coalesceFaceColorFeatures = ( patternBoard: TPatternBoard, solution
   const sameColorDuals: FaceColorDualFeature[] = [];
   const oppositeColorDuals: FaceColorDualFeature[] = [];
 
+  const edgeConnectedComponentFaces = getEdgeConnectedComponentFaces( patternBoard );
+  const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
+  const sameComponent = ( faceA: TPatternFace, faceB: TPatternFace ) => getComponentIndex( faceA ) === getComponentIndex( faceB );
+
   for ( let i = 0; i < patternBoard.faces.length; i++ ) {
     const faceA = patternBoard.faces[ i ];
     for ( let j = i + 1; j < patternBoard.faces.length; j++ ) {
       const faceB = patternBoard.faces[ j ];
 
-      sameColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
-      oppositeColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
+      if ( sameComponent( faceA, faceB ) ) {
+        sameColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
+        oppositeColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
+      }
     }
   }
 
