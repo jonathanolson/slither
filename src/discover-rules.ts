@@ -666,6 +666,7 @@ console.log( 'test' );
 
       {
         const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
+        const diagonalPatternBoard = getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
 
         container.addChild( new PatternNode( {
           patternBoard: squarePatternBoard,
@@ -781,6 +782,11 @@ console.log( 'test' );
           new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
           new SectorOnlyOneFeature( squarePatternBoard.sectors[ 0 ] ),
         ], false, false, true ) );
+
+        container.addChild( getRuleNode( diagonalPatternBoard, [
+          new FaceFeature( diagonalPatternBoard.faces[ 0 ], 3 ),
+          new FaceFeature( diagonalPatternBoard.faces[ 1 ], 3 ),
+        ], true, false, true ) );
       }
     }
   }

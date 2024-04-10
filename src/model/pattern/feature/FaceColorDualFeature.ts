@@ -147,6 +147,9 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     const visitedFaces = new Set( [ firstFace ] );
 
     for ( let hops = 1; visitedFaces.size < allFaces.size; hops++ ) {
+      if ( hops > 100 ) {
+        throw new Error( 'FaceColorDualFeature.fromPrimarySecondaryFaces: could not find all connections' );
+      }
       const recur = ( face: TPatternFace, path: TPatternEdge[], initialFace: TPatternFace ) => {
         for ( const edge of face.edges ) {
 

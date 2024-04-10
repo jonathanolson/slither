@@ -3,11 +3,16 @@
 
 - TODO
   - 
-  - !!! Only "red exit edge" if there are always 2 black edges INSIDE our pattern for that vertex!!!
-    - (... OR it was in the original pattern)
-    - think "in-between diagonal 3" is a non-trivial case.
-  - 
-  - !!! Match exit edges (red) with either absense or just red edges. no white/black!
+  - Bug:
+    - Replace FaceColorDualFeature (fromPrimarySecondaryFaces) with a better search (it fails on diagonal-vertex-connected faces)
+      - HEY, we should reset hops to 0 when we actually increment? Hmm
+      - !!! Actually... we need to give it different input data! It is trying to find paths between faces that
+        !!! HAVE NO PATHS!!! NO PATHS!
+      - We can have a threshold, and FAIL OUT, right?
+      - Yeah, just have it return null if we can't discover anything -
+        - NO THRESHOLD, we should do BFS and increase the set of faces we search each time? if count stays the same, bail?
+  - Matching!!!
+    - !!! Match exit edges (red) with either absense or just red edges. no white/black!
   - 
   - Get automorphisms from a pattern board
   - Get all edge features
