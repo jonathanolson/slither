@@ -3,6 +3,12 @@
 
 - TODO
   - 
+  - Highlander canonical:
+    - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
+      - Easily allows searching for highlander-duplicates
+  - [ HEY HEY!!!! ]
+    - Let's just output both FeatureSets of non-highlander AND highlander (from the solve process)
+  - 
   - Matching!!!
     - !!! Match exit edges (red) with either absence or just red edges. no white/black!
     - ... Almost everything else needs to have an exact analogue? (sectors, face colors, non-exit edge features, etc.)
