@@ -27,8 +27,6 @@ export class PlanarMappedPatternBoardNode extends Node {
       scale: 30
     } );
 
-    // TODO: labels?
-
     patternBoard.faces.forEach( face => {
       const isExit = face.isExit;
 

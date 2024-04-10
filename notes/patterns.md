@@ -3,10 +3,21 @@
 
 - TODO
   - 
+  - Get automorphisms from a pattern board
+  - Get all edge features
+  - Get all face color dual feature combinations
+  - [ ... ] create patterns (verify at least one solution in the solver)
+  - DEDUPLICATE? (with automorphisms)
+  - 
+  - View for pattern - canonicalize which face features get which coloring (lowest index ordering) so those don't... change? hmm awkward
+    - We... actually want to try to keep face colors consistent? (allow passing in a previous mapping?)
+  - 
   - !!!! When we have a set of features we are adding, we can potentially RULE OUT other features (intelligent exploration)
     - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
   - 
   - Add "feature creation" from pattern board
+  - 
+  - Can we use Solver.solveAssuming
   - 
   - NOTE: Handle FaceColorDualFeature differently, no redundancy checking
   - 

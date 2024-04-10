@@ -22,6 +22,15 @@ import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNod
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
 import { deserializePlanarMappedPatternBoard, serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
 import { generateAllDisjointNonSingleSubsets, generateBinaryPartitions, getFaceFeatureCombinations } from './model/pattern/feature/getFaceFeatureCombinations.ts';
+import { PatternNode } from './view/pattern/PatternNode.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
+import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
+import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeature.ts';
+import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature.ts';
+import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
+import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -645,6 +654,50 @@ console.log( 'test' );
         type: 'faces',
         vertexLists: [ [ 0, 1, 2, 3 ] ]
       } ) ).map( arr => arr.map( f => f.getCanonicalString() ) ) );
+      console.log( getFaceFeatureCombinations( new BasePatternBoard( {
+        numNonExitVertices: 0,
+        numExitVertices: 4,
+        type: 'faces',
+        vertexLists: [ [ 0, 1, 2, 3 ] ]
+      } ) ) );
+
+      {
+        const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
+
+        container.addChild( new PatternNode( {
+          patternBoard: squarePatternBoard,
+          features: [
+            new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
+            new BlackEdgeFeature( squarePatternBoard.edges[ 0 ] ),
+            new RedEdgeFeature( squarePatternBoard.edges[ 1 ] ),
+            new RedEdgeFeature( squarePatternBoard.edges[ 4 ] ),
+            // FaceColorDualFeature.fromPrimarySecondaryFaces( [
+            //   squarePatternBoard.faces[ 0 ],
+            //   squarePatternBoard.faces[ 1 ],
+            //   squarePatternBoard.faces[ 2 ],
+            // ], [
+            //   squarePatternBoard.faces[ 3 ],
+            //   squarePatternBoard.faces[ 4 ],
+            // ] ),
+            FaceColorDualFeature.fromPrimarySecondaryFaces( [
+              squarePatternBoard.faces[ 0 ],
+              squarePatternBoard.faces[ 1 ],
+            ], [
+              squarePatternBoard.faces[ 2 ],
+            ] ),
+            FaceColorDualFeature.fromPrimarySecondaryFaces( [
+              squarePatternBoard.faces[ 3 ],
+            ], [
+              squarePatternBoard.faces[ 4 ],
+            ] ),
+            new SectorNotZeroFeature( squarePatternBoard.sectors[ 0 ] ),
+            new SectorNotOneFeature( squarePatternBoard.sectors[ 1 ] ),
+            new SectorNotTwoFeature( squarePatternBoard.sectors[ 2 ] ),
+            new SectorOnlyOneFeature( squarePatternBoard.sectors[ 3 ] ),
+          ],
+          planarPatternMap: squarePatternBoard.planarPatternMap
+        } ) );
+      }
     }
   }
 
