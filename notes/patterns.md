@@ -3,8 +3,6 @@
 
 - TODO
   - 
-  - Serialization of FeatureSet
-  - 
   - Highlander canonical:
     - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
       - Easily allows searching for highlander-duplicates

@@ -33,7 +33,7 @@ import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature
 import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';
-import { solveBasicPattern } from './model/pattern/solveBasicPattern.ts';
+import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -740,7 +740,13 @@ console.log( 'test' );
 
         // TODO: other features
         const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
-          const outputFeatures = solveBasicPattern( board, inputFeatures, solveEdges, solveFaceColors, solveSectors );
+          // TODO: clearly allow FeatureSet as the primary here
+          const outputFeatures = FeatureSet.getBasicSolve( board, new FeatureSet( inputFeatures ), {
+            solveEdges,
+            solveFaceColors,
+            solveSectors,
+            highlander: false
+          } ).features;
 
           console.log( 'solve', JSON.stringify( board.descriptor ) );
           console.log( 'inputFeatures', inputFeatures.map( feature => feature.getCanonicalString() ) );

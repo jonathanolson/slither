@@ -3,7 +3,16 @@ import { default as assert, assertEnabled } from '../../../workarounds/assert.ts
 import { filterRedundantFeatures } from './filterRedundantFeatures.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { arrayRemove } from 'phet-lib/phet-core';
+import { arrayRemove, optionize } from 'phet-lib/phet-core';
+import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
+import { deserializeEmbeddableFeature } from './deserializeEmbeddableFeature.ts';
+import { TPatternBoard } from '../TPatternBoard.ts';
+import { PatternBoardSolver } from '../PatternBoardSolver.ts';
+import { coalesceEdgeFeatures } from '../coalesceEdgeFeatures.ts';
+import { coalesceFaceColorFeatures } from '../coalesceFaceColorFeatures.ts';
+import { coalesceSectorFeatures } from '../coalesceSectorFeatures.ts';
+import { filterHighlanderSolutions } from '../filterHighlanderSolutions.ts';
+import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 
 export class FeatureSet {
 
@@ -102,4 +111,58 @@ export class FeatureSet {
   public equals( other: FeatureSet ): boolean {
     return this.features.length === other.features.length && this.isSubsetOf( other );
   }
+
+  public serialize(): TSerializedFeatureSet {
+    return {
+      features: this.features.map( feature => feature.serialize() )
+    };
+  }
+
+  public static deserialize( serialized: TSerializedFeatureSet, patternBoard: TPatternBoard ): FeatureSet {
+    return new FeatureSet( serialized.features.map( feature => deserializeEmbeddableFeature( feature, patternBoard ) ) );
+  }
+
+  // TODO: Figure out best "Pattern" representation (FeatureSet, no? mapping or no?)
+  public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet {
+
+    // TODO: is this too much performance loss?
+    const options = optionize<BasicSolveOptions>()( {
+      solveEdges: true,
+      solveFaceColors: false,
+      solveSectors: false,
+      highlander: false
+    }, providedOptions );
+
+    let solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatureSet.features );
+
+    if ( options.highlander ) {
+      const indeterminateEdges = getIndeterminateEdges( patternBoard, inputFeatureSet.features );
+      const exitVertices = patternBoard.vertices.filter( v => v.isExit );
+
+      solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
+    }
+
+    const addedEdgeFeatures = options.solveEdges ? coalesceEdgeFeatures( patternBoard, solutions ) : [];
+    const addedFaceColorFeatures = options.solveFaceColors ? coalesceFaceColorFeatures( patternBoard, solutions ) : [];
+    const addedSectorFeatures = options.solveSectors ? coalesceSectorFeatures( patternBoard, solutions ) : [];
+
+    return new FeatureSet( filterRedundantFeatures( [
+      // Strip face color duals, because we can't vet redundancy (we generate a new set)
+      ...( options.solveFaceColors ? inputFeatureSet.features.filter( feature => !( feature instanceof FaceColorDualFeature ) ) : inputFeatureSet.features ),
+      ...addedEdgeFeatures,
+      ...addedFaceColorFeatures,
+      ...addedSectorFeatures
+    ] ) );
+  }
 }
+
+export type BasicSolveOptions = {
+  solveEdges?: boolean;
+  solveFaceColors?: boolean;
+  solveSectors?: boolean;
+  highlander?: boolean;
+};
+
+export type TSerializedFeatureSet = {
+  features: TSerializedEmbeddableFeature[];
+};
