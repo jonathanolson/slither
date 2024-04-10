@@ -31,6 +31,7 @@ import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeatu
 import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature.ts';
 import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
+import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -697,6 +698,35 @@ console.log( 'test' );
           ],
           planarPatternMap: squarePatternBoard.planarPatternMap
         } ) );
+
+        container.addChild( PatternNode.fromEdgeSolution(
+          squarePatternBoard,
+          [ squarePatternBoard.edges[ 0 ], squarePatternBoard.edges[ 1 ], squarePatternBoard.edges[ 4 ] ]
+        ) );
+
+        [
+          [],
+          [ new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ) ],
+          [ new BlackEdgeFeature( squarePatternBoard.edges[ 0 ] )],
+          [ new RedEdgeFeature( squarePatternBoard.edges[ 0 ] )],
+          [ FaceColorDualFeature.fromPrimarySecondaryFaces( [
+              squarePatternBoard.faces[ 0 ],
+              squarePatternBoard.faces[ 1 ],
+            ], [
+              squarePatternBoard.faces[ 2 ],
+            ] ) ],
+          [ new SectorOnlyOneFeature( squarePatternBoard.sectors[ 3 ] ) ],
+        ].forEach( features => {
+          const solver = new PatternBoardSolver( squarePatternBoard );
+          features.forEach( feature => solver.addFeature( feature ) );
+          const solutions = solver.getRemainingSolutions();
+          console.log( solutions );
+
+          container.addChild( new AlignBox( new HBox( {
+            spacing: 10,
+            children: solutions.map( solution => PatternNode.fromEdgeSolution( squarePatternBoard, solution ) )
+          } ), { margin: 5 } ) );
+        } );
       }
     }
   }

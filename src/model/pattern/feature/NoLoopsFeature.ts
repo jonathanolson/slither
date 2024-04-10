@@ -49,8 +49,7 @@ export class NoLoopsFeature implements TFeature {
           continue;
         }
 
-        if ( nextVertex === startVertex ) {
-          assertEnabled() && assert( path.length >= 3 );
+        if ( nextVertex === startVertex && path.length >= 3 ) {
 
           const loop = [ ...path, edge ];
 

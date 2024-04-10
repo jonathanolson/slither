@@ -13,6 +13,9 @@ import { SectorNotOneFeature } from '../../model/pattern/feature/SectorNotOneFea
 import { SectorNotTwoFeature } from '../../model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorNotZeroFeature } from '../../model/pattern/feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneFeature.ts';
+import { TPlanarMappedPatternBoard } from '../../model/pattern/TPlanarMappedPatternBoard.ts';
+import { TPatternEdge } from '../../model/pattern/TPatternEdge.ts';
+import { TEmbeddableFeature } from '../../model/pattern/feature/TEmbeddableFeature.ts';
 
 export type PatternNodeOptions = {
   // TODO: face color matching for a previous patternnode
@@ -205,7 +208,7 @@ export class PatternNode extends Node {
         edgeFeatures.forEach( feature => {
           const isBlack = feature instanceof BlackEdgeFeature;
 
-          container.addChild( new Circle( 0.1, {
+          container.addChild( new Circle( 0.12, {
             center: planarPatternMap.vertexMap.get( exitVertex )!,
             lineWidth: 0.03,
             stroke: isBlack ? '#000' : '#f00' // TODO: factor out color?
@@ -214,25 +217,62 @@ export class PatternNode extends Node {
       }
     } );
 
-    // Non-exit Edge features
+    // Non-exit Red Edge features
     patternBoard.edges.forEach( edge => {
       if ( !edge.isExit ) {
-        const edgeFeatures = features.filter( feature => ( feature instanceof BlackEdgeFeature || feature instanceof RedEdgeFeature ) && feature.edge === edge ) as ( BlackEdgeFeature | RedEdgeFeature )[];
+        const edgeFeatures = features.filter( feature => feature instanceof RedEdgeFeature  && feature.edge === edge ) as RedEdgeFeature[];
 
-        edgeFeatures.forEach( feature => {
+        if ( edgeFeatures.length ) {
           const points = planarPatternMap.edgeMap.get( edge )!;
-          const isBlack = feature instanceof BlackEdgeFeature;
 
           container.addChild( new Line( points[ 0 ], points[ 1 ], {
-            stroke: isBlack ? '#fff' : '#f00',
-            lineWidth: 0.05
+            stroke: '#f00',
+            lineWidth: 0.05,
+            lineCap: 'round'
           } ) );
-        } );
+        }
+      }
+    } );
+
+    // Non-exit Black Edge features
+    patternBoard.edges.forEach( edge => {
+      if ( !edge.isExit ) {
+        const edgeFeatures = features.filter( feature => feature instanceof BlackEdgeFeature && feature.edge === edge ) as BlackEdgeFeature[];
+
+        if ( edgeFeatures.length ) {
+          const points = planarPatternMap.edgeMap.get( edge )!;
+
+          container.addChild( new Line( points[ 0 ], points[ 1 ], {
+            stroke: '#fff',
+            lineWidth: 0.1,
+            lineCap: 'round'
+          } ) );
+        }
       }
     } );
 
     super( {
       children: [ container ]
+    } );
+  }
+
+  public static fromEdgeSolution( mappedBoard: TPlanarMappedPatternBoard, edgeSolution: TPatternEdge[] ): PatternNode {
+    const features: TEmbeddableFeature[] = [
+      ...mappedBoard.patternBoard.edges.filter( edge => {
+        const isBlack = edgeSolution.includes( edge );
+
+        return !isBlack || !edge.isExit;
+      } ).map( edge => {
+        const isBlack = edgeSolution.includes( edge );
+
+        return isBlack ? new BlackEdgeFeature( edge ) : new RedEdgeFeature( edge );
+      } )
+    ];
+
+    return new PatternNode( {
+      patternBoard: mappedBoard.patternBoard,
+      features: features,
+      planarPatternMap: mappedBoard.planarPatternMap
     } );
   }
 }

@@ -3,6 +3,9 @@
 
 - TODO
   - 
+  - !!! Only "red exit edge" if there are always 2 black edges INSIDE our pattern for that vertex!!!
+    - think "in-between diagonal 3" is a non-trivial case.
+  - 
   - Get automorphisms from a pattern board
   - Get all edge features
   - Get all face color dual feature combinations
