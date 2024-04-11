@@ -1,13 +1,13 @@
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { getEdgeConnectedComponentFaces } from '../getEdgeConnectedComponentFaces.ts';
 import { TPatternFace } from '../TPatternFace.ts';
 import _ from '../../../workarounds/_.ts';
+import { FaceConnectivity } from '../FaceConnectivity.ts';
 
 export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceColorDualFeature[][] => {
   const featureMap = new Map<string, FaceColorDualFeature>();
 
-  const edgeConnectedComponentFaces = getEdgeConnectedComponentFaces( patternBoard );
+  const edgeConnectedComponentFaces = FaceConnectivity.get( patternBoard ).connectedComponents;
   const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
 
   // Memoize features, since (a) we want to share them, and (b) sometimes they are slightly expensive to create.

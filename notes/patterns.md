@@ -9,6 +9,8 @@
     - (performance, but also "hey we can show what actually changed")
     - Also, our matching is partially based on this(!)
   - 
+  - Deprecate getEdgeConnectedComponentFaces (use FaceConnectivity instead)
+  - 
   - Enumerate initial feature sets (given a pattern board) for:
     1. Edges
     2. Face Colors

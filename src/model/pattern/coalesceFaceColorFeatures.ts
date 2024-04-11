@@ -3,7 +3,7 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
-import { getEdgeConnectedComponentFaces } from './getEdgeConnectedComponentFaces.ts';
+import { FaceConnectivity } from './FaceConnectivity.ts';
 
 // TODO: performance!!!!
 export const coalesceFaceColorFeatures = ( patternBoard: TPatternBoard, solutions: TPatternEdge[][] ): FaceColorDualFeature[] => {
@@ -12,7 +12,7 @@ export const coalesceFaceColorFeatures = ( patternBoard: TPatternBoard, solution
   const sameColorDuals: FaceColorDualFeature[] = [];
   const oppositeColorDuals: FaceColorDualFeature[] = [];
 
-  const edgeConnectedComponentFaces = getEdgeConnectedComponentFaces( patternBoard );
+  const edgeConnectedComponentFaces = FaceConnectivity.get( patternBoard ).connectedComponents;
   const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
   const sameComponent = ( faceA: TPatternFace, faceB: TPatternFace ) => getComponentIndex( faceA ) === getComponentIndex( faceB );
 

@@ -408,18 +408,23 @@ console.log( 'test' );
       console.log( generateAllDisjointNonSingleSubsets( 5 ).map( arr => JSON.stringify( arr ) ) );
       console.log( generateBinaryPartitions( 5 ).map( arr => JSON.stringify( arr ) ) );
 
+      // quantity: 257
       console.log( getFaceFeatureCombinations( new BasePatternBoard( {
         numNonExitVertices: 0,
         numExitVertices: 4,
         type: 'faces',
         vertexLists: [ [ 0, 1, 2, 3 ] ]
       } ) ).map( arr => arr.map( f => f.toCanonicalString() ) ) );
+
+      // quantity: 257
       console.log( getFaceFeatureCombinations( new BasePatternBoard( {
         numNonExitVertices: 0,
         numExitVertices: 4,
         type: 'faces',
         vertexLists: [ [ 0, 1, 2, 3 ] ]
       } ) ) );
+
+      // quantity: 66049
       console.log( getFaceFeatureCombinations( new BasePatternBoard( {
         numNonExitVertices: 0,
         numExitVertices: 7,
