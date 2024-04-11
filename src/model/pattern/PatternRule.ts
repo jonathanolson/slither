@@ -60,21 +60,7 @@ export class PatternRule {
   // Assumes FaceFeatures are static, and that features "in principle" won't be removed (if they are, they are replaced
   // by something that implies the same thing).
   public canPotentiallyMatch( featureSet: FeatureSet ): boolean {
-    if ( !this.inputFeatureSet.isCompatibleWith( featureSet ) ) {
-      return false;
-    }
-
-    for ( const feature of this.inputFeatureSet.features ) {
-      if ( feature instanceof FaceFeature ) {
-        const matchingFaceFeature = ( featureSet.features.find( otherFeature => otherFeature instanceof FaceFeature && feature.face === otherFeature.face ) ?? null ) as FaceFeature | null;
-
-        if ( !matchingFaceFeature || feature.value !== matchingFaceFeature.value ) {
-          return false;
-        }
-      }
-    }
-
-    return true;
+    return this.inputFeatureSet.isCompatibleWith( featureSet ) && this.inputFeatureSet.isFaceSubsetOf( featureSet );
   }
 
   public isRedundant( embeddedRules: PatternRule[] ): boolean {

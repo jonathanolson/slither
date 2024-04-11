@@ -26,7 +26,7 @@ export class FeatureSet {
 
   public map: Map<string, TEmbeddableFeature> = new Map();
 
-  public constructor(
+  private constructor(
     // TODO: can we make this NOT public, so we can change things in the future?
     public features: TEmbeddableFeature[]
   ) {
@@ -39,8 +39,14 @@ export class FeatureSet {
     assertEnabled() && assert( this.map.size === features.length );
   }
 
+  public static fromFeatures(
+    features: TEmbeddableFeature[]
+  ) {
+    return new FeatureSet( features );
+  }
+
   public clone(): FeatureSet {
-    return new FeatureSet( this.features.slice() );
+    return FeatureSet.fromFeatures( this.features.slice() );
   }
 
   public hasExactFeature( feature: TEmbeddableFeature ): boolean {
@@ -90,7 +96,7 @@ export class FeatureSet {
       }
     }
 
-    return new FeatureSet( filterRedundantFeatures( [
+    return FeatureSet.fromFeatures( filterRedundantFeatures( [
       ...nonFaceColorFeatures,
       ...nonoverlappingFaceColorFeatures
     ] ) );
@@ -229,7 +235,7 @@ export class FeatureSet {
       }
     }
 
-    return new FeatureSet( [
+    return FeatureSet.fromFeatures( [
       ...nonFaceFeatures,
       ...faceFeatures
     ] );
@@ -318,6 +324,20 @@ export class FeatureSet {
     return true;
   }
 
+  public isFaceSubsetOf( other: FeatureSet ): boolean {
+    for ( const feature of this.features ) {
+      if ( feature instanceof FaceFeature ) {
+        const matchingFaceFeature = ( other.features.find( otherFeature => otherFeature instanceof FaceFeature && feature.face === otherFeature.face ) ?? null ) as FaceFeature | null;
+
+        if ( !matchingFaceFeature || feature.value !== matchingFaceFeature.value ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   public toCanonicalString(): string {
     return `feat:${_.sortBy( this.map.keys() ).join( '/' )}`;
   }
@@ -329,7 +349,7 @@ export class FeatureSet {
   }
 
   public static deserialize( serialized: TSerializedFeatureSet, patternBoard: TPatternBoard ): FeatureSet {
-    return new FeatureSet( serialized.features.map( feature => deserializeEmbeddableFeature( feature, patternBoard ) ) );
+    return FeatureSet.fromFeatures( serialized.features.map( feature => deserializeEmbeddableFeature( feature, patternBoard ) ) );
   }
 
   // TODO: Figure out best "Pattern" representation (FeatureSet, no? mapping or no?)
@@ -361,7 +381,7 @@ export class FeatureSet {
     const addedFaceColorFeatures = options.solveFaceColors ? coalesceFaceColorFeatures( patternBoard, solutions ) : [];
     const addedSectorFeatures = options.solveSectors ? coalesceSectorFeatures( patternBoard, solutions ) : [];
 
-    return new FeatureSet( filterRedundantFeatures( [
+    return FeatureSet.fromFeatures( filterRedundantFeatures( [
       // Strip face color duals, because we can't vet redundancy (we generate a new set)
       ...( options.solveFaceColors ? inputFeatureSet.features.filter( feature => !( feature instanceof FaceColorDualFeature ) ) : inputFeatureSet.features ),
       ...addedEdgeFeatures,

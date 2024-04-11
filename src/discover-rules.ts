@@ -499,7 +499,7 @@ console.log( 'test' );
 
         // TODO: other features
         const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
-          const rule = PatternRule.getBasicRule( board, new FeatureSet( inputFeatures ), {
+          const rule = PatternRule.getBasicRule( board, FeatureSet.fromFeatures( inputFeatures ), {
             solveEdges,
             solveFaceColors,
             solveSectors,
