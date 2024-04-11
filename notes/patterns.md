@@ -3,6 +3,17 @@
 
 - TODO
   - 
+  - Enumerate initial feature sets (given a pattern board) for:
+    1. Edges
+    2. Face Colors
+    3. Edges + Sectors
+    4. Edges + Face Colors
+    5. All
+  - THEN filter them with PatternRule.isAutomorphicTo? (or just... check for isomorphisms of the patterns).
+    - Use... the "is isomorphic" function
+  - THEN test PatternRule.isAutomorphicTo / PatternRule.isRedundant
+  - 
+  - 
   - Organization:
     - Automorphisms?
     - How do we cache embeddings between PatternBoards?
