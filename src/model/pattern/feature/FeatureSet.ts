@@ -1,5 +1,5 @@
 import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { default as assert, assertEnabled } from '../../../workarounds/assert.ts';
+import { assertEnabled, default as assert } from '../../../workarounds/assert.ts';
 import { filterRedundantFeatures } from './filterRedundantFeatures.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';

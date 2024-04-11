@@ -25,8 +25,6 @@ import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
 import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
 import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeature.ts';
-import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature.ts';
-import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';

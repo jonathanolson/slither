@@ -3,7 +3,6 @@ import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
-import { FaceFeature } from './feature/FaceFeature.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 
 export class PatternRule {

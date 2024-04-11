@@ -1,6 +1,6 @@
 import { GeneralVertexStateAction } from './GeneralVertexStateAction.ts';
 import { TDelta } from '../core/TDelta.ts';
-import { serializeVertexStateData, TVertexStateData, TSerializedVertexStateData } from './TVertexStateData.ts';
+import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';

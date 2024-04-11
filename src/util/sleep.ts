@@ -1,4 +1,3 @@
-
 // Work around iOS Safari... just not really calling setTimeout. Fun times. Hook into the animation frame if it hasn't yet.
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 

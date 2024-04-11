@@ -1,8 +1,8 @@
 import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { serializeFace, TSerializedFace, TFace } from '../../board/core/TFace.ts';
-import { TSerializedFaceState, FaceState } from './FaceState.ts';
+import { serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
+import { FaceState, TSerializedFaceState } from './FaceState.ts';
 
 export interface TFaceStateData {
   getFaceState( face: TFace ): FaceState;

@@ -1,4 +1,4 @@
-import { VBox, VBoxOptions, Text } from 'phet-lib/scenery';
+import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
 import { UIAquaRadioButtonGroup, UIAquaRadioButtonGroupOptions } from './UIAquaRadioButtonGroup.ts';
 import { Property } from 'phet-lib/axon';
 import { AquaRadioButtonGroupItem } from 'phet-lib/sun';

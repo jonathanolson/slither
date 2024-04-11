@@ -1,5 +1,5 @@
 import { TState } from '../core/TState.ts';
-import { TVertexStateData, TSerializedVertexStateData } from './TVertexStateData.ts';
+import { TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';

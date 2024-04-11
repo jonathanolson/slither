@@ -1,5 +1,5 @@
-import MiniSat from './minisat_wrapper.js';
 import _ from '../../../workarounds/_';
+import MiniSat from './minisat_wrapper.js';
 
 // var MiniSat = require("./minisat_wrapper.js");
 // var _ = require("underscore");

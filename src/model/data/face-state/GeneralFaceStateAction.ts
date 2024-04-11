@@ -1,8 +1,8 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceStateData } from './TFaceStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { deserializeFace, serializeFace, TSerializedFace, TFace } from '../../board/core/TFace.ts';
-import { TSerializedFaceState, FaceState } from './FaceState.ts';
+import { deserializeFace, serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
+import { FaceState, TSerializedFaceState } from './FaceState.ts';
 
 export class GeneralFaceStateAction implements TAction<TFaceStateData> {
   public constructor(

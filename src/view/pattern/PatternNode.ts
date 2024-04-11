@@ -19,7 +19,7 @@ import { TPatternBoard } from '../../model/pattern/TPatternBoard.ts';
 export type PatternNodeOptions = {
   showQuestionMarks?: boolean;
   labels?: boolean;
-  // TODO: face color matching for a previous patternnode
+  // TODO: face color matching for a previous pattern node
 };
 
 export class PatternNode extends Node {
