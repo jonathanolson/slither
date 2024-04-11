@@ -24,6 +24,7 @@ export class PatternRuleNode extends Node {
     options.children = [
       new HBox( {
         spacing: 10,
+        align: 'origin',
         children: [
           new PatternNode( {
             patternBoard: rule.patternBoard,
@@ -37,6 +38,9 @@ export class PatternRuleNode extends Node {
             headHeight: 7,
             headWidth: 7,
             tailWidth: 1,
+            layoutOptions: {
+              align: 'center'
+            }
           } ),
           new PatternNode( {
             patternBoard: rule.patternBoard,
