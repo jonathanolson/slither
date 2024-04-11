@@ -3,7 +3,6 @@ import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
 import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
 import { darkTheme, puzzleFont } from '../Theme.ts';
-import { TPattern } from '../../model/pattern/TPattern.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
 import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
@@ -13,9 +12,6 @@ import { SectorNotOneFeature } from '../../model/pattern/feature/SectorNotOneFea
 import { SectorNotTwoFeature } from '../../model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorNotZeroFeature } from '../../model/pattern/feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneFeature.ts';
-import { TPlanarMappedPatternBoard } from '../../model/pattern/TPlanarMappedPatternBoard.ts';
-import { TPatternEdge } from '../../model/pattern/TPatternEdge.ts';
-import { TEmbeddableFeature } from '../../model/pattern/feature/TEmbeddableFeature.ts';
 import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
 import { TPlanarPatternMap } from '../../model/pattern/TPlanarPatternMap.ts';
 import { TPatternBoard } from '../../model/pattern/TPatternBoard.ts';
