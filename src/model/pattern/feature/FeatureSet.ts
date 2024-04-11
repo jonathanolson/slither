@@ -27,9 +27,17 @@ export class FeatureSet {
 
   public map: Map<string, TEmbeddableFeature> = new Map();
 
+  // TODO: "solving state" (assuming we are the input feature set, to a target feature set)
+  // TODO: - INCOMPATIBLE - the input feature set is impossible to satisfy, given the target feature set or derivations (this rule will never be applied)
+  // TODO:   - NOTE: do we assume Face features will never be added?
+  // TODO: - NO_MATCH
+  // TODO: - MATCH
+
+  // TODO: provide a set of edges/sectors/faces whose state changes COULD change whether this feature set "matches"
+
   private constructor(
     // TODO: can we make this NOT public, so we can change things in the future?
-    public features: TEmbeddableFeature[]
+    private features: TEmbeddableFeature[]
   ) {
     assertEnabled() && assert( filterRedundantFeatures( features ).length === features.length );
 
@@ -60,6 +68,10 @@ export class FeatureSet {
 
   public clone(): FeatureSet {
     return FeatureSet.fromFeatures( this.features.slice() );
+  }
+
+  public getFeaturesArray(): TEmbeddableFeature[] {
+    return this.features;
   }
 
   public hasExactFeature( feature: TEmbeddableFeature ): boolean {

@@ -56,6 +56,12 @@ export class PatternRule {
     return this.inputFeatureSet.isSubsetOf( featureSet );
   }
 
+  // TODO: "solving state" for PatternRule (given a target feature set):
+  // TODO: - INCOMPATIBLE - the input feature set is impossible to satisfy, given the target feature set or derivations (this rule will never be applied)
+  // TODO: - INCONSEQUENTIAL - the output feature set is a subset of the target feature set (this rule will never provide MORE information)
+  // TODO: - DORMANT - the input feature set is compatible, the output feature set is NOT inconsequential, BUT the input feature set is not satisfied yet (could be used in the future, keep it around)
+  // TODO: - ACTIONABLE - the input feature set matches, and the output feature set is not a subset of the target feature set (this rule can be applied, and will do something)
+
   // Assumes FaceFeatures are static, and that features "in principle" won't be removed (if they are, they are replaced
   // by something that implies the same thing).
   public canPotentiallyMatch( featureSet: FeatureSet ): boolean {

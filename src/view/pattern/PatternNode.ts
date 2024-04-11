@@ -35,7 +35,7 @@ export class PatternNode extends Node {
       labels: false
     }, providedOptions );
 
-    const features = featureSet.features;
+    const features = featureSet.getFeaturesArray();
     assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
     // TODO: move scale elsewhere?
