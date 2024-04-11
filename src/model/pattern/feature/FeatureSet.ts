@@ -21,6 +21,7 @@ import { SectorNotZeroFeature } from './SectorNotZeroFeature.ts';
 import { SectorNotTwoFeature } from './SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
 import { FaceFeature } from './FaceFeature.ts';
+import { TPatternEdge } from '../TPatternEdge.ts';
 
 export class FeatureSet {
 
@@ -39,10 +40,22 @@ export class FeatureSet {
     assertEnabled() && assert( this.map.size === features.length );
   }
 
-  public static fromFeatures(
-    features: TEmbeddableFeature[]
-  ) {
+  public static fromFeatures( features: TEmbeddableFeature[] ): FeatureSet {
     return new FeatureSet( features );
+  }
+
+  public static fromSolution( patternBoard: TPatternBoard, edgeSolution: TPatternEdge[] ): FeatureSet {
+    return FeatureSet.fromFeatures( [
+      ...patternBoard.edges.filter( edge => {
+        const isBlack = edgeSolution.includes( edge );
+
+        return !isBlack || !edge.isExit;
+      } ).map( edge => {
+        const isBlack = edgeSolution.includes( edge );
+
+        return isBlack ? new BlackEdgeFeature( edge ) : new RedEdgeFeature( edge );
+      } )
+    ] );
   }
 
   public clone(): FeatureSet {

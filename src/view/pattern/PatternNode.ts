@@ -16,6 +16,9 @@ import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneF
 import { TPlanarMappedPatternBoard } from '../../model/pattern/TPlanarMappedPatternBoard.ts';
 import { TPatternEdge } from '../../model/pattern/TPatternEdge.ts';
 import { TEmbeddableFeature } from '../../model/pattern/feature/TEmbeddableFeature.ts';
+import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
+import { TPlanarPatternMap } from '../../model/pattern/TPlanarPatternMap.ts';
+import { TPatternBoard } from '../../model/pattern/TPatternBoard.ts';
 
 export type PatternNodeOptions = {
   showQuestionMarks?: boolean;
@@ -25,7 +28,9 @@ export type PatternNodeOptions = {
 
 export class PatternNode extends Node {
   public constructor(
-    public readonly pattern: TPattern,
+    public readonly patternBoard: TPatternBoard,
+    public readonly featureSet: FeatureSet,
+    public readonly planarPatternMap: TPlanarPatternMap,
     providedOptions?: PatternNodeOptions
   ) {
 
@@ -34,9 +39,7 @@ export class PatternNode extends Node {
       labels: false
     }, providedOptions );
 
-    const patternBoard = pattern.patternBoard;
-    const features = pattern.features;
-    const planarPatternMap = pattern.planarPatternMap!;
+    const features = featureSet.features;
     assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
     // TODO: move scale elsewhere?
@@ -301,26 +304,6 @@ export class PatternNode extends Node {
 
     super( {
       children: [ container ]
-    } );
-  }
-
-  public static fromEdgeSolution( mappedBoard: TPlanarMappedPatternBoard, edgeSolution: TPatternEdge[] ): PatternNode {
-    const features: TEmbeddableFeature[] = [
-      ...mappedBoard.patternBoard.edges.filter( edge => {
-        const isBlack = edgeSolution.includes( edge );
-
-        return !isBlack || !edge.isExit;
-      } ).map( edge => {
-        const isBlack = edgeSolution.includes( edge );
-
-        return isBlack ? new BlackEdgeFeature( edge ) : new RedEdgeFeature( edge );
-      } )
-    ];
-
-    return new PatternNode( {
-      patternBoard: mappedBoard.patternBoard,
-      features: features,
-      planarPatternMap: mappedBoard.planarPatternMap
     } );
   }
 }

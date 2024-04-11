@@ -26,11 +26,11 @@ export class PatternRuleNode extends Node {
         spacing: 10,
         align: 'origin',
         children: [
-          new PatternNode( {
-            patternBoard: rule.patternBoard,
-            features: rule.inputFeatureSet.features,
-            planarPatternMap: planarPatternMap,
-          } ),
+          new PatternNode(
+            rule.patternBoard,
+            rule.inputFeatureSet,
+            planarPatternMap
+          ),
           new ArrowNode( 0, 0, 20, 0, {
             // TODO: theme
             fill: '#ccc',
@@ -42,11 +42,11 @@ export class PatternRuleNode extends Node {
               align: 'center'
             }
           } ),
-          new PatternNode( {
-            patternBoard: rule.patternBoard,
-            features: rule.outputFeatureSet.features,
-            planarPatternMap: planarPatternMap,
-          } )
+          new PatternNode(
+            rule.patternBoard,
+            rule.outputFeatureSet,
+            planarPatternMap
+          )
         ]
       } )
     ];

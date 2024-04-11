@@ -434,43 +434,10 @@ console.log( 'test' );
         const diagonalPatternBoard = FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
         const doubleSquarePatternBoard = FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) ) ) )[ 0 ];
 
-        container.addChild( new PatternNode( {
-          patternBoard: squarePatternBoard,
-          features: [
-            new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
-            new BlackEdgeFeature( squarePatternBoard.edges[ 0 ] ),
-            new RedEdgeFeature( squarePatternBoard.edges[ 1 ] ),
-            new RedEdgeFeature( squarePatternBoard.edges[ 4 ] ),
-            // FaceColorDualFeature.fromPrimarySecondaryFaces( [
-            //   squarePatternBoard.faces[ 0 ],
-            //   squarePatternBoard.faces[ 1 ],
-            //   squarePatternBoard.faces[ 2 ],
-            // ], [
-            //   squarePatternBoard.faces[ 3 ],
-            //   squarePatternBoard.faces[ 4 ],
-            // ] ),
-            FaceColorDualFeature.fromPrimarySecondaryFaces( [
-              squarePatternBoard.faces[ 0 ],
-              squarePatternBoard.faces[ 1 ],
-            ], [
-              squarePatternBoard.faces[ 2 ],
-            ] ),
-            FaceColorDualFeature.fromPrimarySecondaryFaces( [
-              squarePatternBoard.faces[ 3 ],
-            ], [
-              squarePatternBoard.faces[ 4 ],
-            ] ),
-            new SectorNotZeroFeature( squarePatternBoard.sectors[ 0 ] ),
-            new SectorNotOneFeature( squarePatternBoard.sectors[ 1 ] ),
-            new SectorNotTwoFeature( squarePatternBoard.sectors[ 2 ] ),
-            new SectorOnlyOneFeature( squarePatternBoard.sectors[ 3 ] ),
-          ],
-          planarPatternMap: squarePatternBoard.planarPatternMap
-        } ) );
-
-        container.addChild( PatternNode.fromEdgeSolution(
+        container.addChild( new PatternNode(
           squarePatternBoard,
-          [ squarePatternBoard.edges[ 0 ], squarePatternBoard.edges[ 1 ], squarePatternBoard.edges[ 4 ] ]
+          FeatureSet.fromSolution( squarePatternBoard, [ squarePatternBoard.edges[ 0 ], squarePatternBoard.edges[ 1 ], squarePatternBoard.edges[ 4 ] ] ),
+          squarePatternBoard.planarPatternMap
         ) );
 
         [
@@ -493,7 +460,7 @@ console.log( 'test' );
 
           container.addChild( new AlignBox( new HBox( {
             spacing: 10,
-            children: solutions.map( solution => PatternNode.fromEdgeSolution( squarePatternBoard, solution ) )
+            children: solutions.map( solution => new PatternNode( squarePatternBoard, FeatureSet.fromSolution( squarePatternBoard, solution ), squarePatternBoard.planarPatternMap ) )
           } ), { margin: 5 } ) );
         } );
 
