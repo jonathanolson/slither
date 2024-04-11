@@ -3,9 +3,8 @@ import { assertEnabled, default as assert } from '../../../workarounds/assert.ts
 import { filterRedundantFeatures } from './filterRedundantFeatures.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { arrayRemove, optionize } from 'phet-lib/phet-core';
+import { optionize } from 'phet-lib/phet-core';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { deserializeEmbeddableFeature } from './deserializeEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
 import { coalesceEdgeFeatures } from '../coalesceEdgeFeatures.ts';
@@ -22,34 +21,391 @@ import { SectorNotTwoFeature } from './SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
 import { FaceFeature } from './FaceFeature.ts';
 import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternFace } from '../TPatternFace.ts';
+import FaceValue from '../../data/face-value/FaceValue.ts';
+import { TPatternSector } from '../TPatternSector.ts';
+import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
+import FeatureCompatibility from './FeatureCompatibility.ts';
 
+// TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
-
-  public map: Map<string, TEmbeddableFeature> = new Map();
-
-  // TODO: "solving state" (assuming we are the input feature set, to a target feature set)
-  // TODO: - INCOMPATIBLE - the input feature set is impossible to satisfy, given the target feature set or derivations (this rule will never be applied)
-  // TODO:   - NOTE: do we assume Face features will never be added?
-  // TODO: - NO_MATCH
-  // TODO: - MATCH
-
-  // TODO: provide a set of edges/sectors/faces whose state changes COULD change whether this feature set "matches"
+  // Used for quick comparisons to see which "way" would be more efficient
+  private readonly size: number;
 
   private constructor(
-    // TODO: can we make this NOT public, so we can change things in the future?
-    private features: TEmbeddableFeature[]
+    private readonly faceValueMap: Map<TPatternFace, FaceValue> = new Map(),
+
+    private readonly blackEdges: Set<TPatternEdge> = new Set(),
+    private readonly redEdges: Set<TPatternEdge> = new Set(),
+
+    private readonly sectorsNotZero: Set<TPatternSector> = new Set(),
+    private readonly sectorsNotOne: Set<TPatternSector> = new Set(),
+    private readonly sectorsNotTwo: Set<TPatternSector> = new Set(),
+    private readonly sectorsOnlyOne: Set<TPatternSector> = new Set(),
+
+    private readonly faceColorDualFeatures: Set<FaceColorDualFeature> = new Set(),
+
+    private readonly faceToColorDualMap: Map<TPatternFace, FaceColorDualFeature> = new Map(),
+    private readonly sectors: Set<TPatternSector> = new Set(),
+    private readonly edgeToSectorsMap: Map<TPatternEdge, Set<TPatternSector>> = new Map(),
   ) {
-    assertEnabled() && assert( filterRedundantFeatures( features ).length === features.length );
-
-    for ( const feature of features ) {
-      this.map.set( feature.toCanonicalString(), feature );
-    }
-
-    assertEnabled() && assert( this.map.size === features.length );
+    this.size = faceValueMap.size + blackEdges.size + redEdges.size + sectorsNotZero.size + sectorsNotOne.size + sectorsNotTwo.size + sectorsOnlyOne.size + faceColorDualFeatures.size;
   }
 
+  public addFaceValue( face: TPatternFace, value: FaceValue ): void {
+    const existingValue = this.faceValueMap.get( face );
+    if ( existingValue ) {
+      if ( existingValue !== value ) {
+        throw new IncompatibleFeatureError( new FaceFeature( face, value ), [ new FaceFeature( face, existingValue ) ] );
+      }
+    }
+    else {
+      this.faceValueMap.set( face, value );
+    }
+  }
+
+  public addFaceColorDual( feature: FaceColorDualFeature ): void {
+
+    const originalFeature = feature;
+
+    // Copy to array for concurrent modification (sanity check)
+    for ( const otherFeature of [ ...this.faceColorDualFeatures ] ) {
+      if ( feature.overlapsWith( otherFeature ) ) {
+        const potentialFaceFeature = feature.union( otherFeature );
+        if ( potentialFaceFeature ) {
+          throw new IncompatibleFeatureError( originalFeature, [ otherFeature ] );
+        }
+        else {
+          feature = potentialFaceFeature!;
+          this.faceColorDualFeatures.delete( otherFeature );
+        }
+      }
+    }
+
+    this.faceColorDualFeatures.add( feature );
+
+    // Update all faces attached to the "new" feature (this will be all of the new ones, plus changed ones from previous features).
+    for ( const face of feature.allFaces ) {
+      this.faceToColorDualMap.set( face, feature );
+    }
+  }
+
+  public addBlackEdge( edge: TPatternEdge ): void {
+    if ( this.redEdges.has( edge ) ) {
+      throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new RedEdgeFeature( edge ) ] );
+    }
+
+    this.blackEdges.add( edge );
+
+    // Handle sector removals (and assertions
+    const sectors = this.edgeToSectorsMap.get( edge );
+    if ( sectors ) {
+      for ( const sector of sectors ) {
+        const otherEdge = edge === sector.edges[ 0 ] ? sector.edges[ 1 ] : sector.edges[ 0 ];
+        assertEnabled() && assert( otherEdge );
+
+        let remainingSectorCount = 0;
+
+        if ( this.sectorsNotZero.has( sector ) ) {
+          this.sectorsNotZero.delete( sector );
+        }
+
+        if ( this.sectorsNotOne.has( sector ) ) {
+          if ( this.blackEdges.has( otherEdge ) ) {
+            this.sectorsNotOne.delete( sector );
+          }
+          else {
+            if ( this.redEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new RedEdgeFeature( otherEdge ), new SectorNotOneFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+        if ( this.sectorsNotTwo.has( sector ) ) {
+          if ( this.redEdges.has( otherEdge ) ) {
+            this.sectorsNotTwo.delete( sector );
+          }
+          else {
+            if ( this.blackEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new BlackEdgeFeature( otherEdge ), new SectorNotTwoFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+        if ( this.sectorsOnlyOne.has( sector ) ) {
+          if ( this.redEdges.has( otherEdge ) ) {
+            this.sectorsOnlyOne.delete( sector );
+          }
+          else {
+            if ( this.blackEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new BlackEdgeFeature( otherEdge ), new SectorOnlyOneFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+
+        if ( remainingSectorCount === 0 ) {
+          this.removeSector( sector );
+        }
+      }
+    }
+  }
+
+  public addRedEdge( edge: TPatternEdge ): void {
+    if ( this.blackEdges.has( edge ) ) {
+      throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new BlackEdgeFeature( edge ) ] );
+    }
+
+    this.redEdges.add( edge );
+
+    // Handle sector removals (and assertions
+    const sectors = this.edgeToSectorsMap.get( edge );
+    if ( sectors ) {
+      for ( const sector of sectors ) {
+        const otherEdge = edge === sector.edges[ 0 ] ? sector.edges[ 1 ] : sector.edges[ 0 ];
+        assertEnabled() && assert( otherEdge );
+
+        let remainingSectorCount = 0;
+
+        if ( this.sectorsNotTwo.has( sector ) ) {
+          this.sectorsNotTwo.delete( sector );
+        }
+
+        if ( this.sectorsNotOne.has( sector ) ) {
+          if ( this.redEdges.has( otherEdge ) ) {
+            this.sectorsNotOne.delete( sector );
+          }
+          else {
+            if ( this.blackEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new BlackEdgeFeature( otherEdge ), new SectorNotOneFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+        if ( this.sectorsNotZero.has( sector ) ) {
+          if ( this.blackEdges.has( otherEdge ) ) {
+            this.sectorsNotZero.delete( sector );
+          }
+          else {
+            if ( this.redEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new RedEdgeFeature( otherEdge ), new SectorNotZeroFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+        if ( this.sectorsOnlyOne.has( sector ) ) {
+          if ( this.blackEdges.has( otherEdge ) ) {
+            this.sectorsOnlyOne.delete( sector );
+          }
+          else {
+            if ( this.redEdges.has( otherEdge ) ) {
+              throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new RedEdgeFeature( otherEdge ), new SectorOnlyOneFeature( sector ) ] );
+            }
+            remainingSectorCount++;
+          }
+        }
+
+
+        if ( remainingSectorCount === 0 ) {
+          this.removeSector( sector );
+        }
+      }
+    }
+  }
+
+  public addSectorNotZero( sector: TPatternSector ): void {
+    const edgeA = sector.edges[ 0 ];
+    const edgeB = sector.edges[ 1 ];
+    assertEnabled() && assert( edgeA && edgeB );
+
+    if ( this.redEdges.has( edgeA ) ) {
+      throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeA ) ] );
+    }
+    if ( this.redEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeB ) ] );
+    }
+
+    // We can skip adding this sector if we have a black edge
+    if ( this.blackEdges.has( edgeA ) || this.blackEdges.has( edgeB ) ) {
+      return;
+    }
+
+    this.sectorsNotZero.add( sector );
+    this.ensureSector( sector );
+  }
+
+  public addSectorNotOne( sector: TPatternSector ): void {
+    const edgeA = sector.edges[ 0 ];
+    const edgeB = sector.edges[ 1 ];
+    assertEnabled() && assert( edgeA && edgeB );
+
+    if ( this.blackEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorNotOneFeature( sector ), [ new BlackEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
+    }
+    if ( this.blackEdges.has( edgeB ) && this.redEdges.has( edgeA ) ) {
+      throw new IncompatibleFeatureError( new SectorNotOneFeature( sector ), [ new BlackEdgeFeature( edgeB ), new RedEdgeFeature( edgeA ) ] );
+    }
+    if ( this.sectorsOnlyOne.has( sector ) ) {
+      throw new IncompatibleFeatureError( new SectorNotOneFeature( sector ), [ new SectorOnlyOneFeature( sector ) ] );
+    }
+
+    // See if we would be redundant
+    if (
+      ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) ||
+      ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) )
+    ) {
+      return;
+    }
+
+    this.sectorsNotOne.add( sector );
+    this.ensureSector( sector );
+  }
+
+  public addSectorNotTwo( sector: TPatternSector ): void {
+    const edgeA = sector.edges[ 0 ];
+    const edgeB = sector.edges[ 1 ];
+    assertEnabled() && assert( edgeA && edgeB );
+
+    if ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorNotTwoFeature( sector ), [ new BlackEdgeFeature( edgeA ), new BlackEdgeFeature( edgeB ) ] );
+    }
+
+    // See if we would be redundant
+    if ( this.redEdges.has( edgeA ) || this.redEdges.has( edgeB ) ) {
+      return;
+    }
+
+    this.sectorsNotTwo.add( sector );
+    this.ensureSector( sector );
+  }
+
+  public addSectorOnlyOne( sector: TPatternSector ): void {
+    const edgeA = sector.edges[ 0 ];
+    const edgeB = sector.edges[ 1 ];
+    assertEnabled() && assert( edgeA && edgeB );
+
+    if ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorOnlyOneFeature( sector ), [ new BlackEdgeFeature( edgeA ), new BlackEdgeFeature( edgeB ) ] );
+    }
+    if ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorOnlyOneFeature( sector ), [ new RedEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
+    }
+    if ( this.sectorsNotOne.has( sector ) ) {
+      throw new IncompatibleFeatureError( new SectorOnlyOneFeature( sector ), [ new SectorNotOneFeature( sector ) ] );
+    }
+
+    // See if we would be redundant
+    if (
+      ( this.blackEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) ||
+      ( this.blackEdges.has( edgeB ) && this.redEdges.has( edgeA ) )
+    ) {
+      return;
+    }
+
+    this.sectorsOnlyOne.add( sector );
+    this.ensureSector( sector );
+  }
+
+  // Mutates by adding a feature
+  public addFeature( feature: TEmbeddableFeature ): void {
+    if ( feature instanceof FaceFeature ) {
+      this.addFaceValue( feature.face, feature.value );
+    }
+    else if ( feature instanceof FaceColorDualFeature ) {
+      this.addFaceColorDual( feature );
+    }
+    else if ( feature instanceof BlackEdgeFeature ) {
+      this.addBlackEdge( feature.edge );
+    }
+    else if ( feature instanceof RedEdgeFeature ) {
+      this.addRedEdge( feature.edge );
+    }
+    else if ( feature instanceof SectorNotZeroFeature ) {
+      this.addSectorNotZero( feature.sector );
+    }
+    else if ( feature instanceof SectorNotOneFeature ) {
+      this.addSectorNotOne( feature.sector );
+    }
+    else if ( feature instanceof SectorNotTwoFeature ) {
+      this.addSectorNotTwo( feature.sector );
+    }
+    else if ( feature instanceof SectorOnlyOneFeature ) {
+      this.addSectorOnlyOne( feature.sector );
+    }
+    else {
+      throw new Error( `unimplemented type of feature for FeatureSet: ${feature}` );
+    }
+  }
+
+  private ensureSector( sector: TPatternSector ): void {
+    if ( !this.sectors.has( sector ) ) {
+      this.sectors.add( sector );
+
+      const edgeA = sector.edges[ 0 ];
+      const edgeB = sector.edges[ 1 ];
+      assertEnabled() && assert( edgeA && edgeB );
+
+      let sectorsA = this.edgeToSectorsMap.get( edgeA );
+      if ( sectorsA ) {
+        sectorsA.add( sector );
+      }
+      else {
+        sectorsA = new Set( [ sector ] );
+        this.edgeToSectorsMap.set( edgeA, sectorsA );
+      }
+
+      let sectorsB = this.edgeToSectorsMap.get( edgeB );
+      if ( sectorsB ) {
+        sectorsB.add( sector );
+      }
+      else {
+        sectorsB = new Set( [ sector ] );
+        this.edgeToSectorsMap.set( edgeB, sectorsB );
+      }
+    }
+  }
+
+  private removeSector( sector: TPatternSector ): void {
+    if ( this.sectors.has( sector ) ) {
+      this.sectors.delete( sector );
+
+      const edgeA = sector.edges[ 0 ];
+      const edgeB = sector.edges[ 1 ];
+      assertEnabled() && assert( edgeA && edgeB );
+
+      const sectorsA = this.edgeToSectorsMap.get( edgeA );
+      if ( sectorsA ) {
+        sectorsA.delete( sector );
+        if ( sectorsA.size === 0 ) {
+          this.edgeToSectorsMap.delete( edgeA );
+        }
+      }
+
+      const sectorsB = this.edgeToSectorsMap.get( edgeB );
+      if ( sectorsB ) {
+        sectorsB.delete( sector );
+        if ( sectorsB.size === 0 ) {
+          this.edgeToSectorsMap.delete( edgeB );
+        }
+      }
+    }
+  }
+
+  // TODO: eventually other feature types
+
   public static fromFeatures( features: TEmbeddableFeature[] ): FeatureSet {
-    return new FeatureSet( features );
+    const featureSet = new FeatureSet();
+
+    for ( const feature of features ) {
+      featureSet.addFeature( feature );
+    }
+
+    return featureSet;
   }
 
   public static fromSolution( patternBoard: TPatternBoard, edgeSolution: TPatternEdge[] ): FeatureSet {
@@ -67,143 +423,201 @@ export class FeatureSet {
   }
 
   public clone(): FeatureSet {
-    return FeatureSet.fromFeatures( this.features.slice() );
+    return new FeatureSet(
+      new Map( this.faceValueMap ),
+      new Set( this.blackEdges ),
+      new Set( this.redEdges ),
+      new Set( this.sectorsNotZero ),
+      new Set( this.sectorsNotOne ),
+      new Set( this.sectorsNotTwo ),
+      new Set( this.sectorsOnlyOne ),
+      new Set( this.faceColorDualFeatures ),
+      new Map( this.faceToColorDualMap ),
+      new Set( this.sectors ),
+      new Map( this.edgeToSectorsMap ),
+    );
   }
 
   public getFeaturesArray(): TEmbeddableFeature[] {
-    return this.features;
+    return [
+      ...[ ...this.faceValueMap.entries() ].map( ( [ face, value ] ) => new FaceFeature( face, value ) ),
+      ...this.faceColorDualFeatures,
+      ...[ ...this.blackEdges ].map( edge => new BlackEdgeFeature( edge ) ),
+      ...[ ...this.redEdges ].map( edge => new RedEdgeFeature( edge ) ),
+      ...[ ...this.sectorsNotZero ].map( sector => new SectorNotZeroFeature( sector ) ),
+      ...[ ...this.sectorsNotOne ].map( sector => new SectorNotOneFeature( sector ) ),
+      ...[ ...this.sectorsNotTwo ].map( sector => new SectorNotTwoFeature( sector ) ),
+      ...[ ...this.sectorsOnlyOne ].map( sector => new SectorOnlyOneFeature( sector ) )
+    ];
   }
 
-  public hasExactFeature( feature: TEmbeddableFeature ): boolean {
-    return this.map.has( feature.toCanonicalString() );
+  public getFaceValue( face: TPatternFace ): FaceValue | undefined {
+    return this.faceValueMap.get( face );
+  }
+
+  public impliesFaceValue( face: TPatternFace, value: FaceValue ): boolean {
+    const existingValue = this.faceValueMap.get( face );
+    return existingValue !== undefined && existingValue === value;
+  }
+
+  public impliesBlackEdge( edge: TPatternEdge ): boolean {
+    return this.blackEdges.has( edge );
+  }
+
+  public impliesRedEdge( edge: TPatternEdge ): boolean {
+    return this.redEdges.has( edge );
+  }
+
+  public impliesSectorNotZero( sector: TPatternSector ): boolean {
+    return this.sectorsNotZero.has( sector ) || this.blackEdges.has( sector.edges[ 0 ] ) || this.blackEdges.has( sector.edges[ 1 ] );
+  }
+
+  public impliesSectorNotOne( sector: TPatternSector ): boolean {
+    return this.sectorsNotOne.has( sector ) ||
+      ( this.blackEdges.has( sector.edges[ 0 ] ) && this.blackEdges.has( sector.edges[ 1 ] ) ) ||
+      ( this.redEdges.has( sector.edges[ 0 ] ) && this.redEdges.has( sector.edges[ 1 ] ) );
+  }
+
+  public impliesSectorNotTwo( sector: TPatternSector ): boolean {
+    return this.sectorsNotTwo.has( sector ) || this.redEdges.has( sector.edges[ 0 ] ) || this.redEdges.has( sector.edges[ 1 ] );
+  }
+
+  public impliesSectorOnlyOne( sector: TPatternSector ): boolean {
+    return this.sectorsNotOne.has( sector ) ||
+      ( this.blackEdges.has( sector.edges[ 0 ] ) && this.redEdges.has( sector.edges[ 1 ] ) ) ||
+      ( this.redEdges.has( sector.edges[ 0 ] ) && this.blackEdges.has( sector.edges[ 1 ] ) );
+  }
+
+  public impliesFaceColorDualFeature( feature: FaceColorDualFeature ): boolean {
+    for ( const otherFeature of this.faceColorDualFeatures ) {
+      if ( feature.isSubsetOf( otherFeature ) ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public impliesFeature( feature: TEmbeddableFeature ): boolean {
     if ( feature instanceof FaceColorDualFeature ) {
-      return this.features.some( otherFeature => feature.isSubsetOf( otherFeature ) );
+      return this.impliesFaceColorDualFeature( feature );
+    }
+    else if ( feature instanceof BlackEdgeFeature ) {
+      return this.impliesBlackEdge( feature.edge );
+    }
+    else if ( feature instanceof RedEdgeFeature ) {
+      return this.impliesRedEdge( feature.edge );
+    }
+    else if ( feature instanceof SectorNotZeroFeature ) {
+      return this.impliesSectorNotZero( feature.sector );
+    }
+    else if ( feature instanceof SectorNotOneFeature ) {
+      return this.impliesSectorNotOne( feature.sector );
+    }
+    else if ( feature instanceof SectorNotTwoFeature ) {
+      return this.impliesSectorNotTwo( feature.sector );
+    }
+    else if ( feature instanceof SectorOnlyOneFeature ) {
+      return this.impliesSectorOnlyOne( feature.sector );
+    }
+    else if ( feature instanceof FaceFeature ) {
+      return this.impliesFaceValue( feature.face, feature.value );
     }
     else {
-      return this.hasExactFeature( feature );
+      throw new Error( `unimplemented type of feature for FeatureSet: ${feature}` );
     }
+  }
+
+  public getAffectedEdges(): Set<TPatternEdge> {
+    return new Set( [
+      ...this.blackEdges,
+      ...this.redEdges,
+      ...this.edgeToSectorsMap.keys()
+    ] );
+  }
+
+  public getAffectedSectors(): Set<TPatternSector> {
+    return new Set( [
+      ...this.sectorsNotZero.values(),
+      ...this.sectorsNotOne.values(),
+      ...this.sectorsNotTwo.values(),
+      ...this.sectorsOnlyOne.values()
+    ] );
+  }
+
+  public getAffectedFaces(): Set<TPatternFace> {
+    return new Set( [
+      ...this.faceValueMap.keys()
+    ] );
   }
 
   // returns null if the embedding is incompatible with the features (e.g. invalid face coloring of exit faces)
   public embedded( embedding: Embedding ): FeatureSet | null {
-    const mappedFeatures = this.features.flatMap( feature => feature.applyEmbedding( embedding ) );
-
-    const faceColorFeatures = mappedFeatures.filter( feature => feature instanceof FaceColorDualFeature ) as FaceColorDualFeature[];
-    const nonFaceColorFeatures = mappedFeatures.filter( feature => !( feature instanceof FaceColorDualFeature ) );
-
-    // TODO: we'll want to detect cases where the features are... inconsistent/incompatible, no?
-
-    // NOTE: exit edges can overlap, but we only mark them as "red" so they won't cause incompatibility.
-    // NOTE: exit faces can overlap, and we'll need to handle cases where they are just incompatible.
-
-    const nonoverlappingFaceColorFeatures: FaceColorDualFeature[] = [];
-
-    for ( const faceColorFeature of faceColorFeatures ) {
-      const overlappingFeature = nonoverlappingFaceColorFeatures.find( otherFeature => faceColorFeature.overlapsWith( otherFeature ) );
-
-      if ( overlappingFeature ) {
-        const feature = faceColorFeature.union( overlappingFeature );
-
-        if ( feature ) {
-          arrayRemove( nonoverlappingFaceColorFeatures, overlappingFeature );
-          nonoverlappingFaceColorFeatures.push( feature );
-        }
-        else {
-          // No embedding, invalid overlap!
-          return null;
-        }
+    try {
+      // NOTE: exit edges can overlap, but we only mark them as "red" so they won't cause incompatibility.
+      // NOTE: exit faces can overlap, and we'll need to handle cases where they are just incompatible.
+      return FeatureSet.fromFeatures( this.getFeaturesArray().flatMap( feature => feature.applyEmbedding( embedding ) ) );
+    }
+    catch ( e ) {
+      if ( e instanceof IncompatibleFeatureError ) {
+        return null;
       }
       else {
-        nonoverlappingFaceColorFeatures.push( faceColorFeature );
+        throw e;
       }
     }
-
-    return FeatureSet.fromFeatures( filterRedundantFeatures( [
-      ...nonFaceColorFeatures,
-      ...nonoverlappingFaceColorFeatures
-    ] ) );
   }
 
   // Whether it has the same number of rules, and same number of features for each type
   public hasSameShapeAs( other: FeatureSet ): boolean {
-    if ( this.features.length !== other.features.length ) {
-      return false;
-    }
-
-    let numBlack = 0;
-    let numRed = 0;
-    let numSectorNotZero = 0;
-    let numSectorNotOne = 0;
-    let numSectorNotTwo = 0;
-    let numSectorOnlyOne = 0;
-    let numFaceColorDual = 0;
-    let numFace = 0;
-
-    for ( const feature of this.features ) {
-      if ( feature instanceof BlackEdgeFeature ) {
-        numBlack++;
-      }
-      else if ( feature instanceof RedEdgeFeature ) {
-        numRed++;
-      }
-      else if ( feature instanceof SectorNotZeroFeature ) {
-        numSectorNotZero++;
-      }
-      else if ( feature instanceof SectorNotOneFeature ) {
-        numSectorNotOne++;
-      }
-      else if ( feature instanceof SectorNotTwoFeature ) {
-        numSectorNotTwo++;
-      }
-      else if ( feature instanceof SectorOnlyOneFeature ) {
-        numSectorOnlyOne++;
-      }
-      else if ( feature instanceof FaceColorDualFeature ) {
-        numFaceColorDual++;
-      }
-      else if ( feature instanceof FaceFeature ) {
-        numFace++;
-      }
-    }
-
-    for ( const feature of other.features ) {
-      if ( feature instanceof BlackEdgeFeature ) {
-        numBlack--;
-      }
-      else if ( feature instanceof RedEdgeFeature ) {
-        numRed--;
-      }
-      else if ( feature instanceof SectorNotZeroFeature ) {
-        numSectorNotZero--;
-      }
-      else if ( feature instanceof SectorNotOneFeature ) {
-        numSectorNotOne--;
-      }
-      else if ( feature instanceof SectorNotTwoFeature ) {
-        numSectorNotTwo--;
-      }
-      else if ( feature instanceof SectorOnlyOneFeature ) {
-        numSectorOnlyOne--;
-      }
-      else if ( feature instanceof FaceColorDualFeature ) {
-        numFaceColorDual--;
-      }
-      else if ( feature instanceof FaceFeature ) {
-        numFace--;
-      }
-    }
-
-    return numBlack === 0 && numRed === 0 && numSectorNotZero === 0 && numSectorNotOne === 0 && numSectorNotTwo === 0 && numSectorOnlyOne === 0 && numFaceColorDual === 0 && numFace === 0;
+    return this.faceValueMap.size === other.faceValueMap.size &&
+      this.blackEdges.size === other.blackEdges.size &&
+      this.redEdges.size === other.redEdges.size &&
+      this.sectorsNotZero.size === other.sectorsNotZero.size &&
+      this.sectorsNotOne.size === other.sectorsNotOne.size &&
+      this.sectorsNotTwo.size === other.sectorsNotTwo.size &&
+      this.sectorsOnlyOne.size === other.sectorsOnlyOne.size &&
+      this.faceColorDualFeatures.size === other.faceColorDualFeatures.size;
   }
 
-  // TODO: embeddings and consolidation of features
-
   public isSubsetOf( other: FeatureSet ): boolean {
-    for ( const feature of this.features ) {
-      if ( !other.impliesFeature( feature ) ) {
+    for ( const [ face, value ] of this.faceValueMap ) {
+      if ( !other.impliesFaceValue( face, value ) ) {
+        return false;
+      }
+    }
+    for ( const edge of this.blackEdges ) {
+      if ( !other.impliesBlackEdge( edge ) ) {
+        return false;
+      }
+    }
+    for ( const edge of this.redEdges ) {
+      if ( !other.impliesRedEdge( edge ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotZero ) {
+      if ( !other.impliesSectorNotZero( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotOne ) {
+      if ( !other.impliesSectorNotOne( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotTwo ) {
+      if ( !other.impliesSectorNotTwo( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsOnlyOne ) {
+      if ( !other.impliesSectorOnlyOne( sector ) ) {
+        return false;
+      }
+    }
+    for ( const feature of this.faceColorDualFeatures ) {
+      if ( !other.impliesFaceColorDualFeature( feature ) ) {
         return false;
       }
     }
@@ -212,174 +626,248 @@ export class FeatureSet {
   }
 
   public equals( other: FeatureSet ): boolean {
-    return this.features.length === other.features.length && this.isSubsetOf( other );
-  }
+    // First see if we have the same shape. Thus if we have one side matching the other, we can assume equality
+    if ( !this.hasSameShapeAs( other ) ) {
+      return false;
+    }
 
-  public hasFeature( feature: TEmbeddableFeature ): boolean {
-    return this.map.has( feature.toCanonicalString() );
+    for ( const [ face, value ] of this.faceValueMap ) {
+      if ( other.faceValueMap.get( face ) !== value ) {
+        return false;
+      }
+    }
+    for ( const edge of this.blackEdges ) {
+      if ( !other.blackEdges.has( edge ) ) {
+        return false;
+      }
+    }
+    for ( const edge of this.redEdges ) {
+      if ( !other.redEdges.has( edge ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotZero ) {
+      if ( !other.sectorsNotZero.has( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotOne ) {
+      if ( !other.sectorsNotOne.has( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsNotTwo ) {
+      if ( !other.sectorsNotTwo.has( sector ) ) {
+        return false;
+      }
+    }
+    for ( const sector of this.sectorsOnlyOne ) {
+      if ( !other.sectorsOnlyOne.has( sector ) ) {
+        return false;
+      }
+    }
+
+    // TODO: this is ideal for a large number of features, right?
+    const canonicalKeys = new Set<string>();
+    other.faceColorDualFeatures.forEach( feature => canonicalKeys.add( feature.toCanonicalString() ) );
+    for ( const feature of this.faceColorDualFeatures ) {
+      if ( !canonicalKeys.has( feature.toCanonicalString() ) ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   // null if they can't be compatibly combined
   public union( other: FeatureSet ): FeatureSet | null {
     // Allow our set to be bigger, so we can optimize a few things
-    if ( this.features.length < other.features.length ) {
+    if ( this.size < other.size ) {
       return other.union( this );
     }
 
-    // TODO: see if there's a more "filter based on edges" way of doing this, that isn't O(n^2).
-    // TODO: have each feature added to a map (edges as keys), and filter based on that?
-    const nonFaceFeatures = filterRedundantFeatures( [
-      ...this.features.filter( feature => !( feature instanceof FaceColorDualFeature ) ),
-      ...other.features.filter( feature => !( feature instanceof FaceColorDualFeature ) )
-    ] );
+    const featureSet = this.clone();
 
-    const faceFeatures: FaceColorDualFeature[] = this.features.filter( feature => feature instanceof FaceColorDualFeature ) as FaceColorDualFeature[];
-
-    for ( const feature of other.features ) {
-      if ( feature instanceof FaceColorDualFeature ) {
-        let faceFeature = feature;
-
-        for ( let i = 0; i < faceFeatures.length; i++ ) {
-          const otherFaceFeature = faceFeatures[ i ];
-
-          if ( faceFeature.overlapsWith( otherFaceFeature ) ) {
-            const potentialFaceFeature = faceFeature.union( otherFaceFeature );
-
-            if ( potentialFaceFeature === null ) {
-              return null;
-            }
-            else {
-              faceFeature = potentialFaceFeature;
-              arrayRemove( faceFeatures, otherFaceFeature );
-              i--;
-            }
-          }
-        }
-
-        faceFeatures.push( faceFeature );
+    try {
+      other.getFeaturesArray().forEach( feature => featureSet.addFeature( feature ) );
+      return featureSet;
+    }
+    catch ( e ) {
+      if ( e instanceof IncompatibleFeatureError ) {
+        return null;
+      }
+      else {
+        throw e;
       }
     }
-
-    return FeatureSet.fromFeatures( [
-      ...nonFaceFeatures,
-      ...faceFeatures
-    ] );
   }
 
-  // TODO: this doesn't vet full compatibility, but tries to rule things out nicely
-  // NOTE: Not the fastest, but hopefully speeds up computations
-  public isCompatibleWith( other: FeatureSet ): boolean {
+  public getQuickCompatibilityWith( other: FeatureSet ): FeatureCompatibility {
+    /*
+  // The input feature set is impossible to satisfy, given the target feature set or derivations (a rule with this as the input will never be applied)
+  public static readonly INCOMPATIBLE = new FeatureCompatibility();
 
-    // TODO: OMG performance?
+  // The input feature isn't a match here, because it doesn't have all of the required face values (and might not have the state)
+  public static readonly NO_MATCH_NEEDS_FACE_VALUES = new FeatureCompatibility();
 
-    for ( const feature of this.features ) {
-      for ( const otherFeature of other.features ) {
-        if ( feature instanceof FaceColorDualFeature && otherFeature instanceof FaceColorDualFeature ) {
-          if ( !feature.isCompatibleWith( otherFeature ) ) {
-            return false;
-          }
-        }
+  // The input feature isn't a match here, because it doesn't have all of the required state values
+  public static readonly NO_MATCH_NEEDS_STATE = new FeatureCompatibility();
 
-        if ( feature instanceof RedEdgeFeature && otherFeature instanceof BlackEdgeFeature && feature.edge === otherFeature.edge ) {
-          return false;
-        }
+  // Matches!
+  public static readonly MATCH = new FeatureCompatibility();
+     */
 
-        if ( feature instanceof BlackEdgeFeature && otherFeature instanceof RedEdgeFeature && feature.edge === otherFeature.edge ) {
-          return false;
-        }
+    let implied = true;
 
+    for ( const edge of this.blackEdges ) {
+      if ( other.impliesRedEdge( edge ) ) {
+        return FeatureCompatibility.INCOMPATIBLE;
+      }
+      if ( implied && !other.impliesBlackEdge( edge ) ) {
+        implied = false;
       }
     }
 
-    // Sector checks
-    // TODO: sector checks? That could be... somewhat more expensive (BUT might save us a lot of computation)
-    // TODO: this will require a sector in one, and two edges in another
-    const checkSectors = ( a: FeatureSet, b: FeatureSet ): boolean => {
-      for ( const feature of a.features ) {
-        if ( feature instanceof SectorNotZeroFeature ) {
-          if ( b.hasFeature( new RedEdgeFeature( feature.sector.edges[ 0 ] ) ) && other.hasFeature( new RedEdgeFeature( feature.sector.edges[ 1 ] ) ) ) {
-            return false;
-          }
-        }
-
-        if ( feature instanceof SectorNotZeroFeature || feature instanceof SectorNotOneFeature || feature instanceof SectorNotTwoFeature || feature instanceof SectorOnlyOneFeature ) {
-          const edgeA = feature.sector.edges[ 0 ];
-
-          const redA = b.hasFeature( new RedEdgeFeature( edgeA ) );
-          const blackA = b.hasFeature( new BlackEdgeFeature( edgeA ) );
-
-          if ( !redA && !blackA ) {
-            continue;
-          }
-
-          const edgeB = feature.sector.edges[ 1 ];
-          const redB = b.hasFeature( new RedEdgeFeature( edgeB ) );
-          const blackB = b.hasFeature( new BlackEdgeFeature( edgeB ) );
-
-          if ( !redB && !blackB ) {
-            continue;
-          }
-
-          const blackCount = ( blackA ? 1 : 0 ) + ( blackB ? 1 : 0 );
-
-          if ( feature instanceof SectorNotZeroFeature && blackCount === 0 ) {
-            return false;
-          }
-          if ( feature instanceof SectorNotOneFeature && blackCount === 1 ) {
-            return false;
-          }
-          if ( feature instanceof SectorNotTwoFeature && blackCount === 2 ) {
-            return false;
-          }
-          if ( feature instanceof SectorOnlyOneFeature && blackCount !== 1 ) {
-            return false;
-          }
-        }
+    for ( const edge of this.redEdges ) {
+      if ( other.impliesBlackEdge( edge ) ) {
+        return FeatureCompatibility.INCOMPATIBLE;
       }
-
-      return true;
-    };
-    if ( !checkSectors( this, other ) ) {
-      return false;
-    }
-    if ( !checkSectors( other, this ) ) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public isFaceSubsetOf( other: FeatureSet ): boolean {
-    for ( const feature of this.features ) {
-      if ( feature instanceof FaceFeature ) {
-        const matchingFaceFeature = ( other.features.find( otherFeature => otherFeature instanceof FaceFeature && feature.face === otherFeature.face ) ?? null ) as FaceFeature | null;
-
-        if ( !matchingFaceFeature || feature.value !== matchingFaceFeature.value ) {
-          return false;
-        }
+      if ( implied && !other.impliesRedEdge( edge ) ) {
+        implied = false;
       }
     }
 
-    return true;
+    for ( const sector of this.sectorsNotZero ) {
+      if ( implied && !other.impliesSectorNotZero( sector ) ) {
+        implied = false;
+      }
+    }
+
+    for ( const sector of this.sectorsNotOne ) {
+      if ( other.impliesSectorOnlyOne( sector ) ) {
+        return FeatureCompatibility.INCOMPATIBLE;
+      }
+      if ( implied && !other.impliesSectorNotOne( sector ) ) {
+        implied = false;
+      }
+    }
+
+    for ( const sector of this.sectorsNotTwo ) {
+      if ( implied && !other.impliesSectorNotTwo( sector ) ) {
+        implied = false;
+      }
+    }
+
+    for ( const sector of this.sectorsOnlyOne ) {
+      if ( other.impliesSectorNotOne( sector ) ) {
+        return FeatureCompatibility.INCOMPATIBLE;
+      }
+      if ( implied && !other.impliesSectorOnlyOne( sector ) ) {
+        implied = false;
+      }
+    }
+
+    for ( const faceColorDual of this.faceColorDualFeatures ) {
+      if ( implied && !other.impliesFaceColorDualFeature( faceColorDual ) ) {
+        implied = false;
+      }
+    }
+
+    let faceValuesMatch = true;
+
+    for ( const [ face, value ] of this.faceValueMap ) {
+      const otherValue = other.getFaceValue( face );
+
+      if ( otherValue === undefined ) {
+        faceValuesMatch = false;
+      }
+      else if ( otherValue !== value ) {
+        return FeatureCompatibility.INCOMPATIBLE;
+      }
+    }
+
+    if ( !faceValuesMatch ) {
+      return FeatureCompatibility.NO_MATCH_NEEDS_FACE_VALUES;
+    }
+    else if ( !implied ) {
+      return FeatureCompatibility.NO_MATCH_NEEDS_STATE;
+    }
+    else {
+      return FeatureCompatibility.MATCH;
+    }
   }
 
   public toCanonicalString(): string {
-    return `feat:${_.sortBy( this.map.keys() ).join( '/' )}`;
+    return `feat:${_.sortBy( this.getFeaturesArray().map( f => f.toCanonicalString() ) ).join( '/' )}`;
   }
 
   public serialize(): TSerializedFeatureSet {
-    return {
-      features: this.features.map( feature => feature.serialize() )
-    };
+    const serialization: TSerializedFeatureSet = {};
+
+    if ( this.faceValueMap.size > 0 ) {
+      serialization.faceValues = [ ...this.faceValueMap.entries() ].map( ( [ face, value ] ) => ( { face: face.index, value: value } ) );
+    }
+    if ( this.blackEdges.size > 0 ) {
+      serialization.blackEdges = [ ...this.blackEdges ].map( edge => edge.index );
+    }
+    if ( this.redEdges.size > 0 ) {
+      serialization.redEdges = [ ...this.redEdges ].map( edge => edge.index );
+    }
+    if ( this.sectorsNotZero.size > 0 ) {
+      serialization.sectorsNotZero = [ ...this.sectorsNotZero ].map( sector => sector.index );
+    }
+    if ( this.sectorsNotOne.size > 0 ) {
+      serialization.sectorsNotOne = [ ...this.sectorsNotOne ].map( sector => sector.index );
+    }
+    if ( this.sectorsNotTwo.size > 0 ) {
+      serialization.sectorsNotTwo = [ ...this.sectorsNotTwo ].map( sector => sector.index );
+    }
+    if ( this.sectorsOnlyOne.size > 0 ) {
+      serialization.sectorsOnlyOne = [ ...this.sectorsOnlyOne ].map( sector => sector.index );
+    }
+    if ( this.faceColorDualFeatures.size > 0 ) {
+      serialization.faceColorDualFeatures = [ ...this.faceColorDualFeatures ].map( f => f.serialize() );
+    }
+
+    return serialization;
   }
 
   public static deserialize( serialized: TSerializedFeatureSet, patternBoard: TPatternBoard ): FeatureSet {
-    return FeatureSet.fromFeatures( serialized.features.map( feature => deserializeEmbeddableFeature( feature, patternBoard ) ) );
+    const featureSet = new FeatureSet();
+
+    for ( const faceValue of serialized.faceValues || [] ) {
+      featureSet.addFaceValue( patternBoard.faces[ faceValue.face ], faceValue.value );
+    }
+    for ( const blackEdge of serialized.blackEdges || [] ) {
+      featureSet.addBlackEdge( patternBoard.edges[ blackEdge ] );
+    }
+    for ( const redEdge of serialized.redEdges || [] ) {
+      featureSet.addRedEdge( patternBoard.edges[ redEdge ] );
+    }
+    for ( const sectorNotZero of serialized.sectorsNotZero || [] ) {
+      featureSet.addSectorNotZero( patternBoard.sectors[ sectorNotZero ] );
+    }
+    for ( const sectorNotOne of serialized.sectorsNotOne || [] ) {
+      featureSet.addSectorNotOne( patternBoard.sectors[ sectorNotOne ] );
+    }
+    for ( const sectorNotTwo of serialized.sectorsNotTwo || [] ) {
+      featureSet.addSectorNotTwo( patternBoard.sectors[ sectorNotTwo ] );
+    }
+    for ( const sectorOnlyOne of serialized.sectorsOnlyOne || [] ) {
+      featureSet.addSectorOnlyOne( patternBoard.sectors[ sectorOnlyOne ] );
+    }
+    for ( const faceColorDual of serialized.faceColorDualFeatures || [] ) {
+      featureSet.addFaceColorDual( FaceColorDualFeature.deserialize( faceColorDual, patternBoard ) );
+    }
+
+    return featureSet;
   }
 
   // TODO: Figure out best "Pattern" representation (FeatureSet, no? mapping or no?)
   // null if there is no solution
   public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet | null {
+
+    // TODO FIX THIS UP, and get it optimized(!)(!)
 
     // TODO: is this too much performance loss?
     const options = optionize<BasicSolveOptions>()( {
@@ -389,14 +877,14 @@ export class FeatureSet {
       highlander: false
     }, providedOptions );
 
-    let solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatureSet.features );
+    let solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatureSet.getFeaturesArray() );
 
     if ( solutions.length === 0 ) {
       return null;
     }
 
     if ( options.highlander ) {
-      const indeterminateEdges = getIndeterminateEdges( patternBoard, inputFeatureSet.features );
+      const indeterminateEdges = getIndeterminateEdges( patternBoard, inputFeatureSet.getFeaturesArray() );
       const exitVertices = patternBoard.vertices.filter( v => v.isExit );
 
       solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
@@ -408,7 +896,7 @@ export class FeatureSet {
 
     return FeatureSet.fromFeatures( filterRedundantFeatures( [
       // Strip face color duals, because we can't vet redundancy (we generate a new set)
-      ...( options.solveFaceColors ? inputFeatureSet.features.filter( feature => !( feature instanceof FaceColorDualFeature ) ) : inputFeatureSet.features ),
+      ...( options.solveFaceColors ? inputFeatureSet.getFeaturesArray().filter( feature => !( feature instanceof FaceColorDualFeature ) ) : inputFeatureSet.getFeaturesArray() ),
       ...addedEdgeFeatures,
       ...addedFaceColorFeatures,
       ...addedSectorFeatures
@@ -424,5 +912,12 @@ export type BasicSolveOptions = {
 };
 
 export type TSerializedFeatureSet = {
-  features: TSerializedEmbeddableFeature[];
+  faceValues?: { face: number; value: number | null }[];
+  blackEdges?: number[];
+  redEdges?: number[];
+  sectorsNotZero?: number[];
+  sectorsNotOne?: number[];
+  sectorsNotTwo?: number[];
+  sectorsOnlyOne?: number[];
+  faceColorDualFeatures?: ( TSerializedEmbeddableFeature & { type: 'face-color-dual' } )[];
 };

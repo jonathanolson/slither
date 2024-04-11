@@ -142,7 +142,7 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     return otherFeatures.some( feature => this.equals( feature ) );
   }
 
-  public serialize(): TSerializedEmbeddableFeature {
+  public serialize(): TSerializedEmbeddableFeature & { type: 'face-color-dual' } {
     return {
       type: 'face-color-dual',
       primaryFaces: this.primaryFaces.map( face => face.index ),

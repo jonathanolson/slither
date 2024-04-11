@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Get rid of the filter features (FeatureSet does this)
+  - 
   - Enumerate initial feature sets (given a pattern board) for:
     1. Edges
     2. Face Colors
