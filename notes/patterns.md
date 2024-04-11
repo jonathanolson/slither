@@ -5,6 +5,9 @@
   - 
   - Get rid of the filter features (FeatureSet does this)
   - 
+  - applyEmbedding => withEmbedding
+  - FeatureSet.difference (things we can apply, essentially the pattern rule output)
+  - 
   - Enumerate initial feature sets (given a pattern board) for:
     1. Edges
     2. Face Colors

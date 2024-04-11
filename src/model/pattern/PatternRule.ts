@@ -3,6 +3,9 @@ import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
+import PatternRuleMatchState from './PatternRuleMatchState.ts';
+import FeatureCompatibility from './feature/FeatureCompatibility.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 export class PatternRule {
   public constructor(
@@ -55,38 +58,48 @@ export class PatternRule {
     return this.inputFeatureSet.isSubsetOf( featureSet );
   }
 
-  // TODO: "solving state" for PatternRule (given a target feature set):
-  // TODO: - INCOMPATIBLE - the input feature set is impossible to satisfy, given the target feature set or derivations (this rule will never be applied)
-  // TODO: - INCONSEQUENTIAL - the output feature set is a subset of the target feature set (this rule will never provide MORE information)
-  // TODO: - DORMANT - the input feature set is compatible, the output feature set is NOT inconsequential, BUT the input feature set is not satisfied yet (could be used in the future, keep it around)
-  // TODO: - ACTIONABLE - the input feature set matches, and the output feature set is not a subset of the target feature set (this rule can be applied, and will do something)
+  public getMatchState( featureSet: FeatureSet ): PatternRuleMatchState {
+    const inputCompatibility = this.inputFeatureSet.getQuickCompatibilityWith( featureSet );
 
-  // // Assumes FaceFeatures are static, and that features "in principle" won't be removed (if they are, they are replaced
-  // // by something that implies the same thing).
-  // public canPotentiallyMatch( featureSet: FeatureSet ): boolean {
-  //   return this.inputFeatureSet.isCompatibleWith( featureSet ) && this.inputFeatureSet.isFaceSubsetOf( featureSet );
-  // }
+    if ( inputCompatibility === FeatureCompatibility.INCOMPATIBLE || inputCompatibility === FeatureCompatibility.NO_MATCH_NEEDS_FACE_VALUES ) {
+      return PatternRuleMatchState.INCOMPATIBLE;
+    }
 
-  // public isRedundant( embeddedRules: PatternRule[] ): boolean {
-  //   if ( this.isTrivial() ) {
-  //     return true;
-  //   }
-  //
-  //   return this.outputFeatureSet.isSubsetOf( PatternRule.applyRules( this.patternBoard, this.inputFeatureSet, embeddedRules ) );
-  // }
+    // TODO: consider saying "incompatible" if our end-resut won't be compatible?
+    if ( this.outputFeatureSet.isSubsetOf( featureSet ) ) {
+      return PatternRuleMatchState.INCONSEQUENTIAL;
+    }
+
+    if ( inputCompatibility === FeatureCompatibility.NO_MATCH_NEEDS_STATE ) {
+      return PatternRuleMatchState.DORMANT;
+    }
+    else {
+      return PatternRuleMatchState.ACTIONABLE;
+    }
+  }
+
+  public isRedundant( embeddedRules: PatternRule[] ): boolean {
+    if ( this.isTrivial() ) {
+      return true;
+    }
+
+    return this.outputFeatureSet.isSubsetOf( PatternRule.withRulesApplied( this.patternBoard, this.inputFeatureSet, embeddedRules ) );
+  }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
     return this.matches( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
   }
 
-  public apply( featureSet: FeatureSet ): FeatureSet {
+  // Note: can throw IncompatibleFeatureError
+  public apply( featureSet: FeatureSet ): void {
     assertEnabled() && assert( this.hasApplication( featureSet ) );
 
-    const result = featureSet.union( this.outputFeatureSet )!;
-    assertEnabled() && assert( result );
-
-    return result;
+    // TODO TODO: FeatureSet.difference, so we can more accurately specify the delta(!)
+    // TODO: this is effectively "re-applying" things in the input pattern(!)
+    featureSet.applyFeaturesFrom( this.outputFeatureSet );
   }
+
+  // TODO: create immutable forms of expression (for use when we're not... trying to squeeze out performance).
 
   public isTrivial(): boolean {
     return this.outputFeatureSet.isSubsetOf( this.inputFeatureSet );
@@ -107,34 +120,38 @@ export class PatternRule {
     }
   }
 
-  // public static applyRules( patternBoard: TPatternBoard, initialFeatureSet: FeatureSet, embeddedRules: PatternRule[] ): FeatureSet {
-  //   assertEnabled() && assert( embeddedRules.every( otherRule => otherRule.patternBoard === patternBoard ), 'embedding check' );
-  //
-  //   // TODO: increase the performance of this?
-  //   const potentialRules = new Set( embeddedRules.filter( otherRule => otherRule.canPotentiallyMatch( initialFeatureSet ) ) );
-  //
-  //   if ( potentialRules.size === 0 ) {
-  //     return initialFeatureSet;
-  //   }
-  //
-  //   let featureState = initialFeatureSet;
-  //
-  //   let changed = true;
-  //
-  //   while ( changed ) {
-  //     changed = false;
-  //
-  //     // TODO: figure out if we update the canPotentiallyMatch regularly? (probably not)
-  //
-  //     for ( const rule of potentialRules ) {
-  //       if ( rule.hasApplication( featureState ) ) {
-  //         featureState = rule.apply( featureState );
-  //         changed = true;
-  //         potentialRules.delete( rule ); // no longer need to consider this rule
-  //       }
-  //     }
-  //   }
-  //
-  //   return featureState;
-  // }
+  public static withRulesApplied( patternBoard: TPatternBoard, initialFeatureSet: FeatureSet, embeddedRules: PatternRule[] ): FeatureSet {
+    assertEnabled() && assert( embeddedRules.every( otherRule => otherRule.patternBoard === patternBoard ), 'embedding check' );
+
+    let currentRuleList = embeddedRules;
+    let nextRuleList: PatternRule[] = [];
+    const featureState = initialFeatureSet.clone();
+
+    let changed = true;
+
+    // TODO: try to prune things based on whether a rule's "input set" of edges/faces has changed since it was last evaluated?
+    // TODO: how to get that computation to be LESS than what we have now?
+
+    while ( changed ) {
+      changed = false;
+
+      for ( const rule of currentRuleList ) {
+
+        const matchState = rule.getMatchState( featureState );
+
+        if ( matchState === PatternRuleMatchState.ACTIONABLE ) {
+          rule.apply( featureState );
+          changed = true;
+        }
+        else if ( matchState === PatternRuleMatchState.DORMANT ) {
+          nextRuleList.push( rule );
+        }
+      }
+
+      currentRuleList = nextRuleList;
+      nextRuleList = [];
+    }
+
+    return featureState;
+  }
 }

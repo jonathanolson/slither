@@ -679,6 +679,11 @@ export class FeatureSet {
     return true;
   }
 
+  // throws IncompatibleFeatureError if it doesn't work
+  public applyFeaturesFrom( other: FeatureSet ): void {
+    other.getFeaturesArray().forEach( feature => this.addFeature( feature ) );
+  }
+
   // null if they can't be compatibly combined
   public union( other: FeatureSet ): FeatureSet | null {
     // Allow our set to be bigger, so we can optimize a few things
@@ -689,7 +694,7 @@ export class FeatureSet {
     const featureSet = this.clone();
 
     try {
-      other.getFeaturesArray().forEach( feature => featureSet.addFeature( feature ) );
+      featureSet.applyFeaturesFrom( other );
       return featureSet;
     }
     catch ( e ) {
@@ -703,19 +708,6 @@ export class FeatureSet {
   }
 
   public getQuickCompatibilityWith( other: FeatureSet ): FeatureCompatibility {
-    /*
-  // The input feature set is impossible to satisfy, given the target feature set or derivations (a rule with this as the input will never be applied)
-  public static readonly INCOMPATIBLE = new FeatureCompatibility();
-
-  // The input feature isn't a match here, because it doesn't have all of the required face values (and might not have the state)
-  public static readonly NO_MATCH_NEEDS_FACE_VALUES = new FeatureCompatibility();
-
-  // The input feature isn't a match here, because it doesn't have all of the required state values
-  public static readonly NO_MATCH_NEEDS_STATE = new FeatureCompatibility();
-
-  // Matches!
-  public static readonly MATCH = new FeatureCompatibility();
-     */
 
     let implied = true;
 
