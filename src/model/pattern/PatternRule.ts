@@ -30,6 +30,10 @@ export class PatternRule {
   public isAutomorphicTo( other: PatternRule ): boolean {
     assertEnabled() && assert( this.patternBoard === other.patternBoard );
 
+    if ( !this.inputFeatureSet.hasSameShapeAs( other.inputFeatureSet ) || !this.outputFeatureSet.hasSameShapeAs( other.outputFeatureSet ) ) {
+      return false;
+    }
+
     const automorphisms = getEmbeddings( this.patternBoard, this.patternBoard );
 
     for ( const automorphism of automorphisms ) {

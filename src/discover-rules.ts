@@ -14,9 +14,7 @@ import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap } from './mode
 import _ from './workarounds/_.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
-import { TFace } from './model/board/core/TFace.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
-import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';

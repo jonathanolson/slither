@@ -2,6 +2,7 @@ import { TPatternBoard } from '../TPatternBoard.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
 import { getEdgeConnectedComponentFaces } from '../getEdgeConnectedComponentFaces.ts';
 import { TPatternFace } from '../TPatternFace.ts';
+import _ from '../../../workarounds/_.ts';
 
 export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceColorDualFeature[][] => {
   const featureMap = new Map<string, FaceColorDualFeature>();
@@ -32,7 +33,7 @@ export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceC
 
   const numFaces = patternBoard.faces.length;
 
-  return generateAllDisjointNonSingleSubsets( numFaces ).flatMap( disjointIndexSets => {
+  const faceFeatureCombinations = generateAllDisjointNonSingleSubsets( numFaces ).flatMap( disjointIndexSets => {
     const result: FaceColorDualFeature[][] = [];
 
     // See if the disjoint index sets are each individually part of the same edge-connected component
@@ -69,6 +70,10 @@ export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceC
     };
     recur( 0 );
     return result;
+  } );
+
+  return _.sortBy( faceFeatureCombinations, combination => {
+    return combination.length * 10000 + combination.reduce( ( sum, feature ) => sum + feature.allFaces.size, 0 );
   } );
 };
 

@@ -20,6 +20,7 @@ import { SectorNotOneFeature } from './SectorNotOneFeature.ts';
 import { SectorNotZeroFeature } from './SectorNotZeroFeature.ts';
 import { SectorNotTwoFeature } from './SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
+import { FaceFeature } from './FaceFeature.ts';
 
 export class FeatureSet {
 
@@ -93,6 +94,78 @@ export class FeatureSet {
       ...nonFaceColorFeatures,
       ...nonoverlappingFaceColorFeatures
     ] ) );
+  }
+
+  // Whether it has the same number of rules, and same number of features for each type
+  public hasSameShapeAs( other: FeatureSet ): boolean {
+    if ( this.features.length !== other.features.length ) {
+      return false;
+    }
+
+    let numBlack = 0;
+    let numRed = 0;
+    let numSectorNotZero = 0;
+    let numSectorNotOne = 0;
+    let numSectorNotTwo = 0;
+    let numSectorOnlyOne = 0;
+    let numFaceColorDual = 0;
+    let numFace = 0;
+
+    for ( const feature of this.features ) {
+      if ( feature instanceof BlackEdgeFeature ) {
+        numBlack++;
+      }
+      else if ( feature instanceof RedEdgeFeature ) {
+        numRed++;
+      }
+      else if ( feature instanceof SectorNotZeroFeature ) {
+        numSectorNotZero++;
+      }
+      else if ( feature instanceof SectorNotOneFeature ) {
+        numSectorNotOne++;
+      }
+      else if ( feature instanceof SectorNotTwoFeature ) {
+        numSectorNotTwo++;
+      }
+      else if ( feature instanceof SectorOnlyOneFeature ) {
+        numSectorOnlyOne++;
+      }
+      else if ( feature instanceof FaceColorDualFeature ) {
+        numFaceColorDual++;
+      }
+      else if ( feature instanceof FaceFeature ) {
+        numFace++;
+      }
+    }
+
+    for ( const feature of other.features ) {
+      if ( feature instanceof BlackEdgeFeature ) {
+        numBlack--;
+      }
+      else if ( feature instanceof RedEdgeFeature ) {
+        numRed--;
+      }
+      else if ( feature instanceof SectorNotZeroFeature ) {
+        numSectorNotZero--;
+      }
+      else if ( feature instanceof SectorNotOneFeature ) {
+        numSectorNotOne--;
+      }
+      else if ( feature instanceof SectorNotTwoFeature ) {
+        numSectorNotTwo--;
+      }
+      else if ( feature instanceof SectorOnlyOneFeature ) {
+        numSectorOnlyOne--;
+      }
+      else if ( feature instanceof FaceColorDualFeature ) {
+        numFaceColorDual--;
+      }
+      else if ( feature instanceof FaceFeature ) {
+        numFace--;
+      }
+    }
+
+    return numBlack === 0 && numRed === 0 && numSectorNotZero === 0 && numSectorNotOne === 0 && numSectorNotTwo === 0 && numSectorOnlyOne === 0 && numFaceColorDual === 0 && numFace === 0;
   }
 
   // TODO: embeddings and consolidation of features

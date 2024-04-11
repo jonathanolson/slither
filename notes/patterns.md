@@ -39,8 +39,6 @@
     - CANONICALIZATION somehow? or just scan for isomorphisms?
     - move out sketchyIsIsomorphic into a function in code
   - 
-  - Ordering of getFaceFeatureCombinations (fewer duals first, then fewer faces in duals, etc.)
-  - 
   - Get automorphisms from a pattern board
   - Get all edge features
   - Get all face color dual feature combinations
