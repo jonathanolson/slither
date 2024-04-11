@@ -66,7 +66,7 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     ] );
   }
 
-  public withEmbedding( embedding: Embedding ): FaceColorDualFeature[] {
+  public embedded( embedding: Embedding ): FaceColorDualFeature[] {
     return [ new FaceColorDualFeature(
       this.primaryFaces.map( face => embedding.mapFace( face ) ),
       this.secondaryFaces.map( face => embedding.mapFace( face ) ),

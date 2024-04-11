@@ -48,7 +48,7 @@ export class FaceNotStateFeature implements TEmbeddableFeature {
     ] );
   }
 
-  public withEmbedding( embedding: Embedding ): FaceNotStateFeature[] {
+  public embedded( embedding: Embedding ): FaceNotStateFeature[] {
     return [ new FaceNotStateFeature(
       embedding.mapFace( this.face ),
       this.blackEdges.map( edge => embedding.mapNonExitEdge( edge ) ),

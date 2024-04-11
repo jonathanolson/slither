@@ -33,7 +33,7 @@ export class SectorOnlyOneFeature implements TEmbeddableFeature {
     return logicExactlyOne( this.sector.edges.map( edge => getFormula( edge ) ) );
   }
 
-  public withEmbedding( embedding: Embedding ): SectorOnlyOneFeature[] {
+  public embedded( embedding: Embedding ): SectorOnlyOneFeature[] {
     return [ new SectorOnlyOneFeature( embedding.mapSector( this.sector ) ) ];
   }
 

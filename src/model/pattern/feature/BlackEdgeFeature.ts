@@ -28,7 +28,7 @@ export class BlackEdgeFeature implements TEmbeddableFeature {
     return getFormula( this.edge );
   }
 
-  public withEmbedding( embedding: Embedding ): BlackEdgeFeature[] {
+  public embedded( embedding: Embedding ): BlackEdgeFeature[] {
     if ( this.edge.isExit ) {
       // WE DO NOT EMBED BLACK EXIT EDGES
       return [];

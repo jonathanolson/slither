@@ -33,7 +33,7 @@ export class SectorNotOneFeature implements TEmbeddableFeature {
     return logicNot1( this.sector.edges.map( edge => getFormula( edge ) ) );
   }
 
-  public withEmbedding( embedding: Embedding ): SectorNotOneFeature[] {
+  public embedded( embedding: Embedding ): SectorNotOneFeature[] {
     return [ new SectorNotOneFeature( embedding.mapSector( this.sector ) ) ];
   }
 

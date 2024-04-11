@@ -36,7 +36,7 @@ export class VertexNotPairFeature implements TEmbeddableFeature {
     return logicNotAll( [ getFormula( this.edgeA ), getFormula( this.edgeB ) ] );
   }
 
-  public withEmbedding( embedding: Embedding ): VertexNotPairFeature[] {
+  public embedded( embedding: Embedding ): VertexNotPairFeature[] {
     if ( this.edgeA.isExit ) {
       const exitEdges = embedding.mapExitEdges( this.edgeA );
       return exitEdges.map( edge => new VertexNotPairFeature( embedding.mapVertex( this.vertex ), edge, embedding.mapNonExitEdge( this.edgeB ) ) );

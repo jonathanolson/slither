@@ -29,7 +29,7 @@ export class RedEdgeFeature implements TEmbeddableFeature {
     return logicNot( getFormula( this.edge ) );
   }
 
-  public withEmbedding( embedding: Embedding ): RedEdgeFeature[] {
+  public embedded( embedding: Embedding ): RedEdgeFeature[] {
     if ( this.edge.isExit ) {
       // NOTE: Can potentially embed to multiple red edges
       return embedding.mapExitEdges( this.edge ).map( edge => new RedEdgeFeature( edge ) );
