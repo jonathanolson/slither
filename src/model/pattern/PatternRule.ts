@@ -1,4 +1,4 @@
-import { FeatureSet } from './feature/FeatureSet.ts';
+import { BasicSolveOptions, FeatureSet } from './feature/FeatureSet.ts';
 import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
@@ -100,6 +100,14 @@ export class PatternRule {
 
   public toCanonicalString(): string {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
+  }
+
+  public static getBasicRule( patternBoard: TDescribedPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ) {
+    return new PatternRule(
+      patternBoard,
+      inputFeatureSet,
+      FeatureSet.getBasicSolve( patternBoard, inputFeatureSet, options )
+    );
   }
 
   public static applyRules( patternBoard: TPatternBoard, initialFeatureSet: FeatureSet, embeddedRules: PatternRule[] ): FeatureSet {

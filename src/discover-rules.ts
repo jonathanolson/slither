@@ -35,6 +35,8 @@ import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsomorphic.ts';
+import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
+import { PatternRule } from './model/pattern/PatternRule.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -137,6 +139,10 @@ console.log( 'test' );
     align: 'left'
   } );
   scene.addChild( container );
+
+  const addPaddedNode = ( node: Node ) => {
+    container.addChild( new AlignBox( node, { margin: 5 } ) );
+  };
 
   const testPattern = ( name: string, pattern: BasePatternBoard ) => {
     console.log( '----------' );
@@ -690,77 +696,54 @@ console.log( 'test' );
 
         // TODO: other features
         const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
-          // TODO: clearly allow FeatureSet as the primary here
-          const outputFeatures = FeatureSet.getBasicSolve( board, new FeatureSet( inputFeatures ), {
+          const rule = PatternRule.getBasicRule( board, new FeatureSet( inputFeatures ), {
             solveEdges,
             solveFaceColors,
             solveSectors,
             highlander: false
-          } ).features;
+          } );
 
-          console.log( 'solve', JSON.stringify( board.descriptor ) );
-          console.log( 'inputFeatures', inputFeatures.map( feature => feature.toCanonicalString() ) );
-          console.log( 'outputFeatures', outputFeatures.map( feature => feature.toCanonicalString() ) );
-
-          // TODO: console.log
-
-          return new AlignBox( new HBox( {
-            spacing: 10,
-            children: [
-              new PatternNode( {
-                patternBoard: board,
-                features: inputFeatures,
-                planarPatternMap: board.planarPatternMap
-              }, {
-                // labels: true
-              } ),
-              new PatternNode( {
-                patternBoard: board,
-                features: outputFeatures,
-                planarPatternMap: board.planarPatternMap
-              }, {
-                // showQuestionMarks: false
-              } )
-            ]
-          } ), { margin: 5 } );
+          return new PatternRuleNode( rule, board.planarPatternMap, {
+            // TODO
+          } );
         };
 
-        container.addChild( getRuleNode( squarePatternBoard, [
+        addPaddedNode( getRuleNode( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
           new RedEdgeFeature( squarePatternBoard.edges[ 0 ] ),
         ], true, false, false ) );
 
-        container.addChild( getRuleNode( squarePatternBoard, [
+        addPaddedNode( getRuleNode( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
           FaceColorDualFeature.fromPrimarySecondaryFaces( [ squarePatternBoard.faces[ 0 ], squarePatternBoard.faces[ 1 ] ], [] ),
         ], false, true, false ) );
 
-        container.addChild( getRuleNode( squarePatternBoard, [
+        addPaddedNode( getRuleNode( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
           new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
         ], true, false, true ) );
 
-        container.addChild( getRuleNode( squarePatternBoard, [
+        addPaddedNode( getRuleNode( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
           new SectorNotZeroFeature( squarePatternBoard.sectors[ 0 ] ),
         ], false, false, true ) );
 
-        container.addChild( getRuleNode( squarePatternBoard, [
+        addPaddedNode( getRuleNode( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
           new SectorOnlyOneFeature( squarePatternBoard.sectors[ 0 ] ),
         ], false, false, true ) );
 
-        container.addChild( getRuleNode( diagonalPatternBoard, [
+        addPaddedNode( getRuleNode( diagonalPatternBoard, [
           new FaceFeature( diagonalPatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( diagonalPatternBoard.faces[ 1 ], 3 ),
         ], true, true, true ) );
 
-        container.addChild( getRuleNode( doubleSquarePatternBoard, [
+        addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
         ], true, true, true ) );
 
-        container.addChild( getRuleNode( doubleSquarePatternBoard, [
+        addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 7 ] ),
