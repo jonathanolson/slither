@@ -34,6 +34,7 @@ import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeatu
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
+import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsomorphic.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -474,57 +475,6 @@ console.log( 'test' );
 
     {
 
-      const getSemiAdjacentFaces = ( board: TBoard, face: TFace ): Set<TFace> => {
-        const set = new Set<TFace>();
-        face.vertices.forEach( vertex => {
-          vertex.faces.forEach( f => {
-            if ( f !== face ) {
-              set.add( f );
-            }
-          } );
-        } );
-        return set;
-      };
-
-      const sketchyIsIsomorphic = ( a: TPatternBoard, b: TPatternBoard ): boolean => {
-        if (
-          a.vertices.length !== b.vertices.length ||
-          a.edges.length !== b.edges.length ||
-          a.faces.length !== b.faces.length ||
-          a.sectors.length !== b.sectors.length ||
-          a.vertices.filter( v => v.isExit ).length !== b.vertices.filter( v => v.isExit ).length ||
-          a.edges.filter( e => e.isExit ).length !== b.edges.filter( e => e.isExit ).length ||
-          a.faces.filter( f => f.isExit ).length !== b.faces.filter( f => f.isExit ).length
-        ) {
-          return false;
-        }
-
-        return computeEmbeddings( a, b ).length > 0 && computeEmbeddings( b, a ).length > 0;
-      };
-
-      const getNextGeneration = ( patternBoards: FacesPatternBoard[] ): FacesPatternBoard[] => {
-        const nextGeneration: FacesPatternBoard[] = [];
-        patternBoards.forEach( patternBoard => {
-          const potentialFaces = new Set<TFace>();
-          patternBoard.originalBoardFaces.forEach( face => {
-            getSemiAdjacentFaces( patternBoard.originalBoard, face ).forEach( f => {
-              if ( !patternBoard.originalBoardFaces.includes( f ) ) {
-                potentialFaces.add( f );
-              }
-            } );
-          } );
-
-          potentialFaces.forEach( face => {
-            const newFaces = [ ...patternBoard.originalBoardFaces, face ];
-            const newPatternBoard = new FacesPatternBoard( patternBoard.originalBoard, newFaces );
-            if ( !nextGeneration.some( p => sketchyIsIsomorphic( p, newPatternBoard ) ) ) {
-              nextGeneration.push( newPatternBoard );
-            }
-          } );
-        } );
-        return nextGeneration;
-      };
-
       const getGenerationNode = ( generation: FacesPatternBoard[] ): Node => {
         return new AlignBox( new HBox( {
           spacing: 10,
@@ -558,7 +508,7 @@ console.log( 'test' );
 
         const generations: FacesPatternBoard[][] = [ firstGeneration ];
         for ( let i = 0; i < n - 1; i++ ) {
-          generations.push( getNextGeneration( generations[ generations.length - 1 ] ) );
+          generations.push( FacesPatternBoard.getNextGeneration( generations[ generations.length - 1 ] ) );
         }
         return generations;
       };
@@ -590,7 +540,7 @@ console.log( 'test' );
         ]
       } ) );
 
-      console.log( sketchyIsIsomorphic( a.patternBoard, b.patternBoard ) );
+      console.log( arePatternBoardsIsomorphic( a.patternBoard, b.patternBoard ) );
 
       const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
       container.addChild( getGenerationsNode( squareGenerations ) );
@@ -656,7 +606,7 @@ console.log( 'test' );
         numExitVertices: 4,
         type: 'faces',
         vertexLists: [ [ 0, 1, 2, 3 ] ]
-      } ) ).map( arr => arr.map( f => f.getCanonicalString() ) ) );
+      } ) ).map( arr => arr.map( f => f.toCanonicalString() ) ) );
       console.log( getFaceFeatureCombinations( new BasePatternBoard( {
         numNonExitVertices: 0,
         numExitVertices: 4,
@@ -672,8 +622,8 @@ console.log( 'test' );
 
       {
         const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
-        const diagonalPatternBoard = getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
-        const doubleSquarePatternBoard = getNextGeneration( getNextGeneration( getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) ) ) )[ 0 ];
+        const diagonalPatternBoard = FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
+        const doubleSquarePatternBoard = FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) ) ) )[ 0 ];
 
         container.addChild( new PatternNode( {
           patternBoard: squarePatternBoard,
@@ -749,8 +699,8 @@ console.log( 'test' );
           } ).features;
 
           console.log( 'solve', JSON.stringify( board.descriptor ) );
-          console.log( 'inputFeatures', inputFeatures.map( feature => feature.getCanonicalString() ) );
-          console.log( 'outputFeatures', outputFeatures.map( feature => feature.getCanonicalString() ) );
+          console.log( 'inputFeatures', inputFeatures.map( feature => feature.toCanonicalString() ) );
+          console.log( 'outputFeatures', outputFeatures.map( feature => feature.toCanonicalString() ) );
 
           // TODO: console.log
 
@@ -761,6 +711,8 @@ console.log( 'test' );
                 patternBoard: board,
                 features: inputFeatures,
                 planarPatternMap: board.planarPatternMap
+              }, {
+                // labels: true
               } ),
               new PatternNode( {
                 patternBoard: board,

@@ -24,26 +24,32 @@ export class PatternRule {
     return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
   }
 
-  // public isSubsetOf( other: PatternRule ): boolean {
-  //   return this.inputFeatureSet.isSubsetOf( other.inputFeatureSet ) && this.outputFeatureSet.isSubsetOf( other.outputFeatureSet );
-  // }
+  public isSubsetOf( other: PatternRule ): boolean {
+    return this.inputFeatureSet.isSubsetOf( other.inputFeatureSet ) && this.outputFeatureSet.isSubsetOf( other.outputFeatureSet );
+  }
+
+  public matches( featureSet: FeatureSet ): boolean {
+    return this.inputFeatureSet.isSubsetOf( featureSet );
+  }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
-    return this.inputFeatureSet.isSubsetOf( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
+    return this.matches( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
   }
 
   public apply( featureSet: FeatureSet ): FeatureSet {
     assertEnabled() && assert( this.hasApplication( featureSet ) );
 
-    // TODO: need to do the same combination of ... face color duals. oh no
-    return new FeatureSet( [
-      // Remove input features, add output features
-      ...featureSet.features.filter( feature => !this.inputFeatureSet.features.some( inputFeature => inputFeature.equals( feature ) ) ),
-      ...this.outputFeatureSet.features
-    ] );
+    const result = featureSet.union( this.outputFeatureSet )!;
+    assertEnabled() && assert( result );
+
+    return result;
   }
 
   public isTrivial(): boolean {
     return this.outputFeatureSet.isSubsetOf( this.inputFeatureSet );
+  }
+
+  public toCanonicalString(): string {
+    return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
   }
 }

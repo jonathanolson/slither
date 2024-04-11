@@ -19,7 +19,7 @@ import { TEmbeddableFeature } from '../../model/pattern/feature/TEmbeddableFeatu
 
 export type PatternNodeOptions = {
   showQuestionMarks?: boolean;
-
+  labels?: boolean;
   // TODO: face color matching for a previous patternnode
 };
 
@@ -30,7 +30,8 @@ export class PatternNode extends Node {
   ) {
 
     const options = optionize<PatternNodeOptions>()( {
-      showQuestionMarks: true
+      showQuestionMarks: true,
+      labels: false
     }, providedOptions );
 
     const patternBoard = pattern.patternBoard;
@@ -248,6 +249,55 @@ export class PatternNode extends Node {
         }
       }
     } );
+
+    if ( options.labels ) {
+      patternBoard.edges.forEach( edge => {
+        if ( !edge.isExit ) {
+          const points = planarPatternMap.edgeMap.get( edge )!;
+          const centroid = points[ 0 ].average( points[ 1 ] );
+
+          container.addChild( new Text( edge.index, {
+            font: puzzleFont,
+            center: centroid,
+            fill: '#fa0',
+            maxWidth: 0.4,
+            maxHeight: 0.4
+          } ) );
+        }
+      } );
+
+      patternBoard.faces.forEach( face => {
+        const isExit = face.isExit;
+
+        const points = planarPatternMap.faceMap.get( face )!;
+        let centroid = getCentroid( points );
+
+        if ( isExit ) {
+          const delta = centroid.minus( face.edges[ 0 ].vertices.map( vertex => planarPatternMap.vertexMap.get( vertex )! ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / 2 ) );
+          centroid = centroid.plus( delta.timesScalar( 1.5 ) );
+        }
+
+        container.addChild( new Text( face.index, {
+          font: puzzleFont,
+          center: centroid,
+          fill: isExit ? '#0ff' : '#0f0',
+          maxWidth: 0.4,
+          maxHeight: 0.4
+        } ) );
+      } );
+
+      patternBoard.vertices.forEach( vertex => {
+        const point = planarPatternMap.vertexMap.get( vertex )!;
+
+        container.addChild( new Text( vertex.index, {
+          font: puzzleFont,
+          center: point,
+          fill: '#fff',
+          maxWidth: 0.4,
+          maxHeight: 0.4
+        } ) );
+      } );
+    }
 
     super( {
       children: [ container ]

@@ -18,7 +18,7 @@ export class VertexNotPairFeature implements TEmbeddableFeature {
     public readonly edgeB: TPatternEdge
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     const minEdge = Math.min( this.edgeA.index, this.edgeB.index );
     const maxEdge = Math.max( this.edgeA.index, this.edgeB.index );
     return `vertex-not-pair-${this.vertex.index}-${minEdge}-${maxEdge}`;

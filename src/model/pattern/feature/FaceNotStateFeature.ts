@@ -19,7 +19,7 @@ export class FaceNotStateFeature implements TEmbeddableFeature {
     public readonly redEdges: TPatternEdge[]
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `face-not-state-${this.face.index}-${_.sortBy( this.blackEdges.map( edge => edge.index ) ).join( ',' )}-${_.sortBy( this.redEdges.map( edge => edge.index ) ).join( ',' )}`;
   }
 

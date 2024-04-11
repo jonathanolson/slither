@@ -12,6 +12,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getSectorFromEdgePair } from '../data/sector-state/getSectorFromEdgePair.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { TEdge } from '../board/core/TEdge.ts';
+import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
 
@@ -151,4 +152,39 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
       faceMap: faceMap
     };
   }
+
+  public static getSemiAdjacentFaces( board: TBoard, face: TFace ): Set<TFace> {
+    const set = new Set<TFace>();
+    face.vertices.forEach( vertex => {
+      vertex.faces.forEach( f => {
+        if ( f !== face ) {
+          set.add( f );
+        }
+      } );
+    } );
+    return set;
+  };
+
+  public static getNextGeneration( patternBoards: FacesPatternBoard[] ): FacesPatternBoard[] {
+    const nextGeneration: FacesPatternBoard[] = [];
+    patternBoards.forEach( patternBoard => {
+      const potentialFaces = new Set<TFace>();
+      patternBoard.originalBoardFaces.forEach( face => {
+        FacesPatternBoard.getSemiAdjacentFaces( patternBoard.originalBoard, face ).forEach( f => {
+          if ( !patternBoard.originalBoardFaces.includes( f ) ) {
+            potentialFaces.add( f );
+          }
+        } );
+      } );
+
+      potentialFaces.forEach( face => {
+        const newFaces = [ ...patternBoard.originalBoardFaces, face ];
+        const newPatternBoard = new FacesPatternBoard( patternBoard.originalBoard, newFaces );
+        if ( !nextGeneration.some( p => arePatternBoardsIsomorphic( p, newPatternBoard ) ) ) {
+          nextGeneration.push( newPatternBoard );
+        }
+      } );
+    } );
+    return nextGeneration;
+  };
 }

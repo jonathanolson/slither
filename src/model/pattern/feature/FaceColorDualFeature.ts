@@ -27,7 +27,7 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     this.allFaces = new Set( [ ...primaryFaces, ...secondaryFaces ] );
   }
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     const primaryIndices = _.sortBy( this.primaryFaces.map( face => face.index ) );
     const secondaryIndices = _.sortBy( this.secondaryFaces.map( face => face.index ) );
 

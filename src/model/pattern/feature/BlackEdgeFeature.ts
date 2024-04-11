@@ -12,7 +12,7 @@ export class BlackEdgeFeature implements TEmbeddableFeature {
     public readonly edge: TPatternEdge
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `black-${this.edge.index}`;
   }
 

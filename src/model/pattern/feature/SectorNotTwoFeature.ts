@@ -15,7 +15,7 @@ export class SectorNotTwoFeature implements TEmbeddableFeature {
     public readonly sector: TPatternSector
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `sector-not-two-${this.sector.index}`;
   }
 

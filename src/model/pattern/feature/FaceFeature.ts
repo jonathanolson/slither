@@ -17,7 +17,7 @@ export class FaceFeature implements TEmbeddableFeature {
     public readonly value: FaceValue
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `face-${this.face.index}-${this.value ?? 'blank'}`;
   }
 

@@ -15,7 +15,7 @@ export class VertexNotEmptyFeature implements TEmbeddableFeature {
     public readonly vertex: TPatternVertex
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `vertex-not-empty-${this.vertex.index}`;
   }
 

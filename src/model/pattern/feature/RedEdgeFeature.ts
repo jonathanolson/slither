@@ -13,7 +13,7 @@ export class RedEdgeFeature implements TEmbeddableFeature {
     public readonly edge: TPatternEdge
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `red-${this.edge.index}`;
   }
 

@@ -16,7 +16,7 @@ export class SectorOnlyOneFeature implements TEmbeddableFeature {
     public readonly sector: TPatternSector
   ) {}
 
-  public getCanonicalString(): string {
+  public toCanonicalString(): string {
     return `sector-only-one-${this.sector.index}`;
   }
 

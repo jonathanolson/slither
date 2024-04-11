@@ -13,6 +13,7 @@ import { coalesceFaceColorFeatures } from '../coalesceFaceColorFeatures.ts';
 import { coalesceSectorFeatures } from '../coalesceSectorFeatures.ts';
 import { filterHighlanderSolutions } from '../filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
+import _ from '../../../workarounds/_.ts';
 
 export class FeatureSet {
 
@@ -25,14 +26,14 @@ export class FeatureSet {
     assertEnabled() && assert( filterRedundantFeatures( features ).length === features.length );
 
     for ( const feature of features ) {
-      this.map.set( feature.getCanonicalString(), feature );
+      this.map.set( feature.toCanonicalString(), feature );
     }
 
     assertEnabled() && assert( this.map.size === features.length );
   }
 
   public hasExactFeature( feature: TEmbeddableFeature ): boolean {
-    return this.map.has( feature.getCanonicalString() );
+    return this.map.has( feature.toCanonicalString() );
   }
 
   public impliesFeature( feature: TEmbeddableFeature ): boolean {
@@ -145,6 +146,10 @@ export class FeatureSet {
       ...nonFaceFeatures,
       ...faceFeatures
     ] );
+  }
+
+  public toCanonicalString(): string {
+    return `feat:${_.sortBy( this.map.keys() ).join( '/' )}`;
   }
 
   public serialize(): TSerializedFeatureSet {
