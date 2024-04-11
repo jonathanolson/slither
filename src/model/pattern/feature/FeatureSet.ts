@@ -14,6 +14,12 @@ import { coalesceSectorFeatures } from '../coalesceSectorFeatures.ts';
 import { filterHighlanderSolutions } from '../filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 import _ from '../../../workarounds/_.ts';
+import { RedEdgeFeature } from './RedEdgeFeature.ts';
+import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
+import { SectorNotOneFeature } from './SectorNotOneFeature.ts';
+import { SectorNotZeroFeature } from './SectorNotZeroFeature.ts';
+import { SectorNotTwoFeature } from './SectorNotTwoFeature.ts';
+import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
 
 export class FeatureSet {
 
@@ -101,6 +107,10 @@ export class FeatureSet {
     return this.features.length === other.features.length && this.isSubsetOf( other );
   }
 
+  public hasFeature( feature: TEmbeddableFeature ): boolean {
+    return this.map.has( feature.toCanonicalString() );
+  }
+
   // null if they can't be compatibly combined
   public union( other: FeatureSet ): FeatureSet | null {
     // Allow our set to be bigger, so we can optimize a few things
@@ -146,6 +156,87 @@ export class FeatureSet {
       ...nonFaceFeatures,
       ...faceFeatures
     ] );
+  }
+
+  // TODO: this doesn't vet full compatibility, but tries to rule things out nicely
+  // NOTE: Not the fastest, but hopefully speeds up computations
+  public isCompatibleWith( other: FeatureSet ): boolean {
+
+    for ( const feature of this.features ) {
+      for ( const otherFeature of other.features ) {
+        if ( feature instanceof FaceColorDualFeature && otherFeature instanceof FaceColorDualFeature ) {
+          if ( !feature.isCompatibleWith( otherFeature ) ) {
+            return false;
+          }
+        }
+
+        if ( feature instanceof RedEdgeFeature && otherFeature instanceof BlackEdgeFeature && feature.edge === otherFeature.edge ) {
+          return false;
+        }
+
+        if ( feature instanceof BlackEdgeFeature && otherFeature instanceof RedEdgeFeature && feature.edge === otherFeature.edge ) {
+          return false;
+        }
+
+      }
+    }
+
+    // Sector checks
+    // TODO: sector checks? That could be... somewhat more expensive (BUT might save us a lot of computation)
+    // TODO: this will require a sector in one, and two edges in another
+    const checkSectors = ( a: FeatureSet, b: FeatureSet ): boolean => {
+      for ( const feature of a.features ) {
+        if ( feature instanceof SectorNotZeroFeature ) {
+          if ( b.hasFeature( new RedEdgeFeature( feature.sector.edges[ 0 ] ) ) && other.hasFeature( new RedEdgeFeature( feature.sector.edges[ 1 ] ) ) ) {
+            return false;
+          }
+        }
+
+        if ( feature instanceof SectorNotZeroFeature || feature instanceof SectorNotOneFeature || feature instanceof SectorNotTwoFeature || feature instanceof SectorOnlyOneFeature ) {
+          const edgeA = feature.sector.edges[ 0 ];
+
+          const redA = b.hasFeature( new RedEdgeFeature( edgeA ) );
+          const blackA = b.hasFeature( new BlackEdgeFeature( edgeA ) );
+
+          if ( !redA && !blackA ) {
+            continue;
+          }
+
+          const edgeB = feature.sector.edges[ 1 ];
+          const redB = b.hasFeature( new RedEdgeFeature( edgeB ) );
+          const blackB = b.hasFeature( new BlackEdgeFeature( edgeB ) );
+
+          if ( !redB && !blackB ) {
+            continue;
+          }
+
+          const blackCount = ( blackA ? 1 : 0 ) + ( blackB ? 1 : 0 );
+
+          if ( feature instanceof SectorNotZeroFeature && blackCount === 0 ) {
+            return false;
+          }
+          if ( feature instanceof SectorNotOneFeature && blackCount === 1 ) {
+            return false;
+          }
+          if ( feature instanceof SectorNotTwoFeature && blackCount === 2 ) {
+            return false;
+          }
+          if ( feature instanceof SectorOnlyOneFeature && blackCount !== 1 ) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+    if ( !checkSectors( this, other ) ) {
+      return false;
+    }
+    if ( !checkSectors( other, this ) ) {
+      return false;
+    }
+
+    return true;
   }
 
   public toCanonicalString(): string {

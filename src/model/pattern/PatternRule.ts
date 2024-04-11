@@ -3,6 +3,7 @@ import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
+import { FaceFeature } from './feature/FaceFeature.ts';
 
 export class PatternRule {
   public constructor(
@@ -54,7 +55,21 @@ export class PatternRule {
   // Assumes FaceFeatures are static, and that features "in principle" won't be removed (if they are, they are replaced
   // by something that implies the same thing).
   public canPotentiallyMatch( featureSet: FeatureSet ): boolean {
-    throw new Error( 'unimplemented' );
+    if ( !this.inputFeatureSet.isCompatibleWith( featureSet ) ) {
+      return false;
+    }
+
+    for ( const feature of this.inputFeatureSet.features ) {
+      if ( feature instanceof FaceFeature ) {
+        const matchingFaceFeature = ( featureSet.features.find( otherFeature => otherFeature instanceof FaceFeature && feature.face === otherFeature.face ) ?? null ) as FaceFeature | null;
+
+        if ( !matchingFaceFeature || feature.value !== matchingFaceFeature.value ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
