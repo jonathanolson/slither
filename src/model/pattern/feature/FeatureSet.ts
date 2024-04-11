@@ -1,15 +1,11 @@
 import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { assertEnabled, default as assert } from '../../../workarounds/assert.ts';
-import { filterRedundantFeatures } from './filterRedundantFeatures.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { optionize } from 'phet-lib/phet-core';
+import { arrayRemove, optionize } from 'phet-lib/phet-core';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
-import { coalesceEdgeFeatures } from '../coalesceEdgeFeatures.ts';
-import { coalesceFaceColorFeatures } from '../coalesceFaceColorFeatures.ts';
-import { coalesceSectorFeatures } from '../coalesceSectorFeatures.ts';
 import { filterHighlanderSolutions } from '../filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 import _ from '../../../workarounds/_.ts';
@@ -26,6 +22,7 @@ import FaceValue from '../../data/face-value/FaceValue.ts';
 import { TPatternSector } from '../TPatternSector.ts';
 import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
+import { FaceConnectivity } from '../FaceConnectivity.ts';
 
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
@@ -235,6 +232,8 @@ export class FeatureSet {
       return;
     }
 
+    // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
+
     this.sectorsNotZero.add( sector );
     this.ensureSector( sector );
   }
@@ -279,6 +278,8 @@ export class FeatureSet {
     if ( this.redEdges.has( edgeA ) || this.redEdges.has( edgeB ) ) {
       return;
     }
+
+    // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
 
     this.sectorsNotTwo.add( sector );
     this.ensureSector( sector );
@@ -855,7 +856,6 @@ export class FeatureSet {
     return featureSet;
   }
 
-  // TODO: Figure out best "Pattern" representation (FeatureSet, no? mapping or no?)
   // null if there is no solution
   public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet | null {
 
@@ -882,17 +882,206 @@ export class FeatureSet {
       solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
     }
 
-    const addedEdgeFeatures = options.solveEdges ? coalesceEdgeFeatures( patternBoard, solutions ) : [];
-    const addedFaceColorFeatures = options.solveFaceColors ? coalesceFaceColorFeatures( patternBoard, solutions ) : [];
-    const addedSectorFeatures = options.solveSectors ? coalesceSectorFeatures( patternBoard, solutions ) : [];
+    const featureSet = new FeatureSet();
 
-    return FeatureSet.fromFeatures( filterRedundantFeatures( [
-      // Strip face color duals, because we can't vet redundancy (we generate a new set)
-      ...( options.solveFaceColors ? inputFeatureSet.getFeaturesArray().filter( feature => !( feature instanceof FaceColorDualFeature ) ) : inputFeatureSet.getFeaturesArray() ),
-      ...addedEdgeFeatures,
-      ...addedFaceColorFeatures,
-      ...addedSectorFeatures
-    ] ) );
+    if ( options.solveEdges ) {
+      // TODO: should this be an instance method?
+      FeatureSet.addSolvedEdgeFeatures( patternBoard, solutions, featureSet );
+    }
+
+    if ( options.solveSectors ) {
+      FeatureSet.addSolvedSectorFeatures( patternBoard, solutions, featureSet );
+    }
+
+    if ( options.solveFaceColors ) {
+      FeatureSet.addSolvedFaceColorDualFeatures( patternBoard, solutions, featureSet );
+    }
+
+    return featureSet;
+  }
+
+  public static addSolvedEdgeFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+    const hasBlack = new Array( patternBoard.edges.length ).fill( false );
+    const hasRed = new Array( patternBoard.edges.length ).fill( false );
+
+    const allEdges = new Set( patternBoard.edges );
+
+    const redExitVertices = new Set( patternBoard.vertices.filter( vertex => vertex.isExit ) );
+
+    for ( const solution of solutions ) {
+
+      // TODO: faster... ways in the future? Performance?
+      const edgesRemaining = new Set( allEdges );
+
+      for ( const edge of solution ) {
+        hasBlack[ edge.index ] = true;
+        edgesRemaining.delete( edge );
+      }
+
+      for ( const edge of edgesRemaining ) {
+        hasRed[ edge.index ] = true;
+      }
+
+      for ( const redExitVertex of [ ...redExitVertices ] ) {
+
+        // If we have a black edge in our exit, it can't be red
+
+        // TODO: omg, improve performance here lol
+        if ( solution.includes( redExitVertex.exitEdge! ) ) {
+          redExitVertices.delete( redExitVertex );
+        }
+
+        // If we have zero or one black edges to our exit vertex, it can't be red.
+        // NOTE: if zero black edges, then we can't rule out exit edge matching to 2 edges that could both be black.
+
+        // TODO: omg, improve performance here lol
+        if ( redExitVertex.edges.filter( edge => solution.includes( edge ) ).length < 2 ) {
+          redExitVertices.delete( redExitVertex );
+        }
+      }
+    }
+
+    for ( const edge of patternBoard.edges ) {
+      if ( !edge.isExit ) {
+        const isBlack = hasBlack[ edge.index ];
+        const isRed = hasRed[ edge.index ];
+
+        if ( isBlack && !isRed ) {
+          featureSet.addBlackEdge( edge );
+        }
+        if ( !isBlack && isRed ) {
+          featureSet.addRedEdge( edge );
+        }
+      }
+    }
+    for ( const redExitVertex of redExitVertices ) {
+      featureSet.addRedEdge( redExitVertex.exitEdge! );
+    }
+  }
+
+  public static addSolvedSectorFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+    const hasZero = new Array( patternBoard.sectors.length ).fill( false );
+    const hasOne = new Array( patternBoard.sectors.length ).fill( false );
+    const hasTwo = new Array( patternBoard.sectors.length ).fill( false );
+
+    for ( const solution of solutions ) {
+      // TODO: performance here omg
+      for ( const sector of patternBoard.sectors ) {
+        const count = ( solution.includes( sector.edges[ 0 ] ) ? 1 : 0 ) + ( solution.includes( sector.edges[ 1 ] ) ? 1 : 0 );
+
+        if ( count === 0 ) {
+          hasZero[ sector.index ] = true;
+        }
+        else if ( count === 1 ) {
+          hasOne[ sector.index ] = true;
+        }
+        else if ( count === 2 ) {
+          hasTwo[ sector.index ] = true;
+        }
+      }
+    }
+
+    for ( const sector of patternBoard.sectors ) {
+      const isZero = hasZero[ sector.index ];
+      const isOne = hasOne[ sector.index ];
+      const isTwo = hasTwo[ sector.index ];
+
+      if ( isOne && !isZero && !isTwo ) {
+        featureSet.addSectorOnlyOne( sector );
+      }
+      else if ( isZero && isOne && !isTwo ) {
+        featureSet.addSectorNotTwo( sector );
+      }
+      else if ( isZero && isTwo && !isOne ) {
+        featureSet.addSectorNotOne( sector );
+      }
+      else if ( !isZero && isOne && isTwo ) {
+        featureSet.addSectorNotZero( sector );
+      }
+    }
+  }
+
+  public static addSolvedFaceColorDualFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+    // TODO: a more efficient way! THIS IS PRETTY LAZY CODING
+
+    const sameColorDuals: FaceColorDualFeature[] = [];
+    const oppositeColorDuals: FaceColorDualFeature[] = [];
+
+    const edgeConnectedComponentFaces = FaceConnectivity.get( patternBoard ).connectedComponents;
+    const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
+    const sameComponent = ( faceA: TPatternFace, faceB: TPatternFace ) => getComponentIndex( faceA ) === getComponentIndex( faceB );
+
+    for ( let i = 0; i < patternBoard.faces.length; i++ ) {
+      const faceA = patternBoard.faces[ i ];
+      for ( let j = i + 1; j < patternBoard.faces.length; j++ ) {
+        const faceB = patternBoard.faces[ j ];
+
+        if ( sameComponent( faceA, faceB ) ) {
+          sameColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
+          oppositeColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
+        }
+      }
+    }
+
+    const duals = new Set( [ ...sameColorDuals, ...oppositeColorDuals ] );
+
+    solutions.forEach( solution => {
+      const solutionSet = new Set( solution );
+
+      for ( const dual of [ ...duals ] ) {
+        if ( !dual.isPossibleWith( edge => solutionSet.has( edge ) ) ) {
+          duals.delete( dual );
+        }
+      }
+    } );
+
+    // TODO: omg efficiency, and code duplication
+    const candidateDuals = patternBoard.faces.map( face => new CandidateDual( [ face ], [] ) );
+    const getDual = ( face: TPatternFace ) => candidateDuals.find( candidate => candidate.primaryFaces.includes( face ) || candidate.secondaryFaces.includes( face ) )!;
+    duals.forEach( dual => {
+      if ( dual.primaryFaces.length === 2 ) {
+        const faceA = dual.primaryFaces[ 0 ];
+        const faceB = dual.primaryFaces[ 1 ];
+
+        const dualA = getDual( faceA );
+        const dualB = getDual( faceB );
+
+        if ( dualA !== dualB ) {
+          const areSameSide = dualA.primaryFaces.includes( faceA ) === dualB.primaryFaces.includes( faceB );
+
+          const dual = areSameSide
+                       ? new CandidateDual( [ ...dualA.primaryFaces, ...dualB.primaryFaces ], [ ...dualA.secondaryFaces, ...dualB.secondaryFaces ] )
+                       : new CandidateDual( [ ...dualA.primaryFaces, ...dualB.secondaryFaces ], [ ...dualA.secondaryFaces, ...dualB.primaryFaces ] );
+
+          arrayRemove( candidateDuals, dualA );
+          arrayRemove( candidateDuals, dualB );
+          candidateDuals.push( dual );
+        }
+      }
+      else {
+        const faceA = dual.primaryFaces[ 0 ];
+        const faceB = dual.secondaryFaces[ 0 ];
+
+        const dualA = getDual( faceA );
+        const dualB = getDual( faceB );
+
+        if ( dualA !== dualB ) {
+          const areSameSide = dualA.primaryFaces.includes( faceA ) !== dualB.primaryFaces.includes( faceB );
+
+          const dual = areSameSide
+                       ? new CandidateDual( [ ...dualA.primaryFaces, ...dualB.primaryFaces ], [ ...dualA.secondaryFaces, ...dualB.secondaryFaces ] )
+                       : new CandidateDual( [ ...dualA.primaryFaces, ...dualB.secondaryFaces ], [ ...dualA.secondaryFaces, ...dualB.primaryFaces ] );
+
+          arrayRemove( candidateDuals, dualA );
+          arrayRemove( candidateDuals, dualB );
+          candidateDuals.push( dual );
+        }
+      }
+    } );
+
+    // TODO: ideally don't have to recompute everything
+    const features = candidateDuals.filter( dual => dual.primaryFaces.length + dual.secondaryFaces.length > 1 ).map( dual => FaceColorDualFeature.fromPrimarySecondaryFaces( dual.primaryFaces, dual.secondaryFaces ) );
+    features.forEach( feature => featureSet.addFeature( feature ) );
   }
 }
 
@@ -913,3 +1102,10 @@ export type TSerializedFeatureSet = {
   sectorsOnlyOne?: number[];
   faceColorDualFeatures?: ( TSerializedEmbeddableFeature & { type: 'face-color-dual' } )[];
 };
+
+class CandidateDual {
+  public constructor(
+    public readonly primaryFaces: TPatternFace[],
+    public readonly secondaryFaces: TPatternFace[],
+  ) {}
+}
