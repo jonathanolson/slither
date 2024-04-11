@@ -32,7 +32,7 @@ export class SectorNotZeroFeature implements TEmbeddableFeature {
     return logicOr( this.sector.edges.map( edge => getFormula( edge ) ) );
   }
 
-  public applyEmbedding( embedding: Embedding ): SectorNotZeroFeature[] {
+  public withEmbedding( embedding: Embedding ): SectorNotZeroFeature[] {
     return [ new SectorNotZeroFeature( embedding.mapSector( this.sector ) ) ];
   }
 

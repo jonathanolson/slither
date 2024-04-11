@@ -556,7 +556,7 @@ export class FeatureSet {
     try {
       // NOTE: exit edges can overlap, but we only mark them as "red" so they won't cause incompatibility.
       // NOTE: exit faces can overlap, and we'll need to handle cases where they are just incompatible.
-      return FeatureSet.fromFeatures( this.getFeaturesArray().flatMap( feature => feature.applyEmbedding( embedding ) ) );
+      return FeatureSet.fromFeatures( this.getFeaturesArray().flatMap( feature => feature.withEmbedding( embedding ) ) );
     }
     catch ( e ) {
       if ( e instanceof IncompatibleFeatureError ) {

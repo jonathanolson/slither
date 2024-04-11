@@ -5,8 +5,9 @@
   - 
   - Get rid of the filter features (FeatureSet does this)
   - 
-  - applyEmbedding => withEmbedding
   - FeatureSet.difference (things we can apply, essentially the pattern rule output)
+    - (performance, but also "hey we can show what actually changed")
+    - Also, our matching is partially based on this(!)
   - 
   - Enumerate initial feature sets (given a pattern board) for:
     1. Edges

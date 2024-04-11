@@ -31,7 +31,7 @@ export class VertexNotEmptyFeature implements TEmbeddableFeature {
     return logicOr( this.vertex.edges.map( edge => getFormula( edge ) ) );
   }
 
-  public applyEmbedding( embedding: Embedding ): VertexNotEmptyFeature[] {
+  public withEmbedding( embedding: Embedding ): VertexNotEmptyFeature[] {
     return [ new VertexNotEmptyFeature( embedding.mapVertex( this.vertex ) ) ];
   }
 
