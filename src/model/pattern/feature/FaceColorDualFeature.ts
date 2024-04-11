@@ -152,6 +152,33 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     };
   }
 
+  public overlapsWith( other: FaceColorDualFeature ): boolean {
+    for ( const face of this.allFaces ) {
+      if ( other.allFaces.has( face ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // null if they are not compatible
+  public union( other: FaceColorDualFeature ): FaceColorDualFeature | null {
+    const hasSameOverlap = this.primaryFaces.some( face => other.primaryFaces.includes( face ) ) || this.secondaryFaces.some( face => other.secondaryFaces.includes( face ) );
+    const hasOppositeOverlap = this.primaryFaces.some( face => other.secondaryFaces.includes( face ) ) || this.secondaryFaces.some( face => other.primaryFaces.includes( face ) );
+
+    assertEnabled() && assert( hasSameOverlap || hasOppositeOverlap );
+
+    if ( hasSameOverlap && hasOppositeOverlap ) {
+      return null;
+    }
+    else if ( hasSameOverlap ) {
+      return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...this.primaryFaces, ...other.primaryFaces ], [ ...this.secondaryFaces, ...other.secondaryFaces ] );
+    }
+    else {
+      return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...this.primaryFaces, ...other.secondaryFaces ], [ ...this.secondaryFaces, ...other.primaryFaces ] );
+    }
+  }
+
   public isCompatibleWith( other: FaceColorDualFeature ): boolean {
     let hasSame = false;
     let hasOpposite = false;

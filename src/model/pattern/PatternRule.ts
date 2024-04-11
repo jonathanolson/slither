@@ -24,6 +24,10 @@ export class PatternRule {
     return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
   }
 
+  // public isSubsetOf( other: PatternRule ): boolean {
+  //   return this.inputFeatureSet.isSubsetOf( other.inputFeatureSet ) && this.outputFeatureSet.isSubsetOf( other.outputFeatureSet );
+  // }
+
   public hasApplication( featureSet: FeatureSet ): boolean {
     return this.inputFeatureSet.isSubsetOf( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
   }

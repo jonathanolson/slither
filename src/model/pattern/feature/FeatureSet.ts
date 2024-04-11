@@ -58,37 +58,11 @@ export class FeatureSet {
 
     const nonoverlappingFaceColorFeatures: FaceColorDualFeature[] = [];
 
-    const hasOverlap = ( a: FaceColorDualFeature, b: FaceColorDualFeature ): boolean => {
-      for ( const face of a.allFaces ) {
-        if ( b.allFaces.has( face ) ) {
-          return true;
-        }
-      }
-      return false;
-    };
-
-    const resolveOverlap = ( a: FaceColorDualFeature, b: FaceColorDualFeature ): FaceColorDualFeature | null => {
-      const hasSameOverlap = a.primaryFaces.some( face => b.primaryFaces.includes( face ) ) || a.secondaryFaces.some( face => b.secondaryFaces.includes( face ) );
-      const hasOppositeOverlap = a.primaryFaces.some( face => b.secondaryFaces.includes( face ) ) || a.secondaryFaces.some( face => b.primaryFaces.includes( face ) );
-
-      assertEnabled() && assert( hasSameOverlap || hasOppositeOverlap );
-
-      if ( hasSameOverlap && hasOppositeOverlap ) {
-        return null;
-      }
-      else if ( hasSameOverlap ) {
-        return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...a.primaryFaces, ...b.primaryFaces ], [ ...a.secondaryFaces, ...b.secondaryFaces ] );
-      }
-      else {
-        return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...a.primaryFaces, ...b.secondaryFaces ], [ ...a.secondaryFaces, ...b.primaryFaces ] );
-      }
-    };
-
     for ( const faceColorFeature of faceColorFeatures ) {
-      const overlappingFeature = nonoverlappingFaceColorFeatures.find( otherFeature => hasOverlap( faceColorFeature, otherFeature ) );
+      const overlappingFeature = nonoverlappingFaceColorFeatures.find( otherFeature => faceColorFeature.overlapsWith( otherFeature ) );
 
       if ( overlappingFeature ) {
-        const feature = resolveOverlap( faceColorFeature, overlappingFeature );
+        const feature = faceColorFeature.union( overlappingFeature );
 
         if ( feature ) {
           arrayRemove( nonoverlappingFaceColorFeatures, overlappingFeature );
@@ -124,6 +98,53 @@ export class FeatureSet {
 
   public equals( other: FeatureSet ): boolean {
     return this.features.length === other.features.length && this.isSubsetOf( other );
+  }
+
+  // null if they can't be compatibly combined
+  public union( other: FeatureSet ): FeatureSet | null {
+    // Allow our set to be bigger, so we can optimize a few things
+    if ( this.features.length < other.features.length ) {
+      return other.union( this );
+    }
+
+    // TODO: see if there's a more "filter based on edges" way of doing this, that isn't O(n^2).
+    // TODO: have each feature added to a map (edges as keys), and filter based on that?
+    const nonFaceFeatures = filterRedundantFeatures( [
+      ...this.features.filter( feature => !( feature instanceof FaceColorDualFeature ) ),
+      ...other.features.filter( feature => !( feature instanceof FaceColorDualFeature ) )
+    ] );
+
+    const faceFeatures: FaceColorDualFeature[] = this.features.filter( feature => feature instanceof FaceColorDualFeature ) as FaceColorDualFeature[];
+
+    for ( const feature of other.features ) {
+      if ( feature instanceof FaceColorDualFeature ) {
+        let faceFeature = feature;
+
+        for ( let i = 0; i < faceFeatures.length; i++ ) {
+          const otherFaceFeature = faceFeatures[ i ];
+
+          if ( faceFeature.overlapsWith( otherFaceFeature ) ) {
+            const potentialFaceFeature = faceFeature.union( otherFaceFeature );
+
+            if ( potentialFaceFeature === null ) {
+              return null;
+            }
+            else {
+              faceFeature = potentialFaceFeature;
+              arrayRemove( faceFeatures, otherFaceFeature );
+              i--;
+            }
+          }
+        }
+
+        faceFeatures.push( faceFeature );
+      }
+    }
+
+    return new FeatureSet( [
+      ...nonFaceFeatures,
+      ...faceFeatures
+    ] );
   }
 
   public serialize(): TSerializedFeatureSet {
