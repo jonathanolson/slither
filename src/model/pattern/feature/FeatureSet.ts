@@ -892,23 +892,25 @@ export class FeatureSet {
 
     const featureSet = inputFeatureSet.clone();
 
+    const solutionSets = solutions.map( solution => new Set( solution ) );
+
     if ( options.solveEdges ) {
       // TODO: should this be an instance method?
-      FeatureSet.addSolvedEdgeFeatures( patternBoard, solutions, featureSet );
+      FeatureSet.addSolvedEdgeFeatures( patternBoard, solutionSets, featureSet );
     }
 
     if ( options.solveSectors ) {
-      FeatureSet.addSolvedSectorFeatures( patternBoard, solutions, featureSet );
+      FeatureSet.addSolvedSectorFeatures( patternBoard, solutionSets, featureSet );
     }
 
     if ( options.solveFaceColors ) {
-      FeatureSet.addSolvedFaceColorDualFeatures( patternBoard, solutions, featureSet );
+      FeatureSet.addSolvedFaceColorDualFeatures( patternBoard, solutionSets, featureSet );
     }
 
     return featureSet;
   }
 
-  public static addSolvedEdgeFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+  public static addSolvedEdgeFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
     const hasBlack = new Array( patternBoard.edges.length ).fill( false );
     const hasRed = new Array( patternBoard.edges.length ).fill( false );
 
@@ -935,7 +937,7 @@ export class FeatureSet {
         // If we have a black edge in our exit, it can't be red
 
         // TODO: omg, improve performance here lol
-        if ( solution.includes( redExitVertex.exitEdge! ) ) {
+        if ( solution.has( redExitVertex.exitEdge! ) ) {
           redExitVertices.delete( redExitVertex );
         }
 
@@ -943,7 +945,7 @@ export class FeatureSet {
         // NOTE: if zero black edges, then we can't rule out exit edge matching to 2 edges that could both be black.
 
         // TODO: omg, improve performance here lol
-        if ( redExitVertex.edges.filter( edge => solution.includes( edge ) ).length < 2 ) {
+        if ( redExitVertex.edges.filter( edge => solution.has( edge ) ).length < 2 ) {
           redExitVertices.delete( redExitVertex );
         }
       }
@@ -967,7 +969,7 @@ export class FeatureSet {
     }
   }
 
-  public static addSolvedSectorFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+  public static addSolvedSectorFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
     const hasZero = new Array( patternBoard.sectors.length ).fill( false );
     const hasOne = new Array( patternBoard.sectors.length ).fill( false );
     const hasTwo = new Array( patternBoard.sectors.length ).fill( false );
@@ -975,7 +977,7 @@ export class FeatureSet {
     for ( const solution of solutions ) {
       // TODO: performance here omg
       for ( const sector of patternBoard.sectors ) {
-        const count = ( solution.includes( sector.edges[ 0 ] ) ? 1 : 0 ) + ( solution.includes( sector.edges[ 1 ] ) ? 1 : 0 );
+        const count = ( solution.has( sector.edges[ 0 ] ) ? 1 : 0 ) + ( solution.has( sector.edges[ 1 ] ) ? 1 : 0 );
 
         if ( count === 0 ) {
           hasZero[ sector.index ] = true;
@@ -1009,21 +1011,20 @@ export class FeatureSet {
     }
   }
 
-  public static addSolvedFaceColorDualFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
+  public static addSolvedFaceColorDualFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
     assertEnabled() && assert( solutions.length > 0 );
 
     const faceConnectivity = FaceConnectivity.get( patternBoard );
 
     const remainingDuals = new Set( faceConnectivity.connectedFacePairs.map( pair => new DualConnectedFacePair( pair ) ) );
     for ( const solution of solutions ) {
-      const solutionSet = new Set( solution );
 
       // TODO: with iteration, don't make a copy anymore?
       for ( const dual of [ ...remainingDuals ] ) {
         let isSame = true;
 
         for ( const edge of dual.pair.shortestPath ) {
-          if ( solutionSet.has( edge ) ) {
+          if ( solution.has( edge ) ) {
             isSame = !isSame;
           }
         }
