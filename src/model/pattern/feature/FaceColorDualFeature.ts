@@ -172,10 +172,15 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
       return null;
     }
     else if ( hasSameOverlap ) {
-      return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...this.primaryFaces, ...other.primaryFaces ], [ ...this.secondaryFaces, ...other.secondaryFaces ] );
+      // TODO: can we do this without creating so much garbage
+      return FaceColorDualFeature.fromPrimarySecondaryFaces(
+        [ ...new Set( [ ...this.primaryFaces, ...other.primaryFaces ] ) ],
+        [ ...new Set( [ ...this.secondaryFaces, ...other.secondaryFaces ] ) ] );
     }
     else {
-      return FaceColorDualFeature.fromPrimarySecondaryFaces( [ ...this.primaryFaces, ...other.secondaryFaces ], [ ...this.secondaryFaces, ...other.primaryFaces ] );
+      return FaceColorDualFeature.fromPrimarySecondaryFaces(
+        [ ...new Set( [ ...this.primaryFaces, ...other.secondaryFaces ] ) ],
+        [ ...new Set( [ ...this.secondaryFaces, ...other.primaryFaces ] ) ] );
     }
   }
 

@@ -2,7 +2,7 @@ import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { assertEnabled, default as assert } from '../../../workarounds/assert.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { arrayRemove, optionize } from 'phet-lib/phet-core';
+import { optionize } from 'phet-lib/phet-core';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
@@ -22,7 +22,7 @@ import FaceValue from '../../data/face-value/FaceValue.ts';
 import { TPatternSector } from '../TPatternSector.ts';
 import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
-import { FaceConnectivity } from '../FaceConnectivity.ts';
+import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
@@ -61,6 +61,14 @@ export class FeatureSet {
     }
   }
 
+  public addSameColorFaces( faceA: TPatternFace, faceB: TPatternFace ): void {
+    this.addFaceColorDual( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
+  }
+
+  public addOppositeColorFaces( faceA: TPatternFace, faceB: TPatternFace ): void {
+    this.addFaceColorDual( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
+  }
+
   public addFaceColorDual( feature: FaceColorDualFeature ): void {
 
     const originalFeature = feature;
@@ -70,11 +78,11 @@ export class FeatureSet {
       if ( feature.overlapsWith( otherFeature ) ) {
         const potentialFaceFeature = feature.union( otherFeature );
         if ( potentialFaceFeature ) {
-          throw new IncompatibleFeatureError( originalFeature, [ otherFeature ] );
-        }
-        else {
           feature = potentialFaceFeature!;
           this.faceColorDualFeatures.delete( otherFeature );
+        }
+        else {
+          throw new IncompatibleFeatureError( originalFeature, [ otherFeature ] );
         }
       }
     }
@@ -882,7 +890,7 @@ export class FeatureSet {
       solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
     }
 
-    const featureSet = new FeatureSet();
+    const featureSet = inputFeatureSet.clone();
 
     if ( options.solveEdges ) {
       // TODO: should this be an instance method?
@@ -1002,86 +1010,45 @@ export class FeatureSet {
   }
 
   public static addSolvedFaceColorDualFeatures( patternBoard: TPatternBoard, solutions: TPatternEdge[][], featureSet: FeatureSet ): void {
-    // TODO: a more efficient way! THIS IS PRETTY LAZY CODING
+    assertEnabled() && assert( solutions.length > 0 );
 
-    const sameColorDuals: FaceColorDualFeature[] = [];
-    const oppositeColorDuals: FaceColorDualFeature[] = [];
+    const faceConnectivity = FaceConnectivity.get( patternBoard );
 
-    const edgeConnectedComponentFaces = FaceConnectivity.get( patternBoard ).connectedComponents;
-    const getComponentIndex = ( face: TPatternFace ) => edgeConnectedComponentFaces.findIndex( component => component.includes( face ) );
-    const sameComponent = ( faceA: TPatternFace, faceB: TPatternFace ) => getComponentIndex( faceA ) === getComponentIndex( faceB );
+    const remainingDuals = new Set( faceConnectivity.connectedFacePairs.map( pair => new DualConnectedFacePair( pair ) ) );
+    for ( const solution of solutions ) {
+      const solutionSet = new Set( solution );
 
-    for ( let i = 0; i < patternBoard.faces.length; i++ ) {
-      const faceA = patternBoard.faces[ i ];
-      for ( let j = i + 1; j < patternBoard.faces.length; j++ ) {
-        const faceB = patternBoard.faces[ j ];
+      // TODO: with iteration, don't make a copy anymore?
+      for ( const dual of [ ...remainingDuals ] ) {
+        let isSame = true;
 
-        if ( sameComponent( faceA, faceB ) ) {
-          sameColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
-          oppositeColorDuals.push( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
+        for ( const edge of dual.pair.shortestPath ) {
+          if ( solutionSet.has( edge ) ) {
+            isSame = !isSame;
+          }
+        }
+
+        if ( isSame ) {
+          dual.isOnlyOpposite = false;
+        }
+        else {
+          dual.isOnlySame = false;
+        }
+
+        if ( !dual.isOnlySame && !dual.isOnlyOpposite ) {
+          remainingDuals.delete( dual );
         }
       }
     }
 
-    const duals = new Set( [ ...sameColorDuals, ...oppositeColorDuals ] );
-
-    solutions.forEach( solution => {
-      const solutionSet = new Set( solution );
-
-      for ( const dual of [ ...duals ] ) {
-        if ( !dual.isPossibleWith( edge => solutionSet.has( edge ) ) ) {
-          duals.delete( dual );
-        }
+    for ( const dual of remainingDuals ) {
+      if ( dual.isOnlySame ) {
+        featureSet.addSameColorFaces( dual.pair.a, dual.pair.b );
       }
-    } );
-
-    // TODO: omg efficiency, and code duplication
-    const candidateDuals = patternBoard.faces.map( face => new CandidateDual( [ face ], [] ) );
-    const getDual = ( face: TPatternFace ) => candidateDuals.find( candidate => candidate.primaryFaces.includes( face ) || candidate.secondaryFaces.includes( face ) )!;
-    duals.forEach( dual => {
-      if ( dual.primaryFaces.length === 2 ) {
-        const faceA = dual.primaryFaces[ 0 ];
-        const faceB = dual.primaryFaces[ 1 ];
-
-        const dualA = getDual( faceA );
-        const dualB = getDual( faceB );
-
-        if ( dualA !== dualB ) {
-          const areSameSide = dualA.primaryFaces.includes( faceA ) === dualB.primaryFaces.includes( faceB );
-
-          const dual = areSameSide
-                       ? new CandidateDual( [ ...dualA.primaryFaces, ...dualB.primaryFaces ], [ ...dualA.secondaryFaces, ...dualB.secondaryFaces ] )
-                       : new CandidateDual( [ ...dualA.primaryFaces, ...dualB.secondaryFaces ], [ ...dualA.secondaryFaces, ...dualB.primaryFaces ] );
-
-          arrayRemove( candidateDuals, dualA );
-          arrayRemove( candidateDuals, dualB );
-          candidateDuals.push( dual );
-        }
+      else if ( dual.isOnlyOpposite ) {
+        featureSet.addOppositeColorFaces( dual.pair.a, dual.pair.b );
       }
-      else {
-        const faceA = dual.primaryFaces[ 0 ];
-        const faceB = dual.secondaryFaces[ 0 ];
-
-        const dualA = getDual( faceA );
-        const dualB = getDual( faceB );
-
-        if ( dualA !== dualB ) {
-          const areSameSide = dualA.primaryFaces.includes( faceA ) !== dualB.primaryFaces.includes( faceB );
-
-          const dual = areSameSide
-                       ? new CandidateDual( [ ...dualA.primaryFaces, ...dualB.primaryFaces ], [ ...dualA.secondaryFaces, ...dualB.secondaryFaces ] )
-                       : new CandidateDual( [ ...dualA.primaryFaces, ...dualB.secondaryFaces ], [ ...dualA.secondaryFaces, ...dualB.primaryFaces ] );
-
-          arrayRemove( candidateDuals, dualA );
-          arrayRemove( candidateDuals, dualB );
-          candidateDuals.push( dual );
-        }
-      }
-    } );
-
-    // TODO: ideally don't have to recompute everything
-    const features = candidateDuals.filter( dual => dual.primaryFaces.length + dual.secondaryFaces.length > 1 ).map( dual => FaceColorDualFeature.fromPrimarySecondaryFaces( dual.primaryFaces, dual.secondaryFaces ) );
-    features.forEach( feature => featureSet.addFeature( feature ) );
+    }
   }
 }
 
@@ -1103,9 +1070,12 @@ export type TSerializedFeatureSet = {
   faceColorDualFeatures?: ( TSerializedEmbeddableFeature & { type: 'face-color-dual' } )[];
 };
 
-class CandidateDual {
+class DualConnectedFacePair {
+
+  public isOnlySame = true;
+  public isOnlyOpposite = true;
+
   public constructor(
-    public readonly primaryFaces: TPatternFace[],
-    public readonly secondaryFaces: TPatternFace[],
+    public readonly pair: ConnectedFacePair
   ) {}
 }
