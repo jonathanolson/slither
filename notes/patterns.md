@@ -4,6 +4,14 @@
 - TODO
   - 
   - Organization:
+    - Automorphisms?
+    - How do we cache embeddings between PatternBoards?
+      - We just... have a global cache, no?
+        - [but... no weakmap on TPatternBoard] NONO, weakmap it!!!!
+        - [instead] just have a two-layer global weakmap. 
+    - 
+    - OMG TPatternBoard being an interface is... killing us?
+    - 
     - PatternBoard (without description)?!?
     - WITH DESCRIPTION
     - WITH MAPPING (?) less important

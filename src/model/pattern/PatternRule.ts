@@ -2,6 +2,7 @@ import { FeatureSet } from './feature/FeatureSet.ts';
 import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { getEmbeddings } from './getEmbeddings.ts';
 
 export class PatternRule {
   public constructor(
@@ -24,12 +25,36 @@ export class PatternRule {
     return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
   }
 
+  public isAutomorphicTo( other: PatternRule ): boolean {
+    assertEnabled() && assert( this.patternBoard === other.patternBoard );
+
+    const automorphisms = getEmbeddings( this.patternBoard, this.patternBoard );
+
+    for ( const automorphism of automorphisms ) {
+      const embeddedRule = this.embedded( this.patternBoard, automorphism );
+      if ( embeddedRule ) {
+        // TODO: can we ditch the "output feature set equals"? Hmm, probably not yet?
+        if ( embeddedRule.inputFeatureSet.equals( other.inputFeatureSet ) && embeddedRule.outputFeatureSet.equals( other.outputFeatureSet ) ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   public isSubsetOf( other: PatternRule ): boolean {
     return this.inputFeatureSet.isSubsetOf( other.inputFeatureSet ) && this.outputFeatureSet.isSubsetOf( other.outputFeatureSet );
   }
 
   public matches( featureSet: FeatureSet ): boolean {
     return this.inputFeatureSet.isSubsetOf( featureSet );
+  }
+
+  // Assumes FaceFeatures are static, and that features "in principle" won't be removed (if they are, they are replaced
+  // by something that implies the same thing).
+  public canPotentiallyMatch( featureSet: FeatureSet ): boolean {
+    throw new Error( 'unimplemented' );
   }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
