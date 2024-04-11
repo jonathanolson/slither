@@ -106,12 +106,15 @@ export class PatternRule {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
   }
 
-  public static getBasicRule( patternBoard: TDescribedPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ) {
-    return new PatternRule(
-      patternBoard,
-      inputFeatureSet,
-      FeatureSet.getBasicSolve( patternBoard, inputFeatureSet, options )
-    );
+  public static getBasicRule( patternBoard: TDescribedPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ): PatternRule | null {
+    const outputFeatureSet = FeatureSet.getBasicSolve( patternBoard, inputFeatureSet, options );
+
+    if ( outputFeatureSet ) {
+      return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
+    }
+    else {
+      return null;
+    }
   }
 
   public static applyRules( patternBoard: TPatternBoard, initialFeatureSet: FeatureSet, embeddedRules: PatternRule[] ): FeatureSet {

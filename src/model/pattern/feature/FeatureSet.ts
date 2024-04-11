@@ -333,7 +333,8 @@ export class FeatureSet {
   }
 
   // TODO: Figure out best "Pattern" representation (FeatureSet, no? mapping or no?)
-  public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet {
+  // null if there is no solution
+  public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet | null {
 
     // TODO: is this too much performance loss?
     const options = optionize<BasicSolveOptions>()( {
@@ -344,6 +345,10 @@ export class FeatureSet {
     }, providedOptions );
 
     let solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatureSet.features );
+
+    if ( solutions.length === 0 ) {
+      return null;
+    }
 
     if ( options.highlander ) {
       const indeterminateEdges = getIndeterminateEdges( patternBoard, inputFeatureSet.features );

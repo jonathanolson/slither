@@ -504,7 +504,8 @@ console.log( 'test' );
             solveFaceColors,
             solveSectors,
             highlander: false
-          } );
+          } )!;
+          assertEnabled() && assert( rule );
 
           return new PatternRuleNode( rule, board.planarPatternMap, {
             // TODO
