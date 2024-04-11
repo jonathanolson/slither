@@ -4,6 +4,7 @@ import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
 import { FaceFeature } from './feature/FaceFeature.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 export class PatternRule {
   public constructor(
@@ -72,6 +73,14 @@ export class PatternRule {
     return true;
   }
 
+  public isRedundant( embeddedRules: PatternRule[] ): boolean {
+    if ( this.isTrivial() ) {
+      return true;
+    }
+
+    return this.outputFeatureSet.isSubsetOf( PatternRule.applyRules( this.patternBoard, this.inputFeatureSet, embeddedRules ) );
+  }
+
   public hasApplication( featureSet: FeatureSet ): boolean {
     return this.matches( featureSet ) && !this.outputFeatureSet.isSubsetOf( featureSet );
   }
@@ -91,5 +100,36 @@ export class PatternRule {
 
   public toCanonicalString(): string {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
+  }
+
+  public static applyRules( patternBoard: TPatternBoard, initialFeatureSet: FeatureSet, embeddedRules: PatternRule[] ): FeatureSet {
+    assertEnabled() && assert( embeddedRules.every( otherRule => otherRule.patternBoard === patternBoard ), 'embedding check' );
+
+    // TODO: increase the performance of this?
+    const potentialRules = new Set( embeddedRules.filter( otherRule => otherRule.canPotentiallyMatch( initialFeatureSet ) ) );
+
+    if ( potentialRules.size === 0 ) {
+      return initialFeatureSet;
+    }
+
+    let featureState = initialFeatureSet;
+
+    let changed = true;
+
+    while ( changed ) {
+      changed = false;
+
+      // TODO: figure out if we update the canPotentiallyMatch regularly? (probably not)
+
+      for ( const rule of potentialRules ) {
+        if ( rule.hasApplication( featureState ) ) {
+          featureState = rule.apply( featureState );
+          changed = true;
+          potentialRules.delete( rule ); // no longer need to consider this rule
+        }
+      }
+    }
+
+    return featureState;
   }
 }

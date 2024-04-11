@@ -38,6 +38,10 @@ export class FeatureSet {
     assertEnabled() && assert( this.map.size === features.length );
   }
 
+  public clone(): FeatureSet {
+    return new FeatureSet( this.features.slice() );
+  }
+
   public hasExactFeature( feature: TEmbeddableFeature ): boolean {
     return this.map.has( feature.toCanonicalString() );
   }
@@ -161,6 +165,8 @@ export class FeatureSet {
   // TODO: this doesn't vet full compatibility, but tries to rule things out nicely
   // NOTE: Not the fastest, but hopefully speeds up computations
   public isCompatibleWith( other: FeatureSet ): boolean {
+
+    // TODO: OMG performance?
 
     for ( const feature of this.features ) {
       for ( const otherFeature of other.features ) {
