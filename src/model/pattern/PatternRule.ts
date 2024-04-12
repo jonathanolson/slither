@@ -6,6 +6,7 @@ import { getEmbeddings } from './getEmbeddings.ts';
 import PatternRuleMatchState from './PatternRuleMatchState.ts';
 import FeatureCompatibility from './feature/FeatureCompatibility.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
+import { optionize3 } from 'phet-lib/phet-core';
 
 export class PatternRule {
   public constructor(
@@ -158,67 +159,98 @@ export class PatternRule {
     return featureState;
   }
 
-  public static getRules( patternBoard: TDescribedPatternBoard, options?: BasicSolveOptions ): PatternRule[] {
+  public static getRules( patternBoard: TDescribedPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
+
+    const options = optionize3<GetRulesOptions, GetRulesSelfOptions, BasicSolveOptions>()( {}, GET_RULES_DEFAULTS, providedOptions );
 
     // TODO: handle enumeration of all cases
     assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
     assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
 
-    const forEachPossibleEdgeFeatureSet = ( initialFeatureSet: FeatureSet, callback: ( featureSet: FeatureSet ) => void ): void => {
+    // callback returns whether it is successful (and we should explore the subtree)
+    const forEachPossibleEdgeFeatureSet = ( initialFeatureSet: FeatureSet, callback: ( featureSet: FeatureSet, numFeatures: number ) => boolean ): void => {
       const edges = patternBoard.edges;
       const edgeFeatureStack = [ initialFeatureSet ];
-      const edgeRecur = ( index: number ): void => {
-        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
-        if ( index === edges.length ) {
-          callback( previousFeatureSet );
+
+      const visitedShapeMap = new Map<string, FeatureSet[]>();
+
+      const addToShapeMap = ( featureSet: FeatureSet ): void => {
+        const key = featureSet.getShapeString();
+        let featuresWithShape = visitedShapeMap.get( key );
+        if ( featuresWithShape ) {
+          featuresWithShape.push( featureSet );
         }
         else {
-          // no edge feature (no push needed)
-          edgeRecur( index + 1 );
+          visitedShapeMap.set( key, [ featureSet ] );
+        }
+      };
 
-          if ( index < 4 ) {
-            console.log( index, 'black' );
-          }
+      const isIsomorphicToVisited = ( featureSet: FeatureSet ): boolean => {
+        const key = featureSet.getShapeString();
+        const featuresWithShape = visitedShapeMap.get( key );
+        if ( featuresWithShape ) {
+          return featuresWithShape.some( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) );
+        }
+        else {
+          return false;
+        }
+      };
 
-          const blackFeatureSet = previousFeatureSet.clone();
-          blackFeatureSet.addBlackEdge( edges[ index ] );
+      const edgeRecur = ( index: number, numFeatures: number ): void => {
 
+        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
+        if ( numFeatures <= options.featureLimit ) {
+          callback( previousFeatureSet, numFeatures );
+        }
+        if ( numFeatures === options.featureLimit || index === edges.length ) {
+          return;
+        }
+
+        addToShapeMap( previousFeatureSet );
+
+        if ( index < 4 ) {
+          console.log( index, 'black' );
+        }
+
+        const blackFeatureSet = previousFeatureSet.clone();
+        blackFeatureSet.addBlackEdge( edges[ index ] );
+
+        // FOR NOW:
+        assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
+
+        if ( !isIsomorphicToVisited( blackFeatureSet ) ) {
           if ( blackFeatureSet.hasSolution( options?.highlander ) ) {
             edgeFeatureStack.push( blackFeatureSet );
-            edgeRecur( index + 1 );
+            edgeRecur( index + 1, numFeatures );
             edgeFeatureStack.pop();
           }
+        }
 
-          if ( index < 4 ) {
-            console.log( index, 'red' );
-          }
+        if ( index < 4 ) {
+          console.log( index, 'red' );
+        }
 
-          const redFeatureSet = previousFeatureSet.clone();
-          redFeatureSet.addRedEdge( edges[ index ] );
+        const redFeatureSet = previousFeatureSet.clone();
+        redFeatureSet.addRedEdge( edges[ index ] );
 
+        // FOR NOW:
+        assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
+
+        if ( !isIsomorphicToVisited( redFeatureSet ) ) {
           if ( redFeatureSet.hasSolution( options?.highlander ) ) {
             edgeFeatureStack.push( redFeatureSet );
-            edgeRecur( index + 1 );
+            edgeRecur( index + 1, numFeatures );
             edgeFeatureStack.pop();
           }
         }
       };
-      edgeRecur( 0 );
+      edgeRecur( 0, 0 );
     };
 
-    const nonIsomorphicFeatureSets: FeatureSet[] = [];
-    forEachPossibleEdgeFeatureSet( FeatureSet.empty( patternBoard ), featureSet => {
-      if ( nonIsomorphicFeatureSets.every( otherFeatureSet => !featureSet.isIsomorphicTo( otherFeatureSet ) ) ) {
-        nonIsomorphicFeatureSets.push( featureSet );
-      }
-    } );
-
-    console.log( 'nonIsomorphicFeatureSets.length', nonIsomorphicFeatureSets.length );
-
     const rules: PatternRule[] = [];
-
     let count = 0;
-    for ( const featureSet of nonIsomorphicFeatureSets ) {
+
+    forEachPossibleEdgeFeatureSet( FeatureSet.empty( patternBoard ), featureSet => {
       count++;
       if ( count % 10 === 0 ) {
         console.log( count );
@@ -227,8 +259,20 @@ export class PatternRule {
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
       }
-    }
+      return !!rule;
+    } );
 
     return rules;
   }
 }
+
+// TODO: OMG, if we have an isomorphic option... we can bail that entire sub-tree no?
+type GetRulesSelfOptions = {
+  featureLimit?: number; // counts 1 for edge or face, n-1 for each face color duals (e.g. how many linked faces)
+};
+
+export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
+
+export const GET_RULES_DEFAULTS = {
+  featureLimit: Number.POSITIVE_INFINITY
+} as const;

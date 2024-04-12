@@ -28,7 +28,7 @@ import { getEmbeddings } from '../getEmbeddings.ts';
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
   // Used for quick comparisons to see which "way" would be more efficient
-  private readonly size: number;
+  public size: number;
 
   private constructor(
     public readonly patternBoard: TPatternBoard,
@@ -48,7 +48,7 @@ export class FeatureSet {
     private readonly sectors: Set<TPatternSector> = new Set(),
     private readonly edgeToSectorsMap: Map<TPatternEdge, Set<TPatternSector>> = new Map(),
   ) {
-    this.size = faceValueMap.size + blackEdges.size + redEdges.size + sectorsNotZero.size + sectorsNotOne.size + sectorsNotTwo.size + sectorsOnlyOne.size + faceColorDualFeatures.size;
+    this.size = this.computeSize();
   }
 
   public addFaceValue( face: TPatternFace, value: FaceValue ): void {
@@ -60,7 +60,10 @@ export class FeatureSet {
     }
     else {
       this.faceValueMap.set( face, value );
+      this.size++;
     }
+
+    assertEnabled() && this.verifySize();
   }
 
   public addSameColorFaces( faceA: TPatternFace, faceB: TPatternFace ): void {
@@ -72,6 +75,7 @@ export class FeatureSet {
   }
 
   public addFaceColorDual( feature: FaceColorDualFeature ): void {
+    assertEnabled() && assert( feature );
 
     const originalFeature = feature;
 
@@ -82,6 +86,7 @@ export class FeatureSet {
         if ( potentialFaceFeature ) {
           feature = potentialFaceFeature!;
           this.faceColorDualFeatures.delete( otherFeature );
+          this.size -= otherFeature.allFaces.size - 1;
         }
         else {
           throw new IncompatibleFeatureError( originalFeature, [ otherFeature ] );
@@ -90,18 +95,26 @@ export class FeatureSet {
     }
 
     this.faceColorDualFeatures.add( feature );
+    this.size += feature.allFaces.size - 1;
 
     // Update all faces attached to the "new" feature (this will be all of the new ones, plus changed ones from previous features).
     for ( const face of feature.allFaces ) {
       this.faceToColorDualMap.set( face, feature );
     }
+
+    assertEnabled() && this.verifySize();
   }
 
   public addBlackEdge( edge: TPatternEdge ): void {
+    assertEnabled() && assert( edge );
+
     if ( this.redEdges.has( edge ) ) {
       throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new RedEdgeFeature( edge ) ] );
     }
 
+    if ( !this.blackEdges.has( edge ) ) {
+      this.size++;
+    }
     this.blackEdges.add( edge );
 
     // Handle sector removals (and assertions
@@ -115,11 +128,13 @@ export class FeatureSet {
 
         if ( this.sectorsNotZero.has( sector ) ) {
           this.sectorsNotZero.delete( sector );
+          this.size--;
         }
 
         if ( this.sectorsNotOne.has( sector ) ) {
           if ( this.blackEdges.has( otherEdge ) ) {
             this.sectorsNotOne.delete( sector );
+            this.size--;
           }
           else {
             if ( this.redEdges.has( otherEdge ) ) {
@@ -132,6 +147,7 @@ export class FeatureSet {
         if ( this.sectorsNotTwo.has( sector ) ) {
           if ( this.redEdges.has( otherEdge ) ) {
             this.sectorsNotTwo.delete( sector );
+            this.size--;
           }
           else {
             if ( this.blackEdges.has( otherEdge ) ) {
@@ -144,6 +160,7 @@ export class FeatureSet {
         if ( this.sectorsOnlyOne.has( sector ) ) {
           if ( this.redEdges.has( otherEdge ) ) {
             this.sectorsOnlyOne.delete( sector );
+            this.size--;
           }
           else {
             if ( this.blackEdges.has( otherEdge ) ) {
@@ -159,13 +176,20 @@ export class FeatureSet {
         }
       }
     }
+
+    assertEnabled() && this.verifySize();
   }
 
   public addRedEdge( edge: TPatternEdge ): void {
+    assertEnabled() && assert( edge );
+
     if ( this.blackEdges.has( edge ) ) {
       throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new BlackEdgeFeature( edge ) ] );
     }
 
+    if ( !this.redEdges.has( edge ) ) {
+      this.size++;
+    }
     this.redEdges.add( edge );
 
     // Handle sector removals (and assertions
@@ -179,11 +203,13 @@ export class FeatureSet {
 
         if ( this.sectorsNotTwo.has( sector ) ) {
           this.sectorsNotTwo.delete( sector );
+          this.size--;
         }
 
         if ( this.sectorsNotOne.has( sector ) ) {
           if ( this.redEdges.has( otherEdge ) ) {
             this.sectorsNotOne.delete( sector );
+            this.size--;
           }
           else {
             if ( this.blackEdges.has( otherEdge ) ) {
@@ -196,6 +222,7 @@ export class FeatureSet {
         if ( this.sectorsNotZero.has( sector ) ) {
           if ( this.blackEdges.has( otherEdge ) ) {
             this.sectorsNotZero.delete( sector );
+            this.size--;
           }
           else {
             if ( this.redEdges.has( otherEdge ) ) {
@@ -208,6 +235,7 @@ export class FeatureSet {
         if ( this.sectorsOnlyOne.has( sector ) ) {
           if ( this.blackEdges.has( otherEdge ) ) {
             this.sectorsOnlyOne.delete( sector );
+            this.size--;
           }
           else {
             if ( this.redEdges.has( otherEdge ) ) {
@@ -223,9 +251,13 @@ export class FeatureSet {
         }
       }
     }
+
+    assertEnabled() && this.verifySize();
   }
 
   public addSectorNotZero( sector: TPatternSector ): void {
+    assertEnabled() && assert( sector );
+
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
@@ -244,11 +276,18 @@ export class FeatureSet {
 
     // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
 
+    if ( !this.sectorsNotZero.has( sector ) ) {
+      this.size++;
+    }
     this.sectorsNotZero.add( sector );
     this.ensureSector( sector );
+
+    assertEnabled() && this.verifySize();
   }
 
   public addSectorNotOne( sector: TPatternSector ): void {
+    assertEnabled() && assert( sector );
+
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
@@ -271,11 +310,18 @@ export class FeatureSet {
       return;
     }
 
+    if ( !this.sectorsNotOne.has( sector ) ) {
+      this.size++;
+    }
     this.sectorsNotOne.add( sector );
     this.ensureSector( sector );
+
+    assertEnabled() && this.verifySize();
   }
 
   public addSectorNotTwo( sector: TPatternSector ): void {
+    assertEnabled() && assert( sector );
+
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
@@ -291,11 +337,18 @@ export class FeatureSet {
 
     // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
 
+    if ( !this.sectorsNotTwo.has( sector ) ) {
+      this.size++;
+    }
     this.sectorsNotTwo.add( sector );
     this.ensureSector( sector );
+
+    assertEnabled() && this.verifySize();
   }
 
   public addSectorOnlyOne( sector: TPatternSector ): void {
+    assertEnabled() && assert( sector );
+
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
@@ -318,8 +371,13 @@ export class FeatureSet {
       return;
     }
 
+    if ( !this.sectorsOnlyOne.has( sector ) ) {
+      this.size++;
+    }
     this.sectorsOnlyOne.add( sector );
     this.ensureSector( sector );
+
+    assertEnabled() && this.verifySize();
   }
 
   // Mutates by adding a feature
@@ -351,6 +409,8 @@ export class FeatureSet {
     else {
       throw new Error( `unimplemented type of feature for FeatureSet: ${feature}` );
     }
+
+    assertEnabled() && this.verifySize();
   }
 
   private ensureSector( sector: TPatternSector ): void {
@@ -405,6 +465,18 @@ export class FeatureSet {
         }
       }
     }
+  }
+
+  public computeSize(): number {
+    let size = this.faceValueMap.size + this.blackEdges.size + this.redEdges.size + this.sectorsNotZero.size + this.sectorsNotOne.size + this.sectorsNotTwo.size + this.sectorsOnlyOne.size;
+    for ( const feature of this.faceColorDualFeatures ) {
+      size += feature.allFaces.size - 1;
+    }
+    return size;
+  }
+
+  private verifySize(): void {
+    assertEnabled() && assert( this.size === this.computeSize(), 'size mismatch' );
   }
 
   // TODO: eventually other feature types
@@ -623,6 +695,10 @@ export class FeatureSet {
       this.sectorsNotTwo.size === other.sectorsNotTwo.size &&
       this.sectorsOnlyOne.size === other.sectorsOnlyOne.size &&
       this.faceColorDualFeatures.size === other.faceColorDualFeatures.size;
+  }
+
+  public getShapeString(): string {
+    return `${this.faceValueMap.size} ${this.blackEdges.size} ${this.redEdges.size} ${this.sectorsNotZero.size} ${this.sectorsNotOne.size} ${this.sectorsNotTwo.size} ${this.sectorsOnlyOne.size} ${this.faceColorDualFeatures.size}`;
   }
 
   public isSubsetOf( other: FeatureSet ): boolean {
