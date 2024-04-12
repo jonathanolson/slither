@@ -242,6 +242,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             // ).toString() );
 
             embeddings.push( new Embedding(
+              pattern,
+              board,
               vertexMap,
               nonExitEdgeMap,
               exitEdgeMap,
@@ -619,6 +621,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
           }
 
           embeddings.push( new Embedding(
+            pattern,
+            board,
             vertexMap,
             edgeMap,
             exitEdgeMap,
@@ -690,6 +694,8 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
 
     for ( const targetEdge of board.edges.filter( boardEdge => !boardEdge.isExit ) ) {
       embeddings.push( new Embedding(
+        pattern,
+        board,
         new Map(),
         new Map( [ [ patternEdge, targetEdge ] ] ),
         new Map(),

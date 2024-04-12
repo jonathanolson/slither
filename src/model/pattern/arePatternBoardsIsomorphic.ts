@@ -1,5 +1,5 @@
 import { TPatternBoard } from './TPatternBoard.ts';
-import { computeEmbeddings } from './computeEmbeddings.ts';
+import { getEmbeddings } from './getEmbeddings.ts';
 
 export const arePatternBoardsIsomorphic = ( a: TPatternBoard, b: TPatternBoard ): boolean => {
   if (
@@ -15,5 +15,5 @@ export const arePatternBoardsIsomorphic = ( a: TPatternBoard, b: TPatternBoard )
   }
 
   // TODO: Wouldn't all of these be invertible? Don't need to do this double check?
-  return computeEmbeddings( a, b ).length > 0 && computeEmbeddings( b, a ).length > 0;
+  return getEmbeddings( a, b ).length > 0 && getEmbeddings( b, a ).length > 0;
 };

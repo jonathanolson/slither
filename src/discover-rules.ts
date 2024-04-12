@@ -7,7 +7,6 @@ import { serializePatternBoardDescriptor } from './model/pattern/TPatternBoardDe
 import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
 import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { computeEmbeddings } from './model/pattern/computeEmbeddings.ts';
 import { EmbeddingNode } from './view/pattern/EmbeddingNode.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import _ from './workarounds/_.ts';
@@ -34,6 +33,7 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -147,7 +147,7 @@ console.log( 'test' );
 
     console.log( 'pattern', serializePatternBoardDescriptor( pattern.descriptor ), pattern );
 
-    const embeddings = computeEmbeddings( pattern, simplePatternBoard );
+    const embeddings = getEmbeddings( pattern, simplePatternBoard );
     console.log( 'embeddings', embeddings );
 
     container.addChild( new HBox( {
@@ -469,7 +469,7 @@ console.log( 'test' );
 
         // TODO: other features
         const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
-          const rule = PatternRule.getBasicRule( board, FeatureSet.fromFeatures( inputFeatures ), {
+          const rule = PatternRule.getBasicRule( board, FeatureSet.fromFeatures( board, inputFeatures ), {
             solveEdges,
             solveFaceColors,
             solveSectors,
@@ -526,14 +526,14 @@ console.log( 'test' );
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 7 ] ),
         ], true, true, true ) );
 
-        addPaddedNode( new PatternNode( doubleSquarePatternBoard, FeatureSet.fromFeatures( [
+        addPaddedNode( new PatternNode( doubleSquarePatternBoard, FeatureSet.fromFeatures( doubleSquarePatternBoard, [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
         ] ), doubleSquarePatternBoard.planarPatternMap ) );
 
-        const aRule = PatternRule.getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( [
+        const aRule = PatternRule.getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
           new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
         ] ), {
@@ -544,7 +544,7 @@ console.log( 'test' );
         } )!;
 
         // TODO: filter by not null
-        const aEmbeddedRules = computeEmbeddings( squarePatternBoard, doubleSquarePatternBoard ).map( embedding => aRule.embedded( doubleSquarePatternBoard, embedding )! );
+        const aEmbeddedRules = getEmbeddings( squarePatternBoard, doubleSquarePatternBoard ).map( embedding => aRule.embedded( doubleSquarePatternBoard, embedding )! );
 
         addPaddedNode( new HBox( {
           spacing: 10,
@@ -553,7 +553,7 @@ console.log( 'test' );
 
         const aUniqueEmbeddedRules: PatternRule[] = [];
         aEmbeddedRules.forEach( rule => {
-          if ( !aUniqueEmbeddedRules.some( uniqueRule => rule.isAutomorphicTo( uniqueRule ) ) ) {
+          if ( !aUniqueEmbeddedRules.some( uniqueRule => rule.isIsomorphicTo( uniqueRule ) ) ) {
             aUniqueEmbeddedRules.push( rule );
           }
         } );
@@ -563,7 +563,7 @@ console.log( 'test' );
           children: aUniqueEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
         } ) );
 
-        const aFeatures = FeatureSet.fromFeatures( [
+        const aFeatures = FeatureSet.fromFeatures( doubleSquarePatternBoard, [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),

@@ -15,12 +15,12 @@ export class PatternRule {
   ) {}
 
   public embedded( patternBoard: TDescribedPatternBoard, embedding: Embedding ): PatternRule | null {
-    const inputFeatureSet = this.inputFeatureSet.embedded( embedding );
+    const inputFeatureSet = this.inputFeatureSet.embedded( patternBoard, embedding );
     if ( inputFeatureSet === null ) {
       return null;
     }
 
-    const outputFeatureSet = this.outputFeatureSet.embedded( embedding )!;
+    const outputFeatureSet = this.outputFeatureSet.embedded( patternBoard, embedding )!;
     if ( outputFeatureSet === null ) {
       return null;
     }
@@ -28,8 +28,10 @@ export class PatternRule {
     return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
   }
 
-  public isAutomorphicTo( other: PatternRule ): boolean {
-    assertEnabled() && assert( this.patternBoard === other.patternBoard );
+  public isIsomorphicTo( other: PatternRule ): boolean {
+    if ( this.patternBoard !== other.patternBoard ) {
+      return false;
+    }
 
     if ( !this.inputFeatureSet.hasSameShapeAs( other.inputFeatureSet ) || !this.outputFeatureSet.hasSameShapeAs( other.outputFeatureSet ) ) {
       return false;

@@ -23,6 +23,7 @@ import { TPatternSector } from '../TPatternSector.ts';
 import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
 import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
+import { getEmbeddings } from '../getEmbeddings.ts';
 
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
@@ -30,6 +31,7 @@ export class FeatureSet {
   private readonly size: number;
 
   private constructor(
+    public readonly patternBoard: TPatternBoard,
     private readonly faceValueMap: Map<TPatternFace, FaceValue> = new Map(),
 
     private readonly blackEdges: Set<TPatternEdge> = new Set(),
@@ -407,8 +409,8 @@ export class FeatureSet {
 
   // TODO: eventually other feature types
 
-  public static fromFeatures( features: TEmbeddableFeature[] ): FeatureSet {
-    const featureSet = new FeatureSet();
+  public static fromFeatures( patternBoard: TPatternBoard, features: TEmbeddableFeature[] ): FeatureSet {
+    const featureSet = new FeatureSet( patternBoard );
 
     for ( const feature of features ) {
       featureSet.addFeature( feature );
@@ -418,7 +420,7 @@ export class FeatureSet {
   }
 
   public static fromSolution( patternBoard: TPatternBoard, edgeSolution: TPatternEdge[] ): FeatureSet {
-    return FeatureSet.fromFeatures( [
+    return FeatureSet.fromFeatures( patternBoard, [
       ...patternBoard.edges.filter( edge => {
         const isBlack = edgeSolution.includes( edge );
 
@@ -433,6 +435,7 @@ export class FeatureSet {
 
   public clone(): FeatureSet {
     return new FeatureSet(
+      this.patternBoard,
       new Map( this.faceValueMap ),
       new Set( this.blackEdges ),
       new Set( this.redEdges ),
@@ -560,12 +563,41 @@ export class FeatureSet {
     ] );
   }
 
+  public isIsomorphicTo( other: FeatureSet ): boolean {
+    if ( this.patternBoard !== other.patternBoard ) {
+      return false;
+    }
+
+    if ( !this.hasSameShapeAs( other ) ) {
+      return false;
+    }
+
+    const automorphisms = getEmbeddings( this.patternBoard, this.patternBoard );
+
+    for ( const automorphism of automorphisms ) {
+      try {
+        const embeddedFeatureSet = this.embedded( this.patternBoard, automorphism );
+        if ( embeddedFeatureSet && embeddedFeatureSet.equals( other ) ) {
+          return true;
+        }
+      }
+      catch ( e ) {
+        // ignore incompatible feature embeddings (just in case)
+        if ( !( e instanceof IncompatibleFeatureError ) ) {
+          throw e;
+        }
+      }
+    }
+
+    return false;
+  }
+
   // returns null if the embedding is incompatible with the features (e.g. invalid face coloring of exit faces)
-  public embedded( embedding: Embedding ): FeatureSet | null {
+  public embedded( patternBoard: TPatternBoard, embedding: Embedding ): FeatureSet | null {
     try {
       // NOTE: exit edges can overlap, but we only mark them as "red" so they won't cause incompatibility.
       // NOTE: exit faces can overlap, and we'll need to handle cases where they are just incompatible.
-      return FeatureSet.fromFeatures( this.getFeaturesArray().flatMap( feature => feature.embedded( embedding ) ) );
+      return FeatureSet.fromFeatures( patternBoard, this.getFeaturesArray().flatMap( feature => feature.embedded( embedding ) ) );
     }
     catch ( e ) {
       if ( e instanceof IncompatibleFeatureError ) {
@@ -834,7 +866,7 @@ export class FeatureSet {
   }
 
   public static deserialize( serialized: TSerializedFeatureSet, patternBoard: TPatternBoard ): FeatureSet {
-    const featureSet = new FeatureSet();
+    const featureSet = new FeatureSet( patternBoard );
 
     for ( const faceValue of serialized.faceValues || [] ) {
       featureSet.addFaceValue( patternBoard.faces[ faceValue.face ], faceValue.value );

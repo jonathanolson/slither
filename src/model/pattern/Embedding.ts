@@ -3,10 +3,13 @@ import { TPatternVertex } from './TPatternVertex.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 export class Embedding {
 
   public constructor(
+    public readonly sourcePatternBoard: TPatternBoard,
+    public readonly targetPatternBoard: TPatternBoard,
     // TODO: consider alternate implementation with fewer objects?
     public readonly vertexMap: Map<TPatternVertex, TPatternVertex>,
     public readonly nonExitEdgeMap: Map<TPatternEdge, TPatternEdge>,
