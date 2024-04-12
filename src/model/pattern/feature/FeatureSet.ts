@@ -2,7 +2,7 @@ import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { assertEnabled, default as assert } from '../../../workarounds/assert.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { optionize } from 'phet-lib/phet-core';
+import { optionize3 } from 'phet-lib/phet-core';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
@@ -834,6 +834,200 @@ export class FeatureSet {
     return `feat:${_.sortBy( this.getFeaturesArray().map( f => f.toCanonicalString() ) ).join( '/' )}`;
   }
 
+  public getSolutions( filterHighlander = false ): TPatternEdge[][] {
+    const features = this.getFeaturesArray();
+
+    let solutions = PatternBoardSolver.getSolutions( this.patternBoard, features );
+
+    if ( solutions.length && filterHighlander ) {
+      // TODO: switch getIndeterminateEdges to use FeatureSet?
+      const indeterminateEdges = getIndeterminateEdges( this.patternBoard, features );
+      const exitVertices = this.patternBoard.vertices.filter( v => v.isExit );
+
+      solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
+    }
+
+    return solutions;
+  }
+
+  public hasSolution( filterHighlander = false ): boolean {
+    if ( filterHighlander ) {
+      return this.getSolutions( filterHighlander ).length > 0;
+    }
+    else {
+      return PatternBoardSolver.hasSolution( this.patternBoard, this.getFeaturesArray() );
+    }
+  }
+
+  // null if there is no solution
+  public solved( providedOptions?: BasicSolveOptions ): FeatureSet | null {
+    // TODO: is this too much performance loss?
+    const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
+
+    const solutions = this.getSolutions( options.highlander );
+
+    const featureSet = this.clone();
+
+    const solutionSets = solutions.map( solution => new Set( solution ) );
+
+    if ( options.solveEdges ) {
+      // TODO: should this be an instance method?
+      featureSet.addSolvedEdgeFeatures( solutionSets );
+    }
+
+    if ( options.solveSectors ) {
+      featureSet.addSolvedSectorFeatures( solutionSets );
+    }
+
+    if ( options.solveFaceColors ) {
+      featureSet.addSolvedFaceColorDualFeatures( solutionSets );
+    }
+
+    return featureSet;
+  }
+
+  private addSolvedEdgeFeatures( solutions: Set<TPatternEdge>[] ): void {
+    const hasBlack = new Array( this.patternBoard.edges.length ).fill( false );
+    const hasRed = new Array( this.patternBoard.edges.length ).fill( false );
+
+    const allEdges = new Set( this.patternBoard.edges );
+
+    const redExitVertices = new Set( this.patternBoard.vertices.filter( vertex => vertex.isExit ) );
+
+    for ( const solution of solutions ) {
+
+      // TODO: faster... ways in the future? Performance?
+      const edgesRemaining = new Set( allEdges );
+
+      for ( const edge of solution ) {
+        hasBlack[ edge.index ] = true;
+        edgesRemaining.delete( edge );
+      }
+
+      for ( const edge of edgesRemaining ) {
+        hasRed[ edge.index ] = true;
+      }
+
+      for ( const redExitVertex of [ ...redExitVertices ] ) {
+
+        // If we have a black edge in our exit, it can't be red
+
+        // TODO: omg, improve performance here lol
+        if ( solution.has( redExitVertex.exitEdge! ) ) {
+          redExitVertices.delete( redExitVertex );
+        }
+
+        // If we have zero or one black edges to our exit vertex, it can't be red.
+        // NOTE: if zero black edges, then we can't rule out exit edge matching to 2 edges that could both be black.
+
+        // TODO: omg, improve performance here lol
+        if ( redExitVertex.edges.filter( edge => solution.has( edge ) ).length < 2 ) {
+          redExitVertices.delete( redExitVertex );
+        }
+      }
+    }
+
+    for ( const edge of this.patternBoard.edges ) {
+      if ( !edge.isExit ) {
+        const isBlack = hasBlack[ edge.index ];
+        const isRed = hasRed[ edge.index ];
+
+        if ( isBlack && !isRed ) {
+          this.addBlackEdge( edge );
+        }
+        if ( !isBlack && isRed ) {
+          this.addRedEdge( edge );
+        }
+      }
+    }
+    for ( const redExitVertex of redExitVertices ) {
+      this.addRedEdge( redExitVertex.exitEdge! );
+    }
+  }
+
+  private addSolvedSectorFeatures( solutions: Set<TPatternEdge>[] ): void {
+    const hasZero = new Array( this.patternBoard.sectors.length ).fill( false );
+    const hasOne = new Array( this.patternBoard.sectors.length ).fill( false );
+    const hasTwo = new Array( this.patternBoard.sectors.length ).fill( false );
+
+    for ( const solution of solutions ) {
+      // TODO: performance here omg
+      for ( const sector of this.patternBoard.sectors ) {
+        const count = ( solution.has( sector.edges[ 0 ] ) ? 1 : 0 ) + ( solution.has( sector.edges[ 1 ] ) ? 1 : 0 );
+
+        if ( count === 0 ) {
+          hasZero[ sector.index ] = true;
+        }
+        else if ( count === 1 ) {
+          hasOne[ sector.index ] = true;
+        }
+        else if ( count === 2 ) {
+          hasTwo[ sector.index ] = true;
+        }
+      }
+    }
+
+    for ( const sector of this.patternBoard.sectors ) {
+      const isZero = hasZero[ sector.index ];
+      const isOne = hasOne[ sector.index ];
+      const isTwo = hasTwo[ sector.index ];
+
+      if ( isOne && !isZero && !isTwo ) {
+        this.addSectorOnlyOne( sector );
+      }
+      else if ( isZero && isOne && !isTwo ) {
+        this.addSectorNotTwo( sector );
+      }
+      else if ( isZero && isTwo && !isOne ) {
+        this.addSectorNotOne( sector );
+      }
+      else if ( !isZero && isOne && isTwo ) {
+        this.addSectorNotZero( sector );
+      }
+    }
+  }
+
+  private addSolvedFaceColorDualFeatures( solutions: Set<TPatternEdge>[] ): void {
+    assertEnabled() && assert( solutions.length > 0 );
+
+    const faceConnectivity = FaceConnectivity.get( this.patternBoard );
+
+    const remainingDuals = new Set( faceConnectivity.connectedFacePairs.map( pair => new DualConnectedFacePair( pair ) ) );
+    for ( const solution of solutions ) {
+
+      // TODO: with iteration, don't make a copy anymore?
+      for ( const dual of [ ...remainingDuals ] ) {
+        let isSame = true;
+
+        for ( const edge of dual.pair.shortestPath ) {
+          if ( solution.has( edge ) ) {
+            isSame = !isSame;
+          }
+        }
+
+        if ( isSame ) {
+          dual.isOnlyOpposite = false;
+        }
+        else {
+          dual.isOnlySame = false;
+        }
+
+        if ( !dual.isOnlySame && !dual.isOnlyOpposite ) {
+          remainingDuals.delete( dual );
+        }
+      }
+    }
+
+    for ( const dual of remainingDuals ) {
+      if ( dual.isOnlySame ) {
+        this.addSameColorFaces( dual.pair.a, dual.pair.b );
+      }
+      else if ( dual.isOnlyOpposite ) {
+        this.addOppositeColorFaces( dual.pair.a, dual.pair.b );
+      }
+    }
+  }
+
   public serialize(): TSerializedFeatureSet {
     const serialization: TSerializedFeatureSet = {};
 
@@ -895,194 +1089,6 @@ export class FeatureSet {
 
     return featureSet;
   }
-
-  // null if there is no solution
-  public static getBasicSolve( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, providedOptions?: BasicSolveOptions ): FeatureSet | null {
-
-    // TODO FIX THIS UP, and get it optimized(!)(!)
-
-    // TODO: is this too much performance loss?
-    const options = optionize<BasicSolveOptions>()( {
-      solveEdges: true,
-      solveFaceColors: false,
-      solveSectors: false,
-      highlander: false
-    }, providedOptions );
-
-    let solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatureSet.getFeaturesArray() );
-
-    if ( solutions.length === 0 ) {
-      return null;
-    }
-
-    if ( options.highlander ) {
-      const indeterminateEdges = getIndeterminateEdges( patternBoard, inputFeatureSet.getFeaturesArray() );
-      const exitVertices = patternBoard.vertices.filter( v => v.isExit );
-
-      solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
-    }
-
-    const featureSet = inputFeatureSet.clone();
-
-    const solutionSets = solutions.map( solution => new Set( solution ) );
-
-    if ( options.solveEdges ) {
-      // TODO: should this be an instance method?
-      FeatureSet.addSolvedEdgeFeatures( patternBoard, solutionSets, featureSet );
-    }
-
-    if ( options.solveSectors ) {
-      FeatureSet.addSolvedSectorFeatures( patternBoard, solutionSets, featureSet );
-    }
-
-    if ( options.solveFaceColors ) {
-      FeatureSet.addSolvedFaceColorDualFeatures( patternBoard, solutionSets, featureSet );
-    }
-
-    return featureSet;
-  }
-
-  public static addSolvedEdgeFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
-    const hasBlack = new Array( patternBoard.edges.length ).fill( false );
-    const hasRed = new Array( patternBoard.edges.length ).fill( false );
-
-    const allEdges = new Set( patternBoard.edges );
-
-    const redExitVertices = new Set( patternBoard.vertices.filter( vertex => vertex.isExit ) );
-
-    for ( const solution of solutions ) {
-
-      // TODO: faster... ways in the future? Performance?
-      const edgesRemaining = new Set( allEdges );
-
-      for ( const edge of solution ) {
-        hasBlack[ edge.index ] = true;
-        edgesRemaining.delete( edge );
-      }
-
-      for ( const edge of edgesRemaining ) {
-        hasRed[ edge.index ] = true;
-      }
-
-      for ( const redExitVertex of [ ...redExitVertices ] ) {
-
-        // If we have a black edge in our exit, it can't be red
-
-        // TODO: omg, improve performance here lol
-        if ( solution.has( redExitVertex.exitEdge! ) ) {
-          redExitVertices.delete( redExitVertex );
-        }
-
-        // If we have zero or one black edges to our exit vertex, it can't be red.
-        // NOTE: if zero black edges, then we can't rule out exit edge matching to 2 edges that could both be black.
-
-        // TODO: omg, improve performance here lol
-        if ( redExitVertex.edges.filter( edge => solution.has( edge ) ).length < 2 ) {
-          redExitVertices.delete( redExitVertex );
-        }
-      }
-    }
-
-    for ( const edge of patternBoard.edges ) {
-      if ( !edge.isExit ) {
-        const isBlack = hasBlack[ edge.index ];
-        const isRed = hasRed[ edge.index ];
-
-        if ( isBlack && !isRed ) {
-          featureSet.addBlackEdge( edge );
-        }
-        if ( !isBlack && isRed ) {
-          featureSet.addRedEdge( edge );
-        }
-      }
-    }
-    for ( const redExitVertex of redExitVertices ) {
-      featureSet.addRedEdge( redExitVertex.exitEdge! );
-    }
-  }
-
-  public static addSolvedSectorFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
-    const hasZero = new Array( patternBoard.sectors.length ).fill( false );
-    const hasOne = new Array( patternBoard.sectors.length ).fill( false );
-    const hasTwo = new Array( patternBoard.sectors.length ).fill( false );
-
-    for ( const solution of solutions ) {
-      // TODO: performance here omg
-      for ( const sector of patternBoard.sectors ) {
-        const count = ( solution.has( sector.edges[ 0 ] ) ? 1 : 0 ) + ( solution.has( sector.edges[ 1 ] ) ? 1 : 0 );
-
-        if ( count === 0 ) {
-          hasZero[ sector.index ] = true;
-        }
-        else if ( count === 1 ) {
-          hasOne[ sector.index ] = true;
-        }
-        else if ( count === 2 ) {
-          hasTwo[ sector.index ] = true;
-        }
-      }
-    }
-
-    for ( const sector of patternBoard.sectors ) {
-      const isZero = hasZero[ sector.index ];
-      const isOne = hasOne[ sector.index ];
-      const isTwo = hasTwo[ sector.index ];
-
-      if ( isOne && !isZero && !isTwo ) {
-        featureSet.addSectorOnlyOne( sector );
-      }
-      else if ( isZero && isOne && !isTwo ) {
-        featureSet.addSectorNotTwo( sector );
-      }
-      else if ( isZero && isTwo && !isOne ) {
-        featureSet.addSectorNotOne( sector );
-      }
-      else if ( !isZero && isOne && isTwo ) {
-        featureSet.addSectorNotZero( sector );
-      }
-    }
-  }
-
-  public static addSolvedFaceColorDualFeatures( patternBoard: TPatternBoard, solutions: Set<TPatternEdge>[], featureSet: FeatureSet ): void {
-    assertEnabled() && assert( solutions.length > 0 );
-
-    const faceConnectivity = FaceConnectivity.get( patternBoard );
-
-    const remainingDuals = new Set( faceConnectivity.connectedFacePairs.map( pair => new DualConnectedFacePair( pair ) ) );
-    for ( const solution of solutions ) {
-
-      // TODO: with iteration, don't make a copy anymore?
-      for ( const dual of [ ...remainingDuals ] ) {
-        let isSame = true;
-
-        for ( const edge of dual.pair.shortestPath ) {
-          if ( solution.has( edge ) ) {
-            isSame = !isSame;
-          }
-        }
-
-        if ( isSame ) {
-          dual.isOnlyOpposite = false;
-        }
-        else {
-          dual.isOnlySame = false;
-        }
-
-        if ( !dual.isOnlySame && !dual.isOnlyOpposite ) {
-          remainingDuals.delete( dual );
-        }
-      }
-    }
-
-    for ( const dual of remainingDuals ) {
-      if ( dual.isOnlySame ) {
-        featureSet.addSameColorFaces( dual.pair.a, dual.pair.b );
-      }
-      else if ( dual.isOnlyOpposite ) {
-        featureSet.addOppositeColorFaces( dual.pair.a, dual.pair.b );
-      }
-    }
-  }
 }
 
 export type BasicSolveOptions = {
@@ -1091,6 +1097,13 @@ export type BasicSolveOptions = {
   solveSectors?: boolean;
   highlander?: boolean;
 };
+
+export const BASIC_SOLVE_DEFAULTS = {
+  solveEdges: true,
+  solveFaceColors: false,
+  solveSectors: false,
+  highlander: false
+} as const;
 
 export type TSerializedFeatureSet = {
   faceValues?: { face: number; value: number | null }[];

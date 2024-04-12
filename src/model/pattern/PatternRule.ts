@@ -111,8 +111,9 @@ export class PatternRule {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
   }
 
+  // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!
   public static getBasicRule( patternBoard: TDescribedPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ): PatternRule | null {
-    const outputFeatureSet = FeatureSet.getBasicSolve( patternBoard, inputFeatureSet, options );
+    const outputFeatureSet = inputFeatureSet.solved( options );
 
     if ( outputFeatureSet ) {
       return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );

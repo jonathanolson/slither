@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!
+  - 
   - FeatureSet.difference (things we can apply, essentially the pattern rule output)
     - (performance, but also "hey we can show what actually changed")
     - Also, our matching is partially based on this(!)

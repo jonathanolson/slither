@@ -51,4 +51,14 @@ export class PatternBoardSolver {
 
     return solver.getRemainingSolutions();
   }
+
+  public static hasSolution( patternBoard: TPatternBoard, features: TFeature[] ): boolean {
+    const solver = new PatternBoardSolver( patternBoard );
+
+    for ( const feature of features ) {
+      solver.addFeature( feature );
+    }
+
+    return solver.getNextSolution() !== null;
+  }
 }
