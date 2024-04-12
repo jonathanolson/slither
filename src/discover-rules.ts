@@ -551,7 +551,17 @@ console.log( 'test' );
           children: aEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
         } ) );
 
-        console.log( aEmbeddedRules );
+        const aUniqueEmbeddedRules: PatternRule[] = [];
+        aEmbeddedRules.forEach( rule => {
+          if ( !aUniqueEmbeddedRules.some( uniqueRule => rule.isAutomorphicTo( uniqueRule ) ) ) {
+            aUniqueEmbeddedRules.push( rule );
+          }
+        } );
+
+        addPaddedNode( new HBox( {
+          spacing: 10,
+          children: aUniqueEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
+        } ) );
 
         const aFeatures = FeatureSet.fromFeatures( [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
