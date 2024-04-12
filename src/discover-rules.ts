@@ -34,6 +34,8 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
+import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
+import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -349,7 +351,7 @@ console.log( 'test' );
 
       console.log( arePatternBoardsIsomorphic( a.patternBoard, b.patternBoard ) );
 
-      const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
+      const squareGenerations = getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
       container.addChild( getGenerationsNode( squareGenerations ) );
       squareGenerations.forEach( ( generation, index ) => {
         console.log( `-- ${index} --` );
@@ -468,12 +470,12 @@ console.log( 'test' );
         } );
 
         // TODO: other features
-        const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors: boolean, solveSectors: boolean ): Node => {
+        const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors = false, solveSectors = false, highlander = false ): Node => {
           const rule = PatternRule.getBasicRule( board, FeatureSet.fromFeatures( board, inputFeatures ), {
             solveEdges,
             solveFaceColors,
             solveSectors,
-            highlander: false
+            highlander
           } )!;
           assertEnabled() && assert( rule );
 
@@ -532,6 +534,47 @@ console.log( 'test' );
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
         ] ), doubleSquarePatternBoard.planarPatternMap ) );
+
+        const crossBoard = squareGenerations[ 4 ][ 7 ];
+
+        const crossBoardHighlanderFeatures = [
+          new FaceFeature( crossBoard.faces[ 0 ], null ),
+          new FaceFeature( crossBoard.faces[ 1 ], null ),
+          new FaceFeature( crossBoard.faces[ 2 ], 2 ),
+          new FaceFeature( crossBoard.faces[ 3 ], null ),
+          new FaceFeature( crossBoard.faces[ 4 ], null ),
+          new RedEdgeFeature( crossBoard.edges[ 1 ] ),
+          new RedEdgeFeature( crossBoard.edges[ 12 ] ),
+          new RedEdgeFeature( crossBoard.edges[ 17 ] ),
+          new RedEdgeFeature( crossBoard.edges[ 21 ] ),
+        ];
+
+        addPaddedNode( new PatternNode( crossBoard, FeatureSet.fromFeatures( crossBoard, crossBoardHighlanderFeatures ), crossBoard.planarPatternMap, {
+          labels: true
+        } ) );
+
+        {
+          const solver = new PatternBoardSolver( crossBoard );
+          const features = crossBoardHighlanderFeatures;
+          features.forEach( feature => solver.addFeature( feature ) );
+          const solutions = solver.getRemainingSolutions();
+          console.log( solutions );
+
+          const indeterminateEdges = getIndeterminateEdges( crossBoard, features );
+          console.log( indeterminateEdges );
+
+          const highlander = filterHighlanderSolutions( solutions, indeterminateEdges, crossBoard.vertices.filter( v => v.isExit ) );
+          console.log( highlander );
+
+          // container.addChild( new AlignBox( new HBox( {
+          //   spacing: 10,
+          //   children: highlander.highlanderSolutions.map( solution => new PatternNode( crossBoard, FeatureSet.fromSolution( crossBoard, solution ), crossBoard.planarPatternMap ) )
+          // } ), { margin: 5 } ) );
+        }
+
+        addPaddedNode( getRuleNode( crossBoard, crossBoardHighlanderFeatures, true, false, true ) );
+
+        addPaddedNode( getRuleNode( crossBoard, crossBoardHighlanderFeatures, true, false, true, true ) );
 
         const aRule = PatternRule.getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
