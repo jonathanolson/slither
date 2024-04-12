@@ -479,6 +479,9 @@ console.log( 'test' );
 
           return new PatternRuleNode( rule, board.planarPatternMap, {
             // TODO
+            patternNodeOptions: {
+              // labels: true
+            }
           } );
         };
 
@@ -522,6 +525,51 @@ console.log( 'test' );
           new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
           new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 7 ] ),
         ], true, true, true ) );
+
+        addPaddedNode( new PatternNode( doubleSquarePatternBoard, FeatureSet.fromFeatures( [
+          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
+          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
+          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
+          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
+        ] ), doubleSquarePatternBoard.planarPatternMap ) );
+
+        const aRule = PatternRule.getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( [
+          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
+          new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
+        ] ), {
+          solveEdges: true,
+          solveFaceColors: false,
+          solveSectors: false,
+          highlander: false
+        } )!;
+
+        // TODO: filter by not null
+        const aEmbeddedRules = computeEmbeddings( squarePatternBoard, doubleSquarePatternBoard ).map( embedding => aRule.embedded( doubleSquarePatternBoard, embedding )! );
+
+        addPaddedNode( new HBox( {
+          spacing: 10,
+          children: aEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
+        } ) );
+
+        console.log( aEmbeddedRules );
+
+        const aFeatures = FeatureSet.fromFeatures( [
+          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
+          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
+          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
+          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
+        ] );
+
+        const aNewFeatures = PatternRule.withRulesApplied( doubleSquarePatternBoard, aFeatures, aEmbeddedRules );
+
+        addPaddedNode( new PatternNode( doubleSquarePatternBoard, aNewFeatures, doubleSquarePatternBoard.planarPatternMap ) );
+
+        // addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
+        //   new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
+        //   new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
+        //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
+        //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
+        // ], true, true, true ) );
       }
     }
   }

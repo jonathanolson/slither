@@ -3,8 +3,6 @@
 
 - TODO
   - 
-  - Get rid of the filter features (FeatureSet does this)
-  - 
   - FeatureSet.difference (things we can apply, essentially the pattern rule output)
     - (performance, but also "hey we can show what actually changed")
     - Also, our matching is partially based on this(!)

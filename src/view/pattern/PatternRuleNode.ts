@@ -29,7 +29,8 @@ export class PatternRuleNode extends Node {
           new PatternNode(
             rule.patternBoard,
             rule.inputFeatureSet,
-            planarPatternMap
+            planarPatternMap,
+            options.patternNodeOptions
           ),
           new ArrowNode( 0, 0, 20, 0, {
             // TODO: theme
@@ -45,7 +46,8 @@ export class PatternRuleNode extends Node {
           new PatternNode(
             rule.patternBoard,
             rule.outputFeatureSet,
-            planarPatternMap
+            planarPatternMap,
+            options.patternNodeOptions
           )
         ]
       } )
