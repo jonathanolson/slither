@@ -409,6 +409,10 @@ export class FeatureSet {
 
   // TODO: eventually other feature types
 
+  public static empty( patternBoard: TPatternBoard ): FeatureSet {
+    return new FeatureSet( patternBoard );
+  }
+
   public static fromFeatures( patternBoard: TPatternBoard, features: TEmbeddableFeature[] ): FeatureSet {
     const featureSet = new FeatureSet( patternBoard );
 
@@ -865,6 +869,10 @@ export class FeatureSet {
     const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
 
     const solutions = this.getSolutions( options.highlander );
+
+    if ( solutions.length === 0 ) {
+      return null;
+    }
 
     const featureSet = this.clone();
 

@@ -623,6 +623,8 @@ console.log( 'test' );
         //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
         //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
         // ], true, true, true ) );
+
+        // console.log( PatternRule.getRules( squarePatternBoard ) );
       }
     }
   }

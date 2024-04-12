@@ -157,4 +157,78 @@ export class PatternRule {
 
     return featureState;
   }
+
+  public static getRules( patternBoard: TDescribedPatternBoard, options?: BasicSolveOptions ): PatternRule[] {
+
+    // TODO: handle enumeration of all cases
+    assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
+    assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
+
+    const forEachPossibleEdgeFeatureSet = ( initialFeatureSet: FeatureSet, callback: ( featureSet: FeatureSet ) => void ): void => {
+      const edges = patternBoard.edges;
+      const edgeFeatureStack = [ initialFeatureSet ];
+      const edgeRecur = ( index: number ): void => {
+        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
+        if ( index === edges.length ) {
+          callback( previousFeatureSet );
+        }
+        else {
+          // no edge feature (no push needed)
+          edgeRecur( index + 1 );
+
+          if ( index < 4 ) {
+            console.log( index, 'black' );
+          }
+
+          const blackFeatureSet = previousFeatureSet.clone();
+          blackFeatureSet.addBlackEdge( edges[ index ] );
+
+          // if ( blackFeatureSet.hasSolution( options?.highlander ) ) {
+            edgeFeatureStack.push( blackFeatureSet );
+            edgeRecur( index + 1 );
+            edgeFeatureStack.pop();
+          // }
+
+          if ( index < 4 ) {
+            console.log( index, 'red' );
+          }
+
+          const redFeatureSet = previousFeatureSet.clone();
+          redFeatureSet.addRedEdge( edges[ index ] );
+
+          // if ( redFeatureSet.hasSolution( options?.highlander ) ) {
+            edgeFeatureStack.push( redFeatureSet );
+            edgeRecur( index + 1 );
+            edgeFeatureStack.pop();
+          // }
+        }
+      };
+      edgeRecur( 0 );
+    };
+
+    const nonIsomorphicFeatureSets: FeatureSet[] = [];
+    forEachPossibleEdgeFeatureSet( FeatureSet.empty( patternBoard ), featureSet => {
+      if ( nonIsomorphicFeatureSets.every( otherFeatureSet => !featureSet.isIsomorphicTo( otherFeatureSet ) ) ) {
+        nonIsomorphicFeatureSets.push( featureSet );
+      }
+    } );
+
+    console.log( 'nonIsomorphicFeatureSets.length', nonIsomorphicFeatureSets.length );
+
+    const rules: PatternRule[] = [];
+
+    let count = 0;
+    for ( const featureSet of nonIsomorphicFeatureSets ) {
+      count++;
+      if ( count % 10 === 0 ) {
+        console.log( count );
+      }
+      const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
+      if ( rule && !rule.isTrivial() ) {
+        rules.push( rule );
+      }
+    }
+
+    return rules;
+  }
 }
