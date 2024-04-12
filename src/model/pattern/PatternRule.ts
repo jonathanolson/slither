@@ -183,11 +183,11 @@ export class PatternRule {
           const blackFeatureSet = previousFeatureSet.clone();
           blackFeatureSet.addBlackEdge( edges[ index ] );
 
-          // if ( blackFeatureSet.hasSolution( options?.highlander ) ) {
+          if ( blackFeatureSet.hasSolution( options?.highlander ) ) {
             edgeFeatureStack.push( blackFeatureSet );
             edgeRecur( index + 1 );
             edgeFeatureStack.pop();
-          // }
+          }
 
           if ( index < 4 ) {
             console.log( index, 'red' );
@@ -196,11 +196,11 @@ export class PatternRule {
           const redFeatureSet = previousFeatureSet.clone();
           redFeatureSet.addRedEdge( edges[ index ] );
 
-          // if ( redFeatureSet.hasSolution( options?.highlander ) ) {
+          if ( redFeatureSet.hasSolution( options?.highlander ) ) {
             edgeFeatureStack.push( redFeatureSet );
             edgeRecur( index + 1 );
             edgeFeatureStack.pop();
-          // }
+          }
         }
       };
       edgeRecur( 0 );

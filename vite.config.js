@@ -28,6 +28,7 @@ export default defineConfig( {
         'scan-test': '/scan-test.html',
         'solver-fuzz': '/solver-fuzz.html',
         'discover-rules': '/discover-rules.html',
+        'rules-test': '/rules-test.html',
       },
       plugins: [
         unassert( {

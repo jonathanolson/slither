@@ -13,6 +13,9 @@ import { getSectorFromEdgePair } from '../data/sector-state/getSectorFromEdgePai
 import { TPatternFace } from './TPatternFace.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
+import _ from '../../workarounds/_.ts';
+import { PolygonalBoard } from '../board/core/TiledBoard.ts';
+import { PolygonGenerator } from '../../view/GenerateNode.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
 
@@ -165,6 +168,19 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
     return set;
   };
 
+  public static getFirstGeneration( board: TBoard ): FacesPatternBoard[] {
+    const orders = _.uniq( board.faces.map( face => face.vertices.length ) );
+
+    const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
+
+    return orders.map( order => {
+      const centermostFace = _.minBy( board.faces.filter( face => face.vertices.length === order ), face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
+      assertEnabled() && assert( centermostFace );
+
+      return new FacesPatternBoard( board, [ centermostFace ] );
+    } );
+  };
+
   public static getNextGeneration( patternBoards: FacesPatternBoard[] ): FacesPatternBoard[] {
     const nextGeneration: FacesPatternBoard[] = [];
     patternBoards.forEach( patternBoard => {
@@ -186,5 +202,28 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
       } );
     } );
     return nextGeneration;
+  };
+
+  public static getFirstNGenerations( board: TBoard, n: number ): FacesPatternBoard[][] {
+    const firstGeneration = FacesPatternBoard.getFirstGeneration( board );
+
+    const generations: FacesPatternBoard[][] = [ firstGeneration ];
+    for ( let i = 0; i < n - 1; i++ ) {
+      generations.push( FacesPatternBoard.getNextGeneration( generations[ generations.length - 1 ] ) );
+    }
+    return generations;
+  };
+
+  public static getUniformTilingGenerations( generator: PolygonGenerator, n: number ): FacesPatternBoard[][] {
+    // TODO: simplify this board generation
+    const polygons = generator.generate( {
+      // TODO: make this variable
+      width: 15,
+      height: 15
+    } );
+
+    const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
+
+    return FacesPatternBoard.getFirstNGenerations( board, n );
   };
 }

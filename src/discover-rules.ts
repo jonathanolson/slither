@@ -625,6 +625,7 @@ console.log( 'test' );
         // ], true, true, true ) );
 
         // console.log( PatternRule.getRules( squarePatternBoard ) );
+        // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
       }
     }
   }
