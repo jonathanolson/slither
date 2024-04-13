@@ -65,6 +65,14 @@ console.log( 'test' );
   console.log( squareRules );
   // addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
 
+  // TODO: red exit edges should be worth "more" score
+  // TODO: score should be... based on what embedding we are likely in?
+  // TODO: face-value 0.5
+  // TODO: black edge 1
+  // TODO: red edge 1.2
+  // TODO: red-exit edge 2.5
+  // TODO: (how to score... faces?)
+
   const solveRuleSizes = _.uniq( squareRules.map( rule => rule.inputFeatureSet.size ) );
   const embeddedRulesLessThanSizeMap = new Map<number, PatternRule[]>( solveRuleSizes.map( size => [ size, [] ] ) );
 
@@ -79,8 +87,6 @@ console.log( 'test' );
       }
     }
   }
-
-  // TODO: we are missing black-edge internal and red-edge exit to a vertex?!?
 
   const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanSizeMap.get( rule.inputFeatureSet.size )! ) );
   console.log( filteredSquareRules );
