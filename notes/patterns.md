@@ -8,6 +8,7 @@
       - Skip symmetry pruning
       - Skip ...
     - Profile it, see what is taking up time. Symmetry checks? Still GC from the solver?
+    - Remove duplicated `return processedWasSatisfied.get( isomorphicDual )!;`
     - 
     - Isometry checks still off, we are calling "callback" without all of the "blanks"
     - Don't do the "initial" solution check, we do this anyway with other things?
