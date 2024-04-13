@@ -512,6 +512,11 @@ console.log( 'test' );
           new SectorOnlyOneFeature( squarePatternBoard.sectors[ 0 ] ),
         ], false, false, true ) );
 
+        addPaddedNode( getRuleNode( squarePatternBoard, [
+          new BlackEdgeFeature( squarePatternBoard.edges[ 0 ] ),
+          new RedEdgeFeature( squarePatternBoard.edges[ 4 ] ),
+        ], true, false, false ) );
+
         addPaddedNode( getRuleNode( diagonalPatternBoard, [
           new FaceFeature( diagonalPatternBoard.faces[ 0 ], 3 ),
           new FaceFeature( diagonalPatternBoard.faces[ 1 ], 3 ),

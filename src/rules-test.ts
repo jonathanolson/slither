@@ -63,6 +63,7 @@ console.log( 'test' );
   console.log( 'square' );
   const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.inputFeatureSet.size );
   console.log( squareRules );
+  // addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
 
   const solveRuleSizes = _.uniq( squareRules.map( rule => rule.inputFeatureSet.size ) );
   const embeddedRulesLessThanSizeMap = new Map<number, PatternRule[]>( solveRuleSizes.map( size => [ size, [] ] ) );
@@ -82,9 +83,9 @@ console.log( 'test' );
   // TODO: we are missing black-edge internal and red-edge exit to a vertex?!?
 
   const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanSizeMap.get( rule.inputFeatureSet.size )! ) );
-  console.log( squareRules );
-
+  console.log( filteredSquareRules );
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
+
   // console.log( 'diagonal' );
   // console.log( PatternRule.getRules( diagonalPatternBoard ) );
 

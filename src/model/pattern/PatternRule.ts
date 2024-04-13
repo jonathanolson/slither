@@ -194,6 +194,7 @@ export class PatternRule {
     };
 
     const allowRecur = ( featureSet: FeatureSet ): boolean => {
+      // TODO: remove the hasSolution(!), we're overdoing this
       return !isIsomorphicToVisited( featureSet ) && featureSet.hasSolution( options?.highlander );
     };
 
@@ -207,21 +208,22 @@ export class PatternRule {
 
       const faceRecur = ( index: number, numFeatures: number ): boolean => {
 
-        const previousFeatureSet = faceFeatureStack[ faceFeatureStack.length - 1 ];
-        if ( numFeatures <= options.featureLimit ) {
-          const success = callback( previousFeatureSet, numFeatures );
-          if ( !success ) {
-            return false;
-          }
-        }
-        if ( numFeatures === options.featureLimit ) {
-          return false;
-        }
         if ( index === faces.length ) {
           return true;
         }
 
-        addToShapeMap( previousFeatureSet );
+        const previousFeatureSet = faceFeatureStack[ faceFeatureStack.length - 1 ];
+        if ( numFeatures <= options.featureLimit ) {
+          console.log( `${_.repeat( '  ', numFeatures )}skip` );
+          const success = faceRecur( index + 1, numFeatures );
+          if ( !success ) {
+            return false;
+          }
+        }
+
+        if ( numFeatures >= options.featureLimit ) {
+          return true;
+        }
 
         const face = faces[ index ];
         const values: FaceValue[] = _.range( options.includeFaceValueZero ? 0 : 1, face.edges.length );
@@ -230,21 +232,34 @@ export class PatternRule {
         }
 
         for ( const value of values ) {
+          console.log( `${_.repeat( '  ', numFeatures )}face ${index} value ${value}` );
           const faceFeatureSet = previousFeatureSet.clone();
           faceFeatureSet.addFaceValue( face, value );
 
           // FOR NOW
           assertEnabled() && assert( faceFeatureSet.size === previousFeatureSet.size + 1 );
 
+          // TODO: reduce the DOUBLE-LOGIC_SOLVER here
           if ( allowRecur( faceFeatureSet ) ) {
-            faceFeatureStack.push( faceFeatureSet );
-            faceRecur( index + 1, numFeatures + 1 );
-            faceFeatureStack.pop();
+            addToShapeMap( faceFeatureSet );
+
+            const success = callback( faceFeatureSet, numFeatures + 1 );
+
+            if ( success ) {
+              console.log( `${_.repeat( '  ', numFeatures )}exploring` );
+              faceFeatureStack.push( faceFeatureSet );
+              faceRecur( index + 1, numFeatures + 1 );
+              faceFeatureStack.pop();
+            }
           }
         }
 
         return true;
       };
+      const rootSuccess = callback( initialFeatureSet, numInitialFeatures );
+      if ( !rootSuccess ) {
+        return false;
+      }
       return faceRecur( 0, numInitialFeatures );
     };
 
@@ -259,48 +274,80 @@ export class PatternRule {
 
       const edgeRecur = ( index: number, numFeatures: number ): boolean => {
 
-        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
-        if ( numFeatures <= options.featureLimit ) {
-          const success = callback( previousFeatureSet, numFeatures );
-          if ( !success ) {
-            return false;
-          }
-        }
-        if ( numFeatures === options.featureLimit ) {
-          return false;
-        }
         if ( index === edges.length ) {
           return true;
         }
 
-        addToShapeMap( previousFeatureSet );
-
-        const blackFeatureSet = previousFeatureSet.clone();
-        blackFeatureSet.addBlackEdge( edges[ index ] );
-
-        // FOR NOW:
-        assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
-
-        if ( allowRecur( blackFeatureSet ) ) {
-          edgeFeatureStack.push( blackFeatureSet );
-          edgeRecur( index + 1, numFeatures + 1 );
-          edgeFeatureStack.pop();
+        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
+        if ( numFeatures <= options.featureLimit ) {
+          console.log( `${_.repeat( '  ', numFeatures )}skip` );
+          const success = edgeRecur( index + 1, numFeatures );
+          if ( !success ) {
+            return false;
+          }
         }
 
-        const redFeatureSet = previousFeatureSet.clone();
-        redFeatureSet.addRedEdge( edges[ index ] );
+        if ( numFeatures >= options.featureLimit ) {
+          return true;
+        }
 
-        // FOR NOW:
-        assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
+        const edge = edges[ index ];
 
-        if ( allowRecur( redFeatureSet ) ) {
-          edgeFeatureStack.push( redFeatureSet );
-          edgeRecur( index + 1, numFeatures + 1 );
-          edgeFeatureStack.pop();
+        // Black edge
+        {
+          // Don't apply black to exit edges
+          if ( !edge.isExit ) {
+            const blackFeatureSet = previousFeatureSet.clone();
+            blackFeatureSet.addBlackEdge( edges[ index ] );
+
+            // FOR NOW:
+            assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
+
+            console.log( `${_.repeat( '  ', numFeatures )}black ${index}` );
+            if ( allowRecur( blackFeatureSet ) ) {
+              addToShapeMap( blackFeatureSet );
+
+              const success = callback( blackFeatureSet, numFeatures + 1 );
+
+              if ( success ) {
+                console.log( `${_.repeat( '    ', numFeatures )}exploring` );
+                edgeFeatureStack.push( blackFeatureSet );
+                edgeRecur( index + 1, numFeatures + 1 );
+                edgeFeatureStack.pop();
+              }
+            }
+          }
+        }
+
+        // Red edge
+        {
+          const redFeatureSet = previousFeatureSet.clone();
+          redFeatureSet.addRedEdge( edges[ index ] );
+
+          // FOR NOW:
+          assertEnabled() && assert( redFeatureSet.size === previousFeatureSet.size + 1 );
+
+          console.log( `${_.repeat( '  ', numFeatures )}red ${index}` );
+          if ( allowRecur( redFeatureSet ) ) {
+            addToShapeMap( redFeatureSet );
+
+            const success = callback( redFeatureSet, numFeatures + 1 );
+
+            if ( success ) {
+              console.log( `${_.repeat( '    ', numFeatures )}exploring` );
+              edgeFeatureStack.push( redFeatureSet );
+              edgeRecur( index + 1, numFeatures + 1 );
+              edgeFeatureStack.pop();
+            }
+          }
         }
 
         return true;
       };
+      const rootSuccess = callback( initialFeatureSet, numInitialFeatures );
+      if ( !rootSuccess ) {
+        return false;
+      }
       return edgeRecur( 0, numInitialFeatures );
     };
 
@@ -313,6 +360,7 @@ export class PatternRule {
         console.log( count );
       }
       const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
+      console.log( `${_.repeat( '  ', numFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
       }
