@@ -5,7 +5,6 @@
   - 
   - PatternRule todos:
     - Don't do the "initial" solution check, we do this anyway with other things?
-    - Comment out console logs
     - check other TODOs
   - // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!
   - 

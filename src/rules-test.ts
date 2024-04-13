@@ -1,11 +1,10 @@
-import { AlignBox, Display, Node, Rectangle, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 import _ from './workarounds/_.ts';
-import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -54,44 +53,23 @@ console.log( 'test' );
   const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
 
   const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
-  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-
+  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
 
   // console.log( 'vertex' );
   // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
-  console.log( 'square' );
-  const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.getInputDifficultyScoreA() );
-  console.log( squareRules );
 
-
-  // TODO: use a better way for given the "score" setup
-  const solveRuleScores = _.uniq( squareRules.map( rule => rule.getInputDifficultyScoreA() ) );
-  const embeddedRulesLessThanScoreMap = new Map<number, PatternRule[]>( solveRuleScores.map( size => [ size, [] ] ) );
-
-  const squareEmbeddings = getEmbeddings( squarePatternBoard, squarePatternBoard );
-  for ( const rule of squareRules ) {
-    const embeddedRules = squareEmbeddings.map( embedding => rule.embedded( squarePatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
-    const score = rule.getInputDifficultyScoreA();
-
-    for ( const otherScore of solveRuleScores ) {
-      if ( score < otherScore ) {
-        embeddedRulesLessThanScoreMap.get( otherScore )!.push( ...embeddedRules );
-      }
-    }
-  }
-
-  const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanScoreMap.get( rule.getInputDifficultyScoreA() )! ) );
+  const filteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getRules( squarePatternBoard ), [] );
   console.log( filteredSquareRules );
+  addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
 
-  // TODO: OH NO, we can't prune isomorphic how we are doing it, because we need to SKIP FEATURES LAST?
-
-  // TODO: 3-black-edge pattern... not showing up?
+  const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
+  console.log( filteredDiagonalRules );
+  addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
 
   // TODO: OMG also avoid the double-logic-solver
 
-  addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
-  addPaddedNode( new Rectangle( 0, 0, 100, 100, { fill: 'red' } ) );
-  addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
+  // addPaddedNode( new Rectangle( 0, 0, 100, 100, { fill: 'red' } ) );
+  // addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
 
   // console.log( 'diagonal' );
   // console.log( PatternRule.getRules( diagonalPatternBoard ) );

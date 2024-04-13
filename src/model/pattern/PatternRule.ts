@@ -24,6 +24,7 @@ export class PatternRule {
     return this.inputFeatureSet.getInputDifficultyScoreA();
   }
 
+  // TODO: now that we have input/output targets, the patternBoard here is redundant
   public embedded( patternBoard: TDescribedPatternBoard, embedding: Embedding ): PatternRule | null {
     const inputFeatureSet = this.inputFeatureSet.embedded( patternBoard, embedding );
     if ( inputFeatureSet === null ) {
@@ -36,6 +37,11 @@ export class PatternRule {
     }
 
     return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
+  }
+
+  public getEmbeddedRules( embeddings: Embedding[] ): PatternRule[] {
+    // TODO: integrate the description, then remove the cast!
+    return embeddings.map( embedding => this.embedded( embedding.targetPatternBoard as TDescribedPatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
   }
 
   public isIsomorphicTo( other: PatternRule ): boolean {
@@ -507,6 +513,41 @@ export class PatternRule {
     ), leafCallback, 0, 0 );
 
     return rules;
+  }
+
+  public static filterAndSortRules( rules: PatternRule[], previousRules: PatternRule[] = [] ): PatternRule[] {
+    if ( rules.length === 0 ) {
+      return rules;
+    }
+
+    const mainPatternBoard = rules[ 0 ].patternBoard;
+
+    rules = _.sortBy( rules, rule => rule.getInputDifficultyScoreA() );
+
+    // TODO: use a better way for given the "score" setup
+    // TODO: this creates a LOT of potential arrays, and is probably memory-unfriendly
+
+    const solveRuleScores = _.uniq( rules.map( rule => rule.getInputDifficultyScoreA() ) );
+    const embeddedRulesLessThanScoreMap = new Map<number, PatternRule[]>( solveRuleScores.map( size => [ size, [] ] ) );
+
+    const embeddings = getEmbeddings( mainPatternBoard, mainPatternBoard );
+    for ( const rule of rules ) {
+      const embeddedRules = rule.getEmbeddedRules( embeddings );
+      const score = rule.getInputDifficultyScoreA();
+
+      for ( const otherScore of solveRuleScores ) {
+        if ( score < otherScore ) {
+          embeddedRulesLessThanScoreMap.get( otherScore )!.push( ...embeddedRules );
+        }
+      }
+    }
+
+    const embeddedPreviousRules = previousRules.flatMap( rule => rule.getEmbeddedRules( embeddings ) );
+
+    return rules.filter( rule => !rule.isRedundant( [
+      ...embeddedPreviousRules,
+      ...embeddedRulesLessThanScoreMap.get( rule.getInputDifficultyScoreA() )!,
+    ] ) );
   }
 }
 
