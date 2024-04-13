@@ -4,6 +4,12 @@
 - TODO
   - 
   - PatternRule todos:
+    - Flags:
+      - Skip symmetry pruning
+      - Skip ...
+    - Profile it, see what is taking up time. Symmetry checks? Still GC from the solver?
+    - 
+    - Isometry checks still off, we are calling "callback" without all of the "blanks"
     - Don't do the "initial" solution check, we do this anyway with other things?
     - check other TODOs
   - // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!

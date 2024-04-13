@@ -4,7 +4,6 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
-import _ from './workarounds/_.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -52,16 +51,16 @@ console.log( 'test' );
 
   const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
 
-  const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
-  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
 
   // console.log( 'vertex' );
   // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
 
+  const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
   const filteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getRules( squarePatternBoard ), [] );
   console.log( filteredSquareRules );
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
 
+  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
   const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
   console.log( filteredDiagonalRules );
   addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );

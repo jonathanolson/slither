@@ -311,7 +311,19 @@ export class PatternRule {
           if ( allowAddedFeatureRecur( faceFeatureSetDual ) ) {
             addToDualShapeMap( faceFeatureSetDual );
 
-            const success = callback( faceFeatureSetDual, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
+            let skipDual = faceFeatureSetDual;
+            if ( index + 1 < faces.length ) {
+              skipDual = new FeatureSetDual(
+                faceFeatureSet,
+                new Set( [
+                  ...previousFeatureSetDual.blankFaces,
+                  ...faces.slice( index + 1 )
+                ] ),
+                previousFeatureSetDual.blankEdges
+              );
+            }
+
+            const success = callback( skipDual, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
 
             if ( success ) {
               // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
@@ -408,7 +420,19 @@ export class PatternRule {
             if ( allowAddedFeatureRecur( blackFeatureSetDual ) ) {
               addToDualShapeMap( blackFeatureSetDual );
 
-              const success = callback( blackFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
+              let skipDual = blackFeatureSetDual;
+              if ( index + 1 < edges.length ) {
+                skipDual = new FeatureSetDual(
+                  blackFeatureSet,
+                  previousFeatureSetDual.blankFaces,
+                  new Set( [
+                    ...previousFeatureSetDual.blankEdges,
+                    ...edges.slice( index + 1 )
+                  ] )
+                );
+              }
+
+              const success = callback( skipDual, numFeatures + 1, numEvaluatedFeatures + 1 );
 
               if ( success ) {
                 // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
