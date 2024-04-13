@@ -172,25 +172,25 @@ export class PatternRule {
     assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
     assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
 
-    const visitedShapeMap = new Map<string, FeatureSetDual[]>();
+    const visitedDualShapeMap = new Map<string, FeatureSetDual[]>();
 
     // Grab a reference for performance
     const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
-    const addToShapeMap = ( featureSetDual: FeatureSetDual ): void => {
+    const addToDualShapeMap = ( featureSetDual: FeatureSetDual ): void => {
       const key = featureSetDual.shapeKey;
-      let featuresWithShape = visitedShapeMap.get( key );
+      let featuresWithShape = visitedDualShapeMap.get( key );
       if ( featuresWithShape ) {
         featuresWithShape.push( featureSetDual );
       }
       else {
-        visitedShapeMap.set( key, [ featureSetDual ] );
+        visitedDualShapeMap.set( key, [ featureSetDual ] );
       }
     };
 
-    const isIsomorphicToVisited = ( featureSetDual: FeatureSetDual ): boolean => {
+    const isIsomorphicToVisitedDual = ( featureSetDual: FeatureSetDual ): boolean => {
       const key = featureSetDual.shapeKey;
-      const featureDualsWithShape = visitedShapeMap.get( key );
+      const featureDualsWithShape = visitedDualShapeMap.get( key );
       if ( featureDualsWithShape ) {
         return featureDualsWithShape.some( otherFeatureSetDual => featureSetDual.isIsomorphicTo( otherFeatureSetDual, automorphisms ) );
       }
@@ -201,7 +201,33 @@ export class PatternRule {
 
     const allowRecur = ( featureSetDual: FeatureSetDual ): boolean => {
       // TODO: remove the hasSolution(!), we're overdoing this
-      return !isIsomorphicToVisited( featureSetDual ) && featureSetDual.featureSet.hasSolution( options?.highlander );
+      return !isIsomorphicToVisitedDual( featureSetDual ) && featureSetDual.featureSet.hasSolution( options?.highlander );
+    };
+
+    const processedShapeMap = new Map<string, FeatureSet[]>();
+    const processedWasSatisfied = new Map<FeatureSet, boolean>();
+
+    const addToShapeMap = ( featureSet: FeatureSet, wasSatisfied: boolean ): void => {
+      const key = featureSet.getShapeString();
+      let featuresWithShape = processedShapeMap.get( key );
+      if ( featuresWithShape ) {
+        featuresWithShape.push( featureSet );
+      }
+      else {
+        processedShapeMap.set( key, [ featureSet ] );
+      }
+      processedWasSatisfied.set( featureSet, wasSatisfied );
+    };
+
+    const getIsomorphicProcessed = ( featureSet: FeatureSet ): FeatureSet | null => {
+      const key = featureSet.getShapeString();
+      const featuresWithShape = processedShapeMap.get( key );
+      if ( featuresWithShape ) {
+        return featuresWithShape.find( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) ) ?? null;
+      }
+      else {
+        return null;
+      }
     };
 
     const forEachPossibleFaceFeatureSet = (
@@ -221,7 +247,7 @@ export class PatternRule {
 
         const previousFeatureSetDual = faceFeatureDualStack[ faceFeatureDualStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
-          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
 
           const nextDual = new FeatureSetDual(
             previousFeatureSetDual.featureSet,
@@ -234,7 +260,7 @@ export class PatternRule {
           faceFeatureDualStack.pop();
 
           if ( !success ) {
-            console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
+            // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
             return false;
           }
         }
@@ -250,7 +276,7 @@ export class PatternRule {
         }
 
         for ( const value of values ) {
-          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}face ${index} value ${value}` );
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}face ${index} value ${value}` );
           const faceFeatureSet = previousFeatureSetDual.featureSet.clone();
           faceFeatureSet.addFaceValue( face, value );
           const faceFeatureSetDual = new FeatureSetDual(
@@ -264,25 +290,25 @@ export class PatternRule {
 
           // TODO: reduce the DOUBLE-LOGIC_SOLVER here
           if ( allowRecur( faceFeatureSetDual ) ) {
-            addToShapeMap( faceFeatureSetDual );
+            addToDualShapeMap( faceFeatureSetDual );
 
             const success = callback( faceFeatureSetDual, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
 
             if ( success ) {
-              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
+              // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
               faceFeatureDualStack.push( faceFeatureSetDual );
               faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               faceFeatureDualStack.pop();
             }
             else {
-              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
+              // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
             }
           }
         }
 
         return true;
       };
-      console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
+      // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
       const skipDual = new FeatureSetDual(
         initialFeatureSetDual.featureSet,
         new Set( [
@@ -316,7 +342,7 @@ export class PatternRule {
 
         const previousFeatureSetDual = edgeFeatureDualStack[ edgeFeatureDualStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
-          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
 
           const nextDual = new FeatureSetDual(
             previousFeatureSetDual.featureSet,
@@ -329,7 +355,7 @@ export class PatternRule {
           edgeFeatureDualStack.pop();
 
           if ( !success ) {
-            console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
+            // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
             return false;
           }
         }
@@ -355,20 +381,20 @@ export class PatternRule {
             // FOR NOW:
             assertEnabled() && assert( blackFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
-            console.log( `${_.repeat( '  ', numEvaluatedFeatures )}black ${index}` );
+            // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}black ${index}` );
             if ( allowRecur( blackFeatureSetDual ) ) {
-              addToShapeMap( blackFeatureSetDual );
+              addToDualShapeMap( blackFeatureSetDual );
 
               const success = callback( blackFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
 
               if ( success ) {
-                console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
+                // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
                 edgeFeatureDualStack.push( blackFeatureSetDual );
                 edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
                 edgeFeatureDualStack.pop();
               }
               else {
-                console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
+                // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
               }
             }
           }
@@ -387,27 +413,27 @@ export class PatternRule {
           // FOR NOW:
           assertEnabled() && assert( redFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
-          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}red ${index}` );
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}red ${index}` );
           if ( allowRecur( redFeatureSetDual ) ) {
-            addToShapeMap( redFeatureSetDual );
+            addToDualShapeMap( redFeatureSetDual );
 
             const success = callback( redFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
 
             if ( success ) {
-              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
+              // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
               edgeFeatureDualStack.push( redFeatureSetDual );
               edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               edgeFeatureDualStack.pop();
             }
             else {
-              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
+              // console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
             }
           }
         }
 
         return true;
       };
-      console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
+      // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
       const skipDual = new FeatureSetDual(
         initialFeatureSetDual.featureSet,
         initialFeatureSetDual.blankFaces,
@@ -427,15 +453,25 @@ export class PatternRule {
     let count = 0;
 
     let leafCallback = ( featureSetDual: FeatureSetDual, numFeatures: number, numEvaluatedFeatures: number ) => {
+      const isomorphicDual = getIsomorphicProcessed( featureSetDual.featureSet );
+      if ( isomorphicDual ) {
+        const wasSatisfied = processedWasSatisfied.get( isomorphicDual );
+        assertEnabled() && assert( wasSatisfied !== undefined );
+        return processedWasSatisfied.get( isomorphicDual )!;
+      }
+
       count++;
       if ( count % 10 === 0 ) {
         console.log( count );
       }
       const rule = PatternRule.getBasicRule( patternBoard, featureSetDual.featureSet, options );
-      console.log( `${_.repeat( '  ', numEvaluatedFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSetDual.featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
+      // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSetDual.featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
       }
+
+      addToShapeMap( featureSetDual.featureSet, !!rule );
+
       return !!rule;
     };
 
