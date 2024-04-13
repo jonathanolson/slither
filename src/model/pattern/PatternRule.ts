@@ -199,7 +199,11 @@ export class PatternRule {
       }
     };
 
-    const allowRecur = ( featureSetDual: FeatureSetDual ): boolean => {
+    const allowAddedBlankRecur = ( featureSetDual: FeatureSetDual ): boolean => {
+      return !isIsomorphicToVisitedDual( featureSetDual );
+    };
+
+    const allowAddedFeatureRecur = ( featureSetDual: FeatureSetDual ): boolean => {
       // TODO: remove the hasSolution(!), we're overdoing this
       return !isIsomorphicToVisitedDual( featureSetDual ) && featureSetDual.featureSet.hasSolution( options?.highlander );
     };
@@ -255,13 +259,18 @@ export class PatternRule {
             previousFeatureSetDual.blankEdges
           );
 
-          faceFeatureDualStack.push( nextDual );
-          const success = faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
-          faceFeatureDualStack.pop();
+          if ( allowAddedBlankRecur( nextDual ) ) {
+            addToDualShapeMap( nextDual );
 
-          if ( !success ) {
-            // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
-            return false;
+            faceFeatureDualStack.push( nextDual );
+            const success = faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+            faceFeatureDualStack.pop();
+
+            // TODO: HOW WOULD THIS EVEN HAPPEN?
+            if ( !success ) {
+              // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
+              return false;
+            }
           }
         }
 
@@ -289,7 +298,7 @@ export class PatternRule {
           assertEnabled() && assert( faceFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
           // TODO: reduce the DOUBLE-LOGIC_SOLVER here
-          if ( allowRecur( faceFeatureSetDual ) ) {
+          if ( allowAddedFeatureRecur( faceFeatureSetDual ) ) {
             addToDualShapeMap( faceFeatureSetDual );
 
             const success = callback( faceFeatureSetDual, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
@@ -350,13 +359,17 @@ export class PatternRule {
             new Set( [ ...previousFeatureSetDual.blankEdges, edges[ index ] ] ),
           );
 
-          edgeFeatureDualStack.push( nextDual );
-          const success = edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
-          edgeFeatureDualStack.pop();
+          if ( allowAddedBlankRecur( nextDual ) ) {
+            addToDualShapeMap( nextDual );
 
-          if ( !success ) {
-            // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
-            return false;
+            edgeFeatureDualStack.push( nextDual );
+            const success = edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+            edgeFeatureDualStack.pop();
+
+            if ( !success ) {
+              // console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
+              return false;
+            }
           }
         }
 
@@ -382,7 +395,7 @@ export class PatternRule {
             assertEnabled() && assert( blackFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
             // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}black ${index}` );
-            if ( allowRecur( blackFeatureSetDual ) ) {
+            if ( allowAddedFeatureRecur( blackFeatureSetDual ) ) {
               addToDualShapeMap( blackFeatureSetDual );
 
               const success = callback( blackFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
@@ -414,7 +427,7 @@ export class PatternRule {
           assertEnabled() && assert( redFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
           // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}red ${index}` );
-          if ( allowRecur( redFeatureSetDual ) ) {
+          if ( allowAddedFeatureRecur( redFeatureSetDual ) ) {
             addToDualShapeMap( redFeatureSetDual );
 
             const success = callback( redFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
