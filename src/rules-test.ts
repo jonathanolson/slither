@@ -7,6 +7,14 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 import _ from './workarounds/_.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
+import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
+import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature.ts';
+import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
+import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeature.ts';
+import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -65,30 +73,58 @@ console.log( 'test' );
   console.log( squareRules );
   // addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
 
-  // TODO: red exit edges should be worth "more" score
-  // TODO: score should be... based on what embedding we are likely in?
-  // TODO: face-value 0.5
-  // TODO: black edge 1
-  // TODO: red edge 1.2
-  // TODO: red-exit edge 2.5
-  // TODO: (how to score... faces?)
+  const getInputDifficultyScore = ( rule: PatternRule ) => {
+    let score = 0;
 
-  const solveRuleSizes = _.uniq( squareRules.map( rule => rule.inputFeatureSet.size ) );
-  const embeddedRulesLessThanSizeMap = new Map<number, PatternRule[]>( solveRuleSizes.map( size => [ size, [] ] ) );
+    for ( const feature of rule.inputFeatureSet.getFeaturesArray() ) {
+      if ( feature instanceof FaceFeature ) {
+        score += 0.5;
+      }
+      else if ( feature instanceof BlackEdgeFeature ) {
+        score += 1;
+      }
+      else if ( feature instanceof RedEdgeFeature ) {
+        score += feature.edge.isExit ? 2.5 : 1.2;
+      }
+      else if ( feature instanceof SectorOnlyOneFeature ) {
+        score += 3;
+      }
+      else if ( feature instanceof SectorNotOneFeature ) {
+        score += 4;
+      }
+      else if ( feature instanceof SectorNotTwoFeature ) {
+        score += 4.1;
+      }
+      else if ( feature instanceof SectorNotZeroFeature ) {
+        score += 4.2;
+      }
+      else if ( feature instanceof FaceColorDualFeature ) {
+        score += feature.allFaces.size - 1;
+      }
+    }
+
+    return score;
+  };
+
+  // TODO: 3-black-edge pattern... not showing up?
+
+  // TODO: use a better way for given the "score" setup
+  const solveRuleScores = _.uniq( squareRules.map( getInputDifficultyScore ) );
+  const embeddedRulesLessThanScoreMap = new Map<number, PatternRule[]>( solveRuleScores.map( size => [ size, [] ] ) );
 
   const squareEmbeddings = getEmbeddings( squarePatternBoard, squarePatternBoard );
   for ( const rule of squareRules ) {
     const embeddedRules = squareEmbeddings.map( embedding => rule.embedded( squarePatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
-    const size = rule.inputFeatureSet.size;
+    const score = getInputDifficultyScore( rule );
 
-    for ( const otherSize of solveRuleSizes ) {
-      if ( size < otherSize ) {
-        embeddedRulesLessThanSizeMap.get( otherSize )!.push( ...embeddedRules );
+    for ( const otherScore of solveRuleScores ) {
+      if ( score < otherScore ) {
+        embeddedRulesLessThanScoreMap.get( otherScore )!.push( ...embeddedRules );
       }
     }
   }
 
-  const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanSizeMap.get( rule.inputFeatureSet.size )! ) );
+  const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanScoreMap.get( getInputDifficultyScore( rule ) )! ) );
   console.log( filteredSquareRules );
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
 
