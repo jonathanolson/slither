@@ -59,19 +59,6 @@ console.log( 'test' );
     } ) );
   };
 
-  const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
-
-  const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
-  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-
-
-  // console.log( 'vertex' );
-  // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
-  console.log( 'square' );
-  const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.inputFeatureSet.size );
-  console.log( squareRules );
-
-
   const getInputDifficultyScore = ( rule: PatternRule ) => {
     let score = 0;
 
@@ -104,6 +91,18 @@ console.log( 'test' );
 
     return score;
   };
+
+  const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
+
+  const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
+  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
+
+
+  // console.log( 'vertex' );
+  // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
+  console.log( 'square' );
+  const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), getInputDifficultyScore );
+  console.log( squareRules );
 
 
   // TODO: use a better way for given the "score" setup
