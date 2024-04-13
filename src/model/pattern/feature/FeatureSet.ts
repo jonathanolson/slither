@@ -479,6 +479,25 @@ export class FeatureSet {
     assertEnabled() && assert( this.size === this.computeSize(), 'size mismatch' );
   }
 
+  public getInputDifficultyScoreA(): number {
+    let score = 0;
+
+    score += this.faceValueMap.size * 0.5;
+    score += this.blackEdges.size * 1.0;
+    for ( const redEdge of this.redEdges ) {
+      score += redEdge.isExit ? 2.5 : 1.2;
+    }
+    score += this.sectorsOnlyOne.size * 3;
+    score += this.sectorsNotOne.size * 4;
+    score += this.sectorsNotTwo.size * 4.1;
+    score += this.sectorsNotZero.size * 4.2;
+    for ( const feature of this.faceColorDualFeatures ) {
+      score += feature.allFaces.size - 1;
+    }
+
+    return score;
+  };
+
   // TODO: eventually other feature types
 
   public static empty( patternBoard: TPatternBoard ): FeatureSet {

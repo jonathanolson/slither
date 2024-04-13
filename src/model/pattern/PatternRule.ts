@@ -20,6 +20,10 @@ export class PatternRule {
     public readonly outputFeatureSet: FeatureSet
   ) {}
 
+  public getInputDifficultyScoreA(): number {
+    return this.inputFeatureSet.getInputDifficultyScoreA();
+  }
+
   public embedded( patternBoard: TDescribedPatternBoard, embedding: Embedding ): PatternRule | null {
     const inputFeatureSet = this.inputFeatureSet.embedded( patternBoard, embedding );
     if ( inputFeatureSet === null ) {
