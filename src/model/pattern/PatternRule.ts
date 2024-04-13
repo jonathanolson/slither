@@ -275,10 +275,6 @@ export class PatternRule {
 
         addToShapeMap( previousFeatureSet );
 
-        if ( index < 4 ) {
-          console.log( index, 'black' );
-        }
-
         const blackFeatureSet = previousFeatureSet.clone();
         blackFeatureSet.addBlackEdge( edges[ index ] );
 
@@ -289,10 +285,6 @@ export class PatternRule {
           edgeFeatureStack.push( blackFeatureSet );
           edgeRecur( index + 1, numFeatures + 1 );
           edgeFeatureStack.pop();
-        }
-
-        if ( index < 4 ) {
-          console.log( index, 'red' );
         }
 
         const redFeatureSet = previousFeatureSet.clone();
@@ -320,7 +312,6 @@ export class PatternRule {
       if ( count % 10 === 0 ) {
         console.log( count );
       }
-      console.log( featureSet.toCanonicalString() );
       const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
@@ -337,18 +328,6 @@ export class PatternRule {
     }
 
     forEachPossibleFaceFeatureSet( FeatureSet.empty( patternBoard ), leafCallback, 0 );
-    //
-    // forEachPossibleEdgeFeatureSet( FeatureSet.empty( patternBoard ), featureSet => {
-    //   count++;
-    //   if ( count % 10 === 0 ) {
-    //     console.log( count );
-    //   }
-    //   const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
-    //   if ( rule && !rule.isTrivial() ) {
-    //     rules.push( rule );
-    //   }
-    //   return !!rule;
-    // } );
 
     return rules;
   }

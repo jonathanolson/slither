@@ -6,6 +6,7 @@ import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 import _ from './workarounds/_.ts';
+import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -62,7 +63,28 @@ console.log( 'test' );
   console.log( 'square' );
   const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.inputFeatureSet.size );
   console.log( squareRules );
-  addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
+
+  const solveRuleSizes = _.uniq( squareRules.map( rule => rule.inputFeatureSet.size ) );
+  const embeddedRulesLessThanSizeMap = new Map<number, PatternRule[]>( solveRuleSizes.map( size => [ size, [] ] ) );
+
+  const squareEmbeddings = getEmbeddings( squarePatternBoard, squarePatternBoard );
+  for ( const rule of squareRules ) {
+    const embeddedRules = squareEmbeddings.map( embedding => rule.embedded( squarePatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
+    const size = rule.inputFeatureSet.size;
+
+    for ( const otherSize of solveRuleSizes ) {
+      if ( size < otherSize ) {
+        embeddedRulesLessThanSizeMap.get( otherSize )!.push( ...embeddedRules );
+      }
+    }
+  }
+
+  // TODO: we are missing black-edge internal and red-edge exit to a vertex?!?
+
+  const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanSizeMap.get( rule.inputFeatureSet.size )! ) );
+  console.log( squareRules );
+
+  addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
   // console.log( 'diagonal' );
   // console.log( PatternRule.getRules( diagonalPatternBoard ) );
 
