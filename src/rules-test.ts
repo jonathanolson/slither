@@ -1,4 +1,4 @@
-import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { vertexExit4TwoOppositeSectorsPatternBoard } from './model/pattern/patternBoards.ts';
@@ -71,7 +71,7 @@ console.log( 'test' );
   console.log( 'square' );
   const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.inputFeatureSet.size );
   console.log( squareRules );
-  // addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
+
 
   const getInputDifficultyScore = ( rule: PatternRule ) => {
     let score = 0;
@@ -106,7 +106,6 @@ console.log( 'test' );
     return score;
   };
 
-  // TODO: 3-black-edge pattern... not showing up?
 
   // TODO: use a better way for given the "score" setup
   const solveRuleScores = _.uniq( squareRules.map( getInputDifficultyScore ) );
@@ -126,7 +125,12 @@ console.log( 'test' );
 
   const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanScoreMap.get( getInputDifficultyScore( rule ) )! ) );
   console.log( filteredSquareRules );
+
+  // TODO: 3-black-edge pattern... not showing up?
+
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
+  addPaddedNode( new Rectangle( 0, 0, 100, 100, { fill: 'red' } ) );
+  addRuleNodes( squareRules, squarePatternBoard.planarPatternMap );
 
   // console.log( 'diagonal' );
   // console.log( PatternRule.getRules( diagonalPatternBoard ) );
