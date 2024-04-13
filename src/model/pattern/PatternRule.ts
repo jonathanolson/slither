@@ -9,6 +9,9 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { optionize3 } from 'phet-lib/phet-core';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import _ from '../../workarounds/_.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import { IncompatibleFeatureError } from './feature/IncompatibleFeatureError.ts';
+import { TPatternEdge } from './TPatternEdge.ts';
 
 export class PatternRule {
   public constructor(
@@ -169,43 +172,46 @@ export class PatternRule {
     assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
     assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
 
-    const visitedShapeMap = new Map<string, FeatureSet[]>();
+    const visitedShapeMap = new Map<string, FeatureSetDual[]>();
 
-    const addToShapeMap = ( featureSet: FeatureSet ): void => {
-      const key = featureSet.getShapeString();
+    // Grab a reference for performance
+    const automorphisms = getEmbeddings( patternBoard, patternBoard );
+
+    const addToShapeMap = ( featureSetDual: FeatureSetDual ): void => {
+      const key = featureSetDual.shapeKey;
       let featuresWithShape = visitedShapeMap.get( key );
       if ( featuresWithShape ) {
-        featuresWithShape.push( featureSet );
+        featuresWithShape.push( featureSetDual );
       }
       else {
-        visitedShapeMap.set( key, [ featureSet ] );
+        visitedShapeMap.set( key, [ featureSetDual ] );
       }
     };
 
-    const isIsomorphicToVisited = ( featureSet: FeatureSet ): boolean => {
-      const key = featureSet.getShapeString();
-      const featuresWithShape = visitedShapeMap.get( key );
-      if ( featuresWithShape ) {
-        return featuresWithShape.some( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) );
+    const isIsomorphicToVisited = ( featureSetDual: FeatureSetDual ): boolean => {
+      const key = featureSetDual.shapeKey;
+      const featureDualsWithShape = visitedShapeMap.get( key );
+      if ( featureDualsWithShape ) {
+        return featureDualsWithShape.some( otherFeatureSetDual => featureSetDual.isIsomorphicTo( otherFeatureSetDual, automorphisms ) );
       }
       else {
         return false;
       }
     };
 
-    const allowRecur = ( featureSet: FeatureSet ): boolean => {
+    const allowRecur = ( featureSetDual: FeatureSetDual ): boolean => {
       // TODO: remove the hasSolution(!), we're overdoing this
-      return !isIsomorphicToVisited( featureSet ) && featureSet.hasSolution( options?.highlander );
+      return !isIsomorphicToVisited( featureSetDual ) && featureSetDual.featureSet.hasSolution( options?.highlander );
     };
 
     const forEachPossibleFaceFeatureSet = (
-      initialFeatureSet: FeatureSet,
-      callback: ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
+      initialFeatureSetDual: FeatureSetDual,
+      callback: ( featureSetDual: FeatureSetDual, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
       numInitialFeatures: number,
       numInitialEvaluatedFeatures: number
     ): boolean => {
       const faces = patternBoard.faces.filter( face => !face.isExit );
-      const faceFeatureStack = [ initialFeatureSet ];
+      const faceFeatureDualStack = [ initialFeatureSetDual ];
 
       const faceRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): boolean => {
 
@@ -213,10 +219,20 @@ export class PatternRule {
           return true;
         }
 
-        const previousFeatureSet = faceFeatureStack[ faceFeatureStack.length - 1 ];
+        const previousFeatureSetDual = faceFeatureDualStack[ faceFeatureDualStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
+
+          const nextDual = new FeatureSetDual(
+            previousFeatureSetDual.featureSet,
+            new Set( [ ...previousFeatureSetDual.blankFaces, faces[ index ] ] ),
+            previousFeatureSetDual.blankEdges
+          );
+
+          faceFeatureDualStack.push( nextDual );
           const success = faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+          faceFeatureDualStack.pop();
+
           if ( !success ) {
             console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
             return false;
@@ -235,23 +251,28 @@ export class PatternRule {
 
         for ( const value of values ) {
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}face ${index} value ${value}` );
-          const faceFeatureSet = previousFeatureSet.clone();
+          const faceFeatureSet = previousFeatureSetDual.featureSet.clone();
           faceFeatureSet.addFaceValue( face, value );
+          const faceFeatureSetDual = new FeatureSetDual(
+            faceFeatureSet,
+            previousFeatureSetDual.blankFaces,
+            previousFeatureSetDual.blankEdges
+          );
 
           // FOR NOW
-          assertEnabled() && assert( faceFeatureSet.size === previousFeatureSet.size + 1 );
+          assertEnabled() && assert( faceFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
           // TODO: reduce the DOUBLE-LOGIC_SOLVER here
-          if ( allowRecur( faceFeatureSet ) ) {
-            addToShapeMap( faceFeatureSet );
+          if ( allowRecur( faceFeatureSetDual ) ) {
+            addToShapeMap( faceFeatureSetDual );
 
-            const success = callback( faceFeatureSet, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
+            const success = callback( faceFeatureSetDual, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
 
             if ( success ) {
               console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
-              faceFeatureStack.push( faceFeatureSet );
+              faceFeatureDualStack.push( faceFeatureSetDual );
               faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
-              faceFeatureStack.pop();
+              faceFeatureDualStack.pop();
             }
             else {
               console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
@@ -262,7 +283,15 @@ export class PatternRule {
         return true;
       };
       console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
-      const rootSuccess = callback( initialFeatureSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
+      const skipDual = new FeatureSetDual(
+        initialFeatureSetDual.featureSet,
+        new Set( [
+          ...initialFeatureSetDual.blankFaces,
+          ...faces
+        ] ),
+        initialFeatureSetDual.blankEdges
+      );
+      const rootSuccess = callback( skipDual, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
       if ( !rootSuccess ) {
         return false;
       }
@@ -271,13 +300,13 @@ export class PatternRule {
 
     // callback returns whether it is successful (and we should explore the subtree)
     const forEachPossibleEdgeFeatureSet = (
-      initialFeatureSet: FeatureSet,
-      callback: ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
+      initialFeatureSetDual: FeatureSetDual,
+      callback: ( featureSetDual: FeatureSetDual, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
       numInitialFeatures: number,
       numInitialEvaluatedFeatures: number
     ): boolean => {
       const edges = patternBoard.edges;
-      const edgeFeatureStack = [ initialFeatureSet ];
+      const edgeFeatureDualStack = [ initialFeatureSetDual ];
 
       const edgeRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): boolean => {
 
@@ -285,10 +314,20 @@ export class PatternRule {
           return true;
         }
 
-        const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
+        const previousFeatureSetDual = edgeFeatureDualStack[ edgeFeatureDualStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
+
+          const nextDual = new FeatureSetDual(
+            previousFeatureSetDual.featureSet,
+            previousFeatureSetDual.blankFaces,
+            new Set( [ ...previousFeatureSetDual.blankEdges, edges[ index ] ] ),
+          );
+
+          edgeFeatureDualStack.push( nextDual );
           const success = edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+          edgeFeatureDualStack.pop();
+
           if ( !success ) {
             console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
             return false;
@@ -305,23 +344,28 @@ export class PatternRule {
         {
           // Don't apply black to exit edges
           if ( !edge.isExit ) {
-            const blackFeatureSet = previousFeatureSet.clone();
+            const blackFeatureSet = previousFeatureSetDual.featureSet.clone();
             blackFeatureSet.addBlackEdge( edges[ index ] );
+            const blackFeatureSetDual = new FeatureSetDual(
+              blackFeatureSet,
+              previousFeatureSetDual.blankFaces,
+              previousFeatureSetDual.blankEdges
+            );
 
             // FOR NOW:
-            assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
+            assertEnabled() && assert( blackFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
             console.log( `${_.repeat( '  ', numEvaluatedFeatures )}black ${index}` );
-            if ( allowRecur( blackFeatureSet ) ) {
-              addToShapeMap( blackFeatureSet );
+            if ( allowRecur( blackFeatureSetDual ) ) {
+              addToShapeMap( blackFeatureSetDual );
 
-              const success = callback( blackFeatureSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+              const success = callback( blackFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
 
               if ( success ) {
                 console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
-                edgeFeatureStack.push( blackFeatureSet );
+                edgeFeatureDualStack.push( blackFeatureSetDual );
                 edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
-                edgeFeatureStack.pop();
+                edgeFeatureDualStack.pop();
               }
               else {
                 console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
@@ -332,23 +376,28 @@ export class PatternRule {
 
         // Red edge
         {
-          const redFeatureSet = previousFeatureSet.clone();
+          const redFeatureSet = previousFeatureSetDual.featureSet.clone();
           redFeatureSet.addRedEdge( edges[ index ] );
+          const redFeatureSetDual = new FeatureSetDual(
+            redFeatureSet,
+            previousFeatureSetDual.blankFaces,
+            previousFeatureSetDual.blankEdges
+          );
 
           // FOR NOW:
-          assertEnabled() && assert( redFeatureSet.size === previousFeatureSet.size + 1 );
+          assertEnabled() && assert( redFeatureSet.size === previousFeatureSetDual.featureSet.size + 1 );
 
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}red ${index}` );
-          if ( allowRecur( redFeatureSet ) ) {
-            addToShapeMap( redFeatureSet );
+          if ( allowRecur( redFeatureSetDual ) ) {
+            addToShapeMap( redFeatureSetDual );
 
-            const success = callback( redFeatureSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+            const success = callback( redFeatureSetDual, numFeatures + 1, numEvaluatedFeatures + 1 );
 
             if ( success ) {
               console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
-              edgeFeatureStack.push( redFeatureSet );
+              edgeFeatureDualStack.push( redFeatureSetDual );
               edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
-              edgeFeatureStack.pop();
+              edgeFeatureDualStack.pop();
             }
             else {
               console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
@@ -359,7 +408,15 @@ export class PatternRule {
         return true;
       };
       console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
-      const rootSuccess = callback( initialFeatureSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
+      const skipDual = new FeatureSetDual(
+        initialFeatureSetDual.featureSet,
+        initialFeatureSetDual.blankFaces,
+        new Set( [
+          ...initialFeatureSetDual.blankEdges,
+          ...edges
+        ] ),
+      );
+      const rootSuccess = callback( skipDual, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
       if ( !rootSuccess ) {
         return false;
       }
@@ -369,13 +426,13 @@ export class PatternRule {
     const rules: PatternRule[] = [];
     let count = 0;
 
-    let leafCallback = ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => {
+    let leafCallback = ( featureSetDual: FeatureSetDual, numFeatures: number, numEvaluatedFeatures: number ) => {
       count++;
       if ( count % 10 === 0 ) {
         console.log( count );
       }
-      const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
-      console.log( `${_.repeat( '  ', numEvaluatedFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
+      const rule = PatternRule.getBasicRule( patternBoard, featureSetDual.featureSet, options );
+      console.log( `${_.repeat( '  ', numEvaluatedFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSetDual.featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
       }
@@ -390,7 +447,11 @@ export class PatternRule {
       };
     }
 
-    forEachPossibleFaceFeatureSet( FeatureSet.empty( patternBoard ), leafCallback, 0, 0 );
+    forEachPossibleFaceFeatureSet( new FeatureSetDual(
+      FeatureSet.empty( patternBoard ),
+      new Set<TPatternFace>(),
+      new Set<TPatternEdge>()
+    ), leafCallback, 0, 0 );
 
     return rules;
   }
@@ -409,3 +470,78 @@ export const GET_RULES_DEFAULTS = {
   featureLimit: Number.POSITIVE_INFINITY,
   includeFaceValueZero: false
 } as const;
+
+// Also records what we have "NOT" chosen, so we can do intelligent symmetry pruning
+class FeatureSetDual {
+
+  public shapeKey: string;
+
+  public constructor(
+    public readonly featureSet: FeatureSet,
+    public readonly blankFaces: Set<TPatternFace>,
+    public readonly blankEdges: Set<TPatternEdge>,
+    // public readonly blankSectors: Set<TPatternFace> TODO: add when we do sectors
+  ) {
+    this.shapeKey = `${this.featureSet.getShapeString()} + ${blankFaces.size} + ${blankEdges.size}`;
+  }
+
+  public isIsomorphicTo( other: FeatureSetDual, automorphisms: Embedding[] ): boolean {
+    assertEnabled() && assert( this.featureSet.patternBoard === other.featureSet.patternBoard, 'embedding check' );
+
+    assertEnabled() && assert( this.shapeKey === other.shapeKey, 'Should be using hashes to filter' );
+
+    for ( const automorphism of automorphisms ) {
+      try {
+        const embeddedFeatureSet = this.featureSet.embedded( this.featureSet.patternBoard, automorphism );
+        if ( embeddedFeatureSet && embeddedFeatureSet.equals( other.featureSet ) ) {
+          let matches = true;
+
+          // Scan blank faces for matches
+          for ( const blankFace of this.blankFaces ) {
+            const embeddedBlankFace = automorphism.mapFace( blankFace );
+            if ( !other.blankFaces.has( embeddedBlankFace ) ) {
+              matches = false;
+              break;
+            }
+          }
+
+          if ( !matches ) {
+            return false;
+          }
+
+          // Scan blank edges for matches
+          for ( const blankEdge of this.blankEdges ) {
+            if ( blankEdge.isExit ) {
+              for ( const exitEdge of automorphism.mapExitEdges( blankEdge ) ) {
+                if ( !other.blankEdges.has( exitEdge ) ) {
+                  matches = false;
+                  break;
+                }
+              }
+              if ( !matches ) {
+                break;
+              }
+            }
+            else {
+              const embeddedBlankEdge = automorphism.mapNonExitEdge( blankEdge );
+              if ( !other.blankEdges.has( embeddedBlankEdge ) ) {
+                matches = false;
+                break;
+              }
+            }
+          }
+
+          return matches;
+        }
+      }
+      catch ( e ) {
+        // ignore incompatible feature embeddings (just in case)
+        if ( !( e instanceof IncompatibleFeatureError ) ) {
+          throw e;
+        }
+      }
+    }
+
+    return false;
+  }
+}

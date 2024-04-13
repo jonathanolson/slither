@@ -125,6 +125,8 @@ console.log( 'test' );
   const filteredSquareRules = squareRules.filter( rule => !rule.isRedundant( embeddedRulesLessThanScoreMap.get( getInputDifficultyScore( rule ) )! ) );
   console.log( filteredSquareRules );
 
+  // TODO: OH NO, we can't prune isomorphic how we are doing it, because we need to SKIP FEATURES LAST?
+
   // TODO: 3-black-edge pattern... not showing up?
 
   // TODO: OMG also avoid the double-logic-solver
