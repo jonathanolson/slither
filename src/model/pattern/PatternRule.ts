@@ -200,13 +200,14 @@ export class PatternRule {
 
     const forEachPossibleFaceFeatureSet = (
       initialFeatureSet: FeatureSet,
-      callback: ( featureSet: FeatureSet, numFeatures: number ) => boolean,
-      numInitialFeatures: number
+      callback: ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
+      numInitialFeatures: number,
+      numInitialEvaluatedFeatures: number
     ): boolean => {
       const faces = patternBoard.faces.filter( face => !face.isExit );
       const faceFeatureStack = [ initialFeatureSet ];
 
-      const faceRecur = ( index: number, numFeatures: number ): boolean => {
+      const faceRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): boolean => {
 
         if ( index === faces.length ) {
           return true;
@@ -214,8 +215,8 @@ export class PatternRule {
 
         const previousFeatureSet = faceFeatureStack[ faceFeatureStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
-          console.log( `${_.repeat( '  ', numFeatures )}skip` );
-          const success = faceRecur( index + 1, numFeatures );
+          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
+          const success = faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
           if ( !success ) {
             return false;
           }
@@ -232,7 +233,7 @@ export class PatternRule {
         }
 
         for ( const value of values ) {
-          console.log( `${_.repeat( '  ', numFeatures )}face ${index} value ${value}` );
+          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}face ${index} value ${value}` );
           const faceFeatureSet = previousFeatureSet.clone();
           faceFeatureSet.addFaceValue( face, value );
 
@@ -243,12 +244,12 @@ export class PatternRule {
           if ( allowRecur( faceFeatureSet ) ) {
             addToShapeMap( faceFeatureSet );
 
-            const success = callback( faceFeatureSet, numFeatures + 1 );
+            const success = callback( faceFeatureSet, numFeatures + 1, numInitialEvaluatedFeatures + 1 );
 
             if ( success ) {
-              console.log( `${_.repeat( '  ', numFeatures )}exploring` );
+              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
               faceFeatureStack.push( faceFeatureSet );
-              faceRecur( index + 1, numFeatures + 1 );
+              faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               faceFeatureStack.pop();
             }
           }
@@ -256,23 +257,25 @@ export class PatternRule {
 
         return true;
       };
-      const rootSuccess = callback( initialFeatureSet, numInitialFeatures );
+      console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
+      const rootSuccess = callback( initialFeatureSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
       if ( !rootSuccess ) {
         return false;
       }
-      return faceRecur( 0, numInitialFeatures );
+      return faceRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
     };
 
     // callback returns whether it is successful (and we should explore the subtree)
     const forEachPossibleEdgeFeatureSet = (
       initialFeatureSet: FeatureSet,
-      callback: ( featureSet: FeatureSet, numFeatures: number ) => boolean,
-      numInitialFeatures: number
+      callback: ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => boolean,
+      numInitialFeatures: number,
+      numInitialEvaluatedFeatures: number
     ): boolean => {
       const edges = patternBoard.edges;
       const edgeFeatureStack = [ initialFeatureSet ];
 
-      const edgeRecur = ( index: number, numFeatures: number ): boolean => {
+      const edgeRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): boolean => {
 
         if ( index === edges.length ) {
           return true;
@@ -280,8 +283,8 @@ export class PatternRule {
 
         const previousFeatureSet = edgeFeatureStack[ edgeFeatureStack.length - 1 ];
         if ( numFeatures <= options.featureLimit ) {
-          console.log( `${_.repeat( '  ', numFeatures )}skip` );
-          const success = edgeRecur( index + 1, numFeatures );
+          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
+          const success = edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
           if ( !success ) {
             return false;
           }
@@ -303,16 +306,16 @@ export class PatternRule {
             // FOR NOW:
             assertEnabled() && assert( blackFeatureSet.size === previousFeatureSet.size + 1 );
 
-            console.log( `${_.repeat( '  ', numFeatures )}black ${index}` );
+            console.log( `${_.repeat( '  ', numEvaluatedFeatures )}black ${index}` );
             if ( allowRecur( blackFeatureSet ) ) {
               addToShapeMap( blackFeatureSet );
 
-              const success = callback( blackFeatureSet, numFeatures + 1 );
+              const success = callback( blackFeatureSet, numFeatures + 1, numEvaluatedFeatures + 1 );
 
               if ( success ) {
-                console.log( `${_.repeat( '    ', numFeatures )}exploring` );
+                console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
                 edgeFeatureStack.push( blackFeatureSet );
-                edgeRecur( index + 1, numFeatures + 1 );
+                edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
                 edgeFeatureStack.pop();
               }
             }
@@ -327,16 +330,16 @@ export class PatternRule {
           // FOR NOW:
           assertEnabled() && assert( redFeatureSet.size === previousFeatureSet.size + 1 );
 
-          console.log( `${_.repeat( '  ', numFeatures )}red ${index}` );
+          console.log( `${_.repeat( '  ', numEvaluatedFeatures )}red ${index}` );
           if ( allowRecur( redFeatureSet ) ) {
             addToShapeMap( redFeatureSet );
 
-            const success = callback( redFeatureSet, numFeatures + 1 );
+            const success = callback( redFeatureSet, numFeatures + 1, numEvaluatedFeatures + 1 );
 
             if ( success ) {
-              console.log( `${_.repeat( '    ', numFeatures )}exploring` );
+              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}exploring` );
               edgeFeatureStack.push( redFeatureSet );
-              edgeRecur( index + 1, numFeatures + 1 );
+              edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               edgeFeatureStack.pop();
             }
           }
@@ -344,23 +347,24 @@ export class PatternRule {
 
         return true;
       };
-      const rootSuccess = callback( initialFeatureSet, numInitialFeatures );
+      console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
+      const rootSuccess = callback( initialFeatureSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
       if ( !rootSuccess ) {
         return false;
       }
-      return edgeRecur( 0, numInitialFeatures );
+      return edgeRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
     };
 
     const rules: PatternRule[] = [];
     let count = 0;
 
-    let leafCallback = ( featureSet: FeatureSet, numFeatures: number ) => {
+    let leafCallback = ( featureSet: FeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => {
       count++;
       if ( count % 10 === 0 ) {
         console.log( count );
       }
       const rule = PatternRule.getBasicRule( patternBoard, featureSet, options );
-      console.log( `${_.repeat( '  ', numFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
+      console.log( `${_.repeat( '  ', numEvaluatedFeatures )}${rule ? `GOOD ${rule.isTrivial() ? '(trivial)' : '(actionable)'}` : 'BAD'} ${featureSet.toCanonicalString()}${rule ? ` => ${rule.outputFeatureSet.toCanonicalString()}` : ''}` );
       if ( rule && !rule.isTrivial() ) {
         rules.push( rule );
       }
@@ -370,12 +374,12 @@ export class PatternRule {
     if ( options.solveEdges ) {
       const originalCallback = leafCallback;
 
-      leafCallback = ( featureSet, numFeatures ) => {
-        return forEachPossibleEdgeFeatureSet( featureSet, originalCallback, numFeatures );
+      leafCallback = ( featureSet, numFeatures, numEvaluatedFeatures ) => {
+        return forEachPossibleEdgeFeatureSet( featureSet, originalCallback, numFeatures, numEvaluatedFeatures );
       };
     }
 
-    forEachPossibleFaceFeatureSet( FeatureSet.empty( patternBoard ), leafCallback, 0 );
+    forEachPossibleFaceFeatureSet( FeatureSet.empty( patternBoard ), leafCallback, 0, 0 );
 
     return rules;
   }
