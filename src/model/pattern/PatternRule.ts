@@ -218,6 +218,7 @@ export class PatternRule {
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
           const success = faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
           if ( !success ) {
+            console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}faceRecur FALSE, aborting subtree` );
             return false;
           }
         }
@@ -251,6 +252,9 @@ export class PatternRule {
               faceFeatureStack.push( faceFeatureSet );
               faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               faceFeatureStack.pop();
+            }
+            else {
+              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
             }
           }
         }
@@ -286,6 +290,7 @@ export class PatternRule {
           console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
           const success = edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
           if ( !success ) {
+            console.log( `  ${_.repeat( '  ', numEvaluatedFeatures )}edgeRecur FALSE, aborting subtree` );
             return false;
           }
         }
@@ -318,6 +323,9 @@ export class PatternRule {
                 edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
                 edgeFeatureStack.pop();
               }
+              else {
+                console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
+              }
             }
           }
         }
@@ -341,6 +349,9 @@ export class PatternRule {
               edgeFeatureStack.push( redFeatureSet );
               edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
               edgeFeatureStack.pop();
+            }
+            else {
+              console.log( ` ${_.repeat( '  ', numEvaluatedFeatures )}no feature` );
             }
           }
         }

@@ -1,7 +1,6 @@
-import { AlignBox, Display, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
-import { vertexExit4TwoOppositeSectorsPatternBoard } from './model/pattern/patternBoards.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
@@ -66,8 +65,8 @@ console.log( 'test' );
   // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
 
 
-  console.log( 'vertex' );
-  console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
+  // console.log( 'vertex' );
+  // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
   console.log( 'square' );
   const squareRules = _.sortBy( PatternRule.getRules( squarePatternBoard ), rule => rule.inputFeatureSet.size );
   console.log( squareRules );
@@ -127,6 +126,8 @@ console.log( 'test' );
   console.log( filteredSquareRules );
 
   // TODO: 3-black-edge pattern... not showing up?
+
+  // TODO: OMG also avoid the double-logic-solver
 
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
   addPaddedNode( new Rectangle( 0, 0, 100, 100, { fill: 'red' } ) );
