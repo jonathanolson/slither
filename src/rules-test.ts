@@ -1,9 +1,8 @@
-import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 
@@ -44,12 +43,12 @@ console.log( 'test' );
   };
 
   // TODO: omg, associate boards with planar pattern maps
-  const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
-    addPaddedNode( new VBox( {
-      spacing: 10,
-      children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
-    } ) );
-  };
+  // const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
+  //   addPaddedNode( new VBox( {
+  //     spacing: 10,
+  //     children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
+  //   } ) );
+  // };
 
   const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
 
@@ -58,9 +57,28 @@ console.log( 'test' );
   // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
 
   const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
+
   const filteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getRules( squarePatternBoard ), [] );
   console.log( filteredSquareRules );
-  addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
+  // addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
+
+  const newFilteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( squarePatternBoard ), [] );
+  console.log( newFilteredSquareRules );
+
+  addPaddedNode( new HBox( {
+    spacing: 50,
+    align: 'top',
+    children: [
+      new VBox( {
+        spacing: 10,
+        children: filteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
+      } ),
+      new VBox( {
+        spacing: 10,
+        children: newFilteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
+      } )
+    ]
+  } ) );
 
   // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
   // const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
