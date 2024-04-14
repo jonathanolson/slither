@@ -12,6 +12,8 @@ import _ from '../../workarounds/_.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { IncompatibleFeatureError } from './feature/IncompatibleFeatureError.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
+import { SolutionSet } from './SolutionSet.ts';
+import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
 
 export class PatternRule {
   public constructor(
@@ -172,6 +174,202 @@ export class PatternRule {
     }
 
     return featureState;
+  }
+
+  public static getSolutionEnumeratedRules( patternBoard: TDescribedPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
+    const options = optionize3<GetRulesOptions, GetRulesSelfOptions, BasicSolveOptions>()( {}, GET_RULES_DEFAULTS, providedOptions );
+
+    // TODO: handle enumeration of all cases
+    assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
+    assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
+
+    const processedShapeMap = new Map<string, FeatureSet[]>();
+
+    // TODO: consider using automorphisms to prune earlier? (MEH: PROBABLY NOT WORTH IT)
+
+    const addToShapeMap = ( featureSet: FeatureSet ): void => {
+      const key = featureSet.getShapeString();
+      let featuresWithShape = processedShapeMap.get( key );
+      if ( featuresWithShape ) {
+        featuresWithShape.push( featureSet );
+      }
+      else {
+        processedShapeMap.set( key, [ featureSet ] );
+      }
+    };
+
+    const getIsomorphicProcessed = ( featureSet: FeatureSet ): FeatureSet | null => {
+      const key = featureSet.getShapeString();
+      const featuresWithShape = processedShapeMap.get( key );
+      if ( featuresWithShape ) {
+        return featuresWithShape.find( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) ) ?? null;
+      }
+      else {
+        return null;
+      }
+    };
+
+    const forEachPossibleFaceFeatureSet = (
+      initialSet: SolutionFeatureSet,
+      callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
+      numInitialFeatures: number,
+      numInitialEvaluatedFeatures: number
+    ): void => {
+      const faces = patternBoard.faces.filter( face => !face.isExit );
+      const stack = [ initialSet ];
+
+      // TODO: get rid of numEvaluatedFeatures
+      const faceRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): void => {
+
+        if ( index === faces.length ) {
+          return;
+        }
+
+        const previousSet = stack[ stack.length - 1 ];
+        if ( numFeatures <= options.featureLimit ) {
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip face ${index}` );
+
+          faceRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+        }
+
+        if ( numFeatures >= options.featureLimit ) {
+          return;
+        }
+
+        const face = faces[ index ];
+        const values: FaceValue[] = _.range( options.includeFaceValueZero ? 0 : 1, face.edges.length );
+        if ( options.highlander ) {
+          values.push( null );
+        }
+
+        for ( const value of values ) {
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}face ${index} value ${value}` );
+
+          const faceSet = previousSet.withFaceValue( face, value );
+          if ( faceSet ) {
+            callback( faceSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+
+            stack.push( faceSet );
+            faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
+            stack.pop();
+          }
+        }
+      };
+      // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
+      callback( initialSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
+      faceRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
+    };
+
+    // callback returns whether it is successful (and we should explore the subtree)
+    const forEachPossibleEdgeFeatureSet = (
+      initialSet: SolutionFeatureSet,
+      callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
+      numInitialFeatures: number,
+      numInitialEvaluatedFeatures: number
+    ): void => {
+      const edges = patternBoard.edges;
+      const stack = [ initialSet ];
+
+      const edgeRecur = ( index: number, numFeatures: number, numEvaluatedFeatures: number ): void => {
+
+        if ( index === edges.length ) {
+          return;
+        }
+
+        const previousSet = stack[ stack.length - 1 ];
+        if ( numFeatures <= options.featureLimit ) {
+          // console.log( `${_.repeat( '  ', numEvaluatedFeatures )}skip edge ${index}` );
+
+          edgeRecur( index + 1, numFeatures, numEvaluatedFeatures + 1 );
+        }
+
+        if ( numFeatures >= options.featureLimit ) {
+          return;
+        }
+
+        const edge = edges[ index ];
+
+        let edgeSets: SolutionFeatureSet[] = [];
+        if ( edge.isExit ) {
+          const redExitSet = previousSet.withExitEdgeRed( edge );
+          redExitSet && edgeSets.push( redExitSet );
+        }
+        else {
+          const partition = previousSet.nonExitEdgePartitioned( edge );
+          partition.black && edgeSets.push( partition.black );
+          partition.red && edgeSets.push( partition.red );
+        }
+
+        for ( const edgeSet of edgeSets ) {
+            callback( edgeSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+
+            stack.push( edgeSet );
+            edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
+            stack.pop();
+        }
+      };
+      // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
+      callback( initialSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
+      edgeRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
+    };
+
+    const rules: PatternRule[] = [];
+    let count = 0;
+
+    let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => {
+      const isomorphicDual = getIsomorphicProcessed( set.featureSet );
+
+      if ( !isomorphicDual ) {
+        count++;
+        if ( count % 10 === 0 ) {
+          console.log( count );
+        }
+
+        let inputFeatureSet = set.featureSet;
+
+        // Done BEFORE we bail (if we have no highlander solutions)
+        addToShapeMap( set.featureSet );
+
+        let solutionSet = set.solutionSet;
+        if ( options.highlander ) {
+          // TODO: don't require a feature array?
+          const filteredSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( patternBoard, inputFeatureSet.getFeaturesArray() ) );
+
+          if ( filteredSet ) {
+            solutionSet = filteredSet;
+          }
+          else {
+            return;
+          }
+        }
+
+        const outputFeatureSet = solutionSet.addToFeatureSet( inputFeatureSet.clone() );
+
+        const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
+
+        if ( !rule.isTrivial() ) {
+          rules.push( rule );
+        }
+      }
+    };
+
+    if ( options.solveEdges ) {
+      const originalCallback = leafCallback;
+
+      leafCallback = ( featureSet, numFeatures, numEvaluatedFeatures ) => {
+        return forEachPossibleEdgeFeatureSet( featureSet, originalCallback, numFeatures, numEvaluatedFeatures );
+      };
+    }
+
+    const rootFeatureSet = FeatureSet.empty( patternBoard );
+    const rootSolutionSet = SolutionSet.fromFeatureSet( rootFeatureSet, options.solveEdges, options.solveSectors, options.solveFaceColors, options.highlander )!;
+    assertEnabled() && assert( rootSolutionSet );
+
+    const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet );
+
+    forEachPossibleFaceFeatureSet( rootSet, leafCallback, 0, 0 );
+
+    return rules;
   }
 
   public static getRules( patternBoard: TDescribedPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
@@ -588,6 +786,71 @@ export const GET_RULES_DEFAULTS = {
   featureLimit: Number.POSITIVE_INFINITY,
   includeFaceValueZero: false
 } as const;
+
+class SolutionFeatureSet {
+  public constructor(
+    public readonly solutionSet: SolutionSet,
+    public readonly featureSet: FeatureSet,
+  ) {}
+
+  public withFaceValue( face: TPatternFace, value: FaceValue ): SolutionFeatureSet | null {
+    const solutionSet = this.solutionSet.withFaceValue( face, value );
+    if ( solutionSet ) {
+      const featureSet = this.featureSet.clone();
+      featureSet.addFaceValue( face, value );
+
+      return new SolutionFeatureSet(
+        solutionSet,
+        featureSet
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  public nonExitEdgePartitioned( edge: TPatternEdge ): { black: SolutionFeatureSet | null; red: SolutionFeatureSet | null } {
+    const solutionSets = this.solutionSet.nonExitEdgePartitioned( edge );
+
+    let blackSet: SolutionFeatureSet | null = null;
+    let redSet: SolutionFeatureSet | null = null;
+
+    if ( solutionSets.black ) {
+      const blackFeatureSet = this.featureSet.clone();
+      blackFeatureSet.addBlackEdge( edge );
+      blackSet = new SolutionFeatureSet(
+        solutionSets.black,
+        blackFeatureSet
+      );
+    }
+    if ( solutionSets.red ) {
+      const redFeatureSet = this.featureSet.clone();
+      redFeatureSet.addRedEdge( edge );
+      redSet = new SolutionFeatureSet(
+        solutionSets.red,
+        redFeatureSet
+      );
+    }
+
+    return { black: blackSet, red: redSet };
+  }
+
+  public withExitEdgeRed( edge: TPatternEdge ): SolutionFeatureSet | null {
+    const solutionSet = this.solutionSet.withExitEdgeRed( edge );
+    if ( solutionSet ) {
+      const featureSet = this.featureSet.clone();
+      featureSet.addRedEdge( edge );
+
+      return new SolutionFeatureSet(
+        solutionSet,
+        featureSet
+      );
+    }
+    else {
+      return null;
+    }
+  }
+}
 
 // Also records what we have "NOT" chosen, so we can do intelligent symmetry pruning
 class FeatureSetDual {

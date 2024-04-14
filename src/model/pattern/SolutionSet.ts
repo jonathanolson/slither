@@ -6,6 +6,8 @@ import _ from '../../workarounds/_.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
 import { FeatureSet } from './feature/FeatureSet.ts';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 
 const BITS_PER_NUMBER = 30;
 
@@ -48,9 +50,161 @@ export class SolutionSet {
   public hasSolutionEdge( solutionIndex: number, edge: TPatternEdge ): boolean {
     const offset = solutionIndex * this.shape.numNumbersPerSolution;
 
-    // Test the red bit, SINCE we also add in the black bit for exit edges sometimes.
     const originalBlackIndex = 3 * edge.index + 2;
     return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+  }
+
+  public clone(): SolutionSet {
+    return new SolutionSet(
+      this.patternBoard,
+      this.numSolutions,
+      this.bitData.slice(),
+      this.shape,
+      this.vertexConnections ? this.vertexConnections.slice() : null, // the individual VertexConnections[] won't change
+      this.vertexConnectionsKeys ? this.vertexConnectionsKeys.slice() : null
+    );
+  }
+
+  public withFilter( predicate: ( i: number ) => boolean ): SolutionSet | null {
+    let numSolutions = 0;
+    const bitData: number[] = [];
+    const vertexConnections: VertexConnection[][] | null = this.vertexConnections ? [] : null;
+    const vertexConnectionsKeys: string[] | null = this.vertexConnections ? [] : null;
+
+    for ( let i = 0; i < this.numSolutions; i++ ) {
+      if ( predicate( i ) ) {
+        numSolutions++;
+
+        const offset = i * this.shape.numNumbersPerSolution;
+        for ( let j = 0; j < this.shape.numNumbersPerSolution; j++ ) {
+          bitData.push( this.bitData[ offset + j ] );
+        }
+
+        if ( vertexConnections ) {
+          vertexConnections.push( this.vertexConnections![ i ] );
+          vertexConnectionsKeys!.push( this.vertexConnectionsKeys![ i ] );
+        }
+      }
+    }
+
+    if ( numSolutions ) {
+      return new SolutionSet(
+        this.patternBoard,
+        numSolutions,
+        bitData,
+        this.shape,
+        vertexConnections,
+        vertexConnectionsKeys
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  public partitioned( predicate: ( i: number ) => boolean ): { with: SolutionSet | null; without: SolutionSet | null } {
+    let falseNumSolutions = 0;
+    let trueNumSolutions = 0;
+
+    const falseBitData: number[] = [];
+    const trueBitData: number[] = [];
+
+    const falseVertexConnections: VertexConnection[][] | null = this.vertexConnections ? [] : null;
+    const trueVertexConnections: VertexConnection[][] | null = this.vertexConnections ? [] : null;
+
+    const falseVertexConnectionsKeys: string[] | null = this.vertexConnections ? [] : null;
+    const trueVertexConnectionsKeys: string[] | null = this.vertexConnections ? [] : null;
+
+    for ( let i = 0; i < this.numSolutions; i++ ) {
+      const offset = i * this.shape.numNumbersPerSolution;
+      if ( predicate( i ) ) {
+        trueNumSolutions++;
+        for ( let j = 0; j < this.shape.numNumbersPerSolution; j++ ) {
+          trueBitData.push( this.bitData[ offset + j ] );
+        }
+        if ( trueVertexConnections ) {
+          trueVertexConnections.push( this.vertexConnections![ i ] );
+          trueVertexConnectionsKeys!.push( this.vertexConnectionsKeys![ i ] );
+        }
+      }
+      else {
+        falseNumSolutions++;
+        for ( let j = 0; j < this.shape.numNumbersPerSolution; j++ ) {
+          falseBitData.push( this.bitData[ offset + j ] );
+        }
+        if ( falseVertexConnections ) {
+          falseVertexConnections.push( this.vertexConnections![ i ] );
+          falseVertexConnectionsKeys!.push( this.vertexConnectionsKeys![ i ] );
+        }
+      }
+    }
+
+    return {
+      with: trueNumSolutions ? new SolutionSet(
+        this.patternBoard,
+        trueNumSolutions,
+        trueBitData,
+        this.shape,
+        trueVertexConnections,
+        trueVertexConnectionsKeys
+      ) : null,
+      without: falseNumSolutions ? new SolutionSet(
+        this.patternBoard,
+        falseNumSolutions,
+        falseBitData,
+        this.shape,
+        falseVertexConnections,
+        falseVertexConnectionsKeys
+      ) : null
+    };
+  }
+
+  // Returns a new copy
+  public withFaceValue( face: TPatternFace, value: FaceValue ): SolutionSet | null {
+    if ( value === null ) {
+      return this.clone();
+    }
+    else {
+      return this.withFilter( i => {
+        const offset = i * this.shape.numNumbersPerSolution;
+
+        let blackCount = 0;
+        for ( const edge of face.edges ) {
+          const originalBlackIndex = 3 * edge.index + 2;
+          if ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) {
+            blackCount++;
+          }
+        }
+
+        return blackCount === value;
+      } );
+    }
+  }
+
+  public nonExitEdgePartitioned( edge: TPatternEdge ): { black: SolutionSet | null; red: SolutionSet | null } {
+    assertEnabled() && assert( !edge.isExit );
+
+    const partition = this.partitioned( i => {
+      const offset = i * this.shape.numNumbersPerSolution;
+      const originalBlackIndex = 3 * edge.index + 2;
+      return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+    } );
+
+    return {
+      black: partition.with,
+      red: partition.without
+    };
+  }
+
+  public withExitEdgeRed( edge: TPatternEdge ): SolutionSet | null {
+    assertEnabled() && assert( edge.isExit );
+
+    return this.withFilter( i => {
+      const offset = i * this.shape.numNumbersPerSolution;
+      const redIndex = 3 * edge.index + 1;
+      // TODO: reduce duplication with this logic, make it clean and readable
+      return ( this.bitData[ offset + Math.floor( redIndex / BITS_PER_NUMBER ) ] & ( 1 << ( redIndex % BITS_PER_NUMBER ) ) ) !== 0;
+    } );
   }
 
   public addToFeatureSet( featureSet: FeatureSet = FeatureSet.empty( this.patternBoard ) ): FeatureSet {
@@ -146,7 +300,7 @@ export class SolutionSet {
   }
 
   // NOTE: can get indeterminateEdges from getIndeterminateEdges( this.patternBoard, features )
-  public withFilteredHighlanderSolutions( indeterminateEdges: TPatternEdge[] ): SolutionSet {
+  public withFilteredHighlanderSolutions( indeterminateEdges: TPatternEdge[] ): SolutionSet | null {
     assertEnabled() && assert( this.vertexConnectionsKeys );
 
     const solutionIndexMap = new Map<string, number[]>;
@@ -194,14 +348,19 @@ export class SolutionSet {
       }
     }
 
-    return new SolutionSet(
-      this.patternBoard,
-      numSolutions,
-      bitData,
-      this.shape,
-      vertexConnections,
-      vertexConnectionsKeys
-    );
+    if ( numSolutions ) {
+      return new SolutionSet(
+        this.patternBoard,
+        numSolutions,
+        bitData,
+        this.shape,
+        vertexConnections,
+        vertexConnectionsKeys
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   // TODO: unit-tests to make sure we get this back successfully
