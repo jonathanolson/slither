@@ -36,6 +36,16 @@ export const getCombinationIndex = ( combination: number[], collectionSize: numb
   return index;
 };
 
+export const getPairIndex = ( minIndex: number, maxIndex: number, collectionSize: number ): number => {
+
+  // Number of combinations of two items possible with the first `minIndex` items
+  let combinationsUntilMin = ( minIndex * ( minIndex - 1 ) ) / 2;
+
+  let offset = maxIndex - minIndex - 1;
+
+  return combinationsUntilMin + offset;
+};
+
 export const getCombinationQuantity = ( collectionSize: number, combinationSize: number ): number => {
   return getBinomialCoefficient( collectionSize, combinationSize, getLazyFactorials( collectionSize ) );
 };

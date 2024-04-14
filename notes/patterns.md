@@ -3,6 +3,13 @@
 
 - TODO
   - 
+  - SolutionSet unit tests(!!!!)
+  - 
+  - UNIT TESTS --- also test that things are "solving" correctly, e.g. given a random feature set WITH solutions,
+  -   things that are solved keep the same solution count/set
+  - 
+  - During simulations, we COULD ignore exit edges (since they are determined by the rest of the puzzle)
+  - 
   - PatternRule todos:
     - Flags:
       - Skip symmetry pruning

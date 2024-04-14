@@ -4,6 +4,8 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
+import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -60,10 +62,20 @@ console.log( 'test' );
   console.log( filteredSquareRules );
   addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
 
-  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-  const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
-  console.log( filteredDiagonalRules );
-  addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
+  // const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
+  // console.log( filteredDiagonalRules );
+  // addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+
+  const getSolutionCount = ( patternBoard: TPatternBoard ) => {
+    return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
+  };
+
+  console.log( 'square', getSolutionCount( squarePatternBoard ) );
+  console.log( 'diagonal', getSolutionCount( squareBoardGenerations[ 1 ][ 0 ] ) );
+  console.log( '3rd gen', getSolutionCount( squareBoardGenerations[ 2 ][ 0 ] ) );
+  console.log( '4th gen', getSolutionCount( squareBoardGenerations[ 3 ][ 0 ] ) );
+  console.log( '5th gen', getSolutionCount( squareBoardGenerations[ 4 ][ 0 ] ) );
 
   // TODO: OMG also avoid the double-logic-solver
 

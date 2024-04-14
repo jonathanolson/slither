@@ -66,10 +66,12 @@ export class FeatureSet {
     assertEnabled() && this.verifySize();
   }
 
+  // TODO: optimize this (so we're not creating things and replacing)
   public addSameColorFaces( faceA: TPatternFace, faceB: TPatternFace ): void {
     this.addFaceColorDual( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA, faceB ], [] ) );
   }
 
+  // TODO: optimize this (so we're not creating things and replacing)
   public addOppositeColorFaces( faceA: TPatternFace, faceB: TPatternFace ): void {
     this.addFaceColorDual( FaceColorDualFeature.fromPrimarySecondaryFaces( [ faceA ], [ faceB ] ) );
   }
@@ -986,6 +988,19 @@ export class FeatureSet {
       featureSet.addSolvedFaceColorDualFeatures( solutionSets );
     }
 
+    // if ( assertEnabled() ) {
+    //   let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
+    //   if ( solutionSet && options.highlander ) {
+    //     solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
+    //   }
+    //
+    //   assertEnabled() && assert( solutionSet );
+    //   const sanityFeatureSet = solutionSet!.addToFeatureSet( this.clone() )!;
+    //   assertEnabled() && assert( sanityFeatureSet );
+    //
+    //   assertEnabled() && assert( sanityFeatureSet.equals( featureSet ) );
+    // }
+
     return featureSet;
   }
 
@@ -1012,6 +1027,8 @@ export class FeatureSet {
       }
 
       for ( const redExitVertex of [ ...redExitVertices ] ) {
+
+        // TODO: these conditions could be collapsed together, the exit edge IS a black edge.
 
         // If we have a black edge in our exit, it can't be red
 

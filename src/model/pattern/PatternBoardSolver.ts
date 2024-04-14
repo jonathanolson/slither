@@ -42,6 +42,29 @@ export class PatternBoardSolver {
     return result;
   }
 
+  public static forEachSolution(
+    patternBoard: TPatternBoard,
+    features: TFeature[],
+    callback: ( solution: TPatternEdge[] ) => void
+  ): void {
+    const solver = new PatternBoardSolver( patternBoard );
+
+    for ( const feature of features ) {
+      solver.addFeature( feature );
+    }
+
+    while ( true ) {
+      const solution = solver.getNextSolution();
+
+      if ( solution ) {
+        callback( solution );
+      }
+      else {
+        break;
+      }
+    }
+  }
+
   public static getSolutions( patternBoard: TPatternBoard, features: TFeature[] ): TPatternEdge[][] {
     const solver = new PatternBoardSolver( patternBoard );
 
