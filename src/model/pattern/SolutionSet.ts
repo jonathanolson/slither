@@ -53,12 +53,9 @@ export class SolutionSet {
     return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
   }
 
-  public addToFeatureSet( featureSet: FeatureSet = FeatureSet.empty( this.patternBoard ) ): FeatureSet | null {
+  public addToFeatureSet( featureSet: FeatureSet = FeatureSet.empty( this.patternBoard ) ): FeatureSet {
     assertEnabled() && assert( featureSet.patternBoard === this.patternBoard );
-
-    if ( this.numSolutions === 0 ) {
-      return null;
-    }
+    assertEnabled() && assert( this.numSolutions > 0 );
 
     const numNumbersPerSolution = this.shape.numNumbersPerSolution;
     const scratchNumbers = new Array<number>( numNumbersPerSolution ).fill( 2 ** BITS_PER_NUMBER - 1 );

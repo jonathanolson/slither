@@ -24,6 +24,7 @@ import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
 import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 import { getEmbeddings } from '../getEmbeddings.ts';
+import { SolutionSet } from '../SolutionSet.ts';
 
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
@@ -961,7 +962,9 @@ export class FeatureSet {
   }
 
   // null if there is no solution
-  public solved( providedOptions?: BasicSolveOptions ): FeatureSet | null {
+  // TODO: @deprecated, but kept around because... our new solution is NOT well tested, and this would be good to use
+  // TODO: for comparison.
+  public solvedOldStyle( providedOptions?: BasicSolveOptions ): FeatureSet | null {
     // TODO: is this too much performance loss?
     const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
 
@@ -988,20 +991,39 @@ export class FeatureSet {
       featureSet.addSolvedFaceColorDualFeatures( solutionSets );
     }
 
-    // if ( assertEnabled() ) {
-    //   let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
-    //   if ( solutionSet && options.highlander ) {
-    //     solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
-    //   }
-    //
-    //   assertEnabled() && assert( solutionSet );
-    //   const sanityFeatureSet = solutionSet!.addToFeatureSet( this.clone() )!;
-    //   assertEnabled() && assert( sanityFeatureSet );
-    //
-    //   assertEnabled() && assert( sanityFeatureSet.equals( featureSet ) );
-    // }
+    if ( assertEnabled() ) {
+      let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
+      if ( solutionSet && options.highlander ) {
+        solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
+      }
+
+      assertEnabled() && assert( solutionSet );
+      const sanityFeatureSet = solutionSet!.addToFeatureSet( this.clone() )!;
+      assertEnabled() && assert( sanityFeatureSet );
+
+      assertEnabled() && assert( sanityFeatureSet.equals( featureSet ) );
+    }
 
     return featureSet;
+  }
+
+  // null if there is no solution
+  public solved( providedOptions?: BasicSolveOptions ): FeatureSet | null {
+    // TODO: is this too much performance loss?
+    const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
+
+    let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
+
+    if ( solutionSet && options.highlander ) {
+      solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
+    }
+
+    if ( solutionSet ) {
+      return solutionSet.addToFeatureSet( this.clone() );
+    }
+    else {
+      return null;
+    }
   }
 
   private addSolvedEdgeFeatures( solutions: Set<TPatternEdge>[] ): void {
