@@ -6,7 +6,7 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
-import { basicEdgeRuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareEdgeGeneration3RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, hexEdgeGeneration1RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareEdgeGeneration3RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -88,6 +88,7 @@ console.log( 'test' );
     ...squareEdgeGeneration1RuleSets,
     ...squareEdgeGeneration2RuleSets,
     ...squareEdgeGeneration3RuleSets,
+    ...hexEdgeGeneration1RuleSets,
   ];
   addPaddedNode( new HBox( {
     spacing: 20,

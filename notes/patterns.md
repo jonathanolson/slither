@@ -5,6 +5,8 @@
   - 
   - Some bug with "3 red exit edges square" not applying to other rules?
   - 
+  - Split "rules.ts" into separate files, so we don't pull in more than necessary?
+  - 
   - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)
   - Use featureLimit to explore larger patterns with smaller numbers of features
   - 
@@ -19,6 +21,11 @@
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
+  - 
+  - Rules "Solver" (for plugging into the UI, puzzle generation, difficulty estimation(!))
+    - How to "apply multiple rules" for a given... embedding*?
+      - OH OH, check all rule input feature sets. Then COMBINE embedded rules that are "compatible"?
+        - If their input feature sets are the same, combine them!!!
   - 
   - Performance wins:
     - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
