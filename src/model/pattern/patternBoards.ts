@@ -160,7 +160,7 @@ vertexNonExitPatternBoards.forEach( patternBoard => patternBoardMappings.set( pa
 export const basicPatternBoards = [
   edgePatternBoard,
   ...vertexExitPatternBoards,
-  ...vertexNonExitPatternBoards
+  ...vertexNonExitPatternBoards,
 ];
 
 // TODO: generate some of the "basic" boards (OR BETTER YET, store them here)

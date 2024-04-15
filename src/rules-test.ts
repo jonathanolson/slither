@@ -6,6 +6,9 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
+import { basicPatternBoards } from './model/pattern/patternBoards.ts';
+import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
+import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -44,54 +47,80 @@ console.log( 'test' );
   };
 
   // TODO: omg, associate boards with planar pattern maps
-  const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
-    addPaddedNode( new VBox( {
-      spacing: 10,
-      children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
-    } ) );
-  };
 
-  const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
+  // const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
+  //   addPaddedNode( new VBox( {
+  //     spacing: 10,
+  //     children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
+  //   } ) );
+  // };
 
-
-  // console.log( 'vertex' );
-  // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
-
-  const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
-
-  const newFilteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( squarePatternBoard ), [] );
-  console.log( newFilteredSquareRules );
-
-  addPaddedNode( new HBox( {
-    spacing: 50,
-    align: 'top',
-    children: [
-      new VBox( {
-        spacing: 10,
-        children: newFilteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
-      } )
-    ]
+  const basicGenerations = basicPatternBoards.map( patternBoard => [ patternBoard ] );
+  const faceGenerations = [
+    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+  ];
+  faceGenerations.forEach( generation => generation.forEach( board => {
+    patternBoardMappings.set( board, board.planarPatternMap );
   } ) );
 
-  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-  const rawDiagonalRules = PatternRule.getSolutionEnumeratedRules( diagonalPatternBoard, {
-    prefilterRules: newFilteredSquareRules
-  } );
-  console.log( `rawDiagonalRules.length=${rawDiagonalRules.length}` );
+  const testGenerations = [
+    ...basicGenerations,
+    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+  ];
 
-  const filteredDiagonalRules = PatternRule.filterAndSortRules( rawDiagonalRules, newFilteredSquareRules );
-  console.log( filteredDiagonalRules );
-  addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+  console.log( testGenerations );
 
-  const getSolutionCount = ( patternBoard: TPatternBoard ) => {
-    return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
-  };
+  const rules = PatternRule.getRulesForGenerations( testGenerations );
 
-  console.log( 'square', getSolutionCount( squarePatternBoard ) );
-  console.log( 'diagonal', getSolutionCount( squareBoardGenerations[ 1 ][ 0 ] ) );
-  console.log( '3rd gen', getSolutionCount( squareBoardGenerations[ 2 ][ 0 ] ) );
-  console.log( '4th gen', getSolutionCount( squareBoardGenerations[ 3 ][ 0 ] ) );
-  console.log( '5th gen', getSolutionCount( squareBoardGenerations[ 4 ][ 0 ] ) );
+  addPaddedNode( new VBox( {
+    spacing: 10,
+    children: rules.map( rule => new PatternRuleNode( rule, patternBoardMappings.get( rule.patternBoard as BasePatternBoard )! ) )
+  } ) );
+
+  // const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
+  //
+  //
+  // // console.log( 'vertex' );
+  // // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
+  //
+  // const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
+  //
+  // const newFilteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( squarePatternBoard ), [] );
+  // console.log( newFilteredSquareRules );
+  //
+  // addPaddedNode( new HBox( {
+  //   spacing: 50,
+  //   align: 'top',
+  //   children: [
+  //     new VBox( {
+  //       spacing: 10,
+  //       children: newFilteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
+  //     } )
+  //   ]
+  // } ) );
+  //
+  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
+  // const rawDiagonalRules = PatternRule.getSolutionEnumeratedRules( diagonalPatternBoard, {
+  //   prefilterRules: newFilteredSquareRules
+  // } );
+  // console.log( `rawDiagonalRules.length=${rawDiagonalRules.length}` );
+  //
+  // const filteredDiagonalRules = PatternRule.filterAndSortRules( rawDiagonalRules, newFilteredSquareRules );
+  // console.log( filteredDiagonalRules );
+  // addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+  //
+  // const getSolutionCount = ( patternBoard: TPatternBoard ) => {
+  //   return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
+  // };
+  //
+  // console.log( 'square', getSolutionCount( squarePatternBoard ) );
+  // console.log( 'diagonal', getSolutionCount( squareBoardGenerations[ 1 ][ 0 ] ) );
+  // console.log( '3rd gen', getSolutionCount( squareBoardGenerations[ 2 ][ 0 ] ) );
+  // console.log( '4th gen', getSolutionCount( squareBoardGenerations[ 3 ][ 0 ] ) );
+  // console.log( '5th gen', getSolutionCount( squareBoardGenerations[ 4 ][ 0 ] ) );
+
+
+
 
   // TODO: OMG also avoid the double-logic-solver
 

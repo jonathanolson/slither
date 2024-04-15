@@ -6,7 +6,7 @@ import { getEmbeddings } from './getEmbeddings.ts';
 import PatternRuleMatchState from './PatternRuleMatchState.ts';
 import FeatureCompatibility from './feature/FeatureCompatibility.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
-import { optionize3 } from 'phet-lib/phet-core';
+import { combineOptions, optionize3 } from 'phet-lib/phet-core';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import _ from '../../workarounds/_.ts';
 import { TPatternFace } from './TPatternFace.ts';
@@ -395,6 +395,31 @@ export class PatternRule {
     }
 
     return filteredRules;
+  }
+
+  public static computeFilteredRules( patternBoard: TDescribedPatternBoard, options?: GetRulesOptions ): PatternRule[] {
+    const rawRules = PatternRule.getSolutionEnumeratedRules( patternBoard, options );
+
+    return PatternRule.filterAndSortRules( rawRules, options?.prefilterRules || [] );
+  }
+
+  public static getRulesForGenerations( generations: TDescribedPatternBoard[][], options?: GetRulesOptions ): PatternRule[] {
+
+    const rules = options?.prefilterRules || [];
+
+    for ( const generation of generations ) {
+      const generationRules: PatternRule[] = [];
+
+      for ( const patternBoard of generation ) {
+        generationRules.push( ...PatternRule.computeFilteredRules( patternBoard, combineOptions<GetRulesOptions>( {}, options, {
+          prefilterRules: rules
+        } ) ) );
+      }
+
+      rules.push( ...generationRules );
+    }
+
+    return _.sortBy( rules, rule => rule.getInputDifficultyScoreA() );
   }
 }
 
