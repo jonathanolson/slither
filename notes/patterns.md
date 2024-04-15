@@ -3,8 +3,6 @@
 
 - TODO
   - 
-  - Some bug with "3 red exit edges square" not applying to other rules?
-  - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
   - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)

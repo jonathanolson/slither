@@ -1,12 +1,6 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
-import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
-import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicPatternBoards } from './model/pattern/patternBoards.ts';
-import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
-import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
-import { basicEdgeRuleSets, hexEdgeGeneration1RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareEdgeGeneration3RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -85,10 +79,14 @@ console.log( 'test' );
 
   const ruleSets = [
     ...basicEdgeRuleSets,
+
+    ...triangularEdgeGeneration0RuleSets,
+    ...squareEdgeGeneration0RuleSets,
+    ...cairoEdgeGeneration0RuleSets,
+    ...hexEdgeGeneration0RuleSets,
+
     ...squareEdgeGeneration1RuleSets,
     ...squareEdgeGeneration2RuleSets,
-    ...squareEdgeGeneration3RuleSets,
-    ...hexEdgeGeneration1RuleSets,
   ];
   addPaddedNode( new HBox( {
     spacing: 20,
