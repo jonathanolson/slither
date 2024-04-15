@@ -10,7 +10,6 @@ import { combineOptions, optionize3 } from 'phet-lib/phet-core';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import _ from '../../workarounds/_.ts';
 import { TPatternFace } from './TPatternFace.ts';
-import { IncompatibleFeatureError } from './feature/IncompatibleFeatureError.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { SolutionSet } from './SolutionSet.ts';
 import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
@@ -23,7 +22,7 @@ export class PatternRule {
   ) {}
 
   public getInputDifficultyScoreA(): number {
-    return this.inputFeatureSet.getInputDifficultyScoreA();
+    return this.inputFeatureSet.getInputDifficultyScoreA() + 0.5 * this.patternBoard.vertices.length;
   }
 
   // TODO: now that we have input/output targets, the patternBoard here is redundant

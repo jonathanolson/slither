@@ -2,7 +2,7 @@ import { TFeature } from './TFeature.ts';
 import { TPatternEdge } from '../TPatternEdge.ts';
 import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
-import { logicAnd, logicNotAll } from '../../logic/operations.ts';
+import { logicAnd, logicNotAll, logicTrue } from '../../logic/operations.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { TPatternVertex } from '../TPatternVertex.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -22,7 +22,12 @@ export class NoLoopsFeature implements TFeature {
   public getPossibleFormula(
     getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
   ): Formula<TPatternEdge> {
-    return logicAnd( this.possibleLoops.map( loop => logicNotAll( loop.map( edge => getFormula( edge ) ) ) ) );
+    if ( this.possibleLoops.length ) {
+      return logicAnd( this.possibleLoops.map( loop => logicNotAll( loop.map( edge => getFormula( edge ) ) ) ) );
+    }
+    else {
+      return logicTrue;
+    }
   }
 
   public static fromBoard( patternBoard: TPatternBoard ): NoLoopsFeature {

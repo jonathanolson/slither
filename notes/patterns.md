@@ -3,7 +3,10 @@
 
 - TODO
   - 
+  - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)
+  - 
   - Verify rules!
+  - Highlander/Sector/Color rules!
   - 
   - Performance wins:
     - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
@@ -13,6 +16,9 @@
       - can we store just a "row index" of the solutions? lightweight view
       - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
     - (b) for each final "input pattern", check to see if we are the "canonical form" (based on all of the automorphisms)?
+    - (c) potentially prune automorphisms EARLIER!
+    - (d) profile, hit GC hotspots (are we creating "feature arrays" a bunch?)
+    - (e) reduce console.log, and figure out a way to output
   - 
   - SolutionSet unit tests(!!!!)
   - 

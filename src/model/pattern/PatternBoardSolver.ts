@@ -4,6 +4,7 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { TFeature } from './feature/TFeature.ts';
 import { Term } from '../logic/Term.ts';
 import { getStructuralFeatures } from './feature/getStructuralFeatures.ts';
+import { logicNot, logicOr } from '../logic/operations.ts';
 
 export class PatternBoardSolver {
   private readonly solver: FormulaSolver<TPatternEdge> = new FormulaSolver();
@@ -14,6 +15,14 @@ export class PatternBoardSolver {
 
     for ( const feature of getStructuralFeatures( patternBoard ) ) {
       this.addFeature( feature );
+    }
+
+    // We need to inform it of our one edge
+    if ( patternBoard.vertices.length === 0 ) {
+      this.solver.addFormula( logicOr( [
+        this.getFormula( patternBoard.edges[ 0 ] ),
+        logicNot( this.getFormula( patternBoard.edges[ 0 ] ) )
+      ] ) );
     }
   }
 
@@ -54,6 +63,9 @@ export class PatternBoardSolver {
     }
 
     while ( true ) {
+      // TODO: figure out if we should expose this for debugging (helps)
+      // console.log( solver.solver.solver._clauseStrings() );
+
       const solution = solver.getNextSolution();
 
       if ( solution ) {

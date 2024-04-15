@@ -9,6 +9,7 @@ import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import assert, { assertEnabled } from './workarounds/assert.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -57,15 +58,19 @@ console.log( 'test' );
 
   const basicGenerations = basicPatternBoards.map( patternBoard => [ patternBoard ] );
   const faceGenerations = [
-    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+    // ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 3 )
   ];
+
   faceGenerations.forEach( generation => generation.forEach( board => {
     patternBoardMappings.set( board, board.planarPatternMap );
   } ) );
 
+  console.log( patternBoardMappings.get( faceGenerations[ 1 ][ 0 ] ) );
+
   const testGenerations = [
     ...basicGenerations,
-    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+    ...faceGenerations
   ];
 
   console.log( testGenerations );
@@ -74,7 +79,11 @@ console.log( 'test' );
 
   addPaddedNode( new VBox( {
     spacing: 10,
-    children: rules.map( rule => new PatternRuleNode( rule, patternBoardMappings.get( rule.patternBoard as BasePatternBoard )! ) )
+    children: rules.map( rule => {
+      const planarPatternMap = patternBoardMappings.get( rule.patternBoard as BasePatternBoard )!;
+
+      return new PatternRuleNode( rule, planarPatternMap );
+    } )
   } ) );
 
   // const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
