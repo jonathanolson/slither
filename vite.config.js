@@ -29,6 +29,7 @@ export default defineConfig( {
         'solver-fuzz': '/solver-fuzz.html',
         'discover-rules': '/discover-rules.html',
         'rules-test': '/rules-test.html',
+        'rule-gen': '/rule-gen.html',
       },
       plugins: [
         unassert( {
