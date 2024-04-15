@@ -364,32 +364,37 @@ export class PatternRule {
 
     const mainPatternBoard = rules[ 0 ].patternBoard;
 
+    // Sort rules
     rules = _.sortBy( rules, rule => rule.getInputDifficultyScoreA() );
 
-    // TODO: use a better way for given the "score" setup
-    // TODO: this creates a LOT of potential arrays, and is probably memory-unfriendly
+    // We will append to this list as we go
+    const embeddedRules = previousRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, mainPatternBoard ) ) );
 
-    const solveRuleScores = _.uniq( rules.map( rule => rule.getInputDifficultyScoreA() ) );
-    const embeddedRulesLessThanScoreMap = new Map<number, PatternRule[]>( solveRuleScores.map( size => [ size, [] ] ) );
+    const automorphisms = getEmbeddings( mainPatternBoard, mainPatternBoard );
 
-    const embeddings = getEmbeddings( mainPatternBoard, mainPatternBoard );
-    for ( const rule of rules ) {
-      const embeddedRules = rule.getEmbeddedRules( embeddings );
+    let lastScore = 0;
+    let lastScoreIndex = 0;
+    const filteredRules: PatternRule[] = [];
+
+    for ( let i = 0; i < rules.length; i++ ) {
+      const rule = rules[ i ];
       const score = rule.getInputDifficultyScoreA();
 
-      for ( const otherScore of solveRuleScores ) {
-        if ( score < otherScore ) {
-          embeddedRulesLessThanScoreMap.get( otherScore )!.push( ...embeddedRules );
-        }
+      if ( score !== lastScore ) {
+        embeddedRules.push( ...filteredRules.slice( lastScoreIndex, i ).flatMap( rule => {
+          return rule.getEmbeddedRules( automorphisms );
+        } ) );
+
+        lastScore = score;
+        lastScoreIndex = filteredRules.length;
+      }
+
+      if ( !rule.isRedundant( embeddedRules ) ) {
+        filteredRules.push( rule );
       }
     }
 
-    const embeddedPreviousRules = previousRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, mainPatternBoard ) ) );
-
-    return rules.filter( rule => !rule.isRedundant( [
-      ...embeddedPreviousRules,
-      ...embeddedRulesLessThanScoreMap.get( rule.getInputDifficultyScoreA() )!,
-    ] ) );
+    return filteredRules;
   }
 }
 

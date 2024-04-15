@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Verify rules!
+  - 
   - Performance wins:
     - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
       - Possibly with a tiny subset of features?

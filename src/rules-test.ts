@@ -81,7 +81,7 @@ console.log( 'test' );
 
   const filteredDiagonalRules = PatternRule.filterAndSortRules( rawDiagonalRules, newFilteredSquareRules );
   console.log( filteredDiagonalRules );
-  // addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+  addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
 
   const getSolutionCount = ( patternBoard: TPatternBoard ) => {
     return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
