@@ -1,6 +1,6 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -85,7 +85,9 @@ console.log( 'test' );
     ...cairoEdgeGeneration0RuleSets,
     ...hexEdgeGeneration0RuleSets,
 
+    ...triangularEdgeGeneration1RuleSets,
     ...squareEdgeGeneration1RuleSets,
+
     ...squareEdgeGeneration2RuleSets,
   ];
   addPaddedNode( new HBox( {
