@@ -3,6 +3,12 @@
 
 - TODO
   - 
+  - Performance wins:
+    - (a) minimize amount of new objects created for each SolutionFeatureSet
+      - can we store just a "row index" of the solutions? lightweight view
+      - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
+    - (b) for each final "input pattern", check to see if we are the "canonical form" (based on all of the automorphisms)?
+  - 
   - SolutionSet unit tests(!!!!)
   - 
   - UNIT TESTS --- also test that things are "solving" correctly, e.g. given a random feature set WITH solutions,

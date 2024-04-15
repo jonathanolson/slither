@@ -5,6 +5,7 @@ import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
+import { TPlanarPatternMap } from './model/pattern/TPlanarPatternMap.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -43,12 +44,12 @@ console.log( 'test' );
   };
 
   // TODO: omg, associate boards with planar pattern maps
-  // const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
-  //   addPaddedNode( new VBox( {
-  //     spacing: 10,
-  //     children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
-  //   } ) );
-  // };
+  const addRuleNodes = ( rules: PatternRule[], planarPatternMap: TPlanarPatternMap ) => {
+    addPaddedNode( new VBox( {
+      spacing: 10,
+      children: rules.map( rule => new PatternRuleNode( rule, planarPatternMap ) )
+    } ) );
+  };
 
   const squareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
 
@@ -80,10 +81,10 @@ console.log( 'test' );
     ]
   } ) );
 
-  // const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-  // const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getRules( diagonalPatternBoard ), filteredSquareRules );
-  // console.log( filteredDiagonalRules );
-  // addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
+  const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
+  const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( diagonalPatternBoard ), newFilteredSquareRules );
+  console.log( filteredDiagonalRules );
+  addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
 
   const getSolutionCount = ( patternBoard: TPatternBoard ) => {
     return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
