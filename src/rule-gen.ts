@@ -1,7 +1,7 @@
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
@@ -89,6 +89,7 @@ window.getCairoBoardRules = ( generationIndex: number, index: number ) => {
     [
       ...basicEdgeRuleSets,
       ...cairoEdgeGeneration0RuleSets,
+      ...cairoEdgeGeneration1RuleSets,
     ],
     generationIndex,
     index
