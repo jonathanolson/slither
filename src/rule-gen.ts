@@ -125,6 +125,7 @@ window.getSnubSquareBoardRules = ( generationIndex: number, index: number ) => {
       ...triangularEdgeGeneration0RuleSets,
       ...triangularEdgeGeneration1RuleSets,
       ...squareEdgeGeneration0RuleSets,
+      ...squareEdgeGeneration1RuleSets,
     ],
     generationIndex,
     index
