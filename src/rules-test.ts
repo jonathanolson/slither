@@ -59,10 +59,6 @@ console.log( 'test' );
 
   const squarePatternBoard = squareBoardGenerations[ 0 ][ 0 ];
 
-  const filteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getRules( squarePatternBoard ), [] );
-  console.log( filteredSquareRules );
-  // addRuleNodes( filteredSquareRules, squarePatternBoard.planarPatternMap );
-
   const newFilteredSquareRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( squarePatternBoard ), [] );
   console.log( newFilteredSquareRules );
 
@@ -70,10 +66,6 @@ console.log( 'test' );
     spacing: 50,
     align: 'top',
     children: [
-      new VBox( {
-        spacing: 10,
-        children: filteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
-      } ),
       new VBox( {
         spacing: 10,
         children: newFilteredSquareRules.map( rule => new PatternRuleNode( rule, squarePatternBoard.planarPatternMap ) )
