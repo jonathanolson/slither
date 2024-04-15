@@ -201,9 +201,11 @@ export class SolutionSet {
 
     return this.withFilter( i => {
       const offset = i * this.shape.numNumbersPerSolution;
-      const redIndex = 3 * edge.index + 1;
+
+      // If the "original" was black, then the exit edge couldn't be red.
+      const originalBlackIndex = 3 * edge.index + 2;
       // TODO: reduce duplication with this logic, make it clean and readable
-      return ( this.bitData[ offset + Math.floor( redIndex / BITS_PER_NUMBER ) ] & ( 1 << ( redIndex % BITS_PER_NUMBER ) ) ) !== 0;
+      return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) === 0;
     } );
   }
 

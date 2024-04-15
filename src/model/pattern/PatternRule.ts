@@ -347,6 +347,12 @@ export class PatternRule {
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
 
+        // // TODO: this will be killing performance, get rid of it
+        // if ( assertEnabled() ) {
+        //   const sanityRule = PatternRule.getBasicRule( patternBoard, inputFeatureSet, options )!;
+        //   assert( outputFeatureSet.equals( sanityRule?.outputFeatureSet ), 'sanity check' );
+        // }
+
         if ( !rule.isTrivial() ) {
           rules.push( rule );
         }
