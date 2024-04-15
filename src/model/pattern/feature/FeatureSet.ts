@@ -838,6 +838,7 @@ export class FeatureSet {
 
   // throws IncompatibleFeatureError if it doesn't work
   public applyFeaturesFrom( other: FeatureSet ): void {
+    // TODO: optimize this (so we're not creating things and replacing)
     other.getFeaturesArray().forEach( feature => this.addFeature( feature ) );
   }
 

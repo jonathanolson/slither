@@ -185,38 +185,6 @@ export class PatternRule {
 
     const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
-    // const processedShapeMap = new Map<string, FeatureSet[]>();
-    //
-    // // TODO: consider using automorphisms to prune earlier? (MEH: PROBABLY NOT WORTH IT)
-    //
-    // let maxIso = 0;
-    //
-    // const addToShapeMap = ( featureSet: FeatureSet ): void => {
-    //   const key = featureSet.getShapeString();
-    //   let featuresWithShape = processedShapeMap.get( key );
-    //   if ( featuresWithShape ) {
-    //     featuresWithShape.push( featureSet );
-    //     if ( featuresWithShape.length > maxIso ) {
-    //       maxIso = featuresWithShape.length;
-    //       console.log( `maxIso: ${maxIso}` );
-    //     }
-    //   }
-    //   else {
-    //     processedShapeMap.set( key, [ featureSet ] );
-    //   }
-    // };
-    //
-    // const getIsomorphicProcessed = ( featureSet: FeatureSet ): FeatureSet | null => {
-    //   const key = featureSet.getShapeString();
-    //   const featuresWithShape = processedShapeMap.get( key );
-    //   if ( featuresWithShape ) {
-    //     return featuresWithShape.find( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) ) ?? null;
-    //   }
-    //   else {
-    //     return null;
-    //   }
-    // };
-
     const forEachPossibleFaceFeatureSet = (
       initialSet: SolutionFeatureSet,
       callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
@@ -268,7 +236,6 @@ export class PatternRule {
       faceRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
     };
 
-    // callback returns whether it is successful (and we should explore the subtree)
     const forEachPossibleEdgeFeatureSet = (
       initialSet: SolutionFeatureSet,
       callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
@@ -309,11 +276,11 @@ export class PatternRule {
         }
 
         for ( const edgeSet of edgeSets ) {
-            callback( edgeSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+          callback( edgeSet, numFeatures + 1, numEvaluatedFeatures + 1 );
 
-            stack.push( edgeSet );
-            edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
-            stack.pop();
+          stack.push( edgeSet );
+          edgeRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
+          stack.pop();
         }
       };
       // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all edges` );
@@ -324,37 +291,22 @@ export class PatternRule {
     const rules: PatternRule[] = [];
     let count = 0;
 
-    let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => {
+    let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ): void => {
+
       if ( set.featureSet.isCanonicalWith( automorphisms ) ) {
+        const inputFeatureSet = set.featureSet;
+        const outputFeatureSet = set.getOutputFeatureSet( options.highlander );
+
+        if ( !outputFeatureSet ) {
+          return;
+        }
+
         count++;
         if ( count % 1000 === 0 ) {
           console.log( count );
         }
 
-        let inputFeatureSet = set.featureSet;
-
-        let solutionSet = set.solutionSet;
-        if ( options.highlander ) {
-          // TODO: don't require a feature array?
-          const filteredSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( patternBoard, inputFeatureSet.getFeaturesArray() ) );
-
-          if ( filteredSet ) {
-            solutionSet = filteredSet;
-          }
-          else {
-            return;
-          }
-        }
-
-        const outputFeatureSet = solutionSet.addToFeatureSet( inputFeatureSet.clone() );
-
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
-
-        // // TODO: this will be killing performance, get rid of it
-        // if ( assertEnabled() ) {
-        //   const sanityRule = PatternRule.getBasicRule( patternBoard, inputFeatureSet, options )!;
-        //   assert( outputFeatureSet.equals( sanityRule?.outputFeatureSet ), 'sanity check' );
-        // }
 
         if ( !rule.isTrivial() ) {
           rules.push( rule );
@@ -494,79 +446,25 @@ class SolutionFeatureSet {
       return null;
     }
   }
-}
 
-// Also records what we have "NOT" chosen, so we can do intelligent symmetry pruning
-class FeatureSetDual {
+  public getOutputFeatureSet( highlander: boolean ): FeatureSet | null {
+    let inputFeatureSet = this.featureSet;
 
-  public shapeKey: string;
+    let solutionSet = this.solutionSet;
 
-  public constructor(
-    public readonly featureSet: FeatureSet,
-    public readonly blankFaces: Set<TPatternFace>,
-    public readonly blankEdges: Set<TPatternEdge>,
-    // public readonly blankSectors: Set<TPatternFace> TODO: add when we do sectors
-  ) {
-    this.shapeKey = `${this.featureSet.getShapeString()} + ${blankFaces.size} + ${blankEdges.size}`;
-  }
+    // TODO: We should probably BAIL from the subtree if we detect a bad highlander rule(!)
+    if ( highlander ) {
+      // TODO: don't require a feature array?
+      const filteredSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.featureSet.patternBoard, inputFeatureSet.getFeaturesArray() ) );
 
-  public isIsomorphicTo( other: FeatureSetDual, automorphisms: Embedding[] ): boolean {
-    assertEnabled() && assert( this.featureSet.patternBoard === other.featureSet.patternBoard, 'embedding check' );
-
-    assertEnabled() && assert( this.shapeKey === other.shapeKey, 'Should be using hashes to filter' );
-
-    for ( const automorphism of automorphisms ) {
-      try {
-        const embeddedFeatureSet = this.featureSet.embedded( this.featureSet.patternBoard, automorphism );
-        if ( embeddedFeatureSet && embeddedFeatureSet.equals( other.featureSet ) ) {
-          let matches = true;
-
-          // Scan blank faces for matches
-          for ( const blankFace of this.blankFaces ) {
-            const embeddedBlankFace = automorphism.mapFace( blankFace );
-            if ( !other.blankFaces.has( embeddedBlankFace ) ) {
-              matches = false;
-              break;
-            }
-          }
-
-          if ( !matches ) {
-            return false;
-          }
-
-          // Scan blank edges for matches
-          for ( const blankEdge of this.blankEdges ) {
-            if ( blankEdge.isExit ) {
-              for ( const exitEdge of automorphism.mapExitEdges( blankEdge ) ) {
-                if ( !other.blankEdges.has( exitEdge ) ) {
-                  matches = false;
-                  break;
-                }
-              }
-              if ( !matches ) {
-                break;
-              }
-            }
-            else {
-              const embeddedBlankEdge = automorphism.mapNonExitEdge( blankEdge );
-              if ( !other.blankEdges.has( embeddedBlankEdge ) ) {
-                matches = false;
-                break;
-              }
-            }
-          }
-
-          return matches;
-        }
+      if ( filteredSet ) {
+        solutionSet = filteredSet;
       }
-      catch ( e ) {
-        // ignore incompatible feature embeddings (just in case)
-        if ( !( e instanceof IncompatibleFeatureError ) ) {
-          throw e;
-        }
+      else {
+        return null;
       }
     }
 
-    return false;
+    return solutionSet.addToFeatureSet( inputFeatureSet.clone() );
   }
 }
