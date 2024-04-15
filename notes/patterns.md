@@ -9,6 +9,10 @@
   - Verify rules!
   - Highlander/Sector/Color rules!
   - Run in parallel (get a setup to do one board at a time?)
+    - Get my desktop running up!
+    - OMG CAN WE WEBGPU THIS?!?
+  - 
+  - CAN WE WEBGPU THIS?!!!!!!!!!!!!
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
@@ -18,6 +22,16 @@
       - If we have said feature sets A => B, then it makes no sense testing anything between A and B
       - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
         - And thus we can't just "skip" to B
+          - (!!!) WAIT, but we CAN just "delay" those features, and focus on others (since exploring them will give no info)
+            - (!!!!!!!)
+              - Can we "choose" features to select, based on their frequency?
+                - Will splitting with a more "binary" search be more efficient?
+                - CAN WE INITIALLY ORDER FEATURES so that the isomorphism checks can prune large amounts?
+                  - ... e.g. start with unique "corners", if we have set all N of what it can map to, we can
+                    - START SYMMETRY PRUNING.
+                  - (obviously, don't do this on boards with only the identity isomorphism)
+      - BUT BUT we can just... do a "quick check" when it's time to decide a feature, see if it can only take one path(!)
+        - This is almost... like a "skip"
     - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
       - Possibly with a tiny subset of features?
     - (x) Don't use that "stack", just pass parameters?
