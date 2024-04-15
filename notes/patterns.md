@@ -4,23 +4,33 @@
 - TODO
   - 
   - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)
+  - Use featureLimit to explore larger patterns with smaller numbers of features
   - 
   - Verify rules!
   - Highlander/Sector/Color rules!
+  - Run in parallel (get a setup to do one board at a time?)
+  - 
+  - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
+    - Certain topology (red exit vertex, etc.) features will probably unlock more things
   - 
   - Performance wins:
+    - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
+      - If we have said feature sets A => B, then it makes no sense testing anything between A and B
+      - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
+        - And thus we can't just "skip" to B
     - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
       - Possibly with a tiny subset of features?
     - (x) Don't use that "stack", just pass parameters?
     - (a) minimize amount of new objects created for each SolutionFeatureSet
       - can we store just a "row index" of the solutions? lightweight view
       - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
-    - (b) for each final "input pattern", check to see if we are the "canonical form" (based on all of the automorphisms)?
     - (c) potentially prune automorphisms EARLIER!
+      - We could at least do automorphism/canonical checks AT END OF FACES(!)
     - (d) profile, hit GC hotspots (are we creating "feature arrays" a bunch?)
     - (e) reduce console.log, and figure out a way to output
   - 
   - SolutionSet unit tests(!!!!)
+    - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
   - 
   - UNIT TESTS --- also test that things are "solving" correctly, e.g. given a random feature set WITH solutions,
   -   things that are solved keep the same solution count/set
