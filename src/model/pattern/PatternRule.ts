@@ -185,6 +185,9 @@ export class PatternRule {
 
     const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
+    // TODO: perhaps we can reduce the isomorphisms here?
+    const embeddedPrefilterRules = options.prefilterRules ? options.prefilterRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) ) : [];
+
     const forEachPossibleFaceFeatureSet = (
       initialSet: SolutionFeatureSet,
       callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
@@ -295,7 +298,7 @@ export class PatternRule {
 
       if ( set.featureSet.isCanonicalWith( automorphisms ) ) {
         const inputFeatureSet = set.featureSet;
-        const outputFeatureSet = set.getOutputFeatureSet( options.highlander );
+        const outputFeatureSet = set.getOutputFeatureSet();
 
         if ( !outputFeatureSet ) {
           return;
@@ -308,7 +311,28 @@ export class PatternRule {
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
 
+        // See if it is guaranteed redundant!
         if ( !rule.isTrivial() ) {
+          if ( set.previousSet ) {
+            const previousOutputFeatureSet = set.previousSet.getOutputFeatureSet();
+
+            if ( previousOutputFeatureSet ) {
+              if ( previousOutputFeatureSet.union( inputFeatureSet )!.equals( outputFeatureSet ) ) {
+                return;
+              }
+
+              if ( embeddedPrefilterRules.length ) {
+                // TODO: ... how can we not make another huge array here?
+                if ( rule.isRedundant( [
+                  new PatternRule( patternBoard, set.previousSet.featureSet, previousOutputFeatureSet! ),
+                  ...embeddedPrefilterRules
+                ] ) ) {
+                  return;
+                }
+              }
+            }
+          }
+
           rules.push( rule );
         }
       }
@@ -326,7 +350,7 @@ export class PatternRule {
     const rootSolutionSet = SolutionSet.fromFeatureSet( rootFeatureSet, options.solveEdges, options.solveSectors, options.solveFaceColors, options.highlander )!;
     assertEnabled() && assert( rootSolutionSet );
 
-    const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet );
+    const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet, null, options.highlander );
 
     forEachPossibleFaceFeatureSet( rootSet, leafCallback, 0, 0 );
 
@@ -373,6 +397,7 @@ export class PatternRule {
 type GetRulesSelfOptions = {
   featureLimit?: number; // counts 1 for edge or face, n-1 for each face color duals (e.g. how many linked faces)
   includeFaceValueZero?: boolean;
+  prefilterRules?: PatternRule[] | null;
 };
 
 export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
@@ -380,13 +405,20 @@ export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
 export const GET_RULES_DEFAULTS = {
   ...BASIC_SOLVE_DEFAULTS,
   featureLimit: Number.POSITIVE_INFINITY,
-  includeFaceValueZero: false
+  includeFaceValueZero: false,
+  prefilterRules: null,
 } as const;
 
 class SolutionFeatureSet {
+
+  private outputFeatureSet: FeatureSet | null = null;
+  private computedOutputFeatureSet = false;
+
   public constructor(
     public readonly solutionSet: SolutionSet,
     public readonly featureSet: FeatureSet,
+    public readonly previousSet: SolutionFeatureSet | null,
+    public readonly highlander: boolean,
   ) {}
 
   public withFaceValue( face: TPatternFace, value: FaceValue ): SolutionFeatureSet | null {
@@ -397,7 +429,9 @@ class SolutionFeatureSet {
 
       return new SolutionFeatureSet(
         solutionSet,
-        featureSet
+        featureSet,
+        this,
+        this.highlander
       );
     }
     else {
@@ -416,7 +450,9 @@ class SolutionFeatureSet {
       blackFeatureSet.addBlackEdge( edge );
       blackSet = new SolutionFeatureSet(
         solutionSets.black,
-        blackFeatureSet
+        blackFeatureSet,
+        this,
+        this.highlander
       );
     }
     if ( solutionSets.red ) {
@@ -424,7 +460,9 @@ class SolutionFeatureSet {
       redFeatureSet.addRedEdge( edge );
       redSet = new SolutionFeatureSet(
         solutionSets.red,
-        redFeatureSet
+        redFeatureSet,
+        this,
+        this.highlander
       );
     }
 
@@ -439,7 +477,9 @@ class SolutionFeatureSet {
 
       return new SolutionFeatureSet(
         solutionSet,
-        featureSet
+        featureSet,
+        this,
+        this.highlander
       );
     }
     else {
@@ -447,24 +487,31 @@ class SolutionFeatureSet {
     }
   }
 
-  public getOutputFeatureSet( highlander: boolean ): FeatureSet | null {
-    let inputFeatureSet = this.featureSet;
+  // lazy computation
+  public getOutputFeatureSet(): FeatureSet | null {
+    if ( !this.computedOutputFeatureSet ) {
+      this.computedOutputFeatureSet = true;
 
-    let solutionSet = this.solutionSet;
+      let inputFeatureSet = this.featureSet;
 
-    // TODO: We should probably BAIL from the subtree if we detect a bad highlander rule(!)
-    if ( highlander ) {
-      // TODO: don't require a feature array?
-      const filteredSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.featureSet.patternBoard, inputFeatureSet.getFeaturesArray() ) );
+      let solutionSet = this.solutionSet;
 
-      if ( filteredSet ) {
-        solutionSet = filteredSet;
+      // TODO: We should probably BAIL from the subtree if we detect a bad highlander rule(!)
+      if ( this.highlander ) {
+        // TODO: don't require a feature array?
+        const filteredSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.featureSet.patternBoard, inputFeatureSet.getFeaturesArray() ) );
+
+        if ( filteredSet ) {
+          solutionSet = filteredSet;
+        }
+        else {
+          return null;
+        }
       }
-      else {
-        return null;
-      }
+
+      this.outputFeatureSet = solutionSet.addToFeatureSet( inputFeatureSet.clone() );
     }
 
-    return solutionSet.addToFeatureSet( inputFeatureSet.clone() );
+    return this.outputFeatureSet;
   }
 }
