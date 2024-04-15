@@ -1,37 +1,25 @@
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
-import { basicPatternBoards } from './model/pattern/patternBoards.ts';
-import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { basicEdgeRuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
 // window.assertions.enableAssert();
 
-( async () => {
+// @ts-expect-error
+window.getSquareBoardRules = ( generation: number, index: number ) => {
 
-  // TODO: Global function we can call from puppeteer.evaluate
+  const squareGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
 
-  const basicGenerations = basicPatternBoards.map( patternBoard => [ patternBoard ] );
-  const faceGenerations = [
-    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
-    // ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 3 )
+  const squareGeneration = squareGenerations[ generation ][ index ];
+
+  const previousRuleSets = [
+    ...basicEdgeRuleSets,
+    ...squareEdgeGeneration1RuleSets,
+    ...squareEdgeGeneration2RuleSets,
   ];
+  const ruleSet = PatternBoardRuleSet.create( squareGeneration, squareGeneration.planarPatternMap, previousRuleSets );
+  console.log( JSON.stringify( ruleSet.serialize( ) ) );
 
-  faceGenerations.forEach( generation => generation.forEach( board => {
-    patternBoardMappings.set( board, board.planarPatternMap );
-  } ) );
-
-  console.log( patternBoardMappings.get( faceGenerations[ 1 ][ 0 ] ) );
-
-  const testGenerations = [
-    ...basicGenerations,
-    ...faceGenerations
-  ];
-
-  console.log( testGenerations );
-
-  const rules = PatternRule.getRulesForGenerations( testGenerations );
-
-  console.log( rules.map( rule => rule.toString() ) );
-} )();
+};

@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Some bug with "3 red exit edges square" not applying to other rules?
+  - 
   - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)
   - Use featureLimit to explore larger patterns with smaller numbers of features
   - 
