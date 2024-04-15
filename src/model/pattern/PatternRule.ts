@@ -183,31 +183,39 @@ export class PatternRule {
     assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
     assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
 
-    const processedShapeMap = new Map<string, FeatureSet[]>();
+    const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
-    // TODO: consider using automorphisms to prune earlier? (MEH: PROBABLY NOT WORTH IT)
-
-    const addToShapeMap = ( featureSet: FeatureSet ): void => {
-      const key = featureSet.getShapeString();
-      let featuresWithShape = processedShapeMap.get( key );
-      if ( featuresWithShape ) {
-        featuresWithShape.push( featureSet );
-      }
-      else {
-        processedShapeMap.set( key, [ featureSet ] );
-      }
-    };
-
-    const getIsomorphicProcessed = ( featureSet: FeatureSet ): FeatureSet | null => {
-      const key = featureSet.getShapeString();
-      const featuresWithShape = processedShapeMap.get( key );
-      if ( featuresWithShape ) {
-        return featuresWithShape.find( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) ) ?? null;
-      }
-      else {
-        return null;
-      }
-    };
+    // const processedShapeMap = new Map<string, FeatureSet[]>();
+    //
+    // // TODO: consider using automorphisms to prune earlier? (MEH: PROBABLY NOT WORTH IT)
+    //
+    // let maxIso = 0;
+    //
+    // const addToShapeMap = ( featureSet: FeatureSet ): void => {
+    //   const key = featureSet.getShapeString();
+    //   let featuresWithShape = processedShapeMap.get( key );
+    //   if ( featuresWithShape ) {
+    //     featuresWithShape.push( featureSet );
+    //     if ( featuresWithShape.length > maxIso ) {
+    //       maxIso = featuresWithShape.length;
+    //       console.log( `maxIso: ${maxIso}` );
+    //     }
+    //   }
+    //   else {
+    //     processedShapeMap.set( key, [ featureSet ] );
+    //   }
+    // };
+    //
+    // const getIsomorphicProcessed = ( featureSet: FeatureSet ): FeatureSet | null => {
+    //   const key = featureSet.getShapeString();
+    //   const featuresWithShape = processedShapeMap.get( key );
+    //   if ( featuresWithShape ) {
+    //     return featuresWithShape.find( otherFeatureSet => featureSet.isIsomorphicTo( otherFeatureSet ) ) ?? null;
+    //   }
+    //   else {
+    //     return null;
+    //   }
+    // };
 
     const forEachPossibleFaceFeatureSet = (
       initialSet: SolutionFeatureSet,
@@ -317,18 +325,13 @@ export class PatternRule {
     let count = 0;
 
     let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => {
-      const isomorphicDual = getIsomorphicProcessed( set.featureSet );
-
-      if ( !isomorphicDual ) {
+      if ( set.featureSet.isCanonicalWith( automorphisms ) ) {
         count++;
-        if ( count % 10 === 0 ) {
+        if ( count % 1000 === 0 ) {
           console.log( count );
         }
 
         let inputFeatureSet = set.featureSet;
-
-        // Done BEFORE we bail (if we have no highlander solutions)
-        addToShapeMap( set.featureSet );
 
         let solutionSet = set.solutionSet;
         if ( options.highlander ) {
@@ -770,7 +773,7 @@ export class PatternRule {
       }
     }
 
-    const embeddedPreviousRules = previousRules.flatMap( rule => rule.getEmbeddedRules( embeddings ) );
+    const embeddedPreviousRules = previousRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, mainPatternBoard ) ) );
 
     return rules.filter( rule => !rule.isRedundant( [
       ...embeddedPreviousRules,

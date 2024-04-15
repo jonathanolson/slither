@@ -82,7 +82,7 @@ console.log( 'test' );
   } ) );
 
   const diagonalPatternBoard = squareBoardGenerations[ 1 ][ 0 ];
-  const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( diagonalPatternBoard ), newFilteredSquareRules );
+  const filteredDiagonalRules = PatternRule.filterAndSortRules( PatternRule.getSolutionEnumeratedRules( diagonalPatternBoard ).slice( 40000, 43000 ), newFilteredSquareRules );
   console.log( filteredDiagonalRules );
   addRuleNodes( filteredDiagonalRules, diagonalPatternBoard.planarPatternMap );
 

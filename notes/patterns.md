@@ -4,6 +4,8 @@
 - TODO
   - 
   - Performance wins:
+    - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
+      - Possibly with a tiny subset of features?
     - (a) minimize amount of new objects created for each SolutionFeatureSet
       - can we store just a "row index" of the solutions? lightweight view
       - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?

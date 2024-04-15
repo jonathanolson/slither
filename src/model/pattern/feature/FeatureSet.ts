@@ -690,6 +690,20 @@ export class FeatureSet {
     return false;
   }
 
+  public isCanonicalWith( embeddings: Embedding[] ): boolean {
+    const canonicalString = this.toCanonicalString();
+
+    // TODO: can we speed this up?
+    for ( const embedding of embeddings ) {
+      const embeddedFeatureSet = this.embedded( this.patternBoard, embedding );
+      if ( embeddedFeatureSet && embeddedFeatureSet.toCanonicalString() < canonicalString ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // returns null if the embedding is incompatible with the features (e.g. invalid face coloring of exit faces)
   public embedded( patternBoard: TPatternBoard, embedding: Embedding ): FeatureSet | null {
     try {
