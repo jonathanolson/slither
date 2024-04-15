@@ -58,8 +58,8 @@ console.log( 'test' );
 
   const basicGenerations = basicPatternBoards.map( patternBoard => [ patternBoard ] );
   const faceGenerations = [
-    // ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
-    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 3 )
+    ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 2 )
+    // ...FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 3 )
   ];
 
   faceGenerations.forEach( generation => generation.forEach( board => {

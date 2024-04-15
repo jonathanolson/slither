@@ -711,6 +711,11 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
     throw new Error( 'pattern search not implemented generally yet' );
   }
 
+  if ( assertEnabled() && pattern === board ) {
+    // We should have the identity somewhere
+    assert( embeddings.filter( embedding => embedding.isIdentityAutomorphism ).length === 1 );
+  }
+
   return embeddings;
 };
 

@@ -7,6 +7,15 @@ import { TPatternBoard } from './TPatternBoard.ts';
 
 export class Embedding {
 
+  public readonly isAutomorphism: boolean;
+  public readonly isIdentityAutomorphism: boolean;
+
+  // Defined if it is an automorphism
+  public readonly vertexInverseMap?: Map<TPatternVertex, TPatternVertex>;
+  public readonly edgeInverseMap?: Map<TPatternEdge, TPatternEdge>;
+  public readonly sectorInverseMap?: Map<TPatternSector, TPatternSector>;
+  public readonly faceInverseMap?: Map<TPatternFace, TPatternFace>;
+
   public constructor(
     public readonly sourcePatternBoard: TPatternBoard,
     public readonly targetPatternBoard: TPatternBoard,
@@ -16,7 +25,26 @@ export class Embedding {
     public readonly exitEdgeMap: Map<TPatternEdge, TPatternEdge[]>,
     public readonly sectorMap: Map<TPatternSector, TPatternSector>,
     public readonly faceMap: Map<TPatternFace, TPatternFace>,
-  ) {}
+  ) {
+    this.isAutomorphism = sourcePatternBoard === targetPatternBoard;
+
+    if ( this.isAutomorphism ) {
+      this.vertexInverseMap = new Map( Array.from( vertexMap ).map( ( [ key, value ] ) => [ value, key ] ) );
+      this.sectorInverseMap = new Map( Array.from( sectorMap ).map( ( [ key, value ] ) => [ value, key ] ) );
+      this.faceInverseMap = new Map( Array.from( faceMap ).map( ( [ key, value ] ) => [ value, key ] ) );
+
+      this.edgeInverseMap = new Map( [
+        ...Array.from( nonExitEdgeMap ).map( ( [ key, value ] ) => [ value, key ] ) as [ TPatternEdge, TPatternEdge ][],
+        ...Array.from( exitEdgeMap ).map( ( [ key, value ] ) => {
+          assertEnabled() && assert( value.length === 1 );
+
+          return [ value[ 0 ], key ];
+        } ) as [ TPatternEdge, TPatternEdge ][]
+      ] );
+    }
+
+    this.isIdentityAutomorphism = this.computeIsIdentityAutomorphism();
+  }
 
   public mapVertex( vertex: TPatternVertex ): TPatternVertex {
     const result = this.vertexMap.get( vertex )!;
@@ -76,5 +104,43 @@ export class Embedding {
       `  sectorMap: ${[ ...this.sectorMap ].map( pair => `${pair[ 0 ].index} => ${pair[ 1 ].index}` ).join( ', ' )}\n` +
       `  faceMap: ${[ ...this.faceMap ].map( pair => `${pair[ 0 ].index} ${pair[ 0 ].isExit ? '->' : '=>' } ${pair[ 1 ].index}` ).join( ', ' )}\n` +
       `)`;
+  }
+
+  private computeIsIdentityAutomorphism(): boolean {
+    if ( this.sourcePatternBoard !== this.targetPatternBoard ) {
+      return false;
+    }
+
+    for ( const vertex of this.vertexMap.keys() ) {
+      if ( this.vertexMap.get( vertex ) !== vertex ) {
+        return false;
+      }
+    }
+
+    for ( const edge of this.nonExitEdgeMap.keys() ) {
+      if ( this.nonExitEdgeMap.get( edge ) !== edge ) {
+        return false;
+      }
+    }
+
+    for ( const edge of this.exitEdgeMap.keys() ) {
+      if ( this.exitEdgeMap.get( edge )!.length !== 1 || this.exitEdgeMap.get( edge )![ 0 ] !== edge ) {
+        return false;
+      }
+    }
+
+    for ( const sector of this.sectorMap.keys() ) {
+      if ( this.sectorMap.get( sector ) !== sector ) {
+        return false;
+      }
+    }
+
+    for ( const face of this.faceMap.keys() ) {
+      if ( this.faceMap.get( face ) !== face ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

@@ -26,6 +26,8 @@ import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 import { getEmbeddings } from '../getEmbeddings.ts';
 import { SolutionSet } from '../SolutionSet.ts';
 
+const scratchEmbeddingsArray: Embedding[] = [];
+
 // TODO: check code with onlyOne / notOne, make sure we haven't reversed it.
 export class FeatureSet {
   // Used for quick comparisons to see which "way" would be more efficient
@@ -690,14 +692,121 @@ export class FeatureSet {
     return false;
   }
 
+  // NOTE: different than toCanonicalString, since we check things in a specific order
   public isCanonicalWith( embeddings: Embedding[] ): boolean {
-    const canonicalString = this.toCanonicalString();
+    scratchEmbeddingsArray.length = 0;
 
-    // TODO: can we speed this up?
     for ( const embedding of embeddings ) {
-      const embeddedFeatureSet = this.embedded( this.patternBoard, embedding );
-      if ( embeddedFeatureSet && embeddedFeatureSet.toCanonicalString() < canonicalString ) {
-        return false;
+      if ( !embedding.isIdentityAutomorphism ) {
+        scratchEmbeddingsArray.push( embedding );
+      }
+    }
+
+    // If we only have an identity embedding (!), then we're canonical
+    if ( scratchEmbeddingsArray.length === 0 ) {
+      return true;
+    }
+
+    if ( this.faceValueMap.size ) {
+      for ( let i = 0; i < this.patternBoard.faces.length && scratchEmbeddingsArray.length; i++ ) {
+        const face = this.patternBoard.faces[ i ];
+
+        const faceValue = this.faceValueMap.get( face );
+        const faceValueComparable = faceValue === undefined ? -2 : ( faceValue === null ? -1 : faceValue );
+
+        for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
+          const embedding = scratchEmbeddingsArray[ j ];
+
+          const embeddedFace = embedding.faceInverseMap!.get( face )!;
+          assertEnabled() && assert( embeddedFace );
+
+          const embeddedFaceValue = this.faceValueMap.get( embeddedFace );
+          const embeddedFaceValueComparable = embeddedFaceValue === undefined ? -2 : ( embeddedFaceValue === null ? -1 : embeddedFaceValue );
+
+          if ( embeddedFaceValueComparable < faceValueComparable ) {
+            return false;
+          }
+          else if ( embeddedFaceValueComparable > faceValueComparable ) {
+            scratchEmbeddingsArray.splice( j, 1 );
+            j--;
+          }
+        }
+      }
+    }
+
+    if ( this.blackEdges.size || this.redEdges.size ) {
+      for ( let i = 0; i < this.patternBoard.edges.length && scratchEmbeddingsArray.length; i++ ) {
+        const edge = this.patternBoard.edges[ i ];
+
+        const edgeComparable = this.blackEdges.has( edge ) ? 1 : ( this.redEdges.has( edge ) ? 2 : 0 );
+
+        for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
+          const embedding = scratchEmbeddingsArray[ j ];
+
+          const embeddedEdge = embedding.edgeInverseMap!.get( edge )!;
+          assertEnabled() && assert( embeddedEdge );
+
+          const embeddedEdgeComparable = this.blackEdges.has( embeddedEdge ) ? 1 : ( this.redEdges.has( embeddedEdge ) ? 2 : 0 );
+
+          if ( embeddedEdgeComparable < edgeComparable ) {
+            return false;
+          }
+          else if ( embeddedEdgeComparable > edgeComparable ) {
+            scratchEmbeddingsArray.splice( j, 1 );
+            j--;
+          }
+        }
+      }
+    }
+
+    if ( this.sectorsNotZero.size || this.sectorsNotOne.size || this.sectorsNotTwo.size || this.sectorsOnlyOne.size ) {
+      for ( let i = 0; i < this.patternBoard.sectors.length && scratchEmbeddingsArray.length; i++ ) {
+        const sector = this.patternBoard.sectors[ i ];
+
+        const sectorComparable = ( this.sectorsOnlyOne.has( sector ) ? 1 : 0 ) +
+          ( this.sectorsNotOne.has( sector ) ? 2 : 0 ) +
+          ( this.sectorsNotTwo.has( sector ) ? 4 : 0 ) +
+          ( this.sectorsNotZero.has( sector ) ? 8 : 0 );
+
+        for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
+          const embedding = scratchEmbeddingsArray[ j ];
+
+          const embeddedSector = embedding.sectorInverseMap!.get( sector )!;
+          assertEnabled() && assert( embeddedSector );
+
+          const embeddedSectorComparable = ( this.sectorsOnlyOne.has( embeddedSector ) ? 1 : 0 ) +
+            ( this.sectorsNotOne.has( embeddedSector ) ? 2 : 0 ) +
+            ( this.sectorsNotTwo.has( embeddedSector ) ? 4 : 0 ) +
+            ( this.sectorsNotZero.has( embeddedSector ) ? 8 : 0 );
+
+          if ( embeddedSectorComparable < sectorComparable ) {
+            return false;
+          }
+          else if ( embeddedSectorComparable > sectorComparable ) {
+            scratchEmbeddingsArray.splice( j, 1 );
+            j--;
+          }
+        }
+      }
+    }
+
+    if ( this.faceColorDualFeatures.size ) {
+      // TODO: optimize these (we have a fallback to disambiguate these cases... will need to improve this when doing faces)
+      const comparable = [ ...this.faceColorDualFeatures ].map( feature => feature.toCanonicalString() ).sort().join( '//' );
+
+      for ( let i = 0; i < scratchEmbeddingsArray.length; i++ ) {
+        const embedding = scratchEmbeddingsArray[ i ];
+
+        const embeddedComparable = [ ...this.faceColorDualFeatures ].map( feature => {
+          const embeddedFeatures = feature.embedded( embedding );
+          assertEnabled() && assert( embeddedFeatures.length === 1 );
+
+          return embeddedFeatures[ 0 ].toCanonicalString();
+        } ).sort().join( '//' );
+
+        if ( embeddedComparable < comparable ) {
+          return false;
+        }
       }
     }
 

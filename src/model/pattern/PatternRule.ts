@@ -22,7 +22,7 @@ export class PatternRule {
   ) {}
 
   public getInputDifficultyScoreA(): number {
-    return this.inputFeatureSet.getInputDifficultyScoreA() + 0.5 * this.patternBoard.vertices.length;
+    return this.inputFeatureSet.getInputDifficultyScoreA() + 0.75 * this.patternBoard.vertices.length;
   }
 
   // TODO: now that we have input/output targets, the patternBoard here is redundant
@@ -304,7 +304,7 @@ export class PatternRule {
         }
 
         count++;
-        if ( count % 1000 === 0 ) {
+        if ( count % 10000 === 0 ) {
           console.log( count );
         }
 
