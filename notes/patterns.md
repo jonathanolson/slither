@@ -13,6 +13,7 @@
     - OMG CAN WE WEBGPU THIS?!?
   - 
   - CAN WE WEBGPU THIS?!!!!!!!!!!!!
+    - Can CPU focus on "redundancy with many rules", while GPU does the search?
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
