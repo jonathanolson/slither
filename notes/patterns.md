@@ -3,43 +3,39 @@
 
 - TODO
   - 
-  - Face colors?
+  - Face colors!
+    - [implemented in PatternRule, just create hooks and test/go!]
+  - 
+  - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
+    - e.g. "red exit edges" for vertices for square/hex patterns ("only")
+    - remove faces/edges from the list at start time?
+      - remove face color dual combinations that are incompatible at start time?
+    - [ready to go, should allow squareOnly/hexOnly searches to be faster]
+    - NOTE: For face coloring, we'd really want ... multiple initial feature sets (permutations?)
+      - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
   - 
   - Sectors (it will reduce pattern rule count considerably?)
+  - Highlander rules (!)
   - 
-  - 
-  - PERFORMANCE(!)
-    - HEY HEY --- should we see if rules are "satisfied"?
-      - This requires more expensive checks, BUT ALSO will improve pruning. Test it out
-    - 
-    - Also maybe sort our rules after
-    - 
-    - 
-    - pass "initial" feature set to PatternRule.get....Rules
-    - 
-    - 
-    - RULE SEARCH TREE for fast solving?
-    - RULE "dormant with <needs feature>" for faster solving
+  - Performance: PatternRule.withRulesApplied
+    - Rule search tree for fast solving?
+    - Dirty rules:
+      - Store "dormant" rules with <needs feature> for faster solving
     - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
       - Would this reduce the number of rules?
         - !!!!!!!#$!#$!#$
         - #$!#$!#$
         - Yes just include this condition in the "redundancy" check solve
+    - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
   - 
-  - PERFORMANCE(!)
-    - Have a way of tagging "dirty" things when solving using "rules".
-      - (faster solving is faster pattern discovery)
+  - Performance: PatternRule.getSolutionEnumeratedRules
+    - Can we filter "satisfied" previous rules out?
+      - This requires more expensive checks. Could see if a rule's outputFeatureSet has our change (and only check then)
+      - If rule.outputFeatureSet.isSubsetOf( ... featureSet ) <--- requires computing featureSet?
   - 
   - STATIC patterns!!!! JUST SEARCH FACES
   - 
-  - "Collapse" / "non-empty initial feature set"
-    - "re-sort" collapsed rule sets 
-    - Collapse a ruleset with a given initial feature set (adds it to all of the input feature sets, then... reapplies all of the rules and filtering?)
-    - Rule search with initial feature set (e.g. some forced red exit edges)
-      - NOTE: for face colors, we might need "different combinations" .... hmm, embeddings complicate things
-        - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
-  - 
-  - See top performance wins
+  - See top performance wins (below)
   - 
   - Should be possible to take "square only" rules, take embeddings in square board, only take (1) as representative
     - Note: will need to "apply" initial conditions to this section
@@ -47,13 +43,6 @@
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
   - Verify rules!
-  - Highlander/Sector/Color rules!
-  - Run in parallel (get a setup to do one board at a time?)
-    - Get my desktop running up!
-    - OMG CAN WE WEBGPU THIS?!?
-  - 
-  - CAN WE WEBGPU THIS?!!!!!!!!!!!!
-    - Can CPU focus on "redundancy with many rules", while GPU does the search?
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
@@ -98,6 +87,9 @@
   - Rule collapse on embedding too (consolidate)
     - (do this in places where we are ... solving?)
   - 
+  - [defer] Performance: WebGPU
+    - This... seems hard
+  - 
   - SolutionSet unit tests(!!!!)
     - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
   - 
@@ -132,10 +124,6 @@
     3. Edges + Sectors
     4. Edges + Face Colors
     5. All
-  - THEN filter them with PatternRule.isAutomorphicTo? (or just... check for isomorphisms of the patterns).
-    - Use... the "is isomorphic" function
-  - THEN test PatternRule.isAutomorphicTo / PatternRule.isRedundant
-  - 
   - 
   - Organization:
     - Automorphisms?
@@ -215,27 +203,6 @@
       - Face values (including blank)
     - Features:
       - .. All the other things we are used to
-  - 
-  - Features
-    - Name them (based on their indices), e.g.
-      - b0 (black edge 0)
-      - f0,1 or F0,1 (opposite or same face colors, for two face indices?)
-      - etc.
-      - Thus we can quickly "rename" them with an embedding and see if it exists in a state-feature collection.
-    - State in:
-      - "input pattern" (possibly a list of "false" features only)
-      - "output pattern" (possibly a list of "false" features in addition to the input false features)
-      - "face pattern board" (static? - or can be dynamic for quick solving with patterns) - note which actual states to set in a TState!
-  - 
-  - Feature sets (enumeration)
-    - Face values (optionally include blank as possibility)
-    - Edges (include red exit, but NOT black exit)
-    - Face Color (binary same/opposite)
-    - Sector simplified (only-one/not-one/not-zero/not-two)
-    - TODO: vertex/face state, nonzero-crossing
-  - Features might use more than one "state" to check (nonzero-crossing checking multiple edges)
-  - Features are either "composable" or not.
-    - If "composable", can map a feature boolean from a pattern to a feature boolean in a board.
   - 
   - Highlander:
     - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
