@@ -46,7 +46,7 @@ export class PatternNode extends Node {
     // Face backgrounds
     patternBoard.faces.forEach( face => {
 
-      if ( face.isExit ) {
+      if ( face.isExit && face.edges.length < 2 ) {
         return;
       }
 

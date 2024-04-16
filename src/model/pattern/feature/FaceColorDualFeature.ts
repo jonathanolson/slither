@@ -10,6 +10,7 @@ import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import _ from '../../../workarounds/_.ts';
+import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 
 export class FaceColorDualFeature implements TEmbeddableFeature {
 
@@ -26,6 +27,10 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     assertEnabled() && assert( primaryFaces.length );
 
     this.allFaces = new Set( [ ...primaryFaces, ...secondaryFaces ] );
+
+    if ( this.allFaces.size !== primaryFaces.length + secondaryFaces.length ) {
+      throw new IncompatibleFeatureError( this, [] );
+    }
   }
 
   public toCanonicalString(): string {

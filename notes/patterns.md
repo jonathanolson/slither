@@ -5,6 +5,7 @@
   - 
   - Face colors!
     - [implemented in PatternRule, just create hooks and test/go!]
+    - Add the "color matching" so the pattern rules are more... viewable?
   - 
   - QUICK:
     - Add "includeFaceValueZero" on one of the initial rulesets
