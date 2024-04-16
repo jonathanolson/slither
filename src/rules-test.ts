@@ -1,6 +1,6 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicPatternBoards } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, vertexNonExitPatternBoards } from './model/pattern/patternBoards.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
@@ -42,7 +42,7 @@ console.log( 'test' );
     container.addChild( new AlignBox( node, { margin: 5 } ) );
   };
 
-  const ruleSets = PatternBoardRuleSet.createChained( basicPatternBoards, basicPatternBoards.map( patternBoard => patternBoardMappings.get( patternBoard )! ), [], {
+  const ruleSets = PatternBoardRuleSet.createChained( vertexNonExitPatternBoards, vertexNonExitPatternBoards.map( patternBoard => patternBoardMappings.get( patternBoard )! ), [], {
     solveEdges: false,
     solveFaceColors: true
   } );
