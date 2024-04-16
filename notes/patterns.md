@@ -5,6 +5,8 @@
   - 
   - Face colors?
   - 
+  - See top performance wins
+  - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
   - Verify rules!
@@ -20,6 +22,7 @@
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
   - Also when we show embedded versions:
     - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
+  - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
   - 
   - Rules "Solver" (for plugging into the UI, puzzle generation, difficulty estimation(!))
     - How to "apply multiple rules" for a given... embedding*?
@@ -27,6 +30,10 @@
         - If their input feature sets are the same, combine them!!!
   - 
   - Performance wins:
+    - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
+      - This gets us "instant incremental"
+      - WOULD NEED TO BRING BACK THAT "DUAL"
+      - ---- wait, won't this take up a LOT of memory? (!)
     - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
       - If we have said feature sets A => B, then it makes no sense testing anything between A and B
       - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
