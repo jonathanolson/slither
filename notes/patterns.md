@@ -6,7 +6,9 @@
   - Face colors!
     - [implemented in PatternRule, just create hooks and test/go!]
   - 
-  - Add "includeFaceValueZero" on one of the initial rulesets
+  - QUICK:
+    - Add "includeFaceValueZero" on one of the initial rulesets
+    - Make a "pattern-boards" page that shows pattern boards
   - 
   - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
     - e.g. "red exit edges" for vertices for square/hex patterns ("only")
@@ -23,6 +25,7 @@
     - Rule search tree for fast solving?
     - Dirty rules:
       - Store "dormant" rules with <needs feature> for faster solving
+      - Basically "don't keep trying to match rules when we haven't changed any of their input features"
     - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
       - Would this reduce the number of rules?
         - !!!!!!!#$!#$!#$

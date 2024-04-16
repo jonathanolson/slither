@@ -48,6 +48,115 @@ export class SolutionSet {
     private readonly vertexConnectionsKeys: string[] | null = null
   ) {}
 
+  public toString(): string {
+    let result = `SolutionSet( numSolutions=${this.numSolutions}\n`;
+
+    for ( let solutionIndex = 0; solutionIndex < this.numSolutions; solutionIndex++ ) {
+      const offset = solutionIndex * this.shape.numNumbersPerSolution;
+
+      result += `  ${solutionIndex}:`;
+
+      if ( this.shape.numEdges ) {
+        result += ' edges: ';
+        for ( let edgeIndex = 0; edgeIndex < this.shape.numEdges; edgeIndex++ ) {
+          const blackIndex = 3 * edgeIndex;
+          const redIndex = 3 * edgeIndex + 1;
+          const originalBlackIndex = 3 * edgeIndex + 2;
+
+          const isBlack = ( this.bitData[ offset + Math.floor( blackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( blackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isRed = ( this.bitData[ offset + Math.floor( redIndex / BITS_PER_NUMBER ) ] & ( 1 << ( redIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isOriginalBlack = ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+
+          if ( edgeIndex > 0 ) {
+            result += ', ';
+          }
+
+          if ( isBlack && isOriginalBlack && !isRed ) {
+            result += `black-${edgeIndex}`;
+          }
+          else if ( isRed && !isBlack && !isOriginalBlack ) {
+            result += `red-${edgeIndex}`;
+          }
+          else if ( !isBlack && !isRed ) {
+            result += `empty${isOriginalBlack ? 'B' : 'R'}-${edgeIndex}`;
+          }
+          else {
+            result += `mixed-${isBlack}:${isRed}:${isOriginalBlack}-${edgeIndex}`;
+          }
+        }
+      }
+
+      if ( this.shape.numSectors ) {
+        result += ' sectors: ';
+        for ( let sectorIndex = 0; sectorIndex < this.shape.numSectors; sectorIndex++ ) {
+          const sectorBaseIndex = this.shape.sectorOffset + 4 * sectorIndex;
+          const notZeroBitIndex = sectorBaseIndex;
+          const notOneBitIndex = sectorBaseIndex + 1;
+          const notTwoBitIndex = sectorBaseIndex + 2;
+          const onlyOneBitIndex = sectorBaseIndex + 3;
+
+          const isNotZero = ( this.bitData[ offset + Math.floor( notZeroBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notZeroBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isNotOne = ( this.bitData[ offset + Math.floor( notOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notOneBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isNotTwo = ( this.bitData[ offset + Math.floor( notTwoBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notTwoBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isOnlyOne = ( this.bitData[ offset + Math.floor( onlyOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( onlyOneBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
+
+          if ( sectorIndex > 0 ) {
+            result += ', ';
+          }
+
+          // TODO: can improve in the future
+          result += `sector-${isNotZero}-${isNotOne}-${isNotTwo}-${isOnlyOne}-${sectorIndex}`;
+        }
+      }
+
+      if ( this.shape.numFacePairs ) {
+        const faceConnectivity = FaceConnectivity.get( this.patternBoard );
+
+        result += ' facePairs: ';
+        for ( let pairIndex = 0; pairIndex < this.shape.numFacePairs; pairIndex++ ) {
+          const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
+          const oppositePairIndex = samePairIndex + 1;
+
+          const isSame = ( this.bitData[ offset + Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isOpposite = ( this.bitData[ offset + Math.floor( oppositePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( oppositePairIndex % BITS_PER_NUMBER ) ) ) !== 0;
+
+          if ( pairIndex > 0 ) {
+            result += ', ';
+          }
+
+          const pair = faceConnectivity.connectedFacePairs[ pairIndex ];
+
+          const type = isSame && isOpposite ? 'both' : isSame ? 'same' : isOpposite ? 'opposite' : 'empty';
+
+          result += `${type}-${pairIndex}(f${pair.a.index},f${pair.b.index})`;
+        }
+      }
+
+      if ( this.vertexConnections ) {
+        result += ' vertexConnections: ';
+
+        const connections = this.vertexConnections[ solutionIndex ];
+
+        for ( let i = 0; i < connections.length; i++ ) {
+          if ( i > 0 ) {
+            result += ', ';
+          }
+
+          const vertexConnection = connections[ i ];
+          result += `(${vertexConnection.minVertexIndex},${vertexConnection.maxVertexIndex})`;
+        }
+      }
+
+      if ( this.vertexConnectionsKeys ) {
+        result += ` key:${this.vertexConnectionsKeys[ solutionIndex ]}`;
+      }
+
+      result += '\n';
+    }
+
+    return result + ')';
+  }
+
   public hasSolutionEdge( solutionIndex: number, edge: TPatternEdge ): boolean {
     const offset = solutionIndex * this.shape.numNumbersPerSolution;
 
