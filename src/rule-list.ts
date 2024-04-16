@@ -1,6 +1,6 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicEdgeRuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { basicColorOnly4RuleSet, basicEdgeRuleSets, dualEdgeColorRuleSet, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -110,6 +110,10 @@ console.log( 'test' );
 
   const ruleSets = [
     ...basicEdgeRuleSets,
+
+    dualEdgeColorRuleSet,
+    basicColorOnly4RuleSet,
+
 
     ...squareOnlyEdgeGeneration0RuleSets,
     ...squareOnlyEdgeGeneration1RuleSets,

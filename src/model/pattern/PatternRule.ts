@@ -365,7 +365,7 @@ export class PatternRule {
           const featureCount = combinationCounts[ i ];
 
           if ( numFeatures + featureCount <= options.featureLimit ) {
-            const faceColorSet = initialSet.withFaceColorDuals( features );
+            const faceColorSet = features.length ? initialSet.withFaceColorDuals( features ) : initialSet;
             if ( faceColorSet ) {
               callback( faceColorSet, numFeatures + featureCount, numEvaluatedFeatures + 1 );
             }
