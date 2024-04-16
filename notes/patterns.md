@@ -5,6 +5,8 @@
   - 
   - Face colors?
   - 
+  - Sectors (it will reduce pattern rule count considerably?)
+  - 
   - Rule collapse on embedding too (consolidate)
   - 
   - PERFORMANCE(!)
@@ -17,7 +19,7 @@
     - Also maybe sort our rules after
     - 
     - 
-    - 
+    - pass "initial" feature set to PatternRule.get....Rules
     - 
     - 
     - RULE SEARCH TREE for fast solving?

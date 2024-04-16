@@ -401,8 +401,6 @@ export class SolutionSet {
     return solutions;
   }
 
-  // TODO: don't use this, just directly "add" features to it by splitting/filtering(!)
-  // TODO: partition( func ) => { with: SolutionSet | null, without: SolutionSet | null }
   public static fromFeatureSet(
     featureSet: FeatureSet,
     includeEdges: boolean,

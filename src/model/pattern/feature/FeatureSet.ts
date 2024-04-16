@@ -509,6 +509,19 @@ export class FeatureSet {
     return new FeatureSet( patternBoard );
   }
 
+  public static emptyWithVertexOrderLimit( patternBoard: TPatternBoard, vertexOrderLimit: number ): FeatureSet {
+    const featureSet = FeatureSet.empty( patternBoard );
+
+    for ( const vertex of patternBoard.vertices ) {
+      // remember, vertex.edges INCLUDES the exit edge
+      if ( vertex.isExit && vertex.edges.length > vertexOrderLimit ) {
+        featureSet.addRedEdge( vertex.exitEdge! );
+      }
+    }
+
+    return featureSet;
+  }
+
   public static fromFeatures( patternBoard: TPatternBoard, features: TEmbeddableFeature[] ): FeatureSet {
     const featureSet = new FeatureSet( patternBoard );
 

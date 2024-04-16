@@ -7,6 +7,8 @@ import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } fr
 import { BasePatternBoard } from './BasePatternBoard.ts';
 import { patternBoardMappings } from './patternBoardMappings.ts';
 import { combineOptions } from 'phet-lib/phet-core';
+import { PatternBoardSolver } from './PatternBoardSolver.ts';
+import { getEmbeddings } from './getEmbeddings.ts';
 
 export class PatternBoardRuleSet {
   public constructor(
@@ -35,6 +37,53 @@ export class PatternBoardRuleSet {
     const rules = PatternRule.computeFilteredRules( patternBoard, options );
 
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
+  }
+
+  // TODO: Don't really use this, JUST generate the rules correctly from the start?
+  public filterCollapseWithInitialFeatureSet( featureSet: FeatureSet, previousRuleSets: PatternBoardRuleSet[] ): PatternBoardRuleSet {
+    assertEnabled() && assert( this.patternBoard === featureSet.patternBoard );
+
+    const previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
+
+    const embeddedRules = previousRules.flatMap( rule => {
+      return rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, this.patternBoard ) );
+    } );
+
+    const patchedFilteredRules = this.rules.map( rule => {
+      if ( featureSet.isSubsetOf( rule.inputFeatureSet ) ) {
+        return rule;
+      }
+      else {
+        const input = rule.inputFeatureSet.union( featureSet ); // this might be null if we make other assumptions
+
+        if ( !input ) {
+          return null;
+        }
+
+        if ( !PatternBoardSolver.hasSolution( rule.patternBoard, input.getFeaturesArray() ) ) {
+          return null;
+        }
+
+        let output = rule.outputFeatureSet.union( featureSet ); // this might be null if the result is not compatible
+
+        if ( output ) {
+          output = PatternRule.withRulesApplied( this.patternBoard, output, embeddedRules );
+        }
+
+        return output ? new PatternRule( rule.patternBoard, input, output ) : null;
+      }
+    } ).filter( rule => rule !== null && !rule.isTrivial() ) as PatternRule[];
+
+    const collapsedRules = PatternRule.collapseRules( patchedFilteredRules );
+
+    const finalRules = PatternRule.filterAndSortRules( collapsedRules, previousRules );
+
+    return new PatternBoardRuleSet( this.patternBoard, this.mapping, finalRules );
+  }
+
+  // TODO: Don't really use this, JUST generate the rules correctly from the start?
+  public filterCollapseWithVertexOrderLimit( vertexOrderLimit: number, previousRuleSets: PatternBoardRuleSet[] ): PatternBoardRuleSet {
+    return this.filterCollapseWithInitialFeatureSet( FeatureSet.emptyWithVertexOrderLimit( this.patternBoard, vertexOrderLimit ), previousRuleSets );
   }
 
   public serialize(): SerializedPatternBoardRuleSet {
