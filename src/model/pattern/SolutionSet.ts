@@ -342,7 +342,7 @@ export class SolutionSet {
       if ( faceColorDual.secondaryFaces.length ) {
         oppositePairIndices.push( getPairIndex( faceColorDual.primaryFaces[ 0 ], faceColorDual.secondaryFaces[ 0 ] ) );
         for ( let i = 1; i < faceColorDual.secondaryFaces.length; i++ ) {
-          oppositePairIndices.push( getPairIndex( faceColorDual.secondaryFaces[ i - 1 ], faceColorDual.secondaryFaces[ i ] ) );
+          samePairIndices.push( getPairIndex( faceColorDual.secondaryFaces[ i - 1 ], faceColorDual.secondaryFaces[ i ] ) );
         }
       }
     }
