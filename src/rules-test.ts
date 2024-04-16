@@ -4,6 +4,7 @@ import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
+import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -41,12 +42,16 @@ console.log( 'test' );
     container.addChild( new AlignBox( node, { margin: 5 } ) );
   };
 
-  const basicGenerations = basicPatternBoards.map( patternBoard => [ patternBoard ] );
-
-  const rules = PatternRule.getRulesForGenerations( basicGenerations, {
+  const ruleSets = PatternBoardRuleSet.createChained( basicPatternBoards, basicPatternBoards.map( patternBoard => patternBoardMappings.get( patternBoard )! ), [], {
     solveEdges: false,
     solveFaceColors: true
   } );
+
+  const rules = ruleSets.flatMap( ruleSet => ruleSet.rules );
+
+  for ( const ruleSet of ruleSets ) {
+    console.log( JSON.stringify( ruleSet.serialize() ) );
+  }
 
   addPaddedNode( new VBox( {
     spacing: 10,

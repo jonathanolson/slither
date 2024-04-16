@@ -39,6 +39,38 @@ export class PatternBoardRuleSet {
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
 
+  // TODO: associate TPlanarPatternMap with the board!!!
+  public static createChained(
+    patternBoards: TDescribedPatternBoard[],
+    mappings: TPlanarPatternMap[],
+    previousRuleSets: PatternBoardRuleSet[],
+    providedOptions?: GetRulesOptions
+  ): PatternBoardRuleSet[] {
+    let previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
+
+    const ruleSets: PatternBoardRuleSet[] = [];
+
+    for ( let i = 0; i < patternBoards.length; i++ ) {
+      const patternBoard = patternBoards[ i ];
+      const mapping = mappings[ i ];
+
+      const options = combineOptions<GetRulesOptions>( {}, providedOptions, {
+        prefilterRules: previousRules
+      } );
+
+      const rules = PatternRule.computeFilteredRules( patternBoard, options );
+
+      ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
+
+      previousRules = [
+        ...previousRules,
+        ...rules
+      ];
+    }
+
+    return ruleSets;
+  }
+
   // TODO: Don't really use this, JUST generate the rules correctly from the start?
   public filterCollapseWithInitialFeatureSet( featureSet: FeatureSet, previousRuleSets: PatternBoardRuleSet[] ): PatternBoardRuleSet {
     assertEnabled() && assert( this.patternBoard === featureSet.patternBoard );

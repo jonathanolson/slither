@@ -5,6 +5,8 @@
   - 
   - Face colors!
     - [implemented in PatternRule, just create hooks and test/go!]
+    - 
+    - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
   - QUICK:
