@@ -5,6 +5,30 @@
   - 
   - Face colors?
   - 
+  - Rule collapse on embedding too (consolidate)
+  - 
+  - PERFORMANCE(!)
+    - RULE COLLAPSE for "previous rules" (embedded), so we are not firing more rules than needed!
+    - RULE SEARCH TREE for fast solving?
+    - RULE "dormant with <needs feature>" for faster solving
+    - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
+      - Would this reduce the number of rules?
+        - !!!!!!!#$!#$!#$
+        - #$!#$!#$
+        - Yes just include this condition in the "redundancy" check solve
+  - 
+  - PERFORMANCE(!)
+    - Have a way of tagging "dirty" things when solving using "rules".
+      - (faster solving is faster pattern discovery)
+  - 
+  - STATIC patterns!!!! JUST SEARCH FACES
+  - 
+  - "Collapse" / "non-empty initial feature set"
+    - Collapse a ruleset with a given initial feature set (adds it to all of the input feature sets, then... reapplies all of the rules and filtering?)
+    - Rule search with initial feature set (e.g. some forced red exit edges)
+      - NOTE: for face colors, we might need "different combinations" .... hmm, embeddings complicate things
+        - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
+  - 
   - See top performance wins
   - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?

@@ -38,31 +38,31 @@ console.log( 'test' );
     container.addChild( new AlignBox( node, { margin: 5 } ) );
   };
 
-  // const ruleSets = [
-  //   ...basicEdgeRuleSets,
-  //
-  //   // ...triangularEdgeGeneration0RuleSets,
-  //   ...squareEdgeGeneration0RuleSets,
-  //   // ...cairoEdgeGeneration0RuleSets,
-  //   // ...hexEdgeGeneration0RuleSets,
-  //
-  //   // ...triangularEdgeGeneration1RuleSets,
-  //   ...squareEdgeGeneration1RuleSets,
-  //   // ...snubSquareEdgeGeneration1RuleSets,
-  //   // ...cairoEdgeGeneration1RuleSets,
-  //   // ...hexEdgeGeneration1RuleSets,
-  //
-  //   // ...triangularEdgeGeneration2RuleSets,
-  //   ...squareEdgeGeneration2RuleSets,
-  //   ...rhombilleEdgeGeneration2RuleSets,
-  // ];
-
   const ruleSets = [
-    // ...basicEdgeRuleSets,
+    ...basicEdgeRuleSets,
 
-    ...hexEdgeGeneration0RuleSets,
-    ...hexEdgeGeneration1RuleSets,
+    // ...triangularEdgeGeneration0RuleSets,
+    ...squareEdgeGeneration0RuleSets,
+    // ...cairoEdgeGeneration0RuleSets,
+    // ...hexEdgeGeneration0RuleSets,
+
+    // ...triangularEdgeGeneration1RuleSets,
+    ...squareEdgeGeneration1RuleSets,
+    // ...snubSquareEdgeGeneration1RuleSets,
+    // ...cairoEdgeGeneration1RuleSets,
+    // ...hexEdgeGeneration1RuleSets,
+
+    // ...triangularEdgeGeneration2RuleSets,
+    ...squareEdgeGeneration2RuleSets,
+    // ...rhombilleEdgeGeneration2RuleSets,
   ];
+
+  // const ruleSets = [
+  //   // ...basicEdgeRuleSets,
+  //
+  //   ...hexEdgeGeneration0RuleSets,
+  //   ...hexEdgeGeneration1RuleSets,
+  // ];
 
 
 
