@@ -8,7 +8,18 @@
   - Rule collapse on embedding too (consolidate)
   - 
   - PERFORMANCE(!)
+    - BUT WHAT IF WE filter the potential "previous rules" applied AT EVERY STEP?
+      - ALSO CRITICAL: at the end of the "face value" step, we can filter out rules that have more face values(!)
+    - 
     - RULE COLLAPSE for "previous rules" (embedded), so we are not firing more rules than needed!
+      - [note] only reduces rules by 10% (HOWEVER this would still technically be helpful)
+    - 
+    - Also maybe sort our rules after
+    - 
+    - 
+    - 
+    - 
+    - 
     - RULE SEARCH TREE for fast solving?
     - RULE "dormant with <needs feature>" for faster solving
     - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
@@ -24,6 +35,7 @@
   - STATIC patterns!!!! JUST SEARCH FACES
   - 
   - "Collapse" / "non-empty initial feature set"
+    - "re-sort" collapsed rule sets 
     - Collapse a ruleset with a given initial feature set (adds it to all of the input feature sets, then... reapplies all of the rules and filtering?)
     - Rule search with initial feature set (e.g. some forced red exit edges)
       - NOTE: for face colors, we might need "different combinations" .... hmm, embeddings complicate things

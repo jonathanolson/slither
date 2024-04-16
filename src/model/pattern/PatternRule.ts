@@ -177,6 +177,39 @@ export class PatternRule {
     return featureState;
   }
 
+  // Find rules with the same input feature set and collapse them (union)
+  public static collapseRules( rules: PatternRule[] ): PatternRule[] {
+    if ( rules.length === 0 ) {
+      return rules;
+    }
+
+    const patternBoard = rules[ 0 ].patternBoard;
+    assertEnabled() && assert( rules.every( rule => rule.patternBoard === patternBoard ), 'pattern board check' );
+
+    const map = new Map<string, PatternRule>();
+
+    for ( const rule of rules ) {
+      const key = rule.inputFeatureSet.toCanonicalString();
+
+      const existingRule = map.get( key );
+      if ( existingRule ) {
+        if ( existingRule.outputFeatureSet.isSubsetOf( rule.outputFeatureSet ) ) {
+          map.set( key, rule );
+        }
+        else if ( !rule.outputFeatureSet.isSubsetOf( existingRule.outputFeatureSet ) ) {
+          const union = rule.outputFeatureSet.union( existingRule.outputFeatureSet )!;
+          assertEnabled() && assert( union );
+          map.set( key, new PatternRule( patternBoard, rule.inputFeatureSet, union ) );
+        }
+      }
+      else {
+        map.set( key, rule );
+      }
+    }
+
+    return [ ...map.values() ];
+  }
+
   public static getSolutionEnumeratedRules( patternBoard: TDescribedPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
     const options = optionize3<GetRulesOptions, GetRulesSelfOptions, BasicSolveOptions>()( {}, GET_RULES_DEFAULTS, providedOptions );
 
@@ -185,8 +218,10 @@ export class PatternRule {
 
     const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
-    // TODO: perhaps we can reduce the isomorphisms here?
-    const embeddedPrefilterRules = options.prefilterRules ? options.prefilterRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) ) : [];
+    // TODO: perhaps we can reduce the isomorphisms here? [probably not]
+    const embeddedPrefilterRules = options.prefilterRules ? PatternRule.collapseRules( options.prefilterRules.flatMap( rule => {
+      return rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) );
+    } ) ) : [];
 
     // TODO: if we start pruning based on isomorphisms, change this
     const canFaceColorDualsBeSymmetryFiltered = true;
