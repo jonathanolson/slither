@@ -78,6 +78,14 @@ export class ConnectedFacePair {
   ) {
     assertEnabled() && assert( a.index < b.index );
   }
+
+  public containsFace( face: TPatternFace ): boolean {
+    return this.a === face || this.b === face;
+  }
+
+  public containsFacePair( a: TPatternFace, b: TPatternFace ): boolean {
+    return ( this.a === a && this.b === b ) || ( this.a === b && this.b === a );
+  }
 }
 
 class CandidatePath {

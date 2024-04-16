@@ -210,17 +210,58 @@ export class SolutionSet {
     } );
   }
 
-  public withFaceColorDual( faceColorDual: FaceColorDualFeature ): SolutionSet | null {
-    return this.withFilter( i => {
-      // NOTE: We probably won't look up edges "many times", so this might be acceptable.
-      return faceColorDual.isPossibleWith( edge => this.hasSolutionEdge( i, edge ) );
-    } );
-  }
-
   public withFaceColorDuals( faceColorDuals: FaceColorDualFeature[] ): SolutionSet | null {
+
+    // Find all pair indices that we'll need to (minimally) check to ensure the features!
+    const samePairIndices: number[] = [];
+    const oppositePairIndices: number[] = [];
+
+    const pairs = FaceConnectivity.get( this.patternBoard ).connectedFacePairs;
+
+    const getPairIndex = ( a: TPatternFace, b: TPatternFace ) => {
+      const pairIndex = pairs.findIndex( pair => pair.containsFacePair( a, b ) )!;
+      assertEnabled() && assert( pairIndex >= 0 );
+
+      return pairIndex;
+    };
+
+    // Add "same" for adjacent faces in the same set, and one "opposite" if we have a secondary set.
+    for ( const faceColorDual of faceColorDuals ) {
+      for ( let i = 1; i < faceColorDual.primaryFaces.length; i++ ) {
+        samePairIndices.push( getPairIndex( faceColorDual.primaryFaces[ i - 1 ], faceColorDual.primaryFaces[ i ] ) );
+      }
+      if ( faceColorDual.secondaryFaces.length ) {
+        oppositePairIndices.push( getPairIndex( faceColorDual.primaryFaces[ 0 ], faceColorDual.secondaryFaces[ 0 ] ) );
+        for ( let i = 1; i < faceColorDual.secondaryFaces.length; i++ ) {
+          oppositePairIndices.push( getPairIndex( faceColorDual.secondaryFaces[ i - 1 ], faceColorDual.secondaryFaces[ i ] ) );
+        }
+      }
+    }
+
     return this.withFilter( i => {
-      // NOTE: We probably won't look up edges "many times", so this might be acceptable.
-      return faceColorDuals.every( faceColorDual => faceColorDual.isPossibleWith( edge => this.hasSolutionEdge( i, edge ) ) );
+      const offset = i * this.shape.numNumbersPerSolution;
+
+      for ( let pairIndex of samePairIndices ) {
+        const bitIndex = this.shape.faceOffset + 2 * pairIndex;
+
+        const isSame = this.bitData[ offset + Math.floor( bitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( bitIndex % BITS_PER_NUMBER ) );
+
+        if ( !isSame ) {
+          return false;
+        }
+      }
+
+      for ( let pairIndex of oppositePairIndices ) {
+        const bitIndex = this.shape.faceOffset + 2 * pairIndex + 1;
+
+        const isOpposite = this.bitData[ offset + Math.floor( bitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( bitIndex % BITS_PER_NUMBER ) );
+
+        if ( !isOpposite ) {
+          return false;
+        }
+      }
+
+      return true;
     } );
   }
 

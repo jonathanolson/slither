@@ -6,6 +6,8 @@
   - Face colors!
     - [implemented in PatternRule, just create hooks and test/go!]
   - 
+  - Add "includeFaceValueZero" on one of the initial rulesets
+  - 
   - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
     - e.g. "red exit edges" for vertices for square/hex patterns ("only")
     - remove faces/edges from the list at start time?
