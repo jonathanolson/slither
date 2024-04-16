@@ -279,7 +279,7 @@ export class PatternRule {
 
           const faceSet = previousSet.withFaceValue( face, value );
           if ( faceSet ) {
-            callback( faceSet, numFeatures + 1, numEvaluatedFeatures + 1 );
+            callback( faceSet.withCompletedFaceValues(), numFeatures + 1, numEvaluatedFeatures + 1 );
 
             stack.push( faceSet );
             faceRecur( index + 1, numFeatures + 1, numEvaluatedFeatures + 1 );
@@ -288,7 +288,7 @@ export class PatternRule {
         }
       };
       // console.log( `${_.repeat( '  ', numInitialEvaluatedFeatures )}skip all faces` );
-      callback( initialSet, numInitialFeatures, numInitialEvaluatedFeatures + 1 );
+      callback( initialSet.withCompletedFaceValues(), numInitialFeatures, numInitialEvaluatedFeatures + 1 );
       faceRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
     };
 
@@ -415,11 +415,11 @@ export class PatternRule {
                 return;
               }
 
-              if ( embeddedPrefilterRules.length ) {
+              if ( set.previousRules.length ) {
                 // TODO: ... how can we not make another huge array here?
                 if ( rule.isRedundant( [
                   new PatternRule( patternBoard, set.previousSet.featureSet, previousOutputFeatureSet! ),
-                  ...embeddedPrefilterRules
+                  ...set.previousRules
                 ] ) ) {
                   return;
                 }
@@ -452,7 +452,7 @@ export class PatternRule {
     const rootSolutionSet = SolutionSet.fromFeatureSet( rootFeatureSet, options.solveEdges, options.solveSectors, options.solveFaceColors, options.highlander )!;
     assertEnabled() && assert( rootSolutionSet );
 
-    const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet, null, options.highlander );
+    const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet, null, embeddedPrefilterRules, options.highlander );
 
     forEachPossibleFaceFeatureSet( rootSet, leafCallback, 0, 0 );
 
@@ -552,6 +552,9 @@ class SolutionFeatureSet {
     public readonly solutionSet: SolutionSet,
     public readonly featureSet: FeatureSet,
     public readonly previousSet: SolutionFeatureSet | null,
+
+    // rules that we will use to filter out redundancies, stored here so we can prune it during the search
+    public readonly previousRules: PatternRule[],
     public readonly highlander: boolean,
   ) {}
 
@@ -565,12 +568,38 @@ class SolutionFeatureSet {
         solutionSet,
         featureSet,
         this,
+        this.previousRules.filter( rule => {
+          const ruleFaceValue = rule.inputFeatureSet.getFaceValue( face );
+
+          return ruleFaceValue === undefined || ruleFaceValue === value;
+        } ),
         this.highlander
       );
     }
     else {
       return null;
     }
+  }
+
+  // Only filters out rules that will need MORE face values to match. Signals we are DONE adding face values
+  public withCompletedFaceValues(): SolutionFeatureSet {
+    const faces = this.featureSet.patternBoard.faces;
+
+    return new SolutionFeatureSet(
+      this.solutionSet,
+      this.featureSet,
+      this.previousSet, // NOTE: copying the previous set, because we didn't actually "change" our features
+      this.previousRules.filter( rule => {
+        for ( const face of faces ) {
+          const ruleFaceValue = rule.inputFeatureSet.getFaceValue( face );
+          if ( ruleFaceValue !== undefined && ruleFaceValue !== this.featureSet.getFaceValue( face ) ) {
+            return false;
+          }
+        }
+        return true;
+      } ),
+      this.highlander
+    );
   }
 
   public withFaceColorDuals( features: FaceColorDualFeature[] ): SolutionFeatureSet | null {
@@ -585,6 +614,8 @@ class SolutionFeatureSet {
         solutionSet,
         featureSet,
         this,
+        // TODO IS THERE A WAY WE CAN improve the filtering of rules here?
+        this.previousRules,
         this.highlander
       );
     }
@@ -599,6 +630,23 @@ class SolutionFeatureSet {
     let blackSet: SolutionFeatureSet | null = null;
     let redSet: SolutionFeatureSet | null = null;
 
+    const blackPreviousRules: PatternRule[] = [];
+    const redPreviousRules: PatternRule[] = [];
+
+    // TODO: ignore previous rules IF our output feature set is a superset of the previous rule output.
+    for ( const rule of this.previousRules ) {
+      if ( rule.inputFeatureSet.impliesBlackEdge( edge ) ) {
+        blackPreviousRules.push( rule );
+      }
+      else if ( rule.inputFeatureSet.impliesRedEdge( edge ) ) {
+        redPreviousRules.push( rule );
+      }
+      else {
+        blackPreviousRules.push( rule );
+        redPreviousRules.push( rule );
+      }
+    }
+
     if ( solutionSets.black ) {
       const blackFeatureSet = this.featureSet.clone();
       blackFeatureSet.addBlackEdge( edge );
@@ -606,6 +654,7 @@ class SolutionFeatureSet {
         solutionSets.black,
         blackFeatureSet,
         this,
+        blackPreviousRules,
         this.highlander
       );
     }
@@ -616,6 +665,7 @@ class SolutionFeatureSet {
         solutionSets.red,
         redFeatureSet,
         this,
+        redPreviousRules,
         this.highlander
       );
     }
@@ -633,6 +683,7 @@ class SolutionFeatureSet {
         solutionSet,
         featureSet,
         this,
+        this.previousRules,
         this.highlander
       );
     }

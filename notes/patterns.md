@@ -7,14 +7,10 @@
   - 
   - Sectors (it will reduce pattern rule count considerably?)
   - 
-  - Rule collapse on embedding too (consolidate)
   - 
   - PERFORMANCE(!)
-    - BUT WHAT IF WE filter the potential "previous rules" applied AT EVERY STEP?
-      - ALSO CRITICAL: at the end of the "face value" step, we can filter out rules that have more face values(!)
-    - 
-    - RULE COLLAPSE for "previous rules" (embedded), so we are not firing more rules than needed!
-      - [note] only reduces rules by 10% (HOWEVER this would still technically be helpful)
+    - HEY HEY --- should we see if rules are "satisfied"?
+      - This requires more expensive checks, BUT ALSO will improve pruning. Test it out
     - 
     - Also maybe sort our rules after
     - 
@@ -44,6 +40,9 @@
         - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
   - 
   - See top performance wins
+  - 
+  - Should be possible to take "square only" rules, take embeddings in square board, only take (1) as representative
+    - Note: will need to "apply" initial conditions to this section
   - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
@@ -95,6 +94,9 @@
     - (c) potentially prune automorphisms EARLIER!
       - We could at least do automorphism/canonical checks AT END OF FACES(!)
     - (d) profile, hit GC hotspots (are we creating "feature arrays" a bunch?)
+  - 
+  - Rule collapse on embedding too (consolidate)
+    - (do this in places where we are ... solving?)
   - 
   - SolutionSet unit tests(!!!!)
     - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
