@@ -211,6 +211,7 @@ export class PatternRule {
         }
 
         if ( numFeatures >= options.featureLimit ) {
+          options.hitFeatureLimitCallback && options.hitFeatureLimitCallback();
           return;
         }
 
@@ -261,6 +262,7 @@ export class PatternRule {
         }
 
         if ( numFeatures >= options.featureLimit ) {
+          options.hitFeatureLimitCallback && options.hitFeatureLimitCallback();
           return;
         }
 
@@ -304,7 +306,7 @@ export class PatternRule {
         }
 
         count++;
-        if ( count % 10000 === 0 ) {
+        if ( count % 10000000 === 0 ) {
           console.log( count );
         }
 
@@ -425,6 +427,7 @@ export class PatternRule {
 // TODO: OMG, if we have an isomorphic option... we can bail that entire sub-tree no?
 type GetRulesSelfOptions = {
   featureLimit?: number; // counts 1 for edge or face, n-1 for each face color duals (e.g. how many linked faces)
+  hitFeatureLimitCallback?: ( () => void ) | null;
   includeFaceValueZero?: boolean;
   prefilterRules?: PatternRule[] | null;
 };
@@ -434,6 +437,7 @@ export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
 export const GET_RULES_DEFAULTS = {
   ...BASIC_SOLVE_DEFAULTS,
   featureLimit: Number.POSITIVE_INFINITY,
+  hitFeatureLimitCallback: null,
   includeFaceValueZero: false,
   prefilterRules: null,
 } as const;
