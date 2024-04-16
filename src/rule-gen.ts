@@ -13,7 +13,7 @@ import { combineOptions } from 'phet-lib/phet-core';
 
 // window.assertions.enableAssert();
 
-const progressive = true;
+const progressive = false;
 
 const handleBoard = (
   board: TBoard,

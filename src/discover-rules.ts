@@ -36,7 +36,7 @@ import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
-import { squareEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { rhombilleEdgeGeneration2RuleSets, squareEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -652,6 +652,8 @@ console.log( 'test' );
         console.log( '<16', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 16 ).length / square2Rules.length );
         console.log( '<18', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 18 ).length / square2Rules.length );
         console.log( '<20', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 20 ).length / square2Rules.length );
+
+        // console.log( arePatternBoardsIsomorphic( rhombilleEdgeGeneration2RuleSets[ 3 ].patternBoard, squareEdgeGeneration2RuleSets[ 3 ].patternBoard ) );
       }
     }
   }
