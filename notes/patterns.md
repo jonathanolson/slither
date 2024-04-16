@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Face colors?
+  - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
   - Verify rules!
