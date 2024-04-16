@@ -19,6 +19,8 @@
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
+  - Also when we show embedded versions:
+    - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
   - 
   - Rules "Solver" (for plugging into the UI, puzzle generation, difficulty estimation(!))
     - How to "apply multiple rules" for a given... embedding*?

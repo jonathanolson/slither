@@ -1,7 +1,7 @@
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
@@ -35,6 +35,24 @@ const handleGenerator = ( generator: PolygonGenerator, previousRuleSets: Pattern
 };
 
 // @ts-expect-error
+window.getTriangularBoardRules = ( generationIndex: number, index: number ) => {
+  handleGenerator(
+    getPeriodicTilingGenerator( triangularTiling, {
+      width: 6,
+      height: 5
+    } ),
+    [
+      ...basicEdgeRuleSets,
+      ...triangularEdgeGeneration0RuleSets,
+      ...triangularEdgeGeneration1RuleSets,
+      ...triangularEdgeGeneration2RuleSets,
+    ],
+    generationIndex,
+    index
+  );
+};
+
+// @ts-expect-error
 window.getSquareBoardRules = ( generationIndex: number, index: number ) => {
   handleBoard(
     new SquareBoard( 20, 20 ),
@@ -42,6 +60,25 @@ window.getSquareBoardRules = ( generationIndex: number, index: number ) => {
       ...basicEdgeRuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets,
+      ...squareEdgeGeneration2RuleSets,
+    ],
+    generationIndex,
+    index
+  );
+};
+
+// @ts-expect-error
+window.getCairoBoardRules = ( generationIndex: number, index: number ) => {
+  handleGenerator(
+    getPeriodicTilingGenerator( cairoPentagonalTiling, {
+      width: 8,
+      height: 8,
+      squareRegion: true
+    } ),
+    [
+      ...basicEdgeRuleSets,
+      ...cairoEdgeGeneration0RuleSets,
+      ...cairoEdgeGeneration1RuleSets,
     ],
     generationIndex,
     index
@@ -72,41 +109,7 @@ window.getRhombilleBoardRules = ( generationIndex: number, index: number ) => {
       ...basicEdgeRuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets, // the first/second generation are just... square rules basically
-    ],
-    generationIndex,
-    index
-  );
-};
-
-// @ts-expect-error
-window.getCairoBoardRules = ( generationIndex: number, index: number ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( cairoPentagonalTiling, {
-      width: 8,
-      height: 8,
-      squareRegion: true
-    } ),
-    [
-      ...basicEdgeRuleSets,
-      ...cairoEdgeGeneration0RuleSets,
-      ...cairoEdgeGeneration1RuleSets,
-    ],
-    generationIndex,
-    index
-  );
-};
-
-// @ts-expect-error
-window.getTriangularBoardRules = ( generationIndex: number, index: number ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( triangularTiling, {
-      width: 6,
-      height: 5
-    } ),
-    [
-      ...basicEdgeRuleSets,
-      ...triangularEdgeGeneration0RuleSets,
-      ...triangularEdgeGeneration1RuleSets,
+      ...squareEdgeGeneration2RuleSets,
     ],
     generationIndex,
     index
@@ -125,8 +128,10 @@ window.getSnubSquareBoardRules = ( generationIndex: number, index: number ) => {
       ...basicEdgeRuleSets,
       ...triangularEdgeGeneration0RuleSets,
       ...triangularEdgeGeneration1RuleSets,
+      ...triangularEdgeGeneration2RuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets,
+      ...squareEdgeGeneration2RuleSets,
     ],
     generationIndex,
     index
@@ -144,6 +149,7 @@ window.getTrihexagonalBoardRules = ( generationIndex: number, index: number ) =>
       ...basicEdgeRuleSets,
       ...triangularEdgeGeneration0RuleSets,
       ...triangularEdgeGeneration1RuleSets,
+      ...triangularEdgeGeneration2RuleSets,
       ...hexEdgeGeneration0RuleSets,
     ],
     generationIndex,

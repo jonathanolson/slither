@@ -1,6 +1,6 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, snubSquareEdgeGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { basicEdgeRuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -80,16 +80,17 @@ console.log( 'test' );
   const ruleSets = [
     ...basicEdgeRuleSets,
 
-    ...triangularEdgeGeneration0RuleSets,
+    // ...triangularEdgeGeneration0RuleSets,
     ...squareEdgeGeneration0RuleSets,
-    ...cairoEdgeGeneration0RuleSets,
-    ...hexEdgeGeneration0RuleSets,
+    // ...cairoEdgeGeneration0RuleSets,
+    // ...hexEdgeGeneration0RuleSets,
 
-    ...triangularEdgeGeneration1RuleSets,
+    // ...triangularEdgeGeneration1RuleSets,
     ...squareEdgeGeneration1RuleSets,
-    ...snubSquareEdgeGeneration1RuleSets,
-    ...cairoEdgeGeneration1RuleSets,
+    // ...snubSquareEdgeGeneration1RuleSets,
+    // ...cairoEdgeGeneration1RuleSets,
 
+    // ...triangularEdgeGeneration2RuleSets,
     ...squareEdgeGeneration2RuleSets,
   ];
   addPaddedNode( new HBox( {
