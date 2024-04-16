@@ -13,6 +13,8 @@ import { TPatternFace } from './TPatternFace.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
 import { SolutionSet } from './SolutionSet.ts';
 import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
+import { getFaceFeatureCombinations } from './feature/getFaceFeatureCombinations.ts';
+import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 
 export class PatternRule {
   public constructor(
@@ -180,12 +182,27 @@ export class PatternRule {
 
     // TODO: handle enumeration of all cases
     assertEnabled() && assert( !options?.solveSectors, 'sector solving not yet supported' );
-    assertEnabled() && assert( !options?.solveFaceColors, 'face solving not yet supported' );
 
     const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
     // TODO: perhaps we can reduce the isomorphisms here?
     const embeddedPrefilterRules = options.prefilterRules ? options.prefilterRules.flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) ) : [];
+
+    // TODO: if we start pruning based on isomorphisms, change this
+    const canFaceColorDualsBeSymmetryFiltered = true;
+
+    // Get a list of unique face feature combinations
+    const faceColorDualCombinations = options.solveFaceColors ? getFaceFeatureCombinations( patternBoard ).filter( features => {
+      return canFaceColorDualsBeSymmetryFiltered ? FaceColorDualFeature.areCanonicalWith( features, automorphisms ) : true;
+    } ) : null;
+
+    const faceColorDualCombinationFeatureCounts = faceColorDualCombinations ? faceColorDualCombinations.map( features => {
+      let count = 0;
+      for ( const feature of features ) {
+        count += feature.primaryFaces.length + feature.secondaryFaces.length - 1;
+      }
+      return count;
+    } ) : null;
 
     const forEachPossibleFaceFeatureSet = (
       initialSet: SolutionFeatureSet,
@@ -193,6 +210,7 @@ export class PatternRule {
       numInitialFeatures: number,
       numInitialEvaluatedFeatures: number
     ): void => {
+      // TODO: refactor this, especially if this isn't run first(!) we don't want to run this unnecessarily
       const faces = patternBoard.faces.filter( face => !face.isExit );
       const stack = [ initialSet ];
 
@@ -292,6 +310,46 @@ export class PatternRule {
       edgeRecur( 0, numInitialFeatures, numInitialEvaluatedFeatures );
     };
 
+
+    const forEachPossibleFaceColorDualFeatureSet = (
+      initialSet: SolutionFeatureSet,
+      callback: ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ) => void,
+      numFeatures: number,
+      numEvaluatedFeatures: number
+    ): void => {
+      const combinations = faceColorDualCombinations!;
+      const combinationCounts = faceColorDualCombinationFeatureCounts!;
+      assertEnabled() && assert( combinations );
+
+      // TODO: ditch numEvaluatedFeatures!
+
+      if ( numFeatures < options.featureLimit ) {
+        // TODO: pre-measure this (if we are ever not the almost-final bit)
+        for ( let i = 0; i < combinations.length; i++ ) {
+          const features = combinations[ i ];
+          const featureCount = combinationCounts[ i ];
+
+          if ( numFeatures + featureCount <= options.featureLimit ) {
+            const faceColorSet = initialSet.withFaceColorDuals( features );
+            if ( faceColorSet ) {
+              callback( faceColorSet, numFeatures + featureCount, numEvaluatedFeatures + 1 );
+            }
+          }
+          else {
+            options.hitFeatureLimitCallback && options.hitFeatureLimitCallback();
+          }
+        }
+      }
+      else {
+        options.hitFeatureLimitCallback && options.hitFeatureLimitCallback();
+
+        // NOTE: Lets double-check this, but our combinations should include the empty set FOR us.
+        // We just do this here INSTEAD for efficiency, so we don't need an iteration
+        callback( initialSet, numFeatures, numEvaluatedFeatures + 1 );
+      }
+    };
+
+
     const rules: PatternRule[] = [];
     let count = 0;
 
@@ -338,6 +396,14 @@ export class PatternRule {
         }
       }
     };
+
+    if ( options.solveFaceColors ) {
+      const originalCallback = leafCallback;
+
+      leafCallback = ( featureSet, numFeatures, numEvaluatedFeatures ) => {
+        return forEachPossibleFaceColorDualFeatureSet( featureSet, originalCallback, numFeatures, numEvaluatedFeatures );
+      };
+    }
 
     if ( options.solveEdges ) {
       const originalCallback = leafCallback;
@@ -459,6 +525,26 @@ class SolutionFeatureSet {
     if ( solutionSet ) {
       const featureSet = this.featureSet.clone();
       featureSet.addFaceValue( face, value );
+
+      return new SolutionFeatureSet(
+        solutionSet,
+        featureSet,
+        this,
+        this.highlander
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  public withFaceColorDuals( features: FaceColorDualFeature[] ): SolutionFeatureSet | null {
+    const solutionSet = this.solutionSet.withFaceColorDuals( features );
+    if ( solutionSet ) {
+      const featureSet = this.featureSet.clone();
+      for ( const feature of features ) {
+        featureSet.addFaceColorDual( feature );
+      }
 
       return new SolutionFeatureSet(
         solutionSet,

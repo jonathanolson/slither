@@ -8,6 +8,7 @@ import { FeatureSet } from './feature/FeatureSet.ts';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
+import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 
 const BITS_PER_NUMBER = 30;
 
@@ -206,6 +207,20 @@ export class SolutionSet {
       const originalBlackIndex = 3 * edge.index + 2;
       // TODO: reduce duplication with this logic, make it clean and readable
       return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) === 0;
+    } );
+  }
+
+  public withFaceColorDual( faceColorDual: FaceColorDualFeature ): SolutionSet | null {
+    return this.withFilter( i => {
+      // NOTE: We probably won't look up edges "many times", so this might be acceptable.
+      return faceColorDual.isPossibleWith( edge => this.hasSolutionEdge( i, edge ) );
+    } );
+  }
+
+  public withFaceColorDuals( faceColorDuals: FaceColorDualFeature[] ): SolutionSet | null {
+    return this.withFilter( i => {
+      // NOTE: We probably won't look up edges "many times", so this might be acceptable.
+      return faceColorDuals.every( faceColorDual => faceColorDual.isPossibleWith( edge => this.hasSolutionEdge( i, edge ) ) );
     } );
   }
 

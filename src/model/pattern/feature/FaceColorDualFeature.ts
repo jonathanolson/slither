@@ -14,6 +14,7 @@ import _ from '../../../workarounds/_.ts';
 export class FaceColorDualFeature implements TEmbeddableFeature {
 
   public readonly allFaces: Set<TPatternFace> = new Set();
+  private canonicalString: string | null = null;
 
   public constructor(
     public readonly primaryFaces: TPatternFace[],
@@ -28,15 +29,19 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
   }
 
   public toCanonicalString(): string {
-    const primaryIndices = _.sortBy( this.primaryFaces.map( face => face.index ) );
-    const secondaryIndices = _.sortBy( this.secondaryFaces.map( face => face.index ) );
+    if ( this.canonicalString === null ) {
+      const primaryIndices = _.sortBy( this.primaryFaces.map( face => face.index ) );
+      const secondaryIndices = _.sortBy( this.secondaryFaces.map( face => face.index ) );
 
-    const isPrimaryFirst = primaryIndices.length > secondaryIndices.length || ( primaryIndices.length === secondaryIndices.length && primaryIndices[ 0 ] < secondaryIndices[ 0 ] );
+      const isPrimaryFirst = primaryIndices.length > secondaryIndices.length || ( primaryIndices.length === secondaryIndices.length && primaryIndices[ 0 ] < secondaryIndices[ 0 ] );
 
-    const firstIndices = isPrimaryFirst ? primaryIndices : secondaryIndices;
-    const secondIndices = isPrimaryFirst ? secondaryIndices : primaryIndices;
+      const firstIndices = isPrimaryFirst ? primaryIndices : secondaryIndices;
+      const secondIndices = isPrimaryFirst ? secondaryIndices : primaryIndices;
 
-    return `face-color-dual-${firstIndices.join( ',' )}-${secondIndices.join( ',' )}`;
+      this.canonicalString = `face-color-dual-${firstIndices.join( ',' )}-${secondIndices.join( ',' )}`;
+    }
+
+    return this.canonicalString;
   }
 
   public isPossibleWith(
@@ -215,6 +220,27 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     }
 
     return !hasSame || !hasOpposite;
+  }
+
+  public static areCanonicalWith( features: FaceColorDualFeature[], embeddings: Embedding[] ): boolean {
+    const comparable = features.map( feature => feature.toCanonicalString() ).sort().join( '//' );
+
+    // TODO: optimize this, so that we aren't creating a bunch of features(!)
+    // TODO: should be able to inverse-map the indices
+    for ( const embedding of embeddings ) {
+      const embeddedComparable = features.map( feature => {
+        const embeddedFeatures = feature.embedded( embedding );
+        assertEnabled() && assert( embeddedFeatures.length === 1 );
+
+        return embeddedFeatures[ 0 ].toCanonicalString();
+      } ).sort().join( '//' );
+
+      if ( embeddedComparable < comparable ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public static deserialize( serialized: TSerializedEmbeddableFeature & { type: 'face-color-dual' }, patternBoard: TPatternBoard ): FaceColorDualFeature {

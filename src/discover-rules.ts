@@ -435,6 +435,17 @@ console.log( 'test' );
         vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ] ]
       } ) ) );
 
+      const itsyBoard = new BasePatternBoard( {
+        numNonExitVertices: 0,
+        numExitVertices: 7,
+        type: 'faces',
+        vertexLists: [ [ 0, 1, 2, 3 ], [ 0, 4, 5, 6 ] ]
+      } );
+      const itsyAutmorphisms = getEmbeddings( itsyBoard, itsyBoard );
+      console.log( getFaceFeatureCombinations( itsyBoard ).filter( features => {
+        return FaceColorDualFeature.areCanonicalWith( features, itsyAutmorphisms );
+      } ) );
+
       {
         const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
         const diagonalPatternBoard = FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];

@@ -5,9 +5,6 @@
   - 
   - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
-  - Serialization of "groups" of rules (e.g. store the pattern boards, with their mappings, and reference from rules)
-  - Use featureLimit to explore larger patterns with smaller numbers of features
-  - 
   - Verify rules!
   - Highlander/Sector/Color rules!
   - Run in parallel (get a setup to do one board at a time?)
@@ -51,13 +48,14 @@
     - (c) potentially prune automorphisms EARLIER!
       - We could at least do automorphism/canonical checks AT END OF FACES(!)
     - (d) profile, hit GC hotspots (are we creating "feature arrays" a bunch?)
-    - (e) reduce console.log, and figure out a way to output
   - 
   - SolutionSet unit tests(!!!!)
     - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
   - 
   - UNIT TESTS --- also test that things are "solving" correctly, e.g. given a random feature set WITH solutions,
   -   things that are solved keep the same solution count/set
+  - 
+  - Highlander with FACE COLORS (!)
   - 
   - During simulations, we COULD ignore exit edges (since they are determined by the rest of the puzzle)
   - 

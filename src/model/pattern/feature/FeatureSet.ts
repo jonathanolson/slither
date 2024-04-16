@@ -697,6 +697,8 @@ export class FeatureSet {
     scratchEmbeddingsArray.length = 0;
 
     for ( const embedding of embeddings ) {
+      assertEnabled() && assert( embedding.isAutomorphism );
+
       if ( !embedding.isIdentityAutomorphism ) {
         scratchEmbeddingsArray.push( embedding );
       }
@@ -791,22 +793,8 @@ export class FeatureSet {
     }
 
     if ( this.faceColorDualFeatures.size ) {
-      // TODO: optimize these (we have a fallback to disambiguate these cases... will need to improve this when doing faces)
-      const comparable = [ ...this.faceColorDualFeatures ].map( feature => feature.toCanonicalString() ).sort().join( '//' );
-
-      for ( let i = 0; i < scratchEmbeddingsArray.length; i++ ) {
-        const embedding = scratchEmbeddingsArray[ i ];
-
-        const embeddedComparable = [ ...this.faceColorDualFeatures ].map( feature => {
-          const embeddedFeatures = feature.embedded( embedding );
-          assertEnabled() && assert( embeddedFeatures.length === 1 );
-
-          return embeddedFeatures[ 0 ].toCanonicalString();
-        } ).sort().join( '//' );
-
-        if ( embeddedComparable < comparable ) {
-          return false;
-        }
+      if ( !FaceColorDualFeature.areCanonicalWith( [ ...this.faceColorDualFeatures ], scratchEmbeddingsArray ) ) {
+        return false;
       }
     }
 
