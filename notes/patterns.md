@@ -11,9 +11,6 @@
     - Registry of simplest-mapping pattern boards (based on isomorphism)
       - We attach the rules to these
   - 
-  - Memory issues... can we figure out more filtering before "STORING" the pattern?
-    - Also... just limit the number of features for the next bit on hexes/etc.?
-  - 
   - Potentially something that lists/gives "serialization" for pattern boards/mappings
   - Make a good "viewer" for patterns (ideally one we can scroll through though)
   - 

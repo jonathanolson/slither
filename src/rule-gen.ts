@@ -1,7 +1,7 @@
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
@@ -14,7 +14,7 @@ import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsom
 
 // window.assertions.enableAssert();
 
-let progressive = true;
+let progressive = false;
 
 // @ts-expect-error
 window.disableProgressive = () => {
@@ -87,6 +87,45 @@ const handleGenerator = (
 
   handleBoard( board, previousRuleSets, generationIndex, index, options );
 };
+
+
+// @ts-expect-error
+window.getOnlySquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleBoard(
+    new SquareBoard( 20, 20 ),
+    [
+      ...basicEdgeRuleSets,
+      ...squareOnlyEdgeGeneration0RuleSets,
+      ...squareOnlyEdgeGeneration1RuleSets,
+      ...squareOnlyEdgeGeneration2RuleSets,
+    ],
+    generationIndex,
+    index,
+    combineOptions<GetRulesOptions>( {
+      vertexOrderLimit: 4
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getOnlyHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleBoard(
+    new HexagonalBoard( 10, 1, true ),
+    [
+      ...basicEdgeRuleSets,
+      ...hexOnlyEdgeGeneration0RuleSets,
+      ...hexOnlyEdgeGeneration1RuleSets,
+    ],
+    generationIndex,
+    index,
+    combineOptions<GetRulesOptions>( {
+      vertexOrderLimit: 3
+    }, options )
+  );
+};
+
+
+
 
 // @ts-expect-error
 window.getTriangularBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {

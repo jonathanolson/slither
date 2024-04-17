@@ -501,7 +501,7 @@ export class PatternRule {
       };
     }
 
-    const rootFeatureSet = FeatureSet.empty( patternBoard );
+    const rootFeatureSet = options.vertexOrderLimit === null ? FeatureSet.empty( patternBoard ) : FeatureSet.emptyWithVertexOrderLimit( patternBoard, options.vertexOrderLimit );
     const rootSolutionSet = SolutionSet.fromFeatureSet( rootFeatureSet, options.solveEdges, options.solveSectors, options.solveFaceColors, options.highlander )!;
     assertEnabled() && assert( rootSolutionSet );
 
@@ -569,6 +569,7 @@ type GetRulesSelfOptions = {
   includeFaceValueZero?: boolean;
   prefilterRules?: PatternRule[] | null;
   logModulo?: number;
+  vertexOrderLimit?: number | null;
 };
 
 export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
@@ -579,7 +580,8 @@ export const GET_RULES_DEFAULTS = {
   hitFeatureLimitCallback: null,
   includeFaceValueZero: false,
   prefilterRules: null,
-  logModulo: 10000000
+  logModulo: 1000000,
+  vertexOrderLimit: null,
 } as const;
 
 class SolutionFeatureSet {
