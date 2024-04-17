@@ -1,4 +1,4 @@
-import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { basicColorOnly4RuleSet, basicEdgeRuleSets, dualEdgeColorRuleSet, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 
@@ -26,6 +26,11 @@ display.setWidthHeight( window.innerWidth, window.innerHeight );
 console.log( 'test' );
 
 ( async () => {
+
+  const background = new Rectangle( {
+    fill: '#333'
+  } );
+  scene.addChild( background );
 
   const container = new VBox( {
     x: 10,
@@ -147,11 +152,28 @@ console.log( 'test' );
 
 
   if ( scene.bounds.isValid() ) {
+    background.rectWidth = Math.ceil( scene.right + 10 );
+    background.rectHeight = Math.ceil( scene.bottom + 10 );
+
     display.setWidthHeight(
       Math.ceil( scene.right + 10 ),
       Math.ceil( scene.bottom + 10 )
     );
     display.updateDisplay();
+
+    // Serialize it to XHTML that can be used in foreignObject (HTML can't be)
+    const xhtml = new window.XMLSerializer().serializeToString( display.domElement );
+
+    // Create an SVG container with a foreignObject.
+    const data = `<svg xmlns="http://www.w3.org/2000/svg" width="${display.width}" height="${display.height}">` +
+                 '<foreignObject width="100%" height="100%">' +
+                 `<div xmlns="http://www.w3.org/1999/xhtml">${
+                   xhtml
+                 }</div>` +
+                 '</foreignObject>' +
+                 '</svg>';
+
+    console.log( data );
   }
 
 } )();

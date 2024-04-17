@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Make a good "viewer" for patterns (ideally one we can scroll through though)
+  - 
   - Performance: PatternRule.withRulesApplied
     - 
     - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
