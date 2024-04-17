@@ -6,6 +6,18 @@
   - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
     - BinaryFeatureSet?
       - [DO SECTORS FIRST, then we can work more at optimization and do this]
+    - Flags:
+      - Not red (e.g. black)
+      - Not black (e.g. red)
+      - Not zero
+      - Not one
+      - Not two (how should the flags detect with red/black?)
+        - OMG OMG what if we store a certain number of EDGES per number, and we DO NOT SPLIT
+          - Then we can BIT SHIFT to potentially check sectors(!!!!!!!!).e.g. "do we need a feature for this, or is it redundant"
+      - Not opposite
+      - Not same
+      - Original is black (solution only)
+    - Everything becomes "finding boolean formulas" now
   - 
   - TPatternBoard cleanup:
     - serialize() on TPatternBoard,
@@ -25,6 +37,12 @@
     - Description and mapping on TPatternBoard(!)
       - Registry of simplest-mapping pattern boards (based on isomorphism)
         - We attach the rules to these
+  - 
+  - Symmetry pruning
+    - Store stacks of choices. Can evaluate whether it is canonical.
+    - NOTE: We can calculate AT WHAT stack index we should potentially check for WHAT automorphism!!!
+      - Of course, ignore identity automorphism 
+      - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
   - 
   - Have rule-image.ts write all of the files out based on pattern-set?
     - Use puppeteer, provide a function that gives the image?
@@ -112,9 +130,6 @@
     - How to "apply multiple rules" for a given... embedding*?
       - OH OH, check all rule input feature sets. Then COMBINE embedded rules that are "compatible"?
         - If their input feature sets are the same, combine them!!!
-  - 
-  - Symmetry pruning
-    - 
   - 
   - Check code TODOs
   - 
