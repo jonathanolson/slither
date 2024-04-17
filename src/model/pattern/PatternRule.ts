@@ -104,7 +104,13 @@ export class PatternRule {
       return true;
     }
 
-    return this.outputFeatureSet.isSubsetOf( PatternRule.withRulesApplied( this.patternBoard, this.inputFeatureSet, embeddedRules ) );
+    // For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
+    const featureSet = this.outputFeatureSet;
+    const filteredEmbeddedRules = embeddedRules.filter( rule => {
+      return rule.outputFeatureSet.isSubsetOf( featureSet );
+    } );
+
+    return this.outputFeatureSet.isSubsetOf( PatternRule.withRulesApplied( this.patternBoard, this.inputFeatureSet, filteredEmbeddedRules ) );
   }
 
   public hasApplication( featureSet: FeatureSet ): boolean {
@@ -415,7 +421,7 @@ export class PatternRule {
         }
 
         count++;
-        if ( count % 10000000 === 0 ) {
+        if ( count % options.logModulo === 0 ) {
           console.log( count );
         }
 
@@ -528,6 +534,7 @@ type GetRulesSelfOptions = {
   hitFeatureLimitCallback?: ( () => void ) | null;
   includeFaceValueZero?: boolean;
   prefilterRules?: PatternRule[] | null;
+  logModulo?: number;
 };
 
 export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
@@ -538,6 +545,7 @@ export const GET_RULES_DEFAULTS = {
   hitFeatureLimitCallback: null,
   includeFaceValueZero: false,
   prefilterRules: null,
+  logModulo: 10000000
 } as const;
 
 class SolutionFeatureSet {

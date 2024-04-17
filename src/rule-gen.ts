@@ -8,6 +8,7 @@ import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTilin
 import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { GetRulesOptions } from './model/pattern/PatternRule.ts';
 import { combineOptions } from 'phet-lib/phet-core';
+import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsomorphic.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -31,6 +32,12 @@ const handleBoard = (
   const generations = FacesPatternBoard.getFirstNGenerations( board, generationIndex + 1 );
 
   const patternBoard = generations[ generationIndex ][ index ];
+
+  // Ignore rule sets that are AT or IN THE FUTURE for what we are computing
+  const indexOfMatching = previousRuleSets.findIndex( ruleSet => arePatternBoardsIsomorphic( ruleSet.patternBoard, patternBoard ) );
+  if ( indexOfMatching >= 0 ) {
+    previousRuleSets = previousRuleSets.slice( 0, indexOfMatching );
+  }
 
   if ( progressive ) {
     let featureLimit = 1;
@@ -126,7 +133,7 @@ window.getSquareBoardRules = ( generationIndex: number, index: number, options?:
       ...basicEdgeRuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets,
-      ...squareEdgeGeneration2RuleSets,
+      // ...squareEdgeGeneration2RuleSets,
     ],
     generationIndex,
     index,

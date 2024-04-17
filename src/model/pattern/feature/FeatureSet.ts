@@ -848,11 +848,6 @@ export class FeatureSet {
   }
 
   public isSubsetOf( other: FeatureSet ): boolean {
-    for ( const [ face, value ] of this.faceValueMap ) {
-      if ( !other.impliesFaceValue( face, value ) ) {
-        return false;
-      }
-    }
     for ( const edge of this.blackEdges ) {
       if ( !other.impliesBlackEdge( edge ) ) {
         return false;
@@ -860,6 +855,11 @@ export class FeatureSet {
     }
     for ( const edge of this.redEdges ) {
       if ( !other.impliesRedEdge( edge ) ) {
+        return false;
+      }
+    }
+    for ( const [ face, value ] of this.faceValueMap ) {
+      if ( !other.impliesFaceValue( face, value ) ) {
         return false;
       }
     }

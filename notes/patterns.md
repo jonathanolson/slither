@@ -3,6 +3,33 @@
 
 - TODO
   - 
+  - Performance: PatternRule.withRulesApplied
+    - 
+    - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
+      - PatternRule.isRedundant will:
+        - (a) scan for what parts of the rule are "missing" (edges, sectors, faces/duals?)
+        - (b) if missing, start an applicator
+          - it will find a match, and apply it, then return back to us (noting WHAT CHANGED)
+          - we see if we are redundant yet, if not, continue until NO MORE MATCHES
+      - Applicator will:
+        - Store arrays for (edges, sectors, faces/duals?) that get rules with "those parts missing"
+          - Whenever we apply a rule that hits these, we put them "back in the queue"
+          - Obviously we ditch rules that can't be applied (incompatible OR not face values)
+      - duals for "missing" - can be noted by their canonical string (so we can easily match/remove)
+      - 
+      - NOTE!!!!!! : For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
+    - 
+    - Rule search tree for fast solving?
+    - Dirty rules:
+      - Store "dormant" rules with <needs feature> for faster solving
+      - Basically "don't keep trying to match rules when we haven't changed any of their input features"
+    - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
+      - Would this reduce the number of rules?
+        - !!!!!!!#$!#$!#$
+        - #$!#$!#$
+        - Yes just include this condition in the "redundancy" check solve
+    - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
+  - 
   - 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
     - ... do we just make this more of a callback iterator (or generator)?
   - 
@@ -30,18 +57,6 @@
   - 
   - Sectors (it will reduce pattern rule count considerably?)
   - Highlander rules (!)
-  - 
-  - Performance: PatternRule.withRulesApplied
-    - Rule search tree for fast solving?
-    - Dirty rules:
-      - Store "dormant" rules with <needs feature> for faster solving
-      - Basically "don't keep trying to match rules when we haven't changed any of their input features"
-    - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
-      - Would this reduce the number of rules?
-        - !!!!!!!#$!#$!#$
-        - #$!#$!#$
-        - Yes just include this condition in the "redundancy" check solve
-    - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
   - 
   - Performance: PatternRule.getSolutionEnumeratedRules
     - Can we filter "satisfied" previous rules out?
