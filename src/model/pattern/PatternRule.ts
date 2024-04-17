@@ -423,10 +423,9 @@ export class PatternRule {
       ];
     };
 
-    let lastRule: PatternRule | null = null;
+    let lastScannedFeatureSet: FeatureSet | null = null;
     const addRule = ( rule: PatternRule ) => {
       rules.push( rule );
-      lastRule = rule;
       embeddedFilterRules.push( ...rule.getEmbeddedRules( automorphisms ) );
       ruleAddedCounter++;
       if ( ruleAddedCounter % 100 === 0 ) {
@@ -435,6 +434,8 @@ export class PatternRule {
     };
 
     let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ): void => {
+
+      lastScannedFeatureSet = set.featureSet;
 
       if ( set.featureSet.isCanonicalWith( automorphisms ) ) {
         const inputFeatureSet = set.featureSet;
@@ -447,7 +448,7 @@ export class PatternRule {
         count++;
         if ( count % options.logModulo === 0 ) {
           compactRules();
-          console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), rules.length, JSON.stringify( lastRule?.inputFeatureSet?.serialize() ) );
+          console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), rules.length, JSON.stringify( lastScannedFeatureSet?.serialize() ) );
         }
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
@@ -556,6 +557,7 @@ export class PatternRule {
   public static computeFilteredRules( patternBoard: TDescribedPatternBoard, options?: GetRulesOptions ): PatternRule[] {
     const rawRules = PatternRule.getSolutionEnumeratedRules( patternBoard, options );
 
+    // TODO: this is probably done above
     return PatternRule.filterAndSortRules( rawRules, options?.prefilterRules || [] );
   }
 }
