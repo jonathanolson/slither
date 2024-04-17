@@ -154,6 +154,8 @@ export class PatternRule {
     // TODO: try to prune things based on whether a rule's "input set" of edges/faces has changed since it was last evaluated?
     // TODO: how to get that computation to be LESS than what we have now?
 
+    // console.log( 'withRulesApplied', initialFeatureSet.toCanonicalString(), JSON.stringify( initialFeatureSet.serialize() ) );
+
     while ( changed ) {
       changed = false;
 
@@ -162,7 +164,13 @@ export class PatternRule {
         const matchState = rule.getMatchState( featureState );
 
         if ( matchState === PatternRuleMatchState.ACTIONABLE ) {
+
+          // console.log( 'applying', rule.inputFeatureSet.toCanonicalString(), JSON.stringify( rule.inputFeatureSet.serialize() ) );
+
           rule.apply( featureState );
+
+          // console.log( 'after', featureState.toCanonicalString(), JSON.stringify( featureState.serialize() ) );
+
           changed = true;
         }
         else if ( matchState === PatternRuleMatchState.DORMANT ) {
@@ -364,9 +372,17 @@ export class PatternRule {
           const features = combinations[ i ];
           const featureCount = combinationCounts[ i ];
 
+          // console.log( 'before' );
+          // console.log( initialSet.solutionSet.toString() );
+
+          // console.log( 'features' );
+          // console.log( features );
+
           if ( numFeatures + featureCount <= options.featureLimit ) {
             const faceColorSet = features.length ? initialSet.withFaceColorDuals( features ) : initialSet;
             if ( faceColorSet ) {
+              // console.log( 'after' );
+              // console.log( faceColorSet.solutionSet.toString() );
               callback( faceColorSet, numFeatures + featureCount, numEvaluatedFeatures + 1 );
             }
           }
@@ -404,10 +420,6 @@ export class PatternRule {
         }
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
-
-        if ( JSON.stringify( rule.outputFeatureSet.serialize() ) === '{"faceValues":[{"face":0,"value":2}],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,1],"secondaryFaces":[],"sameColorPaths":[[0]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[3,2],"secondaryFaces":[4],"sameColorPaths":[[2,1]],"oppositeColorPaths":[[2,3]]}]}' ) {
-          debugger;
-        }
 
         // See if it is guaranteed redundant!
         if ( !rule.isTrivial() ) {

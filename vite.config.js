@@ -31,6 +31,7 @@ export default defineConfig( {
         'rules-test': '/rules-test.html',
         'rule-gen': '/rule-gen.html',
         'rule-list': '/rule-list.html',
+        'debug-rule': '/debug-rule.html',
       },
       plugins: [
         unassert( {

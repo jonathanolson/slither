@@ -298,7 +298,10 @@ export class SolutionSet {
           for ( let pairIndex = 0; pairIndex < this.shape.numFacePairs; pairIndex++ ) {
             const pair = faceConnectivity!.connectedFacePairs[ pairIndex ];
 
-            if ( pair.a === face || pair.b === face ) {
+            // TODO: don't rely on shortestPath this hard? we're relying on this for an adjacency check (essentially)
+            // TODO: for larger patterns, we might have a LOT of pairs. Is there a way we can optimize this, and
+            // TODO: basically just look at "direct connecting pairs"?
+            if ( ( pair.a === face || pair.b === face ) && pair.shortestPath.length === 1 ) {
               const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
               const isSame = this.bitData[ offset + Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) );
 
