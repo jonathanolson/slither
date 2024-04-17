@@ -275,18 +275,44 @@ export class SolutionSet {
       return this.clone();
     }
     else {
+      const faceConnectivity = this.shape.numFacePairs ? FaceConnectivity.get( this.patternBoard ) : null;
       return this.withFilter( i => {
         const offset = i * this.shape.numNumbersPerSolution;
 
-        let blackCount = 0;
-        for ( const edge of face.edges ) {
-          const originalBlackIndex = 3 * edge.index + 2;
-          if ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) {
-            blackCount++;
+        if ( this.shape.numEdges ) {
+          let blackCount = 0;
+          for ( const edge of face.edges ) {
+            const originalBlackIndex = 3 * edge.index + 2;
+            if ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) {
+              blackCount++;
+            }
+          }
+
+          if ( blackCount !== value ) {
+            return false;
           }
         }
 
-        return blackCount === value;
+        if ( this.shape.numFacePairs ) {
+          let blackCount = 0;
+          for ( let pairIndex = 0; pairIndex < this.shape.numFacePairs; pairIndex++ ) {
+            const pair = faceConnectivity!.connectedFacePairs[ pairIndex ];
+
+            if ( pair.a === face || pair.b === face ) {
+              const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
+              const isSame = this.bitData[ offset + Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) );
+
+              if ( !isSame ) {
+                blackCount++;
+              }
+            }
+          }
+          if ( blackCount !== value ) {
+            return false;
+          }
+        }
+
+        return true;
       } );
     }
   }

@@ -405,6 +405,10 @@ export class PatternRule {
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
 
+        if ( JSON.stringify( rule.outputFeatureSet.serialize() ) === '{"faceValues":[{"face":0,"value":2}],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,1],"secondaryFaces":[],"sameColorPaths":[[0]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[3,2],"secondaryFaces":[4],"sameColorPaths":[[2,1]],"oppositeColorPaths":[[2,3]]}]}' ) {
+          debugger;
+        }
+
         // See if it is guaranteed redundant!
         if ( !rule.isTrivial() ) {
           if ( set.previousSet ) {

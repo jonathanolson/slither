@@ -3,11 +3,15 @@
 
 - TODO
   - 
+  - SolutionSet.withFaceValue not applying to ... face-only data (duh)
+  - 
   - Face colors!
     - [implemented in PatternRule, just create hooks and test/go!]
     - 
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
+  - 
+  - rule-gen failure in dev (circular) https://github.com/vitejs/vite/issues/3033#issuecomment-973247243
   - 
   - QUICK:
     - Add "includeFaceValueZero" on one of the initial rulesets

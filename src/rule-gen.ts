@@ -1,7 +1,7 @@
 import { SquareBoard } from './model/board/square/SquareBoard.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
@@ -97,6 +97,22 @@ window.getTriangularBoardRules = ( generationIndex: number, index: number, optio
     generationIndex,
     index,
     options
+  );
+};
+
+// @ts-expect-error
+window.getColorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleBoard(
+    new SquareBoard( 20, 20 ),
+    [
+      ...basicColorRuleSets,
+    ],
+    generationIndex,
+    index,
+    combineOptions<GetRulesOptions>( {
+      solveEdges: false,
+      solveFaceColors: true,
+    }, options )
   );
 };
 

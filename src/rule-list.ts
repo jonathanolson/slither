@@ -1,6 +1,9 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicColorOnly4RuleSet, basicEdgeRuleSets, dualEdgeColorRuleSet, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { basicColorOnly4RuleSet, basicEdgeRuleSets, dualEdgeColorRuleSet, squareColorGeneration0RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { PatternRule } from './model/pattern/PatternRule.ts';
+import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -78,12 +81,13 @@ console.log( 'test' );
   //   squareOnlyEdgeGeneration2RuleSets[ 0 ],
   // ];
 
+  // TODO: add a 'debug-rule' page? And move things out into a directory
   // const ruleSets = [
-  //   new PatternBoardRuleSet( squareEdgeGeneration1RuleSets[ 0 ].patternBoard, squareEdgeGeneration1RuleSets[ 0 ].mapping, [
+  //   new PatternBoardRuleSet( squareEdgeGeneration0RuleSets[ 0 ].patternBoard, squareEdgeGeneration0RuleSets[ 0 ].mapping, [
   //     new PatternRule(
-  //       squareEdgeGeneration1RuleSets[ 0 ].patternBoard,
-  //       FeatureSet.deserialize( JSON.parse( '{"faceValues":[{"face":0,"value":1},{"face":1,"value":2}],"redEdges":[1,2,12,8]}' ), squareEdgeGeneration1RuleSets[ 0 ].patternBoard ),
-  //       FeatureSet.deserialize( JSON.parse( '{"faceValues":[{"face":0,"value":1},{"face":1,"value":2}],"blackEdges":[4,7],"redEdges":[1,2,12,5,6,8]}' ), squareEdgeGeneration1RuleSets[ 0 ].patternBoard )
+  //       squareEdgeGeneration0RuleSets[ 0 ].patternBoard,
+  //       FeatureSet.deserialize( JSON.parse( '{"faceValues":[{"face":0,"value":2}],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,1],"secondaryFaces":[],"sameColorPaths":[[0]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[2],"secondaryFaces":[4],"sameColorPaths":[],"oppositeColorPaths":[[1,3]]}]}' ), squareEdgeGeneration0RuleSets[ 0 ].patternBoard ),
+  //       FeatureSet.deserialize( JSON.parse( '{"faceValues":[{"face":0,"value":2}],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,1],"secondaryFaces":[],"sameColorPaths":[[0]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[3,2],"secondaryFaces":[4],"sameColorPaths":[[2,1]],"oppositeColorPaths":[[2,3]]}]}' ), squareEdgeGeneration0RuleSets[ 0 ].patternBoard )
   //     )
   //   ] )
   // ];
@@ -114,6 +118,7 @@ console.log( 'test' );
     dualEdgeColorRuleSet,
     basicColorOnly4RuleSet,
 
+    ...squareColorGeneration0RuleSets,
 
     ...squareOnlyEdgeGeneration0RuleSets,
     ...squareOnlyEdgeGeneration1RuleSets,

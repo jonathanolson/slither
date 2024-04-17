@@ -5,6 +5,9 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
+import { SquareBoard } from './model/board/square/SquareBoard.ts';
+import { basicColorRuleSets } from './model/pattern/rules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -68,6 +71,17 @@ console.log( 'test' );
     } )
   } ) );
 
+
+  const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
+
+  const patternBoard = generations[ 0 ][ 0 ];
+  const ruleSet = PatternBoardRuleSet.create( patternBoard, patternBoard.planarPatternMap, [
+    ...basicColorRuleSets
+  ], {
+    solveEdges: false,
+    solveFaceColors: true
+  } );
+  console.log( JSON.stringify( ruleSet.serialize() ) );
 
 
   // const getSolutionCount = ( patternBoard: TPatternBoard ) => {
