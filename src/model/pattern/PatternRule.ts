@@ -407,8 +407,32 @@ export class PatternRule {
     };
 
 
-    const rules: PatternRule[] = [];
     let count = 0;
+
+    let ruleAddedCounter = 0;
+    let rules: PatternRule[] = [];
+    let embeddedFilterRules: PatternRule[] = [
+      ...embeddedPrefilterRules
+    ];
+
+    const compactRules = () => {
+      rules = PatternRule.filterAndSortRules( rules, options.prefilterRules || [] );
+      embeddedFilterRules = [
+        ...embeddedPrefilterRules,
+        ...rules.flatMap( rule => rule.getEmbeddedRules( automorphisms ) ),
+      ];
+    };
+
+    let lastRule: PatternRule | null = null;
+    const addRule = ( rule: PatternRule ) => {
+      rules.push( rule );
+      lastRule = rule;
+      embeddedFilterRules.push( ...rule.getEmbeddedRules( automorphisms ) );
+      ruleAddedCounter++;
+      if ( ruleAddedCounter % 100 === 0 ) {
+        compactRules();
+      }
+    };
 
     let leafCallback = ( set: SolutionFeatureSet, numFeatures: number, numEvaluatedFeatures: number ): void => {
 
@@ -422,13 +446,15 @@ export class PatternRule {
 
         count++;
         if ( count % options.logModulo === 0 ) {
-          console.log( count );
+          compactRules();
+          console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), rules.length, JSON.stringify( lastRule?.inputFeatureSet?.serialize() ) );
         }
 
         const rule = new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
 
         // See if it is guaranteed redundant!
         if ( !rule.isTrivial() ) {
+          // See if it is redundant based on our prefilterRules + the previous "rule"
           if ( set.previousSet ) {
             const previousOutputFeatureSet = set.previousSet.getOutputFeatureSet();
 
@@ -449,7 +475,11 @@ export class PatternRule {
             }
           }
 
-          rules.push( rule );
+          if ( rule.isRedundant( embeddedFilterRules ) ) {
+            return;
+          }
+
+          addRule( rule );
         }
       }
     };
@@ -477,6 +507,8 @@ export class PatternRule {
     const rootSet = new SolutionFeatureSet( rootSolutionSet, rootFeatureSet, null, embeddedPrefilterRules, options.highlander );
 
     forEachPossibleFaceFeatureSet( rootSet, leafCallback, 0, 0 );
+
+    compactRules();
 
     return rules;
   }
