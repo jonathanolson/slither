@@ -3,18 +3,21 @@
 
 - TODO
   - 
-  - SolutionSet.withFaceValue not applying to ... face-only data (duh)
+  - 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
+    - ... do we just make this more of a callback iterator (or generator)?
+  - 
+  - Compute face colors for other boards (at least gen 0 and 1)
+  - 
+  - It seems like progressive is SLOWING things down! Maybe lets just store a flag and call the callback once?
   - 
   - Face colors!
-    - [implemented in PatternRule, just create hooks and test/go!]
-    - 
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
   - rule-gen failure in dev (circular) https://github.com/vitejs/vite/issues/3033#issuecomment-973247243
   - 
   - QUICK:
-    - Add "includeFaceValueZero" on one of the initial rulesets
+    - Add "includeFaceValueZero" on one of the initial rulesets (for every edge-based)
     - Make a "pattern-boards" page that shows pattern boards
   - 
   - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
