@@ -3,6 +3,10 @@
 
 - TODO
   - 
+  - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
+    - BinaryFeatureSet?
+      - [DO SECTORS FIRST, then we can work more at optimization and do this]
+  - 
   - Description and mapping on TPatternBoard(!)
     - Registry of simplest-mapping pattern boards (based on isomorphism)
       - We attach the rules to these
