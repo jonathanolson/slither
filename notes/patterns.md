@@ -90,6 +90,8 @@
       - If rule.outputFeatureSet.isSubsetOf( ... featureSet ) <--- requires computing featureSet?
   - 
   - STATIC patterns!!!! JUST SEARCH FACES
+    - ... do we only report these if... removing ANY of the faces would then give no information?
+      - Or do we allow a certain number of "red exit vertices"?
   - 
   - See top performance wins (below)
   - 
@@ -110,6 +112,11 @@
     - How to "apply multiple rules" for a given... embedding*?
       - OH OH, check all rule input feature sets. Then COMBINE embedded rules that are "compatible"?
         - If their input feature sets are the same, combine them!!!
+  - 
+  - Symmetry pruning
+    - 
+  - 
+  - Check code TODOs
   - 
   - Performance wins:
     - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
@@ -138,13 +145,13 @@
       - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
     - (c) potentially prune automorphisms EARLIER!
       - We could at least do automorphism/canonical checks AT END OF FACES(!)
-    - (d) profile, hit GC hotspots (are we creating "feature arrays" a bunch?)
   - 
   - Rule collapse on embedding too (consolidate)
     - (do this in places where we are ... solving?)
   - 
   - [defer] Performance: WebGPU
-    - This... seems hard
+    - This... seems hard. But wait, this is actually really more of a BITMASK situation. See how JS "prototype" goes
+      - This would be AMAZING for performance
   - 
   - SolutionSet unit tests(!!!!)
     - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
@@ -156,17 +163,8 @@
   - 
   - During simulations, we COULD ignore exit edges (since they are determined by the rest of the puzzle)
   - 
-  - PatternRule todos:
-    - Flags:
-      - Skip symmetry pruning
-      - Skip ...
-    - Profile it, see what is taking up time. Symmetry checks? Still GC from the solver?
-    - Remove duplicated `return processedWasSatisfied.get( isomorphicDual )!;`
-    - 
-    - Isometry checks still off, we are calling "callback" without all of the "blanks"
-    - Don't do the "initial" solution check, we do this anyway with other things?
-    - check other TODOs
-  - // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!
+  - Parallel running:
+    - https://github.com/deThread/dethread?tab=readme-ov-file / https://socket.io/docs/v4/
   - 
   - FeatureSet.difference (things we can apply, essentially the pattern rule output)
     - (performance, but also "hey we can show what actually changed")
