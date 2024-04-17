@@ -1,6 +1,6 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { hexOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { hexOnlyEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
@@ -55,9 +55,10 @@ console.log( 'test' );
     } ) );
   };
 
-  showRuleSet( squareOnlyEdgeGeneration1RuleSets[ 0 ] );
-  showRuleSet( squareOnlyEdgeGeneration1RuleSets[ 1 ] );
+  // showRuleSet( squareOnlyEdgeGeneration1RuleSets[ 0 ] );
+  // showRuleSet( squareOnlyEdgeGeneration3RuleSets[ 0 ] );
   showRuleSet( hexOnlyEdgeGeneration1RuleSets[ 0 ] );
+  // showRuleSet( squareOnlyEdgeGeneration3RuleSets[ 0 ] );
 
 
   // const ruleSets = [

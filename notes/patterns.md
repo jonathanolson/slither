@@ -7,9 +7,28 @@
     - BinaryFeatureSet?
       - [DO SECTORS FIRST, then we can work more at optimization and do this]
   - 
-  - Description and mapping on TPatternBoard(!)
-    - Registry of simplest-mapping pattern boards (based on isomorphism)
-      - We attach the rules to these
+  - TPatternBoard cleanup:
+    - serialize() on TPatternBoard,
+      - corresponding deserialize()
+    - 
+    - descriptor on TPatternBoard
+    - 
+    - default planar mapping on TPatternBoard
+    - 
+    - PatternBoard registry:
+      - names (?) so we can refer to them in rules
+      - descriptor
+      - mappings? (do we want multiple?)
+    - QUICK:
+      - Make a "pattern-boards" page that shows pattern boards
+        - ESTABLISH a registry of "tiling" types
+    - Description and mapping on TPatternBoard(!)
+      - Registry of simplest-mapping pattern boards (based on isomorphism)
+        - We attach the rules to these
+  - 
+  - Have rule-image.ts write all of the files out based on pattern-set?
+    - Use puppeteer, provide a function that gives the image?
+    - Use svgo (minus the viewbox removal) to optimize the files
   - 
   - Potentially something that lists/gives "serialization" for pattern boards/mappings
   - Make a good "viewer" for patterns (ideally one we can scroll through though)
@@ -53,10 +72,6 @@
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
   - rule-gen failure in dev (circular) https://github.com/vitejs/vite/issues/3033#issuecomment-973247243
-  - 
-  - QUICK:
-    - Add "includeFaceValueZero" on one of the initial rulesets (for every edge-based)
-    - Make a "pattern-boards" page that shows pattern boards
   - 
   - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
     - e.g. "red exit edges" for vertices for square/hex patterns ("only")
