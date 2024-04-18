@@ -26,8 +26,6 @@
     - serialize() on TPatternBoard,
       - corresponding deserialize()
     - 
-    - descriptor on TPatternBoard
-    - 
     - default planar mapping on TPatternBoard
     - 
     - PatternBoard registry:

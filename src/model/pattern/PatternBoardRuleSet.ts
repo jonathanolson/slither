@@ -1,4 +1,3 @@
-import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
 import { GetRulesOptions, PatternRule } from './PatternRule.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
@@ -9,10 +8,11 @@ import { patternBoardMappings } from './patternBoardMappings.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 export class PatternBoardRuleSet {
   public constructor(
-    public readonly patternBoard: TDescribedPatternBoard,
+    public readonly patternBoard: TPatternBoard,
     public readonly mapping: TPlanarPatternMap,
     public readonly rules: PatternRule[] = []
   ) {
@@ -20,7 +20,7 @@ export class PatternBoardRuleSet {
   }
 
   public static create(
-    patternBoard: TDescribedPatternBoard,
+    patternBoard: TPatternBoard,
     mapping: TPlanarPatternMap,
     previousRuleSets: PatternBoardRuleSet[],
     providedOptions?: GetRulesOptions
@@ -41,7 +41,7 @@ export class PatternBoardRuleSet {
 
   // TODO: associate TPlanarPatternMap with the board!!!
   public static createChained(
-    patternBoards: TDescribedPatternBoard[],
+    patternBoards: TPatternBoard[],
     mappings: TPlanarPatternMap[],
     previousRuleSets: PatternBoardRuleSet[],
     providedOptions?: GetRulesOptions

@@ -1,5 +1,4 @@
 import { BASIC_SOLVE_DEFAULTS, BasicSolveOptions, FeatureSet } from './feature/FeatureSet.ts';
-import { TDescribedPatternBoard } from './TDescribedPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
@@ -18,7 +17,7 @@ import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 
 export class PatternRule {
   public constructor(
-    public readonly patternBoard: TDescribedPatternBoard,
+    public readonly patternBoard: TPatternBoard,
     public readonly inputFeatureSet: FeatureSet,
     public readonly outputFeatureSet: FeatureSet
   ) {}
@@ -28,7 +27,7 @@ export class PatternRule {
   }
 
   // TODO: now that we have input/output targets, the patternBoard here is redundant
-  public embedded( patternBoard: TDescribedPatternBoard, embedding: Embedding ): PatternRule | null {
+  public embedded( patternBoard: TPatternBoard, embedding: Embedding ): PatternRule | null {
     const inputFeatureSet = this.inputFeatureSet.embedded( patternBoard, embedding );
     if ( inputFeatureSet === null ) {
       return null;
@@ -44,7 +43,7 @@ export class PatternRule {
 
   public getEmbeddedRules( embeddings: Embedding[] ): PatternRule[] {
     // TODO: integrate the description, then remove the cast!
-    return embeddings.map( embedding => this.embedded( embedding.targetPatternBoard as TDescribedPatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
+    return embeddings.map( embedding => this.embedded( embedding.targetPatternBoard as TPatternBoard, embedding ) ).filter( rule => rule !== null ) as PatternRule[];
   }
 
   public isIsomorphicTo( other: PatternRule ): boolean {
@@ -136,8 +135,7 @@ export class PatternRule {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
   }
 
-  // TODO: TDescribedPatternBoard should be integrated into TPatternBoard!
-  public static getBasicRule( patternBoard: TDescribedPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ): PatternRule | null {
+  public static getBasicRule( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ): PatternRule | null {
     const outputFeatureSet = inputFeatureSet.solved( options );
 
     if ( outputFeatureSet ) {
@@ -224,7 +222,7 @@ export class PatternRule {
     return [ ...map.values() ];
   }
 
-  public static getSolutionEnumeratedRules( patternBoard: TDescribedPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
+  public static getSolutionEnumeratedRules( patternBoard: TPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] {
     const options = optionize3<GetRulesOptions, GetRulesSelfOptions, BasicSolveOptions>()( {}, GET_RULES_DEFAULTS, providedOptions );
 
     // TODO: handle enumeration of all cases
@@ -554,7 +552,7 @@ export class PatternRule {
     return filteredRules;
   }
 
-  public static computeFilteredRules( patternBoard: TDescribedPatternBoard, options?: GetRulesOptions ): PatternRule[] {
+  public static computeFilteredRules( patternBoard: TPatternBoard, options?: GetRulesOptions ): PatternRule[] {
     const rawRules = PatternRule.getSolutionEnumeratedRules( patternBoard, options );
 
     // TODO: this is probably done above

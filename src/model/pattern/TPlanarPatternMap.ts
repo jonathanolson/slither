@@ -6,6 +6,7 @@ import { TPatternFace } from './TPatternFace.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import _ from '../../workarounds/_.ts';
+import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 
 export interface TPlanarPatternMap {
   vertexMap: Map<TPatternVertex, Vector2>;
@@ -160,7 +161,7 @@ export const serializePlanarPatternMap = ( map: TPlanarPatternMap ): string => {
   ] );
 
   if ( assertEnabled() ) {
-    const deserialized = deserializePlanarPatternMap( result, { vertices: orderedVertices, edges: orderedEdges, sectors: orderedSectors, faces: orderedFaces } );
+    const deserialized = deserializePlanarPatternMap( result, { vertices: orderedVertices, edges: orderedEdges, sectors: orderedSectors, faces: orderedFaces, descriptor: {} as unknown as TPatternBoardDescriptor } );
 
     const vectorArrayEqual = ( a: Vector2[], b: Vector2[] ): boolean => {
       if ( a.length !== b.length ) {
