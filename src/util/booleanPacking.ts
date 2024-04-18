@@ -23,3 +23,16 @@ export const unpackBooleanArray = ( str: string, length: number ): boolean[] => 
   }
   return booleans.slice( 0, length );
 };
+
+export const BIT_NUMBERS_BITS_PER_NUMBER = 30;
+
+export const bitNumbersIsBitOne = ( bitNumbers: number[], offset: number, index: number ): boolean => {
+  return (
+    bitNumbers[ offset + Math.floor( index / BIT_NUMBERS_BITS_PER_NUMBER ) ] &
+    ( 1 << ( index % BIT_NUMBERS_BITS_PER_NUMBER ) )
+  ) !== 0;
+};
+
+export const bitNumbersSetBitToOne = ( bitNumbers: number[], offset: number, index: number ): void => {
+  bitNumbers[ offset + Math.floor( index / BIT_NUMBERS_BITS_PER_NUMBER ) ] |= 1 << ( index % BIT_NUMBERS_BITS_PER_NUMBER );
+};

@@ -9,8 +9,9 @@ import { PatternBoardSolver } from './PatternBoardSolver.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
+import { BIT_NUMBERS_BITS_PER_NUMBER, bitNumbersIsBitOne, bitNumbersSetBitToOne } from '../../util/booleanPacking.ts';
 
-const BITS_PER_NUMBER = 30;
+
 
 export type SolutionSetShape = {
   numEdges: number;
@@ -63,9 +64,9 @@ export class SolutionSet {
           const redIndex = 3 * edgeIndex + 1;
           const originalBlackIndex = 3 * edgeIndex + 2;
 
-          const isBlack = ( this.bitData[ offset + Math.floor( blackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( blackIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isRed = ( this.bitData[ offset + Math.floor( redIndex / BITS_PER_NUMBER ) ] & ( 1 << ( redIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isOriginalBlack = ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isBlack = bitNumbersIsBitOne( this.bitData, offset, blackIndex );
+          const isRed = bitNumbersIsBitOne( this.bitData, offset, redIndex );
+          const isOriginalBlack = bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex );
 
           if ( edgeIndex > 0 ) {
             result += ', ';
@@ -95,10 +96,10 @@ export class SolutionSet {
           const notTwoBitIndex = sectorBaseIndex + 2;
           const onlyOneBitIndex = sectorBaseIndex + 3;
 
-          const isNotZero = ( this.bitData[ offset + Math.floor( notZeroBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notZeroBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isNotOne = ( this.bitData[ offset + Math.floor( notOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notOneBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isNotTwo = ( this.bitData[ offset + Math.floor( notTwoBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notTwoBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isOnlyOne = ( this.bitData[ offset + Math.floor( onlyOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( onlyOneBitIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isNotZero = bitNumbersIsBitOne( this.bitData, offset, notZeroBitIndex );
+          const isNotOne = bitNumbersIsBitOne( this.bitData, offset, notOneBitIndex );
+          const isNotTwo = bitNumbersIsBitOne( this.bitData, offset, notTwoBitIndex );
+          const isOnlyOne = bitNumbersIsBitOne( this.bitData, offset, onlyOneBitIndex );
 
           if ( sectorIndex > 0 ) {
             result += ', ';
@@ -117,8 +118,8 @@ export class SolutionSet {
           const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
           const oppositePairIndex = samePairIndex + 1;
 
-          const isSame = ( this.bitData[ offset + Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) ) ) !== 0;
-          const isOpposite = ( this.bitData[ offset + Math.floor( oppositePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( oppositePairIndex % BITS_PER_NUMBER ) ) ) !== 0;
+          const isSame = bitNumbersIsBitOne( this.bitData, offset, samePairIndex );
+          const isOpposite = bitNumbersIsBitOne( this.bitData, offset, oppositePairIndex );
 
           if ( pairIndex > 0 ) {
             result += ', ';
@@ -161,7 +162,8 @@ export class SolutionSet {
     const offset = solutionIndex * this.shape.numNumbersPerSolution;
 
     const originalBlackIndex = 3 * edge.index + 2;
-    return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+
+    return bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex );
   }
 
   public clone(): SolutionSet {
@@ -283,7 +285,7 @@ export class SolutionSet {
           let blackCount = 0;
           for ( const edge of face.edges ) {
             const originalBlackIndex = 3 * edge.index + 2;
-            if ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) {
+            if ( bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex ) ) {
               blackCount++;
             }
           }
@@ -303,7 +305,7 @@ export class SolutionSet {
             // TODO: basically just look at "direct connecting pairs"?
             if ( ( pair.a === face || pair.b === face ) && pair.shortestPath.length === 1 ) {
               const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
-              const isSame = this.bitData[ offset + Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) );
+              const isSame = bitNumbersIsBitOne( this.bitData, offset, samePairIndex );
 
               if ( !isSame ) {
                 blackCount++;
@@ -326,7 +328,8 @@ export class SolutionSet {
     const partition = this.partitioned( i => {
       const offset = i * this.shape.numNumbersPerSolution;
       const originalBlackIndex = 3 * edge.index + 2;
-      return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) !== 0;
+
+      return bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex );
     } );
 
     return {
@@ -344,7 +347,7 @@ export class SolutionSet {
       // If the "original" was black, then the exit edge couldn't be red.
       const originalBlackIndex = 3 * edge.index + 2;
       // TODO: reduce duplication with this logic, make it clean and readable
-      return ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) === 0;
+      return !bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex );
     } );
   }
 
@@ -382,7 +385,7 @@ export class SolutionSet {
       for ( let pairIndex of samePairIndices ) {
         const bitIndex = this.shape.faceOffset + 2 * pairIndex;
 
-        const isSame = this.bitData[ offset + Math.floor( bitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( bitIndex % BITS_PER_NUMBER ) );
+        const isSame = bitNumbersIsBitOne( this.bitData, offset, bitIndex );
 
         if ( !isSame ) {
           return false;
@@ -392,7 +395,7 @@ export class SolutionSet {
       for ( let pairIndex of oppositePairIndices ) {
         const bitIndex = this.shape.faceOffset + 2 * pairIndex + 1;
 
-        const isOpposite = this.bitData[ offset + Math.floor( bitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( bitIndex % BITS_PER_NUMBER ) );
+        const isOpposite = bitNumbersIsBitOne( this.bitData, offset, bitIndex );
 
         if ( !isOpposite ) {
           return false;
@@ -408,7 +411,7 @@ export class SolutionSet {
     assertEnabled() && assert( this.numSolutions > 0 );
 
     const numNumbersPerSolution = this.shape.numNumbersPerSolution;
-    const scratchNumbers = new Array<number>( numNumbersPerSolution ).fill( 2 ** BITS_PER_NUMBER - 1 );
+    const scratchNumbers = new Array<number>( numNumbersPerSolution ).fill( 2 ** BIT_NUMBERS_BITS_PER_NUMBER - 1 );
 
     // console.log( scratchNumbers );
 
@@ -426,8 +429,8 @@ export class SolutionSet {
       const blackIndex = 3 * edgeIndex;
       const redIndex = blackIndex + 1;
 
-      const canBeBlack = scratchNumbers[ Math.floor( blackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( blackIndex % BITS_PER_NUMBER ) );
-      const canBeRed = scratchNumbers[ Math.floor( redIndex / BITS_PER_NUMBER ) ] & ( 1 << ( redIndex % BITS_PER_NUMBER ) );
+      const canBeBlack = bitNumbersIsBitOne( scratchNumbers, 0, blackIndex );
+      const canBeRed = bitNumbersIsBitOne( scratchNumbers, 0, redIndex );
 
       const edge = this.patternBoard.edges[ edgeIndex ];
 
@@ -449,10 +452,11 @@ export class SolutionSet {
       const notTwoBitIndex = sectorBaseIndex + 2;
       const onlyOneBitIndex = sectorBaseIndex + 3;
 
-      const isNotZero = scratchNumbers[ Math.floor( notZeroBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notZeroBitIndex % BITS_PER_NUMBER ) );
-      const isNotOne = scratchNumbers[ Math.floor( notOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notOneBitIndex % BITS_PER_NUMBER ) );
-      const isNotTwo = scratchNumbers[ Math.floor( notTwoBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( notTwoBitIndex % BITS_PER_NUMBER ) );
-      const isOnlyOne = scratchNumbers[ Math.floor( onlyOneBitIndex / BITS_PER_NUMBER ) ] & ( 1 << ( onlyOneBitIndex % BITS_PER_NUMBER ) );
+      // TODO: refactor to notzero/notone/nottwo
+      const isNotZero = bitNumbersIsBitOne( scratchNumbers, 0, notZeroBitIndex );
+      const isNotOne = bitNumbersIsBitOne( scratchNumbers, 0, notOneBitIndex );
+      const isNotTwo = bitNumbersIsBitOne( scratchNumbers, 0, notTwoBitIndex );
+      const isOnlyOne = bitNumbersIsBitOne( scratchNumbers, 0, onlyOneBitIndex );
 
       if ( isOnlyOne && !isNotOne ) {
         featureSet.addSectorOnlyOne( this.patternBoard.sectors[ sectorIndex ] );
@@ -474,8 +478,8 @@ export class SolutionSet {
       for ( let pairIndex = 0; pairIndex < this.shape.numFacePairs; pairIndex++ ) {
         const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
         const oppositePairIndex = samePairIndex + 1;
-        const isSame = scratchNumbers[ Math.floor( samePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( samePairIndex % BITS_PER_NUMBER ) );
-        const isOpposite = scratchNumbers[ Math.floor( oppositePairIndex / BITS_PER_NUMBER ) ] & ( 1 << ( oppositePairIndex % BITS_PER_NUMBER ) );
+        const isSame = bitNumbersIsBitOne( scratchNumbers, 0, samePairIndex );
+        const isOpposite = bitNumbersIsBitOne( scratchNumbers, 0, oppositePairIndex );
 
         if ( isSame || isOpposite ) {
           const pair = faceConnectivity.connectedFacePairs[ pairIndex ];
@@ -509,7 +513,7 @@ export class SolutionSet {
         // Indeterminate edges can be exits, so here we'll check the red bit
         const originalBlackIndex = 3 * edge.index + 2;
 
-        const isBlack = this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) );
+        const isBlack = bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex );
         key += isBlack ? '1' : '0';
       }
 
@@ -569,7 +573,7 @@ export class SolutionSet {
       for ( let j = 0; j < this.shape.numEdges; j++ ) {
         const originalBlackIndex = 3 * j + 2;
 
-        if ( this.bitData[ offset + Math.floor( originalBlackIndex / BITS_PER_NUMBER ) ] & ( 1 << ( originalBlackIndex % BITS_PER_NUMBER ) ) ) {
+        if ( bitNumbersIsBitOne( this.bitData, offset, originalBlackIndex ) ) {
           solution.push( this.patternBoard.edges[ j ] );
         }
       }
@@ -615,7 +619,7 @@ export class SolutionSet {
     const sectorOffset = 3 * numEdges;
     const faceOffset = sectorOffset + 4 * numSectors;
     const bitsPerSolution = faceOffset + 2 * numFacePairs;
-    const numNumbersPerSolution = Math.ceil( bitsPerSolution / BITS_PER_NUMBER );
+    const numNumbersPerSolution = Math.ceil( bitsPerSolution / BIT_NUMBERS_BITS_PER_NUMBER );
 
     const shape: SolutionSetShape = {
       numEdges: numEdges,
@@ -660,10 +664,10 @@ export class SolutionSet {
         if ( includeEdges ) {
           // console.log( `black edge ${edge.index}` );
           const blackBitIndex = 3 * edge.index;
-          scratchNumbers[ Math.floor( blackBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( blackBitIndex % BITS_PER_NUMBER );
+          bitNumbersSetBitToOne( scratchNumbers, 0, blackBitIndex );
 
           const originalBlackBitIndex = 3 * edge.index + 2;
-          scratchNumbers[ Math.floor( originalBlackBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( originalBlackBitIndex % BITS_PER_NUMBER );
+          bitNumbersSetBitToOne( scratchNumbers, 0, originalBlackBitIndex );
         }
       }
 
@@ -678,8 +682,7 @@ export class SolutionSet {
           if ( !edge.isExit || edge.exitVertex!.edges.some( edge => !scratchEdgeIndexSet.has( edge.index ) ) ) {
             // console.log( `red edge ${edge.index}` );
             const redBitIndex = 3 * edgeIndex + 1;
-            scratchNumbers[ Math.floor( redBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( redBitIndex % BITS_PER_NUMBER );
-            assertEnabled() && assert( scratchNumbers[ Math.floor( redBitIndex / BITS_PER_NUMBER ) ] >= 0 );
+            bitNumbersSetBitToOne( scratchNumbers, 0, redBitIndex );
           }
         }
       }
@@ -699,26 +702,22 @@ export class SolutionSet {
 
           if ( count !== 0 ) {
             const notZeroBitIndex = sectorBaseIndex;
-            scratchNumbers[ Math.floor( notZeroBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( notZeroBitIndex % BITS_PER_NUMBER );
-            assertEnabled() && assert( scratchNumbers[ Math.floor( notZeroBitIndex / BITS_PER_NUMBER ) ] >= 0 );
+            bitNumbersSetBitToOne( scratchNumbers, 0, notZeroBitIndex );
           }
 
           if ( count !== 1 ) {
             const notOneBitIndex = sectorBaseIndex + 1;
-            scratchNumbers[ Math.floor( notOneBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( notOneBitIndex % BITS_PER_NUMBER );
-            assertEnabled() && assert( scratchNumbers[ Math.floor( notOneBitIndex / BITS_PER_NUMBER ) ] >= 0 );
+            bitNumbersSetBitToOne( scratchNumbers, 0, notOneBitIndex );
           }
 
           if ( count !== 2 ) {
             const notTwoBitIndex = sectorBaseIndex + 2;
-            scratchNumbers[ Math.floor( notTwoBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( notTwoBitIndex % BITS_PER_NUMBER );
-            assertEnabled() && assert( scratchNumbers[ Math.floor( notTwoBitIndex / BITS_PER_NUMBER ) ] >= 0 );
+            bitNumbersSetBitToOne( scratchNumbers, 0, notTwoBitIndex );
           }
 
           if ( count === 1 ) {
             const onlyOneBitIndex = sectorBaseIndex + 3;
-            scratchNumbers[ Math.floor( onlyOneBitIndex / BITS_PER_NUMBER ) ] |= 1 << ( onlyOneBitIndex % BITS_PER_NUMBER );
-            assertEnabled() && assert( scratchNumbers[ Math.floor( onlyOneBitIndex / BITS_PER_NUMBER ) ] >= 0 );
+            bitNumbersSetBitToOne( scratchNumbers, 0, onlyOneBitIndex );
           }
         }
       }
@@ -746,8 +745,7 @@ export class SolutionSet {
 
           const facePairIndex = faceOffset + 2 * j + ( isSame ? 0 : 1 );
 
-          scratchNumbers[ Math.floor( facePairIndex / BITS_PER_NUMBER ) ] |= 1 << ( facePairIndex % BITS_PER_NUMBER );
-          assertEnabled() && assert( scratchNumbers[ Math.floor( facePairIndex / BITS_PER_NUMBER ) ] >= 0 );
+          bitNumbersSetBitToOne( scratchNumbers, 0, facePairIndex );
         }
       }
 

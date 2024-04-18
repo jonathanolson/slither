@@ -4,8 +4,11 @@
 - TODO
   - 
   - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
-    - BinaryFeatureSet?
-      - [DO SECTORS FIRST, then we can work more at optimization and do this]
+    - Binary bitpacked array helper methods. 
+    - BinaryFeatureSet
+    - SolutionSet potential refactor:
+      - (a) add BinaryFeatureSet output
+      - (b) move "original is black" bits out to a contiguous chunk at the end of the array
     - Flags:
       - Not red (e.g. black)
       - Not black (e.g. red)
@@ -381,23 +384,13 @@
 https://github.com/timhutton/slinker ---> has the "solving rules"
 Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
 
-- Inputs are the board (primary and expanded), and the booleans where are marked as "IMPOSSIBLE" (also face values?)
-- Explicitly model symmetries when constructing patterns?
-
 [this is mostly old, refresh it]:
 
-- Topology-invariance:
+- Topology-invariance (full):
   - Make a pattern. Can "add" topo-invariant things to it with a match.
   - 
   - Same as our topological bit, BUT REVERSE the simplification when matching?
   - RED edges mostly disappear or no?
   - IF we deal with a single part of a face, we can "generalize" the rest of the face?
-
-- WAIT: Am I being too ambitious with topo-invariant patterns? What about patterns that don't have that level of generality?
-
-- "Pattern" SOLVER!!! (inspect numbers, identify possible pattern locations that can individually get checked)
-  - Each pattern needs to specify the required topology/structure for the area (what is important)
-  - FOR EACH topology, many cases we DO NOT CARE how many other edges a vertex supports, as long as they are red.
   - RED EDGES essentially CHANGES the topology
     - Make rules that can be applied to ANY cases 
-  - Going off the side of the board is "all x" - Use a way of pattern matching those
