@@ -5,6 +5,7 @@ import { TPatternFace } from './TPatternFace.ts';
 import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 
 export interface TPatternBoard {
+  name?: string;
   descriptor: TPatternBoardDescriptor;
 
   vertices: TPatternVertex[];

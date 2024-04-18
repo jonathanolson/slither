@@ -13,13 +13,17 @@ import { BasePatternFace } from './BasePatternFace.ts';
 
 export class BasePatternBoard implements TPatternBoard {
 
+  // Settable externally
+  public name?: string;
+
   public readonly vertices: TPatternVertex[];
   public readonly edges: TPatternEdge[];
   public readonly sectors: TPatternSector[];
   public readonly faces: TPatternFace[];
 
   public constructor(
-    public readonly descriptor: TPatternBoardDescriptor
+    public readonly descriptor: TPatternBoardDescriptor,
+    name?: string
   ) {
 
     const vertices = [
@@ -303,6 +307,10 @@ export class BasePatternBoard implements TPatternBoard {
     this.edges = edges;
     this.sectors = sectors;
     this.faces = faces;
+
+    if ( name ) {
+      this.name = name;
+    }
   }
 
   public serialize(): string {

@@ -15,7 +15,7 @@ export const edgePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
   numExitVertices: 0,
   type: 'edge'
-} );
+}, 'single-edge' );
 
 export const vertexExit2NoSectorsPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -23,7 +23,7 @@ export const vertexExit2NoSectorsPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 2,
   spans: []
-} );
+}, 'vertex-2-exit-none' );
 
 export const vertexExit2OneSectorPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -31,7 +31,7 @@ export const vertexExit2OneSectorPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 2,
   spans: [ 1 ]
-} );
+}, 'vertex-2-exit-one' );
 
 export const vertexExit3TwoAdjacentSectorsPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -39,7 +39,7 @@ export const vertexExit3TwoAdjacentSectorsPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 3,
   spans: [ 2 ]
-} );
+}, 'vertex-3-exit-two-adjacent' );
 
 export const vertexExit4TwoOppositeSectorsPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -47,7 +47,7 @@ export const vertexExit4TwoOppositeSectorsPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 4,
   spans: [ 1, 1 ]
-} );
+}, 'vertex-4-exit-two-opposite' );
 
 export const vertexExit4ThreeAdjacentSectorsPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -55,7 +55,7 @@ export const vertexExit4ThreeAdjacentSectorsPatternBoard = new BasePatternBoard(
   type: 'exit-vertex',
   edgeCount: 4,
   spans: [ 3 ]
-} );
+}, 'vertex-4-exit-three-adjacent' );
 
 export const vertexExit5TwoOnePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -63,7 +63,7 @@ export const vertexExit5TwoOnePatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 5,
   spans: [ 2, 1 ]
-} );
+}, 'vertex-5-exit-two-one' );
 
 export const vertexExit5FourPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -71,7 +71,7 @@ export const vertexExit5FourPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 5,
   spans: [ 4 ]
-} );
+}, 'vertex-5-exit-four' );
 
 export const vertexExit6TriplePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -79,7 +79,7 @@ export const vertexExit6TriplePatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 6,
   spans: [ 1, 1, 1 ]
-} );
+}, 'vertex-6-exit-triple' );
 
 export const vertexExit6TwoTwoPatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -87,7 +87,7 @@ export const vertexExit6TwoTwoPatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 6,
   spans: [ 2, 2 ]
-} );
+}, 'vertex-6-exit-two-two' );
 
 export const vertexExit6ThreeOnePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -95,7 +95,7 @@ export const vertexExit6ThreeOnePatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 6,
   spans: [ 3, 1 ]
-} );
+}, 'vertex-6-exit-three-one' );
 
 export const vertexExit6FivePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -103,42 +103,42 @@ export const vertexExit6FivePatternBoard = new BasePatternBoard( {
   type: 'exit-vertex',
   edgeCount: 6,
   spans: [ 5 ]
-} );
+}, 'vertex-6-exit-five' );
 
 export const vertexNonExit2PatternBoard = new BasePatternBoard( {
   numNonExitVertices: 1,
   numExitVertices: 0,
   type: 'non-exit-vertex',
   edgeCount: 2
-} );
+}, 'vertex-2' );
 
 export const vertexNonExit3PatternBoard = new BasePatternBoard( {
   numNonExitVertices: 1,
   numExitVertices: 0,
   type: 'non-exit-vertex',
   edgeCount: 3
-} );
+}, 'vertex-3' );
 
 export const vertexNonExit4PatternBoard = new BasePatternBoard( {
   numNonExitVertices: 1,
   numExitVertices: 0,
   type: 'non-exit-vertex',
   edgeCount: 4
-} );
+}, 'vertex-4' );
 
 export const vertexNonExit5PatternBoard = new BasePatternBoard( {
   numNonExitVertices: 1,
   numExitVertices: 0,
   type: 'non-exit-vertex',
   edgeCount: 5
-} );
+}, 'vertex-5' );
 
 export const vertexNonExit6PatternBoard = new BasePatternBoard( {
   numNonExitVertices: 1,
   numExitVertices: 0,
   type: 'non-exit-vertex',
   edgeCount: 6
-} );
+}, 'vertex-6' );
 
 export const vertexExitPatternBoards = [
   vertexExit2NoSectorsPatternBoard,
@@ -195,6 +195,10 @@ export const getStandardIsomorphicPatternBoard = ( patternBoard: TPatternBoard )
   return standardPatternBoards.find( otherPatternBoard => arePatternBoardsIsomorphic( patternBoard, otherPatternBoard ) ) ?? null;
 };
 
+export const getStandardNamedPatternBoard = ( name: string ): TPatternBoard | null => {
+  return standardPatternBoards.find( patternBoard => patternBoard.name === name ) ?? null;
+};
+
 // Replaces isomorphic pattern boards with their standard versions
 export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, planarPatternMap: TPlanarPatternMap ): TPatternBoard => {
   const standardPatternBoard = getStandardIsomorphicPatternBoard( patternBoard );
@@ -210,8 +214,15 @@ export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, plana
 };
 
 // Replaces isomorphic pattern boards with their standard versions
-export const getRegisteredGenerations = ( generations: FacesPatternBoard[][] ): TPatternBoard[][] => {
-  return generations.map( generation => generation.map( patternBoard => registerStandardPatternBoard( patternBoard, patternBoard.planarPatternMap ) ) );
+export const getRegisteredGenerations = ( name: string, generations: FacesPatternBoard[][] ): TPatternBoard[][] => {
+  return generations.map( ( generation, generationIndex ) => {
+    return generation.map( ( patternBoard, index ) => {
+
+      patternBoard.name = `${name}-${generationIndex}-${index}`;
+
+      return registerStandardPatternBoard( patternBoard, patternBoard.planarPatternMap );
+    } );
+  } );
 };
 
 registerStandardPatternBoard( edgePatternBoard, getSingleEdgePlanarPatternMap( edgePatternBoard ) );
@@ -226,13 +237,15 @@ export const getRhombilleBoardGenerations = ( n: number ) => FacesPatternBoard.g
 export const getSnubSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), n );
 
 // ORDER IMPORTANT(!)
-export const standardSquareBoardGenerations = getRegisteredGenerations( getSquareBoardGenerations( 5 ) );
-export const standardHexagonalBoardGenerations = getRegisteredGenerations( getHexagonalBoardGenerations( 4 ) );
-export const standardTriangularBoardGenerations = getRegisteredGenerations( getTriangularBoardGenerations( 3 ) );
-export const standardCairoBoardGenerations = getRegisteredGenerations( getCairoBoardGenerations( 4 ) );
+export const standardSquareBoardGenerations = getRegisteredGenerations( 'square', getSquareBoardGenerations( 5 ) );
+export const standardHexagonalBoardGenerations = getRegisteredGenerations( 'hexagonal', getHexagonalBoardGenerations( 4 ) );
+export const standardTriangularBoardGenerations = getRegisteredGenerations( 'triangular', getTriangularBoardGenerations( 4 ) );
+export const standardCairoBoardGenerations = getRegisteredGenerations( 'cairo', getCairoBoardGenerations( 4 ) );
 
-export const standardRhombilleBoardGenerations = getRegisteredGenerations( getRhombilleBoardGenerations( 3 ) );
-export const standardSnubSquareBoardGenerations = getRegisteredGenerations( getSnubSquareBoardGenerations( 3 ) );
+export const standardRhombilleBoardGenerations = getRegisteredGenerations( 'rhombille', getRhombilleBoardGenerations( 4 ) );
+export const standardSnubSquareBoardGenerations = getRegisteredGenerations( 'snub-square', getSnubSquareBoardGenerations( 3 ) );
+
+// console.log( standardPatternBoards.map( board => board.name ).filter( name => name ) );
 
 // TODO: Create serialized forms of these(!)
 // export const serializePlanarMappedPatternBoardGenerations = ( generations: FacesPatternBoard[][] ): string[][] => {

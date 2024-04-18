@@ -19,6 +19,7 @@ import { PolygonGenerator } from '../../view/GenerateNode.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
 
+  // TODO: can we remove this self-reference?
   public readonly patternBoard: this;
   public readonly planarPatternMap: TPlanarPatternMap;
 

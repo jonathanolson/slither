@@ -1,4 +1,4 @@
-import { BASIC_SOLVE_DEFAULTS, BasicSolveOptions, FeatureSet } from './feature/FeatureSet.ts';
+import { BASIC_SOLVE_DEFAULTS, BasicSolveOptions, FeatureSet, TSerializedFeatureSet } from './feature/FeatureSet.ts';
 import { Embedding } from './Embedding.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
@@ -14,6 +14,14 @@ import { SolutionSet } from './SolutionSet.ts';
 import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
 import { getFaceFeatureCombinations } from './feature/getFaceFeatureCombinations.ts';
 import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
+import { serializePatternBoard } from './serializePatternBoard.ts';
+import { deserializePatternBoard } from './deserializePatternBoard.ts';
+
+export type SerializedPatternRule = {
+  patternBoard: string;
+  input: TSerializedFeatureSet;
+  output: TSerializedFeatureSet;
+};
 
 export class PatternRule {
   public constructor(
@@ -133,6 +141,24 @@ export class PatternRule {
 
   public toCanonicalString(): string {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
+  }
+
+  public serialize(): SerializedPatternRule {
+    return {
+      patternBoard: serializePatternBoard( this.patternBoard ),
+      input: this.inputFeatureSet.serialize(),
+      output: this.outputFeatureSet.serialize()
+    };
+  }
+
+  public static deserialize( serialized: SerializedPatternRule ): PatternRule {
+    const patternBoard = deserializePatternBoard( serialized.patternBoard );
+
+    return new PatternRule(
+      patternBoard,
+      FeatureSet.deserialize( serialized.input, patternBoard ),
+      FeatureSet.deserialize( serialized.output, patternBoard )
+    );
   }
 
   public static getBasicRule( patternBoard: TPatternBoard, inputFeatureSet: FeatureSet, options?: BasicSolveOptions ): PatternRule | null {
