@@ -5,6 +5,13 @@
   - 
   - Fix up generation (we broke some things?)
   - 
+  - Testing...
+    - 
+    - Make sure that pattern rules in lists are "minimal" (individually remove input features and they should ALL change the output features)
+    - 
+    - 
+    - WAIT WAIT .... is that just how we check redundancy?
+  - 
   - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
     - Binary bitpacked array helper methods. 
     - BinaryFeatureSet
@@ -12,6 +19,9 @@
       - (a) add BinaryFeatureSet output
       - (b) move "original is black" bits out to a contiguous chunk at the end of the array
     - Flags:
+        - NOTE NOTE: WE HAVE OVERLAP between opposite/same (for adjacent faces) and the notred/notblack equivalent
+        - Do we... deduplicate this data?
+        - --- also exit edges only need a bit for "is red"?
       - Not red (e.g. black)
       - Not black (e.g. red)
       - Not zero
@@ -25,6 +35,10 @@
     - Everything becomes "finding boolean formulas" now
   - 
   - TPatternBoard cleanup:
+    - 
+    - !!!!!! GET RID OF TPatternBoard, just make BasePatternBoard => PatternBoard.
+      - Then we can store PatternBoard-related info (e.g. automorphisms, planar mappings, bit-packing metadata) on it
+    - 
     - default planar mapping on TPatternBoard
     - 
     - QUICK:
