@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - Fix up generation (we broke some things?)
+  - 
   - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
     - Binary bitpacked array helper methods. 
     - BinaryFeatureSet

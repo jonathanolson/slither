@@ -6,10 +6,10 @@ import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import _ from '../../workarounds/_.ts';
 import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 import { FacesPatternBoard } from './FacesPatternBoard.ts';
-import { SquareBoard } from '../board/square/SquareBoard.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from '../../view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling } from '../board/core/TiledBoard.ts';
+import { SquareBoard } from '../board/square/SquareBoard.ts';
 
 export const edgePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -179,17 +179,6 @@ const boardFromPolygonGenerator = ( generator: PolygonGenerator ) => {
   return new PolygonalBoard( polygons, generator.scale ?? 1 );
 };
 
-// TODO: evaluate our depth here, potentially make them lazy?
-const time = Date.now();
-console.log( time );
-export const standardTriangularBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( triangularTiling ) ), 4 );
-export const standardSquareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
-export const standardCairoBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( cairoPentagonalTiling ) ), 4 );
-export const standardHexagonalBoardGenerations = FacesPatternBoard.getFirstNGenerations( new HexagonalBoard( 10, 1, true ), 4 );
-export const standardRhombilleBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( rhombilleTiling ) ), 4 );
-export const standardSnubSquareBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), 4 );
-console.log( Date.now() - time );
-
 // TODO: faster way in the future?
 const standardPatternBoards: TPatternBoard[] = [];
 
@@ -206,17 +195,47 @@ export const getStandardIsomorphicPatternBoard = ( patternBoard: TPatternBoard )
   return standardPatternBoards.find( otherPatternBoard => arePatternBoardsIsomorphic( patternBoard, otherPatternBoard ) ) ?? null;
 };
 
-export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, planarPatternMap: TPlanarPatternMap ): void => {
-  if ( !getStandardIsomorphicPatternBoard( patternBoard ) ) {
+// Replaces isomorphic pattern boards with their standard versions
+export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, planarPatternMap: TPlanarPatternMap ): TPatternBoard => {
+  const standardPatternBoard = getStandardIsomorphicPatternBoard( patternBoard );
+
+  if ( standardPatternBoard ) {
+    return standardPatternBoard;
+  }
+  else {
     standardPatternBoards.push( patternBoard );
     patternBoardMappings.set( patternBoard, planarPatternMap );
+    return patternBoard;
   }
+};
+
+// Replaces isomorphic pattern boards with their standard versions
+export const getRegisteredGenerations = ( generations: FacesPatternBoard[][] ): TPatternBoard[][] => {
+  return generations.map( generation => generation.map( patternBoard => registerStandardPatternBoard( patternBoard, patternBoard.planarPatternMap ) ) );
 };
 
 registerStandardPatternBoard( edgePatternBoard, getSingleEdgePlanarPatternMap( edgePatternBoard ) );
 vertexExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 vertexNonExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 
+export const getTriangularBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( triangularTiling ) ), n );
+export const getSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), n );
+export const getCairoBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( cairoPentagonalTiling ) ), n );
+export const getHexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( new HexagonalBoard( 10, 1, true ), n );
+export const getRhombilleBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( rhombilleTiling ) ), n );
+export const getSnubSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), n );
 
+// ORDER IMPORTANT(!)
+export const standardSquareBoardGenerations = getRegisteredGenerations( getSquareBoardGenerations( 5 ) );
+export const standardHexagonalBoardGenerations = getRegisteredGenerations( getHexagonalBoardGenerations( 4 ) );
+export const standardTriangularBoardGenerations = getRegisteredGenerations( getTriangularBoardGenerations( 3 ) );
+export const standardCairoBoardGenerations = getRegisteredGenerations( getCairoBoardGenerations( 4 ) );
 
-// TODO: generate some of the "basic" boards (OR BETTER YET, store them here)
+export const standardRhombilleBoardGenerations = getRegisteredGenerations( getRhombilleBoardGenerations( 3 ) );
+export const standardSnubSquareBoardGenerations = getRegisteredGenerations( getSnubSquareBoardGenerations( 3 ) );
+
+// TODO: Create serialized forms of these(!)
+// export const serializePlanarMappedPatternBoardGenerations = ( generations: FacesPatternBoard[][] ): string[][] => {
+//   return generations.map( generation => generation.map( patternBoard => serializePlanarMappedPatternBoard( patternBoard ) ) );
+// };
+// console.log( JSON.stringify( serializePlanarMappedPatternBoardGenerations( standardSquareBoardGenerations ), null, 2 ) );

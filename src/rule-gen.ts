@@ -1,14 +1,11 @@
-import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
-import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
-import { TBoard } from './model/board/core/TBoard.ts';
-import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
-import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { GetRulesOptions } from './model/pattern/PatternRule.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsomorphic.ts';
+import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import assert, { assertEnabled } from './workarounds/assert.ts';
+import { standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -21,23 +18,13 @@ window.disableProgressive = () => {
   progressive = false;
 };
 
-const handleBoard = (
-  board: TBoard,
+const handlePatternBoard = (
+  patternBoard: TPatternBoard,
   previousRuleSets: PatternBoardRuleSet[],
-  generationIndex: number,
-  index: number,
   options?: GetRulesOptions
 ) => {
-
-  const generations = FacesPatternBoard.getFirstNGenerations( board, generationIndex + 1 );
-
-  const patternBoard = generations[ generationIndex ][ index ];
-
-  // Ignore rule sets that are AT or IN THE FUTURE for what we are computing
-  const indexOfMatching = previousRuleSets.findIndex( ruleSet => arePatternBoardsIsomorphic( ruleSet.patternBoard, patternBoard ) );
-  if ( indexOfMatching >= 0 ) {
-    previousRuleSets = previousRuleSets.slice( 0, indexOfMatching );
-  }
+  const planarPatternMap = patternBoardMappings.get( patternBoard )!;
+  assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
   if ( progressive ) {
     let featureLimit = 1;
@@ -47,11 +34,12 @@ const handleBoard = (
     while ( hitFeatureLimit ) {
       hitFeatureLimit = false;
 
-      ruleSet = PatternBoardRuleSet.create( patternBoard, patternBoard.planarPatternMap, previousRuleSets, combineOptions<GetRulesOptions>( {}, options, {
+      ruleSet = PatternBoardRuleSet.create( patternBoard, planarPatternMap, previousRuleSets, combineOptions<GetRulesOptions>( {}, options, {
         featureLimit: featureLimit,
         hitFeatureLimitCallback: () => {
           hitFeatureLimit = true;
-        }
+        },
+        includeFaceValueZero: patternBoard.faces.filter( face => !face.isExit ).length === 1
       } ) );
 
       console.log( 'featureLimit', featureLimit );
@@ -64,43 +52,27 @@ const handleBoard = (
     console.log( 'COMPLETE' );
   }
   else {
-    const ruleSet = PatternBoardRuleSet.create( patternBoard, patternBoard.planarPatternMap, previousRuleSets, options );
+    const ruleSet = PatternBoardRuleSet.create( patternBoard, planarPatternMap, previousRuleSets, options );
     console.log( JSON.stringify( ruleSet.serialize() ) );
   }
 };
 
-const handleGenerator = (
-  generator: PolygonGenerator,
-  previousRuleSets: PatternBoardRuleSet[],
-  generationIndex: number,
-  index: number,
-  options?: GetRulesOptions
-) => {
-  // TODO: simplify this board generation
-  const polygons = generator.generate( {
-    // TODO: make this variable
-    width: 20,
-    height: 20
-  } );
-
-  const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
-
-  handleBoard( board, previousRuleSets, generationIndex, index, options );
+const onlyRuleSetsWithFewerNotExitFaces = ( numNonExitFaces: number ) => {
+  return ( ruleSet: PatternBoardRuleSet ) => {
+    return ruleSet.patternBoard.faces.filter( face => !face.isExit ).length < numNonExitFaces;
+  };
 };
-
 
 // @ts-expect-error
 window.getOnlySquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleBoard(
-    new SquareBoard( 20, 20 ),
+  handlePatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...squareOnlyEdgeGeneration0RuleSets,
       ...squareOnlyEdgeGeneration1RuleSets,
       ...squareOnlyEdgeGeneration2RuleSets,
-    ],
-    generationIndex,
-    index,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4
     }, options )
@@ -109,15 +81,13 @@ window.getOnlySquareBoardRules = ( generationIndex: number, index: number, optio
 
 // @ts-expect-error
 window.getOnlyHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleBoard(
-    new HexagonalBoard( 10, 1, true ),
+  handlePatternBoard(
+    standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...hexOnlyEdgeGeneration0RuleSets,
       ...hexOnlyEdgeGeneration1RuleSets,
     ],
-    generationIndex,
-    index,
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3
     }, options )
@@ -126,37 +96,29 @@ window.getOnlyHexBoardRules = ( generationIndex: number, index: number, options?
 
 
 
-
 // @ts-expect-error
 window.getTriangularBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( triangularTiling, {
-      width: 6,
-      height: 5
-    } ),
+  handlePatternBoard(
+    standardTriangularBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...triangularEdgeGeneration0RuleSets,
       ...triangularEdgeGeneration1RuleSets,
       ...triangularEdgeGeneration2RuleSets,
     ],
-    generationIndex,
-    index,
     options
   );
 };
 
 // @ts-expect-error
 window.getColorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleBoard(
-    new SquareBoard( 20, 20 ),
+  handlePatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
       ...squareColorGeneration0RuleSets,
       ...squareColorGeneration1RuleSets,
     ],
-    generationIndex,
-    index,
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
       solveFaceColors: true,
@@ -166,81 +128,62 @@ window.getColorSquareBoardRules = ( generationIndex: number, index: number, opti
 
 // @ts-expect-error
 window.getSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleBoard(
-    new SquareBoard( 20, 20 ),
+  handlePatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets,
       // ...squareEdgeGeneration2RuleSets,
     ],
-    generationIndex,
-    index,
     options
   );
 };
 
 // @ts-expect-error
 window.getCairoBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( cairoPentagonalTiling, {
-      width: 8,
-      height: 8,
-      squareRegion: true
-    } ),
+  handlePatternBoard(
+    standardCairoBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...cairoEdgeGeneration0RuleSets,
       ...cairoEdgeGeneration1RuleSets,
     ],
-    generationIndex,
-    index,
     options
   );
 };
 
 // @ts-expect-error
 window.getHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleBoard(
-    new HexagonalBoard( 10, 1, true ),
+  handlePatternBoard(
+    standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...hexEdgeGeneration0RuleSets,
       ...hexEdgeGeneration1RuleSets,
     ],
-    generationIndex,
-    index,
     options
   );
 };
 
 // @ts-expect-error
 window.getRhombilleBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( rhombilleTiling, {
-      width: 8,
-      height: 8
-    } ),
+  handlePatternBoard(
+    standardRhombilleBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...squareEdgeGeneration0RuleSets,
       ...squareEdgeGeneration1RuleSets, // the first/second generation are just... square rules basically
       ...squareEdgeGeneration2RuleSets,
     ],
-    generationIndex,
-    index,
     options
   );
 };
 
 // @ts-expect-error
 window.getSnubSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( snubSquareTiling, {
-      width: 5,
-      height: 6,
-      squareRegion: true
-    } ),
+  handlePatternBoard(
+    standardSnubSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
       ...triangularEdgeGeneration0RuleSets,
@@ -250,28 +193,6 @@ window.getSnubSquareBoardRules = ( generationIndex: number, index: number, optio
       ...squareEdgeGeneration1RuleSets,
       ...squareEdgeGeneration2RuleSets,
     ],
-    generationIndex,
-    index,
-    options
-  );
-};
-
-// @ts-expect-error
-window.getTrihexagonalBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleGenerator(
-    getPeriodicTilingGenerator( trihexagonalTiling, {
-      width: 9,
-      height: 9
-    } ),
-    [
-      ...basicEdgeRuleSets,
-      ...triangularEdgeGeneration0RuleSets,
-      ...triangularEdgeGeneration1RuleSets,
-      ...triangularEdgeGeneration2RuleSets,
-      ...hexEdgeGeneration0RuleSets,
-    ],
-    generationIndex,
-    index,
     options
   );
 };
