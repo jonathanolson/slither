@@ -1,10 +1,9 @@
 import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
-import { autoSolveEnabledProperty, safeSolveWithFactory, standardSolverFactory } from '../solver/autoSolver.ts';
+import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
 import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
-import { NoOpAction } from '../data/core/NoOpAction.ts';
 import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
@@ -13,9 +12,8 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TAction, TSerializedAction } from '../data/core/TAction.ts';
 import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
-import { isAnnotationDisplayedForStyle, TAnnotation } from '../data/core/TAnnotation.ts';
+import { TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
 import { getPressStyle } from './EdgePressStyle.ts';
@@ -32,7 +30,14 @@ import { TSector } from '../data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
-import { currentPuzzleStyle, TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
+import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
+import { isAnnotationDisplayedForStyle } from '../../view/isAnnotationDisplayedForStyle.ts';
+import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
+import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
+import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
+import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
+import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
+import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -652,64 +657,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 }
 
 export type PuzzleModelUserAction = EdgeStateSetAction | FaceColorMakeSameAction | FaceColorMakeOppositeAction | SectorStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
-
-export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
-  public readonly isUserLoadPuzzleAutoSolveAction = true;
-
-  public override serializeAction(): TSerializedAction {
-    return {
-      type: 'UserLoadPuzzleAutoSolveAction'
-    };
-  }
-
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserLoadPuzzleAutoSolveAction {
-    return new UserLoadPuzzleAutoSolveAction();
-  }
-}
-
-export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
-  public readonly isUserRequestSolveAction = true;
-
-  public override serializeAction(): TSerializedAction {
-    return {
-      type: 'UserRequestSolveAction'
-    };
-  }
-
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserRequestSolveAction {
-    return new UserRequestSolveAction();
-  }
-}
-
-export class UserPuzzleHintApplyAction implements TAnnotatedAction<TCompleteData> {
-  public constructor(
-    public readonly hintAction: TAnnotatedAction<TCompleteData>
-  ) {}
-
-  public get annotation(): TAnnotation {
-    return this.hintAction.annotation;
-  }
-
-  public apply( state: TCompleteData ): void {
-    this.hintAction.apply( state );
-  }
-
-  public getUndo( state: TCompleteData ): TAction<TCompleteData> {
-    throw new Error( 'unimplemented' );
-  }
-
-  public isEmpty(): boolean {
-    return this.hintAction.isEmpty();
-  }
-
-  public serializeAction(): TSerializedAction {
-    throw new Error( 'unimplemented' );
-  }
-
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): NoOpAction<any> {
-    throw new Error( 'unimplemented' );
-  }
-}
 
 export class PuzzleSnapshot<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
   public constructor(

@@ -1,8 +1,10 @@
 import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import { serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TSerializedFace } from '../../board/core/TSerializedFace.ts';
+import { serializeFace } from '../../board/core/serializeFace.ts';
 
 export default class FaceColorState extends EnumerationValue {
   public static readonly OUTSIDE = new FaceColorState();

@@ -4,8 +4,8 @@ import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { iterateSolverFactory } from '../solver/TSolver.ts';
-import { standardSolverFactory } from '../solver/autoSolver.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 
 export default class CanSolveDifficulty extends EnumerationValue {
 

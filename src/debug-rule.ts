@@ -1,6 +1,6 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { squareEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { squareEdgeGeneration1RuleSets } from './model/pattern/data/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';

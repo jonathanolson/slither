@@ -18,7 +18,7 @@
     "tactile-js": "~1.0.0"
   },
   "devDependencies": {
-    "vite": "^5.1.4",
+    "vite": "^5.2.9",
     "qunit": "~2.20.1",
     "eslint": "~8.56.0",
     "typescript": "~5.3.3",

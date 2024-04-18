@@ -6,8 +6,9 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 import { TSector } from './TSector.ts';
-import { deserializeHalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
 import { GeneralSectorStateDelta } from './GeneralSectorStateDelta.ts';
+import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
+import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 
 export class GeneralSectorStateData implements TState<TSectorStateData> {
 

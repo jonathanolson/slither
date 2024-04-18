@@ -22,8 +22,8 @@ import { TAnnotation } from './model/data/core/TAnnotation.ts';
 import { HintTipNode } from './view/HintTipNode.ts';
 import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
-import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/TPuzzleStyle.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
+import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {

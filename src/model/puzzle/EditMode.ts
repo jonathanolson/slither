@@ -1,7 +1,7 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { currentPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
 
 export default class EditMode extends EnumerationValue {
   // TODO: remove unused modes? hmmm

@@ -5,7 +5,6 @@ import { TSector } from '../sector-state/TSector.ts';
 import SectorState from '../sector-state/SectorState.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
 import { FaceState } from '../face-state/FaceState.ts';
-import { TPuzzleStyle } from '../../../view/puzzle/TPuzzleStyle.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';
@@ -293,32 +292,6 @@ export const annotationSetsVertexState = ( annotation: TAnnotation ): boolean =>
 
 export const annotationSetsFaceState = ( annotation: TAnnotation ): boolean => {
   return annotation.type === 'FaceState';
-};
-
-export const isAnnotationDisplayedForStyle = ( annotation: TAnnotation, style: TPuzzleStyle ): boolean => {
-  // TODO: Should we hide these sometimes?
-  if ( annotationSetsEdgeState( annotation ) ) {
-    return true;
-  }
-
-  // NOTE: finite check so we ignore the inside/outside only cases
-  if ( style.faceColorsVisibleProperty.value && isFinite( style.faceColorThresholdProperty.value ) && annotationSetsFaceColor( annotation ) ) {
-    return true;
-  }
-
-  if ( style.sectorsVisibleProperty.value && annotationSetsSectorState( annotation ) ) {
-    return true;
-  }
-
-  if ( style.vertexStateVisibleProperty.value && annotationSetsVertexState( annotation ) ) {
-    return true;
-  }
-
-  if ( style.faceStateVisibleProperty.value && annotationSetsFaceState( annotation ) ) {
-    return true;
-  }
-
-  return false;
 };
 
 export type TAnnotation =

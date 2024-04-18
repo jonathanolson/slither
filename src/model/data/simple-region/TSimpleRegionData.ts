@@ -1,9 +1,13 @@
-import { serializeEdge, TEdge, TSerializedEdge } from '../../board/core/TEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { serializeHalfEdge, THalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
+import { THalfEdge } from '../../board/core/THalfEdge.ts';
 import { TEmitter } from 'phet-lib/axon';
 import { TSerializedState } from '../core/TState.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
+import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
+import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
 
 export interface TSimpleRegion {
   // An identifier that is tracked across simple regions over time. Algorithms will try to keep this consistent, for

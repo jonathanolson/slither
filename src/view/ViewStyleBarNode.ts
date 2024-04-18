@@ -4,13 +4,14 @@ import { controlBarMargin, currentTheme } from './Theme.ts';
 import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
-import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, TPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { fontAwesomePencilShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { puzzleFromCompressedString } from '../model/puzzle/TPuzzle.ts';
 import { VertexStateNode } from './puzzle/VertexStateNode.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { FaceStateNode } from './puzzle/FaceStateNode.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
 
 export type ViewStyleBarNodeOptions = {
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;

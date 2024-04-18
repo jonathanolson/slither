@@ -23,8 +23,8 @@ import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
 import { TCompleteData } from '../../data/combined/TCompleteData.ts';
 import { CompleteData } from '../../data/combined/CompleteData.ts';
 import { TPuzzle } from '../../puzzle/TPuzzle.ts';
-import { safeSolve } from '../../solver/autoSolver.ts';
 import { okhslToRGBString } from '../../../util/color.ts';
+import { safeSolve } from '../../solver/safeSolve.ts';
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 

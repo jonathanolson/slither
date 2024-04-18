@@ -1,4 +1,4 @@
-import { deserializeAction, TAction, TSerializedAction } from '../core/TAction.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TCompleteData } from './TCompleteData.ts';
 import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
@@ -8,6 +8,7 @@ import { TFaceColorData } from '../face-color/TFaceColorData.ts';
 import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import { deserializeAction } from '../core/deserializeAction.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(

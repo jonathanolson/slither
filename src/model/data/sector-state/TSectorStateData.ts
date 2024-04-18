@@ -3,7 +3,8 @@ import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import SectorState, { TSerializedSectorState } from './SectorState.ts';
 import { TSector } from './TSector.ts';
-import { serializeHalfEdge, TSerializedHalfEdge } from '../../board/core/THalfEdge.ts';
+import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
+import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
 
 export interface TSectorStateData {
   // a sector is effectively halfEdge and halfEdge.next

@@ -1,6 +1,7 @@
-import { deserializeAction, TAction, TSerializedAction } from './TAction.ts';
+import { TAction, TSerializedAction } from './TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TCompleteData } from '../combined/TCompleteData.ts';
+import { deserializeAction } from './deserializeAction.ts';
 
 export class CompositeAction<Data> implements TAction<Data> {
 

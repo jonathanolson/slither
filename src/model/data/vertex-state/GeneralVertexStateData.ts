@@ -4,9 +4,11 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { deserializeVertex, TSerializedVertex, TVertex } from '../../board/core/TVertex.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
 import { GeneralVertexStateDelta } from './GeneralVertexStateDelta.ts';
+import { TSerializedVertex } from '../../board/core/TSerializedVertex.ts';
+import { deserializeVertex } from '../../board/core/deserializeVertex.ts';
 
 export class GeneralVertexStateData implements TState<TVertexStateData> {
 

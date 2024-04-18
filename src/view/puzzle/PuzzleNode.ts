@@ -25,7 +25,8 @@ import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
 import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
-import { currentPuzzleStyle, TPuzzleStyle } from './TPuzzleStyle.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { currentPuzzleStyle } from './puzzleStyles.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;

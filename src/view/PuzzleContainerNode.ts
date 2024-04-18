@@ -7,7 +7,8 @@ import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
-import { currentPuzzleStyle, TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
 
 type SelfOptions = {
   topological?: boolean;

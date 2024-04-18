@@ -5,10 +5,11 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { GeneralFaceColorDelta } from './GeneralFaceColorDelta.ts';
 import { GeneralFaceColor } from './GeneralFaceColor.ts';
-import { deserializeFace, TFace } from '../../board/core/TFace.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { dotRandom } from 'phet-lib/dot';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { deserializeFace } from '../../board/core/deserializeFace.ts';
 
 export const getFaceColorGlobalId = (): number => dotRandom.nextInt( Number.MAX_SAFE_INTEGER );
 

@@ -1,6 +1,6 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { hexOnlyEdgeGeneration1RuleSets } from './model/pattern/rules.ts';
+import { hexOnlyEdgeGeneration1RuleSets } from './model/pattern/data/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`

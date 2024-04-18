@@ -2,9 +2,11 @@
 // TODO: Potentially a UserEdgeStateToggleAction that does this and other things?
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TEdgeStateData } from './TEdgeStateData.ts';
-import { deserializeEdge, serializeEdge, TEdge } from '../../board/core/TEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
 
 export class EdgeStateCycleAction implements TAction<TEdgeStateData> {
 

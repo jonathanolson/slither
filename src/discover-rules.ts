@@ -36,7 +36,7 @@ import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
-import { squareEdgeGeneration2RuleSets } from './model/pattern/rules.ts';
+import { squareEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 

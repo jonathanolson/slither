@@ -12,9 +12,10 @@ import { TStructure } from '../board/core/TStructure.ts';
 import { TDelta } from '../data/core/TDelta.ts';
 import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { backtrackerSolverFactory, standardSolverFactory } from './autoSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
+import { backtrackerSolverFactory } from './backtrackerSolverFactory.ts';
+import { standardSolverFactory } from './standardSolverFactory.ts';
 
 export type EdgeBacktrackData = TEdgeStateData & TSimpleRegionData;
 

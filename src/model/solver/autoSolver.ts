@@ -1,6 +1,5 @@
 import { DerivedProperty } from 'phet-lib/axon';
 import { CompositeSolver } from './CompositeSolver';
-import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver';
 import { SimpleVertexSolver } from './SimpleVertexSolver';
 import { SimpleFaceSolver } from './SimpleFaceSolver';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
@@ -8,19 +7,14 @@ import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
-import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
-import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory, TSolver } from './TSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
-import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
 import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
 import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { TStructure } from '../board/core/TStructure.ts';
-import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
 import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
 import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
@@ -29,6 +23,7 @@ import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
 import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
 import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
+import { safeSolverFactory } from './safeSolverFactory.ts';
 
 // Top-level setting that controls whether auto-solve is enabled at all
 export const autoSolveEnabledProperty = new LocalStorageBooleanProperty( 'autoSolveEnabledProperty', true );
@@ -72,59 +67,6 @@ export const autoSolveFaceToBlackProperty = new LocalStorageBooleanProperty( 'au
 export const autoSolveFaceToSectorsProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToSectorsProperty', false );
 export const autoSolveFaceToFaceColorsProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToFaceColorsProperty', false );
 export const autoSolveFaceToVertexProperty = new LocalStorageBooleanProperty( 'autoSolveFaceToVertexProperty', false );
-
-// TODO: have some way of the autoSolver ALWAYS having these solvers?
-// TODO: deprecate this?!?
-export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new SafeEdgeToSimpleRegionSolver( board, state ),
-    new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToFaceColorSolver( board, state ),
-    new SafeEdgeToSectorSolver( board, state ),
-    new SafeEdgeSectorColorToVertexSolver( board, state ),
-  ] );
-};
-
-export const getSafeSolverFactory = (
-  faceColors: boolean,
-  sectors: boolean,
-  vertexState: boolean,
-  faceState: boolean,
-) => {
-  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-    const solvers: TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>[] = [
-      new SafeEdgeToSimpleRegionSolver( board, state ),
-      new SafeSolvedEdgeSolver( board, state ),
-    ];
-
-    if ( faceColors || sectors || vertexState || faceState ) {
-      solvers.push( new SafeEdgeToFaceColorSolver( board, state ) );
-
-      if ( sectors || vertexState || faceState ) {
-        solvers.push( new SafeEdgeToSectorSolver( board, state ) );
-
-        if ( vertexState || faceState ) {
-          solvers.push( new SafeEdgeSectorColorToVertexSolver( board, state ) );
-
-          if ( faceState ) {
-            solvers.push( new VertexColorToFaceSolver( board, state ) );
-          }
-        }
-      }
-    }
-
-    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( solvers );
-  };
-};
-
-// TODO: rename "safe" to "view-specific"?
-export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
-  iterateSolverFactory( safeSolverFactory, board, state, true );
-};
-
-export const safeSolveWithFactory = ( board: TBoard, state: TState<TCompleteData>, factory: AnnotatedSolverFactory<TStructure, TCompleteData> ) => {
-  iterateSolverFactory( factory, board, state, true );
-};
 
 export const finalStateSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
@@ -289,73 +231,3 @@ export const autoSolverFactoryProperty = new DerivedProperty<AnnotatedSolverFact
   };
 } );
 
-export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new SafeEdgeToSimpleRegionSolver( board, state ),
-    new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToFaceColorSolver( board, state ),
-
-    new SimpleVertexSolver( board, state, {
-      solveJointToRed: true,
-      solveForcedLineToBlack: true,
-      solveAlmostEmptyToRed: true
-    } ),
-    new SimpleFaceSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true,
-    } ),
-
-    // We rely on the Simple Regions being accurate here, so they are lower down
-    new SimpleLoopSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true,
-      resolveAllRegions: false // NOTE: this will be faster
-    } ),
-
-    // e.g. double-3s adjacent in square form
-    new StaticDoubleMinusOneFacesSolver( board, state ),
-
-    new SafeEdgeToSectorSolver( board, state ),
-    new StaticSectorSolver( board, state ),
-    new SimpleSectorSolver( board, state ),
-
-    new SafeEdgeSectorColorToVertexSolver( board, state ),
-
-    new VertexToEdgeSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true
-    } ),
-    new VertexToSectorSolver( board, state ),
-
-    // We rely on the Face colors being accurate here
-    new SimpleFaceColorSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true
-    } ),
-
-    new FaceColorParitySolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true,
-      solveColors: true,
-      allowPartialReduction: true,
-    } ),
-
-    new VertexToFaceColorSolver( board, state ),
-
-    new VertexColorToFaceSolver( board, state ),
-    new FaceToEdgeSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true
-    } ),
-    new FaceToSectorSolver( board, state ),
-    new FaceToFaceColorSolver( board, state ),
-    new FaceToVertexSolver( board, state ),
-  ] );
-};
-
-export const backtrackerSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new EdgeBacktrackerSolver( board, state, {
-    solverFactory: standardSolverFactory,
-    depth: 1
-  } );
-};

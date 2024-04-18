@@ -7,7 +7,7 @@ import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
 import PuzzleNode from './view/puzzle/PuzzleNode.ts';
 import { sleep } from './util/sleep.ts';
 import { BooleanProperty } from 'phet-lib/axon';
-import { finalStateSolve, standardSolverFactory } from './model/solver/autoSolver.ts';
+import { finalStateSolve } from './model/solver/autoSolver.ts';
 import { CompleteValidator } from './model/data/combined/CompleteValidator.ts';
 import EdgeState from './model/data/edge-state/EdgeState.ts';
 import { simpleRegionIsSolved } from './model/data/simple-region/TSimpleRegionData.ts';
@@ -16,7 +16,8 @@ import assert, { assertEnabled } from './workarounds/assert.ts';
 import { PolygonalBoard } from './model/board/core/TiledBoard.ts';
 import { PolygonGenerator, polygonGenerators } from './view/GenerateNode.ts';
 import { AnnotationNode } from './view/AnnotationNode.ts';
-import { currentPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
+import { standardSolverFactory } from './model/solver/standardSolverFactory.ts';
+import { currentPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
 
 // Load with `http://localhost:5173/solver-fuzz.html?debugger`
 

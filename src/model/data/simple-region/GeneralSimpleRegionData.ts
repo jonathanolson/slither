@@ -1,13 +1,14 @@
 import { TState } from '../core/TState.ts';
 import { serializeSimpleRegionData, TSerializedSimpleRegionData, TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TinyEmitter } from 'phet-lib/axon';
-import { deserializeEdge, TEdge } from '../../board/core/TEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
 import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
 
 export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
 

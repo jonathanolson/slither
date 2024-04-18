@@ -1,7 +1,10 @@
-import { deserializeFace, serializeFace, TFace, TSerializedFace } from '../../board/core/TFace.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TSerializedFace } from '../../board/core/TSerializedFace.ts';
+import { serializeFace } from '../../board/core/serializeFace.ts';
+import { deserializeFace } from '../../board/core/deserializeFace.ts';
 
 export type TFaceColorPointer = {
   type: 'face';

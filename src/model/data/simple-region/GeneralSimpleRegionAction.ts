@@ -1,8 +1,11 @@
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { serializedSimpleRegion, TSerializedSimpleRegion, TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { deserializeEdge, serializeEdge, TEdge, TSerializedEdge } from '../../board/core/TEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
 
 export class GeneralSimpleRegionAction implements TAction<TSimpleRegionData> {
   public constructor(

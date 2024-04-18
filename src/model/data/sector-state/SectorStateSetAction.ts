@@ -3,7 +3,8 @@ import { TSectorStateData } from './TSectorStateData.ts';
 import SectorState from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TSector } from './TSector.ts';
-import { deserializeHalfEdge, serializeHalfEdge } from '../../board/core/THalfEdge.ts';
+import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
+import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 
 export class SectorStateSetAction implements TAction<TSectorStateData> {
 

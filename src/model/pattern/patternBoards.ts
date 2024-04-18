@@ -1,6 +1,15 @@
 import { BasePatternBoard } from './BasePatternBoard.ts';
 import { patternBoardMappings } from './patternBoardMappings.ts';
-import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap } from './TPlanarPatternMap.ts';
+import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
+import _ from '../../workarounds/_.ts';
+import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
+import { FacesPatternBoard } from './FacesPatternBoard.ts';
+import { SquareBoard } from '../board/square/SquareBoard.ts';
+import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
+import { getPeriodicTilingGenerator, PolygonGenerator } from '../../view/GenerateNode.ts';
+import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling } from '../board/core/TiledBoard.ts';
 
 export const edgePatternBoard = new BasePatternBoard( {
   numNonExitVertices: 0,
@@ -131,8 +140,6 @@ export const vertexNonExit6PatternBoard = new BasePatternBoard( {
   edgeCount: 6
 } );
 
-patternBoardMappings.set( edgePatternBoard, getSingleEdgePlanarPatternMap( edgePatternBoard ) );
-
 export const vertexExitPatternBoards = [
   vertexExit2NoSectorsPatternBoard,
   vertexExit2OneSectorPatternBoard,
@@ -146,7 +153,6 @@ export const vertexExitPatternBoards = [
   vertexExit6ThreeOnePatternBoard,
   vertexExit6FivePatternBoard,
 ];
-vertexExitPatternBoards.forEach( patternBoard => patternBoardMappings.set( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 
 export const vertexNonExitPatternBoards = [
   vertexNonExit2PatternBoard,
@@ -155,12 +161,62 @@ export const vertexNonExitPatternBoards = [
   vertexNonExit5PatternBoard,
   vertexNonExit6PatternBoard,
 ];
-vertexNonExitPatternBoards.forEach( patternBoard => patternBoardMappings.set( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 
 export const basicPatternBoards = [
   edgePatternBoard,
   ...vertexExitPatternBoards,
   ...vertexNonExitPatternBoards,
 ];
+
+const boardFromPolygonGenerator = ( generator: PolygonGenerator ) => {
+  // TODO: simplify this board generation
+  const polygons = generator.generate( {
+    // TODO: make this variable
+    width: 20,
+    height: 20
+  } );
+
+  return new PolygonalBoard( polygons, generator.scale ?? 1 );
+};
+
+// TODO: evaluate our depth here, potentially make them lazy?
+const time = Date.now();
+console.log( time );
+export const standardTriangularBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( triangularTiling ) ), 4 );
+export const standardSquareBoardGenerations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 4 );
+export const standardCairoBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( cairoPentagonalTiling ) ), 4 );
+export const standardHexagonalBoardGenerations = FacesPatternBoard.getFirstNGenerations( new HexagonalBoard( 10, 1, true ), 4 );
+export const standardRhombilleBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( rhombilleTiling ) ), 4 );
+export const standardSnubSquareBoardGenerations = FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), 4 );
+console.log( Date.now() - time );
+
+// TODO: faster way in the future?
+const standardPatternBoards: TPatternBoard[] = [];
+
+export const getStandardDescribedPatternBoard = ( descriptor: TPatternBoardDescriptor ): TPatternBoard | null => {
+  return standardPatternBoards.find( patternBoard => _.isEqual( patternBoard.descriptor, descriptor ) ) ?? null;
+};
+
+export const getStandardIsomorphicPatternBoard = ( patternBoard: TPatternBoard ): TPatternBoard | null => {
+  const boardFromDescriptor = getStandardDescribedPatternBoard( patternBoard.descriptor );
+  if ( boardFromDescriptor ) {
+    return boardFromDescriptor;
+  }
+
+  return standardPatternBoards.find( otherPatternBoard => arePatternBoardsIsomorphic( patternBoard, otherPatternBoard ) ) ?? null;
+};
+
+export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, planarPatternMap: TPlanarPatternMap ): void => {
+  if ( !getStandardIsomorphicPatternBoard( patternBoard ) ) {
+    standardPatternBoards.push( patternBoard );
+    patternBoardMappings.set( patternBoard, planarPatternMap );
+  }
+};
+
+registerStandardPatternBoard( edgePatternBoard, getSingleEdgePlanarPatternMap( edgePatternBoard ) );
+vertexExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
+vertexNonExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
+
+
 
 // TODO: generate some of the "basic" boards (OR BETTER YET, store them here)

@@ -1,9 +1,10 @@
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { deserializeHalfEdge, THalfEdge } from '../../board/core/THalfEdge.ts';
+import { THalfEdge } from '../../board/core/THalfEdge.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TSerializedSimpleRegion, TSimpleRegion } from './TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 
 // TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
 export class GeneralSimpleRegion implements TSimpleRegion {
