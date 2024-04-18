@@ -33,6 +33,7 @@ export default defineConfig( {
         'rule-list': '/rule-list.html',
         'rule-image': '/rule-image.html',
         'debug-rule': '/debug-rule.html',
+        'model-tests': '/model-tests.html',
       },
       plugins: [
         unassert( {
