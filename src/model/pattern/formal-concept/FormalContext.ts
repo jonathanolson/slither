@@ -58,8 +58,58 @@ export class FormalContext {
     return intents;
   }
 
-  // NextClosures TODO allow pre-existing implications (embedded)
+  // TODO: can we filter out isomorphisms???
   public getIntentsAndImplications(): {
+    intents: AttributeSet[];
+    implications: Implication[];
+  } {
+    const intents: AttributeSet[] = [];
+    const implications: Implication[] = [];
+
+    let set: AttributeSet | null = AttributeSet.getEmpty( this.numAttributes );
+
+    while ( set ) {
+      const closedSet = this.getClosure( set );
+
+      if ( set.equals( closedSet ) ) {
+        // Is a concept intent
+        intents.push( set );
+      }
+      else {
+        // Is a pseudo-intent
+        implications.push( new Implication( set, closedSet ) );
+      }
+
+      let nextSet: AttributeSet | null = null;
+      for ( let i = 0; i < this.numAttributes; i++ ) {
+        // TODO: can we get away without clearing the other bits? no, right?
+        const withLowestBit = set.withLowestBitSet( i );
+
+        const closedWithLowestBit = Implication.implicationSetClosure( implications, withLowestBit );
+
+        if ( set.isLessThanI( closedWithLowestBit, i ) ) {
+          nextSet = closedWithLowestBit;
+          break;
+        }
+      }
+
+      if ( nextSet ) {
+        set = nextSet;
+      }
+      else {
+        // done!
+        break;
+      }
+    }
+
+    return {
+      intents,
+      implications,
+    };
+  }
+
+  // NextClosures TODO allow pre-existing implications (embedded)
+  public getIntentsAndImplicationsParallelizable(): {
     intents: AttributeSet[];
     implications: Implication[];
   } {
@@ -91,30 +141,14 @@ export class FormalContext {
         }
       }
 
-      console.log( k, currentCandidates.length, uniqueCandidates.length );
+      // console.log( k, currentCandidates.length, uniqueCandidates.length );
 
       for ( const candidate of uniqueCandidates ) {
         // TODO: maybe store cardinality...?
         const cardinality = candidate.getCardinality();
 
         if ( cardinality === k ) {
-          let impliedCandidate = candidate.clone();
-
-          // TODO: improve complexity
-          let changed = true;
-          while ( changed ) {
-            changed = false;
-
-            for ( const implication of implications ) {
-              if (
-                implication.antecedent.isProperSubsetOf( impliedCandidate ) &&
-                !implication.consequent.isSubsetOf( impliedCandidate )
-              ) {
-                impliedCandidate.or( implication.consequent );
-                changed = true;
-              }
-            }
-          }
+          let impliedCandidate = Implication.implicationSetClosure( implications, candidate );
 
           if ( candidate.equals( impliedCandidate ) ) {
             const closedCandidate = this.getClosure( candidate );

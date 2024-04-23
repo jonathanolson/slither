@@ -50,5 +50,10 @@ console.log( squareFormalContext.toString() );
 // console.log( squareFormalContext.getIntents().map( intent => intent.toString() ) );
 console.log( squareFormalContext.getIntents().length );
 
-const data = squareFormalContext.getIntentsAndImplications();
+const data = squareFormalContext.getIntentsAndImplicationsParallelizable();
 console.log( data.intents.length, data.implications.length );
+
+const data2 = squareFormalContext.getIntentsAndImplications();
+console.log( data2.intents.length, data2.implications.length );
+
+console.log( data2.implications.map( implication => implication.toString() ) );
