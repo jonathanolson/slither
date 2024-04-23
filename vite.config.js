@@ -34,6 +34,7 @@ export default defineConfig( {
         'rule-image': '/rule-image.html',
         'debug-rule': '/debug-rule.html',
         'model-tests': '/model-tests.html',
+        'formal-concept-analysis': '/formal-concept-analysis.html',
       },
       plugins: [
         unassert( {
