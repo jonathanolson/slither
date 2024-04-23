@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - WebGPU general-purpose FCA "solver"
+  - 
   - Fix up generation (we broke some things?)
   - 
   - Testing...

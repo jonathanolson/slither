@@ -1,5 +1,6 @@
 import { AttributeSet } from './AttributeSet.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { Implication } from './Implication.ts';
 
 export class FormalContext {
   public constructor(
@@ -35,6 +36,127 @@ export class FormalContext {
     }
 
     return null;
+  }
+
+  // NextClosure
+  public getIntents(): AttributeSet[] {
+    const intents: AttributeSet[] = [];
+
+    // let count = 0;
+
+    let intent: AttributeSet | null = this.getClosure( AttributeSet.getEmpty( this.numAttributes ) );
+    while ( intent ) {
+      intents.push( intent );
+
+      intent = this.getNextClosure( intent );
+
+      // if ( count++ % 10000 === 0 ) {
+      //   console.log( count, `${intent}` );
+      // }
+    }
+
+    return intents;
+  }
+
+  // NextClosures TODO allow pre-existing implications (embedded)
+  public getIntentsAndImplications(): {
+    intents: AttributeSet[];
+    implications: Implication[];
+  } {
+    let k = 0;
+    let currentCandidates: AttributeSet[] = [];
+    let nextCandidates: AttributeSet[] = [ AttributeSet.getEmpty( this.numAttributes ) ];
+    const intents: AttributeSet[] = [];
+    const implications: Implication[] = [];
+
+    const intentKeys = new Set<string>();
+    const implicationKeys = new Set<string>();
+
+    while ( k <= this.numAttributes ) {
+      currentCandidates = nextCandidates;
+      nextCandidates = [];
+
+      if ( currentCandidates.length === 0 ) {
+        break;
+      }
+
+      currentCandidates.sort( ( a, b ) => a.isLessThanOrEqual( b ) ? -1 : a.equals( b ) ? 0 : 1 );
+
+      const uniqueCandidates: AttributeSet[] = [
+        currentCandidates[ 0 ]
+      ];
+      for ( let i = 1; i < currentCandidates.length; i++ ) {
+        if ( !currentCandidates[ i ].equals( currentCandidates[ i - 1 ] ) ) {
+          uniqueCandidates.push( currentCandidates[ i ] );
+        }
+      }
+
+      console.log( k, currentCandidates.length, uniqueCandidates.length );
+
+      for ( const candidate of uniqueCandidates ) {
+        // TODO: maybe store cardinality...?
+        const cardinality = candidate.getCardinality();
+
+        if ( cardinality === k ) {
+          let impliedCandidate = candidate.clone();
+
+          // TODO: improve complexity
+          let changed = true;
+          while ( changed ) {
+            changed = false;
+
+            for ( const implication of implications ) {
+              if (
+                implication.antecedent.isProperSubsetOf( impliedCandidate ) &&
+                !implication.consequent.isSubsetOf( impliedCandidate )
+              ) {
+                impliedCandidate.or( implication.consequent );
+                changed = true;
+              }
+            }
+          }
+
+          if ( candidate.equals( impliedCandidate ) ) {
+            const closedCandidate = this.getClosure( candidate );
+
+            if ( !candidate.equals( closedCandidate ) ) {
+              const implicationKey = candidate.toString();
+              if ( !implicationKeys.has( implicationKey ) ) {
+                implicationKeys.add( implicationKey );
+                implications.push( new Implication( candidate, closedCandidate ) );
+              }
+            }
+
+            const closedCandidateKey = closedCandidate.toString();
+            if ( !intentKeys.has( closedCandidateKey ) ) {
+              intentKeys.add( closedCandidateKey );
+              intents.push( closedCandidate );
+            }
+
+            for ( let i = 0; i < this.numAttributes; i++ ) {
+              if ( !closedCandidate.hasAttribute( i ) ) {
+                const nextCandidate = closedCandidate.clone();
+                nextCandidate.set( i );
+                nextCandidates.push( nextCandidate );
+              }
+            }
+          }
+          else {
+            nextCandidates.push( impliedCandidate );
+          }
+        }
+        else {
+          nextCandidates.push( candidate );
+        }
+      }
+
+      k++;
+    }
+
+    return {
+      intents,
+      implications,
+    };
   }
 
   public toString(): string {

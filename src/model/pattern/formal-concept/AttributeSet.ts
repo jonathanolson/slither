@@ -85,6 +85,10 @@ export class AttributeSet {
     return new AttributeSet( this.numAttributes, ( 1n << BigInt( this.numAttributes ) ) - 1n - this.data );
   }
 
+  public clone(): AttributeSet {
+    return new AttributeSet( this.numAttributes, this.data );
+  }
+
   public equals( other: AttributeSet ): boolean {
     return this.data === other.data;
   }
@@ -93,8 +97,24 @@ export class AttributeSet {
     return ( this.data & other.data ) === this.data;
   }
 
+  public isProperSubsetOf( other: AttributeSet ): boolean {
+    return this.isSubsetOf( other ) && !this.equals( other );
+  }
+
   public isEmpty(): boolean {
     return this.data === 0n;
+  }
+
+  public getCardinality(): number {
+    let count = 0n;
+
+    let data = this.data;
+    while ( data ) {
+      count += data & 1n;
+      data >>= 1n;
+    }
+
+    return Number( count );
   }
 
   public withLowestBitSet( i: number ): AttributeSet {
@@ -119,7 +139,7 @@ export class AttributeSet {
 
   public toString(): string {
     // TODO: potentially reverse these! How do we handle the display?
-    return `[(${this.getAttributes().join( ',' )}) ${_.range( 0, this.numAttributes ).map( i => this.hasAttribute( i ) ? '1' : '0' ).join( '' )} #${this.numAttributes}]`;
+    return `[${_.range( 0, this.numAttributes ).map( i => this.hasAttribute( i ) ? '1' : '0' ).join( '' )} (${this.getAttributes().join( ',' )}) #${this.numAttributes}]`;
   }
 
   public static getEmpty( numAttributes: number ): AttributeSet {
@@ -132,6 +152,18 @@ export class AttributeSet {
 
   public static fromBinary( numAttributes: number, data: bigint ): AttributeSet {
     assertEnabled() && assert( data < ( 1n << BigInt( numAttributes ) ) && data >= 0n );
+
+    return new AttributeSet( numAttributes, data );
+  }
+
+  public static fromCallback( numAttributes: number, callback: ( i: number ) => boolean ): AttributeSet {
+    let data = 0n;
+
+    for ( let i = 0; i < numAttributes; i++ ) {
+      if ( callback( i ) ) {
+        data |= 1n << BigInt( i );
+      }
+    }
 
     return new AttributeSet( numAttributes, data );
   }
