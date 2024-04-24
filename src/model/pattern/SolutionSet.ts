@@ -33,7 +33,6 @@ export type SolutionSetShape = {
  *   [ +0 ] not-zero
  *   [ +1 ] not-one
  *   [ +2 ] not-two
- *   [ +3 ] only-one
  *
  * Face bits (per face-pair):
  *   [ +0 ] same color
@@ -90,23 +89,20 @@ export class SolutionSet {
       if ( this.shape.numSectors ) {
         result += ' sectors: ';
         for ( let sectorIndex = 0; sectorIndex < this.shape.numSectors; sectorIndex++ ) {
-          const sectorBaseIndex = this.shape.sectorOffset + 4 * sectorIndex;
+          const sectorBaseIndex = this.shape.sectorOffset + 3 * sectorIndex;
           const notZeroBitIndex = sectorBaseIndex;
           const notOneBitIndex = sectorBaseIndex + 1;
           const notTwoBitIndex = sectorBaseIndex + 2;
-          const onlyOneBitIndex = sectorBaseIndex + 3;
 
           const isNotZero = bitNumbersIsBitOne( this.bitData, offset, notZeroBitIndex );
           const isNotOne = bitNumbersIsBitOne( this.bitData, offset, notOneBitIndex );
           const isNotTwo = bitNumbersIsBitOne( this.bitData, offset, notTwoBitIndex );
-          const isOnlyOne = bitNumbersIsBitOne( this.bitData, offset, onlyOneBitIndex );
 
           if ( sectorIndex > 0 ) {
             result += ', ';
           }
 
-          // TODO: can improve in the future
-          result += `sector-${isNotZero}-${isNotOne}-${isNotTwo}-${isOnlyOne}-${sectorIndex}`;
+          result += `sector-${isNotZero}-${isNotOne}-${isNotTwo}-${sectorIndex}`;
         }
       }
 
@@ -446,19 +442,16 @@ export class SolutionSet {
 
     // TODO: OR add excess sectors?
     for ( let sectorIndex = 0; sectorIndex < this.shape.numSectors; sectorIndex++ ) {
-      const sectorBaseIndex = this.shape.sectorOffset + 4 * sectorIndex;
+      const sectorBaseIndex = this.shape.sectorOffset + 3 * sectorIndex;
       const notZeroBitIndex = sectorBaseIndex;
       const notOneBitIndex = sectorBaseIndex + 1;
       const notTwoBitIndex = sectorBaseIndex + 2;
-      const onlyOneBitIndex = sectorBaseIndex + 3;
 
-      // TODO: refactor to notzero/notone/nottwo
       const isNotZero = bitNumbersIsBitOne( scratchNumbers, 0, notZeroBitIndex );
       const isNotOne = bitNumbersIsBitOne( scratchNumbers, 0, notOneBitIndex );
       const isNotTwo = bitNumbersIsBitOne( scratchNumbers, 0, notTwoBitIndex );
-      const isOnlyOne = bitNumbersIsBitOne( scratchNumbers, 0, onlyOneBitIndex );
 
-      if ( isOnlyOne && !isNotOne ) {
+      if ( !isNotOne && isNotZero && isNotTwo ) {
         featureSet.addSectorOnlyOne( this.patternBoard.sectors[ sectorIndex ] );
       }
       else if ( isNotOne && !isNotZero && !isNotTwo ) {
@@ -617,7 +610,7 @@ export class SolutionSet {
     const numSectors = includeSectors ? patternBoard.sectors.length : 0;
     const numFacePairs = includeFaces ? faceConnectivity!.connectedFacePairs.length : 0;
     const sectorOffset = 3 * numEdges;
-    const faceOffset = sectorOffset + 4 * numSectors;
+    const faceOffset = sectorOffset + 3 * numSectors;
     const bitsPerSolution = faceOffset + 2 * numFacePairs;
     const numNumbersPerSolution = Math.ceil( bitsPerSolution / BIT_NUMBERS_BITS_PER_NUMBER );
 
@@ -698,7 +691,7 @@ export class SolutionSet {
 
           assertEnabled() && assert( count <= 2 );
 
-          const sectorBaseIndex = sectorOffset + 4 * j;
+          const sectorBaseIndex = sectorOffset + 3 * j;
 
           if ( count !== 0 ) {
             const notZeroBitIndex = sectorBaseIndex;
@@ -713,11 +706,6 @@ export class SolutionSet {
           if ( count !== 2 ) {
             const notTwoBitIndex = sectorBaseIndex + 2;
             bitNumbersSetBitToOne( scratchNumbers, 0, notTwoBitIndex );
-          }
-
-          if ( count === 1 ) {
-            const onlyOneBitIndex = sectorBaseIndex + 3;
-            bitNumbersSetBitToOne( scratchNumbers, 0, onlyOneBitIndex );
           }
         }
       }
