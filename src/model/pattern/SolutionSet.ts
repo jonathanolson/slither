@@ -12,7 +12,6 @@ import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 import { BIT_NUMBERS_BITS_PER_NUMBER, bitNumbersIsBitOne, bitNumbersSetBitToOne } from '../../util/booleanPacking.ts';
 
 
-
 export type SolutionSetShape = {
   numEdges: number;
   numSectors: number;
@@ -817,4 +816,99 @@ export class VertexConnection {
     public readonly minVertexIndex: number,
     public readonly maxVertexIndex: number
   ) {}
+}
+
+export class PatternAttributeSetMapping {
+
+  // SolutionSet bit index => Attribute Set bit index
+  public readonly bitMap = new Map<number, number>();
+
+  /**
+   * Strips the "original black", reorders to (red,black), and deduplicates single-edge "face-color differences"
+   */
+  public constructor(
+    public readonly patternBoard: TPatternBoard,
+    public readonly shape: SolutionSetShape
+  ) {
+    let bitIndex = 0;
+
+    // NOTE: no mapping for "original black"
+    if ( shape.numEdges ) {
+      for ( let edgeIndex = 0; edgeIndex < shape.numEdges; edgeIndex++ ) {
+        const blackIndex = 3 * edgeIndex;
+        const redIndex = 3 * edgeIndex + 1;
+
+        // Reverse the map here, so we are red, black
+        this.bitMap.set( redIndex, bitIndex++ );
+        this.bitMap.set( blackIndex, bitIndex++ );
+      }
+    }
+
+    if ( shape.numSectors ) {
+      for ( let sectorIndex = 0; sectorIndex < shape.numSectors; sectorIndex++ ) {
+        const sectorBaseIndex = shape.sectorOffset + 3 * sectorIndex;
+        const notZeroBitIndex = sectorBaseIndex;
+        const notOneBitIndex = sectorBaseIndex + 1;
+        const notTwoBitIndex = sectorBaseIndex + 2;
+
+        this.bitMap.set( notZeroBitIndex, bitIndex++ );
+        this.bitMap.set( notOneBitIndex, bitIndex++ );
+        this.bitMap.set( notTwoBitIndex, bitIndex++ );
+      }
+    }
+
+    if ( shape.numFacePairs ) {
+      const faceConnectivity = FaceConnectivity.get( this.patternBoard );
+      const pairs = faceConnectivity.connectedFacePairs;
+
+      for ( let pairIndex = 0; pairIndex < shape.numFacePairs; pairIndex++ ) {
+        const samePairIndex = shape.faceOffset + 2 * pairIndex;
+        const oppositePairIndex = samePairIndex + 1;
+
+        const pair = pairs[ pairIndex ];
+
+        if ( pair.shortestPath.length === 1 && shape.numEdges ) {
+          // Single edge, so we are duplicating things
+          const edgeIndex = patternBoard.edges.indexOf( pair.shortestPath[ 0 ] );
+          assertEnabled() && assert( edgeIndex >= 0 );
+
+          this.bitMap.set( samePairIndex, 2 * edgeIndex );
+          this.bitMap.set( oppositePairIndex, 2 * edgeIndex + 1 );
+        }
+        else {
+          this.bitMap.set( samePairIndex, bitIndex++ );
+          this.bitMap.set( oppositePairIndex, bitIndex++ );
+        }
+      }
+    }
+  }
+
+  // TODO: could reorder the SolutionSet data to be similar to this, so we can JUST COPY DIRECTLY!!!
+  public getBigint( bitData: number[], solutionIndex: number ): bigint {
+    const offset = solutionIndex * this.shape.numNumbersPerSolution;
+
+    let result = BigInt( 0 );
+
+    for ( let [ solutionBitIndex, attributeBitIndex ] of this.bitMap ) {
+      if ( bitNumbersIsBitOne( bitData, offset, solutionBitIndex ) ) {
+        result |= 1n << BigInt( attributeBitIndex );
+      }
+    }
+
+    return result;
+  }
+
+  public getNumbers( bigint: bigint ): number[] {
+    const numbers = new Array<number>( this.shape.numNumbersPerSolution ).fill( 0 );
+
+    for ( let [ solutionBitIndex, attributeBitIndex ] of this.bitMap ) {
+      if ( ( bigint & ( 1n << BigInt( attributeBitIndex ) ) ) !== 0n ) {
+        bitNumbersSetBitToOne( numbers, 0, solutionBitIndex );
+      }
+    }
+
+    assertEnabled() && assert( bigint === this.getBigint( numbers, 0 ) );
+
+    return numbers;
+  }
 }
