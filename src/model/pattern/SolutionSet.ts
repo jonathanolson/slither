@@ -420,14 +420,30 @@ export class SolutionSet {
 
     // console.log( scratchNumbers );
 
-    for ( let edgeIndex = 0; edgeIndex < this.shape.numEdges; edgeIndex++ ) {
+    SolutionSet.applyNumbersToFeatureSet(
+      this.patternBoard,
+      this.shape,
+      scratchNumbers,
+      featureSet
+    );
+
+    return featureSet;
+  }
+
+  public static applyNumbersToFeatureSet(
+    patternBoard: TPatternBoard,
+    shape: SolutionSetShape,
+    numbers: number[],
+    featureSet: FeatureSet
+  ): void {
+    for ( let edgeIndex = 0; edgeIndex < shape.numEdges; edgeIndex++ ) {
       const blackIndex = 3 * edgeIndex;
       const redIndex = blackIndex + 1;
 
-      const canBeBlack = bitNumbersIsBitOne( scratchNumbers, 0, blackIndex );
-      const canBeRed = bitNumbersIsBitOne( scratchNumbers, 0, redIndex );
+      const canBeBlack = bitNumbersIsBitOne( numbers, 0, blackIndex );
+      const canBeRed = bitNumbersIsBitOne( numbers, 0, redIndex );
 
-      const edge = this.patternBoard.edges[ edgeIndex ];
+      const edge = patternBoard.edges[ edgeIndex ];
 
       // TODO: I think these "both" cases are impossible now
       // Handle cases where our exit edge is both "black" and "red" at the same time.
@@ -440,38 +456,38 @@ export class SolutionSet {
     }
 
     // TODO: OR add excess sectors?
-    for ( let sectorIndex = 0; sectorIndex < this.shape.numSectors; sectorIndex++ ) {
-      const sectorBaseIndex = this.shape.sectorOffset + 3 * sectorIndex;
+    for ( let sectorIndex = 0; sectorIndex < shape.numSectors; sectorIndex++ ) {
+      const sectorBaseIndex = shape.sectorOffset + 3 * sectorIndex;
       const notZeroBitIndex = sectorBaseIndex;
       const notOneBitIndex = sectorBaseIndex + 1;
       const notTwoBitIndex = sectorBaseIndex + 2;
 
-      const isNotZero = bitNumbersIsBitOne( scratchNumbers, 0, notZeroBitIndex );
-      const isNotOne = bitNumbersIsBitOne( scratchNumbers, 0, notOneBitIndex );
-      const isNotTwo = bitNumbersIsBitOne( scratchNumbers, 0, notTwoBitIndex );
+      const isNotZero = bitNumbersIsBitOne( numbers, 0, notZeroBitIndex );
+      const isNotOne = bitNumbersIsBitOne( numbers, 0, notOneBitIndex );
+      const isNotTwo = bitNumbersIsBitOne( numbers, 0, notTwoBitIndex );
 
       if ( !isNotOne && isNotZero && isNotTwo ) {
-        featureSet.addSectorOnlyOne( this.patternBoard.sectors[ sectorIndex ] );
+        featureSet.addSectorOnlyOne( patternBoard.sectors[ sectorIndex ] );
       }
       else if ( isNotOne && !isNotZero && !isNotTwo ) {
-        featureSet.addSectorNotOne( this.patternBoard.sectors[ sectorIndex ] );
+        featureSet.addSectorNotOne( patternBoard.sectors[ sectorIndex ] );
       }
       else if ( isNotZero && !isNotOne && !isNotTwo ) {
-        featureSet.addSectorNotZero( this.patternBoard.sectors[ sectorIndex ] );
+        featureSet.addSectorNotZero( patternBoard.sectors[ sectorIndex ] );
       }
       else if ( isNotTwo && !isNotZero && !isNotOne ) {
-        featureSet.addSectorNotTwo( this.patternBoard.sectors[ sectorIndex ] );
+        featureSet.addSectorNotTwo( patternBoard.sectors[ sectorIndex ] );
       }
     }
 
-    if ( this.shape.numFacePairs ) {
-      const faceConnectivity = FaceConnectivity.get( this.patternBoard );
+    if ( shape.numFacePairs ) {
+      const faceConnectivity = FaceConnectivity.get( patternBoard );
 
-      for ( let pairIndex = 0; pairIndex < this.shape.numFacePairs; pairIndex++ ) {
-        const samePairIndex = this.shape.faceOffset + 2 * pairIndex;
+      for ( let pairIndex = 0; pairIndex < shape.numFacePairs; pairIndex++ ) {
+        const samePairIndex = shape.faceOffset + 2 * pairIndex;
         const oppositePairIndex = samePairIndex + 1;
-        const isSame = bitNumbersIsBitOne( scratchNumbers, 0, samePairIndex );
-        const isOpposite = bitNumbersIsBitOne( scratchNumbers, 0, oppositePairIndex );
+        const isSame = bitNumbersIsBitOne( numbers, 0, samePairIndex );
+        const isOpposite = bitNumbersIsBitOne( numbers, 0, oppositePairIndex );
 
         if ( isSame || isOpposite ) {
           const pair = faceConnectivity.connectedFacePairs[ pairIndex ];
@@ -487,8 +503,6 @@ export class SolutionSet {
         }
       }
     }
-
-    return featureSet;
   }
 
   // NOTE: can get indeterminateEdges from getIndeterminateEdges( this.patternBoard, features )
