@@ -13,7 +13,6 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
 
   const options = optionize3<GetRulesOptions, GetRulesSelfOptions, BasicSolveOptions>()( {}, GET_RULES_DEFAULTS, providedOptions );
 
-  assertEnabled() && assert( !options.highlander );
   assertEnabled() && assert( !isFinite( options.featureLimit ) );
 
   // enumerate all face value features (up to isomorphism)
@@ -59,7 +58,8 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
       featureSet,
       options.solveEdges,
       options.solveSectors,
-      options.solveFaceColors
+      options.solveFaceColors,
+      options.highlander
     );
 
     for ( const rule of impliedRules ) {

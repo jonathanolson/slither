@@ -6,27 +6,33 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import _ from '../../../workarounds/_.ts';
 import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
+import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 
 export const getImpliedRules = (
   featureSet: FeatureSet,
   includeEdges: boolean,
   includeSectors: boolean,
-  includeFaces: boolean
+  includeFaces: boolean,
+  highlander: boolean,
 ): PatternRule[] => {
-  const solutionSet = SolutionSet.fromFeatureSet(
+  let initialSolutionSet = SolutionSet.fromFeatureSet(
     featureSet,
     includeEdges,
     includeSectors,
     includeFaces,
-    false
-  )!;
+    highlander
+  );
 
-  // TODO: add in highlander filter here
+  if ( initialSolutionSet && highlander ) {
+    initialSolutionSet = initialSolutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() ) );
+  }
 
   // We might have faces that have no solutions!
-  if ( !solutionSet ) {
+  if ( !initialSolutionSet ) {
     return [];
   }
+
+  const solutionSet = initialSolutionSet;
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
 
