@@ -23,6 +23,8 @@ export const getImpliedRules = (
     highlander
   );
 
+  // NOTE: Highlander indeterminate edges (and thus which "solutions" are filtered out) are set HERE, since we won't be
+  // adding in face values!
   if ( initialSolutionSet && highlander ) {
     initialSolutionSet = initialSolutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() ) );
   }
