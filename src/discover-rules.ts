@@ -32,7 +32,7 @@ import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsom
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
-import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
@@ -280,7 +280,7 @@ console.log( 'test' );
       align: 'origin',
       children: basicPatternBoards.map( patternBoard => new PlanarMappedPatternBoardNode( {
         patternBoard: patternBoard,
-        planarPatternMap: patternBoardMappings.get( patternBoard )!
+        planarPatternMap: planarPatternMaps.get( patternBoard )!
       } ) )
     } ) );
 

@@ -1,5 +1,5 @@
 import { BasePatternBoard } from './BasePatternBoard.ts';
-import { patternBoardMappings } from './patternBoardMappings.ts';
+import { planarPatternMaps } from './planarPatternMaps.ts';
 import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
@@ -208,7 +208,7 @@ export const registerStandardPatternBoard = ( patternBoard: TPatternBoard, plana
   }
   else {
     standardPatternBoards.push( patternBoard );
-    patternBoardMappings.set( patternBoard, planarPatternMap );
+    planarPatternMaps.set( patternBoard, planarPatternMap );
     return patternBoard;
   }
 };

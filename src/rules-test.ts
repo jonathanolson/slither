@@ -1,7 +1,7 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { edgePatternBoard } from './model/pattern/patternBoards.ts';
-import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 
@@ -46,7 +46,7 @@ console.log( 'test' );
   //   solveFaceColors: true
   // } );
 
-  const ruleSets = [ PatternBoardRuleSet.create( edgePatternBoard, patternBoardMappings.get( edgePatternBoard )!, [], {
+  const ruleSets = [ PatternBoardRuleSet.createEnumerated( edgePatternBoard, planarPatternMaps.get( edgePatternBoard )!, [], {
     solveEdges: true,
     solveFaceColors: true
   } ) ];
@@ -61,7 +61,7 @@ console.log( 'test' );
     spacing: 10,
     children: rules.map( rule => {
       // TODO: omg, associate boards with planar pattern maps
-      const planarPatternMap = patternBoardMappings.get( rule.patternBoard as BasePatternBoard )!;
+      const planarPatternMap = planarPatternMaps.get( rule.patternBoard as BasePatternBoard )!;
 
       return new PatternRuleNode( rule, planarPatternMap );
     } )

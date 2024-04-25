@@ -3,6 +3,8 @@ import { AttributeSet } from './model/pattern/formal-concept/AttributeSet.ts';
 import { FormalContext } from './model/pattern/formal-concept/FormalContext.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
+import { SolutionSet } from './model/pattern/SolutionSet.ts';
+import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 
 const vector = new Vector2( 0, 0 );
 console.log( vector );
@@ -50,10 +52,12 @@ console.log( squareFormalContext.toString() );
 // console.log( squareFormalContext.getIntents().map( intent => intent.toString() ) );
 console.log( squareFormalContext.getIntents().length );
 
-const data = squareFormalContext.getIntentsAndImplicationsParallelizable();
-console.log( data.intents.length, data.implications.length );
+// const data = squareFormalContext.getIntentsAndImplicationsParallelizable();
+// console.log( data.intents.length, data.implications.length );
 
 const data2 = squareFormalContext.getIntentsAndImplications();
 console.log( data2.intents.length, data2.implications.length );
 
-console.log( data2.implications.map( implication => implication.toString() ) );
+// console.log( data2.implications.map( implication => implication.toString() ) );
+
+console.log( SolutionSet.getImpliedRules( FeatureSet.emptyWithVertexOrderLimit( squarePatternBoard, 4 ), true, false, false ).map( rule => rule.toCanonicalString() ) );

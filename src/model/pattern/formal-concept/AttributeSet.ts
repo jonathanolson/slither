@@ -10,6 +10,10 @@ export class AttributeSet {
     private data: bigint
   ) {}
 
+  public getBits(): bigint {
+    return this.data;
+  }
+
   // Mutable
 
   public or( other: AttributeSet ): void {
@@ -115,6 +119,10 @@ export class AttributeSet {
     }
 
     return Number( count );
+  }
+
+  public withAttribute( i: number ): AttributeSet {
+    return new AttributeSet( this.numAttributes, this.data | ( 1n << BigInt( i ) ) );
   }
 
   public withLowestBitSet( i: number ): AttributeSet {

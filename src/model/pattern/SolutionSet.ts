@@ -10,6 +10,9 @@ import { TPatternFace } from './TPatternFace.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 import { BIT_NUMBERS_BITS_PER_NUMBER, bitNumbersIsBitOne, bitNumbersSetBitToOne } from '../../util/booleanPacking.ts';
+import { PatternRule } from './PatternRule.ts';
+import { FormalContext } from './formal-concept/FormalContext.ts';
+import { AttributeSet } from './formal-concept/AttributeSet.ts';
 
 
 export type SolutionSetShape = {
@@ -590,6 +593,149 @@ export class SolutionSet {
     return solutions;
   }
 
+  public static getImpliedRules(
+    featureSet: FeatureSet,
+    includeEdges: boolean,
+    includeSectors: boolean,
+    includeFaces: boolean
+  ): PatternRule[] {
+    const solutionSet = SolutionSet.fromFeatureSet(
+      featureSet,
+      includeEdges,
+      includeSectors,
+      includeFaces,
+      false
+    )!;
+
+    // We might have faces that have no solutions!
+    if ( !solutionSet ) {
+      return [];
+    }
+
+    const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
+
+    const formalContext = new FormalContext( mapping.numBits, _.range( 0, solutionSet.numSolutions ).flatMap( i => {
+      const attributeSets: AttributeSet[] = [];
+
+      // TODO: factor back in?
+      const baseBigint = mapping.getBigint( solutionSet.bitData, i );
+
+      const primaryAttributeSet = AttributeSet.fromBinary( mapping.numBits, baseBigint );
+
+      // TODO: Make it so that we don't have to include every permutation of potential red exit edges(!)
+      // TODO: We will want to switch to a more manual "closure" function (both for red exit edges, and highlander)
+
+      // TODO: use different abstractions, so we do NOT have to duplicate things for red exit edge sets
+      const potentiallyRedExitEdges = featureSet.patternBoard.edges.filter( edge => {
+        if ( !edge.isExit ) {
+          return false;
+        }
+
+        const redSolutionEdgeIndex = 3 * edge.index + 1;
+        const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+
+        // TODO: map directly from solutions ideally
+        if ( primaryAttributeSet.hasAttribute( redAttributeEdgeIndex ) ) {
+          return false;
+        }
+
+        const hasNoBlackNonExitEdges = edge.exitVertex!.edges.every( edge => {
+          return edge.isExit || !primaryAttributeSet.hasAttribute( mapping.mapBitIndex( 3 * edge.index ) );
+        } );
+
+        return hasNoBlackNonExitEdges;
+      } );
+
+      const exitRecur = ( attributeSet: AttributeSet, edgeIndex: number ) => {
+        if ( edgeIndex === potentiallyRedExitEdges.length ) {
+          attributeSets.push( attributeSet );
+          return;
+        }
+        else {
+          exitRecur( attributeSet, edgeIndex + 1 );
+
+          const edge = potentiallyRedExitEdges[ edgeIndex ];
+          const redSolutionEdgeIndex = 3 * edge.index + 1;
+          const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+
+          exitRecur( attributeSet.withAttribute( redAttributeEdgeIndex ), edgeIndex + 1 );
+        }
+      };
+      exitRecur( primaryAttributeSet, 0 );
+      // attributeSets.push( primaryAttributeSet );
+
+      for ( const edge of featureSet.patternBoard.edges ) {
+        if ( edge.isExit ) {
+          const redSolutionEdgeIndex = 3 * edge.index + 1;
+          const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+
+          // TODO: map directly from solutions ideally
+          if ( !primaryAttributeSet.hasAttribute( redAttributeEdgeIndex ) ) {
+            const hasNoBlackNonExitEdges = edge.exitVertex!.edges.every( edge => {
+              return edge.isExit || !primaryAttributeSet.hasAttribute( mapping.mapBitIndex( 3 * edge.index ) );
+            } );
+
+            if ( hasNoBlackNonExitEdges ) {
+              attributeSets.push( primaryAttributeSet.withAttribute( redAttributeEdgeIndex ) );
+            }
+          }
+        }
+      }
+
+      // TODO: ... really just go straight from the "solutions" to our context?
+
+      // TODO: handle "potentially red exit edges" here
+
+      return attributeSets;
+    } ) );
+
+    const implications = formalContext.getIntentsAndImplications().implications;
+
+    const invalidAttributeSet = AttributeSet.getFull( mapping.numBits );
+
+    return implications.map( implication => {
+      // TODO: can we just have a filter first? (or do we need to handle exit edges separately?)
+      if ( implication.consequent.equals( invalidAttributeSet ) ) {
+        return null;
+      }
+
+      const inputFeatureSet = featureSet.clone();
+      const inputNumbers = mapping.getNumbers( implication.antecedent.getBits() );
+      SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, inputNumbers, inputFeatureSet );
+
+      const outputFeatureSet = featureSet.clone();
+      const outputNumbers = mapping.getNumbers( implication.consequent.getBits() );
+      SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, outputNumbers, outputFeatureSet );
+
+      if ( assertEnabled() ) {
+        for ( let i = 0; i < solutionSet.numSolutions; i++ ) {
+          const offset = i * solutionSet.shape.numNumbersPerSolution;
+          let inputMatches = true;
+          let outputMatches = true;
+
+          for ( let j = 0; j < solutionSet.shape.numNumbersPerSolution; j++ ) {
+            if ( ( inputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== inputNumbers[ j ] ) {
+              inputMatches = false;
+            }
+            if ( ( outputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== outputNumbers[ j ] ) {
+              outputMatches = false;
+            }
+          }
+
+          // Implication
+          assert( !inputMatches || outputMatches );
+        }
+      }
+
+      // TODO: see if we need to re-enable this
+      if ( inputFeatureSet.equals( outputFeatureSet ) ) {
+        return null;
+      }
+
+      return new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet );
+    } ).filter( rule => !!rule ) as PatternRule[];
+  }
+
   public static fromFeatureSet(
     featureSet: FeatureSet,
     includeEdges: boolean,
@@ -837,6 +983,8 @@ export class PatternAttributeSetMapping {
   // SolutionSet bit index => Attribute Set bit index
   public readonly bitMap = new Map<number, number>();
 
+  public readonly numBits: number;
+
   /**
    * Strips the "original black", reorders to (red,black), and deduplicates single-edge "face-color differences"
    */
@@ -848,13 +996,25 @@ export class PatternAttributeSetMapping {
 
     // NOTE: no mapping for "original black"
     if ( shape.numEdges ) {
+      let hasExitEdge = false;
       for ( let edgeIndex = 0; edgeIndex < shape.numEdges; edgeIndex++ ) {
+        const edge = patternBoard.edges[ edgeIndex ];
+
         const blackIndex = 3 * edgeIndex;
         const redIndex = 3 * edgeIndex + 1;
 
-        // Reverse the map here, so we are red, black
-        this.bitMap.set( redIndex, bitIndex++ );
-        this.bitMap.set( blackIndex, bitIndex++ );
+        if ( edge.isExit ) {
+          hasExitEdge = true;
+
+          this.bitMap.set( redIndex, bitIndex++ );
+        }
+        else {
+          assertEnabled() && assert( !hasExitEdge, 'Assume ordering of non-exit before exit' );
+
+          // Reverse the map here, so we are red, black
+          this.bitMap.set( redIndex, bitIndex++ );
+          this.bitMap.set( blackIndex, bitIndex++ );
+        }
       }
     }
 
@@ -895,6 +1055,15 @@ export class PatternAttributeSetMapping {
         }
       }
     }
+
+    this.numBits = bitIndex;
+  }
+
+  public mapBitIndex( bitIndex: number ): number {
+    const mapped = this.bitMap.get( bitIndex )!;
+    assertEnabled() && assert( mapped !== undefined );
+
+    return mapped;
   }
 
   // TODO: could reorder the SolutionSet data to be similar to this, so we can JUST COPY DIRECTLY!!!

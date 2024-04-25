@@ -1,9 +1,11 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { squareEdgeGeneration1RuleSets } from './model/pattern/data/rules.ts';
+import { basicEdgeRuleSets, squareEdgeGeneration1RuleSets } from './model/pattern/data/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
+import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
+import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -72,15 +74,6 @@ const addRule = ( serializedInput: string, serializedOutput: string ) => {
       } );
     } )
   } ) );
-
-
-  if ( scene.bounds.isValid() ) {
-    display.setWidthHeight(
-      Math.ceil( scene.right + 10 ),
-      Math.ceil( scene.bottom + 10 )
-    );
-    display.updateDisplay();
-  }
 };
 
 // @ts-expect-error
@@ -94,3 +87,41 @@ addRule(
   "{\"faceValues\":[{\"face\":1,\"value\":1}],\"faceColorDualFeatures\":[{\"type\":\"face-color-dual\",\"primaryFaces\":[0,3,5,6,7],\"secondaryFaces\":[],\"sameColorPaths\":[[0,4],[0,5],[0,6],[2]],\"oppositeColorPaths\":[]}]}",
   "{\"faceValues\":[{\"face\":1,\"value\":1}],\"faceColorDualFeatures\":[{\"type\":\"face-color-dual\",\"primaryFaces\":[2],\"secondaryFaces\":[4],\"sameColorPaths\":[],\"oppositeColorPaths\":[[1,3]]},{\"type\":\"face-color-dual\",\"primaryFaces\":[6,7,5,3,1,0],\"secondaryFaces\":[],\"sameColorPaths\":[[5],[4],[0],[6],[2]],\"oppositeColorPaths\":[]}]}",
 );
+
+const squarePatternBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
+
+const rules = PatternRule.getSolutionImpliedRules( squarePatternBoard, {
+  vertexOrderLimit: 4,
+  prefilterRules: [
+    ...basicEdgeRuleSets.flatMap( ruleSet => ruleSet.rules ),
+  ],
+  includeFaceValueZero: true
+} );
+
+rules.forEach( rule => {
+  addPaddedNode( new PatternRuleNode( rule, planarPatternMaps.get( squarePatternBoard )! ) );
+} );
+
+// const featureSet = FeatureSet.emptyWithVertexOrderLimit( squarePatternBoard, 4 );
+// featureSet.addFaceValue( squarePatternBoard.faces[ 0 ], 2 );
+// // featureSet.addFaceValue( squarePatternBoard.faces[ 1 ], 2 );
+//
+// const impliedRules = SolutionSet.getImpliedRules( featureSet, true, false, false );
+//
+// // console.log( impliedRules[ 0 ].isIsomorphicTo( impliedRules[ 3 ] ) );
+//
+// const filteredRules = PatternRule.filterAndSortRules( impliedRules );
+//
+// // console.log( filteredRules[ 0 ].isIsomorphicTo( filteredRules[ 3 ] ) );
+//
+// filteredRules.forEach( rule => {
+//   addPaddedNode( new PatternRuleNode( rule, planarPatternMaps.get( squarePatternBoard )! ) );
+// } );
+
+if ( scene.bounds.isValid() ) {
+  display.setWidthHeight(
+    Math.ceil( scene.right + 10 ),
+    Math.ceil( scene.bottom + 10 )
+  );
+  display.updateDisplay();
+}

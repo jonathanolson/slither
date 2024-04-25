@@ -1,9 +1,9 @@
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
+import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, squareOnlyImpliedEdgeGeneration0RuleSets, squareOnlyImpliedEdgeGeneration1RuleSets, squareOnlyImpliedEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
 import { GetRulesOptions } from './model/pattern/PatternRule.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
-import { patternBoardMappings } from './model/pattern/patternBoardMappings.ts';
+import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 
@@ -23,7 +23,7 @@ const handlePatternBoard = (
   previousRuleSets: PatternBoardRuleSet[],
   options?: GetRulesOptions
 ) => {
-  const planarPatternMap = patternBoardMappings.get( patternBoard )!;
+  const planarPatternMap = planarPatternMaps.get( patternBoard )!;
   assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
   if ( progressive ) {
@@ -34,7 +34,7 @@ const handlePatternBoard = (
     while ( hitFeatureLimit ) {
       hitFeatureLimit = false;
 
-      ruleSet = PatternBoardRuleSet.create( patternBoard, planarPatternMap, previousRuleSets, combineOptions<GetRulesOptions>( {}, options, {
+      ruleSet = PatternBoardRuleSet.createEnumerated( patternBoard, planarPatternMap, previousRuleSets, combineOptions<GetRulesOptions>( {}, options, {
         featureLimit: featureLimit,
         hitFeatureLimitCallback: () => {
           hitFeatureLimit = true;
@@ -52,15 +52,47 @@ const handlePatternBoard = (
     console.log( 'COMPLETE' );
   }
   else {
-    const ruleSet = PatternBoardRuleSet.create( patternBoard, planarPatternMap, previousRuleSets, options );
+    const ruleSet = PatternBoardRuleSet.createEnumerated( patternBoard, planarPatternMap, previousRuleSets, options );
     console.log( JSON.stringify( ruleSet.serialize() ) );
   }
+};
+
+const handleImpliedPatternBoard = (
+  patternBoard: TPatternBoard,
+  previousRuleSets: PatternBoardRuleSet[],
+  options?: GetRulesOptions
+) => {
+  const planarPatternMap = planarPatternMaps.get( patternBoard )!;
+  assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
+
+  options = combineOptions( {
+    includeFaceValueZero: patternBoard.faces.filter( face => !face.isExit ).length === 1
+  }, options );
+
+  const ruleSet = PatternBoardRuleSet.createImplied( patternBoard, planarPatternMap, previousRuleSets, options );
+  console.log( JSON.stringify( ruleSet.serialize() ) );
 };
 
 const onlyRuleSetsWithFewerNotExitFaces = ( numNonExitFaces: number ) => {
   return ( ruleSet: PatternBoardRuleSet ) => {
     return ruleSet.patternBoard.faces.filter( face => !face.isExit ).length < numNonExitFaces;
   };
+};
+
+// @ts-expect-error
+window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleImpliedPatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicEdgeRuleSets,
+      ...squareOnlyImpliedEdgeGeneration0RuleSets,
+      ...squareOnlyImpliedEdgeGeneration1RuleSets,
+      ...squareOnlyImpliedEdgeGeneration2RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      vertexOrderLimit: 4
+    }, options )
+  );
 };
 
 // @ts-expect-error

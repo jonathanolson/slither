@@ -4,7 +4,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FeatureSet, TSerializedFeatureSet } from './feature/FeatureSet.ts';
 import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import { BasePatternBoard } from './BasePatternBoard.ts';
-import { patternBoardMappings } from './patternBoardMappings.ts';
+import { planarPatternMaps } from './planarPatternMaps.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
@@ -19,7 +19,7 @@ export class PatternBoardRuleSet {
     assertEnabled() && assert( rules.every( rule => rule.patternBoard === patternBoard ) );
   }
 
-  public static create(
+  public static createEnumerated(
     patternBoard: TPatternBoard,
     mapping: TPlanarPatternMap,
     previousRuleSets: PatternBoardRuleSet[],
@@ -35,6 +35,26 @@ export class PatternBoardRuleSet {
     } );
 
     const rules = PatternRule.computeFilteredRules( patternBoard, options );
+
+    return new PatternBoardRuleSet( patternBoard, mapping, rules );
+  }
+
+  public static createImplied(
+    patternBoard: TPatternBoard,
+    mapping: TPlanarPatternMap,
+    previousRuleSets: PatternBoardRuleSet[],
+    providedOptions?: GetRulesOptions
+  ): PatternBoardRuleSet {
+    assertEnabled() && assert( patternBoard );
+    assertEnabled() && assert( mapping );
+
+    const previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
+
+    const options = combineOptions<GetRulesOptions>( {}, providedOptions, {
+      prefilterRules: previousRules
+    } );
+
+    const rules = PatternRule.getSolutionImpliedRules( patternBoard, options );
 
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
@@ -135,7 +155,7 @@ export class PatternBoardRuleSet {
     const patternBoard = new BasePatternBoard( deserializePatternBoardDescriptor( serialized.patternBoard ) );
     const mapping = deserializePlanarPatternMap( serialized.mapping, patternBoard );
 
-    patternBoardMappings.set( patternBoard, mapping );
+    planarPatternMaps.set( patternBoard, mapping );
 
     const rules = serialized.rules.map( rule => {
       return new PatternRule(
