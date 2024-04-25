@@ -470,16 +470,14 @@ export class SolutionSet {
       const isNotOne = bitNumbersIsBitOne( numbers, 0, notOneBitIndex );
       const isNotTwo = bitNumbersIsBitOne( numbers, 0, notTwoBitIndex );
 
-      if ( !isNotOne && isNotZero && isNotTwo ) {
-        featureSet.addSectorOnlyOne( patternBoard.sectors[ sectorIndex ] );
-      }
-      else if ( isNotOne && !isNotZero && !isNotTwo ) {
+      // NOTE: Relying on the FeatureSet to properly collapse everything together
+      if ( isNotOne ) {
         featureSet.addSectorNotOne( patternBoard.sectors[ sectorIndex ] );
       }
-      else if ( isNotZero && !isNotOne && !isNotTwo ) {
+      if ( isNotZero ) {
         featureSet.addSectorNotZero( patternBoard.sectors[ sectorIndex ] );
       }
-      else if ( isNotTwo && !isNotZero && !isNotOne ) {
+      if ( isNotTwo ) {
         featureSet.addSectorNotTwo( patternBoard.sectors[ sectorIndex ] );
       }
     }

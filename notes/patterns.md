@@ -3,7 +3,10 @@
 
 - TODO
   - 
-  - Memory issues if we are "storing" a ton of intents/implications. Have it be an "iterator"? / Generator
+  - ZOMG move files OUT of the huge rules.ts (into others)
+  - 
+  - Sectors not-0 + not-1 => fill in both (black) edges
+  - Sectors not-1 + not-2 => fill in both (red) edges
   - 
   - Test implied-sector
     - These are... broken looking. See exit-2... look into it

@@ -265,11 +265,8 @@ export class FeatureSet {
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
 
-    if ( this.redEdges.has( edgeA ) ) {
-      throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeA ) ] );
-    }
-    if ( this.redEdges.has( edgeB ) ) {
-      throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeB ) ] );
+    if ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+      throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
     }
 
     // We can skip adding this sector if we have a black edge
