@@ -1,11 +1,11 @@
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, squareOnlyImpliedEdgeGeneration0RuleSets, squareOnlyImpliedEdgeGeneration1RuleSets, squareOnlyImpliedEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
-import { GetRulesOptions } from './model/pattern/PatternRule.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
+import { GetRulesOptions } from './model/pattern/generation/GetRulesOptions.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

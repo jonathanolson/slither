@@ -1,5 +1,5 @@
 import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
-import { GetRulesOptions, PatternRule } from './PatternRule.ts';
+import { PatternRule } from './PatternRule.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FeatureSet, TSerializedFeatureSet } from './feature/FeatureSet.ts';
 import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
@@ -9,6 +9,11 @@ import { combineOptions } from 'phet-lib/phet-core';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
+import { filterAndSortRules } from './generation/filterAndSortRules.ts';
+import { GetRulesOptions } from './generation/GetRulesOptions.ts';
+import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
+import { getFilteredEnumeratedRules } from './generation/getFilteredEnumeratedRules.ts';
+import { getCollapsedRules } from './generation/getCollapsedRules.ts';
 
 export class PatternBoardRuleSet {
   public constructor(
@@ -34,7 +39,7 @@ export class PatternBoardRuleSet {
       prefilterRules: previousRules
     } );
 
-    const rules = PatternRule.computeFilteredRules( patternBoard, options );
+    const rules = getFilteredEnumeratedRules( patternBoard, options );
 
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
@@ -54,7 +59,7 @@ export class PatternBoardRuleSet {
       prefilterRules: previousRules
     } );
 
-    const rules = PatternRule.getSolutionImpliedRules( patternBoard, options );
+    const rules = getSolutionImpliedRules( patternBoard, options );
 
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
@@ -78,7 +83,7 @@ export class PatternBoardRuleSet {
         prefilterRules: previousRules
       } );
 
-      const rules = PatternRule.computeFilteredRules( patternBoard, options );
+      const rules = getFilteredEnumeratedRules( patternBoard, options );
 
       ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
 
@@ -126,9 +131,9 @@ export class PatternBoardRuleSet {
       }
     } ).filter( rule => rule !== null && !rule.isTrivial() ) as PatternRule[];
 
-    const collapsedRules = PatternRule.collapseRules( patchedFilteredRules );
+    const collapsedRules = getCollapsedRules( patchedFilteredRules );
 
-    const finalRules = PatternRule.filterAndSortRules( collapsedRules, previousRules );
+    const finalRules = filterAndSortRules( collapsedRules, previousRules );
 
     return new PatternBoardRuleSet( this.patternBoard, this.mapping, finalRules );
   }

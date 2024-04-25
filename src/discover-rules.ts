@@ -37,6 +37,7 @@ import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
 import { squareEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
+import { getBasicRule } from './model/pattern/generation/getBasicRule.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -483,7 +484,7 @@ console.log( 'test' );
 
         // TODO: other features
         const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors = false, solveSectors = false, highlander = false ): Node => {
-          const rule = PatternRule.getBasicRule( board, FeatureSet.fromFeatures( board, inputFeatures ), {
+          const rule = getBasicRule( board, FeatureSet.fromFeatures( board, inputFeatures ), {
             solveEdges,
             solveFaceColors,
             solveSectors,
@@ -593,7 +594,7 @@ console.log( 'test' );
 
         addPaddedNode( getRuleNode( crossBoard, crossBoardHighlanderFeatures, true, false, true, true ) );
 
-        const aRule = PatternRule.getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( squarePatternBoard, [
+        const aRule = getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( squarePatternBoard, [
           new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
           new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
         ] ), {

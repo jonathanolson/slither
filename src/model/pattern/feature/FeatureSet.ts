@@ -2,7 +2,6 @@ import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { assertEnabled, default as assert } from '../../../workarounds/assert.ts';
 import { Embedding } from '../Embedding.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { optionize3 } from 'phet-lib/phet-core';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
@@ -24,7 +23,6 @@ import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
 import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 import { getEmbeddings } from '../getEmbeddings.ts';
-import { SolutionSet } from '../SolutionSet.ts';
 
 const scratchEmbeddingsArray: Embedding[] = [];
 
@@ -1086,72 +1084,7 @@ export class FeatureSet {
     }
   }
 
-  // null if there is no solution
-  // TODO: @deprecated, but kept around because... our new solution is NOT well tested, and this would be good to use
-  // TODO: for comparison.
-  public solvedOldStyle( providedOptions?: BasicSolveOptions ): FeatureSet | null {
-    // TODO: is this too much performance loss?
-    const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
-
-    const solutions = this.getSolutions( options.highlander );
-
-    if ( solutions.length === 0 ) {
-      return null;
-    }
-
-    const featureSet = this.clone();
-
-    const solutionSets = solutions.map( solution => new Set( solution ) );
-
-    if ( options.solveEdges ) {
-      // TODO: should this be an instance method?
-      featureSet.addSolvedEdgeFeatures( solutionSets );
-    }
-
-    if ( options.solveSectors ) {
-      featureSet.addSolvedSectorFeatures( solutionSets );
-    }
-
-    if ( options.solveFaceColors ) {
-      featureSet.addSolvedFaceColorDualFeatures( solutionSets );
-    }
-
-    if ( assertEnabled() ) {
-      let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
-      if ( solutionSet && options.highlander ) {
-        solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
-      }
-
-      assertEnabled() && assert( solutionSet );
-      const sanityFeatureSet = solutionSet!.addToFeatureSet( this.clone() )!;
-      assertEnabled() && assert( sanityFeatureSet );
-
-      assertEnabled() && assert( sanityFeatureSet.equals( featureSet ) );
-    }
-
-    return featureSet;
-  }
-
-  // null if there is no solution
-  public solved( providedOptions?: BasicSolveOptions ): FeatureSet | null {
-    // TODO: is this too much performance loss?
-    const options = optionize3<BasicSolveOptions>()( {}, BASIC_SOLVE_DEFAULTS, providedOptions );
-
-    let solutionSet: SolutionSet | null = SolutionSet.fromFeatureSet( this, !!options.solveEdges, !!options.solveSectors, !!options.solveFaceColors, !!options.highlander );
-
-    if ( solutionSet && options.highlander ) {
-      solutionSet = solutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( this.patternBoard, this.getFeaturesArray() ) );
-    }
-
-    if ( solutionSet ) {
-      return solutionSet.addToFeatureSet( this.clone() );
-    }
-    else {
-      return null;
-    }
-  }
-
-  private addSolvedEdgeFeatures( solutions: Set<TPatternEdge>[] ): void {
+  public addSolvedEdgeFeatures( solutions: Set<TPatternEdge>[] ): void {
     const hasBlack = new Array( this.patternBoard.edges.length ).fill( false );
     const hasRed = new Array( this.patternBoard.edges.length ).fill( false );
 
@@ -1212,7 +1145,7 @@ export class FeatureSet {
     }
   }
 
-  private addSolvedSectorFeatures( solutions: Set<TPatternEdge>[] ): void {
+  public addSolvedSectorFeatures( solutions: Set<TPatternEdge>[] ): void {
     const hasZero = new Array( this.patternBoard.sectors.length ).fill( false );
     const hasOne = new Array( this.patternBoard.sectors.length ).fill( false );
     const hasTwo = new Array( this.patternBoard.sectors.length ).fill( false );
@@ -1254,7 +1187,7 @@ export class FeatureSet {
     }
   }
 
-  private addSolvedFaceColorDualFeatures( solutions: Set<TPatternEdge>[] ): void {
+  public addSolvedFaceColorDualFeatures( solutions: Set<TPatternEdge>[] ): void {
     assertEnabled() && assert( solutions.length > 0 );
 
     const faceConnectivity = FaceConnectivity.get( this.patternBoard );

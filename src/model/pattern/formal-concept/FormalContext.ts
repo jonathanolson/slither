@@ -58,6 +58,45 @@ export class FormalContext {
     return intents;
   }
 
+  public forEachImplication( callback: ( implication: Implication ) => void ): void {
+    // NOTE: We need to store implications to handle implication set closure(!)
+    const implications: Implication[] = [];
+
+    let set: AttributeSet | null = AttributeSet.getEmpty( this.numAttributes );
+
+    while ( set ) {
+      const closedSet = this.getClosure( set );
+
+      if ( !set.equals( closedSet ) ) {
+        // Is a pseudo-intent
+        const implication = new Implication( set, closedSet );
+        callback( implication );
+        implications.push( implication );
+      }
+
+      let nextSet: AttributeSet | null = null;
+      for ( let i = 0; i < this.numAttributes; i++ ) {
+        // TODO: can we get away without clearing the other bits? no, right?
+        const withLowestBit = set.withLowestBitSet( i );
+
+        const closedWithLowestBit = Implication.implicationSetClosure( implications, withLowestBit );
+
+        if ( set.isLessThanI( closedWithLowestBit, i ) ) {
+          nextSet = closedWithLowestBit;
+          break;
+        }
+      }
+
+      if ( nextSet ) {
+        set = nextSet;
+      }
+      else {
+        // done!
+        break;
+      }
+    }
+  }
+
   // TODO: can we filter out isomorphisms???
   public getIntentsAndImplications(): {
     intents: AttributeSet[];

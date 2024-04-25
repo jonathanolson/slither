@@ -6,6 +6,7 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
+import { getSolutionImpliedRules } from './model/pattern/generation/getSolutionImpliedRules.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -90,7 +91,7 @@ addRule(
 
 const squarePatternBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
 
-const rules = PatternRule.getSolutionImpliedRules( squarePatternBoard, {
+const rules = getSolutionImpliedRules( squarePatternBoard, {
   vertexOrderLimit: 4,
   prefilterRules: [
     ...basicEdgeRuleSets.flatMap( ruleSet => ruleSet.rules ),
@@ -110,7 +111,7 @@ rules.forEach( rule => {
 //
 // // console.log( impliedRules[ 0 ].isIsomorphicTo( impliedRules[ 3 ] ) );
 //
-// const filteredRules = PatternRule.filterAndSortRules( impliedRules );
+// const filteredRules = filterAndSortRules( impliedRules );
 //
 // // console.log( filteredRules[ 0 ].isIsomorphicTo( filteredRules[ 3 ] ) );
 //

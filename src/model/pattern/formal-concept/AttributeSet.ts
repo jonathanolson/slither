@@ -2,12 +2,12 @@ import _ from '../../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class AttributeSet {
-  private constructor(
+  protected constructor(
     public readonly numAttributes: number,
 
     // Note: We are going to store features in a bitwise order so we can use the usual < and > operators.
     // This means we're reversing index order conventions from classical FCA
-    private data: bigint
+    public data: bigint
   ) {}
 
   public getBits(): bigint {
