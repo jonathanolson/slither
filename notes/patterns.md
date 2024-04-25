@@ -15,6 +15,8 @@
   - 
   - Fix up generation (we broke some things?)
   - 
+  - Clean up all SORTS of code. See if FCA approach is widely better in all ways.
+  - 
   - Testing...
     - 
     - Make sure that pattern rules in lists are "minimal" (individually remove input features and they should ALL change the output features)

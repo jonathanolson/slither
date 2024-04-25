@@ -8,7 +8,7 @@ import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.t
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 
-export const getImpliedRules = (
+export const getFeatureImpliedRules = (
   featureSet: FeatureSet,
   includeEdges: boolean,
   includeSectors: boolean,
