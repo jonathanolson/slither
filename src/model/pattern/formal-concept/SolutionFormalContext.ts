@@ -18,7 +18,7 @@ export class SolutionFormalContext extends FormalContext {
 
     // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
     for ( const solutionAttributeSet of this.solutionAttributeSets ) {
-      if ( ( attributeSet.data & solutionAttributeSet.data & solutionAttributeSet.optionalDataComplement ) === attributeSet.data ) {
+      if ( ( attributeSet.data & solutionAttributeSet.withOptionalData ) === attributeSet.data ) {
         // TODO: can we perhaps just OR it with attributeSet.data? Why do we need to filter optionalData? We are... a closure, right?
         // TODO: Unclear whether that is correct. This is not too bad, leave it for now for correctness?
         closure.data = closure.data & ( solutionAttributeSet.data | ( attributeSet.data & solutionAttributeSet.optionalData ) );

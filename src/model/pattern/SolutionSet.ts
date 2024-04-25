@@ -42,12 +42,13 @@ export type SolutionSetShape = {
  */
 export class SolutionSet {
   private constructor(
-    private readonly patternBoard: TPatternBoard,
-    private readonly numSolutions: number,
-    private readonly bitData: number[],
-    private readonly shape: SolutionSetShape,
-    private readonly vertexConnections: VertexConnection[][] | null, // sorted
-    private readonly vertexConnectionsKeys: string[] | null = null
+    // TODO: private, but we needed to export these for getImpliedRules? TREAT AS PRIVATE?
+    public readonly patternBoard: TPatternBoard,
+    public readonly numSolutions: number,
+    public readonly bitData: number[],
+    public readonly shape: SolutionSetShape,
+    public readonly vertexConnections: VertexConnection[][] | null, // sorted
+    public readonly vertexConnectionsKeys: string[] | null = null
   ) {}
 
   public toString(): string {

@@ -3,8 +3,8 @@ import { AttributeSet } from './model/pattern/formal-concept/AttributeSet.ts';
 import { FormalContext } from './model/pattern/formal-concept/FormalContext.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
-import { SolutionSet } from './model/pattern/SolutionSet.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
+import { getImpliedRules } from './model/pattern/generation/getImpliedRules.ts';
 
 const vector = new Vector2( 0, 0 );
 console.log( vector );
@@ -60,4 +60,4 @@ console.log( data2.intents.length, data2.implications.length );
 
 // console.log( data2.implications.map( implication => implication.toString() ) );
 
-console.log( SolutionSet.getImpliedRules( FeatureSet.emptyWithVertexOrderLimit( squarePatternBoard, 4 ), true, false, false ).map( rule => rule.toCanonicalString() ) );
+console.log( getImpliedRules( FeatureSet.emptyWithVertexOrderLimit( squarePatternBoard, 4 ), true, false, false ).map( rule => rule.toCanonicalString() ) );

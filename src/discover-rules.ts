@@ -571,6 +571,10 @@ console.log( 'test' );
           labels: true
         } ) );
 
+        addPaddedNode( new PatternNode( squarePatternBoard, FeatureSet.empty( squarePatternBoard ), squarePatternBoard.planarPatternMap, {
+          labels: true
+        } ) );
+
         {
           const solver = new PatternBoardSolver( crossBoard );
           const features = crossBoardHighlanderFeatures;

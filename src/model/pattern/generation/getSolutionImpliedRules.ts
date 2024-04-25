@@ -6,8 +6,8 @@ import { BasicSolveOptions, FeatureSet } from '../feature/FeatureSet.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import FaceValue from '../../data/face-value/FaceValue.ts';
 import { getEmbeddings } from '../getEmbeddings.ts';
-import { SolutionSet } from '../SolutionSet.ts';
 import _ from '../../../workarounds/_.ts';
+import { getImpliedRules } from './getImpliedRules.ts';
 
 export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOptions?: GetRulesOptions ): PatternRule[] => {
 
@@ -55,7 +55,7 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
   for ( const featureSet of faceValueFeatures ) {
     console.log( featureSet.toCanonicalString() );
 
-    const impliedRules = SolutionSet.getImpliedRules(
+    const impliedRules = getImpliedRules(
       featureSet,
       options.solveEdges,
       options.solveSectors,
