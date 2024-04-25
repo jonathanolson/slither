@@ -1,5 +1,5 @@
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, squareOnlyImpliedEdgeGeneration0RuleSets, squareOnlyImpliedEdgeGeneration1RuleSets, squareOnlyImpliedEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
+import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareImpliedColorGeneration0RuleSets, squareImpliedColorGeneration1RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, squareOnlyImpliedEdgeGeneration0RuleSets, squareOnlyImpliedEdgeGeneration1RuleSets, squareOnlyImpliedEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
@@ -94,6 +94,44 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
     }, options )
   );
 };
+
+
+
+// @ts-expect-error
+window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleImpliedPatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicEdgeRuleSets,
+      ...squareOnlyImpliedEdgeGeneration0RuleSets,
+      ...squareOnlyImpliedEdgeGeneration1RuleSets,
+      ...squareOnlyImpliedEdgeGeneration2RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: true,
+      solveSectors: true,
+      vertexOrderLimit: 4
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleImpliedPatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicColorRuleSets,
+      ...squareImpliedColorGeneration0RuleSets,
+      ...squareImpliedColorGeneration1RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: false,
+      solveFaceColors: true,
+    }, options )
+  );
+};
+
+
 
 // @ts-expect-error
 window.getOnlySquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {

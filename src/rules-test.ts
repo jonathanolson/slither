@@ -1,6 +1,6 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { edgePatternBoard } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, edgePatternBoard } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
@@ -66,6 +66,13 @@ console.log( 'test' );
       return new PatternRuleNode( rule, planarPatternMap );
     } )
   } ) );
+
+  PatternBoardRuleSet.createImpliedChained( basicPatternBoards, [], {
+    solveEdges: true,
+    solveSectors: true
+  } ).forEach( ruleSet => {
+    console.log( JSON.stringify( ruleSet.serialize() ) );
+  } );
 
 
   // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );

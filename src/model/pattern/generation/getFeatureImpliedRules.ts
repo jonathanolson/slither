@@ -46,27 +46,29 @@ export const getFeatureImpliedRules = (
 
     let redEdgeData = BigInt( 0 );
 
-    featureSet.patternBoard.edges.forEach( edge => {
-      if ( !edge.isExit ) {
-        return;
-      }
+    if ( includeEdges ) {
+      featureSet.patternBoard.edges.forEach( edge => {
+        if ( !edge.isExit ) {
+          return;
+        }
 
-      const redSolutionEdgeIndex = 3 * edge.index + 1;
-      const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+        const redSolutionEdgeIndex = 3 * edge.index + 1;
+        const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
 
-      // TODO: map directly from solutions ideally
-      if ( simpleAttributeSet.hasAttribute( redAttributeEdgeIndex ) ) {
-        return;
-      }
+        // TODO: map directly from solutions ideally
+        if ( simpleAttributeSet.hasAttribute( redAttributeEdgeIndex ) ) {
+          return;
+        }
 
-      const hasNoBlackNonExitEdges = edge.exitVertex!.edges.every( edge => {
-        return edge.isExit || !simpleAttributeSet.hasAttribute( mapping.mapBitIndex( 3 * edge.index ) );
+        const hasNoBlackNonExitEdges = edge.exitVertex!.edges.every( edge => {
+          return edge.isExit || !simpleAttributeSet.hasAttribute( mapping.mapBitIndex( 3 * edge.index ) );
+        } );
+
+        if ( hasNoBlackNonExitEdges ) {
+          redEdgeData |= BigInt( 1 ) << BigInt( redAttributeEdgeIndex );
+        }
       } );
-
-      if ( hasNoBlackNonExitEdges ) {
-        redEdgeData |= BigInt( 1 ) << BigInt( redAttributeEdgeIndex );
-      }
-    } );
+    }
 
     return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData );
   } ) );

@@ -64,6 +64,39 @@ export class PatternBoardRuleSet {
     return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
 
+  public static createImpliedChained(
+    patternBoards: TPatternBoard[],
+    previousRuleSets: PatternBoardRuleSet[],
+    providedOptions?: GetRulesOptions
+  ): PatternBoardRuleSet[] {
+    let previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
+
+    const ruleSets: PatternBoardRuleSet[] = [];
+
+    for ( let i = 0; i < patternBoards.length; i++ ) {
+      const patternBoard = patternBoards[ i ];
+      const mapping = planarPatternMaps.get( patternBoard )!;
+      assertEnabled() && assert( mapping );
+
+      const options = combineOptions<GetRulesOptions>( {}, providedOptions, {
+        prefilterRules: previousRules
+      } );
+
+      const rules = getSolutionImpliedRules( patternBoard, options );
+
+      if ( rules.length ) {
+        ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
+      }
+
+      previousRules = [
+        ...previousRules,
+        ...rules
+      ];
+    }
+
+    return ruleSets;
+  }
+
   // TODO: associate TPlanarPatternMap with the board!!!
   public static createChained(
     patternBoards: TPatternBoard[],

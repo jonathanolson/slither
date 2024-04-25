@@ -5,8 +5,8 @@
   - 
   - Memory issues if we are "storing" a ton of intents/implications. Have it be an "iterator"? / Generator
   - 
-  - Test implied-face-duals
   - Test implied-sector
+    - These are... broken looking. See exit-2... look into it
   - Test implied-highlander
   - 
   - NOTE: FCA solving showing "issues" with 1,0 - it is creating lines that don't need to be there
