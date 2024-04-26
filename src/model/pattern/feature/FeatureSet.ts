@@ -273,7 +273,10 @@ export class FeatureSet {
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
 
-    if ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+    const redA = this.redEdges.has( edgeA );
+    const redB = this.redEdges.has( edgeB );
+
+    if ( redA && redB ) {
       throw new IncompatibleFeatureError( new SectorNotZeroFeature( sector ), [ new RedEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
     }
 
@@ -282,7 +285,13 @@ export class FeatureSet {
       return;
     }
 
-    if ( this.sectorsNotOne.has( sector ) ) {
+    if ( redA ) {
+      this.addBlackEdge( edgeB );
+    }
+    else if ( redB ) {
+      this.addBlackEdge( edgeA );
+    }
+    else if ( this.sectorsNotOne.has( sector ) ) {
       this.addBlackEdge( edgeA );
       this.addBlackEdge( edgeB );
     }
@@ -312,10 +321,15 @@ export class FeatureSet {
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
 
-    if ( this.blackEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+    const blackA = this.blackEdges.has( edgeA );
+    const blackB = this.blackEdges.has( edgeB );
+    const redA = this.redEdges.has( edgeA );
+    const redB = this.redEdges.has( edgeB );
+
+    if ( blackA && redB ) {
       throw new IncompatibleFeatureError( new SectorNotOneFeature( sector ), [ new BlackEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
     }
-    if ( this.blackEdges.has( edgeB ) && this.redEdges.has( edgeA ) ) {
+    if ( blackB && redA ) {
       throw new IncompatibleFeatureError( new SectorNotOneFeature( sector ), [ new BlackEdgeFeature( edgeB ), new RedEdgeFeature( edgeA ) ] );
     }
     if ( this.sectorsOnlyOne.has( sector ) ) {
@@ -324,13 +338,25 @@ export class FeatureSet {
 
     // See if we would be redundant
     if (
-      ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) ||
-      ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) )
+      ( blackA && blackB ) ||
+      ( redA && redB )
     ) {
       return;
     }
 
-    if ( this.sectorsNotZero.has( sector ) ) {
+    if ( blackA ) {
+      this.addBlackEdge( edgeB );
+    }
+    else if ( blackB ) {
+      this.addBlackEdge( edgeA );
+    }
+    else if ( redA ) {
+      this.addRedEdge( edgeB );
+    }
+    else if ( redB ) {
+      this.addRedEdge( edgeA );
+    }
+    else if ( this.sectorsNotZero.has( sector ) ) {
       this.addBlackEdge( edgeA );
       this.addBlackEdge( edgeB );
     }
@@ -358,7 +384,10 @@ export class FeatureSet {
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
 
-    if ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) {
+    const blackA = this.blackEdges.has( edgeA );
+    const blackB = this.blackEdges.has( edgeB )
+
+    if ( blackA && blackB ) {
       throw new IncompatibleFeatureError( new SectorNotTwoFeature( sector ), [ new BlackEdgeFeature( edgeA ), new BlackEdgeFeature( edgeB ) ] );
     }
 
@@ -367,7 +396,13 @@ export class FeatureSet {
       return;
     }
 
-    if ( this.sectorsNotZero.has( sector ) ) {
+    if ( blackA ) {
+      this.addRedEdge( edgeB );
+    }
+    else if ( blackB ) {
+      this.addRedEdge( edgeA );
+    }
+    else if ( this.sectorsNotZero.has( sector ) ) {
       this.size--;
       this.sectorsNotZero.delete( sector );
 
@@ -397,10 +432,15 @@ export class FeatureSet {
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
 
-    if ( this.blackEdges.has( edgeA ) && this.blackEdges.has( edgeB ) ) {
+    const blackA = this.blackEdges.has( edgeA );
+    const blackB = this.blackEdges.has( edgeB );
+    const redA = this.redEdges.has( edgeA );
+    const redB = this.redEdges.has( edgeB );
+
+    if ( blackA && blackB ) {
       throw new IncompatibleFeatureError( new SectorOnlyOneFeature( sector ), [ new BlackEdgeFeature( edgeA ), new BlackEdgeFeature( edgeB ) ] );
     }
-    if ( this.redEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) {
+    if ( redA && redB ) {
       throw new IncompatibleFeatureError( new SectorOnlyOneFeature( sector ), [ new RedEdgeFeature( edgeA ), new RedEdgeFeature( edgeB ) ] );
     }
     if ( this.sectorsNotOne.has( sector ) ) {
@@ -409,13 +449,25 @@ export class FeatureSet {
 
     // See if we would be redundant
     if (
-      ( this.blackEdges.has( edgeA ) && this.redEdges.has( edgeB ) ) ||
-      ( this.blackEdges.has( edgeB ) && this.redEdges.has( edgeA ) )
+      ( blackA && redB ) ||
+      ( blackB && redA )
     ) {
       return;
     }
 
-    if ( this.sectorsNotZero.has( sector ) ) {
+    if ( blackA ) {
+      this.addRedEdge( edgeB );
+    }
+    else if ( blackB ) {
+      this.addRedEdge( edgeA );
+    }
+    else if ( redA ) {
+      this.addBlackEdge( edgeB );
+    }
+    else if ( redB ) {
+      this.addBlackEdge( edgeA );
+    }
+    else if ( this.sectorsNotZero.has( sector ) ) {
       this.size--;
       this.sectorsNotZero.delete( sector );
     }

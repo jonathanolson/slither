@@ -5,14 +5,10 @@
   - 
   - ZOMG move files OUT of the huge rules.ts (into others)
   - 
-  - Sectors not-0 + not-1 => fill in both (black) edges
-  - Sectors not-1 + not-2 => fill in both (red) edges
+  - Sector solving... still buggy
+    - Check if isomorphism checks for sector rules aren't working (e.g. 3-edge + exit, 2 adjacent sector)
   - 
-  - Test implied-sector
-    - These are... broken looking. See exit-2... look into it
-  - Test implied-highlander
-  - 
-  - NOTE: FCA solving showing "issues" with 1,0 - it is creating lines that don't need to be there
+  - Test implied-highlander (... to check our GOOD case, we need all of level-3 square, and the specific level-4 square)
   - 
   - WebGPU general-purpose FCA "solver"
   - 

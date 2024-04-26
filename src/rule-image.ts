@@ -67,7 +67,8 @@ console.log( 'test' );
 
   // showRuleSet( squareImpliedColorGeneration1RuleSets[ 1 ] );
 
-  showRuleSet( basicSectorImpliedRuleSets[ 1 ] );
+  // showRuleSet( basicSectorImpliedRuleSets[ 4 ] );
+  showRuleSet( basicSectorImpliedRuleSets[ 13 ] );
 
 
   // const ruleSets = [
