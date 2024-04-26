@@ -3,6 +3,8 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
+import { squareOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration0RuleSets.ts';
+import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -68,9 +70,13 @@ console.log( 'test' );
 
   // showRuleSet( squareImpliedColorGeneration1RuleSets[ 1 ] );
 
-  // showRuleSet( basicSectorImpliedRuleSets[ 4 ] );
-  showRuleSet( basicSectorImpliedRuleSets[ 13 ] );
+  // showRuleSet( basicSectorImpliedRuleSets[ 2 ] );
+  // showRuleSet( basicSectorImpliedRuleSets[ 8 ] );
 
+  // TODO OMG!!!
+  // showRuleSet( squareOnlyImpliedSectorGeneration0RuleSets[ 0 ] );
+
+  showRuleSet( squareOnlyImpliedSectorGeneration1RuleSets[ 0 ] );
 
 
 

@@ -692,20 +692,24 @@ export class FeatureSet {
   }
 
   public impliesSectorNotZero( sector: TPatternSector ): boolean {
-    return this.sectorsNotZero.has( sector ) || this.blackEdges.has( sector.edges[ 0 ] ) || this.blackEdges.has( sector.edges[ 1 ] );
+    // TODO: check face color too
+    return this.sectorsNotZero.has( sector ) || this.sectorsOnlyOne.has( sector ) || this.blackEdges.has( sector.edges[ 0 ] ) || this.blackEdges.has( sector.edges[ 1 ] );
   }
 
   public impliesSectorNotOne( sector: TPatternSector ): boolean {
+    // TODO: check face color too
     return this.sectorsNotOne.has( sector ) ||
       ( this.blackEdges.has( sector.edges[ 0 ] ) && this.blackEdges.has( sector.edges[ 1 ] ) ) ||
       ( this.redEdges.has( sector.edges[ 0 ] ) && this.redEdges.has( sector.edges[ 1 ] ) );
   }
 
   public impliesSectorNotTwo( sector: TPatternSector ): boolean {
-    return this.sectorsNotTwo.has( sector ) || this.redEdges.has( sector.edges[ 0 ] ) || this.redEdges.has( sector.edges[ 1 ] );
+    // TODO: check face color too
+    return this.sectorsNotTwo.has( sector ) || this.sectorsOnlyOne.has( sector ) || this.redEdges.has( sector.edges[ 0 ] ) || this.redEdges.has( sector.edges[ 1 ] );
   }
 
   public impliesSectorOnlyOne( sector: TPatternSector ): boolean {
+    // TODO: check face color too
     return this.sectorsOnlyOne.has( sector ) ||
       ( this.blackEdges.has( sector.edges[ 0 ] ) && this.redEdges.has( sector.edges[ 1 ] ) ) ||
       ( this.redEdges.has( sector.edges[ 0 ] ) && this.blackEdges.has( sector.edges[ 1 ] ) );

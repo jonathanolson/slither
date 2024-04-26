@@ -67,6 +67,7 @@ console.log( 'test' );
     } )
   } ) );
 
+  // Sector initial chained
   PatternBoardRuleSet.createImpliedChained( basicPatternBoards, [], {
     solveEdges: true,
     solveSectors: true

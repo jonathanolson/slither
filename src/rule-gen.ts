@@ -29,6 +29,9 @@ import { cairoEdgeGeneration1RuleSets } from './model/pattern/data/cairoEdgeGene
 import { hexEdgeGeneration0RuleSets } from './model/pattern/data/hexEdgeGeneration0RuleSets.ts';
 import { hexEdgeGeneration1RuleSets } from './model/pattern/data/hexEdgeGeneration1RuleSets.ts';
 import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGeneration2RuleSets.ts';
+import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
+import { squareOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration0RuleSets.ts';
+import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -118,17 +121,14 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
   );
 };
 
-
-
 // @ts-expect-error
 window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
   handleImpliedPatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
-      ...basicEdgeRuleSets,
-      ...squareOnlyImpliedEdgeGeneration0RuleSets,
-      ...squareOnlyImpliedEdgeGeneration1RuleSets,
-      ...squareOnlyImpliedEdgeGeneration2RuleSets,
+      ...basicSectorImpliedRuleSets,
+      ...squareOnlyImpliedSectorGeneration0RuleSets,
+      ...squareOnlyImpliedSectorGeneration1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,

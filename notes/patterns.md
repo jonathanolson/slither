@@ -6,6 +6,8 @@
   - HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
+  - FeatureSet "only one" is... weird to store. It is essentially true if not-zero and not-two (redundant)
+  - 
   - Sector solving... still buggy
     - Check if isomorphism checks for sector rules aren't working (e.g. 3-edge + exit, 2 adjacent sector)
   - 
