@@ -706,7 +706,7 @@ export class FeatureSet {
   }
 
   public impliesSectorOnlyOne( sector: TPatternSector ): boolean {
-    return this.sectorsNotOne.has( sector ) ||
+    return this.sectorsOnlyOne.has( sector ) ||
       ( this.blackEdges.has( sector.edges[ 0 ] ) && this.redEdges.has( sector.edges[ 1 ] ) ) ||
       ( this.redEdges.has( sector.edges[ 0 ] ) && this.blackEdges.has( sector.edges[ 1 ] ) );
   }

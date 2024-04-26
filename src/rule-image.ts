@@ -2,6 +2,7 @@ import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scen
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
+import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -69,6 +70,17 @@ console.log( 'test' );
 
   // showRuleSet( basicSectorImpliedRuleSets[ 4 ] );
   showRuleSet( basicSectorImpliedRuleSets[ 13 ] );
+
+
+
+
+  // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
+  // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isRedundant( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ].getEmbeddedRules( getEmbeddings( basicSectorImpliedRuleSets[ 13 ].patternBoard, basicSectorImpliedRuleSets[ 13 ].patternBoard ) ) ) );
+  // debugger;
+  // const embeddings = getEmbeddings( basicSectorImpliedRuleSets[ 13 ].patternBoard, basicSectorImpliedRuleSets[ 13 ].patternBoard );
+  // const embeddedRules = basicSectorImpliedRuleSets[ 13 ].rules[ 1 ].getEmbeddedRules( embeddings );
+  // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isRedundant( embeddedRules ) );
+  // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
 
 
   // const ruleSets = [
