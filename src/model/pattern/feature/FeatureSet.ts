@@ -111,13 +111,15 @@ export class FeatureSet {
   public addBlackEdge( edge: TPatternEdge ): void {
     assertEnabled() && assert( edge );
 
+    if ( this.blackEdges.has( edge ) ) {
+      return;
+    }
+
     if ( this.redEdges.has( edge ) ) {
       throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new RedEdgeFeature( edge ) ] );
     }
 
-    if ( !this.blackEdges.has( edge ) ) {
-      this.size++;
-    }
+    this.size++;
     this.blackEdges.add( edge );
 
     // Handle sector removals (and assertions
@@ -186,13 +188,15 @@ export class FeatureSet {
   public addRedEdge( edge: TPatternEdge ): void {
     assertEnabled() && assert( edge );
 
+    if ( this.redEdges.has( edge ) ) {
+      return;
+    }
+
     if ( this.blackEdges.has( edge ) ) {
       throw new IncompatibleFeatureError( new RedEdgeFeature( edge ), [ new BlackEdgeFeature( edge ) ] );
     }
 
-    if ( !this.redEdges.has( edge ) ) {
-      this.size++;
-    }
+    this.size++;
     this.redEdges.add( edge );
 
     // Handle sector removals (and assertions
@@ -261,6 +265,10 @@ export class FeatureSet {
   public addSectorNotZero( sector: TPatternSector ): void {
     assertEnabled() && assert( sector );
 
+    if ( this.sectorsNotZero.has( sector ) || this.sectorsOnlyOne.has( sector ) ) {
+      return;
+    }
+
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
     assertEnabled() && assert( edgeA && edgeB );
@@ -274,19 +282,31 @@ export class FeatureSet {
       return;
     }
 
-    // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
-
-    if ( !this.sectorsNotZero.has( sector ) ) {
-      this.size++;
+    if ( this.sectorsNotOne.has( sector ) ) {
+      this.addBlackEdge( edgeA );
+      this.addBlackEdge( edgeB );
     }
-    this.sectorsNotZero.add( sector );
-    this.ensureSector( sector );
+    else if ( this.sectorsNotTwo.has( sector ) ) {
+      this.size--;
+      this.sectorsNotTwo.delete( sector );
+
+      this.addSectorOnlyOne( sector );
+    }
+    else {
+      this.size++;
+      this.sectorsNotZero.add( sector );
+      this.ensureSector( sector );
+    }
 
     assertEnabled() && this.verifySize();
   }
 
   public addSectorNotOne( sector: TPatternSector ): void {
     assertEnabled() && assert( sector );
+
+    if ( this.sectorsNotOne.has( sector ) ) {
+      return;
+    }
 
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
@@ -310,17 +330,29 @@ export class FeatureSet {
       return;
     }
 
-    if ( !this.sectorsNotOne.has( sector ) ) {
-      this.size++;
+    if ( this.sectorsNotZero.has( sector ) ) {
+      this.addBlackEdge( edgeA );
+      this.addBlackEdge( edgeB );
     }
-    this.sectorsNotOne.add( sector );
-    this.ensureSector( sector );
+    else if ( this.sectorsNotTwo.has( sector ) ) {
+      this.addRedEdge( edgeA );
+      this.addRedEdge( edgeB );
+    }
+    else {
+      this.size++;
+      this.sectorsNotOne.add( sector );
+      this.ensureSector( sector );
+    }
 
     assertEnabled() && this.verifySize();
   }
 
   public addSectorNotTwo( sector: TPatternSector ): void {
     assertEnabled() && assert( sector );
+
+    if ( this.sectorsNotTwo.has( sector ) || this.sectorsOnlyOne.has( sector ) ) {
+      return;
+    }
 
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
@@ -335,19 +367,31 @@ export class FeatureSet {
       return;
     }
 
-    // NOTE: not-zero + not-two = only-one, BUT we'll rely on rules to do that transformation
+    if ( this.sectorsNotZero.has( sector ) ) {
+      this.size--;
+      this.sectorsNotZero.delete( sector );
 
-    if ( !this.sectorsNotTwo.has( sector ) ) {
-      this.size++;
+      this.addSectorOnlyOne( sector );
     }
-    this.sectorsNotTwo.add( sector );
-    this.ensureSector( sector );
+    else if ( this.sectorsNotOne.has( sector ) ) {
+      this.addRedEdge( edgeA );
+      this.addRedEdge( edgeB );
+    }
+    else {
+      this.size++;
+      this.sectorsNotTwo.add( sector );
+      this.ensureSector( sector );
+    }
 
     assertEnabled() && this.verifySize();
   }
 
   public addSectorOnlyOne( sector: TPatternSector ): void {
     assertEnabled() && assert( sector );
+
+    if ( this.sectorsOnlyOne.has( sector ) ) {
+      return;
+    }
 
     const edgeA = sector.edges[ 0 ];
     const edgeB = sector.edges[ 1 ];
@@ -371,9 +415,16 @@ export class FeatureSet {
       return;
     }
 
-    if ( !this.sectorsOnlyOne.has( sector ) ) {
-      this.size++;
+    if ( this.sectorsNotZero.has( sector ) ) {
+      this.size--;
+      this.sectorsNotZero.delete( sector );
     }
+    if ( this.sectorsNotTwo.has( sector ) ) {
+      this.size--;
+      this.sectorsNotTwo.delete( sector );
+    }
+
+    this.size++;
     this.sectorsOnlyOne.add( sector );
     this.ensureSector( sector );
 
