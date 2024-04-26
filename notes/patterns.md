@@ -3,6 +3,21 @@
 
 - TODO
   - 
+  - Generate:
+    - Current:
+      - getImpliedColorSquareBoardRules( 2, 0 )
+      - getImpliedColorSquareBoardRules( 2, 4 )
+      - getOnlyImpliedSquareBoardRules( 3, 11 )
+      - getOnlyImpliedSquareBoardRules( 3, 18 )
+    - Future:
+      - Highlander on smaller boards(!)
+      - getOnlyImpliedSectorSquareBoardRules( 2, 0 )
+      - getOnlyImpliedSectorSquareBoardRules( 2, 1 )
+      - getOnlyImpliedSectorSquareBoardRules( 2, 2 )
+      - getOnlyImpliedSectorSquareBoardRules( 2, 3 )
+      - getOnlyImpliedSectorSquareBoardRules( 2, 4 )
+      - [once square 3, x] getOnlyImpliedSquareBoardRules( 0, 4 ) THEN HIGHLANDER
+  - 
   - HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
