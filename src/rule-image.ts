@@ -1,7 +1,7 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicSectorImpliedRuleSets, squareImpliedColorGeneration0RuleSets, squareImpliedColorGeneration1RuleSets } from './model/pattern/data/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

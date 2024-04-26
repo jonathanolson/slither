@@ -1,0 +1,6 @@
+import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
+
+export const basicEdgeRuleSets = [
+  // PatternBoardRuleSet.deserialize( JSON.parse( '' ) ),
+  PatternBoardRuleSet.deserialize( JSON.parse( '{"patternBoard":"[0,1,\\"exit-vertex\\",2,[]]","mapping":"[[[0,0]],[[0,[1,0]],[0,[-1,1.2246467991473532e-16]],[0,[1,-2.4492935982947064e-16]]],[],[[[0,0],[1,0],[0.5,0.3]],[[0,0],[0.5,-0.3],[1,0]],[[0,0],[-0.5,0.3],[-1,0]],[[0,0],[-1,0],[-0.5,-0.3]]]]","rules":[{"input":{"blackEdges":[0,1]},"output":{"blackEdges":[0,1],"redEdges":[2]}},{"input":{"blackEdges":[1],"redEdges":[2]},"output":{"blackEdges":[1,0],"redEdges":[2]}},{"input":{"redEdges":[1,2]},"output":{"redEdges":[1,2,0]}}]}' ) )
+];

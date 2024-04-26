@@ -1,12 +1,13 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicEdgeRuleSets, squareEdgeGeneration1RuleSets } from './model/pattern/data/rules.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getSolutionImpliedRules } from './model/pattern/generation/getSolutionImpliedRules.ts';
+import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
+import { squareEdgeGeneration1RuleSets } from './model/pattern/data/squareEdgeGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

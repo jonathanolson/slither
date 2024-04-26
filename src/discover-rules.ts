@@ -36,8 +36,8 @@ import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
-import { squareEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
 import { getBasicRule } from './model/pattern/generation/getBasicRule.ts';
+import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 

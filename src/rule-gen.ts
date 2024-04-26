@@ -1,11 +1,34 @@
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { basicColorRuleSets, basicEdgeRuleSets, cairoEdgeGeneration0RuleSets, cairoEdgeGeneration1RuleSets, hexEdgeGeneration0RuleSets, hexEdgeGeneration1RuleSets, hexOnlyEdgeGeneration0RuleSets, hexOnlyEdgeGeneration1RuleSets, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareEdgeGeneration0RuleSets, squareEdgeGeneration1RuleSets, squareEdgeGeneration2RuleSets, squareImpliedColorGeneration0RuleSets, squareImpliedColorGeneration1RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets, squareOnlyImpliedEdgeGeneration0RuleSets, squareOnlyImpliedEdgeGeneration1RuleSets, squareOnlyImpliedEdgeGeneration2RuleSets, triangularEdgeGeneration0RuleSets, triangularEdgeGeneration1RuleSets, triangularEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 import { GetRulesOptions } from './model/pattern/generation/GetRulesOptions.ts';
+import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
+import { squareOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration0RuleSets.ts';
+import { squareOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration1RuleSets.ts';
+import { squareOnlyImpliedEdgeGeneration2RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration2RuleSets.ts';
+import { basicColorRuleSets } from './model/pattern/data/basicColorRuleSets.ts';
+import { squareImpliedColorGeneration0RuleSets } from './model/pattern/data/squareImpliedColorGeneration0RuleSets.ts';
+import { squareImpliedColorGeneration1RuleSets } from './model/pattern/data/squareImpliedColorGeneration1RuleSets.ts';
+import { squareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration0RuleSets.ts';
+import { squareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration1RuleSets.ts';
+import { squareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration2RuleSets.ts';
+import { hexOnlyEdgeGeneration0RuleSets } from './model/pattern/data/hexOnlyEdgeGeneration0RuleSets.ts';
+import { hexOnlyEdgeGeneration1RuleSets } from './model/pattern/data/hexOnlyEdgeGeneration1RuleSets.ts';
+import { triangularEdgeGeneration0RuleSets } from './model/pattern/data/triangularEdgeGeneration0RuleSets.ts';
+import { triangularEdgeGeneration1RuleSets } from './model/pattern/data/triangularEdgeGeneration1RuleSets.ts';
+import { triangularEdgeGeneration2RuleSets } from './model/pattern/data/triangularEdgeGeneration2RuleSets.ts';
+import { squareColorGeneration0RuleSets } from './model/pattern/data/squareColorGeneration0RuleSets.ts';
+import { squareColorGeneration1RuleSets } from './model/pattern/data/squareColorGeneration1RuleSets.ts';
+import { squareEdgeGeneration0RuleSets } from './model/pattern/data/squareEdgeGeneration0RuleSets.ts';
+import { squareEdgeGeneration1RuleSets } from './model/pattern/data/squareEdgeGeneration1RuleSets.ts';
+import { cairoEdgeGeneration0RuleSets } from './model/pattern/data/cairoEdgeGeneration0RuleSets.ts';
+import { cairoEdgeGeneration1RuleSets } from './model/pattern/data/cairoEdgeGeneration1RuleSets.ts';
+import { hexEdgeGeneration0RuleSets } from './model/pattern/data/hexEdgeGeneration0RuleSets.ts';
+import { hexEdgeGeneration1RuleSets } from './model/pattern/data/hexEdgeGeneration1RuleSets.ts';
+import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

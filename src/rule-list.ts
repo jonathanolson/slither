@@ -1,6 +1,13 @@
 import { AlignBox, Display, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicColorOnly4RuleSet, basicEdgeRuleSets, dualEdgeColorRuleSet, squareColorGeneration0RuleSets, squareColorGeneration1RuleSets, squareOnlyEdgeGeneration0RuleSets, squareOnlyEdgeGeneration1RuleSets, squareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/rules.ts';
+import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
+import { dualEdgeColorRuleSet } from './model/pattern/data/dualEdgeColorRuleSet.ts';
+import { basicColorOnly4RuleSet } from './model/pattern/data/basicColorOnly4RuleSet.ts';
+import { squareColorGeneration0RuleSets } from './model/pattern/data/squareColorGeneration0RuleSets.ts';
+import { squareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration0RuleSets.ts';
+import { squareColorGeneration1RuleSets } from './model/pattern/data/squareColorGeneration1RuleSets.ts';
+import { squareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration1RuleSets.ts';
+import { squareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

@@ -3,8 +3,6 @@
 
 - TODO
   - 
-  - ZOMG move files OUT of the huge rules.ts (into others)
-  - 
   - Sector solving... still buggy
     - Check if isomorphism checks for sector rules aren't working (e.g. 3-edge + exit, 2 adjacent sector)
   - 
@@ -15,6 +13,8 @@
   - Fix up generation (we broke some things?)
   - 
   - Clean up all SORTS of code. See if FCA approach is widely better in all ways.
+  - 
+  - deduplication of pattern board instances, based on isomorphism
   - 
   - Testing...
     - 
@@ -136,8 +136,6 @@
   - 
   - Should be possible to take "square only" rules, take embeddings in square board, only take (1) as representative
     - Note: will need to "apply" initial conditions to this section
-  - 
-  - Split "rules.ts" into separate files, so we don't pull in more than necessary?
   - 
   - Verify rules!
   - 
