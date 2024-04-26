@@ -7,6 +7,15 @@ import _ from '../../../workarounds/_.ts';
 import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
+import { optionize3 } from 'phet-lib/phet-core';
+
+export type GetFeatureImpliedRulesOptions = {
+  logModulo?: number;
+};
+
+export const GET_FEATURE_IMPLIED_RULES_DEFAULTS = {
+  logModulo: 1000000
+};
 
 export const getFeatureImpliedRules = (
   featureSet: FeatureSet,
@@ -14,7 +23,10 @@ export const getFeatureImpliedRules = (
   includeSectors: boolean,
   includeFaces: boolean,
   highlander: boolean,
+  providedOptions?: GetFeatureImpliedRulesOptions
 ): PatternRule[] => {
+  const options = optionize3<GetFeatureImpliedRulesOptions>()( {}, GET_FEATURE_IMPLIED_RULES_DEFAULTS, providedOptions );
+
   let initialSolutionSet = SolutionSet.fromFeatureSet(
     featureSet,
     includeEdges,
@@ -128,6 +140,8 @@ export const getFeatureImpliedRules = (
     }
 
     rules.push( new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet ) );
+  }, {
+    logModulo: options.logModulo
   } );
 
   return rules;

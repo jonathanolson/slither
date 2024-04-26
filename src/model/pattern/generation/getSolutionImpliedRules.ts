@@ -42,9 +42,6 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
   const rootFeatureSet = options.vertexOrderLimit === null ? FeatureSet.empty( patternBoard ) : FeatureSet.emptyWithVertexOrderLimit( patternBoard, options.vertexOrderLimit );
   faceValueRecur( rootFeatureSet, 0 );
 
-  // TODO: logModulo
-
-
   // We will append to this list as we go
   const embeddedRules = ( options.prefilterRules ?? [] ).flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) );
 
@@ -59,7 +56,10 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
       options.solveEdges,
       options.solveSectors,
       options.solveFaceColors,
-      options.highlander
+      options.highlander,
+      {
+        logModulo: options.logModulo
+      }
     );
 
     for ( const rule of impliedRules ) {

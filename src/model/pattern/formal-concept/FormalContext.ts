@@ -58,13 +58,22 @@ export class FormalContext {
     return intents;
   }
 
-  public forEachImplication( callback: ( implication: Implication ) => void ): void {
+  public forEachImplication( callback: ( implication: Implication ) => void, options?: { logModulo?: number } ): void {
+    const logModulo = options?.logModulo ?? 1000000;
+
     // NOTE: We need to store implications to handle implication set closure(!)
     const implications: Implication[] = [];
 
     let set: AttributeSet | null = AttributeSet.getEmpty( this.numAttributes );
 
+    let count = 0;
+
     while ( set ) {
+      count++;
+      if ( count % logModulo === 0 ) {
+        console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length );
+      }
+
       const closedSet = this.getClosure( set );
 
       if ( !set.equals( closedSet ) ) {
