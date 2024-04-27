@@ -39,6 +39,7 @@ import { hexagonalOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/dat
 import { hexagonalOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedSectorGeneration0RuleSets.ts';
 import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/hexagonalImpliedColorGeneration0RuleSets.ts';
 import { hexagonalOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration1RuleSets.ts';
+import { generalPatternBoardGenerations } from './model/pattern/data/generalPatternBoardGenerations.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -258,6 +259,63 @@ window.getImpliedColorHexBoardRules = ( generationIndex: number, index: number, 
     [
       ...basicColorRuleSets,
       ...hexagonalImpliedColorGeneration0RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: false,
+      solveFaceColors: true,
+    }, options )
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// @ts-expect-error
+window.getImpliedGeneralBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  return handleImpliedPatternBoard(
+    generalPatternBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicEdgeRuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getImpliedSectorGeneralBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  return handleImpliedPatternBoard(
+    generalPatternBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicSectorImpliedRuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: true,
+      solveSectors: true,
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getImpliedColorGeneralBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  return handleImpliedPatternBoard(
+    generalPatternBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicColorRuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
