@@ -3,6 +3,9 @@
 
 - TODO
   - 
+  - Support "blank/null" face values on EXIT FACES (so that the corresponding "boundary" non-exit edge can be determinate).
+    - Matching and other things will need to ... check this?
+  -
   - HIGHLANDER on colors
     - Or maybe... match face values of exit faces?
     - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
@@ -11,14 +14,16 @@
       - Exit face (opposite a face WITH a numeric/null value, not ?) is a candidate to have a non-indeterminate edge
   - 
   - Generate:
+    - HEY HEY -- highlander can be added like "only"? 
     - Current:
       - getOnlyImpliedSquareBoardRules( 4, 7, { logModulo: 250000 } )
+        - THEN EXCLUSIVE HIGHLANDER ON THIS
       - getImpliedColorSquareBoardRules( 2, 0 )
       - getImpliedColorSquareBoardRules( 2, 4 )
-    - Future:
-      - Highlander on smaller boards(!)
       - getOnlyImpliedSectorSquareBoardRules( 2, 0 )
       - getOnlyImpliedSectorSquareBoardRules( 2, 1 )
+    - Future:
+      - Highlander on smaller boards(!)
       - getOnlyImpliedSectorSquareBoardRules( 2, 2 )
       - getOnlyImpliedSectorSquareBoardRules( 2, 3 )
       - getOnlyImpliedSectorSquareBoardRules( 2, 4 )
