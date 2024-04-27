@@ -8,7 +8,7 @@ import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 import { FacesPatternBoard } from './FacesPatternBoard.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from '../../view/GenerateNode.ts';
-import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from '../board/core/TiledBoard.ts';
+import { cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubSquareTiling, tetrakisSquareTiling, triangularTiling, trihexagonalTiling } from '../board/core/TiledBoard.ts';
 import { SquareBoard } from '../board/square/SquareBoard.ts';
 
 export const edgePatternBoard = new BasePatternBoard( {
@@ -229,6 +229,7 @@ registerStandardPatternBoard( edgePatternBoard, getSingleEdgePlanarPatternMap( e
 vertexExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 vertexNonExitPatternBoards.forEach( patternBoard => registerStandardPatternBoard( patternBoard, getVertexPlanarPatternMap( patternBoard ) ) );
 
+// "each face order is isomorphic to others of the same order" and "no vertex orders greater than 6
 export const getTriangularBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( triangularTiling ) ), n );
 export const getSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), n );
 export const getCairoBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( cairoPentagonalTiling ) ), n );
@@ -236,6 +237,12 @@ export const getHexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.g
 export const getRhombilleBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( rhombilleTiling ) ), n );
 export const getSnubSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), n );
 export const getTrihexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( trihexagonalTiling ) ), n );
+export const getFloretPentagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( floretPentagonalTiling ) ), n );
+export const getDeltoidalTrihexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( deltoidalTrihexagonalTiling ) ), n );
+export const getPortugalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( portugalTiling ) ), n );
+export const getRhombitrihexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( smallRhombitrihexagonalTiling ) ), n );
+export const getPrismaticPentagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( prismaticPentagonalTiling ) ), n );
+export const getElongatedTriangularBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( elongatedTriangularTiling ) ), n );
 
 // ORDER IMPORTANT(!)
 export const standardSquareBoardGenerations = getRegisteredGenerations( 'square', getSquareBoardGenerations( 5 ) );
@@ -246,6 +253,12 @@ export const standardCairoBoardGenerations = getRegisteredGenerations( 'cairo', 
 export const standardRhombilleBoardGenerations = getRegisteredGenerations( 'rhombille', getRhombilleBoardGenerations( 4 ) );
 export const standardSnubSquareBoardGenerations = getRegisteredGenerations( 'snub-square', getSnubSquareBoardGenerations( 3 ) );
 export const standardTrihexagonalBoardGenerations = getRegisteredGenerations( 'trihexagonal', getTrihexagonalBoardGenerations( 3 ) );
+export const standardFloretPentagonalBoardGenerations = getRegisteredGenerations( 'floret-pentagonal', getFloretPentagonalBoardGenerations( 3 ) );
+export const standardDeltoidalTrihexagonalBoardGenerations = getRegisteredGenerations( 'deltoidal-trihexagonal', getDeltoidalTrihexagonalBoardGenerations( 3 ) );
+export const standardPortugalBoardGenerations = getRegisteredGenerations( 'portugal', getPortugalBoardGenerations( 3 ) );
+export const standardRhombitrihexagonalBoardGenerations = getRegisteredGenerations( 'rhombitrihexagonal', getRhombitrihexagonalBoardGenerations( 3 ) );
+export const standardPrismaticPentagonalBoardGenerations = getRegisteredGenerations( 'prismatic-pentagonal', getPrismaticPentagonalBoardGenerations( 3 ) );
+export const standardElongatedTriangularBoardGenerations = getRegisteredGenerations( 'elongated-triangular', getElongatedTriangularBoardGenerations( 3 ) );
 
 // console.log( standardPatternBoards.map( board => board.name ).filter( name => name ) );
 

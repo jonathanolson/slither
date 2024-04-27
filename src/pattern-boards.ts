@@ -4,6 +4,7 @@ import { deserializePlanarMappedPatternBoard } from './model/pattern/TPlanarMapp
 import { basicPatternBoards, standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { generalPatternBoardGenerations } from './model/pattern/data/generalPatternBoardGenerations.ts';
 
 // Load with `http://localhost:5173/pattern-boards.html?debugger`
 
@@ -68,6 +69,10 @@ display.setWidthHeight( window.innerWidth, window.innerHeight );
   container.addChild( getGenerationsNode( standardSnubSquareBoardGenerations ) );
 
   container.addChild( getGenerationsNode( standardTrihexagonalBoardGenerations ) );
+
+  container.addChild( getGenerationsNode( generalPatternBoardGenerations ) );
+
+  console.log( 'general pattern board length', generalPatternBoardGenerations.map( generations => generations.length ) );
 
   // TODO: terminology omg!
   const a = deserializePlanarMappedPatternBoard( "{\"patternBoard\":\"[0,9,\\\"faces\\\",[[0,1,2,3],[4,5,0,6],[1,7,8,2]]]\",\"planarPatternMap\":\"[[[9,9],[10,9],[10,10],[9,10],[8,8],[9,8],[8,9],[11,9],[11,10]],[[0,1],[1,2],[2,3],[0,3],[4,5],[0,5],[0,6],[4,6],[1,7],[7,8],[2,8]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]],[[8,8],[9,8],[9,9]],[[9,8],[9,9],[8,9]],[[9,9],[8,9],[8,8]],[[8,9],[8,8],[9,8]],[[10,9],[11,9],[11,10]],[[11,9],[11,10],[10,10]],[[11,10],[10,10],[10,9]],[[10,10],[10,9],[11,9]]],[[[9,9],[10,9],[10,10],[9,10]],[[8,8],[9,8],[9,9],[8,9]],[[10,9],[11,9],[11,10],[10,10]],[[9,9],[10,9],[9.5,8.75]],[[10,10],[9,10],[9.5,10.25]],[[9,9],[9,10],[8.75,9.5]],[[8,8],[9,8],[8.5,7.75]],[[9,9],[9,8],[9.25,8.5]],[[9,9],[8,9],[8.5,9.25]],[[8,8],[8,9],[7.75,8.5]],[[10,9],[11,9],[10.5,8.75]],[[11,9],[11,10],[11.25,9.5]],[[10,10],[11,10],[10.5,10.25]]]]\"}" );
