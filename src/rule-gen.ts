@@ -32,6 +32,7 @@ import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGe
 import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
 import { squareOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration0RuleSets.ts';
 import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration1RuleSets.ts';
+import { squareOnlyImpliedEdgeGeneration3RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration3RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -114,6 +115,7 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
       ...squareOnlyImpliedEdgeGeneration0RuleSets,
       ...squareOnlyImpliedEdgeGeneration1RuleSets,
       ...squareOnlyImpliedEdgeGeneration2RuleSets,
+      ...squareOnlyImpliedEdgeGeneration3RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4
@@ -150,6 +152,25 @@ window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: numbe
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
       solveFaceColors: true,
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  handleImpliedPatternBoard(
+    standardSquareBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicEdgeRuleSets,
+      ...squareOnlyImpliedEdgeGeneration0RuleSets,
+      ...squareOnlyImpliedEdgeGeneration1RuleSets,
+      ...squareOnlyImpliedEdgeGeneration2RuleSets,
+      ...squareOnlyImpliedEdgeGeneration3RuleSets,
+    ],
+    combineOptions<GetRulesOptions>( {
+      vertexOrderLimit: 4,
+      highlander: true,
+      onlyNontrivialHighlander: true,
     }, options )
   );
 };

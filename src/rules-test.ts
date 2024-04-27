@@ -1,9 +1,10 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicPatternBoards, edgePatternBoard } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, edgePatternBoard, standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -68,12 +69,18 @@ console.log( 'test' );
   } ) );
 
   // Sector initial chained
-  PatternBoardRuleSet.createImpliedChained( basicPatternBoards, [], {
-    solveEdges: true,
-    solveSectors: true
-  } ).forEach( ruleSet => {
-    console.log( JSON.stringify( ruleSet.serialize() ) );
-  } );
+  // PatternBoardRuleSet.createImpliedChained( basicPatternBoards, [], {
+  //   solveEdges: true,
+  //   solveSectors: true
+  // } ).forEach( ruleSet => {
+  //   console.log( JSON.stringify( ruleSet.serialize() ) );
+  // } );
+
+  const testBoard = standardSquareBoardGenerations[ 4 ][ 7 ];
+  addPaddedNode( new PlanarMappedPatternBoardNode( {
+    patternBoard: testBoard,
+    planarPatternMap: planarPatternMaps.get( testBoard )!,
+  }, ) );
 
 
   // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );

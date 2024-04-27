@@ -28,6 +28,9 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
       const face = valuedFaces[ index ];
 
       const values: FaceValue[] = _.range( options.includeFaceValueZero ? 0 : 1, face.edges.length );
+      if ( options.highlander ) {
+        values.push( null );
+      }
 
       // blank
       faceValueRecur( featureSet, index + 1 );

@@ -3,12 +3,18 @@
 
 - TODO
   - 
+  - HIGHLANDER on colors
+    - Or maybe... match face values of exit faces?
+    - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
+      - Yes, if we expand this to pattern matching with blank exit faces, we'll be able to detect a TON of patterns
+        - !!!!!! (1,0) will get us the main pattern, instead of (4,?)
+      - Exit face (opposite a face WITH a numeric/null value, not ?) is a candidate to have a non-indeterminate edge
+  - 
   - Generate:
     - Current:
+      - getOnlyImpliedSquareBoardRules( 4, 7, { logModulo: 250000 } )
       - getImpliedColorSquareBoardRules( 2, 0 )
       - getImpliedColorSquareBoardRules( 2, 4 )
-      - getOnlyImpliedSquareBoardRules( 3, 11 )
-      - getOnlyImpliedSquareBoardRules( 3, 18 )
     - Future:
       - Highlander on smaller boards(!)
       - getOnlyImpliedSectorSquareBoardRules( 2, 0 )
@@ -23,9 +29,6 @@
   - 
   - FeatureSet "only one" is... weird to store. It is essentially true if not-zero and not-two (redundant)
   - 
-  - Sector solving... still buggy
-    - Check if isomorphism checks for sector rules aren't working (e.g. 3-edge + exit, 2 adjacent sector)
-  - 
   - Test implied-highlander (... to check our GOOD case, we need all of level-3 square, and the specific level-4 square)
   - 
   - WebGPU general-purpose FCA "solver"
@@ -39,31 +42,8 @@
   - Testing...
     - 
     - Make sure that pattern rules in lists are "minimal" (individually remove input features and they should ALL change the output features)
-    - 
-    - 
     - WAIT WAIT .... is that just how we check redundancy?
-  - 
-  - Bitmasks... for FeatureSets (.... oh, and duals are solved by the pair bits?)
-    - Binary bitpacked array helper methods. 
-    - BinaryFeatureSet
-    - SolutionSet potential refactor:
-      - (a) add BinaryFeatureSet output
-      - (b) move "original is black" bits out to a contiguous chunk at the end of the array
-    - Flags:
-        - NOTE NOTE: WE HAVE OVERLAP between opposite/same (for adjacent faces) and the notred/notblack equivalent
-        - Do we... deduplicate this data?
-        - --- also exit edges only need a bit for "is red"?
-      - Not red (e.g. black)
-      - Not black (e.g. red)
-      - Not zero
-      - Not one
-      - Not two (how should the flags detect with red/black?)
-        - OMG OMG what if we store a certain number of EDGES per number, and we DO NOT SPLIT
-          - Then we can BIT SHIFT to potentially check sectors(!!!!!!!!).e.g. "do we need a feature for this, or is it redundant"
-      - Not opposite
-      - Not same
-      - Original is black (solution only)
-    - Everything becomes "finding boolean formulas" now
+  -
   - 
   - TPatternBoard cleanup:
     - 
@@ -360,12 +340,6 @@
 [API needs to be compatible with boards, maybe with adapter]
   - Can we put an 'index' on everything in a board?
 
-- Each boolean will be on a state:
-  - NOT_FOUND (initial state)
-  - POSSIBLE
-  - IMPOSSIBLE
-
-- Automorphisms?
 - [defer] "Invalidity" patterns?
 
 - Running through all SAT solutions is possible, but can do better
