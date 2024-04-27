@@ -37,7 +37,7 @@ import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
 import { getBasicRule } from './model/pattern/generation/getBasicRule.ts';
-import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGeneration2RuleSets.ts';
+import { deprecatedSquareEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -649,7 +649,7 @@ console.log( 'test' );
         // console.log( PatternRule.getRules( squarePatternBoard ) );
         // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
 
-        const square2Rules = squareEdgeGeneration2RuleSets.flatMap( ruleSet => ruleSet.rules );
+        const square2Rules = deprecatedSquareEdgeGeneration2RuleSets.flatMap( ruleSet => ruleSet.rules );
         console.log( _.sum( square2Rules.map( rule => rule.inputFeatureSet.getInputDifficultyScoreA() ) ) / square2Rules.length );
         console.log( '<12', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 12 ).length / square2Rules.length );
         console.log( '<14', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 14 ).length / square2Rules.length );

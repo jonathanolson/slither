@@ -12,27 +12,29 @@ import { squareOnlyImpliedEdgeGeneration2RuleSets } from './model/pattern/data/s
 import { basicColorRuleSets } from './model/pattern/data/basicColorRuleSets.ts';
 import { squareImpliedColorGeneration0RuleSets } from './model/pattern/data/squareImpliedColorGeneration0RuleSets.ts';
 import { squareImpliedColorGeneration1RuleSets } from './model/pattern/data/squareImpliedColorGeneration1RuleSets.ts';
-import { squareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration0RuleSets.ts';
-import { squareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration1RuleSets.ts';
-import { squareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/squareOnlyEdgeGeneration2RuleSets.ts';
-import { hexOnlyEdgeGeneration0RuleSets } from './model/pattern/data/hexOnlyEdgeGeneration0RuleSets.ts';
-import { hexOnlyEdgeGeneration1RuleSets } from './model/pattern/data/hexOnlyEdgeGeneration1RuleSets.ts';
-import { triangularEdgeGeneration0RuleSets } from './model/pattern/data/triangularEdgeGeneration0RuleSets.ts';
-import { triangularEdgeGeneration1RuleSets } from './model/pattern/data/triangularEdgeGeneration1RuleSets.ts';
-import { triangularEdgeGeneration2RuleSets } from './model/pattern/data/triangularEdgeGeneration2RuleSets.ts';
-import { squareColorGeneration0RuleSets } from './model/pattern/data/squareColorGeneration0RuleSets.ts';
-import { squareColorGeneration1RuleSets } from './model/pattern/data/squareColorGeneration1RuleSets.ts';
-import { squareEdgeGeneration0RuleSets } from './model/pattern/data/squareEdgeGeneration0RuleSets.ts';
-import { squareEdgeGeneration1RuleSets } from './model/pattern/data/squareEdgeGeneration1RuleSets.ts';
-import { cairoEdgeGeneration0RuleSets } from './model/pattern/data/cairoEdgeGeneration0RuleSets.ts';
-import { cairoEdgeGeneration1RuleSets } from './model/pattern/data/cairoEdgeGeneration1RuleSets.ts';
-import { hexEdgeGeneration0RuleSets } from './model/pattern/data/hexEdgeGeneration0RuleSets.ts';
-import { hexEdgeGeneration1RuleSets } from './model/pattern/data/hexEdgeGeneration1RuleSets.ts';
-import { squareEdgeGeneration2RuleSets } from './model/pattern/data/squareEdgeGeneration2RuleSets.ts';
+import { deprecatedSquareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration0RuleSets.ts';
+import { deprecatedSquareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration1RuleSets.ts';
+import { deprecatedSquareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration2RuleSets.ts';
+import { deprecatedHexOnlyEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedHexOnlyEdgeGeneration0RuleSets.ts';
+import { deprecatedHexOnlyEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedHexOnlyEdgeGeneration1RuleSets.ts';
+import { deprecatedTriangularEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedTriangularEdgeGeneration0RuleSets.ts';
+import { deprecatedTriangularEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedTriangularEdgeGeneration1RuleSets.ts';
+import { deprecatedTriangularEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedTriangularEdgeGeneration2RuleSets.ts';
+import { deprecatedSquareColorGeneration0RuleSets } from './model/pattern/data/deprecatedSquareColorGeneration0RuleSets.ts';
+import { deprecatedSquareColorGeneration1RuleSets } from './model/pattern/data/deprecatedSquareColorGeneration1RuleSets.ts';
+import { deprecatedSquareEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration0RuleSets.ts';
+import { deprecatedSquareEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration1RuleSets.ts';
+import { deprecatedCairoEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedCairoEdgeGeneration0RuleSets.ts';
+import { deprecatedCairoEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedCairoEdgeGeneration1RuleSets.ts';
+import { deprecatedHexEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedHexEdgeGeneration0RuleSets.ts';
+import { deprecatedHexEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedHexEdgeGeneration1RuleSets.ts';
+import { deprecatedSquareEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration2RuleSets.ts';
 import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
 import { squareOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration0RuleSets.ts';
 import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration1RuleSets.ts';
 import { squareOnlyImpliedEdgeGeneration3RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration3RuleSets.ts';
+import { squareOnlyImpliedEdgeGeneration4RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration4RuleSets.ts';
+import { squareImpliedColorGeneration2RuleSets } from './model/pattern/data/squareImpliedColorGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -49,7 +51,7 @@ const handlePatternBoard = (
   patternBoard: TPatternBoard,
   previousRuleSets: PatternBoardRuleSet[],
   options?: GetRulesOptions
-) => {
+): PatternBoardRuleSet => {
   const planarPatternMap = planarPatternMaps.get( patternBoard )!;
   assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
@@ -77,10 +79,18 @@ const handlePatternBoard = (
     }
 
     console.log( 'COMPLETE' );
+
+    if ( !ruleSet ) {
+      throw new Error( 'No rule set' );
+    }
+
+    return ruleSet!;
   }
   else {
     const ruleSet = PatternBoardRuleSet.createEnumerated( patternBoard, planarPatternMap, previousRuleSets, options );
     console.log( JSON.stringify( ruleSet.serialize() ) );
+
+    return ruleSet;
   }
 };
 
@@ -88,7 +98,7 @@ const handleImpliedPatternBoard = (
   patternBoard: TPatternBoard,
   previousRuleSets: PatternBoardRuleSet[],
   options?: GetRulesOptions
-) => {
+): PatternBoardRuleSet => {
   const planarPatternMap = planarPatternMaps.get( patternBoard )!;
   assertEnabled() && assert( planarPatternMap, 'planarPatternMap should be defined' );
 
@@ -98,6 +108,8 @@ const handleImpliedPatternBoard = (
 
   const ruleSet = PatternBoardRuleSet.createImplied( patternBoard, planarPatternMap, previousRuleSets, options );
   console.log( JSON.stringify( ruleSet.serialize() ) );
+
+  return ruleSet;
 };
 
 const onlyRuleSetsWithFewerNotExitFaces = ( numNonExitFaces: number ) => {
@@ -107,8 +119,32 @@ const onlyRuleSetsWithFewerNotExitFaces = ( numNonExitFaces: number ) => {
 };
 
 // @ts-expect-error
+window.getExisting_squareOnlyImpliedEdgeGeneration2RuleSets = ( generationIndex: number, index: number ) => {
+  if ( generationIndex !== 2 ) {
+    throw new Error( 'Only generation 2 is supported' );
+  }
+  return squareOnlyImpliedEdgeGeneration2RuleSets[ index ];
+};
+
+// @ts-expect-error
+window.getExisting_squareOnlyImpliedEdgeGeneration3RuleSets = ( generationIndex: number, index: number ) => {
+  if ( generationIndex !== 3 ) {
+    throw new Error( 'Only generation 3 is supported' );
+  }
+  return squareOnlyImpliedEdgeGeneration3RuleSets[ index ];
+};
+
+// @ts-expect-error
+window.getExisting_squareOnlyImpliedEdgeGeneration4RuleSets = ( generationIndex: number, index: number ) => {
+  if ( generationIndex !== 4 ) {
+    throw new Error( 'Only generation 4 is supported' );
+  }
+  return squareOnlyImpliedEdgeGeneration4RuleSets[ index ];
+};
+
+// @ts-expect-error
 window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleImpliedPatternBoard(
+  return handleImpliedPatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
@@ -125,7 +161,7 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
 
 // @ts-expect-error
 window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleImpliedPatternBoard(
+  return handleImpliedPatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicSectorImpliedRuleSets,
@@ -142,12 +178,13 @@ window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: 
 
 // @ts-expect-error
 window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleImpliedPatternBoard(
+  return handleImpliedPatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
       ...squareImpliedColorGeneration0RuleSets,
       ...squareImpliedColorGeneration1RuleSets,
+      ...squareImpliedColorGeneration2RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
@@ -158,7 +195,7 @@ window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: numbe
 
 // @ts-expect-error
 window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handleImpliedPatternBoard(
+  return handleImpliedPatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
@@ -179,13 +216,13 @@ window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, ind
 
 // @ts-expect-error
 window.getOnlySquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...squareOnlyEdgeGeneration0RuleSets,
-      ...squareOnlyEdgeGeneration1RuleSets,
-      ...squareOnlyEdgeGeneration2RuleSets,
+      ...deprecatedSquareOnlyEdgeGeneration0RuleSets,
+      ...deprecatedSquareOnlyEdgeGeneration1RuleSets,
+      ...deprecatedSquareOnlyEdgeGeneration2RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4
@@ -195,12 +232,12 @@ window.getOnlySquareBoardRules = ( generationIndex: number, index: number, optio
 
 // @ts-expect-error
 window.getOnlyHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...hexOnlyEdgeGeneration0RuleSets,
-      ...hexOnlyEdgeGeneration1RuleSets,
+      ...deprecatedHexOnlyEdgeGeneration0RuleSets,
+      ...deprecatedHexOnlyEdgeGeneration1RuleSets,
     ],
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3
@@ -212,13 +249,13 @@ window.getOnlyHexBoardRules = ( generationIndex: number, index: number, options?
 
 // @ts-expect-error
 window.getTriangularBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardTriangularBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...triangularEdgeGeneration0RuleSets,
-      ...triangularEdgeGeneration1RuleSets,
-      ...triangularEdgeGeneration2RuleSets,
+      ...deprecatedTriangularEdgeGeneration0RuleSets,
+      ...deprecatedTriangularEdgeGeneration1RuleSets,
+      ...deprecatedTriangularEdgeGeneration2RuleSets,
     ],
     options
   );
@@ -226,12 +263,12 @@ window.getTriangularBoardRules = ( generationIndex: number, index: number, optio
 
 // @ts-expect-error
 window.getColorSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
-      ...squareColorGeneration0RuleSets,
-      ...squareColorGeneration1RuleSets,
+      ...deprecatedSquareColorGeneration0RuleSets,
+      ...deprecatedSquareColorGeneration1RuleSets,
     ],
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
@@ -242,12 +279,12 @@ window.getColorSquareBoardRules = ( generationIndex: number, index: number, opti
 
 // @ts-expect-error
 window.getSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...squareEdgeGeneration0RuleSets,
-      ...squareEdgeGeneration1RuleSets,
+      ...deprecatedSquareEdgeGeneration0RuleSets,
+      ...deprecatedSquareEdgeGeneration1RuleSets,
       // ...squareEdgeGeneration2RuleSets,
     ],
     options
@@ -256,12 +293,12 @@ window.getSquareBoardRules = ( generationIndex: number, index: number, options?:
 
 // @ts-expect-error
 window.getCairoBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardCairoBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...cairoEdgeGeneration0RuleSets,
-      ...cairoEdgeGeneration1RuleSets,
+      ...deprecatedCairoEdgeGeneration0RuleSets,
+      ...deprecatedCairoEdgeGeneration1RuleSets,
     ],
     options
   );
@@ -269,12 +306,12 @@ window.getCairoBoardRules = ( generationIndex: number, index: number, options?: 
 
 // @ts-expect-error
 window.getHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...hexEdgeGeneration0RuleSets,
-      ...hexEdgeGeneration1RuleSets,
+      ...deprecatedHexEdgeGeneration0RuleSets,
+      ...deprecatedHexEdgeGeneration1RuleSets,
     ],
     options
   );
@@ -282,13 +319,13 @@ window.getHexBoardRules = ( generationIndex: number, index: number, options?: Ge
 
 // @ts-expect-error
 window.getRhombilleBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardRhombilleBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...squareEdgeGeneration0RuleSets,
-      ...squareEdgeGeneration1RuleSets, // the first/second generation are just... square rules basically
-      ...squareEdgeGeneration2RuleSets,
+      ...deprecatedSquareEdgeGeneration0RuleSets,
+      ...deprecatedSquareEdgeGeneration1RuleSets, // the first/second generation are just... square rules basically
+      ...deprecatedSquareEdgeGeneration2RuleSets,
     ],
     options
   );
@@ -296,16 +333,16 @@ window.getRhombilleBoardRules = ( generationIndex: number, index: number, option
 
 // @ts-expect-error
 window.getSnubSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-  handlePatternBoard(
+  return handlePatternBoard(
     standardSnubSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...triangularEdgeGeneration0RuleSets,
-      ...triangularEdgeGeneration1RuleSets,
-      ...triangularEdgeGeneration2RuleSets,
-      ...squareEdgeGeneration0RuleSets,
-      ...squareEdgeGeneration1RuleSets,
-      ...squareEdgeGeneration2RuleSets,
+      ...deprecatedTriangularEdgeGeneration0RuleSets,
+      ...deprecatedTriangularEdgeGeneration1RuleSets,
+      ...deprecatedTriangularEdgeGeneration2RuleSets,
+      ...deprecatedSquareEdgeGeneration0RuleSets,
+      ...deprecatedSquareEdgeGeneration1RuleSets,
+      ...deprecatedSquareEdgeGeneration2RuleSets,
     ],
     options
   );

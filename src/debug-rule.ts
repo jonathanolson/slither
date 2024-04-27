@@ -7,7 +7,7 @@ import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getSolutionImpliedRules } from './model/pattern/generation/getSolutionImpliedRules.ts';
 import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
-import { squareEdgeGeneration1RuleSets } from './model/pattern/data/squareEdgeGeneration1RuleSets.ts';
+import { deprecatedSquareEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -50,8 +50,8 @@ const addRule = ( serializedInput: string, serializedOutput: string ) => {
   // const patternBoard = new BasePatternBoard( patternBoardDescriptor );
 
   // TODO: omg
-  const patternBoard = squareEdgeGeneration1RuleSets[ 1 ].patternBoard;
-  const mapping = squareEdgeGeneration1RuleSets[ 1 ].mapping;
+  const patternBoard = deprecatedSquareEdgeGeneration1RuleSets[ 1 ].patternBoard;
+  const mapping = deprecatedSquareEdgeGeneration1RuleSets[ 1 ].mapping;
 
   // '{"faceValues":[{"face":1,"value":1}],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,3,5,6,7],"secondaryFaces":[],"sameColorPaths":[[0,4],[0,5],[0,6],[2]],"oppositeColorPaths":[]}]}'
   // TODO: add a 'debug-rule' page? And move things out into a directory

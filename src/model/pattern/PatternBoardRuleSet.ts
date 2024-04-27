@@ -14,6 +14,7 @@ import { GetRulesOptions } from './generation/GetRulesOptions.ts';
 import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
 import { getFilteredEnumeratedRules } from './generation/getFilteredEnumeratedRules.ts';
 import { getCollapsedRules } from './generation/getCollapsedRules.ts';
+import { getStandardDescribedPatternBoard } from './patternBoards.ts';
 
 export class PatternBoardRuleSet {
   public constructor(
@@ -190,10 +191,25 @@ export class PatternBoardRuleSet {
   }
 
   public static deserialize( serialized: SerializedPatternBoardRuleSet ): PatternBoardRuleSet {
-    const patternBoard = new BasePatternBoard( deserializePatternBoardDescriptor( serialized.patternBoard ) );
-    const mapping = deserializePlanarPatternMap( serialized.mapping, patternBoard );
 
-    planarPatternMaps.set( patternBoard, mapping );
+    // TODO: these should match descriptors perfectly, so they won't be "isomorphic"
+    const descriptor = deserializePatternBoardDescriptor( serialized.patternBoard );
+
+    let patternBoard: TPatternBoard;
+    let planarPatternMap: TPlanarPatternMap;
+
+    let standardPatternBoard = getStandardDescribedPatternBoard( descriptor );
+    if ( standardPatternBoard ) {
+      patternBoard = standardPatternBoard;
+      planarPatternMap = planarPatternMaps.get( patternBoard )!;
+      assertEnabled() && assert( planarPatternMap );
+    }
+    else {
+      patternBoard = new BasePatternBoard( deserializePatternBoardDescriptor( serialized.patternBoard ) );
+      planarPatternMap = deserializePlanarPatternMap( serialized.mapping, patternBoard );
+
+      planarPatternMaps.set( patternBoard, planarPatternMap );
+    }
 
     const rules = serialized.rules.map( rule => {
       return new PatternRule(
@@ -203,7 +219,7 @@ export class PatternBoardRuleSet {
       );
     } );
 
-    return new PatternBoardRuleSet( patternBoard, mapping, rules );
+    return new PatternBoardRuleSet( patternBoard, planarPatternMap, rules );
   }
 }
 

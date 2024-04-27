@@ -5,6 +5,10 @@
   - 
   - HIGHLANDER BAD because exit edges that could be "double black"
   - 
+  - VALIDATION of pattern rules (e.g. we should be able to enumerate solutions, and check)
+  - 
+  - Serialize individual rules, for "collections"
+  - 
   - Support "blank/null" face values on EXIT FACES (so that the corresponding "boundary" non-exit edge can be determinate).
     - Matching and other things will need to ... check this?
   -
