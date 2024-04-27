@@ -16,14 +16,29 @@ export class SolutionFormalContext extends FormalContext {
 
     let closure = AttributeSet.getFull( this.numAttributes );
 
-    // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
-    for ( const solutionAttributeSet of this.solutionAttributeSets ) {
-      if ( ( attributeSet.data & solutionAttributeSet.withOptionalData ) === attributeSet.data ) {
-        // TODO: can we perhaps just OR it with attributeSet.data? Why do we need to filter optionalData? We are... a closure, right?
-        // TODO: Unclear whether that is correct. This is not too bad, leave it for now for correctness?
-        closure.data = closure.data & ( solutionAttributeSet.data | ( attributeSet.data & solutionAttributeSet.optionalData ) );
+    let closureData = closure.data;
+
+    // // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
+    // for ( const solutionAttributeSet of this.solutionAttributeSets ) {
+    //   if ( ( attributeSet.data & solutionAttributeSet.withOptionalData ) === attributeSet.data ) {
+    //     // TODO: can we perhaps just OR it with attributeSet.data? Why do we need to filter optionalData? We are... a closure, right?
+    //     // TODO: Unclear whether that is correct. This is not too bad, leave it for now for correctness?
+    //     closure.data = closure.data & ( solutionAttributeSet.data | ( attributeSet.data & solutionAttributeSet.optionalData ) );
+    //   }
+    // }
+
+    // Higher-performance version
+    const attributeSetData = attributeSet.data;
+    const numSolutionAttributeSets = this.solutionAttributeSets.length;
+    for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
+      const solutionAttributeSet = this.solutionAttributeSets[ i ];
+
+      if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
+        closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
       }
     }
+
+    closure.data = closureData;
 
     return closure;
   }
