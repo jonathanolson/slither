@@ -3,9 +3,14 @@
 
 - TODO
   - 
+  - HIGHLANDER BAD because exit edges that could be "double black"
+  - 
   - Support "blank/null" face values on EXIT FACES (so that the corresponding "boundary" non-exit edge can be determinate).
     - Matching and other things will need to ... check this?
   -
+  - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
+    - Maybe not?
+  - 
   - HIGHLANDER on colors
     - Or maybe... match face values of exit faces?
     - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
@@ -18,8 +23,8 @@
     - Current:
       - getOnlyImpliedSquareBoardRules( 4, 7, { logModulo: 250000 } )
         - THEN EXCLUSIVE HIGHLANDER ON THIS
-      - getImpliedColorSquareBoardRules( 2, 0 )
-      - getImpliedColorSquareBoardRules( 2, 4 )
+      - getImpliedColorSquareBoardRules( 2, 0 ) <--- zomg, we were not making much progress, rerun
+      - getImpliedColorSquareBoardRules( 2, 4 ) <--- zomg, we were not making much progress, rerun
       - getOnlyImpliedSectorSquareBoardRules( 2, 0 )
       - getOnlyImpliedSectorSquareBoardRules( 2, 1 )
     - Future:

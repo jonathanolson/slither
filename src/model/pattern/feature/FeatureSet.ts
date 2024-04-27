@@ -385,7 +385,7 @@ export class FeatureSet {
     assertEnabled() && assert( edgeA && edgeB );
 
     const blackA = this.blackEdges.has( edgeA );
-    const blackB = this.blackEdges.has( edgeB )
+    const blackB = this.blackEdges.has( edgeB );
 
     if ( blackA && blackB ) {
       throw new IncompatibleFeatureError( new SectorNotTwoFeature( sector ), [ new BlackEdgeFeature( edgeA ), new BlackEdgeFeature( edgeB ) ] );

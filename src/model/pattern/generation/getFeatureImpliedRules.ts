@@ -37,6 +37,11 @@ export const getFeatureImpliedRules = (
     highlander
   );
 
+  // if ( initialSolutionSet ) {
+  //   console.log( 'before highlander' );
+  //   console.log( initialSolutionSet.toString() );
+  // }
+
   // NOTE: Highlander indeterminate edges (and thus which "solutions" are filtered out) are set HERE, since we won't be
   // adding in face values!
   if ( initialSolutionSet && highlander ) {
@@ -48,6 +53,11 @@ export const getFeatureImpliedRules = (
       return [];
     }
   }
+
+  // if ( initialSolutionSet ) {
+  //   console.log( 'after highlander' );
+  //   console.log( initialSolutionSet.toString() );
+  // }
 
   // We might have faces that have no solutions!
   if ( !initialSolutionSet ) {

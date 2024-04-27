@@ -194,6 +194,21 @@ export class PatternNode extends Node {
           }
         }
       }
+      else {
+        // exit face
+        const faceFeature = ( features.find( feature => feature instanceof FaceFeature && feature.face === face ) ?? null ) as FaceFeature | null;
+
+        if ( faceFeature && faceFeature.value === null ) {
+          const points = planarPatternMap.faceMap.get( face )!;
+          const shape = Shape.polygon( points );
+
+          container.addChild( new Path( shape, {
+            stroke: '#666',
+            lineWidth: 0.05,
+            lineDash: [ 0.05, 0.05 ],
+          } ) );
+        }
+      }
     } );
 
     // Exit Edge features

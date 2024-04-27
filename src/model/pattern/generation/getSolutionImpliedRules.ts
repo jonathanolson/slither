@@ -15,19 +15,46 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
 
   assertEnabled() && assert( !isFinite( options.featureLimit ) );
 
+  const potentialBlankExitFaces = options.highlander ? patternBoard.faces.filter( face => {
+    // See if we're an exit face with one edge connected to a non-exit face
+
+    if ( !face.isExit ) {
+      return false;
+    }
+
+    if ( face.edges.length !== 1 ) {
+      return false;
+    }
+
+    const edge = face.edges[ 0 ];
+
+    const otherFace = edge.faces.find( otherFace => otherFace !== face );
+
+    if ( otherFace ) {
+      return !otherFace.isExit;
+    }
+    else {
+      return false;
+    }
+  } ) : [];
+
   // enumerate all face value features (up to isomorphism)
   const faceValueFeatures: FeatureSet[] = [];
-  const valuedFaces = patternBoard.faces.filter( face => !face.isExit );
+  const potentiallyValuedFaces = [
+    ...patternBoard.faces.filter( face => !face.isExit ),
+    ...potentialBlankExitFaces
+  ];
   const faceValueRecur = ( featureSet: FeatureSet, index: number ): void => {
-    if ( index === valuedFaces.length ) {
+    if ( index === potentiallyValuedFaces.length ) {
       if ( faceValueFeatures.every( otherFeatureSet => !featureSet.isIsomorphicTo( otherFeatureSet ) ) ) {
         faceValueFeatures.push( featureSet );
       }
     }
     else {
-      const face = valuedFaces[ index ];
+      const face = potentiallyValuedFaces[ index ];
 
-      const values: FaceValue[] = _.range( options.includeFaceValueZero ? 0 : 1, face.edges.length );
+      // If this is an exit face, it will only be able to take on the value of null.
+      const values: FaceValue[] = face.isExit ? [] : _.range( options.includeFaceValueZero ? 0 : 1, face.edges.length );
       if ( options.highlander ) {
         values.push( null );
       }
