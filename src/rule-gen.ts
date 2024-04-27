@@ -38,6 +38,7 @@ import { squareImpliedColorGeneration2RuleSets } from './model/pattern/data/squa
 import { hexagonalOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration0RuleSets.ts';
 import { hexagonalOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedSectorGeneration0RuleSets.ts';
 import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/hexagonalImpliedColorGeneration0RuleSets.ts';
+import { hexagonalOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -226,6 +227,7 @@ window.getOnlyImpliedHexBoardRules = ( generationIndex: number, index: number, o
     [
       ...basicEdgeRuleSets,
       ...hexagonalOnlyImpliedEdgeGeneration0RuleSets,
+      ...hexagonalOnlyImpliedEdgeGeneration1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3
