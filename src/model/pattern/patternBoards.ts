@@ -8,7 +8,7 @@ import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 import { FacesPatternBoard } from './FacesPatternBoard.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from '../../view/GenerateNode.ts';
-import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling } from '../board/core/TiledBoard.ts';
+import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from '../board/core/TiledBoard.ts';
 import { SquareBoard } from '../board/square/SquareBoard.ts';
 
 export const edgePatternBoard = new BasePatternBoard( {
@@ -235,6 +235,7 @@ export const getCairoBoardGenerations = ( n: number ) => FacesPatternBoard.getFi
 export const getHexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( new HexagonalBoard( 10, 1, true ), n );
 export const getRhombilleBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( rhombilleTiling ) ), n );
 export const getSnubSquareBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( snubSquareTiling ) ), n );
+export const getTrihexagonalBoardGenerations = ( n: number ) => FacesPatternBoard.getFirstNGenerations( boardFromPolygonGenerator( getPeriodicTilingGenerator( trihexagonalTiling ) ), n );
 
 // ORDER IMPORTANT(!)
 export const standardSquareBoardGenerations = getRegisteredGenerations( 'square', getSquareBoardGenerations( 5 ) );
@@ -244,6 +245,7 @@ export const standardCairoBoardGenerations = getRegisteredGenerations( 'cairo', 
 
 export const standardRhombilleBoardGenerations = getRegisteredGenerations( 'rhombille', getRhombilleBoardGenerations( 4 ) );
 export const standardSnubSquareBoardGenerations = getRegisteredGenerations( 'snub-square', getSnubSquareBoardGenerations( 3 ) );
+export const standardTrihexagonalBoardGenerations = getRegisteredGenerations( 'trihexagonal', getTrihexagonalBoardGenerations( 3 ) );
 
 // console.log( standardPatternBoards.map( board => board.name ).filter( name => name ) );
 

@@ -35,6 +35,7 @@ export default defineConfig( {
         'debug-rule': '/debug-rule.html',
         'model-tests': '/model-tests.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
+        'pattern-boards': '/pattern-boards.html',
       },
       plugins: [
         unassert( {
