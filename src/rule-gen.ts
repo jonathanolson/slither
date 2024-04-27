@@ -35,6 +35,9 @@ import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data
 import { squareOnlyImpliedEdgeGeneration3RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration3RuleSets.ts';
 import { squareOnlyImpliedEdgeGeneration4RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration4RuleSets.ts';
 import { squareImpliedColorGeneration2RuleSets } from './model/pattern/data/squareImpliedColorGeneration2RuleSets.ts';
+import { hexagonalOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration0RuleSets.ts';
+import { hexagonalOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedSectorGeneration0RuleSets.ts';
+import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/hexagonalImpliedColorGeneration0RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -142,6 +145,9 @@ window.getExisting_squareOnlyImpliedEdgeGeneration4RuleSets = ( generationIndex:
   return squareOnlyImpliedEdgeGeneration4RuleSets[ index ];
 };
 
+
+
+
 // @ts-expect-error
 window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
   return handleImpliedPatternBoard(
@@ -193,24 +199,97 @@ window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: numbe
   );
 };
 
+// // @ts-expect-error
+// window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+//   return handleImpliedPatternBoard(
+//     standardSquareBoardGenerations[ generationIndex ][ index ],
+//     [
+//       ...basicEdgeRuleSets,
+//       ...squareOnlyImpliedEdgeGeneration0RuleSets,
+//       ...squareOnlyImpliedEdgeGeneration1RuleSets,
+//       ...squareOnlyImpliedEdgeGeneration2RuleSets,
+//       ...squareOnlyImpliedEdgeGeneration3RuleSets,
+//     ],
+//     combineOptions<GetRulesOptions>( {
+//       vertexOrderLimit: 4,
+//       highlander: true,
+//       onlyNontrivialHighlander: true,
+//     }, options )
+//   );
+// };
+
+
 // @ts-expect-error
-window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+window.getOnlyImpliedHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
   return handleImpliedPatternBoard(
-    standardSquareBoardGenerations[ generationIndex ][ index ],
+    standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...squareOnlyImpliedEdgeGeneration0RuleSets,
-      ...squareOnlyImpliedEdgeGeneration1RuleSets,
-      ...squareOnlyImpliedEdgeGeneration2RuleSets,
-      ...squareOnlyImpliedEdgeGeneration3RuleSets,
-    ],
+      ...hexagonalOnlyImpliedEdgeGeneration0RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
-      vertexOrderLimit: 4,
-      highlander: true,
-      onlyNontrivialHighlander: true,
+      vertexOrderLimit: 3
     }, options )
   );
 };
+
+// @ts-expect-error
+window.getOnlyImpliedSectorHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  return handleImpliedPatternBoard(
+    standardHexagonalBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicSectorImpliedRuleSets,
+      ...hexagonalOnlyImpliedSectorGeneration0RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: true,
+      solveSectors: true,
+      vertexOrderLimit: 4
+    }, options )
+  );
+};
+
+// @ts-expect-error
+window.getImpliedColorHexBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
+  return handleImpliedPatternBoard(
+    standardHexagonalBoardGenerations[ generationIndex ][ index ],
+    [
+      ...basicColorRuleSets,
+      ...hexagonalImpliedColorGeneration0RuleSets,
+    ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
+    combineOptions<GetRulesOptions>( {
+      solveEdges: false,
+      solveFaceColors: true,
+    }, options )
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

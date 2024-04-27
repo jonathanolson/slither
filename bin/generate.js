@@ -19,6 +19,11 @@ const name = {
   getOnlyImpliedSquareBoardRules: 'square-edge-only-implied',
   getOnlyImpliedSectorSquareBoardRules: 'square-sector-only-implied',
   getImpliedColorSquareBoardRules: 'square-color-implied',
+
+  getOnlyImpliedHexBoardRules: 'hexagonal-edge-only-implied',
+  getOnlyImpliedSectorHexBoardRules: 'hexagonal-sector-only-implied',
+  getImpliedColorHexBoardRules: 'hexagonal-color-implied',
+
   getExisting_squareOnlyImpliedEdgeGeneration2RuleSets: 'square-edge-only-implied',
   getExisting_squareOnlyImpliedEdgeGeneration3RuleSets: 'square-edge-only-implied',
   getExisting_squareOnlyImpliedEdgeGeneration4RuleSets: 'square-edge-only-implied',
