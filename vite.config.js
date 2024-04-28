@@ -33,10 +33,11 @@ export default defineConfig( {
         'rule-list': '/rule-list.html',
         'rule-image': '/rule-image.html',
         'debug-rule': '/debug-rule.html',
-        'model-tests': '/model-tests.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
         'pattern-boards': '/pattern-boards.html',
         'export-ruleset-image': '/export-ruleset-image.html',
+        'test/model-tests': '/test/model-tests.html',
+        'test/correctness-tests': '/test/correctness-tests.html',
       },
       plugins: [
         unassert( {

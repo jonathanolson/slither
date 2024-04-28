@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
+  - 
   - HIGHLANDER BAD because exit edges that could be "double black"
   - 
   - VALIDATION of pattern rules (e.g. we should be able to enumerate solutions, and check)
@@ -37,7 +39,7 @@
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 4]
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 5]
       - getImpliedColorHexBoardRules 1 0 [kitty 6]
-      - getImpliedSectorGeneralBoardRules 1 12 [kitty 7]
+      - getImpliedSectorGeneralBoardRules 1 12 [kitty 7] <--- not starting, due to nice values?
       - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
       - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
       - getImpliedColorGeneralBoardRules 1 2 [PC]
