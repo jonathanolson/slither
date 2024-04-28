@@ -42,7 +42,13 @@
       - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
       - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
       - getImpliedColorGeneralBoardRules 1 * [PC] (partially complete)
-      - getImpliedColorHexBoardRules 1 0 [PC last]
+      - getImpliedColorHexBoardRules 1 0 [PC ?]
+      - getImpliedGeneralBoardRules 2 0 [PC +]
+      - getImpliedGeneralBoardRules 2 1 [PC +]
+      - getImpliedGeneralBoardRules 2 2 [PC +]
+      - getImpliedGeneralBoardRules 2 3 [PC +]
+      - getOnlyImpliedSquareBoardRules 4 0 [PC +]
+      - getOnlyImpliedSquareBoardRules 4 1 [PC +]
     - Future:
       - Highlander on smaller boards(!)
   - 
@@ -54,6 +60,9 @@
   - Test implied-highlander (... to check our GOOD case, we need all of level-3 square, and the specific level-4 square)
   - 
   - WebGPU general-purpose FCA "solver"
+    - NOTE: multiple approaches
+      - (a) do the "parallel" full approach suggested by that paper. how would we handle the massive amount of memory?
+      - (b) do the next-closure, BUT parallelize the parts (both checking multiple i's, AND parallel-apply of SolutionFormalContext.getClosure/Implication.implicationSetClosure)
   - 
   - Fix up generation (we broke some things?)
   - 
