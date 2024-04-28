@@ -25,11 +25,11 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getOnlyImpliedSectorSquareBoardRules 2 2 [chrome right]
-      - getOnlyImpliedSectorSquareBoardRules 2 3 [chrome right]
-      - getOnlyImpliedSectorSquareBoardRules 2 4 [chrome right] (is last of type)
-      - getImpliedColorSquareBoardRules 2 0 [chrome right]
-      - getImpliedColorSquareBoardRules 2 4 [chrome right]
+      - getOnlyImpliedSectorSquareBoardRules 2 2 [chrome right #67]
+      - getOnlyImpliedSectorSquareBoardRules 2 3 [chrome right #70]
+      - getOnlyImpliedSectorSquareBoardRules 2 4 [chrome right #64] (is last of type)
+      - getImpliedColorSquareBoardRules 2 0 [chrome right #110]
+      - getImpliedColorSquareBoardRules 2 4 [chrome right #110]
       - getImpliedSectorGeneralBoardRules 1 6 [kitty 0]
       - getImpliedSectorGeneralBoardRules 1 11 [kitty 1]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 2]
@@ -37,7 +37,7 @@
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 4]
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 5]
       - getImpliedColorHexBoardRules 1 0 [kitty 6]
-      - getOnlyImpliedHexBoardRules 2 0 [kitty 7]
+      - getImpliedSectorGeneralBoardRules 1 12 [kitty 7]
       - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
       - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
       - getImpliedColorGeneralBoardRules 1 2 [PC]
@@ -52,7 +52,8 @@
       - getImpliedGeneralBoardRules 2 7? [PC +]
       - getImpliedGeneralBoardRules 2 19 [PC +] (((incomplete)))
       - getImpliedGeneralBoardRules 2 17 [PC +]
-      - getImpliedGeneralBoardRules 2 22 [PC +]
+      - getImpliedGeneralBoardRules 2 40 [PC +]
+      - getImpliedGeneralBoardRules 2 42 [PC +]
       - getOnlyImpliedSquareBoardRules 4 0 [PC +]
       - getOnlyImpliedSquareBoardRules 4 1 [PC +] (((incomplete)))
     - Future:
