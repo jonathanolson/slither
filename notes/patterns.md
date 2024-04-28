@@ -25,18 +25,26 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getOnlyImpliedSquareBoardRules( 4, 7, { logModulo: 250000 } )
-        - THEN EXCLUSIVE HIGHLANDER ON THIS
-      - getImpliedColorSquareBoardRules( 2, 0 ) <--- zomg, we were not making much progress, rerun
-      - getImpliedColorSquareBoardRules( 2, 4 ) <--- zomg, we were not making much progress, rerun
-      - getOnlyImpliedSectorSquareBoardRules( 2, 0 )
-      - getOnlyImpliedSectorSquareBoardRules( 2, 1 )
+      - getOnlyImpliedSectorSquareBoardRules 2 0 [chrome left]
+      - getOnlyImpliedSectorSquareBoardRules 2 2 [chrome right]
+      - getOnlyImpliedSectorSquareBoardRules 2 3 [chrome right]
+      - getOnlyImpliedSectorSquareBoardRules 2 4 [chrome right]
+      - getImpliedColorSquareBoardRules 2 0 [chrome right]
+      - getImpliedColorSquareBoardRules 2 4 [chrome right]
+      - getImpliedSectorGeneralBoardRules 1 6 [kitty 0]
+      - getImpliedSectorGeneralBoardRules 1 9 [kitty 1]
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 2]
+      - getImpliedSectorGeneralBoardRules 1 5 [kitty 3]
+      - getImpliedSectorGeneralBoardRules 1 10 [kitty 4]
+      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 5]
+      - getImpliedColorHexBoardRules 1 0 [kitty 6]
+      - getOnlyImpliedHexBoardRules 2 0 [kitty 7]
+      - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
+      - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
+      - getImpliedColorGeneralBoardRules 1 * [PC] (partially complete)
+      - getImpliedColorHexBoardRules 1 0 [PC last]
     - Future:
       - Highlander on smaller boards(!)
-      - getOnlyImpliedSectorSquareBoardRules( 2, 2 )
-      - getOnlyImpliedSectorSquareBoardRules( 2, 3 )
-      - getOnlyImpliedSectorSquareBoardRules( 2, 4 )
-      - [once square 3, x] getOnlyImpliedSquareBoardRules( 0, 4 ) THEN HIGHLANDER
   - 
   - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
