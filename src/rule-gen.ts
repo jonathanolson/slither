@@ -41,6 +41,9 @@ import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/h
 import { hexagonalOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration1RuleSets.ts';
 import { generalPatternBoardGenerations } from './model/pattern/generalPatternBoardGenerations.ts';
 import { generalImpliedEdgeGeneration0RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration0RuleSets.ts';
+import { generalImpliedEdgeGeneration1RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration1RuleSets.ts';
+import { generalImpliedSectorGeneration0RuleSets } from './model/pattern/data/generalImpliedSectorGeneration0RuleSets.ts';
+import { generalImpliedColorGeneration0RuleSets } from './model/pattern/data/generalImpliedColorGeneration0RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -291,6 +294,7 @@ window.getImpliedGeneralBoardRules = ( generationIndex: number, index: number, o
     [
       ...basicEdgeRuleSets,
       ...generalImpliedEdgeGeneration0RuleSets,
+      ...generalImpliedEdgeGeneration1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
 
@@ -304,6 +308,7 @@ window.getImpliedSectorGeneralBoardRules = ( generationIndex: number, index: num
     generalPatternBoardGenerations[ generationIndex ][ index ],
     [
       ...basicSectorImpliedRuleSets,
+      ...generalImpliedSectorGeneration0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,
@@ -318,6 +323,7 @@ window.getImpliedColorGeneralBoardRules = ( generationIndex: number, index: numb
     generalPatternBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
+      ...generalImpliedColorGeneration0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,

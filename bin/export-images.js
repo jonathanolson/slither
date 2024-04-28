@@ -2,6 +2,11 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import svgo from 'svgo';
 
+// `node bin/export-images.js --max_old_space_size=8192 --stack-size=1024` to run this script with more memory
+// TODO: it seems svgo can crash fairly easily, perhaps we should be more careful about how we're using it?
+
+const IGNORE_TIMESTAMPS = false;
+
 const sleep = async function( milliseconds ) {
   return new Promise( ( resolve, reject ) => {
     setTimeout( resolve, milliseconds );
@@ -9,7 +14,7 @@ const sleep = async function( milliseconds ) {
 };
 
 // Get a list of all files recursively under the data directory, e.g. data/basic-color/basic-color-exit-5-4.json
-const files = [];
+let files = [];
 const walkSync = function( dir ) {
   fs.readdirSync( dir, { withFileTypes: true } ).forEach( dirent => {
     if ( dirent.isDirectory() ) {
@@ -27,7 +32,8 @@ walkSync( './data' );
 
   const browser = await puppeteer.launch( {
     args: [
-      '--disable-gpu'
+      '--disable-gpu',
+      '--max-old-space-size=4096'
     ]
   } );
 
@@ -35,7 +41,16 @@ walkSync( './data' );
     if ( remainingFiles ) {
       const file = remainingFiles.shift();
 
-      // TODO: check timestamps of existing files to see if they need to be regenerated
+      const outputPath = file.replace( '.json', '.svg' ).replace( '/data', '/images');
+
+      // does outputPath exist, and if so, does it have a newer timestamp than our file?
+      if ( !IGNORE_TIMESTAMPS && fs.existsSync( outputPath ) ) {
+        const stat = fs.statSync( outputPath );
+        if ( stat.mtimeMs > fs.statSync( file ).mtimeMs ) {
+          await next();
+          return;
+        }
+      }
 
       console.log( file );
 
@@ -68,28 +83,37 @@ walkSync( './data' );
 
         const svg = await page.evaluate( expression );
 
-        const outputPath = file.replace( '.json', '.svg' ).replace( '/data', '/images');
-
         // Ensure that the directories to outputPath exists with fs.mkdirSync / recursive:true
         const directory = outputPath.split( '/' ).slice( 0, -1 ).join( '/' );
         fs.mkdirSync( directory, { recursive: true } );
 
-        const optimizedSVG = svgo.optimize( svg, {
-          multipass: true,
-          plugins: [
-            {
-              name: 'preset-default',
-              params: {
-                overrides: {
-                  // We can't scale things and get the right bounds if the view box is removed.
-                  removeViewBox: false
+        let optimizedSVG = svg;
+
+        try {
+          optimizedSVG = svgo.optimize( svg, {
+            multipass: true,
+            plugins: [
+              {
+                name: 'preset-default',
+                params: {
+                  overrides: {
+                    // We can't scale things and get the right bounds if the view box is removed.
+                    removeViewBox: false
+                  }
                 }
               }
-            }
-          ]
-        } ).data;
+            ]
+          } ).data;
+        }
+        catch ( e ) {
+          console.log( 'PROBABLY A SVGO CRASH', e );
+        }
 
-        fs.writeFileSync( outputPath, optimizedSVG, 'utf8' );
+        const moreMinifiedSVG = optimizedSVG
+          .replace( /;stroke-miterlimit:10/g, '' )
+          .replace( /;stroke:none/g, '' )
+
+        fs.writeFileSync( outputPath, moreMinifiedSVG, 'utf8' );
 
         !page.isClosed() && await page.close();
 

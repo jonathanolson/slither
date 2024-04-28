@@ -52,7 +52,7 @@ fs.mkdirSync( `./data/${name}`, { recursive: true } );
 
   const page = await browser.newPage();
 
-  await page.setDefaultNavigationTimeout( 30000 );
+  await page.setDefaultNavigationTimeout( 120000 );
   page.setCacheEnabled && page.setCacheEnabled( false );
 
   page.on( 'console', msg => {
@@ -88,7 +88,7 @@ fs.mkdirSync( `./data/${name}`, { recursive: true } );
   } );
 
   await page.goto( 'http://localhost/slither/dist/rule-gen.html', {
-    timeout: 30000
+    timeout: 120000
   } );
 } )();
 
