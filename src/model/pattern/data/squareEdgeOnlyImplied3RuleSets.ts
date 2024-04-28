@@ -20,7 +20,7 @@ import r17 from '../../../../data/square-edge-only-implied/square-edge-only-impl
 import r18 from '../../../../data/square-edge-only-implied/square-edge-only-implied-3-18.json';
 import r19 from '../../../../data/square-edge-only-implied/square-edge-only-implied-3-19.json';
 
-export const squareOnlyImpliedEdgeGeneration3RuleSets = [
+export const squareEdgeOnlyImplied3RuleSets = [
   PatternBoardRuleSet.deserialize( r0 ),
   PatternBoardRuleSet.deserialize( r1 ),
   PatternBoardRuleSet.deserialize( r2 ),

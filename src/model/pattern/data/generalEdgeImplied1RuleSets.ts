@@ -13,7 +13,7 @@ import r10 from '../../../../data/general-implied/general-implied-1-10.json';
 import r11 from '../../../../data/general-implied/general-implied-1-11.json';
 import r12 from '../../../../data/general-implied/general-implied-1-12.json';
 
-export const generalImpliedEdgeGeneration1RuleSets = [
+export const generalEdgeImplied1RuleSets = [
   PatternBoardRuleSet.deserialize( r0 ),
   PatternBoardRuleSet.deserialize( r1 ),
   PatternBoardRuleSet.deserialize( r2 ),

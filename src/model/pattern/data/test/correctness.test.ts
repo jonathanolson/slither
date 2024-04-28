@@ -1,11 +1,11 @@
 import QUnit from 'qunit';
 import { PatternRule } from '../../PatternRule.ts';
 import { PatternBoardRuleSet } from '../../PatternBoardRuleSet.ts';
-import { squareOnlyImpliedEdgeGeneration0RuleSets } from '../squareOnlyImpliedEdgeGeneration0RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration1RuleSets } from '../squareOnlyImpliedEdgeGeneration1RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration2RuleSets } from '../squareOnlyImpliedEdgeGeneration2RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration3RuleSets } from '../squareOnlyImpliedEdgeGeneration3RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration4RuleSets } from '../squareOnlyImpliedEdgeGeneration4RuleSets.ts';
+import { squareEdgeOnlyImplied0RuleSets } from '../squareEdgeOnlyImplied0RuleSets.ts';
+import { squareEdgeOnlyImplied1RuleSets } from '../squareEdgeOnlyImplied1RuleSets.ts';
+import { squareEdgeOnlyImplied2RuleSets } from '../squareEdgeOnlyImplied2RuleSets.ts';
+import { squareEdgeOnlyImplied3RuleSets } from '../squareEdgeOnlyImplied3RuleSets.ts';
+import { squareEdgeOnlyImplied4RuleSets } from '../squareEdgeOnlyImplied4RuleSets.ts';
 import { PatternBoardSolver } from '../../PatternBoardSolver.ts';
 import { TPatternEdge } from '../../TPatternEdge.ts';
 
@@ -49,9 +49,9 @@ QUnit.module( 'pattern rule correctness', () => {
     } );
   };
 
-  testRuleSets( squareOnlyImpliedEdgeGeneration0RuleSets, 'squareOnlyImpliedEdgeGeneration0RuleSets' );
-  testRuleSets( squareOnlyImpliedEdgeGeneration1RuleSets, 'squareOnlyImpliedEdgeGeneration1RuleSets' );
-  testRuleSets( squareOnlyImpliedEdgeGeneration2RuleSets, 'squareOnlyImpliedEdgeGeneration2RuleSets' );
-  testRuleSets( squareOnlyImpliedEdgeGeneration3RuleSets, 'squareOnlyImpliedEdgeGeneration3RuleSets' );
-  testRuleSets( squareOnlyImpliedEdgeGeneration4RuleSets, 'squareOnlyImpliedEdgeGeneration4RuleSets' );
+  testRuleSets( squareEdgeOnlyImplied0RuleSets, 'squareOnlyImpliedEdgeGeneration0RuleSets' );
+  testRuleSets( squareEdgeOnlyImplied1RuleSets, 'squareOnlyImpliedEdgeGeneration1RuleSets' );
+  testRuleSets( squareEdgeOnlyImplied2RuleSets, 'squareOnlyImpliedEdgeGeneration2RuleSets' );
+  testRuleSets( squareEdgeOnlyImplied3RuleSets, 'squareOnlyImpliedEdgeGeneration3RuleSets' );
+  testRuleSets( squareEdgeOnlyImplied4RuleSets, 'squareOnlyImpliedEdgeGeneration4RuleSets' );
 } );

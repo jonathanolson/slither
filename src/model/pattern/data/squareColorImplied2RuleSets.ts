@@ -3,7 +3,7 @@ import r1 from '../../../../data/square-color-implied/square-color-implied-2-1.j
 import r2 from '../../../../data/square-color-implied/square-color-implied-2-2.json';
 import r3 from '../../../../data/square-color-implied/square-color-implied-2-3.json';
 
-export const squareImpliedColorGeneration2RuleSets = [
+export const squareColorImplied2RuleSets = [
   // 2,0
   // PatternBoardRuleSet.deserialize( JSON.parse( '' ) ),
   // 2,1

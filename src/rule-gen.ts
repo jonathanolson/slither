@@ -6,12 +6,12 @@ import assert, { assertEnabled } from './workarounds/assert.ts';
 import { standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 import { GetRulesOptions } from './model/pattern/generation/GetRulesOptions.ts';
 import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration0RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration1RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration2RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration2RuleSets.ts';
+import { squareEdgeOnlyImplied0RuleSets } from './model/pattern/data/squareEdgeOnlyImplied0RuleSets.ts';
+import { squareEdgeOnlyImplied1RuleSets } from './model/pattern/data/squareEdgeOnlyImplied1RuleSets.ts';
+import { squareEdgeOnlyImplied2RuleSets } from './model/pattern/data/squareEdgeOnlyImplied2RuleSets.ts';
 import { basicColorRuleSets } from './model/pattern/data/basicColorRuleSets.ts';
-import { squareImpliedColorGeneration0RuleSets } from './model/pattern/data/squareImpliedColorGeneration0RuleSets.ts';
-import { squareImpliedColorGeneration1RuleSets } from './model/pattern/data/squareImpliedColorGeneration1RuleSets.ts';
+import { squareColorImplied0RuleSets } from './model/pattern/data/squareColorImplied0RuleSets.ts';
+import { squareColorImplied1RuleSets } from './model/pattern/data/squareColorImplied1RuleSets.ts';
 import { deprecatedSquareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration0RuleSets.ts';
 import { deprecatedSquareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration1RuleSets.ts';
 import { deprecatedSquareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration2RuleSets.ts';
@@ -30,20 +30,20 @@ import { deprecatedHexEdgeGeneration0RuleSets } from './model/pattern/data/depre
 import { deprecatedHexEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedHexEdgeGeneration1RuleSets.ts';
 import { deprecatedSquareEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration2RuleSets.ts';
 import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
-import { squareOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration0RuleSets.ts';
-import { squareOnlyImpliedSectorGeneration1RuleSets } from './model/pattern/data/squareOnlyImpliedSectorGeneration1RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration3RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration3RuleSets.ts';
-import { squareOnlyImpliedEdgeGeneration4RuleSets } from './model/pattern/data/squareOnlyImpliedEdgeGeneration4RuleSets.ts';
-import { squareImpliedColorGeneration2RuleSets } from './model/pattern/data/squareImpliedColorGeneration2RuleSets.ts';
-import { hexagonalOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration0RuleSets.ts';
-import { hexagonalOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedSectorGeneration0RuleSets.ts';
-import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/hexagonalImpliedColorGeneration0RuleSets.ts';
-import { hexagonalOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration1RuleSets.ts';
+import { squareSectorOnlyImplied0RuleSets } from './model/pattern/data/squareSectorOnlyImplied0RuleSets.ts';
+import { squareSectorOnlyImplied1RuleSets } from './model/pattern/data/squareSectorOnlyImplied1RuleSets.ts';
+import { squareEdgeOnlyImplied3RuleSets } from './model/pattern/data/squareEdgeOnlyImplied3RuleSets.ts';
+import { squareEdgeOnlyImplied4RuleSets } from './model/pattern/data/squareEdgeOnlyImplied4RuleSets.ts';
+import { squareColorImplied2RuleSets } from './model/pattern/data/squareColorImplied2RuleSets.ts';
+import { hexagonalEdgeOnlyImplied0RuleSets } from './model/pattern/data/hexagonalEdgeOnlyImplied0RuleSets.ts';
+import { hexagonalSectorOnlyImplied0RuleSets } from './model/pattern/data/hexagonalSectorOnlyImplied0RuleSets.ts';
+import { hexagonalColorImplied0RuleSets } from './model/pattern/data/hexagonalColorImplied0RuleSets.ts';
+import { hexagonalEdgeOnlyImplied1RuleSets } from './model/pattern/data/hexagonalEdgeOnlyImplied1RuleSets.ts';
 import { generalPatternBoardGenerations } from './model/pattern/generalPatternBoardGenerations.ts';
-import { generalImpliedEdgeGeneration0RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration0RuleSets.ts';
-import { generalImpliedEdgeGeneration1RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration1RuleSets.ts';
-import { generalImpliedSectorGeneration0RuleSets } from './model/pattern/data/generalImpliedSectorGeneration0RuleSets.ts';
-import { generalImpliedColorGeneration0RuleSets } from './model/pattern/data/generalImpliedColorGeneration0RuleSets.ts';
+import { generalEdgeImplied0RuleSets } from './model/pattern/data/generalEdgeImplied0RuleSets.ts';
+import { generalEdgeImplied1RuleSets } from './model/pattern/data/generalEdgeImplied1RuleSets.ts';
+import { generalSectorImplied0RuleSets } from './model/pattern/data/generalSectorImplied0RuleSets.ts';
+import { generalColorImplied0RuleSets } from './model/pattern/data/generalColorImplied0RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -132,7 +132,7 @@ window.getExisting_squareOnlyImpliedEdgeGeneration2RuleSets = ( generationIndex:
   if ( generationIndex !== 2 ) {
     throw new Error( 'Only generation 2 is supported' );
   }
-  return squareOnlyImpliedEdgeGeneration2RuleSets[ index ];
+  return squareEdgeOnlyImplied2RuleSets[ index ];
 };
 
 // @ts-expect-error
@@ -140,7 +140,7 @@ window.getExisting_squareOnlyImpliedEdgeGeneration3RuleSets = ( generationIndex:
   if ( generationIndex !== 3 ) {
     throw new Error( 'Only generation 3 is supported' );
   }
-  return squareOnlyImpliedEdgeGeneration3RuleSets[ index ];
+  return squareEdgeOnlyImplied3RuleSets[ index ];
 };
 
 // @ts-expect-error
@@ -148,7 +148,7 @@ window.getExisting_squareOnlyImpliedEdgeGeneration4RuleSets = ( generationIndex:
   if ( generationIndex !== 4 ) {
     throw new Error( 'Only generation 4 is supported' );
   }
-  return squareOnlyImpliedEdgeGeneration4RuleSets[ index ];
+  return squareEdgeOnlyImplied4RuleSets[ index ];
 };
 
 
@@ -160,10 +160,10 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...squareOnlyImpliedEdgeGeneration0RuleSets,
-      ...squareOnlyImpliedEdgeGeneration1RuleSets,
-      ...squareOnlyImpliedEdgeGeneration2RuleSets,
-      ...squareOnlyImpliedEdgeGeneration3RuleSets,
+      ...squareEdgeOnlyImplied0RuleSets,
+      ...squareEdgeOnlyImplied1RuleSets,
+      ...squareEdgeOnlyImplied2RuleSets,
+      ...squareEdgeOnlyImplied3RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4
@@ -177,8 +177,8 @@ window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: 
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicSectorImpliedRuleSets,
-      ...squareOnlyImpliedSectorGeneration0RuleSets,
-      ...squareOnlyImpliedSectorGeneration1RuleSets,
+      ...squareSectorOnlyImplied0RuleSets,
+      ...squareSectorOnlyImplied1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,
@@ -194,9 +194,9 @@ window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: numbe
     standardSquareBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
-      ...squareImpliedColorGeneration0RuleSets,
-      ...squareImpliedColorGeneration1RuleSets,
-      ...squareImpliedColorGeneration2RuleSets,
+      ...squareColorImplied0RuleSets,
+      ...squareColorImplied1RuleSets,
+      ...squareColorImplied2RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
@@ -231,8 +231,8 @@ window.getOnlyImpliedHexBoardRules = ( generationIndex: number, index: number, o
     standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...hexagonalOnlyImpliedEdgeGeneration0RuleSets,
-      ...hexagonalOnlyImpliedEdgeGeneration1RuleSets,
+      ...hexagonalEdgeOnlyImplied0RuleSets,
+      ...hexagonalEdgeOnlyImplied1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3
@@ -246,7 +246,7 @@ window.getOnlyImpliedSectorHexBoardRules = ( generationIndex: number, index: num
     standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicSectorImpliedRuleSets,
-      ...hexagonalOnlyImpliedSectorGeneration0RuleSets,
+      ...hexagonalSectorOnlyImplied0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,
@@ -262,7 +262,7 @@ window.getImpliedColorHexBoardRules = ( generationIndex: number, index: number, 
     standardHexagonalBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
-      ...hexagonalImpliedColorGeneration0RuleSets,
+      ...hexagonalColorImplied0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
@@ -293,8 +293,8 @@ window.getImpliedGeneralBoardRules = ( generationIndex: number, index: number, o
     generalPatternBoardGenerations[ generationIndex ][ index ],
     [
       ...basicEdgeRuleSets,
-      ...generalImpliedEdgeGeneration0RuleSets,
-      ...generalImpliedEdgeGeneration1RuleSets,
+      ...generalEdgeImplied0RuleSets,
+      ...generalEdgeImplied1RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
 
@@ -308,7 +308,7 @@ window.getImpliedSectorGeneralBoardRules = ( generationIndex: number, index: num
     generalPatternBoardGenerations[ generationIndex ][ index ],
     [
       ...basicSectorImpliedRuleSets,
-      ...generalImpliedSectorGeneration0RuleSets,
+      ...generalSectorImplied0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,
@@ -323,7 +323,7 @@ window.getImpliedColorGeneralBoardRules = ( generationIndex: number, index: numb
     generalPatternBoardGenerations[ generationIndex ][ index ],
     [
       ...basicColorRuleSets,
-      ...generalImpliedColorGeneration0RuleSets,
+      ...generalColorImplied0RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,

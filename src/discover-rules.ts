@@ -37,7 +37,6 @@ import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
 import { getBasicRule } from './model/pattern/generation/getBasicRule.ts';
-import { deprecatedSquareEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -638,38 +637,6 @@ console.log( 'test' );
         const aNewFeatures = PatternRule.withRulesApplied( doubleSquarePatternBoard, aFeatures, aEmbeddedRules );
 
         addPaddedNode( new PatternNode( doubleSquarePatternBoard, aNewFeatures, doubleSquarePatternBoard.planarPatternMap ) );
-
-        // addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
-        //   new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
-        //   new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
-        //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
-        //   new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
-        // ], true, true, true ) );
-
-        // console.log( PatternRule.getRules( squarePatternBoard ) );
-        // console.log( PatternRule.getRules( vertexExit4TwoOppositeSectorsPatternBoard ) );
-
-        const square2Rules = deprecatedSquareEdgeGeneration2RuleSets.flatMap( ruleSet => ruleSet.rules );
-        console.log( _.sum( square2Rules.map( rule => rule.inputFeatureSet.getInputDifficultyScoreA() ) ) / square2Rules.length );
-        console.log( '<12', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 12 ).length / square2Rules.length );
-        console.log( '<14', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 14 ).length / square2Rules.length );
-        console.log( '<16', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 16 ).length / square2Rules.length );
-        console.log( '<18', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 18 ).length / square2Rules.length );
-        console.log( '<20', square2Rules.filter( rule => rule.inputFeatureSet.getInputDifficultyScoreA() < 20 ).length / square2Rules.length );
-
-        console.log( _.sum( square2Rules.map( rule => rule.inputFeatureSet.getFeaturesArray().length ) ) / square2Rules.length );
-        console.log( '<4', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 4 ).length / square2Rules.length );
-        console.log( '<6', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 6 ).length / square2Rules.length );
-        console.log( '<8', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 8 ).length / square2Rules.length );
-        console.log( '<9', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 9 ).length / square2Rules.length );
-        console.log( '<10', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 10 ).length / square2Rules.length );
-        console.log( '<12', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 12 ).length / square2Rules.length );
-        console.log( '<14', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 14 ).length / square2Rules.length );
-        console.log( '<16', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 16 ).length / square2Rules.length );
-        console.log( '<18', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 18 ).length / square2Rules.length );
-        console.log( '<20', square2Rules.filter( rule => rule.inputFeatureSet.getFeaturesArray().length < 20 ).length / square2Rules.length );
-
-        // console.log( arePatternBoardsIsomorphic( rhombilleEdgeGeneration2RuleSets[ 3 ].patternBoard, squareEdgeGeneration2RuleSets[ 3 ].patternBoard ) );
       }
     }
   }
