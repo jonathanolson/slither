@@ -1,5 +1,8 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import os from 'os';
+
+// TODO: try to get in the habit of `nice -n 7 node bin/generate.js` -- but see what the command line arguments are
 
 const sleep = async function( milliseconds ) {
   return new Promise( ( resolve, reject ) => {
@@ -7,8 +10,10 @@ const sleep = async function( milliseconds ) {
   } );
 };
 
-if ( process.argv.length < 5 ) {
-  throw new Error( 'command line arguments required' );
+os.setPriority( os.constants.priority.PRIORITY_LOW );
+
+if ( process.argv.length !== 5 ) {
+  throw new Error( `command line arguments required, ${process.argv.length} provided: ${process.argv.join( ' ' )}` );
 }
 
 const method = process.argv[ 2 ];
@@ -52,7 +57,9 @@ fs.mkdirSync( `./data/${name}`, { recursive: true } );
 
   const page = await browser.newPage();
 
-  await page.setDefaultNavigationTimeout( 120000 );
+  await page.setDefaultNavigationTimeout( 200000 );
+  await page.setDefaultTimeout( 200000 );
+
   page.setCacheEnabled && page.setCacheEnabled( false );
 
   page.on( 'console', msg => {
@@ -88,7 +95,7 @@ fs.mkdirSync( `./data/${name}`, { recursive: true } );
   } );
 
   await page.goto( 'http://localhost/slither/dist/rule-gen.html', {
-    timeout: 120000
+    timeout: 200000
   } );
 } )();
 
