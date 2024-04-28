@@ -41,14 +41,17 @@
       - getOnlyImpliedHexBoardRules 2 0 [kitty 7]
       - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
       - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
-      - getImpliedColorGeneralBoardRules 1 * [PC] (partially complete)
+      - getImpliedColorGeneralBoardRules 1 * [PC] - partially done
       - getImpliedColorHexBoardRules 1 0 [PC ?]
-      - getImpliedGeneralBoardRules 2 0 [PC +]
-      - getImpliedGeneralBoardRules 2 1 [PC +]
-      - getImpliedGeneralBoardRules 2 2 [PC +]
-      - getImpliedGeneralBoardRules 2 3 [PC +]
+      - getImpliedGeneralBoardRules 2 6 [PC +]
+      - getImpliedGeneralBoardRules 2 5 [PC +]
+      - getImpliedGeneralBoardRules 2 4 [PC +]
+      - getImpliedGeneralBoardRules 2 15 [PC +]
+      - getImpliedGeneralBoardRules 2 7? [PC +]
+      - getImpliedGeneralBoardRules 2 16 [PC +] (((incomplete)))
+      - getImpliedGeneralBoardRules 2 17 [PC +]
       - getOnlyImpliedSquareBoardRules 4 0 [PC +]
-      - getOnlyImpliedSquareBoardRules 4 1 [PC +]
+      - getOnlyImpliedSquareBoardRules 4 1 [PC +] (((incomplete)))
     - Future:
       - Highlander on smaller boards(!)
   - 
