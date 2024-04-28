@@ -1,8 +1,7 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { generalImpliedEdgeGeneration1RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration1RuleSets.ts';
-import { generalImpliedSectorGeneration0RuleSets } from './model/pattern/data/generalImpliedSectorGeneration0RuleSets.ts';
+import { squareImpliedColorGeneration1RuleSets } from './model/pattern/data/squareImpliedColorGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -77,10 +76,13 @@ console.log( 'test' );
   // showRuleSet( squareOnlyImpliedSectorGeneration1RuleSets[ 0 ] );
 
   // showRuleSet( highlanderSquareOnlyImpliedEdgeGeneration0RuleSets[ 0 ] );
+  showRuleSet( squareImpliedColorGeneration1RuleSets[ 0 ] );
   // showRuleSet( squareOnlyImpliedEdgeGeneration2RuleSets[ 0 ] );
   // showRuleSet( basicSectorImpliedRuleSets[ 3 ] );
   // showRuleSet( generalImpliedEdgeGeneration0RuleSets[ 0 ] );
-  showRuleSet( generalImpliedSectorGeneration0RuleSets[ 2 ] );
+
+  // showRuleSet( generalImpliedSectorGeneration0RuleSets[ 2 ] );
+  // showRuleSet( squareOnlyImpliedEdgeGeneration3RuleSets[ 11 ] );
 
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isRedundant( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ].getEmbeddedRules( getEmbeddings( basicSectorImpliedRuleSets[ 13 ].patternBoard, basicSectorImpliedRuleSets[ 13 ].patternBoard ) ) ) );

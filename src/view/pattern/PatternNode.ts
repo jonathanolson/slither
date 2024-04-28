@@ -44,6 +44,7 @@ export class PatternNode extends Node {
     } );
 
     // Face backgrounds
+    const backgroundShape = new Shape();
     patternBoard.faces.forEach( face => {
 
       if ( face.isExit && face.edges.length < 2 ) {
@@ -51,37 +52,42 @@ export class PatternNode extends Node {
       }
 
       const points = planarPatternMap.faceMap.get( face )!;
-      const shape = Shape.polygon( points );
-
-      container.addChild( new Path( shape, {
-        fill: '#000'
-      } ) );
+      backgroundShape.polygon( points );
     } );
+    container.addChild( new Path( backgroundShape, {
+      fill: '#000'
+    } ) );
 
     // Face Color Features
+    const hueLUT = [ 255, 160, 20, 96, 70, 230, 0 ];
+    const primaryFaceColorShapes: Shape[] = hueLUT.map( () => new Shape() );
+    const secondaryFaceColorShapes: Shape[] = hueLUT.map( () => new Shape() );
     ( features.filter( f => f instanceof FaceColorDualFeature ) as FaceColorDualFeature[] ).forEach( ( feature, i ) => {
-      const hueLUT = [ 255, 160, 20, 96, 70, 230, 0 ];
       const hue = hueLUT[ i % hueLUT.length ];
-      const primaryColor = darkTheme.faceColorLightHueLUTProperty.value[ hue ];
-      const secondaryColor = darkTheme.faceColorDarkHueLUTProperty.value[ hue ];
 
       feature.primaryFaces.forEach( face => {
         const points = planarPatternMap.faceMap.get( face )!;
-        const shape = Shape.polygon( points );
-
-        container.addChild( new Path( shape, {
-          fill: primaryColor
-        } ) );
+        primaryFaceColorShapes[ i % hueLUT.length ].polygon( points );
       } );
 
       feature.secondaryFaces.forEach( face => {
         const points = planarPatternMap.faceMap.get( face )!;
-        const shape = Shape.polygon( points );
-
-        container.addChild( new Path( shape, {
-          fill: secondaryColor
-        } ) );
+        secondaryFaceColorShapes[ i % hueLUT.length ].polygon( points );
       } );
+    } );
+    primaryFaceColorShapes.forEach( ( shape, i ) => {
+      if ( shape.bounds.isFinite() ) {
+        container.addChild( new Path( shape, {
+          fill: darkTheme.faceColorLightHueLUTProperty.value[ hueLUT[ i ] ]
+        } ) );
+      }
+    } );
+    secondaryFaceColorShapes.forEach( ( shape, i ) => {
+      if ( shape.bounds.isFinite() ) {
+        container.addChild( new Path( shape, {
+          fill: darkTheme.faceColorDarkHueLUTProperty.value[ hueLUT[ i ] ]
+        } ) );
+      }
     } );
 
     // Sector features
@@ -148,19 +154,22 @@ export class PatternNode extends Node {
       }
     } );
 
+    const allEdgesShape = new Shape();
     patternBoard.edges.forEach( edge => {
       if ( edge.isExit ) {
         return;
       }
 
       const points = planarPatternMap.edgeMap.get( edge )!;
-
-      container.addChild( new Line( points[ 0 ], points[ 1 ], {
-        stroke: 'rgba(255,255,255,0.2)',
-        lineWidth: 0.01
-      } ) );
+      allEdgesShape.moveToPoint( points[ 0 ] );
+      allEdgesShape.lineToPoint( points[ 1 ] );
     } );
+    container.addChild( new Path( allEdgesShape, {
+      stroke: 'rgba(255,255,255,0.2)',
+      lineWidth: 0.01
+    } ) );
 
+    // TODO: collapse this a bit
     patternBoard.vertices.forEach( vertex => {
       const isExit = vertex.isExit;
 
@@ -212,6 +221,7 @@ export class PatternNode extends Node {
     } );
 
     // Exit Edge features
+    // TODO: collapse these!
     patternBoard.edges.forEach( edge => {
       if ( edge.isExit ) {
         const edgeFeatures = features.filter( feature => ( feature instanceof BlackEdgeFeature || feature instanceof RedEdgeFeature ) && feature.edge === edge ) as ( BlackEdgeFeature | RedEdgeFeature )[];
@@ -231,38 +241,42 @@ export class PatternNode extends Node {
     } );
 
     // Non-exit Red Edge features
+    const nonExitRedShape = new Shape();
     patternBoard.edges.forEach( edge => {
       if ( !edge.isExit ) {
         const edgeFeatures = features.filter( feature => feature instanceof RedEdgeFeature  && feature.edge === edge ) as RedEdgeFeature[];
 
         if ( edgeFeatures.length ) {
           const points = planarPatternMap.edgeMap.get( edge )!;
-
-          container.addChild( new Line( points[ 0 ], points[ 1 ], {
-            stroke: '#f00',
-            lineWidth: 0.05,
-            lineCap: 'round'
-          } ) );
+          nonExitRedShape.moveToPoint( points[ 0 ] );
+          nonExitRedShape.lineToPoint( points[ 1 ] );
         }
       }
     } );
+    container.addChild( new Path( nonExitRedShape, {
+      stroke: '#f00',
+      lineWidth: 0.05,
+      lineCap: 'round'
+    } ) );
 
     // Non-exit Black Edge features
+    const nonExitBlackShape = new Shape();
     patternBoard.edges.forEach( edge => {
       if ( !edge.isExit ) {
         const edgeFeatures = features.filter( feature => feature instanceof BlackEdgeFeature && feature.edge === edge ) as BlackEdgeFeature[];
 
         if ( edgeFeatures.length ) {
           const points = planarPatternMap.edgeMap.get( edge )!;
-
-          container.addChild( new Line( points[ 0 ], points[ 1 ], {
-            stroke: '#fff',
-            lineWidth: 0.1,
-            lineCap: 'round'
-          } ) );
+          nonExitBlackShape.moveToPoint( points[ 0 ] );
+          nonExitBlackShape.lineToPoint( points[ 1 ] );
         }
       }
     } );
+    container.addChild( new Path( nonExitBlackShape, {
+      stroke: '#fff',
+      lineWidth: 0.1,
+      lineCap: 'round'
+    } ) );
 
     if ( options.labels ) {
       patternBoard.edges.forEach( edge => {
