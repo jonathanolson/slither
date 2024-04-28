@@ -4,7 +4,7 @@ import { deserializePlanarMappedPatternBoard } from './model/pattern/TPlanarMapp
 import { basicPatternBoards, standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
-import { generalPatternBoardGenerations } from './model/pattern/data/generalPatternBoardGenerations.ts';
+import { generalPatternBoardGenerations } from './model/pattern/generalPatternBoardGenerations.ts';
 
 // Load with `http://localhost:5173/pattern-boards.html?debugger`
 

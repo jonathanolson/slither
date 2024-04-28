@@ -1,7 +1,7 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { generalImpliedEdgeGeneration0RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration0RuleSets.ts';
+import { generalImpliedEdgeGeneration1RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration1RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -78,7 +78,8 @@ console.log( 'test' );
   // showRuleSet( highlanderSquareOnlyImpliedEdgeGeneration0RuleSets[ 0 ] );
   // showRuleSet( squareOnlyImpliedEdgeGeneration2RuleSets[ 0 ] );
   // showRuleSet( basicSectorImpliedRuleSets[ 3 ] );
-  showRuleSet( generalImpliedEdgeGeneration0RuleSets[ 0 ] );
+  // showRuleSet( generalImpliedEdgeGeneration0RuleSets[ 0 ] );
+  showRuleSet( generalImpliedEdgeGeneration1RuleSets[ 7 ] );
 
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isRedundant( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ].getEmbeddedRules( getEmbeddings( basicSectorImpliedRuleSets[ 13 ].patternBoard, basicSectorImpliedRuleSets[ 13 ].patternBoard ) ) ) );
@@ -156,18 +157,10 @@ console.log( 'test' );
     display.updateDisplay();
 
     // Serialize it to XHTML that can be used in foreignObject (HTML can't be)
-    const xhtml = new window.XMLSerializer().serializeToString( display.domElement );
 
-    // Create an SVG container with a foreignObject.
-    const data = `<svg xmlns="http://www.w3.org/2000/svg" width="${display.width}" height="${display.height}">` +
-                 '<foreignObject width="100%" height="100%">' +
-                 `<div xmlns="http://www.w3.org/1999/xhtml">${
-                   xhtml
-                 }</div>` +
-                 '</foreignObject>' +
-                 '</svg>';
+    const xhtml = new window.XMLSerializer().serializeToString( display.getRootBackbone().blocks[ 0 ].domElement );
 
-    console.log( data );
+    console.log( xhtml );
   }
 
 } )();

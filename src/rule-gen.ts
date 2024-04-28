@@ -39,7 +39,7 @@ import { hexagonalOnlyImpliedEdgeGeneration0RuleSets } from './model/pattern/dat
 import { hexagonalOnlyImpliedSectorGeneration0RuleSets } from './model/pattern/data/hexagonalOnlyImpliedSectorGeneration0RuleSets.ts';
 import { hexagonalImpliedColorGeneration0RuleSets } from './model/pattern/data/hexagonalImpliedColorGeneration0RuleSets.ts';
 import { hexagonalOnlyImpliedEdgeGeneration1RuleSets } from './model/pattern/data/hexagonalOnlyImpliedEdgeGeneration1RuleSets.ts';
-import { generalPatternBoardGenerations } from './model/pattern/data/generalPatternBoardGenerations.ts';
+import { generalPatternBoardGenerations } from './model/pattern/generalPatternBoardGenerations.ts';
 import { generalImpliedEdgeGeneration0RuleSets } from './model/pattern/data/generalImpliedEdgeGeneration0RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`

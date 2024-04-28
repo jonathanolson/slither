@@ -36,6 +36,7 @@ export default defineConfig( {
         'model-tests': '/model-tests.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
         'pattern-boards': '/pattern-boards.html',
+        'export-ruleset-image': '/export-ruleset-image.html',
       },
       plugins: [
         unassert( {

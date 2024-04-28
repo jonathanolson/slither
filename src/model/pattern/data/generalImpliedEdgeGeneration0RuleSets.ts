@@ -8,5 +8,5 @@ export const generalImpliedEdgeGeneration0RuleSets = [
   PatternBoardRuleSet.deserialize( r0 ),
   PatternBoardRuleSet.deserialize( r1 ),
   PatternBoardRuleSet.deserialize( r2 ),
-  PatternBoardRuleSet.deserialize( r3 )
+  PatternBoardRuleSet.deserialize( r3 ),
 ];
