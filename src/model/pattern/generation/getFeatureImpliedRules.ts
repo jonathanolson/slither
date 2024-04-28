@@ -64,6 +64,8 @@ export const getFeatureImpliedRules = (
     return [];
   }
 
+  console.log( 'solutions', initialSolutionSet.numSolutions );
+
   const solutionSet = initialSolutionSet;
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );

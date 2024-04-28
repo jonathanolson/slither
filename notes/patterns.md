@@ -5,9 +5,9 @@
   - 
   - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
-  - HIGHLANDER BAD because exit edges that could be "double black"
+  - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
   - 
-  - VALIDATION of pattern rules (e.g. we should be able to enumerate solutions, and check)
+  - HIGHLANDER BAD because exit edges that could be "double black"
   - 
   - Serialize individual rules, for "collections"
   - 
@@ -16,6 +16,9 @@
   -
   - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
     - Maybe not?
+  - 
+  - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
+    - Do we do a boolean flag here?
   - 
   - HIGHLANDER on colors
     - Or maybe... match face values of exit faces?
@@ -42,22 +45,21 @@
       - getImpliedSectorGeneralBoardRules 1 12 [kitty 7] <--- not starting, due to nice values?
       - getOnlyImpliedHexBoardRules 2 1 [kitty 8]
       - getOnlyImpliedHexBoardRules 2 2 [kitty 9]
-      - getImpliedColorGeneralBoardRules 1 2 [PC]
-      - getImpliedColorGeneralBoardRules 1 5 [PC]
-      - getImpliedColorGeneralBoardRules 1 10 [PC]
-      - getImpliedColorGeneralBoardRules 1 11 [PC]
-      - getImpliedColorHexBoardRules 1 0 [PC ? #132]
-      - getImpliedGeneralBoardRules 2 6 [PC +]
-      - getImpliedGeneralBoardRules 2 5 [PC +]
-      - getImpliedGeneralBoardRules 2 4 [PC +]
-      - getImpliedGeneralBoardRules 2 18 [PC +]
-      - getImpliedGeneralBoardRules 2 7? [PC +]
-      - getImpliedGeneralBoardRules 2 19 [PC +] (((incomplete)))
-      - getImpliedGeneralBoardRules 2 17 [PC +]
-      - getImpliedGeneralBoardRules 2 40 [PC +]
-      - getImpliedGeneralBoardRules 2 44 [PC +]
-      - getOnlyImpliedSquareBoardRules 4 0 [PC +]
-      - getOnlyImpliedSquareBoardRules 4 1 [PC +] (((incomplete)))
+      - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek]
+      - getImpliedColorGeneralBoardRules 1 5 [PC #90]
+      - getImpliedColorGeneralBoardRules 1 10 [PC #84]
+      - getImpliedColorGeneralBoardRules 1 11 [PC #90]
+      - getImpliedColorHexBoardRules 1 0 [PC ? #132 - EEEEK]
+      - getImpliedGeneralBoardRules 2 6 [PC + #46 - eeek?]
+      - getImpliedGeneralBoardRules 2 5 [PC + #42]
+      - getImpliedGeneralBoardRules 2 18 [PC + #40]
+      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek]
+      - getImpliedGeneralBoardRules 2 19 [PC + #43 ek] (((incomplete)))
+      - getImpliedGeneralBoardRules 2 17 [PC + #40]
+      - getImpliedGeneralBoardRules 2 40 [PC + #37]
+      - getImpliedGeneralBoardRules 2 44 [PC + #40]
+      - getOnlyImpliedSquareBoardRules 4 0 [PC + #40]
+      - getOnlyImpliedSquareBoardRules 4 1 [PC + #43] (((incomplete)))
     - Future:
       - Highlander on smaller boards(!)
   - 
@@ -103,10 +105,6 @@
       - Of course, ignore identity automorphism 
       - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
   - 
-  - Have rule-image.ts write all of the files out based on pattern-set?
-    - Use puppeteer, provide a function that gives the image?
-    - Use svgo (minus the viewbox removal) to optimize the files
-  - 
   - Potentially something that lists/gives "serialization" for pattern boards/mappings
   - Make a good "viewer" for patterns (ideally one we can scroll through though)
   - 
@@ -148,8 +146,6 @@
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
-  - rule-gen failure in dev (circular) https://github.com/vitejs/vite/issues/3033#issuecomment-973247243
-  - 
   - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
     - e.g. "red exit edges" for vertices for square/hex patterns ("only")
     - remove faces/edges from the list at start time?
@@ -157,9 +153,6 @@
     - [ready to go, should allow squareOnly/hexOnly searches to be faster]
     - NOTE: For face coloring, we'd really want ... multiple initial feature sets (permutations?)
       - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
-  - 
-  - Sectors (it will reduce pattern rule count considerably?)
-  - Highlander rules (!)
   - 
   - Performance: PatternRule.getSolutionEnumeratedRules
     - Can we filter "satisfied" previous rules out?
@@ -170,12 +163,8 @@
     - ... do we only report these if... removing ANY of the faces would then give no information?
       - Or do we allow a certain number of "red exit vertices"?
   - 
-  - See top performance wins (below)
-  - 
   - Should be possible to take "square only" rules, take embeddings in square board, only take (1) as representative
     - Note: will need to "apply" initial conditions to this section
-  - 
-  - Verify rules!
   - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
@@ -190,7 +179,7 @@
   - 
   - Check code TODOs
   - 
-  - Performance wins:
+  - "Solution Search" Performance wins:
     - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
       - This gets us "instant incremental"
       - WOULD NEED TO BRING BACK THAT "DUAL"
@@ -221,19 +210,11 @@
   - Rule collapse on embedding too (consolidate)
     - (do this in places where we are ... solving?)
   - 
-  - [defer] Performance: WebGPU
-    - This... seems hard. But wait, this is actually really more of a BITMASK situation. See how JS "prototype" goes
-      - This would be AMAZING for performance
-  - 
-  - SolutionSet unit tests(!!!!)
-    - Also check "random feature set" combinations, ensure that our "filtered" rules solve all of the cases correctly.
-  - 
-  - UNIT TESTS --- also test that things are "solving" correctly, e.g. given a random feature set WITH solutions,
-  -   things that are solved keep the same solution count/set
+  - Testing
+    - SolutionSet unit tests
+    - Rule set fuzzing (ensure "random feature set" that is valid is properly solved by our rules)
   - 
   - Highlander with FACE COLORS (!)
-  - 
-  - During simulations, we COULD ignore exit edges (since they are determined by the rest of the puzzle)
   - 
   - Parallel running:
     - https://github.com/deThread/dethread?tab=readme-ov-file / https://socket.io/docs/v4/
@@ -241,30 +222,6 @@
   - FeatureSet.difference (things we can apply, essentially the pattern rule output)
     - (performance, but also "hey we can show what actually changed")
     - Also, our matching is partially based on this(!)
-  - 
-  - Deprecate getEdgeConnectedComponentFaces (use FaceConnectivity instead)
-  - 
-  - Enumerate initial feature sets (given a pattern board) for:
-    1. Edges
-    2. Face Colors
-    3. Edges + Sectors
-    4. Edges + Face Colors
-    5. All
-  - 
-  - Organization:
-    - Automorphisms?
-    - How do we cache embeddings between PatternBoards?
-      - We just... have a global cache, no?
-        - [but... no weakmap on TPatternBoard] NONO, weakmap it!!!!
-        - [instead] just have a two-layer global weakmap. 
-    - 
-    - OMG TPatternBoard being an interface is... killing us?
-    - 
-    - PatternBoard (without description)?!?
-    - WITH DESCRIPTION
-    - WITH MAPPING (?) less important
-    - --- with automorphisms?
-      - Later, for solving... finding valid embeddings(!) 
   - 
   - Highlander canonical:
     - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
@@ -282,26 +239,13 @@
         - embedFeatures( features ) => features, handles overlapping things (face color duals) and removes redundancies
           - then sort to "canonical order"?
   - 
-  - Database of pattern boards (with mappings).
-    - So we can manually create a pattern board and FIND an equivalent mapping through it(!)
-    - CANONICALIZATION somehow? or just scan for isomorphisms?
-    - move out sketchyIsIsomorphic into a function in code
-  - 
-  - Get automorphisms from a pattern board
-  - Get all edge features
-  - Get all face color dual feature combinations
-  - [ ... ] create patterns (verify at least one solution in the solver)
-  - DEDUPLICATE? (with automorphisms)
-  - 
   - View for pattern - canonicalize which face features get which coloring (lowest index ordering) so those don't... change? hmm awkward
     - We... actually want to try to keep face colors consistent? (allow passing in a previous mapping?)
   - 
   - !!!! When we have a set of features we are adding, we can potentially RULE OUT other features (intelligent exploration)
     - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
   - 
-  - Add "feature creation" from pattern board
-  - 
-  - Can we use Solver.solveAssuming
+  - [NOTE: not a bottleneck for patterns] Can we use Solver.solveAssuming
   - 
   - NOTE: Handle FaceColorDualFeature differently, no redundancy checking
   - 
@@ -331,7 +275,6 @@
       - .. All the other things we are used to
   - 
   - Highlander:
-    - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
     - Q: Do we need to iterate through all solutions for highlander?
       - Can "hash" highlander solutions by:
         - (a) string of booleans (one per indeterminate edge)
@@ -396,38 +339,12 @@
   - Ignore "black" exit edges (no feature for that both for input and output).
   - No sectors for exit edges (no feature for that both for input and output).
 
-- Vertex rule count
-  - Order 6 typical, but order 12 for Triakis Triangular / Bisected Hexagonal... 8 for Tetrakis Square
-
 - PatternBoard:
   - [defer] Generation: 
     - [defer] Prevent combinations where... a face isn't included but all of its neighbors are? (or perhaps... if all its vertices are included, include it?) THINK
   - [defer] Canonicalize:
     - [defer] Find the vertex permutation that gives us the lexicographically smallest order of states.
     - [defer] Then we can use equality to check isomorphism (and we can store this in a hash table)
-
-- Flexible BUT NOT TOPO-invariant (no red edge removal, but we generate face combinations):
-  - FaceRule
-    - FaceRule application to:
-      - A puzzle (with a board)
-      - A FaceRule state(!) so we can directly see what rules "dominate" others, and construct a minimal set of rules.
-        - OR... we just have things create a matching puzzle (board+state), and then apply to that board?
-          - Padding is complicated.... nah
-        - Yeah, just find subgraph isomorphisms and check?
-    - Visualization
-      - Direct (the pattern data itself)
-        - How to show "exit" edges for "twist" vertices?
-      - Indirect (examples on a board)
-        - For viz, we search for possible occurrences in a tiling (there might be a good number, can we enumerate?)
-          - See where it applies, cut faces too far from the pattern (or create a grid view around it, and clip)
-    - If rules have isomorphic topologies, check these (multiple?) isomorphisms to see if they are isomorphic rules(!)
-    - "FlexBoard" should be memoized, so that we can store computed automorphisms (and subgraph isomorphisms)
-      - And... SHARED between rules!
-      - Automorphisms (can be used be rules to see if they have symmetries in input)
-      - List all of the potential features (boolean values)
-        - (follow "state" boolean conventions, true means "this configuration is possible")
-        - Feature
-          - Ability to add SAT condition
 
 https://github.com/timhutton/slinker ---> has the "solving rules"
 Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
