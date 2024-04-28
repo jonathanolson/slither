@@ -67,11 +67,12 @@ export class FormalContext {
     let set: AttributeSet | null = AttributeSet.getEmpty( this.numAttributes );
 
     let count = 0;
+    const initialTime = Date.now();
 
     while ( set ) {
       count++;
       if ( count % logModulo === 0 ) {
-        console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length );
+        console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${Math.round( ( Date.now() - initialTime ) / 1000 )}s` );
       }
 
       const closedSet = this.getClosure( set );
@@ -85,13 +86,19 @@ export class FormalContext {
 
       let nextSet: AttributeSet | null = null;
       for ( let i = 0; i < this.numAttributes; i++ ) {
-        // TODO: can we get away without clearing the other bits? no, right?
-        const withLowestBit = set.withLowestBitSet( i );
+        // NOTE: below is a performance-optimized version of this, where we can bail early
+        // const withLowestBit = set.withLowestBitSet( i );
+        //
+        // const closedWithLowestBit = Implication.implicationSetClosure( implications, withLowestBit );
+        //
+        // if ( set.isLessThanI( closedWithLowestBit, i ) ) {
+        //   nextSet = closedWithLowestBit;
+        //   break;
+        // }
 
-        const closedWithLowestBit = Implication.implicationSetClosure( implications, withLowestBit );
-
-        if ( set.isLessThanI( closedWithLowestBit, i ) ) {
-          nextSet = closedWithLowestBit;
+        const potentialNextSet = Implication.implicationSetClosureLessThanI( implications, set, i );
+        if ( potentialNextSet ) {
+          nextSet = potentialNextSet;
           break;
         }
       }

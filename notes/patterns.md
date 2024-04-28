@@ -3,6 +3,11 @@
 
 - TODO
   - 
+  - PERFORMANCE OF PUPPETEER:
+    - (upgrade to 22.7.1)
+    - Do we need upgraded puppeteer versions to get newer chrome versions?
+    - is it just slow on my computer because I have things overloaded?
+  - 
   - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
   - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
@@ -55,7 +60,6 @@
       - getImpliedGeneralBoardRules 2 18 [PC + #40]
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek]
       - getImpliedGeneralBoardRules 2 19 [PC + #43 ek] (((incomplete)))
-      - getImpliedGeneralBoardRules 2 17 [PC + #40]
       - getImpliedGeneralBoardRules 2 40 [PC + #37]
       - getImpliedGeneralBoardRules 2 44 [PC + #40]
       - getOnlyImpliedSquareBoardRules 4 0 [PC + #40]
