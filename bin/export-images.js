@@ -56,7 +56,8 @@ walkSync( './data' );
 
       const page = await browser.newPage();
 
-      await page.setDefaultNavigationTimeout( 120000 );
+      await page.setDefaultNavigationTimeout( 200000 );
+      await page.setDefaultTimeout( 200000 );
       page.setCacheEnabled && page.setCacheEnabled( false );
 
       page.on( 'console', msg => {
@@ -122,7 +123,7 @@ walkSync( './data' );
       } );
 
       await page.goto( 'http://localhost/slither/dist/export-ruleset-image.html', {
-        timeout: 120000
+        timeout: 200000
       } );
     }
     else {
