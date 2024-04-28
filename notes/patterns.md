@@ -53,7 +53,7 @@
       - getImpliedGeneralBoardRules 2 19 [PC +] (((incomplete)))
       - getImpliedGeneralBoardRules 2 17 [PC +]
       - getImpliedGeneralBoardRules 2 40 [PC +]
-      - getImpliedGeneralBoardRules 2 42 [PC +]
+      - getImpliedGeneralBoardRules 2 44 [PC +]
       - getOnlyImpliedSquareBoardRules 4 0 [PC +]
       - getOnlyImpliedSquareBoardRules 4 1 [PC +] (((incomplete)))
     - Future:
