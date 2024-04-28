@@ -77,6 +77,16 @@ export class PatternBoardSolver {
     }
   }
 
+  public static countSolutions( patternBoard: TPatternBoard, features: TFeature[] ): number {
+    let count = 0;
+
+    PatternBoardSolver.forEachSolution( patternBoard, features, () => {
+      count++;
+    } );
+
+    return count;
+  }
+
   public static getSolutions( patternBoard: TPatternBoard, features: TFeature[] ): TPatternEdge[][] {
     const solver = new PatternBoardSolver( patternBoard );
 

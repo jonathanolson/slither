@@ -38,7 +38,7 @@
       - getOnlyImpliedSectorSquareBoardRules( 2, 4 )
       - [once square 3, x] getOnlyImpliedSquareBoardRules( 0, 4 ) THEN HIGHLANDER
   - 
-  - HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
+  - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
   - FeatureSet "only one" is... weird to store. It is essentially true if not-zero and not-two (redundant)
@@ -50,8 +50,6 @@
   - Fix up generation (we broke some things?)
   - 
   - Clean up all SORTS of code. See if FCA approach is widely better in all ways.
-  - 
-  - deduplication of pattern board instances, based on isomorphism
   - 
   - Testing...
     - 

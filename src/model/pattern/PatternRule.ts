@@ -7,6 +7,7 @@ import FeatureCompatibility from './feature/FeatureCompatibility.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import { serializePatternBoard } from './serializePatternBoard.ts';
 import { deserializePatternBoard } from './deserializePatternBoard.ts';
+import { PatternBoardSolver } from './PatternBoardSolver.ts';
 
 export type SerializedPatternRule = {
   patternBoard: string;
@@ -128,6 +129,13 @@ export class PatternRule {
 
   public isTrivial(): boolean {
     return this.outputFeatureSet.isSubsetOf( this.inputFeatureSet );
+  }
+
+  public isCorrectSlow(): boolean {
+    const inputSolutionsCount = PatternBoardSolver.countSolutions( this.patternBoard, this.inputFeatureSet.getFeaturesArray() );
+    const outputSolutionsCount = PatternBoardSolver.countSolutions( this.patternBoard, this.outputFeatureSet.getFeaturesArray() );
+
+    return inputSolutionsCount === outputSolutionsCount;
   }
 
   public toCanonicalString(): string {
