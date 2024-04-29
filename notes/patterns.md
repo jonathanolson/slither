@@ -3,6 +3,11 @@
 
 - TODO
   - 
+  - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
+    - 2 48 also
+    - minisat-OUT
+    - Perhaps we are giving it too many loops?
+  - 
   - General performance enhancements:
     - CONSIDER reordering of attributes or objects!!!!
       - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
@@ -12,12 +17,6 @@
   - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
   - 
   - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
-  - 
-  - PERFORMANCE OF PUPPETEER:
-    - (upgrade to 22.7.1)
-    - Do we need upgraded puppeteer versions to get newer chrome versions?
-    - is it just slow on my computer because I have things overloaded?
-    - Test getImpliedSectorGeneralBoardRules( 1, 11 ), see how long between things
   - 
   - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
@@ -48,23 +47,27 @@
     - Current:
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- check if last of type? (did... we have some gaps?)
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
-      - getImpliedColorHexBoardRules 1 0 [kitty 2]
-      - getImpliedGeneralBoardRules 2 6 [PC + #46 - eeek? AND AND kitty 3 with new filtering] 
+      - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
+      - getImpliedGeneralBoardRules 2 6 [kitty 3] 
       - getImpliedColorSquareBoardRules 2 0 [kitty 4]
       - getImpliedColorSquareBoardRules 2 4 [kitty 5]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
+      - getImpliedColorHexBoardRules 1 0 [kitty 7]
+      - 
+      - Missing:
+        - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
       - 
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek]
       - getImpliedColorGeneralBoardRules 1 5 [PC #90]
       - getImpliedColorGeneralBoardRules 1 10 [PC #84]
       - getImpliedColorGeneralBoardRules 1 11 [PC #90]
-      - getImpliedColorHexBoardRules 1 0 [PC ? #132 - EEEEK]
       - getImpliedGeneralBoardRules 2 5 [PC + #42]
-      - getImpliedGeneralBoardRules 2 18 [PC + #40]
-      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek]
-      - getImpliedGeneralBoardRules 2 19 [PC + #43 ek] (((incomplete)))
-      - getImpliedGeneralBoardRules 2 45 [PC + ?]
-      - getImpliedGeneralBoardRules 2 44 [PC + #40]
+      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
+      - getImpliedGeneralBoardRules 2 19 [PC + #43 ek + restart] (((incomplete)))
+      - getImpliedGeneralBoardRules 2 46 [PC]
+      - getImpliedGeneralBoardRules 2 49 [PC]
+      - getImpliedGeneralBoardRules 2 50 [PC]
+      - getImpliedGeneralBoardRules 2 52 [PC]
       - getOnlyImpliedSquareBoardRules 4 0 [PC + #40]
       - getOnlyImpliedSquareBoardRules 4 1 [PC + #43] (((incomplete)))
     - Future:
