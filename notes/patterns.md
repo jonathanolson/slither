@@ -10,17 +10,22 @@
     - CONSIDER:
       - What if we... manually compute these? For these SMALL cases, it is probably practical
   - 
+  - ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
+    - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
+  - 
   - General performance enhancements:
     - See pruning discussion with ChatGPT
       - We can see if implications would be VIOLATED by adding an attribute (early termination)
-      - 
+      - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
+        - Still keep those in our implications,
+        - BUT IMMEDIATELY exit implication set closure when we get to full bits
+        - Consider showing how many non-to-invalid implications we have in our set (in our debugging info)
     - Performance test best way to handle bit vectors - 110 bits seems slow?
     - CONSIDER reordering of attributes or objects!!!!
       - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
         - Wait, what would this do...?
       - [probably not - only after adding pruning] REORDER ATTRIBUTES?
   - 
-  - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
   - 
   - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
   - 
