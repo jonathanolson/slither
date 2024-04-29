@@ -77,7 +77,14 @@ const executablePath = [
   page.setCacheEnabled && page.setCacheEnabled( false );
 
   page.on( 'console', msg => {
-    console.log( 'console', msg.text() );
+    const text = msg.text();
+
+    if ( text.length < 100000 ) {
+      console.log( 'console', text );
+    }
+    else {
+      console.log( `console LONG MESSAGE ${text.length} length, likely solution(!)` );
+    }
   } );
 
   page.on( 'error', message => {

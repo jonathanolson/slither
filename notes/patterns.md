@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - generate.js should IGNORE LONG MESSAGES because omg, especially Windows gets spammed
+  - 
   - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
     - 2 48 also
     - minisat-OUT
@@ -18,7 +20,6 @@
       - We can see if implications would be VIOLATED by adding an attribute (early termination)
       - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
         - Still keep those in our implications,
-        - BUT IMMEDIATELY exit implication set closure when we get to full bits
         - Consider showing how many non-to-invalid implications we have in our set (in our debugging info)
     - Performance test best way to handle bit vectors - 110 bits seems slow?
     - CONSIDER reordering of attributes or objects!!!!
@@ -60,8 +61,8 @@
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - getImpliedGeneralBoardRules 2 6 [kitty 3] 
-      - getImpliedColorSquareBoardRules 2 0 [kitty 4]
-      - getImpliedColorSquareBoardRules 2 4 [kitty 5]
+      - - [kitty 4]
+      - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
       - getImpliedColorHexBoardRules 1 0 [kitty 7]
       - getImpliedGeneralBoardRules 2 56 [kitty 8]
@@ -71,8 +72,7 @@
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
       - 
-      - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek]
-      - getImpliedColorGeneralBoardRules 1 5 [PC #90]
+      - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
@@ -84,7 +84,8 @@
       - getOnlyImpliedSquareBoardRules 4 5 [PC]
       - getOnlyImpliedSquareBoardRules 4 6 [PC]
       - getOnlyImpliedSquareBoardRules 4 7 [PC]
-      - getOnlyImpliedSquareBoardRules 4 8 [PC]
+      - getOnlyImpliedSquareBoardRules 4 8 [PC] (goes to 4,75)
+      - getOnlyImpliedSquareBoardRules 4 9 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 
