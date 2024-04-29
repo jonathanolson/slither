@@ -3,20 +3,19 @@
 
 - TODO
   - 
-  - generate.js should IGNORE LONG MESSAGES because omg, especially Windows gets spammed
-  - 
-  - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
+  - MINISAT FAILURE
+    - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
     - 2 48 also
     - minisat-OUT
     - Perhaps we are giving it too many loops?
     - CONSIDER:
       - What if we... manually compute these? For these SMALL cases, it is probably practical
   - 
-  - ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
-    - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
-  - 
-  - General performance enhancements:
+  - [LinCb0!!!] General performance enhancements:
+    - [First, testing infrastructure] ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
+      - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
     - See pruning discussion with ChatGPT
+      - [implement LinCb0] - from https://arxiv.org/pdf/2011.04928, etc.
       - We can see if implications would be VIOLATED by adding an attribute (early termination)
       - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
         - Still keep those in our implications,
@@ -27,6 +26,26 @@
         - Wait, what would this do...?
       - [probably not - only after adding pruning] REORDER ATTRIBUTES?
   - 
+  - Improved highlander:
+    - [first] Store whether a rule/pattern is highlander(!), it should be serialized?
+    - 
+    - Currently it is NOT working with blank exit faces - notably exits that could be "double black"
+    - Even though exit face edges can potentially be determinate, the exit has three cases:
+      - For each solution, an exit edge is:
+        - (a) potentially red (solution has no edges through exit vertex)
+        - (b) single-black (solution has one edge to the exit vertex, and it exits as a connection)
+        - (c) HARD red (solution has two edges through the exit vertex)
+      - Just like our "if the indeterminate edges are the same, it is filtered out", this information needs to be included
+        - Solutions with the same exit "states" can be filtered out
+        - *** Adding red exit edge as a feature CHANGES this
+      - Current plan is to ADJUST the "simple (non-implication) closure" to filter highlander duplicates out, since we might add exit edge (red) features
+    - 
+    - Highlander ON COLORS? (figure this out)
+      - Or maybe... match face values of exit faces?
+      - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
+        - Yes, if we expand this to pattern matching with blank exit faces, we'll be able to detect a TON of patterns
+          - !!!!!! (1,0) will get us the main pattern, instead of (4,?)
+        - Exit face (opposite a face WITH a numeric/null value, not ?) is a candidate to have a non-indeterminate edge
   - 
   - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
   - 
@@ -34,25 +53,10 @@
   - 
   - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
   - 
-  - HIGHLANDER BAD because exit edges that could be "double black"
-  - 
   - Serialize individual rules, for "collections"
   - 
-  - Support "blank/null" face values on EXIT FACES (so that the corresponding "boundary" non-exit edge can be determinate).
-    - Matching and other things will need to ... check this?
-  -
   - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
     - Maybe not?
-  - 
-  - STORE WHETHER A RULE/PATTERN IS HIGHLANDER(!)
-    - Do we do a boolean flag here?
-  - 
-  - HIGHLANDER on colors
-    - Or maybe... match face values of exit faces?
-    - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
-      - Yes, if we expand this to pattern matching with blank exit faces, we'll be able to detect a TON of patterns
-        - !!!!!! (1,0) will get us the main pattern, instead of (4,?)
-      - Exit face (opposite a face WITH a numeric/null value, not ?) is a candidate to have a non-indeterminate edge
   - 
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
