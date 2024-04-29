@@ -3,6 +3,41 @@
 
 - TODO
   - 
+  - Generate:
+    - HEY HEY -- highlander can be added like "only"? 
+    - Current:
+      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- waiting on 1,2 and 1,10
+      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
+      - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
+      - getImpliedGeneralBoardRules 2 6 [kitty 3] 
+      - - [kitty 4]
+      - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
+      - getImpliedColorHexBoardRules 1 0 [kitty 7]
+      - getImpliedGeneralBoardRules 2 56 [kitty 8]
+      - getImpliedGeneralBoardRules 2 70 [kitty 9]
+      - getImpliedGeneralBoardRules 2 60 [kitty 10]
+      - 
+      - Missing:
+        - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
+      - 
+      - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
+      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
+      - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
+      - getImpliedGeneralBoardRules 2 52 [PC]
+      - getImpliedGeneralBoardRules 2 54 [PC]
+      - getImpliedGeneralBoardRules 2 55 [PC]
+      - getOnlyImpliedSquareBoardRules 4 2 [PC]
+      - getOnlyImpliedSquareBoardRules 4 3 [PC]
+      - getOnlyImpliedSquareBoardRules 4 4 [PC]
+      - getOnlyImpliedSquareBoardRules 4 5 [PC]
+      - getOnlyImpliedSquareBoardRules 4 6 [PC]
+      - getOnlyImpliedSquareBoardRules 4 8 [PC] (goes to 4,75)
+      - getOnlyImpliedSquareBoardRules 4 9 [PC]
+      - getOnlyImpliedSquareBoardRules 4 10 [PC]
+    - Future:
+      - Highlander on smaller boards(!)
+  - 
   - MINISAT FAILURE
     - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
     - 2 48 also
@@ -58,41 +93,6 @@
   - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
     - Maybe not?
   - 
-  - Generate:
-    - HEY HEY -- highlander can be added like "only"? 
-    - Current:
-      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- waiting on 1,2 and 1,10
-      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
-      - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - getImpliedGeneralBoardRules 2 6 [kitty 3] 
-      - - [kitty 4]
-      - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
-      - getImpliedColorHexBoardRules 1 0 [kitty 7]
-      - getImpliedGeneralBoardRules 2 56 [kitty 8]
-      - getImpliedGeneralBoardRules 2 70 [kitty 9]
-      - getImpliedGeneralBoardRules 2 60 [kitty 10]
-      - 
-      - Missing:
-        - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
-      - 
-      - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
-      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
-      - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
-      - getImpliedGeneralBoardRules 2 52 [PC]
-      - getImpliedGeneralBoardRules 2 54 [PC]
-      - getImpliedGeneralBoardRules 2 55 [PC]
-      - getOnlyImpliedSquareBoardRules 4 2 [PC]
-      - getOnlyImpliedSquareBoardRules 4 3 [PC]
-      - getOnlyImpliedSquareBoardRules 4 4 [PC]
-      - getOnlyImpliedSquareBoardRules 4 5 [PC]
-      - getOnlyImpliedSquareBoardRules 4 6 [PC]
-      - getOnlyImpliedSquareBoardRules 4 7 [PC]
-      - getOnlyImpliedSquareBoardRules 4 8 [PC] (goes to 4,75)
-      - getOnlyImpliedSquareBoardRules 4 9 [PC]
-    - Future:
-      - Highlander on smaller boards(!)
-  - 
   - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
@@ -108,12 +108,6 @@
   - Fix up generation (we broke some things?)
   - 
   - Clean up all SORTS of code. See if FCA approach is widely better in all ways.
-  - 
-  - Testing...
-    - 
-    - Make sure that pattern rules in lists are "minimal" (individually remove input features and they should ALL change the output features)
-    - WAIT WAIT .... is that just how we check redundancy?
-  -
   - 
   - TPatternBoard cleanup:
     - 
@@ -135,42 +129,38 @@
       - Of course, ignore identity automorphism 
       - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
   - 
-  - Potentially something that lists/gives "serialization" for pattern boards/mappings
-  - Make a good "viewer" for patterns (ideally one we can scroll through though)
+  - Make a good "viewer" for patterns/rules (ideally one we can scroll through though)
   - 
-  - Performance: PatternRule.withRulesApplied
-    - 
-    - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
-      - PatternRule.isRedundant will:
-        - (a) scan for what parts of the rule are "missing" (edges, sectors, faces/duals?)
-        - (b) if missing, start an applicator
-          - it will find a match, and apply it, then return back to us (noting WHAT CHANGED)
-          - we see if we are redundant yet, if not, continue until NO MORE MATCHES
-      - Applicator will:
-        - Store arrays for (edges, sectors, faces/duals?) that get rules with "those parts missing"
-          - Whenever we apply a rule that hits these, we put them "back in the queue"
-          - Obviously we ditch rules that can't be applied (incompatible OR not face values)
-      - duals for "missing" - can be noted by their canonical string (so we can easily match/remove)
+  - Rules Solver!
+    - (for plugging into the UI, puzzle generation, difficulty estimation(!))
+    - Performance: PatternRule.withRulesApplied
       - 
-      - NOTE!!!!!! : For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
-    - 
-    - Rule search tree for fast solving?
-    - Dirty rules:
-      - Store "dormant" rules with <needs feature> for faster solving
-      - Basically "don't keep trying to match rules when we haven't changed any of their input features"
-    - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
-      - Would this reduce the number of rules?
-        - !!!!!!!#$!#$!#$
-        - #$!#$!#$
-        - Yes just include this condition in the "redundancy" check solve
-    - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
-  - 
-  - 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
-    - ... do we just make this more of a callback iterator (or generator)?
-  - 
-  - Compute face colors for other boards (at least gen 0 and 1)
-  - 
-  - It seems like progressive is SLOWING things down! Maybe lets just store a flag and call the callback once?
+      - Make sure to combine embedded rules that have the same embedded input feature set 
+      - 
+      - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
+        - PatternRule.isRedundant will:
+          - (a) scan for what parts of the rule are "missing" (edges, sectors, faces/duals?)
+          - (b) if missing, start an applicator
+            - it will find a match, and apply it, then return back to us (noting WHAT CHANGED)
+            - we see if we are redundant yet, if not, continue until NO MORE MATCHES
+        - Applicator will:
+          - Store arrays for (edges, sectors, faces/duals?) that get rules with "those parts missing"
+            - Whenever we apply a rule that hits these, we put them "back in the queue"
+            - Obviously we ditch rules that can't be applied (incompatible OR not face values)
+        - duals for "missing" - can be noted by their canonical string (so we can easily match/remove)
+        - 
+        - NOTE!!!!!! : For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
+      - 
+      - Rule search tree for fast solving?
+      - Dirty rules:
+        - Store "dormant" rules with <needs feature> for faster solving
+        - Basically "don't keep trying to match rules when we haven't changed any of their input features"
+      - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
+        - Would this reduce the number of rules?
+          - !!!!!!!#$!#$!#$
+          - #$!#$!#$
+          - Yes just include this condition in the "redundancy" check solve
+      - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
   - 
   - Face colors!
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
@@ -184,58 +174,13 @@
     - NOTE: For face coloring, we'd really want ... multiple initial feature sets (permutations?)
       - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
   - 
-  - Performance: PatternRule.getSolutionEnumeratedRules
-    - Can we filter "satisfied" previous rules out?
-      - This requires more expensive checks. Could see if a rule's outputFeatureSet has our change (and only check then)
-      - If rule.outputFeatureSet.isSubsetOf( ... featureSet ) <--- requires computing featureSet?
-  - 
-  - STATIC patterns!!!! JUST SEARCH FACES
-    - ... do we only report these if... removing ANY of the faces would then give no information?
-      - Or do we allow a certain number of "red exit vertices"?
-  - 
-  - Should be possible to take "square only" rules, take embeddings in square board, only take (1) as representative
-    - Note: will need to "apply" initial conditions to this section
-  - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
   - Also when we show embedded versions:
     - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
   - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
   - 
-  - Rules "Solver" (for plugging into the UI, puzzle generation, difficulty estimation(!))
-    - How to "apply multiple rules" for a given... embedding*?
-      - OH OH, check all rule input feature sets. Then COMBINE embedded rules that are "compatible"?
-        - If their input feature sets are the same, combine them!!!
-  - 
   - Check code TODOs
-  - 
-  - "Solution Search" Performance wins:
-    - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
-      - This gets us "instant incremental"
-      - WOULD NEED TO BRING BACK THAT "DUAL"
-      - ---- wait, won't this take up a LOT of memory? (!)
-    - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
-      - If we have said feature sets A => B, then it makes no sense testing anything between A and B
-      - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
-        - And thus we can't just "skip" to B
-          - (!!!) WAIT, but we CAN just "delay" those features, and focus on others (since exploring them will give no info)
-            - (!!!!!!!)
-              - Can we "choose" features to select, based on their frequency?
-                - Will splitting with a more "binary" search be more efficient?
-                - CAN WE INITIALLY ORDER FEATURES so that the isomorphism checks can prune large amounts?
-                  - ... e.g. start with unique "corners", if we have set all N of what it can map to, we can
-                    - START SYMMETRY PRUNING.
-                  - (obviously, don't do this on boards with only the identity isomorphism)
-      - BUT BUT we can just... do a "quick check" when it's time to decide a feature, see if it can only take one path(!)
-        - This is almost... like a "skip"
-    - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
-      - Possibly with a tiny subset of features?
-    - (x) Don't use that "stack", just pass parameters?
-    - (a) minimize amount of new objects created for each SolutionFeatureSet
-      - can we store just a "row index" of the solutions? lightweight view
-      - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
-    - (c) potentially prune automorphisms EARLIER!
-      - We could at least do automorphism/canonical checks AT END OF FACES(!)
   - 
   - Rule collapse on embedding too (consolidate)
     - (do this in places where we are ... solving?)
@@ -389,3 +334,39 @@ Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
   - IF we deal with a single part of a face, we can "generalize" the rest of the face?
   - RED EDGES essentially CHANGES the topology
     - Make rules that can be applied to ANY cases 
+
+[Deprecated]
+
+- [deprecated - use implication search] "Solution Search" Performance wins:
+  - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
+    - This gets us "instant incremental"
+    - WOULD NEED TO BRING BACK THAT "DUAL"
+    - ---- wait, won't this take up a LOT of memory? (!)
+  - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
+    - If we have said feature sets A => B, then it makes no sense testing anything between A and B
+    - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
+      - And thus we can't just "skip" to B
+        - (!!!) WAIT, but we CAN just "delay" those features, and focus on others (since exploring them will give no info)
+          - (!!!!!!!)
+            - Can we "choose" features to select, based on their frequency?
+              - Will splitting with a more "binary" search be more efficient?
+              - CAN WE INITIALLY ORDER FEATURES so that the isomorphism checks can prune large amounts?
+                - ... e.g. start with unique "corners", if we have set all N of what it can map to, we can
+                  - START SYMMETRY PRUNING.
+                - (obviously, don't do this on boards with only the identity isomorphism)
+    - BUT BUT we can just... do a "quick check" when it's time to decide a feature, see if it can only take one path(!)
+      - This is almost... like a "skip"
+  - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
+    - Possibly with a tiny subset of features?
+  - (x) Don't use that "stack", just pass parameters?
+  - (a) minimize amount of new objects created for each SolutionFeatureSet
+    - can we store just a "row index" of the solutions? lightweight view
+    - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
+  - (c) potentially prune automorphisms EARLIER!
+    - We could at least do automorphism/canonical checks AT END OF FACES(!)
+- [deprecated, solved by implication search] 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
+  - ... do we just make this more of a callback iterator (or generator)?
+- [deprecated, just use implication search] Performance: PatternRule.getSolutionEnumeratedRules
+  - Can we filter "satisfied" previous rules out?
+    - This requires more expensive checks. Could see if a rule's outputFeatureSet has our change (and only check then)
+    - If rule.outputFeatureSet.isSubsetOf( ... featureSet ) <--- requires computing featureSet?
