@@ -48,14 +48,13 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getImpliedColorSquareBoardRules 2 0 [chrome right #110]
-      - getImpliedColorSquareBoardRules 2 4 [chrome right #110]
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 2] <--- partially taken over? (like, also running the other version)
-      - getImpliedSectorGeneralBoardRules 1 10 [kitty 4]
-      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 5]
-      - getImpliedColorHexBoardRules 1 0 [kitty 6]
-      - getImpliedSectorGeneralBoardRules 1 12 [kitty 7] <--- not starting, due to nice values?
-      - getOnlyImpliedHexBoardRules 2 2 [kitty 9] <--- last of its type
+      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- check if last of type? (did... we have some gaps?)
+      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
+      - getImpliedColorHexBoardRules 1 0 [kitty 2]
+      - getOnlyImpliedHexBoardRules 2 2 [kitty 3] <--- last of its type
+      - getImpliedColorSquareBoardRules 2 0 [kitty 4]
+      - getImpliedColorSquareBoardRules 2 4 [kitty 5]
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
       - 
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek]
       - getImpliedColorGeneralBoardRules 1 5 [PC #90]
@@ -67,7 +66,7 @@
       - getImpliedGeneralBoardRules 2 18 [PC + #40]
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek]
       - getImpliedGeneralBoardRules 2 19 [PC + #43 ek] (((incomplete)))
-      - getImpliedGeneralBoardRules 2 40 [PC + #37]
+      - getImpliedGeneralBoardRules 2 45 [PC + ?]
       - getImpliedGeneralBoardRules 2 44 [PC + #40]
       - getOnlyImpliedSquareBoardRules 4 0 [PC + #40]
       - getOnlyImpliedSquareBoardRules 4 1 [PC + #43] (((incomplete)))
