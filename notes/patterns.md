@@ -4,14 +4,14 @@
 - TODO
   - 
   - General performance enhancements:
-    - For each bit i, find all bits k > i that are incompatible (never in a solution with i)
-      - Have a mask for this. If our set INTERSECTS this, skip to next i (closure would be the full set)
-    - For each bit i, find all bits k > i that are IMPLIED by just i
-      - Have a mask for this. If (set & mask) !== mask (at least one bit missing from set in mask), skip to next i (closure would include this higher bit that is missing)
-    - Actually, we can COMBINE this into an input/output mask, e.g.
-      - see if ( set & inputMask ) === outputMask
-        - inputMask is incompatibleMask | impliedMask
-        - outputMask is impliedMask
+    - OMG, create object sub-lists for ones that "have each individual attribute" (map i => list of objects)
+      - This can be done for tuples of attributes (i, j), with a N-dimensional matrix of sub-lists (that has all of those attributes)
+      - Do this in SolutionFormalContext
+        - Use solutionAttributeSet.withOptionalData
+    - CONSIDER reordering of attributes or objects!!!!
+      - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
+        - Wait, what would this do...?
+      - [INVESTIGATE] REORDER ATTRIBUTES?
   - 
   - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
   - 
