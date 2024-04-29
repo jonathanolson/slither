@@ -11,10 +11,14 @@
       - What if we... manually compute these? For these SMALL cases, it is probably practical
   - 
   - General performance enhancements:
+    - See pruning discussion with ChatGPT
+      - We can see if implications would be VIOLATED by adding an attribute (early termination)
+      - 
+    - Performance test best way to handle bit vectors - 110 bits seems slow?
     - CONSIDER reordering of attributes or objects!!!!
       - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
         - Wait, what would this do...?
-      - [INVESTIGATE] REORDER ATTRIBUTES?
+      - [probably not - only after adding pruning] REORDER ATTRIBUTES?
   - 
   - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
   - 
@@ -55,23 +59,27 @@
       - getImpliedColorSquareBoardRules 2 4 [kitty 5]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
       - getImpliedColorHexBoardRules 1 0 [kitty 7]
+      - getImpliedGeneralBoardRules 2 56 [kitty 8]
+      - getImpliedGeneralBoardRules 2 70 [kitty 9]
+      - getImpliedGeneralBoardRules 2 60 [kitty 10]
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
       - 
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek]
       - getImpliedColorGeneralBoardRules 1 5 [PC #90]
-      - getImpliedColorGeneralBoardRules 1 10 [PC #84]
-      - getImpliedColorGeneralBoardRules 1 11 [PC #90]
-      - getImpliedGeneralBoardRules 2 5 [PC + #42]
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
-      - getImpliedGeneralBoardRules 2 19 [PC + #43 ek + restart] (((incomplete)))
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
-      - getImpliedGeneralBoardRules 2 49 [PC]
-      - getImpliedGeneralBoardRules 2 50 [PC]
       - getImpliedGeneralBoardRules 2 52 [PC]
-      - getOnlyImpliedSquareBoardRules 4 0 [PC + #40]
-      - getOnlyImpliedSquareBoardRules 4 1 [PC + #43] (((incomplete)))
+      - getImpliedGeneralBoardRules 2 54 [PC]
+      - getImpliedGeneralBoardRules 2 55 [PC]
+      - getOnlyImpliedSquareBoardRules 4 2 [PC]
+      - getOnlyImpliedSquareBoardRules 4 3 [PC]
+      - getOnlyImpliedSquareBoardRules 4 4 [PC]
+      - getOnlyImpliedSquareBoardRules 4 5 [PC]
+      - getOnlyImpliedSquareBoardRules 4 6 [PC]
+      - getOnlyImpliedSquareBoardRules 4 7 [PC]
+      - getOnlyImpliedSquareBoardRules 4 8 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 
