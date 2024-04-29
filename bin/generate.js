@@ -48,12 +48,23 @@ console.log( `starting ${method} ${generationIndex} ${boardIndex} into ${filenam
 
 fs.mkdirSync( `./data/${name}`, { recursive: true } );
 
+// Look up executable paths so we can have specific hardcoded paths for the Chrome version we want to use.
+// We see an INSANE amount of speedup between chrome 100 and chrome 124. Probably bigint bitwise operations?
+const executablePath = [
+  '/Users/jon/puppeteer/chrome/mac_arm-124.0.6367.78/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+].find( path => fs.existsSync( path ) );
+
 ( async () => {
   const browser = await puppeteer.launch( {
+    executablePath: executablePath,
+    timeout: 0,
+    protocolTimeout: 0,
     args: [
       '--disable-gpu'
     ]
   } );
+
+  console.log( `browser version ${await browser.version()}` );
 
   const page = await browser.newPage();
 
