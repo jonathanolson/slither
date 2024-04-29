@@ -3,10 +3,23 @@
 
 - TODO
   - 
+  - General performance enhancements:
+    - For each bit i, find all bits k > i that are incompatible (never in a solution with i)
+      - Have a mask for this. If our set INTERSECTS this, skip to next i (closure would be the full set)
+    - For each bit i, find all bits k > i that are IMPLIED by just i
+      - Have a mask for this. If (set & mask) !== mask (at least one bit missing from set in mask), skip to next i (closure would include this higher bit that is missing)
+    - Actually, we can COMBINE this into an input/output mask, e.g.
+      - see if ( set & inputMask ) === outputMask
+        - inputMask is incompatibleMask | impliedMask
+        - outputMask is impliedMask
+  - 
+  - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
+  - 
   - PERFORMANCE OF PUPPETEER:
     - (upgrade to 22.7.1)
     - Do we need upgraded puppeteer versions to get newer chrome versions?
     - is it just slow on my computer because I have things overloaded?
+    - Test getImpliedSectorGeneralBoardRules( 1, 11 ), see how long between things
   - 
   - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
@@ -40,10 +53,8 @@
       - getOnlyImpliedSectorSquareBoardRules 2 4 [chrome right #64] (is last of type)
       - getImpliedColorSquareBoardRules 2 0 [chrome right #110]
       - getImpliedColorSquareBoardRules 2 4 [chrome right #110]
-      - getImpliedSectorGeneralBoardRules 1 6 [kitty 0]
-      - getImpliedSectorGeneralBoardRules 1 11 [kitty 1]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 2]
-      - getImpliedSectorGeneralBoardRules 1 5 [kitty 3]
+      - getImpliedSectorGeneralBoardRules 1 5 [kitty 3] <--- also on chrome left
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 4]
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 5]
       - getImpliedColorHexBoardRules 1 0 [kitty 6]
