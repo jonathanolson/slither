@@ -7,6 +7,8 @@
     - 2 48 also
     - minisat-OUT
     - Perhaps we are giving it too many loops?
+    - CONSIDER:
+      - What if we... manually compute these? For these SMALL cases, it is probably practical
   - 
   - General performance enhancements:
     - CONSIDER reordering of attributes or objects!!!!
@@ -45,7 +47,7 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- check if last of type? (did... we have some gaps?)
+      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- waiting on 1,2 and 1,10
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - getImpliedGeneralBoardRules 2 6 [kitty 3] 
@@ -64,7 +66,7 @@
       - getImpliedGeneralBoardRules 2 5 [PC + #42]
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
       - getImpliedGeneralBoardRules 2 19 [PC + #43 ek + restart] (((incomplete)))
-      - getImpliedGeneralBoardRules 2 46 [PC]
+      - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 49 [PC]
       - getImpliedGeneralBoardRules 2 50 [PC]
       - getImpliedGeneralBoardRules 2 52 [PC]
