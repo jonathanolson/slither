@@ -50,6 +50,7 @@ fs.mkdirSync( `./data/${name}`, { recursive: true } );
 
 // Look up executable paths so we can have specific hardcoded paths for the Chrome version we want to use.
 // We see an INSANE amount of speedup between chrome 100 and chrome 124. Probably bigint bitwise operations?
+// `npx @puppeteer/browsers install chrome@124.0.6367.78`.
 const executablePath = [
   '/Users/jon/puppeteer/chrome/mac_arm-124.0.6367.78/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
 ].find( path => fs.existsSync( path ) );
