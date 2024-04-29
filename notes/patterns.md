@@ -38,6 +38,10 @@
     - Future:
       - Highlander on smaller boards(!)
   - 
+  - Build failure, trying `npm run build --max-old-space-size`
+    - export NODE_OPTIONS=--max-old-space-size=32768
+    - Maybe we should... ditch loading all the data? (remove references for the collections tests?)
+  - 
   - MINISAT FAILURE
     - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
     - 2 48 also
