@@ -48,7 +48,6 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getOnlyImpliedSectorSquareBoardRules 2 4 [chrome right #64] (is last of type) <-- taken over, with fast now (dev, but left)
       - getImpliedColorSquareBoardRules 2 0 [chrome right #110]
       - getImpliedColorSquareBoardRules 2 4 [chrome right #110]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 2] <--- partially taken over? (like, also running the other version)

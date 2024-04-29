@@ -44,6 +44,7 @@ import { generalEdgeImplied0RuleSets } from './model/pattern/data/generalEdgeImp
 import { generalEdgeImplied1RuleSets } from './model/pattern/data/generalEdgeImplied1RuleSets.ts';
 import { generalSectorImplied0RuleSets } from './model/pattern/data/generalSectorImplied0RuleSets.ts';
 import { generalColorImplied0RuleSets } from './model/pattern/data/generalColorImplied0RuleSets.ts';
+import { squareSectorOnlyImplied2RuleSets } from './model/pattern/data/squareSectorOnlyImplied2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -179,6 +180,7 @@ window.getOnlyImpliedSectorSquareBoardRules = ( generationIndex: number, index: 
       ...basicSectorImpliedRuleSets,
       ...squareSectorOnlyImplied0RuleSets,
       ...squareSectorOnlyImplied1RuleSets,
+      ...squareSectorOnlyImplied2RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,
