@@ -29,6 +29,7 @@ import { basicColorRuleSets } from '../basicColorRuleSets.ts';
 import { basicColorOnly4RuleSet } from '../basicColorOnly4RuleSet.ts';
 import { basicColorOnly5RuleSet } from '../basicColorOnly5RuleSet.ts';
 import { basicColorOnly6RuleSet } from '../basicColorOnly6RuleSet.ts';
+import { hexagonalEdgeOnlyImplied2RuleSets } from '../hexagonalEdgeOnlyImplied2RuleSets.ts';
 
 QUnit.module( 'pattern rule correctness', () => {
   const getFirstIncorrectRule = ( ruleSet: PatternBoardRuleSet ): PatternRule | null => {
@@ -95,8 +96,9 @@ QUnit.module( 'pattern rule correctness', () => {
   testRuleSets( squareColorImplied1RuleSets, 'squareColorImplied1RuleSets' );
   testRuleSets( squareColorImplied2RuleSets, 'squareColorImplied2RuleSets' );
 
-  testRuleSets( hexagonalEdgeOnlyImplied0RuleSets, 'hexagonalOnlyImpliedEdgeGeneration0RuleSets' );
-  testRuleSets( hexagonalEdgeOnlyImplied1RuleSets, 'hexagonalOnlyImpliedEdgeGeneration1RuleSets' );
+  testRuleSets( hexagonalEdgeOnlyImplied0RuleSets, 'hexagonalEdgeOnlyImplied0RuleSets' );
+  testRuleSets( hexagonalEdgeOnlyImplied1RuleSets, 'hexagonalEdgeOnlyImplied1RuleSets' );
+  testRuleSets( hexagonalEdgeOnlyImplied2RuleSets, 'hexagonalEdgeOnlyImplied2RuleSets' );
 
   testRuleSets( hexagonalSectorOnlyImplied0RuleSets, 'hexagonalSectorOnlyImplied0RuleSets' );
 

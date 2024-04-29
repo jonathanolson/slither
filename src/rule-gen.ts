@@ -45,6 +45,7 @@ import { generalEdgeImplied1RuleSets } from './model/pattern/data/generalEdgeImp
 import { generalSectorImplied0RuleSets } from './model/pattern/data/generalSectorImplied0RuleSets.ts';
 import { generalColorImplied0RuleSets } from './model/pattern/data/generalColorImplied0RuleSets.ts';
 import { squareSectorOnlyImplied2RuleSets } from './model/pattern/data/squareSectorOnlyImplied2RuleSets.ts';
+import { hexagonalEdgeOnlyImplied2RuleSets } from './model/pattern/data/hexagonalEdgeOnlyImplied2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -235,6 +236,7 @@ window.getOnlyImpliedHexBoardRules = ( generationIndex: number, index: number, o
       ...basicEdgeRuleSets,
       ...hexagonalEdgeOnlyImplied0RuleSets,
       ...hexagonalEdgeOnlyImplied1RuleSets,
+      ...hexagonalEdgeOnlyImplied2RuleSets,
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3

@@ -4,16 +4,14 @@
 - TODO
   - 
   - General performance enhancements:
-    - OMG, create object sub-lists for ones that "have each individual attribute" (map i => list of objects)
-      - This can be done for tuples of attributes (i, j), with a N-dimensional matrix of sub-lists (that has all of those attributes)
-      - Do this in SolutionFormalContext
-        - Use solutionAttributeSet.withOptionalData
     - CONSIDER reordering of attributes or objects!!!!
       - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
         - Wait, what would this do...?
       - [INVESTIGATE] REORDER ATTRIBUTES?
   - 
   - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
+  - 
+  - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
   - 
   - PERFORMANCE OF PUPPETEER:
     - (upgrade to 22.7.1)
@@ -51,7 +49,7 @@
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- check if last of type? (did... we have some gaps?)
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
       - getImpliedColorHexBoardRules 1 0 [kitty 2]
-      - getOnlyImpliedHexBoardRules 2 2 [kitty 3] <--- last of its type
+      - getImpliedGeneralBoardRules 2 6 [PC + #46 - eeek? AND AND kitty 3 with new filtering] 
       - getImpliedColorSquareBoardRules 2 0 [kitty 4]
       - getImpliedColorSquareBoardRules 2 4 [kitty 5]
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
@@ -61,7 +59,6 @@
       - getImpliedColorGeneralBoardRules 1 10 [PC #84]
       - getImpliedColorGeneralBoardRules 1 11 [PC #90]
       - getImpliedColorHexBoardRules 1 0 [PC ? #132 - EEEEK]
-      - getImpliedGeneralBoardRules 2 6 [PC + #46 - eeek?]
       - getImpliedGeneralBoardRules 2 5 [PC + #42]
       - getImpliedGeneralBoardRules 2 18 [PC + #40]
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek]
