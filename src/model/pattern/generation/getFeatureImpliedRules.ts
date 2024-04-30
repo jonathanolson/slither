@@ -11,12 +11,10 @@ import { optionize3 } from 'phet-lib/phet-core';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
-  onlyNontrivialHighlander?: boolean;
 };
 
 export const GET_FEATURE_IMPLIED_RULES_DEFAULTS = {
   logModulo: 1000000,
-  onlyNontrivialHighlander: false,
 };
 
 export const getFeatureImpliedRules = (
@@ -36,29 +34,6 @@ export const getFeatureImpliedRules = (
     includeFaces,
     highlander
   );
-
-  // if ( initialSolutionSet ) {
-  //   console.log( 'before highlander' );
-  //   console.log( initialSolutionSet.toString() );
-  // }
-
-  // NOTE: Highlander indeterminate edges (and thus which "solutions" are filtered out) are set HERE, since we won't be
-  // adding in face values!
-  // TODO!: Note that we weren't handling the exit-edge-double-black possibilities correctly, so we are now filtering differently below
-  // if ( initialSolutionSet && highlander ) {
-  //   const initialSize = initialSolutionSet.numSolutions;
-  //   initialSolutionSet = initialSolutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() ) );
-  //
-  //   // If no solutions were filtered, we won't gain anything from highlander (so for now, we
-  //   if ( options.onlyNontrivialHighlander && initialSolutionSet && initialSolutionSet.numSolutions === initialSize ) {
-  //     return [];
-  //   }
-  // }
-
-  // if ( initialSolutionSet ) {
-  //   console.log( 'after highlander' );
-  //   console.log( initialSolutionSet.toString() );
-  // }
 
   // We might have faces that have no solutions!
   if ( !initialSolutionSet ) {

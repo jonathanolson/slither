@@ -1,6 +1,7 @@
 import { getOnlyImpliedSquareBoardRules } from './model/pattern/generation/getOnlyImpliedSquareBoardRules.ts';
 import { getOnlyImpliedSectorSquareBoardRules } from './model/pattern/generation/getOnlyImpliedSectorSquareBoardRules.ts';
 import { getImpliedColorSquareBoardRules } from './model/pattern/generation/getImpliedColorSquareBoardRules.ts';
+import { getHighlanderOnlyImpliedSquareBoardRules } from './model/pattern/generation/getHighlanderOnlyImpliedSquareBoardRules.ts';
 import { getOnlyImpliedHexBoardRules } from './model/pattern/generation/getOnlyImpliedHexBoardRules.ts';
 import { getOnlyImpliedSectorHexBoardRules } from './model/pattern/generation/getOnlyImpliedSectorHexBoardRules.ts';
 import { getImpliedColorHexBoardRules } from './model/pattern/generation/getImpliedColorHexBoardRules.ts';
@@ -21,24 +22,8 @@ window.getOnlyImpliedSectorSquareBoardRules = getOnlyImpliedSectorSquareBoardRul
 // @ts-expect-error
 window.getImpliedColorSquareBoardRules = getImpliedColorSquareBoardRules;
 
-// // @ts-expect-error
-// window.getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
-//   return getImpliedRuleSet(
-//     standardSquareBoardGenerations[ generationIndex ][ index ],
-//     [
-//       ...basicEdgeRuleSets,
-//       ...squareOnlyImpliedEdgeGeneration0RuleSets,
-//       ...squareOnlyImpliedEdgeGeneration1RuleSets,
-//       ...squareOnlyImpliedEdgeGeneration2RuleSets,
-//       ...squareOnlyImpliedEdgeGeneration3RuleSets,
-//     ],
-//     combineOptions<GetRulesOptions>( {
-//       vertexOrderLimit: 4,
-//       highlander: true,
-//       onlyNontrivialHighlander: true,
-//     }, options )
-//   );
-// };
+// @ts-expect-error
+window.getHighlanderOnlyImpliedSquareBoardRules = getHighlanderOnlyImpliedSquareBoardRules;
 
 
 // @ts-expect-error

@@ -1,8 +1,6 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { squareColorImplied1RuleSets } from './model/pattern/data/squareColorImplied1RuleSets.ts';
-import { squareEdgeOnlyImplied3RuleSets } from './model/pattern/data/squareEdgeOnlyImplied3RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -83,7 +81,7 @@ console.log( 'test' );
   // showRuleSet( generalImpliedEdgeGeneration0RuleSets[ 0 ] );
 
   // showRuleSet( generalImpliedSectorGeneration0RuleSets[ 2 ] );
-  showRuleSet( squareEdgeOnlyImplied3RuleSets[ 5 ] );
+  // showRuleSet( squareEdgeOnlyImplied3RuleSets[ 5 ] );
   // showRuleSet( squareOnlyImpliedEdgeGeneration3RuleSets[ 11 ] );
 
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
@@ -94,6 +92,7 @@ console.log( 'test' );
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isRedundant( embeddedRules ) );
   // console.log( basicSectorImpliedRuleSets[ 13 ].rules[ 0 ].isIsomorphicTo( basicSectorImpliedRuleSets[ 13 ].rules[ 1 ] ) );
 
+  showRuleSet( PatternBoardRuleSet.deserialize( JSON.parse( `{"patternBoard":"[0,4,\\"faces\\",[[0,1,2,3]]]","mapping":"[[[9,9],[10,9],[10,10],[9,10]],[[0,1],[1,2],[2,3],[0,3]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]]],[[[9,9],[10,9],[10,10],[9,10]],[[9,9],[10,9],[9.5,8.75]],[[10,9],[10,10],[10.25,9.5]],[[10,10],[9,10],[9.5,10.25]],[[9,9],[9,10],[8.75,9.5]]]]","rules":[{"input":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"blackEdges":[0,1,3],"redEdges":[2,4,5]}},{"input":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[5]},"output":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"blackEdges":[0,1,3],"redEdges":[2,4,5]}},{"input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[6,7]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[0,1,2,3,6,7]}}]}` ) ) );
 
   // const ruleSets = [
   //   ...basicEdgeRuleSets,

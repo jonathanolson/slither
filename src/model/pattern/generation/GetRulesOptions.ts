@@ -9,7 +9,6 @@ export type GetRulesSelfOptions = {
   prefilterRules?: PatternRule[] | null;
   logModulo?: number;
   vertexOrderLimit?: number | null;
-  onlyNontrivialHighlander?: boolean;
 };
 export type GetRulesOptions = BasicSolveOptions & GetRulesSelfOptions;
 export const GET_RULES_DEFAULTS = {
@@ -20,6 +19,5 @@ export const GET_RULES_DEFAULTS = {
   prefilterRules: null,
   logModulo: 1000000,
   vertexOrderLimit: null,
-  onlyNontrivialHighlander: false,
 } as const;
 
