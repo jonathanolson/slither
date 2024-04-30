@@ -51,7 +51,10 @@ console.log( 'test' );
       // xAlign: 'origin',
       // yAlign: 'origin',
       autoColumns: ruleSet.rules.length < 9 ? 1 : Math.floor( 0.5 * Math.sqrt( ruleSet.rules.length ) ),
-      children: ruleSet.rules.map( rule => new PatternRuleNode( rule, ruleSet.mapping ) )
+      children: ruleSet.rules.map( rule => {
+        console.log( JSON.stringify( rule.serialize() ) );
+        return new PatternRuleNode( rule, ruleSet.mapping );
+      } )
     } ) );
   };
 
@@ -95,9 +98,7 @@ console.log( 'test' );
 
   // showRuleSet( PatternBoardRuleSet.deserialize( JSON.parse( `{"patternBoard":"[0,4,\\"faces\\",[[0,1,2,3]]]","mapping":"[[[9,9],[10,9],[10,10],[9,10]],[[0,1],[1,2],[2,3],[0,3]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]]],[[[9,9],[10,9],[10,10],[9,10]],[[9,9],[10,9],[9.5,8.75]],[[10,9],[10,10],[10.25,9.5]],[[10,10],[9,10],[9.5,10.25]],[[9,9],[9,10],[8.75,9.5]]]]","rules":[{"input":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"blackEdges":[0,1,3],"redEdges":[2,4,5]}},{"input":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[5]},"output":{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"blackEdges":[0,1,3],"redEdges":[2,4,5]}},{"input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[6,7]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[0,1,2,3,6,7]}}]}` ) ) );
   // showRuleSet( PatternBoardRuleSet.deserialize( JSON.parse( `{"patternBoard":"[0,4,\\"faces\\",[[0,1,2,3]]]","mapping":"[[[9,9],[10,9],[10,10],[9,10]],[[0,1],[1,2],[2,3],[0,3]],[[[9,9],[10,9],[10,10]],[[10,9],[10,10],[9,10]],[[10,10],[9,10],[9,9]],[[9,10],[9,9],[10,9]]],[[[9,9],[10,9],[10,10],[9,10]],[[9,9],[10,9],[9.5,8.75]],[[10,9],[10,10],[10.25,9.5]],[[10,10],[9,10],[9.5,10.25]],[[9,9],[9,10],[8.75,9.5]]]]","rules":[{"input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4,5]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[0,1,2,3,4,5]}},{"input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4,6]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[0,1,2,3,4,6]}}]}` ) ) );
-  showRuleSet( squareEdgeHighlanderOnlyImplied1RuleSets[ 1 ] );
-
-  console.log( JSON.stringify( squareEdgeHighlanderOnlyImplied1RuleSets[ 1 ].rules[ 0 ].serialize() ) );
+  showRuleSet( squareEdgeHighlanderOnlyImplied1RuleSets[ 0 ] );
 
   // const ruleSets = [
   //   ...basicEdgeRuleSets,

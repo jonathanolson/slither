@@ -1077,6 +1077,10 @@ export class FeatureSet {
     }
   }
 
+  public isCompatibleWith( other: FeatureSet ): boolean {
+    return this.union( other ) !== null;
+  }
+
   public getQuickCompatibilityWith( other: FeatureSet ): FeatureCompatibility {
 
     let implied = true;
