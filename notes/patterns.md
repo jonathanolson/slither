@@ -24,7 +24,6 @@
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getImpliedGeneralBoardRules 2 54 [PC]
       - getOnlyImpliedSquareBoardRules 4 2 [PC]
-      - getOnlyImpliedSquareBoardRules 4 8 [PC] (goes to 4,75)
       - getOnlyImpliedSquareBoardRules 4 9 [PC] <--- crash on complete? is it in console history?
       - getOnlyImpliedSquareBoardRules 4 10 [PC]
       - getOnlyImpliedSquareBoardRules 4 11 [PC]
@@ -32,6 +31,7 @@
       - getOnlyImpliedSquareBoardRules 4 13 [PC]
       - getOnlyImpliedSquareBoardRules 4 14 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
+      - getOnlyImpliedSquareBoardRules 4 16 [PC] (goes to 4,75)
     - Future:
       - Highlander on smaller boards(!)
   - 

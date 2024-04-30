@@ -160,12 +160,18 @@ export class SolutionFormalContext extends FormalContext {
     const attributeSetData = attributeSet.data;
     const numSolutionAttributeSets = solutionAttributeSets.length;
     if ( this.highlander ) {
+      console.log( 'attributes', attributeSet.toString() );
+
       let mask = this.edgeHighlanderCodeMask;
+
+      console.log( '  initial mask ts2', mask.toString( 2 ) );
 
       // Adjust the mask based on red exit edges already in the set
       for ( const [ maskToMatch, maskToAdjust ] of this.edgeHighlanderCodePairs ) {
         if ( ( attributeSetData & maskToMatch ) === maskToMatch ) {
+          console.log( `    mask adjust for ${AttributeSet.fromBinary( this.numAttributes, maskToMatch )} for ts2:${maskToAdjust.toString( 2 )}` );
           mask &= maskToAdjust;
+          console.log( '    mask after ts2', mask.toString( 2 ) );
         }
       }
 
@@ -177,11 +183,16 @@ export class SolutionFormalContext extends FormalContext {
       for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
         const solutionAttributeSet = solutionAttributeSets[ i ];
 
+        console.log( '  testing solution', solutionAttributeSet.toString() );
+
         if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
           const bin = solutionAttributeSet.edgeHighlanderCode & mask;
 
+          console.log( `    matches, bin-ts2 ${bin.toString( 2 )}` );
+
           // If we are NOT the first with this bin, NULL out the bin, so it will contribute to no solutions
           if ( map.has( bin ) ) {
+            console.log( '    DUPLICATE, nulling' );
             map.set( bin, null );
           }
           // Otherwise if we're the first in, set it (if we STAY the only one, our contribution will be counted)
@@ -194,6 +205,7 @@ export class SolutionFormalContext extends FormalContext {
       // Iterate through, and we'll only add the contributions of solutions that had a unique bin
       for ( const solutionAttributeSet of map.values() ) {
         if ( solutionAttributeSet ) {
+          console.log( `  applying solution ${solutionAttributeSet.toString()}` );
           closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
         }
       }

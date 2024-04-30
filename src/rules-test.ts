@@ -76,11 +76,13 @@ console.log( 'test' );
   //   console.log( JSON.stringify( ruleSet.serialize() ) );
   // } );
 
-  const testBoard = standardSquareBoardGenerations[ 4 ][ 7 ];
+  const testBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
   addPaddedNode( new PlanarMappedPatternBoardNode( {
     patternBoard: testBoard,
     planarPatternMap: planarPatternMaps.get( testBoard )!,
-  }, ) );
+  }, {
+    labels: true
+  } ) );
 
 
   // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );

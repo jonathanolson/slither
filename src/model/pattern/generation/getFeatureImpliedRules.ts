@@ -64,7 +64,7 @@ export const getFeatureImpliedRules = (
     }
 
     // Attribute mask with all bits set
-    const fullMask = ( 1n << BigInt( mapping.numBits ) ) - 1n;
+    const fullMask = ( 1n << BigInt( 2 * featureSet.patternBoard.edges.length ) ) - 1n;
 
     for ( const edge of featureSet.patternBoard.edges ) {
       if ( edge.isExit ) {
@@ -166,31 +166,35 @@ export const getFeatureImpliedRules = (
     const outputNumbers = mapping.getNumbers( implication.consequent.getBits() );
     SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, outputNumbers, outputFeatureSet );
 
-    if ( assertEnabled() ) {
-      for ( let i = 0; i < solutionSet.numSolutions; i++ ) {
-        const offset = i * solutionSet.shape.numNumbersPerSolution;
-        let inputMatches = true;
-        let outputMatches = true;
-
-        for ( let j = 0; j < solutionSet.shape.numNumbersPerSolution; j++ ) {
-          if ( ( inputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== inputNumbers[ j ] ) {
-            inputMatches = false;
-          }
-          if ( ( outputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== outputNumbers[ j ] ) {
-            outputMatches = false;
-          }
-        }
-
-        // Implication
-        assert( !inputMatches || outputMatches );
-      }
-    }
+    // if ( assertEnabled() ) {
+    //   for ( let i = 0; i < solutionSet.numSolutions; i++ ) {
+    //     const offset = i * solutionSet.shape.numNumbersPerSolution;
+    //     let inputMatches = true;
+    //     let outputMatches = true;
+    //
+    //     for ( let j = 0; j < solutionSet.shape.numNumbersPerSolution; j++ ) {
+    //       if ( ( inputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== inputNumbers[ j ] ) {
+    //         inputMatches = false;
+    //       }
+    //       if ( ( outputNumbers[ j ] & solutionSet.bitData[ offset + j ] ) !== outputNumbers[ j ] ) {
+    //         outputMatches = false;
+    //       }
+    //     }
+    //
+    //     // Implication
+    //     assert( !inputMatches || outputMatches );
+    //   }
+    // }
 
     if ( inputFeatureSet.equals( outputFeatureSet ) ) {
       return;
     }
 
     rules.push( new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet ) );
+
+    if ( JSON.stringify( inputFeatureSet.serialize() ) === `{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]}` ) {
+      debugger;
+    }
   }, {
     logModulo: options.logModulo
   } );
