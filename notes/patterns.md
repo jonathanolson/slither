@@ -14,9 +14,6 @@
       - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
       - getImpliedColorHexBoardRules 1 0 [kitty 7]
-      - getImpliedGeneralBoardRules 2 56 [kitty 8]
-      - getImpliedGeneralBoardRules 2 70 [kitty 9]
-      - getImpliedGeneralBoardRules 2 60 [kitty 10]
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 

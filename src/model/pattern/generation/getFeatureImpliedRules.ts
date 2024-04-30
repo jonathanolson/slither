@@ -44,15 +44,16 @@ export const getFeatureImpliedRules = (
 
   // NOTE: Highlander indeterminate edges (and thus which "solutions" are filtered out) are set HERE, since we won't be
   // adding in face values!
-  if ( initialSolutionSet && highlander ) {
-    const initialSize = initialSolutionSet.numSolutions;
-    initialSolutionSet = initialSolutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() ) );
-
-    // If no solutions were filtered, we won't gain anything from highlander (so for now, we
-    if ( options.onlyNontrivialHighlander && initialSolutionSet && initialSolutionSet.numSolutions === initialSize ) {
-      return [];
-    }
-  }
+  // TODO!: Note that we weren't handling the exit-edge-double-black possibilities correctly, so we are now filtering differently below
+  // if ( initialSolutionSet && highlander ) {
+  //   const initialSize = initialSolutionSet.numSolutions;
+  //   initialSolutionSet = initialSolutionSet.withFilteredHighlanderSolutions( getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() ) );
+  //
+  //   // If no solutions were filtered, we won't gain anything from highlander (so for now, we
+  //   if ( options.onlyNontrivialHighlander && initialSolutionSet && initialSolutionSet.numSolutions === initialSize ) {
+  //     return [];
+  //   }
+  // }
 
   // if ( initialSolutionSet ) {
   //   console.log( 'after highlander' );
@@ -69,6 +70,43 @@ export const getFeatureImpliedRules = (
   const solutionSet = initialSolutionSet;
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
+
+  let edgeHighlanderCodeMask = 0n;
+
+  // Holds pairs that detect features (red exit edge features) in the attribute set, and then IF that matches, the
+  // bit pattern to & to the mask to get the (reduced) highlander mask.
+  const edgeHighlanderCodePairs: [ bigint, bigint ][] = [];
+
+  if ( highlander ) {
+    // TODO NOTE: if we fully rule out all solutions FROM THE START... we should potentially create a rule that says "all determinate edges are red?"
+    // maybe NO: "everything red" will be a solution
+    // TODO: if it is an "invalid" pattern for highlander, all will be filtered, including "everything red"
+
+    const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
+
+    for ( const indeterminateEdge of indeterminateEdges ) {
+      edgeHighlanderCodeMask |= 0x3n << BigInt( 2 * indeterminateEdge.index );
+    }
+
+    // Attribute mask with all bits set
+    const fullMask = ( 1n << BigInt( mapping.numBits ) ) - 1n;
+
+    for ( const edge of featureSet.patternBoard.edges ) {
+      if ( edge.isExit ) {
+        const redSolutionEdgeIndex = 3 * edge.index + 1;
+        const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+
+        edgeHighlanderCodePairs.push( [
+          // a mask to detect the presence of a red exit edge in an attribute set
+          1n << BigInt( redAttributeEdgeIndex ),
+
+          // a mask with all bits set EXCEPT those that should be removed from the edgeHighlanderCodeMask when this
+          // feature is present
+          fullMask - ( 0x3n << BigInt( 2 * edge.index ) )
+        ] );
+      }
+    }
+  }
 
   const formalContext = new SolutionFormalContext( mapping.numBits, _.range( 0, solutionSet.numSolutions ).map( solutionIndex => {
     // TODO: factor back in?
@@ -121,7 +159,7 @@ export const getFeatureImpliedRules = (
     }
 
     return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData, edgeHighlanderCode );
-  } ) );
+  } ), highlander, edgeHighlanderCodeMask, edgeHighlanderCodePairs );
 
   // console.log( featureSet.toCanonicalString() );
   // console.log( formalContext.toString() );

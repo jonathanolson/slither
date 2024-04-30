@@ -19,6 +19,16 @@ export class SolutionFormalContext extends FormalContext {
   public constructor(
     numAttributes: number,
     public readonly solutionAttributeSets: SolutionAttributeSet[],
+
+    // Whether we are running highlander filtering
+    public readonly highlander: boolean,
+
+    // A mask for the format of SolutionAttributeSet's edgeHighlanderCode, where we will "bin" the solutions into
+    // highlander groups based on this mask (and its adjustments based on red exit edges).
+    public readonly edgeHighlanderCodeMask: bigint,
+
+    // If the (left & set) === left (left fully matches), then effectiveEdgeHighlanderCodeMask &= right
+    public readonly edgeHighlanderCodePairs: [ bigint, bigint ][],
   ) {
     super( numAttributes, solutionAttributeSets );
 
@@ -66,8 +76,6 @@ export class SolutionFormalContext extends FormalContext {
     assertEnabled() && assert( this.numAttributes === attributeSet.numAttributes );
 
     let closure = AttributeSet.getFull( this.numAttributes );
-
-    let closureData = closure.data;
 
     // // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
     // for ( const solutionAttributeSet of this.solutionAttributeSets ) {
@@ -147,19 +155,62 @@ export class SolutionFormalContext extends FormalContext {
       }
     }
 
-    // Higher-performance version
+    let closureData = closure.data;
+
     const attributeSetData = attributeSet.data;
     const numSolutionAttributeSets = solutionAttributeSets.length;
-    for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
-      const solutionAttributeSet = solutionAttributeSets[ i ];
+    if ( this.highlander ) {
+      let mask = this.edgeHighlanderCodeMask;
 
-      if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
-        closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
+      // Adjust the mask based on red exit edges already in the set
+      for ( const [ maskToMatch, maskToAdjust ] of this.edgeHighlanderCodePairs ) {
+        if ( ( attributeSetData & maskToMatch ) === maskToMatch ) {
+          mask &= maskToAdjust;
+        }
+      }
 
-        // NOTE: error checking code if this goes wrong
-        // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
-        //   throw new Error( 'eek' );
-        // }
+      // TODO: more memory-friendly way of doing this?
+      // Will be set to null when there is any sort of duplicate
+      const map = new Map<bigint, SolutionAttributeSet | null>();
+
+      // Put solutions into bins, so we can mark duplicates
+      for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
+        const solutionAttributeSet = solutionAttributeSets[ i ];
+
+        if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
+          const bin = solutionAttributeSet.edgeHighlanderCode & mask;
+
+          // If we are NOT the first with this bin, NULL out the bin, so it will contribute to no solutions
+          if ( map.has( bin ) ) {
+            map.set( bin, null );
+          }
+          // Otherwise if we're the first in, set it (if we STAY the only one, our contribution will be counted)
+          else {
+            map.set( bin, solutionAttributeSet );
+          }
+        }
+      }
+
+      // Iterate through, and we'll only add the contributions of solutions that had a unique bin
+      for ( const solutionAttributeSet of map.values() ) {
+        if ( solutionAttributeSet ) {
+          closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
+        }
+      }
+    }
+    else {
+      // Higher-performance version
+      for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
+        const solutionAttributeSet = solutionAttributeSets[ i ];
+
+        if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
+          closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
+
+          // NOTE: error checking code if this goes wrong
+          // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
+          //   throw new Error( 'eek' );
+          // }
+        }
       }
     }
 

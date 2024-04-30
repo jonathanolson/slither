@@ -2,7 +2,7 @@ import { TPatternBoard } from '../TPatternBoard.ts';
 import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 import { GetRulesOptions } from './GetRulesOptions.ts';
 import { planarPatternMaps } from '../planarPatternMaps.ts';
-import { assertEnabled } from '../../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 
 export const getImpliedRuleSet = (
