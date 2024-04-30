@@ -33,8 +33,6 @@ import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpl
 import { squareSectorOnlyImplied0RuleSets } from './model/pattern/data/squareSectorOnlyImplied0RuleSets.ts';
 import { squareSectorOnlyImplied1RuleSets } from './model/pattern/data/squareSectorOnlyImplied1RuleSets.ts';
 import { squareEdgeOnlyImplied3RuleSets } from './model/pattern/data/squareEdgeOnlyImplied3RuleSets.ts';
-import { squareEdgeOnlyImplied4RuleSets } from './model/pattern/data/squareEdgeOnlyImplied4RuleSets.ts';
-import { squareColorImplied2RuleSets } from './model/pattern/data/squareColorImplied2RuleSets.ts';
 import { hexagonalEdgeOnlyImplied0RuleSets } from './model/pattern/data/hexagonalEdgeOnlyImplied0RuleSets.ts';
 import { hexagonalSectorOnlyImplied0RuleSets } from './model/pattern/data/hexagonalSectorOnlyImplied0RuleSets.ts';
 import { hexagonalColorImplied0RuleSets } from './model/pattern/data/hexagonalColorImplied0RuleSets.ts';
@@ -45,7 +43,6 @@ import { generalEdgeImplied1RuleSets } from './model/pattern/data/generalEdgeImp
 import { generalSectorImplied0RuleSets } from './model/pattern/data/generalSectorImplied0RuleSets.ts';
 import { generalColorImplied0RuleSets } from './model/pattern/data/generalColorImplied0RuleSets.ts';
 import { squareSectorOnlyImplied2RuleSets } from './model/pattern/data/squareSectorOnlyImplied2RuleSets.ts';
-import { hexagonalEdgeOnlyImplied2RuleSets } from './model/pattern/data/hexagonalEdgeOnlyImplied2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -129,32 +126,6 @@ const onlyRuleSetsWithFewerNotExitFaces = ( numNonExitFaces: number ) => {
   };
 };
 
-// @ts-expect-error
-window.getExisting_squareOnlyImpliedEdgeGeneration2RuleSets = ( generationIndex: number, index: number ) => {
-  if ( generationIndex !== 2 ) {
-    throw new Error( 'Only generation 2 is supported' );
-  }
-  return squareEdgeOnlyImplied2RuleSets[ index ];
-};
-
-// @ts-expect-error
-window.getExisting_squareOnlyImpliedEdgeGeneration3RuleSets = ( generationIndex: number, index: number ) => {
-  if ( generationIndex !== 3 ) {
-    throw new Error( 'Only generation 3 is supported' );
-  }
-  return squareEdgeOnlyImplied3RuleSets[ index ];
-};
-
-// @ts-expect-error
-window.getExisting_squareOnlyImpliedEdgeGeneration4RuleSets = ( generationIndex: number, index: number ) => {
-  if ( generationIndex !== 4 ) {
-    throw new Error( 'Only generation 4 is supported' );
-  }
-  return squareEdgeOnlyImplied4RuleSets[ index ];
-};
-
-
-
 
 // @ts-expect-error
 window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
@@ -166,6 +137,7 @@ window.getOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number
       ...squareEdgeOnlyImplied1RuleSets,
       ...squareEdgeOnlyImplied2RuleSets,
       ...squareEdgeOnlyImplied3RuleSets,
+      // TODO: potentially include square-edge-4
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4
@@ -199,7 +171,7 @@ window.getImpliedColorSquareBoardRules = ( generationIndex: number, index: numbe
       ...basicColorRuleSets,
       ...squareColorImplied0RuleSets,
       ...squareColorImplied1RuleSets,
-      ...squareColorImplied2RuleSets,
+      // ...squareColorImplied2RuleSets, // TODO: don't include the 48MB square-color-implied-2-0 because
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: false,
@@ -236,7 +208,7 @@ window.getOnlyImpliedHexBoardRules = ( generationIndex: number, index: number, o
       ...basicEdgeRuleSets,
       ...hexagonalEdgeOnlyImplied0RuleSets,
       ...hexagonalEdgeOnlyImplied1RuleSets,
-      ...hexagonalEdgeOnlyImplied2RuleSets,
+      // ...hexagonalEdgeOnlyImplied2RuleSets, // TODO: don't include these for now due to file size and compilation
     ].filter( onlyRuleSetsWithFewerNotExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 3
