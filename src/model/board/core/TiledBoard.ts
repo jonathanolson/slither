@@ -6,7 +6,7 @@ import { TBoard } from './TBoard.ts';
 import { TStructure } from './TStructure.ts';
 import { BaseBoard } from './BaseBoard.ts';
 import { createBoardDescriptor, rescaleProtoDescriptorMinimum, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
-import { getCoordinateClusteredMap } from '../../../util/getCoordinateCluteredMap.ts';
+import { getCoordinateClusteredMap } from '../../../util/getCoordinateClusteredMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 // console.log( EdgeShape );

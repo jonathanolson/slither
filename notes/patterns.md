@@ -9,7 +9,7 @@
       - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- waiting on 1,2 and 1,10
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - getImpliedGeneralBoardRules 2 6 [kitty 3] 
+      - - [kitty 3] 
       - - [kitty 4]
       - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
@@ -26,15 +26,15 @@
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getImpliedGeneralBoardRules 2 54 [PC]
-      - getImpliedGeneralBoardRules 2 55 [PC]
       - getOnlyImpliedSquareBoardRules 4 2 [PC]
-      - getOnlyImpliedSquareBoardRules 4 3 [PC]
-      - getOnlyImpliedSquareBoardRules 4 4 [PC]
-      - getOnlyImpliedSquareBoardRules 4 5 [PC]
-      - getOnlyImpliedSquareBoardRules 4 6 [PC]
       - getOnlyImpliedSquareBoardRules 4 8 [PC] (goes to 4,75)
-      - getOnlyImpliedSquareBoardRules 4 9 [PC]
+      - getOnlyImpliedSquareBoardRules 4 9 [PC] <--- crash on complete? is it in console history?
       - getOnlyImpliedSquareBoardRules 4 10 [PC]
+      - getOnlyImpliedSquareBoardRules 4 11 [PC]
+      - getOnlyImpliedSquareBoardRules 4 12 [PC]
+      - getOnlyImpliedSquareBoardRules 4 13 [PC]
+      - getOnlyImpliedSquareBoardRules 4 14 [PC]
+      - getOnlyImpliedSquareBoardRules 4 15 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 
@@ -55,6 +55,8 @@
       - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
     - See pruning discussion with ChatGPT
       - [implement LinCb0] - from https://arxiv.org/pdf/2011.04928, etc.
+        - Looks important for e.g. getImpliedColorSquareBoardRules 2 4, which is going up to 47k implications 
+      - [implement pruning] from the paper
       - We can see if implications would be VIOLATED by adding an attribute (early termination)
       - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
         - Still keep those in our implications,
@@ -67,6 +69,18 @@
   - 
   - Improved highlander:
     - [first] Store whether a rule/pattern is highlander(!), it should be serialized?
+    - 
+    - Bloom filter "deduplications"?
+    - 
+    - For now, bitsets
+      - Non-exit edges: 1,0 for red, 0,1 for black
+      - Exit edges: 1,0 for hard-red, 0,1 for black, 1,1 for red-or-double-black
+      -  
+      - edgeHighlanderCode
+      - Map<bigint, SolutionAttributeSet | null>, first goes to the set, then null when a duplicate is found
+      - Indeterminate (non-exit) edges get both bits set in the mask
+      - No-feature exit edges get all of the bits set in the mask
+      - Red-exit-edge gets none of the bits set in the mask???
     - 
     - Currently it is NOT working with blank exit faces - notably exits that could be "double black"
     - Even though exit face edges can potentially be determinate, the exit has three cases:
@@ -138,6 +152,7 @@
   - Rules Solver!
     - (for plugging into the UI, puzzle generation, difficulty estimation(!))
     - Performance: PatternRule.withRulesApplied
+      - Looks so much like [LinClosure] noted from LinCbO paper.
       - 
       - Make sure to combine embedded rules that have the same embedded input feature set 
       - 

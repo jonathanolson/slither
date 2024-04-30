@@ -2,7 +2,7 @@ import QUnit from 'qunit';
 import { standardSquareBoardGenerations } from '../patternBoards.ts';
 
 QUnit.module( 'patternBoards', () => {
-  QUnit.test('square pattern sanity', assert => {
+  QUnit.test( 'square pattern sanity', assert => {
     assert.equal( standardSquareBoardGenerations[ 0 ][ 0 ].vertices.length, 4 );
 
     for ( const generation of standardSquareBoardGenerations ) {

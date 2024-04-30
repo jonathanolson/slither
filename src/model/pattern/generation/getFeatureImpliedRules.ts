@@ -70,13 +70,14 @@ export const getFeatureImpliedRules = (
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
 
-  const formalContext = new SolutionFormalContext( mapping.numBits, _.range( 0, solutionSet.numSolutions ).map( i => {
+  const formalContext = new SolutionFormalContext( mapping.numBits, _.range( 0, solutionSet.numSolutions ).map( solutionIndex => {
     // TODO: factor back in?
-    const baseBigint = mapping.getBigint( solutionSet.bitData, i );
+    const baseBigint = mapping.getBigint( solutionSet.bitData, solutionIndex );
 
     const simpleAttributeSet = AttributeSet.fromBinary( mapping.numBits, baseBigint );
 
     let redEdgeData = BigInt( 0 );
+    let edgeHighlanderCode = BigInt( 0 );
 
     if ( includeEdges ) {
       featureSet.patternBoard.edges.forEach( edge => {
@@ -100,9 +101,26 @@ export const getFeatureImpliedRules = (
           redEdgeData |= BigInt( 1 ) << BigInt( redAttributeEdgeIndex );
         }
       } );
+
+      if ( highlander ) {
+        for ( let edgeIndex = 0; edgeIndex < featureSet.patternBoard.edges.length; edgeIndex++ ) {
+          const edge = featureSet.patternBoard.edges[ edgeIndex ];
+
+          const isBlack = solutionSet.hasSolutionEdge( solutionIndex, edge );
+
+          // TODO: deduplicate the above information processing? we're copying some stuff
+          const isRedOrExitDoubleBlack = edge.isExit && !isBlack && edge.exitVertex!.edges.every( otherEdge => {
+            // Note the confusing terminology. We RETURN TRUE if all non-exit edges are RED.
+            // This allows the EXIT EDGE to be either "red" or "double black"
+            return otherEdge.isExit || !solutionSet.hasSolutionEdge( solutionIndex, otherEdge );
+          } );
+
+          edgeHighlanderCode |= ( isBlack ? 0x2n : ( isRedOrExitDoubleBlack ? 0x3n : 0x1n ) ) << BigInt( 2 * edgeIndex );
+        }
+      }
     }
 
-    return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData );
+    return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData, edgeHighlanderCode );
   } ) );
 
   // console.log( featureSet.toCanonicalString() );

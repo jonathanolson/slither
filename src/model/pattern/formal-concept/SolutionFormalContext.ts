@@ -80,6 +80,7 @@ export class SolutionFormalContext extends FormalContext {
 
     let solutionAttributeSets = this.solutionAttributeSets;
 
+    // See if we can find a shorter list of solutionAttributeSets efficiently
     if ( enableObjectPruning && this.singleAttributeObjectsMap ) {
       // get attribute indices that are set
       let indices = [];

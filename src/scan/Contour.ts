@@ -3,7 +3,7 @@ import { Shape } from 'phet-lib/kite';
 import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
 import assert from '../workarounds/assert';
 import { Bounds2, ConvexHull2, Vector2 } from 'phet-lib/dot';
-import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
+import { getCoordinateClusteredMap } from '../util/getCoordinateClusteredMap.ts';
 
 export class Contour {
 

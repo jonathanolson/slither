@@ -11,7 +11,7 @@ import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
-import { getCoordinateClusteredMap } from '../util/getCoordinateCluteredMap.ts';
+import { getCoordinateClusteredMap } from '../util/getCoordinateClusteredMap.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
