@@ -24,6 +24,7 @@ const name = {
   getOnlyImpliedSquareBoardRules: 'square-edge-only-implied',
   getOnlyImpliedSectorSquareBoardRules: 'square-sector-only-implied',
   getImpliedColorSquareBoardRules: 'square-color-implied',
+  getHighlanderOnlyImpliedSquareBoardRules: 'square-edge-highlander-only-implied',
 
   getOnlyImpliedHexBoardRules: 'hexagonal-edge-only-implied',
   getOnlyImpliedSectorHexBoardRules: 'hexagonal-sector-only-implied',

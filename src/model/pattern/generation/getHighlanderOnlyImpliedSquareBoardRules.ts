@@ -7,6 +7,7 @@ import { squareEdgeOnlyImplied2RuleSets } from '../data/squareEdgeOnlyImplied2Ru
 import { squareEdgeOnlyImplied3RuleSets } from '../data/squareEdgeOnlyImplied3RuleSets.ts';
 import { squareEdgeOnlyImplied0RuleSets } from '../data/squareEdgeOnlyImplied0RuleSets.ts';
 import { squareEdgeOnlyImplied1RuleSets } from '../data/squareEdgeOnlyImplied1RuleSets.ts';
+import { squareEdgeHighlanderOnlyImplied0RuleSets } from '../data/squareEdgeHighlanderOnlyImplied0RuleSets.ts';
 
 export const getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
   return getImpliedRuleSet(
@@ -17,6 +18,7 @@ export const getHighlanderOnlyImpliedSquareBoardRules = ( generationIndex: numbe
       ...squareEdgeOnlyImplied1RuleSets,
       ...squareEdgeOnlyImplied2RuleSets,
       ...squareEdgeOnlyImplied3RuleSets,
+      ...squareEdgeHighlanderOnlyImplied0RuleSets,
     ],
     combineOptions<GetRulesOptions>( {
       vertexOrderLimit: 4,
