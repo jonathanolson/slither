@@ -10,7 +10,7 @@
     - getFeatureImpliedRules / SolutionFormalContext / SolutionAttributeSet / PatternAttributeSetMapping
     - 
     - RichSolution
-    - BinarySetFeatureMap - given PatternBoard and edge/sector/face-dual/highlander options
+    - BinaryFeatureMap - given PatternBoard and edge/sector/face-dual/highlander options
       - List (at least one) TFeature for each bit!!! - will have edge/color-dual OVERLAP of features specified
       - Allow various reads/writes on bigints based on features (with methods)
       - WHEN READING BACK INTO A FEATURESET:
