@@ -68,14 +68,10 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - - [kitty 0] 
-      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
+      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- last one
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- last one!
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - - [kitty 3] 
-      - - [kitty 4]
-      - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- FINISHED, RECORD IT OMG
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6] <--- last one!
-      - getImpliedColorHexBoardRules 1 0 [kitty 7]
+      - getImpliedColorHexBoardRules 1 0 [kitty 3] OMG WTF why did I end up with duplication? kill whichever one is slower when back
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
