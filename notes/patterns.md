@@ -129,14 +129,14 @@
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getImpliedGeneralBoardRules 2 54 [PC]
-      - getOnlyImpliedSquareBoardRules 4 11 [PC]
-      - getOnlyImpliedSquareBoardRules 4 13 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
       - getOnlyImpliedSquareBoardRules 4 16 [PC] (goes to 4,75)
       - getOnlyImpliedSquareBoardRules 4 17 [PC]
       - getOnlyImpliedSquareBoardRules 4 18 [PC]
       - getOnlyImpliedSquareBoardRules 4 19 [PC]
       - getOnlyImpliedSquareBoardRules 4 20 [PC]
+      - getOnlyImpliedSquareBoardRules 4 21 [PC]
+      - getOnlyImpliedSquareBoardRules 4 22 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 
