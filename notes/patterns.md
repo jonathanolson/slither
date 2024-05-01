@@ -3,6 +3,9 @@
 
 - TODO
   - 
+  - Get our highlander FILTER working with the bins INCLUDING exit edges, so we can run this on the "real" data
+    - e.g. show it in rule.html
+  - 
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
