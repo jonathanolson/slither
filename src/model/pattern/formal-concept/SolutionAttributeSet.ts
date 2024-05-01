@@ -50,4 +50,25 @@ export class SolutionAttributeSet extends AttributeSet {
   public static fromSolutionBinary( numAttributes: number, data: bigint, optionalData: bigint ): SolutionAttributeSet {
     return new SolutionAttributeSet( numAttributes, data, optionalData );
   }
+
+  public static solutionClosure( numAttributes: number, solutionAttributeSets: SolutionAttributeSet[], data: bigint ): bigint {
+    let closure = ( 1n << BigInt( numAttributes ) ) - 1n;
+
+    // Higher-performance version
+    const numSolutionAttributeSets = solutionAttributeSets.length;
+    for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
+      const solutionAttributeSet = solutionAttributeSets[ i ];
+
+      if ( ( data & solutionAttributeSet.withOptionalData ) === data ) {
+        closure &= solutionAttributeSet.data | ( data & solutionAttributeSet.optionalData );
+
+        // NOTE: error checking code if this goes wrong
+        // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
+        //   throw new Error( 'eek' );
+        // }
+      }
+    }
+
+    return closure;
+  }
 }

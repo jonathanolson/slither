@@ -68,8 +68,6 @@ export class SolutionFormalContext extends FormalContext {
   public override getClosure( attributeSet: AttributeSet ): AttributeSet {
     assertEnabled() && assert( this.numAttributes === attributeSet.numAttributes );
 
-    let closure = AttributeSet.getFull( this.numAttributes );
-
     // // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
     // for ( const solutionAttributeSet of this.solutionAttributeSets ) {
     //   if ( ( attributeSet.data & solutionAttributeSet.withOptionalData ) === attributeSet.data ) {
@@ -152,25 +150,9 @@ export class SolutionFormalContext extends FormalContext {
       }
     }
 
-    let closureData = closure.data;
-
-    // Higher-performance version
-    const numSolutionAttributeSets = solutionAttributeSets.length;
-    for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
-      const solutionAttributeSet = solutionAttributeSets[ i ];
-
-      if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
-        closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
-
-        // NOTE: error checking code if this goes wrong
-        // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
-        //   throw new Error( 'eek' );
-        // }
-      }
-    }
-
-    closure.data = closureData;
-
+    // TODO: get rid of the wrapping in AttributeSet
+    let closure = AttributeSet.getFull( this.numAttributes );
+    closure.data = SolutionAttributeSet.solutionClosure( this.numAttributes, solutionAttributeSets, attributeSetData );
     return closure;
   }
 }

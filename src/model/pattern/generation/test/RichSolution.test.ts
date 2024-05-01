@@ -7,7 +7,7 @@ import { BlackEdgeFeature } from '../../feature/BlackEdgeFeature.ts';
 import { RedEdgeFeature } from '../../feature/RedEdgeFeature.ts';
 
 QUnit.module( 'RichSolution', () => {
-  QUnit.test( 'Basic Edge Construction', assert => {
+  QUnit.test( 'Basic Edge/Sector Construction', assert => {
     const squareBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
 
     const solutionOptions = {
