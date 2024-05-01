@@ -2,12 +2,11 @@ import { PatternRule } from '../PatternRule.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { PatternAttributeSetMapping, SolutionSet } from '../SolutionSet.ts';
 import { AttributeSet } from '../formal-concept/AttributeSet.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import _ from '../../../workarounds/_.ts';
 import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
-import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 import { optionize3 } from 'phet-lib/phet-core';
+import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
@@ -46,44 +45,44 @@ export const getFeatureImpliedRules = (
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
 
-  let edgeHighlanderCodeMask = 0n;
+  // let edgeHighlanderCodeMask = 0n;
+  //
+  // // Holds pairs that detect features (red exit edge features) in the attribute set, and then IF that matches, the
+  // // bit pattern to & to the mask to get the (reduced) highlander mask.
+  // const edgeHighlanderCodePairs: [ bigint, bigint ][] = [];
+  //
+  // if ( highlander ) {
+  //   // TODO NOTE: if we fully rule out all solutions FROM THE START... we should potentially create a rule that says "all determinate edges are red?"
+  //   // maybe NO: "everything red" will be a solution
+  //   // TODO: if it is an "invalid" pattern for highlander, all will be filtered, including "everything red"
+  //
+  //   const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
+  //
+  //   for ( const indeterminateEdge of indeterminateEdges ) {
+  //     edgeHighlanderCodeMask |= 0x3n << BigInt( 2 * indeterminateEdge.index );
+  //   }
+  //
+  //   // Attribute mask with all bits set
+  //   const fullMask = ( 1n << BigInt( 2 * featureSet.patternBoard.edges.length ) ) - 1n;
+  //
+  //   for ( const edge of featureSet.patternBoard.edges ) {
+  //     if ( edge.isExit ) {
+  //       const redSolutionEdgeIndex = 3 * edge.index + 1;
+  //       const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+  //
+  //       edgeHighlanderCodePairs.push( [
+  //         // a mask to detect the presence of a red exit edge in an attribute set
+  //         1n << BigInt( redAttributeEdgeIndex ),
+  //
+  //         // a mask with all bits set EXCEPT those that should be removed from the edgeHighlanderCodeMask when this
+  //         // feature is present
+  //         fullMask - ( 0x3n << BigInt( 2 * edge.index ) )
+  //       ] );
+  //     }
+  //   }
+  // }
 
-  // Holds pairs that detect features (red exit edge features) in the attribute set, and then IF that matches, the
-  // bit pattern to & to the mask to get the (reduced) highlander mask.
-  const edgeHighlanderCodePairs: [ bigint, bigint ][] = [];
-
-  if ( highlander ) {
-    // TODO NOTE: if we fully rule out all solutions FROM THE START... we should potentially create a rule that says "all determinate edges are red?"
-    // maybe NO: "everything red" will be a solution
-    // TODO: if it is an "invalid" pattern for highlander, all will be filtered, including "everything red"
-
-    const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
-
-    for ( const indeterminateEdge of indeterminateEdges ) {
-      edgeHighlanderCodeMask |= 0x3n << BigInt( 2 * indeterminateEdge.index );
-    }
-
-    // Attribute mask with all bits set
-    const fullMask = ( 1n << BigInt( 2 * featureSet.patternBoard.edges.length ) ) - 1n;
-
-    for ( const edge of featureSet.patternBoard.edges ) {
-      if ( edge.isExit ) {
-        const redSolutionEdgeIndex = 3 * edge.index + 1;
-        const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
-
-        edgeHighlanderCodePairs.push( [
-          // a mask to detect the presence of a red exit edge in an attribute set
-          1n << BigInt( redAttributeEdgeIndex ),
-
-          // a mask with all bits set EXCEPT those that should be removed from the edgeHighlanderCodeMask when this
-          // feature is present
-          fullMask - ( 0x3n << BigInt( 2 * edge.index ) )
-        ] );
-      }
-    }
-  }
-
-  const formalContext = new SolutionFormalContext( mapping.numBits, _.range( 0, solutionSet.numSolutions ).map( solutionIndex => {
+  const solutionAttributeSets = _.range( 0, solutionSet.numSolutions ).map( solutionIndex => {
     // TODO: factor back in?
     const baseBigint = mapping.getBigint( solutionSet.bitData, solutionIndex );
 
@@ -91,6 +90,7 @@ export const getFeatureImpliedRules = (
 
     let redEdgeData = BigInt( 0 );
     let edgeHighlanderCode = BigInt( 0 );
+    let vertexConnectionKey: string | null = null;
 
     if ( includeEdges ) {
       featureSet.patternBoard.edges.forEach( edge => {
@@ -116,6 +116,8 @@ export const getFeatureImpliedRules = (
       } );
 
       if ( highlander ) {
+        vertexConnectionKey = solutionSet.vertexConnectionsKeys![ solutionIndex ];
+
         for ( let edgeIndex = 0; edgeIndex < featureSet.patternBoard.edges.length; edgeIndex++ ) {
           const edge = featureSet.patternBoard.edges[ edgeIndex ];
 
@@ -133,8 +135,77 @@ export const getFeatureImpliedRules = (
       }
     }
 
-    return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData, edgeHighlanderCode );
-  } ), highlander, edgeHighlanderCodeMask, edgeHighlanderCodePairs );
+    return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData, edgeHighlanderCode, vertexConnectionKey );
+  } );
+
+  // TODO: omg this code
+  let highlanderSolutionsMap: SolutionAttributeSet[][]; // highlanderSolutionsMap[ binary-exit-edges ] = pre-filtered solutions
+  let highlanderExitEdgeMap: number[] | null; // arr[ exit-edge-index ] = map into attribute set
+  // TODO: omg, don't try to hide all of this from SolutionFormalContext. This is a mess.
+  if ( highlander ) {
+    // TODO: can pack more efficiently for cases where we assume certain exit edges are red
+    const exitEdges = featureSet.patternBoard.edges.filter( edge => edge.isExit );
+
+    highlanderSolutionsMap = new Array<SolutionAttributeSet[]>( 1 << exitEdges.length );
+
+    // TODO: in the future, we'll be able to prune based on "no solutions before? no solutions now"
+    const recur = ( index: number, highlanderIndex: number, mask: bigint ) => {
+      if ( index === exitEdges.length ) {
+        const solutionMap = new Map<string, SolutionAttributeSet | null>();
+
+        for ( const solution of solutionAttributeSets ) {
+          const key = `${solution.edgeHighlanderCode & mask}/${solution.vertexConnectionKey}`;
+          if ( !solutionMap.has( key ) ) {
+            solutionMap.set( key, solution );
+          }
+          else {
+            solutionMap.set( key, null );
+          }
+        }
+
+        const solutions: SolutionAttributeSet[] = [];
+
+        for ( const solution of solutionMap.values() ) {
+          if ( solution ) {
+            solutions.push( solution );
+          }
+        }
+
+        highlanderSolutionsMap[ highlanderIndex ] = solutions;
+      }
+      else {
+        recur( index + 1, highlanderIndex, mask );
+        recur( index + 1, highlanderIndex | ( 1 << index ), mask - ( 0x3n << BigInt( 2 * exitEdges[ index ].index ) ) );
+      }
+    };
+    // Initially set all bits
+    let baseHighlanderMask = ( 1n << BigInt( 2 * featureSet.patternBoard.edges.length ) ) - 1n;
+
+    // Remove determinate non-exit edges
+    const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
+    for ( const edge of featureSet.patternBoard.edges ) {
+      if ( !edge.isExit && !indeterminateEdges.includes( edge ) ) {
+        baseHighlanderMask -= ( 0x3n << BigInt( 2 * edge.index ) );
+      }
+    }
+
+    recur( 0, 0, baseHighlanderMask );
+
+    highlanderExitEdgeMap = exitEdges.map( edge => {
+      const redSolutionEdgeIndex = 3 * edge.index + 1;
+      const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
+      return redAttributeEdgeIndex;
+    } );
+  }
+  else {
+    highlanderSolutionsMap = [];
+    highlanderExitEdgeMap = null;
+  }
+
+  const formalContext = new SolutionFormalContext(
+    mapping.numBits, solutionAttributeSets, highlander,
+    highlanderSolutionsMap, highlanderExitEdgeMap
+  );
 
   // console.log( featureSet.toCanonicalString() );
   // console.log( formalContext.toString() );
@@ -192,9 +263,47 @@ export const getFeatureImpliedRules = (
 
     rules.push( new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet ) );
 
-    if ( JSON.stringify( inputFeatureSet.serialize() ) === `{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]}` ) {
-      debugger;
-    }
+  //   if ( inputFeatureSet.equals( FeatureSet.deserialize( {
+  //     "faceValues": [
+  //         {
+  //             "face": 0,
+  //             "value": 1
+  //         },
+  //         {
+  //             "face": 1,
+  //             "value": null
+  //         },
+  //         {
+  //             "face": 6,
+  //             "value": null
+  //         },
+  //         {
+  //             "face": 7,
+  //             "value": null
+  //         },
+  //         {
+  //             "face": 8,
+  //             "value": null
+  //         },
+  //         {
+  //             "face": 9,
+  //             "value": null
+  //         }
+  //     ],
+  //     "blackEdges": [
+  //         7
+  //     ],
+  //     "redEdges": [
+  //         8,
+  //         13
+  //     ]
+  // }, solutionSet.patternBoard ) ) ) {
+  //     debugger;
+  //   }
+
+    // if ( JSON.stringify( inputFeatureSet.serialize() ) === `{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]}` ) {
+    //   debugger;
+    // }
   }, {
     logModulo: options.logModulo
   } );

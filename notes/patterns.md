@@ -6,6 +6,10 @@
   - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
   - 
   - 
+  - I've made a rats nest basing things on SolutionSet. Just create a `Solution` type(!) for ease of use
+  - 
+  - DIRECT from PatternBoardSolver => SolutionFormalContext, with IMPROVED solution objects!
+  - 
   - FOR HIGHLANDER:
     - Calculate the list of solutions for EVERY binary combination of "is it red exit edge" states.
       - Store in array where array[ index: binary-exit-edges ] = [ list of solutions ]
@@ -71,17 +75,16 @@
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- last one
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- last one!
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - getImpliedColorHexBoardRules 1 0 [kitty 3] OMG WTF why did I end up with duplication? kill whichever one is slower when back
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
+        - getOnlyImpliedSquareBoardRules 4 9 <--- crash on complete? is it in console history? Try on browser direct macOS?
       - 
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
       - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getImpliedGeneralBoardRules 2 54 [PC]
-      - getOnlyImpliedSquareBoardRules 4 9 [PC] <--- crash on complete? is it in console history? Try on browser direct macOS?
       - getOnlyImpliedSquareBoardRules 4 11 [PC]
       - getOnlyImpliedSquareBoardRules 4 13 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]

@@ -19,6 +19,8 @@ export class SolutionAttributeSet extends AttributeSet {
     // Non-exit edges: 0x1 for red, 0x2 for black
     // Exit edges: 0x1 for hard-red, 0x2 for black, 0x3 for red-or-double-black (e.g. solution has NO black edges on the exit vertex, so exit edge could be double-black)
     public readonly edgeHighlanderCode: bigint,
+
+    public readonly vertexConnectionKey: string | null,
   ) {
     super( numAttributes, data );
 
@@ -54,7 +56,7 @@ export class SolutionAttributeSet extends AttributeSet {
     return `${super.toString()} ${optionalString} ${edgeHighlanderCodeString})`;
   }
 
-  public static fromSolutionBinary( numAttributes: number, data: bigint, optionalData: bigint, edgeHighlanderCode: bigint ): SolutionAttributeSet {
-    return new SolutionAttributeSet( numAttributes, data, optionalData, edgeHighlanderCode );
+  public static fromSolutionBinary( numAttributes: number, data: bigint, optionalData: bigint, edgeHighlanderCode: bigint, vertexConnectionKey: string | null ): SolutionAttributeSet {
+    return new SolutionAttributeSet( numAttributes, data, optionalData, edgeHighlanderCode, vertexConnectionKey );
   }
 }

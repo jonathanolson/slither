@@ -23,12 +23,9 @@ export class SolutionFormalContext extends FormalContext {
     // Whether we are running highlander filtering
     public readonly highlander: boolean,
 
-    // A mask for the format of SolutionAttributeSet's edgeHighlanderCode, where we will "bin" the solutions into
-    // highlander groups based on this mask (and its adjustments based on red exit edges).
-    public readonly edgeHighlanderCodeMask: bigint,
-
-    // If the (left & set) === left (left fully matches), then effectiveEdgeHighlanderCodeMask &= right
-    public readonly edgeHighlanderCodePairs: [ bigint, bigint ][],
+    // TODO: cleanup all of this!
+    public readonly highlanderSolutionsMap: SolutionAttributeSet[][], // highlanderSolutionsMap[ binary-exit-edges ] = pre-filtered solutions
+    public readonly highlanderExitEdgeMap: number[] | null, // arr[ exit-edge-index ] = map into attribute set
   ) {
     super( numAttributes, solutionAttributeSets );
 
@@ -87,9 +84,25 @@ export class SolutionFormalContext extends FormalContext {
     // }
 
     let solutionAttributeSets = this.solutionAttributeSets;
+    const attributeSetData = attributeSet.data;
 
+    if ( this.highlander ) {
+      let highlanderIndex = 0;
+
+      const exitEdgeMap = this.highlanderExitEdgeMap!;
+      assertEnabled() && assert( exitEdgeMap );
+
+      for ( let i = 0; i < exitEdgeMap.length; i++ ) {
+        const attributeIndex = exitEdgeMap[ i ];
+        if ( ( attributeSetData & ( 1n << BigInt( attributeIndex ) ) ) !== 0n ) {
+          highlanderIndex |= 1 << i;
+        }
+      }
+
+      solutionAttributeSets = this.highlanderSolutionsMap[ highlanderIndex ];
+    }
     // See if we can find a shorter list of solutionAttributeSets efficiently
-    if ( enableObjectPruning && this.singleAttributeObjectsMap ) {
+    else if ( enableObjectPruning && this.singleAttributeObjectsMap ) {
       // get attribute indices that are set
       let indices = [];
       let n = attributeSet.data;
@@ -157,72 +170,18 @@ export class SolutionFormalContext extends FormalContext {
 
     let closureData = closure.data;
 
-    const attributeSetData = attributeSet.data;
+    // Higher-performance version
     const numSolutionAttributeSets = solutionAttributeSets.length;
-    if ( this.highlander ) {
-      // console.log( 'attributes', attributeSet.toString() );
+    for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
+      const solutionAttributeSet = solutionAttributeSets[ i ];
 
-      let mask = this.edgeHighlanderCodeMask;
+      if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
+        closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
 
-      // console.log( '  initial mask ts2', mask.toString( 2 ) );
-
-      // Adjust the mask based on red exit edges already in the set
-      for ( const [ maskToMatch, maskToAdjust ] of this.edgeHighlanderCodePairs ) {
-        if ( ( attributeSetData & maskToMatch ) === maskToMatch ) {
-          // console.log( `    mask adjust for ${AttributeSet.fromBinary( this.numAttributes, maskToMatch )} for ts2:${maskToAdjust.toString( 2 )}` );
-          mask &= maskToAdjust;
-          // console.log( '    mask after ts2', mask.toString( 2 ) );
-        }
-      }
-
-      // TODO: more memory-friendly way of doing this?
-      // Will be set to null when there is any sort of duplicate
-      const map = new Map<bigint, SolutionAttributeSet | null>();
-
-      // Put solutions into bins, so we can mark duplicates
-      for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
-        const solutionAttributeSet = solutionAttributeSets[ i ];
-
-        // console.log( '  testing solution', solutionAttributeSet.toString() );
-
-        if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
-          const bin = solutionAttributeSet.edgeHighlanderCode & mask;
-
-          // console.log( `    matches, bin-ts2 ${bin.toString( 2 )}` );
-
-          // If we are NOT the first with this bin, NULL out the bin, so it will contribute to no solutions
-          if ( map.has( bin ) ) {
-            // console.log( '    DUPLICATE, nulling' );
-            map.set( bin, null );
-          }
-          // Otherwise if we're the first in, set it (if we STAY the only one, our contribution will be counted)
-          else {
-            map.set( bin, solutionAttributeSet );
-          }
-        }
-      }
-
-      // Iterate through, and we'll only add the contributions of solutions that had a unique bin
-      for ( const solutionAttributeSet of map.values() ) {
-        if ( solutionAttributeSet ) {
-          // console.log( `  applying solution ${solutionAttributeSet.toString()}` );
-          closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
-        }
-      }
-    }
-    else {
-      // Higher-performance version
-      for ( let i = 0; i < numSolutionAttributeSets; i++ ) {
-        const solutionAttributeSet = solutionAttributeSets[ i ];
-
-        if ( ( attributeSetData & solutionAttributeSet.withOptionalData ) === attributeSetData ) {
-          closureData &= solutionAttributeSet.data | ( attributeSetData & solutionAttributeSet.optionalData );
-
-          // NOTE: error checking code if this goes wrong
-          // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
-          //   throw new Error( 'eek' );
-          // }
-        }
+        // NOTE: error checking code if this goes wrong
+        // if ( !solutionAttributeSets.includes( solutionAttributeSet ) ) {
+        //   throw new Error( 'eek' );
+        // }
       }
     }
 
