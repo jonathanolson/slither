@@ -9,6 +9,45 @@
   - CLEANUP:
     - getFeatureImpliedRules / SolutionFormalContext / SolutionAttributeSet / PatternAttributeSetMapping
     - 
+    - RichSolution
+    - BinarySetFeatureMap - given PatternBoard and edge/sector/face-dual/highlander options
+      - List (at least one) TFeature for each bit!!! - will have edge/color-dual OVERLAP of features specified
+      - Allow various reads/writes on bigints based on features (with methods)
+      - WHEN READING BACK INTO A FEATURESET:
+        - Check for "invalid" (null) - e.g. all bits set
+        - Do a lot of what SolutionSet.applyNumbersToFeatureSet does now?
+          - BUT pull efficient face-color code eventually from that one place?
+    - For closures:
+      - RichSolutionFinder - given a bigint/attributeset, give a (pruned) list of RichSolutions we should search through
+        - [HELPFUL] - For those red exit edges, ALSO prune the solutions based on this (AFTER the highlander bit)
+      - easy to get "getClosure" from a finder (should be consistent) - NOTE the potential "optional data"
+        - HEY, these should INSTEAD directly give us SolutionAttributeSets?
+          - [HEY] SolutionAttributeSet DIRECTLY on RichSolution?
+    - 
+    - Remember, bits are:
+      - non-exit edges: RED, BLACK
+        - If solution:black, set BLACK
+        - If solution:red, set RED
+      - exit edges: RED
+        - If solution:red AND exit vertex has a black (non-exit) edge, set RED (since it is a forced red)
+      - sectors: NOT_ZERO, NOT_ONE, NOT_TWO
+        - (set as normal)
+      - OTHER face pairs (that don't have a single edge based on FaceConnectivity): SAME, OPPOSITE
+        - (check parity, using shortestPath), set the appropriate bit
+    - VertexConnections:
+      - Use the SolutionSet algos, line 760ish
+    - Highlander-related:
+      - Map<TPatternEdge, HARD_RED | BLACK | RED_OR_DOUBLE_BLACK> <--- because we are NOT doing this with binary codes (for now)
+    - 
+    - 
+    - Order of operations:
+      - Solutions, from PatternBoardSolver.forEachSolution( featureSet.patternBoard, featureSet.getFeaturesArray(), callback )
+        - Store solution: TPatternEdge[],
+        - Store solutionSet: Set<TPatternEdge>
+        - Store main bigint (attribute set)
+        - Store optional bigint (optional set, indicating exit edges soft-red-or-double-black, with no black non-exit edges)
+        - Store vertex connections (and string key?)
+    - 
     - SKIP the SolutionSet(!), but perhaps do things that it does?
   - 
   - I've made a rats nest basing things on SolutionSet. Just create a `Solution` type(!) for ease of use
