@@ -6,6 +6,11 @@
   - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
   - 
   - 
+  - CLEANUP:
+    - getFeatureImpliedRules / SolutionFormalContext / SolutionAttributeSet / PatternAttributeSetMapping
+    - 
+    - SKIP the SolutionSet(!), but perhaps do things that it does?
+  - 
   - I've made a rats nest basing things on SolutionSet. Just create a `Solution` type(!) for ease of use
   - 
   - DIRECT from PatternBoardSolver => SolutionFormalContext, with IMPROVED solution objects!

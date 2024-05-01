@@ -7,6 +7,7 @@ import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.t
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { optionize3 } from 'phet-lib/phet-core';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
+import { NextClosure } from '../formal-concept/NextClosure.ts';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
@@ -224,7 +225,7 @@ export const getFeatureImpliedRules = (
   const invalidAttributeSet = AttributeSet.getFull( mapping.numBits );
 
   const rules: PatternRule[] = [];
-  formalContext.forEachImplication( implication => {
+  NextClosure.forEachImplication( formalContext.numAttributes, formalContext.getClosure.bind( formalContext ), implication => {
     if ( implication.consequent.equals( invalidAttributeSet ) ) {
       return;
     }
