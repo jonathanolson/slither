@@ -9,16 +9,14 @@
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getImpliedSectorGeneralBoardRules 1 10 [kitty 0] <--- waiting on 1,2 and 1,10
+      - - [kitty 0] 
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 1]
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - - [kitty 3] 
       - - [kitty 4]
       - getImpliedColorSquareBoardRules 2 4 [kitty 5] <---- last of its type?
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6]
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 6] <--- last one!
       - getImpliedColorHexBoardRules 1 0 [kitty 7]
-      - getHighlanderOnlyImpliedSquareBoardRules 1 0 [kitty 9]
-      - getHighlanderOnlyImpliedSquareBoardRules 1 1 [kitty 10]
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
@@ -28,15 +26,15 @@
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getImpliedGeneralBoardRules 2 54 [PC]
-      - getOnlyImpliedSquareBoardRules 4 2 [PC]
-      - getOnlyImpliedSquareBoardRules 4 9 [PC] <--- crash on complete? is it in console history?
-      - getOnlyImpliedSquareBoardRules 4 10 [PC]
+      - getOnlyImpliedSquareBoardRules 4 9 [PC] <--- crash on complete? is it in console history? Try on browser direct macOS?
       - getOnlyImpliedSquareBoardRules 4 11 [PC]
       - getOnlyImpliedSquareBoardRules 4 12 [PC]
       - getOnlyImpliedSquareBoardRules 4 13 [PC]
-      - getOnlyImpliedSquareBoardRules 4 14 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
       - getOnlyImpliedSquareBoardRules 4 16 [PC] (goes to 4,75)
+      - getOnlyImpliedSquareBoardRules 4 17 [PC]
+      - getOnlyImpliedSquareBoardRules 4 18 [PC]
+      - getOnlyImpliedSquareBoardRules 4 19 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 

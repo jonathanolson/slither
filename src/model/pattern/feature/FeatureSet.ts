@@ -1174,10 +1174,7 @@ export class FeatureSet {
 
     if ( solutions.length && filterHighlander ) {
       // TODO: switch getIndeterminateEdges to use FeatureSet?
-      const indeterminateEdges = getIndeterminateEdges( this.patternBoard, features );
-      const exitVertices = this.patternBoard.vertices.filter( v => v.isExit );
-
-      solutions = filterHighlanderSolutions( solutions, indeterminateEdges, exitVertices ).highlanderSolutions;
+      solutions = filterHighlanderSolutions( solutions, getIndeterminateEdges( this.patternBoard, features ) ).highlanderSolutions;
     }
 
     return solutions;

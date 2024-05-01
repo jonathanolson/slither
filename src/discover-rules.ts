@@ -584,7 +584,7 @@ console.log( 'test' );
           const indeterminateEdges = getIndeterminateEdges( crossBoard, features );
           console.log( indeterminateEdges );
 
-          const highlander = filterHighlanderSolutions( solutions, indeterminateEdges, crossBoard.vertices.filter( v => v.isExit ) );
+          const highlander = filterHighlanderSolutions( solutions, indeterminateEdges );
           console.log( highlander );
 
           // container.addChild( new AlignBox( new HBox( {
