@@ -3,8 +3,67 @@
 
 - TODO
   - 
+  - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
+  - 
+  - 
+  - FOR HIGHLANDER:
+    - Calculate the list of solutions for EVERY binary combination of "is it red exit edge" states.
+      - Store in array where array[ index: binary-exit-edges ] = [ list of solutions ]
+      - 
+      - OMFG, for the start, to validate the idea, JUST raw compute the filter every time? (ooof, is this bad perf quick?)
+        - Actually, the initial ones don't have a HUGE amount of solutions, this is NOT ABSOLUTELY horrible
+      - 
+      - Compute all bins for the "BASE STATE", and what their numeric bins are.
+      - Then start recursively going through the "unset exit edges", trying both SET and NOT.
+        - When SETTING to red, combine bins so we have fast computation
+          - [HOW TO COMBINE] - can we still use bigints to index these? How can we stuff connection data in? (that is a lot of bits?)
+            - [WE DO NOT NEED HIGH PERFORMANCE BINNING] - We do it at the start, we can just fall back to strings now
+            - Just get the "new" bin ID from a single exemplar from each bin.
+            - DITCH bins that are now "excluded" because of red exits (so amount of bins will get smaller)
+              - [WAIT can we ditch bins???] - if we need to track "excluded" (so they can be joined)...?
+            - THIS WILL hit to cases where we just don't have any bins anymore (invalid subtrees)
+      - [TODO]: DO we ... do anything special for when we START with red exit edges?
+        - We could just process those at the start, and then "skip" in the recursion. How to index things?
+      - Bin identifiers (ordered):
+        - Indeterminate non-exit edge: 0,1 for red/black.
+        - Exit edge: 1 for black, 0 for hard-red, 2 for red-or-double-black
+        - Vertex connections [MAKE SURE SORTED]
+          - `,c${min}-${max}` for each --- precompute this for the solutions (since it won't change)
+      - 
+      - Should be SAFE to do the normal bin/filter
+      - BUT if we do this recursively, and actually COMPUTE which bins get combined, it will be way faster
+        - (this could be a bottleneck)
+    - THEN lookup for the closure, INSTEAD of doing filtering dynamically(!!!) - massive performance win probably
+      - This... LETS US DO HIGHLANDER almost on par with others (besides the blank exit faces adding complexity)
+    - 
+    - Solutions with different vertex connections are NEVER in the same bin
+      - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
+      - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
+        - IMPORTANT: It will never INVALIDATE only part of a bin.
+    - 
+    - Include vertex connection info in bins
+    - 
+    - If we have STARTING CONDITIONS (e.g. "only square"), we should only start with solutions to that.
+    - 
+    - For every binary combination of exit edge state, COMPUTE a list of solutions(!)
+      - THEN WE ALSO WILL NOT NEED TO FILTER AFTER THIS(!) and we can get the full speed-up solution
+      - But don't single/double prune solution lists if this is the case
+      - CONSTRUCT ALL OF THESE as a closure system directly!!! So both:
+        - (a) filter out solutions that 
+      - WAIT: if it is a closure, we have the "intersections" property of closures, no? Hmmm...
+        - Can we "intersect" (ALL of the previou ones)? That seems... expensive on its own?
+    - --- ADD indices to solutions (so we can merge them efficiently)
+  - 
+  - Omg, stop piping everything through SolutionSet when we're using a different binary format. Go direct.
+  - 
   - Get our highlander FILTER working with the bins INCLUDING exit edges, so we can run this on the "real" data
     - e.g. show it in rule.html
+  - 
+  - Run a ton of "completed puzzle testing" for RANDOM puzzles.
+    - Ensure that highlander and other rules are ALWAYS correct within these! (VERY MUCH HIGHLANDER)
+  - 
+  - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
+    - Constraint!!!
   - 
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
