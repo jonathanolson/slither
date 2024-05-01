@@ -10,6 +10,7 @@ import { TPatternFace } from './TPatternFace.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
 import { BIT_NUMBERS_BITS_PER_NUMBER, bitNumbersIsBitOne, bitNumbersSetBitToOne } from '../../util/booleanPacking.ts';
+import { VertexConnection } from './VertexConnection.ts';
 
 
 export type SolutionSetShape = {
@@ -822,13 +823,6 @@ export class SolutionSet {
       }
     }, includeEdges, includeSectors, includeFaces, includeVertexConnections );
   }
-}
-
-export class VertexConnection {
-  public constructor(
-    public readonly minVertexIndex: number,
-    public readonly maxVertexIndex: number
-  ) {}
 }
 
 export class PatternAttributeSetMapping {

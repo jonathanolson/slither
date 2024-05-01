@@ -13,6 +13,7 @@ import { SectorNotTwoFeature } from '../feature/SectorNotTwoFeature.ts';
 import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
 import _ from '../../../workarounds/_.ts';
 import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
+import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 
 export type BinaryFeatureMapOptions = {
   solveEdges: boolean;
@@ -35,9 +36,12 @@ export class BinaryFeatureMap {
   public readonly primaryFeatures: TEmbeddableFeature[] = [];
   public readonly allFeatures: TEmbeddableFeature[][] = [];
 
+  public readonly empty = 0n;
+  public readonly full: bigint;
+
   public constructor(
     public readonly patternBoard: TPatternBoard,
-    public readonly options: BinaryFeatureMapOptions,
+    options: BinaryFeatureMapOptions,
   ) {
     const faceConnectivity = FaceConnectivity.get( patternBoard );
 
@@ -91,6 +95,7 @@ export class BinaryFeatureMap {
     this.facePairBaseIndex = bitIndex;
     if ( options.solveFaceColors ) {
       for ( const pair of faceConnectivity.connectedFacePairs ) {
+        // TODO: create FaceColorDualFeature directly (since we have the path info)
         const sameFeature = FaceColorDualFeature.fromPrimarySecondaryFaces( [ pair.a, pair.b ], [] );
         const oppositeFeature = FaceColorDualFeature.fromPrimarySecondaryFaces( [ pair.a ], [ pair.b ] );
 
@@ -115,73 +120,36 @@ export class BinaryFeatureMap {
 
     this.numNonExitEdges = numNonExitEdges;
     this.numAttributes = bitIndex;
+    this.full = ( 1n << BigInt( this.numAttributes ) ) - 1n;
   }
 
-  // public getSolutionAttributeSet( solution: TPatternEdge[] ): SolutionAttributeSet {
-  //   return this.getSetSolutionAttributeSet( new Set( solution ) );
-  // }
-  //
-  // public getSetSolutionAttributeSet( setSolution: Set<TPatternEdge> ): SolutionAttributeSet {
-  //   let data = 0n;
-  //   let optionalData = 0n;
-  //
-  //   const isEdgeBlack = ( edge: TPatternEdge ) => setSolution.has( edge );
-  //
-  //   for ( let i = 0; i < this.numAttributes; i++ ) {
-  //     const feature = this.primaryFeatures[ i ];
-  //
-  //     if ( feature instanceof RedEdgeFeature && feature.edge.isExit ) {
-  //       if ( feature.edge.exitVertex!.edges.every( edge => !isEdgeBlack( edge ) ) ) {
-  //         data |= 1n << BigInt( i );
-  //       }
-  //       else if ( !isEdgeBlack( feature.edge ) ) {
-  //         optionalData |= 1n << BigInt( i );
-  //       }
-  //     }
-  //     else if ( feature.isPossibleWith( isEdgeBlack ) ) {
-  //       data |= 1n << BigInt( i );
-  //     }
-  //   }
-  //
-  //   return SolutionAttributeSet.fromSolutionBinary(
-  //     this.numAttributes,
-  //     data,
-  //     optionalData,
-  //     0n, // TODO: remove this?
-  //     null, // TODO: pass in vertex info!!!!
-  //   );
-  // }
-
-  // TODO: Probably call all of this stuff from RichSolution instead
-  public requiredFromSolution( solution: TPatternEdge[] ): bigint {
-    return this.requiredFromSetSolution( new Set( solution ) );
-  }
-
-  // normal, except will only have red exit edges if they are forced (hard-red)
-  public requiredFromSetSolution( setSolution: Set<TPatternEdge> ): bigint {
-    let result = 0n;
+  public getSolutionAttributeSet( setSolution: Set<TPatternEdge> ): SolutionAttributeSet {
+    let data = 0n;
+    let optionalData = 0n;
 
     const isEdgeBlack = ( edge: TPatternEdge ) => setSolution.has( edge );
 
     for ( let i = 0; i < this.numAttributes; i++ ) {
       const feature = this.primaryFeatures[ i ];
 
-      let matches: boolean;
-
-      // Handle exit edges differently, we only mark them as red if they are FORCED (remember double-black-exit)
       if ( feature instanceof RedEdgeFeature && feature.edge.isExit ) {
-        matches = feature.edge.exitVertex!.edges.every( edge => !isEdgeBlack( edge ) );
+        if ( feature.edge.exitVertex!.edges.every( edge => !isEdgeBlack( edge ) ) ) {
+          optionalData |= 1n << BigInt( i );
+        }
+        else if ( !isEdgeBlack( feature.edge ) ) {
+          data |= 1n << BigInt( i );
+        }
       }
-      else {
-        matches = feature.isPossibleWith( isEdgeBlack );
-      }
-
-      if ( matches ) {
-        result |= 1n << BigInt( i );
+      else if ( feature.isPossibleWith( isEdgeBlack ) ) {
+        data |= 1n << BigInt( i );
       }
     }
 
-    return result;
+    return SolutionAttributeSet.fromSolutionBinary(
+      this.numAttributes,
+      data,
+      optionalData,
+    );
   }
 
   public bitsHaveIndex( bits: bigint, index: number ): boolean {
@@ -213,6 +181,11 @@ export class BinaryFeatureMap {
   }
 
   public getBitsFeatureSet( bits: bigint ): FeatureSet | null {
+    // If all bits are set, we will be contradictory, and can shortcut to no feature set.
+    if ( bits === this.full ) {
+      return null;
+    }
+
     const featureSet = FeatureSet.empty( this.patternBoard );
 
     // TODO: improve efficiency in the future (for face color duals)

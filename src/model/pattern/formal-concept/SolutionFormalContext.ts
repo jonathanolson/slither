@@ -22,10 +22,6 @@ export class SolutionFormalContext extends FormalContext {
 
     // Whether we are running highlander filtering
     public readonly highlander: boolean,
-
-    // TODO: cleanup all of this!
-    public readonly highlanderSolutionsMap: SolutionAttributeSet[][], // highlanderSolutionsMap[ binary-exit-edges ] = pre-filtered solutions
-    public readonly highlanderExitEdgeMap: number[] | null, // arr[ exit-edge-index ] = map into attribute set
   ) {
     super( numAttributes, solutionAttributeSets );
 
@@ -87,19 +83,7 @@ export class SolutionFormalContext extends FormalContext {
     const attributeSetData = attributeSet.data;
 
     if ( this.highlander ) {
-      let highlanderIndex = 0;
-
-      const exitEdgeMap = this.highlanderExitEdgeMap!;
-      assertEnabled() && assert( exitEdgeMap );
-
-      for ( let i = 0; i < exitEdgeMap.length; i++ ) {
-        const attributeIndex = exitEdgeMap[ i ];
-        if ( ( attributeSetData & ( 1n << BigInt( attributeIndex ) ) ) !== 0n ) {
-          highlanderIndex |= 1 << i;
-        }
-      }
-
-      solutionAttributeSets = this.highlanderSolutionsMap[ highlanderIndex ];
+      throw new Error( 'reimplement!' ); // TODO
     }
     // See if we can find a shorter list of solutionAttributeSets efficiently
     else if ( enableObjectPruning && this.singleAttributeObjectsMap ) {

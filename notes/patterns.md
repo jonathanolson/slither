@@ -36,9 +36,8 @@
         - (check parity, using shortestPath), set the appropriate bit
     - VertexConnections:
       - Use the SolutionSet algos, line 760ish
-    - Highlander-related:
-      - Map<TPatternEdge, HARD_RED | BLACK | RED_OR_DOUBLE_BLACK> <--- because we are NOT doing this with binary codes (for now)
     - 
+    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
     - 
     - Order of operations:
       - Solutions, from PatternBoardSolver.forEachSolution( featureSet.patternBoard, featureSet.getFeaturesArray(), callback )
