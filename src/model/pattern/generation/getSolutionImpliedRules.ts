@@ -15,6 +15,8 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
 
   assertEnabled() && assert( !isFinite( options.featureLimit ) );
 
+  const automorphisms = getEmbeddings( patternBoard, patternBoard );
+
   const potentialBlankExitFaces = options.highlander ? patternBoard.faces.filter( face => {
     // See if we're an exit face with one edge connected to a non-exit face
 
@@ -44,11 +46,14 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
     ...patternBoard.faces.filter( face => !face.isExit ),
     ...potentialBlankExitFaces
   ];
+
   const faceValueRecur = ( featureSet: FeatureSet, index: number ): void => {
     if ( index === potentiallyValuedFaces.length ) {
-      if ( faceValueFeatures.every( otherFeatureSet => !featureSet.isIsomorphicTo( otherFeatureSet ) ) ) {
+      if ( featureSet.isCanonicalWith( automorphisms ) ) {
         faceValueFeatures.push( featureSet );
       }
+      // if ( faceValueFeatures.every( otherFeatureSet => !featureSet.isIsomorphicTo( otherFeatureSet ) ) ) {
+      // }
     }
     else {
       const face = potentiallyValuedFaces[ index ];
@@ -74,8 +79,6 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
 
   // We will append to this list as we go
   const embeddedRules = ( options.prefilterRules ?? [] ).flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) );
-
-  const automorphisms = getEmbeddings( patternBoard, patternBoard );
 
   const filteredRules: PatternRule[] = [];
   for ( const featureSet of faceValueFeatures ) {

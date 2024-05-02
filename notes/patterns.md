@@ -5,6 +5,16 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - Canonicity tests!!! test out same number of rules with 2-0
+  - 
+  - Perf loss right now is at the start, in faceValueRecur, where we check EVERY OTHER FEATURE SET for isomorphism
+    - Figure out better shape-based handling?
+- 
+- Try out highlander for other stilings and types (sector and --- think about color)
+  - VERY EXPLICITLY SHOW THE HIGHLANDER CASES FOR RULE EXPLANATIONS, showing which ones were excluded (espeiclally if they only have red/black edges or clues)
+  - 
+  - SHOW HIGHLANDER PATTERNS - make separate code to filter out highlander solutions
+    - NOTE: We want this anyway, so we can control the filtering whether it happens ahead-of-time.
   - 
   - WHY are we getting .... INCONSISTENT things? Oh, because it doesn't KNOW it is inconsistent? unclear. What is going on
     - DETECT that case, and then SHOW precisely which solutions are getting "highlandered" out.
