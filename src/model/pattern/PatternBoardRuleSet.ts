@@ -12,7 +12,6 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { filterAndSortRules } from './generation/filterAndSortRules.ts';
 import { GetRulesOptions } from './generation/GetRulesOptions.ts';
 import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
-import { getFilteredEnumeratedRules } from './generation/getFilteredEnumeratedRules.ts';
 import { getCollapsedRules } from './generation/getCollapsedRules.ts';
 import { getStandardDescribedPatternBoard } from './patternBoards.ts';
 
@@ -23,26 +22,6 @@ export class PatternBoardRuleSet {
     public readonly rules: PatternRule[] = []
   ) {
     assertEnabled() && assert( rules.every( rule => rule.patternBoard === patternBoard ) );
-  }
-
-  public static createEnumerated(
-    patternBoard: TPatternBoard,
-    mapping: TPlanarPatternMap,
-    previousRuleSets: PatternBoardRuleSet[],
-    providedOptions?: GetRulesOptions
-  ): PatternBoardRuleSet {
-    assertEnabled() && assert( patternBoard );
-    assertEnabled() && assert( mapping );
-
-    const previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
-
-    const options = combineOptions<GetRulesOptions>( {}, providedOptions, {
-      prefilterRules: previousRules
-    } );
-
-    const rules = getFilteredEnumeratedRules( patternBoard, options );
-
-    return new PatternBoardRuleSet( patternBoard, mapping, rules );
   }
 
   public static createImplied(
@@ -88,38 +67,6 @@ export class PatternBoardRuleSet {
       if ( rules.length ) {
         ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
       }
-
-      previousRules = [
-        ...previousRules,
-        ...rules
-      ];
-    }
-
-    return ruleSets;
-  }
-
-  // TODO: associate TPlanarPatternMap with the board!!!
-  public static createChained(
-    patternBoards: TPatternBoard[],
-    mappings: TPlanarPatternMap[],
-    previousRuleSets: PatternBoardRuleSet[],
-    providedOptions?: GetRulesOptions
-  ): PatternBoardRuleSet[] {
-    let previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
-
-    const ruleSets: PatternBoardRuleSet[] = [];
-
-    for ( let i = 0; i < patternBoards.length; i++ ) {
-      const patternBoard = patternBoards[ i ];
-      const mapping = mappings[ i ];
-
-      const options = combineOptions<GetRulesOptions>( {}, providedOptions, {
-        prefilterRules: previousRules
-      } );
-
-      const rules = getFilteredEnumeratedRules( patternBoard, options );
-
-      ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
 
       previousRules = [
         ...previousRules,

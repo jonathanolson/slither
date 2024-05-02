@@ -1,9 +1,6 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
+import { standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
-import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
@@ -43,41 +40,6 @@ console.log( 'test' );
   const addPaddedNode = ( node: Node ) => {
     container.addChild( new AlignBox( node, { margin: 5 } ) );
   };
-
-  // const ruleSets = PatternBoardRuleSet.createChained( vertexNonExitPatternBoards, vertexNonExitPatternBoards.map( patternBoard => patternBoardMappings.get( patternBoard )! ), [], {
-  //   solveEdges: false,
-  //   solveFaceColors: true
-  // } );
-
-  const ruleSets = [ PatternBoardRuleSet.createEnumerated( edgePatternBoard, planarPatternMaps.get( edgePatternBoard )!, [], {
-    solveEdges: true,
-    solveFaceColors: true
-  } ) ];
-
-  const rules = ruleSets.flatMap( ruleSet => ruleSet.rules );
-
-  for ( const ruleSet of ruleSets ) {
-    console.log( JSON.stringify( ruleSet.serialize() ) );
-  }
-
-  addPaddedNode( new VBox( {
-    spacing: 10,
-    children: rules.map( rule => {
-      // TODO: omg, associate boards with planar pattern maps
-      const planarPatternMap = planarPatternMaps.get( rule.patternBoard as BasePatternBoard )!;
-
-      return new PatternRuleNode( rule, planarPatternMap );
-    } )
-  } ) );
-
-  // Sector initial chained
-  // PatternBoardRuleSet.createImpliedChained( basicPatternBoards, basicSectorImpliedRuleSets, {
-  //   solveEdges: true,
-  //   solveSectors: true,
-  //   highlander: true
-  // } ).forEach( ruleSet => {
-  //   console.log( JSON.stringify( ruleSet.serialize() ) );
-  // } );
 
   const testBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
   addPaddedNode( new PlanarMappedPatternBoardNode( {

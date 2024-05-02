@@ -23,20 +23,15 @@ import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
 import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
 import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
-import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
-import { TEmbeddableFeature } from './model/pattern/feature/TEmbeddableFeature.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import { arePatternBoardsIsomorphic } from './model/pattern/arePatternBoardsIsomorphic.ts';
-import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
 import { basicPatternBoards } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
-import { getBasicRule } from './model/pattern/generation/getBasicRule.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 
@@ -448,7 +443,6 @@ console.log( 'test' );
 
       {
         const squarePatternBoard = getFirstGeneration( new SquareBoard( 20, 20 ) )[ 0 ];
-        const diagonalPatternBoard = FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) )[ 0 ];
         const doubleSquarePatternBoard = FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( FacesPatternBoard.getNextGeneration( getFirstGeneration( new SquareBoard( 20, 20 ) ) ) ) )[ 0 ];
 
         container.addChild( new PatternNode(
@@ -480,70 +474,6 @@ console.log( 'test' );
             children: solutions.map( solution => new PatternNode( squarePatternBoard, FeatureSet.fromSolution( squarePatternBoard, solution ), squarePatternBoard.planarPatternMap ) )
           } ), { margin: 5 } ) );
         } );
-
-        // TODO: other features
-        const getRuleNode = ( board: FacesPatternBoard, inputFeatures: TEmbeddableFeature[], solveEdges: boolean, solveFaceColors = false, solveSectors = false, highlander = false ): Node => {
-          const rule = getBasicRule( board, FeatureSet.fromFeatures( board, inputFeatures ), {
-            solveEdges,
-            solveFaceColors,
-            solveSectors,
-            highlander
-          } )!;
-          assertEnabled() && assert( rule );
-
-          return new PatternRuleNode( rule, board.planarPatternMap, {
-            // TODO
-            patternNodeOptions: {
-              // labels: true
-            }
-          } );
-        };
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
-          new RedEdgeFeature( squarePatternBoard.edges[ 0 ] ),
-        ], true, false, false ) );
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
-          FaceColorDualFeature.fromPrimarySecondaryFaces( [ squarePatternBoard.faces[ 0 ], squarePatternBoard.faces[ 1 ] ], [] ),
-        ], false, true, false ) );
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
-          new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
-        ], true, false, true ) );
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
-          new SectorNotZeroFeature( squarePatternBoard.sectors[ 0 ] ),
-        ], false, false, true ) );
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 2 ),
-          new SectorOnlyOneFeature( squarePatternBoard.sectors[ 0 ] ),
-        ], false, false, true ) );
-
-        addPaddedNode( getRuleNode( squarePatternBoard, [
-          new BlackEdgeFeature( squarePatternBoard.edges[ 0 ] ),
-          new RedEdgeFeature( squarePatternBoard.edges[ 4 ] ),
-        ], true, false, false ) );
-
-        addPaddedNode( getRuleNode( diagonalPatternBoard, [
-          new FaceFeature( diagonalPatternBoard.faces[ 0 ], 3 ),
-          new FaceFeature( diagonalPatternBoard.faces[ 1 ], 3 ),
-        ], true, true, true ) );
-
-        addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
-          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
-          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
-        ], true, true, true ) );
-
-        addPaddedNode( getRuleNode( doubleSquarePatternBoard, [
-          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
-          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
-          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 7 ] ),
-        ], true, true, true ) );
 
         addPaddedNode( new PatternNode( doubleSquarePatternBoard, FeatureSet.fromFeatures( doubleSquarePatternBoard, [
           new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
@@ -592,51 +522,6 @@ console.log( 'test' );
           //   children: highlander.highlanderSolutions.map( solution => new PatternNode( crossBoard, FeatureSet.fromSolution( crossBoard, solution ), crossBoard.planarPatternMap ) )
           // } ), { margin: 5 } ) );
         }
-
-        addPaddedNode( getRuleNode( crossBoard, crossBoardHighlanderFeatures, true, false, true ) );
-
-        addPaddedNode( getRuleNode( crossBoard, crossBoardHighlanderFeatures, true, false, true, true ) );
-
-        const aRule = getBasicRule( squarePatternBoard, FeatureSet.fromFeatures( squarePatternBoard, [
-          new FaceFeature( squarePatternBoard.faces[ 0 ], 3 ),
-          new RedEdgeFeature( squarePatternBoard.vertices[ 0 ].exitEdge! )
-        ] ), {
-          solveEdges: true,
-          solveFaceColors: false,
-          solveSectors: false,
-          highlander: false
-        } )!;
-
-        // TODO: filter by not null
-        const aEmbeddedRules = getEmbeddings( squarePatternBoard, doubleSquarePatternBoard ).map( embedding => aRule.embedded( doubleSquarePatternBoard, embedding )! );
-
-        addPaddedNode( new HBox( {
-          spacing: 10,
-          children: aEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
-        } ) );
-
-        const aUniqueEmbeddedRules: PatternRule[] = [];
-        aEmbeddedRules.forEach( rule => {
-          if ( !aUniqueEmbeddedRules.some( uniqueRule => rule.isIsomorphicTo( uniqueRule ) ) ) {
-            aUniqueEmbeddedRules.push( rule );
-          }
-        } );
-
-        addPaddedNode( new HBox( {
-          spacing: 10,
-          children: aUniqueEmbeddedRules.map( rule => new PatternRuleNode( rule, doubleSquarePatternBoard.planarPatternMap ) )
-        } ) );
-
-        const aFeatures = FeatureSet.fromFeatures( doubleSquarePatternBoard, [
-          new FaceFeature( doubleSquarePatternBoard.faces[ 0 ], 3 ),
-          new FaceFeature( doubleSquarePatternBoard.faces[ 1 ], 3 ),
-          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 1 ] ),
-          new RedEdgeFeature( doubleSquarePatternBoard.edges.filter( edge => edge.isExit )[ 3 ] ),
-        ] );
-
-        const aNewFeatures = PatternRule.withRulesApplied( doubleSquarePatternBoard, aFeatures, aEmbeddedRules );
-
-        addPaddedNode( new PatternNode( doubleSquarePatternBoard, aNewFeatures, doubleSquarePatternBoard.planarPatternMap ) );
       }
     }
   }

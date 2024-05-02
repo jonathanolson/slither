@@ -5,10 +5,8 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
-  - Triangular somehow giving a "loop" solution?
+  - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
   - 
-  - Perf loss right now is at the start, in faceValueRecur, where we check EVERY OTHER FEATURE SET for isomorphism
-    - Figure out better shape-based handling?
 - 
 - Try out highlander for other stilings and types (sector and --- think about color)
   - VERY EXPLICITLY SHOW THE HIGHLANDER CASES FOR RULE EXPLANATIONS, showing which ones were excluded (espeiclally if they only have red/black edges or clues)
@@ -274,14 +272,6 @@
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
-  - "initial feature set" for PatternRule.getSolutionEnumeratedRules (for "only")
-    - e.g. "red exit edges" for vertices for square/hex patterns ("only")
-    - remove faces/edges from the list at start time?
-      - remove face color dual combinations that are incompatible at start time?
-    - [ready to go, should allow squareOnly/hexOnly searches to be faster]
-    - NOTE: For face coloring, we'd really want ... multiple initial feature sets (permutations?)
-      - Imagine 3 squares diagonal pattern. Yes red exit vertices (2), BUT we can't just FIX face colors, because multiple embeddings(!)
-  - 
   - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
     - Certain topology (red exit vertex, etc.) features will probably unlock more things
   - Also when we show embedded versions:
@@ -474,7 +464,3 @@ Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
     - We could at least do automorphism/canonical checks AT END OF FACES(!)
 - [deprecated, solved by implication search] 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
   - ... do we just make this more of a callback iterator (or generator)?
-- [deprecated, just use implication search] Performance: PatternRule.getSolutionEnumeratedRules
-  - Can we filter "satisfied" previous rules out?
-    - This requires more expensive checks. Could see if a rule's outputFeatureSet has our change (and only check then)
-    - If rule.outputFeatureSet.isSubsetOf( ... featureSet ) <--- requires computing featureSet?
