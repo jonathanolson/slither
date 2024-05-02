@@ -127,7 +127,7 @@ export const getFeatureImpliedRules = (
   }, {
     logModulo: options.logModulo,
     logModuloCallback: ( count, set, implications, seconds ) => {
-      console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), [`${binaryFeatureMap.getBinaryString( set )} (${binaryFeatureMap.getIndicesString( set )})`], implications.length, `${seconds}s` );
+      console.log( `${count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' )} [${binaryFeatureMap.getBinaryString( set )}] (${binaryFeatureMap.getIndicesString( set )}) ${implications.length} ${seconds}s` );
     }
   } );
 
