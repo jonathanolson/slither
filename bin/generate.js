@@ -25,14 +25,19 @@ const name = {
   getOnlyImpliedSectorSquareBoardRules: 'square-sector-only-implied',
   getImpliedColorSquareBoardRules: 'square-color-implied',
   getHighlanderOnlyImpliedSquareBoardRules: 'square-edge-highlander-only-implied',
+  getHighlanderOnlyImpliedSectorSquareBoardRules: 'square-sector-highlander-only-implied',
 
   getOnlyImpliedHexBoardRules: 'hexagonal-edge-only-implied',
   getOnlyImpliedSectorHexBoardRules: 'hexagonal-sector-only-implied',
   getImpliedColorHexBoardRules: 'hexagonal-color-implied',
+  getHighlanderOnlyImpliedHexBoardRules: 'hexagonal-edge-highlander-only-implied',
+  getHighlanderOnlyImpliedSectorHexBoardRules: 'hexagonal-sector-highlander-only-implied',
 
-  getImpliedGeneralBoardRules: 'general-implied',
+  getImpliedGeneralBoardRules: 'general-implied', // TODO: fix naming here
   getImpliedSectorGeneralBoardRules: 'general-sector-implied',
   getImpliedColorGeneralBoardRules: 'general-color-implied',
+  getHighlanderImpliedGeneralBoardRules: 'general-edge-highlander-implied',
+  getHighlanderImpliedSectorGeneralBoardRules: 'general-sector-highlander-implied',
 
   getExisting_squareOnlyImpliedEdgeGeneration2RuleSets: 'square-edge-only-implied',
   getExisting_squareOnlyImpliedEdgeGeneration3RuleSets: 'square-edge-only-implied',

@@ -1,9 +1,9 @@
-import { getImpliedRuleSet } from './getImpliedRuleSet.ts';
-import { GetRulesOptions } from './GetRulesOptions.ts';
-import { generalPatternBoardGenerations } from '../generalPatternBoardGenerations.ts';
-import { basicSectorImpliedRuleSets } from '../data/basicSectorImpliedRuleSets.ts';
-import { generalSectorImplied0RuleSets } from '../data/generalSectorImplied0RuleSets.ts';
-import { onlyRuleSetsWithFewerNonExitFaces } from './onlyRuleSetsWithFewerNonExitFaces.ts';
+import { getImpliedRuleSet } from '../getImpliedRuleSet.ts';
+import { GetRulesOptions } from '../GetRulesOptions.ts';
+import { generalPatternBoardGenerations } from '../../generalPatternBoardGenerations.ts';
+import { basicSectorImpliedRuleSets } from '../../data/basicSectorImpliedRuleSets.ts';
+import { generalSectorImplied0RuleSets } from '../../data/generalSectorImplied0RuleSets.ts';
+import { onlyRuleSetsWithFewerNonExitFaces } from '../onlyRuleSetsWithFewerNonExitFaces.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 
 export const getImpliedSectorGeneralBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {

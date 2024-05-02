@@ -1,10 +1,11 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { edgePatternBoard, standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, edgePatternBoard, standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
+import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -69,9 +70,10 @@ console.log( 'test' );
   } ) );
 
   // Sector initial chained
-  // PatternBoardRuleSet.createImpliedChained( basicPatternBoards, [], {
+  // PatternBoardRuleSet.createImpliedChained( basicPatternBoards, basicSectorImpliedRuleSets, {
   //   solveEdges: true,
-  //   solveSectors: true
+  //   solveSectors: true,
+  //   highlander: true
   // } ).forEach( ruleSet => {
   //   console.log( JSON.stringify( ruleSet.serialize() ) );
   // } );

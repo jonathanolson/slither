@@ -5,7 +5,7 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
-  - Canonicity tests!!! test out same number of rules with 2-0
+  - Triangular somehow giving a "loop" solution?
   - 
   - Perf loss right now is at the start, in faceValueRecur, where we check EVERY OTHER FEATURE SET for isomorphism
     - Figure out better shape-based handling?
@@ -103,6 +103,9 @@
       - getHighlanderOnlyImpliedSquareBoardRules 2 2 [kitty 5]
       - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 6]
       - getHighlanderOnlyImpliedSquareBoardRules 2 4 [kitty 7]
+      - 
+      - Failure on node bin/generate.js getHighlanderImpliedGeneralBoardRules 0 2 --- error?
+      - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 

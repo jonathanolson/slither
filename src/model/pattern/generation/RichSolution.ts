@@ -58,58 +58,65 @@ export class RichSolution {
 
     // vertex connections
     if ( options.highlander ) {
-      const remainingEdges = new Set( this.solutionSet );
+      if ( patternBoard.faces.some( face => !face.isExit ) ) {
+        const remainingEdges = new Set( this.solutionSet );
 
-      const connections: VertexConnection[] = [];
+        const connections: VertexConnection[] = [];
 
-      while ( remainingEdges.size ) {
-        let startExitEdge!: TPatternEdge;
-        for ( const edge of remainingEdges ) {
-          if ( edge.isExit ) {
-            startExitEdge = edge;
-            break;
-          }
-        }
-        assertEnabled() && assert( startExitEdge );
-
-        const getNextEdge = ( currentEdge: TPatternEdge ): TPatternEdge => {
-          for ( const vertex of currentEdge.vertices ) {
-            for ( const edge of vertex.edges ) {
-              if ( remainingEdges.has( edge ) ) {
-                return edge;
-              }
+        while ( remainingEdges.size ) {
+          let startExitEdge!: TPatternEdge;
+          for ( const edge of remainingEdges ) {
+            if ( edge.isExit ) {
+              startExitEdge = edge;
+              break;
             }
           }
-          throw new Error( 'no next edge found' );
+          assertEnabled() && assert( startExitEdge );
 
-          // Performance-improved from below
-          // const potentialEdges = currentEdge.vertices.flatMap( vertex => vertex.edges ).filter( edge => remainingEdges.has( edge ) );
-          // assertEnabled() && assert( potentialEdges.length === 1 );
-          //
-          // return potentialEdges[ 0 ];
-        };
+          const getNextEdge = ( currentEdge: TPatternEdge ): TPatternEdge => {
+            for ( const vertex of currentEdge.vertices ) {
+              for ( const edge of vertex.edges ) {
+                if ( remainingEdges.has( edge ) ) {
+                  return edge;
+                }
+              }
+            }
+            throw new Error( 'no next edge found' );
 
-        remainingEdges.delete( startExitEdge );
-        let currentEdge = startExitEdge;
+            // Performance-improved from below
+            // const potentialEdges = currentEdge.vertices.flatMap( vertex => vertex.edges ).filter( edge => remainingEdges.has( edge ) );
+            // assertEnabled() && assert( potentialEdges.length === 1 );
+            //
+            // return potentialEdges[ 0 ];
+          };
 
-        while ( currentEdge === startExitEdge || !currentEdge.isExit ) {
-          const nextEdge = getNextEdge( currentEdge );
-          remainingEdges.delete( nextEdge );
-          currentEdge = nextEdge;
+          remainingEdges.delete( startExitEdge );
+          let currentEdge = startExitEdge;
+
+          while ( currentEdge === startExitEdge || !currentEdge.isExit ) {
+            const nextEdge = getNextEdge( currentEdge );
+            remainingEdges.delete( nextEdge );
+            currentEdge = nextEdge;
+          }
+
+          const endExitEdge = currentEdge;
+
+          const minVertexIndex = Math.min( startExitEdge.exitVertex!.index, endExitEdge.exitVertex!.index );
+          const maxVertexIndex = Math.max( startExitEdge.exitVertex!.index, endExitEdge.exitVertex!.index );
+
+          connections.push( new VertexConnection( minVertexIndex, maxVertexIndex ) );
         }
 
-        const endExitEdge = currentEdge;
+        const sortedConnections = _.sortBy( connections, connection => connection.minVertexIndex );
 
-        const minVertexIndex = Math.min( startExitEdge.exitVertex!.index, endExitEdge.exitVertex!.index );
-        const maxVertexIndex = Math.max( startExitEdge.exitVertex!.index, endExitEdge.exitVertex!.index );
-
-        connections.push( new VertexConnection( minVertexIndex, maxVertexIndex ) );
+        this.vertexConnection = sortedConnections;
+        this.vertexConnectionKey = sortedConnections.map( connection => `c${connection.minVertexIndex}-${connection.maxVertexIndex}`).join( ',' );
       }
-
-      const sortedConnections = _.sortBy( connections, connection => connection.minVertexIndex );
-
-      this.vertexConnection = sortedConnections;
-      this.vertexConnectionKey = sortedConnections.map( connection => `c${connection.minVertexIndex}-${connection.maxVertexIndex}`).join( ',' );
+      else {
+        // Placeholder this, since it doesn't matter for the single-edge-only case
+        this.vertexConnection = [];
+        this.vertexConnectionKey = '';
+      }
     }
   }
 

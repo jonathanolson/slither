@@ -1,10 +1,10 @@
 import QUnit from 'qunit';
-import { getOnlyImpliedSquareBoardRules } from '../getOnlyImpliedSquareBoardRules.ts';
+import { getOnlyImpliedSquareBoardRules } from '../data/getOnlyImpliedSquareBoardRules.ts';
 import { squareEdgeOnlyImplied1RuleSets } from '../../data/squareEdgeOnlyImplied1RuleSets.ts';
 import { squareEdgeOnlyImplied0RuleSets } from '../../data/squareEdgeOnlyImplied0RuleSets.ts';
-import { getOnlyImpliedSectorSquareBoardRules } from '../getOnlyImpliedSectorSquareBoardRules.ts';
+import { getOnlyImpliedSectorSquareBoardRules } from '../data/getOnlyImpliedSectorSquareBoardRules.ts';
 import { squareSectorOnlyImplied0RuleSets } from '../../data/squareSectorOnlyImplied0RuleSets.ts';
-import { getImpliedColorSquareBoardRules } from '../getImpliedColorSquareBoardRules.ts';
+import { getImpliedColorSquareBoardRules } from '../data/getImpliedColorSquareBoardRules.ts';
 import { squareColorImplied0RuleSets } from '../../data/squareColorImplied0RuleSets.ts';
 
 QUnit.module( 'generation', () => {
