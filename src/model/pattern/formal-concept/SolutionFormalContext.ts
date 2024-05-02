@@ -1,4 +1,3 @@
-import { FormalContext } from './FormalContext.ts';
 import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
 import { AttributeSet } from './AttributeSet.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -10,20 +9,19 @@ const hasWithOptionalAttribute = ( set: SolutionAttributeSet, i: number ): boole
 
 const enableObjectPruning = true;
 
-export class SolutionFormalContext extends FormalContext {
+export class SolutionFormalContext {
 
   public singleAttributeObjectsMap: SolutionAttributeSet[][] | null;
   public doubleAttributeObjectsMap: SolutionAttributeSet[][][] | null; // IMPORTANT, second index is [0] for [i+1], so we have better memory locality
   // TODO: consider trying a THIRD level here?
 
   public constructor(
-    numAttributes: number,
+    public readonly numAttributes: number,
     public readonly solutionAttributeSets: SolutionAttributeSet[],
 
     // Whether we are running highlander filtering
     public readonly highlander: boolean,
   ) {
-    super( numAttributes, solutionAttributeSets );
 
     /*
       NOTE: For larger sets of solutionAttributeSets, it makes sense to "prune" what is possible for getClosure().
@@ -65,7 +63,7 @@ export class SolutionFormalContext extends FormalContext {
     }
   }
 
-  public override getClosure( attributeSet: AttributeSet ): AttributeSet {
+  public getClosure( attributeSet: AttributeSet ): AttributeSet {
     assertEnabled() && assert( this.numAttributes === attributeSet.numAttributes );
 
     // // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
