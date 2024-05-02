@@ -1,6 +1,4 @@
 import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
-import { AttributeSet } from './AttributeSet.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import _ from '../../../workarounds/_.ts';
 
 const hasWithOptionalAttribute = ( set: SolutionAttributeSet, i: number ): boolean => {
@@ -63,8 +61,7 @@ export class SolutionFormalContext {
     }
   }
 
-  public getClosure( attributeSet: AttributeSet ): AttributeSet {
-    assertEnabled() && assert( this.numAttributes === attributeSet.numAttributes );
+  public getClosure( attributeSet: bigint ): bigint {
 
     // // TODO: we're directly grabbing the data field, decent for performance, OK to have public?
     // for ( const solutionAttributeSet of this.solutionAttributeSets ) {
@@ -76,7 +73,7 @@ export class SolutionFormalContext {
     // }
 
     let solutionAttributeSets = this.solutionAttributeSets;
-    const attributeSetData = attributeSet.data;
+    const attributeSetData = attributeSet;
 
     if ( this.highlander ) {
       throw new Error( 'reimplement!' ); // TODO
@@ -85,7 +82,7 @@ export class SolutionFormalContext {
     else if ( enableObjectPruning && this.singleAttributeObjectsMap ) {
       // get attribute indices that are set
       let indices = [];
-      let n = attributeSet.data;
+      let n = attributeSet;
       let index = 0;
       while ( n > 0n ) {
         if ( n & 1n ) {
@@ -148,9 +145,6 @@ export class SolutionFormalContext {
       }
     }
 
-    // TODO: get rid of the wrapping in AttributeSet
-    let closure = AttributeSet.getFull( this.numAttributes );
-    closure.data = SolutionAttributeSet.solutionClosure( this.numAttributes, solutionAttributeSets, attributeSetData );
-    return closure;
+    return SolutionAttributeSet.solutionClosure( this.numAttributes, solutionAttributeSets, attributeSetData );
   }
 }

@@ -8,7 +8,7 @@ import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 import { FacesPatternBoard } from './FacesPatternBoard.ts';
 import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
 import { getPeriodicTilingGenerator, PolygonGenerator } from '../../view/GenerateNode.ts';
-import { cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubSquareTiling, tetrakisSquareTiling, triangularTiling, trihexagonalTiling } from '../board/core/TiledBoard.ts';
+import { cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from '../board/core/TiledBoard.ts';
 import { SquareBoard } from '../board/square/SquareBoard.ts';
 
 export const edgePatternBoard = new BasePatternBoard( {

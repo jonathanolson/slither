@@ -4,7 +4,7 @@ import { AttributeSet } from './AttributeSet.ts';
 export class NextClosure {
   public static forEachImplication(
     numAttributes: number,
-    getClosure: ( attributeSet: AttributeSet ) => AttributeSet,
+    getClosure: ( attributeSet: bigint ) => bigint,
     callback: ( implication: Implication ) => void,
     options?: { logModulo?: number }
   ): void {
@@ -72,11 +72,11 @@ export class NextClosure {
         console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${Math.round( ( Date.now() - initialTime ) / 1000 )}s` );
       }
 
-      const closedSet = getClosure( AttributeSet.fromBinary( numAttributes, set ) );
+      const closedSet = getClosure( set );
 
-      if ( set !== closedSet.data ) {
+      if ( set !== closedSet ) {
         // Is a pseudo-intent
-        const implication = new Implication( AttributeSet.fromBinary( numAttributes, set ), closedSet );
+        const implication = new Implication( AttributeSet.fromBinary( numAttributes, set ), AttributeSet.fromBinary( numAttributes, closedSet ) );
         callback( implication );
         implications.push( implication );
 
@@ -92,7 +92,7 @@ export class NextClosure {
           }
 
           const greaterThanIMask = ~( ( 1n << BigInt( i + 1 ) ) - 1n );
-          impliedGreaterMasks[ i ] |= greaterThanIMask & closedSet.data;
+          impliedGreaterMasks[ i ] |= greaterThanIMask & closedSet;
           // console.log( `${i} implies ${impliedGreaterMasks[ i ].toString( 2 )}` );
         }
       }
