@@ -97,7 +97,7 @@ export class NextClosure {
         }
       }
 
-      let nextSet: AttributeSet | null = null;
+      let nextSet: bigint | null = null;
       for ( let i = 0; i < numAttributes; i++ ) {
         // NOTE: below is a performance-optimized version of this, where we can bail early
         // const withLowestBit = set.withLowestBitSet( i );
@@ -135,13 +135,13 @@ export class NextClosure {
         // }
 
         if ( potentialNextSet ) {
-          nextSet = potentialNextSet;
+          nextSet = potentialNextSet.data;
           break;
         }
       }
 
       if ( nextSet ) {
-        set = nextSet.data;
+        set = nextSet;
       }
       else {
         // done!
