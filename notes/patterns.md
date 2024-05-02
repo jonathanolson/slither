@@ -9,12 +9,7 @@
   - 
   - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
   - 
-  - Generalize the "closure" operator, so we can wrap it and call it with a FeatureSet (pattern)
-  - 
-  - Rule page(!)
-    - When showing highlander-excluded solutions, show (1) other solution (even if it is excluded by the input pattern)
-  - 
-  - Organization:
+  - Database of rules:
     - NAME the ruleset BY ITS PATTERN BOARD NAME?
       - (do basic boards have good names? we need that)
     - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
@@ -22,84 +17,25 @@
   - 
   - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
   - 
-- 
-- Try out highlander for other stilings and types (sector and --- think about color)
-  - VERY EXPLICITLY SHOW THE HIGHLANDER CASES FOR RULE EXPLANATIONS, showing which ones were excluded (espeiclally if they only have red/black edges or clues)
+  - rule.html
+    - Could just take an input pattern
   - 
-  - SHOW HIGHLANDER PATTERNS - make separate code to filter out highlander solutions
-    - NOTE: We want this anyway, so we can control the filtering whether it happens ahead-of-time.
+  - Highlander + color:
+    - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
+    - This seems "solvable" in the "ALL" solving stage?
   - 
-  - WHY are we getting .... INCONSISTENT things? Oh, because it doesn't KNOW it is inconsistent? unclear. What is going on
-    - DETECT that case, and then SHOW precisely which solutions are getting "highlandered" out.
-  - WAIT WAIT WAIT we are... somehow not "borking" out of invalid patterns? OMG OMG.
-    - Wait, how is this NOT a bigger failure in general?
-  - 
-  - 
-  - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
-  - 
-  - HEY! We should do the recursive optimization for the highlander stuff.
-  - 
-  - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
-  - 
-  - I've made a rats nest basing things on SolutionSet. Just create a `Solution` type(!) for ease of use
-    - Can we... remove SolutionSet soon? ([DITCH IT])
-  - 
-  - DIRECT from PatternBoardSolver => SolutionFormalContext, with IMPROVED solution objects!
-  - 
-  - FOR HIGHLANDER:
-    - Calculate the list of solutions for EVERY binary combination of "is it red exit edge" states.
-      - Store in array where array[ index: binary-exit-edges ] = [ list of solutions ]
-      - 
-      - OMFG, for the start, to validate the idea, JUST raw compute the filter every time? (ooof, is this bad perf quick?)
-        - Actually, the initial ones don't have a HUGE amount of solutions, this is NOT ABSOLUTELY horrible
-      - 
-      - Compute all bins for the "BASE STATE", and what their numeric bins are.
-      - Then start recursively going through the "unset exit edges", trying both SET and NOT.
-        - When SETTING to red, combine bins so we have fast computation
-          - [HOW TO COMBINE] - can we still use bigints to index these? How can we stuff connection data in? (that is a lot of bits?)
-            - [WE DO NOT NEED HIGH PERFORMANCE BINNING] - We do it at the start, we can just fall back to strings now
-            - Just get the "new" bin ID from a single exemplar from each bin.
-            - DITCH bins that are now "excluded" because of red exits (so amount of bins will get smaller)
-              - [WAIT can we ditch bins???] - if we need to track "excluded" (so they can be joined)...?
-            - THIS WILL hit to cases where we just don't have any bins anymore (invalid subtrees)
-      - [TODO]: DO we ... do anything special for when we START with red exit edges?
-        - We could just process those at the start, and then "skip" in the recursion. How to index things?
-      - Bin identifiers (ordered):
-        - Indeterminate non-exit edge: 0,1 for red/black.
-        - Exit edge: 1 for black, 0 for hard-red, 2 for red-or-double-black
-        - Vertex connections [MAKE SURE SORTED]
-          - `,c${min}-${max}` for each --- precompute this for the solutions (since it won't change)
-      - 
-      - Should be SAFE to do the normal bin/filter
-      - BUT if we do this recursively, and actually COMPUTE which bins get combined, it will be way faster
-        - (this could be a bottleneck)
-    - THEN lookup for the closure, INSTEAD of doing filtering dynamically(!!!) - massive performance win probably
-      - This... LETS US DO HIGHLANDER almost on par with others (besides the blank exit faces adding complexity)
-    - 
+  - Highlander potential solving changes:
+    - (a) don't precompute closures, do it on demand (I mean, from persisted RichSolutions...)
+    - (b) precompute more efficiently (recursively)
+      - Can just "combine" bins as we recurse
+      - "no solutions possible" will recurse trivially
     - Solutions with different vertex connections are NEVER in the same bin
       - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
       - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
         - IMPORTANT: It will never INVALIDATE only part of a bin.
-    - 
-    - Include vertex connection info in bins
-    - 
-    - If we have STARTING CONDITIONS (e.g. "only square"), we should only start with solutions to that.
-    - 
-    - For every binary combination of exit edge state, COMPUTE a list of solutions(!)
-      - THEN WE ALSO WILL NOT NEED TO FILTER AFTER THIS(!) and we can get the full speed-up solution
-      - But don't single/double prune solution lists if this is the case
-      - CONSTRUCT ALL OF THESE as a closure system directly!!! So both:
-        - (a) filter out solutions that 
-      - WAIT: if it is a closure, we have the "intersections" property of closures, no? Hmmm...
-        - Can we "intersect" (ALL of the previou ones)? That seems... expensive on its own?
-    - --- ADD indices to solutions (so we can merge them efficiently)
+    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
   - 
-  - Omg, stop piping everything through SolutionSet when we're using a different binary format. Go direct.
-  - 
-  - Get our highlander FILTER working with the bins INCLUDING exit edges, so we can run this on the "real" data
-    - e.g. show it in rule.html
-  - 
-  - Run a ton of "completed puzzle testing" for RANDOM puzzles.
+  - Run a ton of "completed puzzle testing" for RANDOM puzzles. --- HEY get this working with a PatternSolver(?)
     - Ensure that highlander and other rules are ALWAYS correct within these! (VERY MUCH HIGHLANDER)
   - 
   - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
@@ -168,47 +104,12 @@
       - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
         - Wait, what would this do...?
       - [probably not - only after adding pruning] REORDER ATTRIBUTES?
-  - 
-  - Improved highlander:
-    - [first] Store whether a rule/pattern is highlander(!), it should be serialized?
-    - 
-    - Bloom filter "deduplications"?
-    - 
-    - For now, bitsets
-      - Non-exit edges: 1,0 for red, 0,1 for black
-      - Exit edges: 1,0 for hard-red, 0,1 for black, 1,1 for red-or-double-black
-      -  
-      - edgeHighlanderCode
-      - Map<bigint, SolutionAttributeSet | null>, first goes to the set, then null when a duplicate is found
-      - Indeterminate (non-exit) edges get both bits set in the mask
-      - No-feature exit edges get all of the bits set in the mask
-      - Red-exit-edge gets none of the bits set in the mask???
-    - 
-    - Currently it is NOT working with blank exit faces - notably exits that could be "double black"
-    - Even though exit face edges can potentially be determinate, the exit has three cases:
-      - For each solution, an exit edge is:
-        - (a) potentially red (solution has no edges through exit vertex)
-        - (b) single-black (solution has one edge to the exit vertex, and it exits as a connection)
-        - (c) HARD red (solution has two edges through the exit vertex)
-      - Just like our "if the indeterminate edges are the same, it is filtered out", this information needs to be included
-        - Solutions with the same exit "states" can be filtered out
-        - *** Adding red exit edge as a feature CHANGES this
-      - Current plan is to ADJUST the "simple (non-implication) closure" to filter highlander duplicates out, since we might add exit edge (red) features
-    - 
-    - Highlander ON COLORS? (figure this out)
-      - Or maybe... match face values of exit faces?
-      - Can we... perhaps match whether "exit faces" are ... null? (because then we could get more indeterminate edges)
-        - Yes, if we expand this to pattern matching with blank exit faces, we'll be able to detect a TON of patterns
-          - !!!!!! (1,0) will get us the main pattern, instead of (4,?)
-        - Exit face (opposite a face WITH a numeric/null value, not ?) is a candidate to have a non-indeterminate edge
-  - 
+  -
   - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
   - 
   - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
   - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
-  - 
-  - Serialize individual rules, for "collections"
   - 
   - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
     - Maybe not?
@@ -216,18 +117,10 @@
   - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
-  - FeatureSet "only one" is... weird to store. It is essentially true if not-zero and not-two (redundant)
-  - 
-  - Test implied-highlander (... to check our GOOD case, we need all of level-3 square, and the specific level-4 square)
-  - 
   - WebGPU general-purpose FCA "solver"
     - NOTE: multiple approaches
       - (a) do the "parallel" full approach suggested by that paper. how would we handle the massive amount of memory?
       - (b) do the next-closure, BUT parallelize the parts (both checking multiple i's, AND parallel-apply of SolutionFormalContext.getClosure/Implication.implicationSetClosure)
-  - 
-  - Fix up generation (we broke some things?)
-  - 
-  - Clean up all SORTS of code. See if FCA approach is widely better in all ways.
   - 
   - TPatternBoard cleanup:
     - 
