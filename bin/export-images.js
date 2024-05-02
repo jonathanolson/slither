@@ -54,6 +54,16 @@ const executablePath = [
     if ( remainingFiles ) {
       const file = remainingFiles.shift();
 
+      console.log( `checking ${file}` );
+      const json = fs.readFileSync( file, 'utf8' );
+      const data = JSON.parse( json );
+      if ( data.rules.length > 1000 ) {
+        console.log( `skipping ${file} due to ${data.rules.length} rules` );
+        // Lazy skip?
+        await next();
+        return;
+      }
+
       const outputPath = file.replace( '.json', '.svg' ).replace( '/data', '/images');
 
       // does outputPath exist, and if so, does it have a newer timestamp than our file?
@@ -86,8 +96,6 @@ const executablePath = [
 
       page.on( 'load', async () => {
         await sleep( 500 );
-
-        const json = fs.readFileSync( file, 'utf8' );
 
         const expression = `serializedRuleSetToSVG( ${json} )`;
 
