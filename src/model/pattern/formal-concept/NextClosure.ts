@@ -13,7 +13,7 @@ export class NextClosure {
     // NOTE: We need to store implications to handle implication set closure(!)
     const implications: Implication[] = [];
 
-    let set: AttributeSet | null = AttributeSet.getEmpty( numAttributes );
+    let set: bigint | null = 0n;
 
     // TODO: this was bad logic. it works for "closure" in general, but we are doing the implication closure!
     // TODO: it feels like there IS a way to accelerate this, I just don't have it yet.
@@ -66,22 +66,22 @@ export class NextClosure {
     let count = 0;
     const initialTime = Date.now();
 
-    while ( set ) {
+    while ( set !== null ) {
       count++;
       if ( count % logModulo === 0 ) {
         console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${Math.round( ( Date.now() - initialTime ) / 1000 )}s` );
       }
 
-      const closedSet = getClosure( set );
+      const closedSet = getClosure( AttributeSet.fromBinary( numAttributes, set ) );
 
-      if ( !set.equals( closedSet ) ) {
+      if ( set !== closedSet.data ) {
         // Is a pseudo-intent
-        const implication = new Implication( set, closedSet );
+        const implication = new Implication( AttributeSet.fromBinary( numAttributes, set ), closedSet );
         callback( implication );
         implications.push( implication );
 
         // Check if a single bit is set (we can mark that in impliedGreaterMasks, and hopefully get some acceleration)
-        let data = set.data;
+        let data = set;
         // See if clearing the lowest bit results in 0
         if ( data !== 0n && ( data & data - 1n ) === 0n ) {
           // Get i
@@ -110,7 +110,7 @@ export class NextClosure {
         // }
 
         // Check if we imply a higher bit that we don't yet have in our set. If so, skip immediately
-        if ( ( set.data & impliedGreaterMasks[ i ] ) !== impliedGreaterMasks[ i ] ) {
+        if ( ( set & impliedGreaterMasks[ i ] ) !== impliedGreaterMasks[ i ] ) {
           continue;
 
           // TODO: can we have slow assertions that check that potentialNextSet would be null here? Did assert in the code below
@@ -124,7 +124,7 @@ export class NextClosure {
           // }
         }
 
-        const potentialNextSetBits = Implication.implicationSetClosureLessThanI( implications, set.data, i );
+        const potentialNextSetBits = Implication.implicationSetClosureLessThanI( implications, set, i );
         const potentialNextSet = potentialNextSetBits !== null ? AttributeSet.fromBinary( numAttributes, potentialNextSetBits ) : potentialNextSetBits;
 
 
@@ -141,7 +141,7 @@ export class NextClosure {
       }
 
       if ( nextSet ) {
-        set = nextSet;
+        set = nextSet.data;
       }
       else {
         // done!
