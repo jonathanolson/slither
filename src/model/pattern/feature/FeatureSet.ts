@@ -674,6 +674,11 @@ export class FeatureSet {
     ];
   }
 
+  // Features that should be used to "prune" the highlander solution available.
+  public getHighlanderFeaturesArray(): TEmbeddableFeature[] {
+    return this.getFeaturesArray().filter( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
+  }
+
   public getFaceValue( face: TPatternFace ): FaceValue | undefined {
     return this.faceValueMap.get( face );
   }

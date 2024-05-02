@@ -7,6 +7,8 @@
   - 
   - HEY create "generations" that include BASIC boards(!)
   - 
+  - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
+  - 
   - Generalize the "closure" operator, so we can wrap it and call it with a FeatureSet (pattern)
   - 
   - Rule page(!)

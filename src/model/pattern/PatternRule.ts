@@ -11,6 +11,7 @@ import { PatternBoardSolver } from './PatternBoardSolver.ts';
 
 export type SerializedPatternRule = {
   patternBoard: string;
+  highlander?: true;
   input: TSerializedFeatureSet;
   output: TSerializedFeatureSet;
 };
@@ -19,7 +20,8 @@ export class PatternRule {
   public constructor(
     public readonly patternBoard: TPatternBoard,
     public readonly inputFeatureSet: FeatureSet,
-    public readonly outputFeatureSet: FeatureSet
+    public readonly outputFeatureSet: FeatureSet,
+    public readonly highlander: boolean = false
   ) {}
 
   public getInputDifficultyScoreA(): number {
@@ -38,7 +40,7 @@ export class PatternRule {
       return null;
     }
 
-    return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet );
+    return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet, this.highlander );
   }
 
   public getEmbeddedRules( embeddings: Embedding[] ): PatternRule[] {
@@ -143,11 +145,17 @@ export class PatternRule {
   }
 
   public serialize(): SerializedPatternRule {
-    return {
+    const result: SerializedPatternRule = {
       patternBoard: serializePatternBoard( this.patternBoard ),
       input: this.inputFeatureSet.serialize(),
       output: this.outputFeatureSet.serialize()
     };
+
+    if ( this.highlander ) {
+      result.highlander = true;
+    }
+
+    return result;
   }
 
   public static deserialize( serialized: SerializedPatternRule ): PatternRule {
@@ -156,7 +164,8 @@ export class PatternRule {
     return new PatternRule(
       patternBoard,
       FeatureSet.deserialize( serialized.input, patternBoard ),
-      FeatureSet.deserialize( serialized.output, patternBoard )
+      FeatureSet.deserialize( serialized.output, patternBoard ),
+      serialized.highlander ?? false
     );
   }
 

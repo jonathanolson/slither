@@ -13,7 +13,7 @@ export const getCollapsedRules = ( rules: PatternRule[] ): PatternRule[] => {
   const map = new Map<string, PatternRule>();
 
   for ( const rule of rules ) {
-    const key = rule.inputFeatureSet.toCanonicalString();
+    const key = `${rule.inputFeatureSet.toCanonicalString()}-${rule.highlander ? '1' : '0'}`;
 
     const existingRule = map.get( key );
     if ( existingRule ) {
@@ -23,7 +23,7 @@ export const getCollapsedRules = ( rules: PatternRule[] ): PatternRule[] => {
       else if ( !rule.outputFeatureSet.isSubsetOf( existingRule.outputFeatureSet ) ) {
         const union = rule.outputFeatureSet.union( existingRule.outputFeatureSet )!;
         assertEnabled() && assert( union );
-        map.set( key, new PatternRule( patternBoard, rule.inputFeatureSet, union ) );
+        map.set( key, new PatternRule( patternBoard, rule.inputFeatureSet, union, rule.highlander ) );
       }
     }
     else {

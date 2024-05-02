@@ -6,20 +6,17 @@ import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } fr
 import { BasePatternBoard } from './BasePatternBoard.ts';
 import { planarPatternMaps } from './planarPatternMaps.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { PatternBoardSolver } from './PatternBoardSolver.ts';
-import { getEmbeddings } from './getEmbeddings.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
-import { filterAndSortRules } from './generation/filterAndSortRules.ts';
 import { GetRulesOptions } from './generation/GetRulesOptions.ts';
 import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
-import { getCollapsedRules } from './generation/getCollapsedRules.ts';
 import { getStandardDescribedPatternBoard } from './patternBoards.ts';
 
 export class PatternBoardRuleSet {
   public constructor(
     public readonly patternBoard: TPatternBoard,
     public readonly mapping: TPlanarPatternMap,
-    public readonly rules: PatternRule[] = []
+    public readonly rules: PatternRule[] = [],
+    public readonly highlander: boolean = false,
   ) {
     assertEnabled() && assert( rules.every( rule => rule.patternBoard === patternBoard ) );
   }
@@ -41,7 +38,7 @@ export class PatternBoardRuleSet {
 
     const rules = getSolutionImpliedRules( patternBoard, options );
 
-    return new PatternBoardRuleSet( patternBoard, mapping, rules );
+    return new PatternBoardRuleSet( patternBoard, mapping, rules, !!providedOptions?.highlander );
   }
 
   public static createImpliedChained(
@@ -65,7 +62,7 @@ export class PatternBoardRuleSet {
       const rules = getSolutionImpliedRules( patternBoard, options );
 
       if ( rules.length ) {
-        ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules ) );
+        ruleSets.push( new PatternBoardRuleSet( patternBoard, mapping, rules, !!providedOptions?.highlander ) );
       }
 
       previousRules = [
@@ -77,55 +74,8 @@ export class PatternBoardRuleSet {
     return ruleSets;
   }
 
-  // TODO: Don't really use this, JUST generate the rules correctly from the start?
-  public filterCollapseWithInitialFeatureSet( featureSet: FeatureSet, previousRuleSets: PatternBoardRuleSet[] ): PatternBoardRuleSet {
-    assertEnabled() && assert( this.patternBoard === featureSet.patternBoard );
-
-    const previousRules = previousRuleSets.flatMap( ruleSet => ruleSet.rules );
-
-    const embeddedRules = previousRules.flatMap( rule => {
-      return rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, this.patternBoard ) );
-    } );
-
-    const patchedFilteredRules = this.rules.map( rule => {
-      if ( featureSet.isSubsetOf( rule.inputFeatureSet ) ) {
-        return rule;
-      }
-      else {
-        const input = rule.inputFeatureSet.union( featureSet ); // this might be null if we make other assumptions
-
-        if ( !input ) {
-          return null;
-        }
-
-        if ( !PatternBoardSolver.hasSolution( rule.patternBoard, input.getFeaturesArray() ) ) {
-          return null;
-        }
-
-        let output = rule.outputFeatureSet.union( featureSet ); // this might be null if the result is not compatible
-
-        if ( output ) {
-          output = PatternRule.withRulesApplied( this.patternBoard, output, embeddedRules );
-        }
-
-        return output ? new PatternRule( rule.patternBoard, input, output ) : null;
-      }
-    } ).filter( rule => rule !== null && !rule.isTrivial() ) as PatternRule[];
-
-    const collapsedRules = getCollapsedRules( patchedFilteredRules );
-
-    const finalRules = filterAndSortRules( collapsedRules, previousRules );
-
-    return new PatternBoardRuleSet( this.patternBoard, this.mapping, finalRules );
-  }
-
-  // TODO: Don't really use this, JUST generate the rules correctly from the start?
-  public filterCollapseWithVertexOrderLimit( vertexOrderLimit: number, previousRuleSets: PatternBoardRuleSet[] ): PatternBoardRuleSet {
-    return this.filterCollapseWithInitialFeatureSet( FeatureSet.emptyWithVertexOrderLimit( this.patternBoard, vertexOrderLimit ), previousRuleSets );
-  }
-
   public serialize(): SerializedPatternBoardRuleSet {
-    return {
+    const result: SerializedPatternBoardRuleSet = {
       patternBoard: serializePatternBoardDescriptor( this.patternBoard.descriptor ),
       mapping: serializePlanarPatternMap( this.mapping ),
       rules: this.rules.map( rule => {
@@ -135,9 +85,17 @@ export class PatternBoardRuleSet {
         };
       } )
     };
+
+    if ( this.highlander ) {
+      result.highlander = true;
+    }
+
+    return result;
   }
 
   public static deserialize( serialized: SerializedPatternBoardRuleSet ): PatternBoardRuleSet {
+
+    const highlander = !!serialized.highlander;
 
     // TODO: these should match descriptors perfectly, so they won't be "isomorphic"
     const descriptor = deserializePatternBoardDescriptor( serialized.patternBoard );
@@ -162,17 +120,19 @@ export class PatternBoardRuleSet {
       return new PatternRule(
         patternBoard,
         FeatureSet.deserialize( rule.input, patternBoard ),
-        FeatureSet.deserialize( rule.output, patternBoard )
+        FeatureSet.deserialize( rule.output, patternBoard ),
+        highlander
       );
     } );
 
-    return new PatternBoardRuleSet( patternBoard, planarPatternMap, rules );
+    return new PatternBoardRuleSet( patternBoard, planarPatternMap, rules, highlander );
   }
 }
 
 export type SerializedPatternBoardRuleSet = {
   patternBoard: string; // descriptor from serializePatternBoardDescriptor
   mapping: string; // from serializePlanarPatternMap
+  highlander?: true;
   rules: {
     input: TSerializedFeatureSet;
     output: TSerializedFeatureSet;

@@ -120,7 +120,7 @@ export const getFeatureImpliedRules = (
       return;
     }
 
-    rules.push( new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet ) );
+    rules.push( new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet, highlander ) );
   }, {
     logModulo: options.logModulo,
     logModuloCallback: ( count, set, implications, seconds ) => {

@@ -72,6 +72,18 @@ export class HighlanderPruner {
     return HighlanderPruner.filterWithInfo( richSolutions, indeterminateEdges, redExitEdges );
   }
 
+  public static getHighlanderKeyWithFeatureSet(
+    richSolution: RichSolution,
+    featureSet: FeatureSet
+  ): string {
+    // TODO: optimize this, or move it into this type?
+    const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
+
+    const redExitEdges = new Set( featureSet.patternBoard.edges.filter( edge => edge.isExit && featureSet.impliesRedEdge( edge ) ) );
+
+    return HighlanderPruner.getHighlanderKeyWithInfo( richSolution, indeterminateEdges, redExitEdges );
+  }
+
   public static getHighlanderKeyWithInfo(
     richSolution: RichSolution,
     indeterminateEdges: TPatternEdge[],

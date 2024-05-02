@@ -5,8 +5,6 @@ import { PatternBoardSolver } from '../PatternBoardSolver.ts';
 import { RichSolution } from './RichSolution.ts';
 import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
-import { FaceFeature } from '../feature/FaceFeature.ts';
-import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 
 export const getFeatureSetClosure = (
   featureSet: FeatureSet,
@@ -29,10 +27,7 @@ export const getFeatureSetClosure = (
   const numAttributes = binaryFeatureMap.numAttributes;
   const patternBits = binaryFeatureMap.getFeatureSetBits( featureSet );
 
-  let inputSolveFeatures = featureSet.getFeaturesArray();
-  if ( highlander ) {
-    inputSolveFeatures = inputSolveFeatures.filter( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
-  }
+  let inputSolveFeatures = highlander ? featureSet.getHighlanderFeaturesArray() : featureSet.getFeaturesArray();
 
   const solutions = PatternBoardSolver.getSolutions( patternBoard, inputSolveFeatures );
   let richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions ) );

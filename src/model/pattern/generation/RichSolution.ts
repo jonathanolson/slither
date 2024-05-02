@@ -1,5 +1,5 @@
 import { TPatternBoard } from '../TPatternBoard.ts';
-import { BasicSolveOptions } from '../feature/FeatureSet.ts';
+import { BasicSolveOptions, FeatureSet } from '../feature/FeatureSet.ts';
 import { TPatternEdge } from '../TPatternEdge.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
@@ -122,6 +122,11 @@ export class RichSolution {
 
   public isCompatibleWithFeature( feature: TEmbeddableFeature ): boolean {
     return feature.isPossibleWith( this.isEdgeBlack );
+  }
+
+  public isCompatibleWithFeatureSet( featureSet: FeatureSet ): boolean {
+    // TODO: better way
+    return featureSet.getFeaturesArray().every( feature => this.isCompatibleWithFeature( feature ) );
   }
 
   public toDebugString(): string {
