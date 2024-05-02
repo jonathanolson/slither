@@ -11,7 +11,9 @@ import _ from '../../../workarounds/_.ts';
 
 export class RichSolution {
 
+  // TODO: rename this? Confusing, given our previous "SolutionSet" type.
   public readonly solutionSet: Set<TPatternEdge>;
+
   public readonly isEdgeBlack: ( edge: TPatternEdge ) => boolean;
   public readonly solutionAttributeSet: SolutionAttributeSet;
   public readonly richEdgeStateMap: Map<TPatternEdge, RichEdgeState> = new Map();

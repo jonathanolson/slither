@@ -1,12 +1,12 @@
 import { PatternRule } from '../PatternRule.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import { PatternAttributeSetMapping, SolutionSet } from '../SolutionSet.ts';
-import { AttributeSet } from '../formal-concept/AttributeSet.ts';
-import _ from '../../../workarounds/_.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { optionize3 } from 'phet-lib/phet-core';
 import { NextClosure } from '../formal-concept/NextClosure.ts';
 import { TablePruner } from '../formal-concept/TablePruner.ts';
+import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
+import { PatternBoardSolver } from '../PatternBoardSolver.ts';
+import { RichSolution } from './RichSolution.ts';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
@@ -26,113 +26,32 @@ export const getFeatureImpliedRules = (
 ): PatternRule[] => {
   const options = optionize3<GetFeatureImpliedRulesOptions>()( {}, GET_FEATURE_IMPLIED_RULES_DEFAULTS, providedOptions );
 
-  let initialSolutionSet = SolutionSet.fromFeatureSet(
-    featureSet,
-    includeEdges,
-    includeSectors,
-    includeFaces,
-    highlander
-  );
+  // TODO: better options handling
+  const solutionOptions = {
+    solveEdges: includeEdges,
+    solveSectors: includeSectors,
+    solveFaceColors: includeFaces,
+    highlander: highlander,
+  };
 
-  // We might have faces that have no solutions!
-  if ( !initialSolutionSet ) {
-    return [];
-  }
+  const patternBoard = featureSet.patternBoard;
+  const inputFeatures = featureSet.getFeaturesArray();
 
-  console.log( 'solutions', initialSolutionSet.numSolutions );
+  const binaryFeatureMap = new BinaryFeatureMap( patternBoard, solutionOptions );
 
-  const solutionSet = initialSolutionSet;
+  const numAttributes = binaryFeatureMap.numAttributes;
 
-  const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
+  const solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatures );
+  const richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions ) );
 
-  const numAttributes = mapping.numBits;
-
-  // let edgeHighlanderCodeMask = 0n;
-  //
-  // // Holds pairs that detect features (red exit edge features) in the attribute set, and then IF that matches, the
-  // // bit pattern to & to the mask to get the (reduced) highlander mask.
-  // const edgeHighlanderCodePairs: [ bigint, bigint ][] = [];
-  //
-  // if ( highlander ) {
-  //   // TODO NOTE: if we fully rule out all solutions FROM THE START... we should potentially create a rule that says "all determinate edges are red?"
-  //   // maybe NO: "everything red" will be a solution
-  //   // TODO: if it is an "invalid" pattern for highlander, all will be filtered, including "everything red"
-  //
-  //   const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
-  //
-  //   for ( const indeterminateEdge of indeterminateEdges ) {
-  //     edgeHighlanderCodeMask |= 0x3n << BigInt( 2 * indeterminateEdge.index );
-  //   }
-  //
-  //   // Attribute mask with all bits set
-  //   const fullMask = ( 1n << BigInt( 2 * featureSet.patternBoard.edges.length ) ) - 1n;
-  //
-  //   for ( const edge of featureSet.patternBoard.edges ) {
-  //     if ( edge.isExit ) {
-  //       const redSolutionEdgeIndex = 3 * edge.index + 1;
-  //       const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
-  //
-  //       edgeHighlanderCodePairs.push( [
-  //         // a mask to detect the presence of a red exit edge in an attribute set
-  //         1n << BigInt( redAttributeEdgeIndex ),
-  //
-  //         // a mask with all bits set EXCEPT those that should be removed from the edgeHighlanderCodeMask when this
-  //         // feature is present
-  //         fullMask - ( 0x3n << BigInt( 2 * edge.index ) )
-  //       ] );
-  //     }
-  //   }
-  // }
-
-  const solutionAttributeSets = _.range( 0, solutionSet.numSolutions ).map( solutionIndex => {
-    // TODO: factor back in?
-    const baseBigint = mapping.getBigint( solutionSet.bitData, solutionIndex );
-
-    const simpleAttributeSet = AttributeSet.fromBinary( numAttributes, baseBigint );
-
-    let redEdgeData = BigInt( 0 );
-
-    if ( includeEdges ) {
-      featureSet.patternBoard.edges.forEach( edge => {
-        if ( !edge.isExit ) {
-          return;
-        }
-
-        const redSolutionEdgeIndex = 3 * edge.index + 1;
-        const redAttributeEdgeIndex = mapping.mapBitIndex( redSolutionEdgeIndex );
-
-        // TODO: map directly from solutions ideally
-        if ( simpleAttributeSet.hasAttribute( redAttributeEdgeIndex ) ) {
-          return;
-        }
-
-        const hasNoBlackNonExitEdges = edge.exitVertex!.edges.every( edge => {
-          return edge.isExit || !simpleAttributeSet.hasAttribute( mapping.mapBitIndex( 3 * edge.index ) );
-        } );
-
-        if ( hasNoBlackNonExitEdges ) {
-          redEdgeData |= BigInt( 1 ) << BigInt( redAttributeEdgeIndex );
-        }
-      } );
-
-      if ( highlander ) {
-        throw new Error( 'unimplemented, reimplement new way' );
-      }
-    }
-
-    return SolutionAttributeSet.fromSolutionBinary( numAttributes, baseBigint, redEdgeData );
-  } );
-
-  if ( highlander ) {
-    // TODO: do highlander filtering
-  }
 
   let getClosure: ( attributeSet: bigint ) => bigint;
   if ( highlander ) {
+    // TODO: do highlander filtering
     throw new Error();
   }
   else {
-    const tablePruner = new TablePruner( numAttributes, solutionAttributeSets );
+    const tablePruner = new TablePruner( numAttributes, richSolutions.map( solution => binaryFeatureMap.getSolutionAttributeSet( solution.solutionSet ) ) );
 
     getClosure = ( attributeSet: bigint ) => {
       const prunedSolutionSets = tablePruner.getSolutionAttributeSets( attributeSet );
@@ -140,20 +59,6 @@ export const getFeatureImpliedRules = (
       return SolutionAttributeSet.solutionClosure( numAttributes, prunedSolutionSets, attributeSet );
     };
   }
-
-  // console.log( featureSet.toCanonicalString() );
-  // console.log( formalContext.toString() );
-  //
-  // if ( featureSet.getFeaturesArray().length === 0 ) {
-  //   const input = AttributeSet.getEmpty( numAttributes ).withAttribute( 8 );
-  //   const output = formalContext.getClosure( input );
-  //
-  //   console.log( 'input', input.toString() );
-  //   console.log( 'output', output.toString() );
-  //
-  //   debugger;
-  //   formalContext.getClosure( input );
-  // }
 
   const invalidAttributeSet = ( 1n << BigInt( numAttributes ) ) - 1n;
 
@@ -163,13 +68,30 @@ export const getFeatureImpliedRules = (
       return;
     }
 
-    const inputFeatureSet = featureSet.clone();
-    const inputNumbers = mapping.getNumbers( implication.antecedent );
-    SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, inputNumbers, inputFeatureSet );
+    // TODO: see if we can relax this
 
+    const inputFeatureSet = featureSet.clone();
     const outputFeatureSet = featureSet.clone();
-    const outputNumbers = mapping.getNumbers( implication.consequent );
-    SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, outputNumbers, outputFeatureSet );
+
+    const inputFeatureSetChanges = binaryFeatureMap.getBitsFeatureSet( implication.antecedent )!;
+    inputFeatureSet.applyFeaturesFrom( inputFeatureSetChanges );
+
+    const outputFeatureSetChanges = binaryFeatureMap.getBitsFeatureSet( implication.consequent )!;
+    outputFeatureSet.applyFeaturesFrom( outputFeatureSetChanges );
+
+    inputFeatureSet.applyFeaturesFrom( inputFeatureSetChanges );
+    outputFeatureSet.applyFeaturesFrom( outputFeatureSetChanges );
+
+    // TODO: reverse order eventually, after we are done testing
+    // const inputFeatureSet = binaryFeatureMap.getBitsFeatureSet( implication.antecedent )!;
+    // assertEnabled() && assert( inputFeatureSet );
+    // inputFeatureSet.applyFeaturesFrom( featureSet );
+    //
+    // const outputFeatureSet = binaryFeatureMap.getBitsFeatureSet( implication.consequent )!;
+    // assertEnabled() && assert( outputFeatureSet );
+    // outputFeatureSet.applyFeaturesFrom( featureSet );
+
+
 
     // if ( assertEnabled() ) {
     //   for ( let i = 0; i < solutionSet.numSolutions; i++ ) {
@@ -195,7 +117,7 @@ export const getFeatureImpliedRules = (
       return;
     }
 
-    rules.push( new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet ) );
+    rules.push( new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet ) );
   }, {
     logModulo: options.logModulo,
     logModuloCallback: ( count, set, implications, seconds ) => {

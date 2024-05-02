@@ -3,6 +3,8 @@
 
 - TODO
   - 
+  - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
+  - 
   - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
   - 
   - 

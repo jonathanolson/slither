@@ -1,4 +1,4 @@
-import { Circle, Line, Node, Path, Text } from 'phet-lib/scenery';
+import { Circle, Node, Path, Text } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
 import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
@@ -63,8 +63,6 @@ export class PatternNode extends Node {
     const primaryFaceColorShapes: Shape[] = hueLUT.map( () => new Shape() );
     const secondaryFaceColorShapes: Shape[] = hueLUT.map( () => new Shape() );
     ( features.filter( f => f instanceof FaceColorDualFeature ) as FaceColorDualFeature[] ).forEach( ( feature, i ) => {
-      const hue = hueLUT[ i % hueLUT.length ];
-
       feature.primaryFaces.forEach( face => {
         const points = planarPatternMap.faceMap.get( face )!;
         primaryFaceColorShapes[ i % hueLUT.length ].polygon( points );

@@ -1,6 +1,5 @@
 import { AlignBox, Display, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { PatternNode } from './view/pattern/PatternNode.ts';
