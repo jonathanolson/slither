@@ -62,18 +62,34 @@ export class HighlanderPruner {
             }
           } ).join( '' ) + '/' + richSolution.vertexConnectionKey;
 
+          // Binning STILL includes RichSolutions that won't actually match some of the features (black edges, etc.)
+          // For highlander purposes, we only treat the external things for filtering (face values, and those exit edges)
           if ( solutionMap.has( key ) ) {
             solutionMap.set( key, null );
           }
           else {
             solutionMap.set( key, richSolution );
           }
-
-          // TODO: WE NEED TO FILTER OUT THE ACTUAL NON_MATCHING ONES!!!!
-          const solutions = ( [ ...solutionMap.values() ].filter( solution => solution ) as RichSolution[] ).map( solution => solution.solutionAttributeSet );
-
-          this.solutionAttributeSetLists[ highlanderIndex ] = solutions;
         }
+
+        // TODO: WE NEED TO FILTER OUT THE ACTUAL NON_MATCHING ONES!!!!
+        const solutions = ( [ ...solutionMap.values() ].filter( solution => {
+          // Filter out ones that had "duplicates"
+          if ( solution === null ) {
+            return false;
+          }
+
+          // Filter out ones with black edges where we REQUIRE red edges
+          for ( const redExitEdge of redExitEdges ) {
+            if ( solution.solutionSet.has( redExitEdge ) ) {
+              return false;
+            }
+          }
+
+          return true;
+        } ) as RichSolution[] ).map( solution => solution.solutionAttributeSet );
+
+        this.solutionAttributeSetLists[ highlanderIndex ] = solutions;
       }
       else {
         recur( index + 1, highlanderIndex, redExitEdges );

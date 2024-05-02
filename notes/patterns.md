@@ -5,55 +5,21 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
-  - Actually.... filter out the red exit edge stuff?
+  - 
+  - WHY are we getting .... INCONSISTENT things? Oh, because it doesn't KNOW it is inconsistent? unclear. What is going on
+    - DETECT that case, and then SHOW precisely which solutions are getting "highlandered" out.
+  - WAIT WAIT WAIT we are... somehow not "borking" out of invalid patterns? OMG OMG.
+    - Wait, how is this NOT a bigger failure in general?
+  - 
   - 
   - OMG, allow my "rule.html" bit to import... just ANY input pattern (board + features)!
   - 
+  - HEY! We should do the recursive optimization for the highlander stuff.
   - 
-  - CLEANUP:
-    - getFeatureImpliedRules / SolutionFormalContext / SolutionAttributeSet / PatternAttributeSetMapping
-    - 
-    - RichSolution
-    - BinaryFeatureMap - given PatternBoard and edge/sector/face-dual/highlander options
-      - List (at least one) TFeature for each bit!!! - will have edge/color-dual OVERLAP of features specified
-      - Allow various reads/writes on bigints based on features (with methods)
-      - WHEN READING BACK INTO A FEATURESET:
-        - Check for "invalid" (null) - e.g. all bits set
-        - Do a lot of what SolutionSet.applyNumbersToFeatureSet does now?
-          - BUT pull efficient face-color code eventually from that one place?
-    - For closures:
-      - RichSolutionFinder - given a bigint/attributeset, give a (pruned) list of RichSolutions we should search through
-        - [HELPFUL] - For those red exit edges, ALSO prune the solutions based on this (AFTER the highlander bit)
-      - easy to get "getClosure" from a finder (should be consistent) - NOTE the potential "optional data"
-        - HEY, these should INSTEAD directly give us SolutionAttributeSets?
-          - [HEY] SolutionAttributeSet DIRECTLY on RichSolution?
-    - 
-    - Remember, bits are:
-      - non-exit edges: RED, BLACK
-        - If solution:black, set BLACK
-        - If solution:red, set RED
-      - exit edges: RED
-        - If solution:red AND exit vertex has a black (non-exit) edge, set RED (since it is a forced red)
-      - sectors: NOT_ZERO, NOT_ONE, NOT_TWO
-        - (set as normal)
-      - OTHER face pairs (that don't have a single edge based on FaceConnectivity): SAME, OPPOSITE
-        - (check parity, using shortestPath), set the appropriate bit
-    - VertexConnections:
-      - Use the SolutionSet algos, line 760ish
-    - 
-    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
-    - 
-    - Order of operations:
-      - Solutions, from PatternBoardSolver.forEachSolution( featureSet.patternBoard, featureSet.getFeaturesArray(), callback )
-        - Store solution: TPatternEdge[],
-        - Store solutionSet: Set<TPatternEdge>
-        - Store main bigint (attribute set)
-        - Store optional bigint (optional set, indicating exit edges soft-red-or-double-black, with no black non-exit edges)
-        - Store vertex connections (and string key?)
-    - 
-    - SKIP the SolutionSet(!), but perhaps do things that it does?
+  - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
   - 
   - I've made a rats nest basing things on SolutionSet. Just create a `Solution` type(!) for ease of use
+    - Can we... remove SolutionSet soon? ([DITCH IT])
   - 
   - DIRECT from PatternBoardSolver => SolutionFormalContext, with IMPROVED solution objects!
   - 
