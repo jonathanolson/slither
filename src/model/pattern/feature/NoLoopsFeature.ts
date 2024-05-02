@@ -54,7 +54,7 @@ export class NoLoopsFeature implements TFeature {
           continue;
         }
 
-        if ( nextVertex === startVertex && path.length >= 3 ) {
+        if ( nextVertex === startVertex && path.length >= 2 ) {
 
           const loop = [ ...path, edge ];
 

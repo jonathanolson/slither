@@ -1,11 +1,12 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { basicPatternBoards, edgePatternBoard, standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
+import { edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { BasePatternBoard } from './model/pattern/BasePatternBoard.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
-import { basicSectorImpliedRuleSets } from './model/pattern/data/basicSectorImpliedRuleSets.ts';
+import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
+import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -85,6 +86,16 @@ console.log( 'test' );
   }, {
     labels: true
   } ) );
+
+  {
+    const patternBoard = standardTriangularBoardGenerations[ 0 ][ 0 ];
+
+    console.log( PatternBoardSolver.getSolutions( patternBoard, [] ) );
+
+    console.log( getStructuralFeatures( patternBoard ) );
+
+    // debugger;
+  }
 
 
   // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
