@@ -107,16 +107,17 @@ export class Implication {
   // TODO: check with built-in assertions checking equality with the old version, AND check a bunch of sets.
   public static implicationSetClosureLessThanI(
     implications: Implication[],
-    attributeSet: AttributeSet,
+    attributeSet: bigint,
     i: number,
-  ): AttributeSet | null {
+  ): bigint | null {
     // Must not be set. If it is set, we would fail the isLessThanI check
-    if ( attributeSet.hasAttribute( i ) ) {
+    // (see if it has the attribute set)
+    if ( ( attributeSet & ( 1n << BigInt( i ) ) ) !== 0n ) {
       return null;
     }
 
     // withLowestBitSet( i )
-    let bits = ( attributeSet.data & ~( ( 1n << BigInt( i ) ) - 1n ) ) | ( 1n << BigInt( i ) );
+    let bits = ( attributeSet & ~( ( 1n << BigInt( i ) ) - 1n ) ) | ( 1n << BigInt( i ) );
 
     let abortRegion = ~( ( 1n << BigInt( i + 1 ) ) - 1n ); // all bits above i
     let abortMask = abortRegion & ~bits;
@@ -171,6 +172,6 @@ export class Implication {
       }
     }
 
-    return AttributeSet.fromBinary( attributeSet.numAttributes, bits );
+    return bits;
   }
 }

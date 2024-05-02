@@ -124,7 +124,8 @@ export class NextClosure {
           // }
         }
 
-        const potentialNextSet = Implication.implicationSetClosureLessThanI( implications, set, i );
+        const potentialNextSetBits = Implication.implicationSetClosureLessThanI( implications, set.data, i );
+        const potentialNextSet = potentialNextSetBits !== null ? AttributeSet.fromBinary( numAttributes, potentialNextSetBits ) : potentialNextSetBits;
 
 
         // if ( ( set.data & inputMasks[ i ] ) !== outputMasks[ i ] ) {
