@@ -8,7 +8,7 @@ import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts
 import { FaceFeature } from '../feature/FaceFeature.ts';
 import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 
-export const getClosure = (
+export const getFeatureSetClosure = (
   featureSet: FeatureSet,
   includeEdges: boolean,
   includeSectors: boolean,
