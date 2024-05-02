@@ -10,6 +10,7 @@
   - Generalize the "closure" operator, so we can wrap it and call it with a FeatureSet (pattern)
   - 
   - Rule page(!)
+    - When showing highlander-excluded solutions, show (1) other solution (even if it is excluded by the input pattern)
   - 
   - Organization:
     - NAME the ruleset BY ITS PATTERN BOARD NAME?

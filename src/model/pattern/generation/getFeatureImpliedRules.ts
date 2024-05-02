@@ -85,9 +85,6 @@ export const getFeatureImpliedRules = (
     const outputFeatureSetChanges = binaryFeatureMap.getBitsFeatureSet( implication.consequent )!;
     outputFeatureSet.applyFeaturesFrom( outputFeatureSetChanges );
 
-    inputFeatureSet.applyFeaturesFrom( inputFeatureSetChanges );
-    outputFeatureSet.applyFeaturesFrom( outputFeatureSetChanges );
-
     // TODO: reverse order eventually, after we are done testing
     // const inputFeatureSet = binaryFeatureMap.getBitsFeatureSet( implication.antecedent )!;
     // assertEnabled() && assert( inputFeatureSet );

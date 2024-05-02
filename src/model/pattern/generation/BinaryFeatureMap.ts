@@ -152,6 +152,20 @@ export class BinaryFeatureMap {
     );
   }
 
+  public getFeatureSetBits( featureSet: FeatureSet ): bigint {
+    let bits = 0n;
+
+    for ( let i = 0; i < this.numAttributes; i++ ) {
+      const feature = this.primaryFeatures[ i ];
+
+      if ( featureSet.impliesFeature( feature ) ) {
+        bits |= 1n << BigInt( i );
+      }
+    }
+
+    return bits;
+  }
+
   public bitsHaveIndex( bits: bigint, index: number ): boolean {
     return ( bits & ( 1n << BigInt( index ) ) ) !== 0n;
   }
