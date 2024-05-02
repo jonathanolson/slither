@@ -3,10 +3,10 @@ import { FeatureSet } from '../feature/FeatureSet.ts';
 import { PatternAttributeSetMapping, SolutionSet } from '../SolutionSet.ts';
 import { AttributeSet } from '../formal-concept/AttributeSet.ts';
 import _ from '../../../workarounds/_.ts';
-import { SolutionFormalContext } from '../formal-concept/SolutionFormalContext.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { optionize3 } from 'phet-lib/phet-core';
 import { NextClosure } from '../formal-concept/NextClosure.ts';
+import { TablePruner } from '../formal-concept/TablePruner.ts';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
@@ -44,6 +44,8 @@ export const getFeatureImpliedRules = (
   const solutionSet = initialSolutionSet;
 
   const mapping = new PatternAttributeSetMapping( solutionSet.patternBoard, solutionSet.shape );
+
+  const numAttributes = mapping.numBits;
 
   // let edgeHighlanderCodeMask = 0n;
   //
@@ -86,7 +88,7 @@ export const getFeatureImpliedRules = (
     // TODO: factor back in?
     const baseBigint = mapping.getBigint( solutionSet.bitData, solutionIndex );
 
-    const simpleAttributeSet = AttributeSet.fromBinary( mapping.numBits, baseBigint );
+    const simpleAttributeSet = AttributeSet.fromBinary( numAttributes, baseBigint );
 
     let redEdgeData = BigInt( 0 );
 
@@ -118,22 +120,32 @@ export const getFeatureImpliedRules = (
       }
     }
 
-    return SolutionAttributeSet.fromSolutionBinary( mapping.numBits, baseBigint, redEdgeData );
+    return SolutionAttributeSet.fromSolutionBinary( numAttributes, baseBigint, redEdgeData );
   } );
 
   if ( highlander ) {
     // TODO: do highlander filtering
   }
 
-  const formalContext = new SolutionFormalContext(
-    mapping.numBits, solutionAttributeSets, highlander,
-  );
+  let getClosure: ( attributeSet: bigint ) => bigint;
+  if ( highlander ) {
+    throw new Error();
+  }
+  else {
+    const tablePruner = new TablePruner( numAttributes, solutionAttributeSets );
+
+    getClosure = ( attributeSet: bigint ) => {
+      const prunedSolutionSets = tablePruner.getSolutionAttributeSets( attributeSet );
+
+      return SolutionAttributeSet.solutionClosure( numAttributes, prunedSolutionSets, attributeSet );
+    };
+  }
 
   // console.log( featureSet.toCanonicalString() );
   // console.log( formalContext.toString() );
   //
   // if ( featureSet.getFeaturesArray().length === 0 ) {
-  //   const input = AttributeSet.getEmpty( mapping.numBits ).withAttribute( 8 );
+  //   const input = AttributeSet.getEmpty( numAttributes ).withAttribute( 8 );
   //   const output = formalContext.getClosure( input );
   //
   //   console.log( 'input', input.toString() );
@@ -143,10 +155,10 @@ export const getFeatureImpliedRules = (
   //   formalContext.getClosure( input );
   // }
 
-  const invalidAttributeSet = ( 1n << BigInt( mapping.numBits ) ) - 1n;
+  const invalidAttributeSet = ( 1n << BigInt( numAttributes ) ) - 1n;
 
   const rules: PatternRule[] = [];
-  NextClosure.forEachImplication( formalContext.numAttributes, formalContext.getClosure.bind( formalContext ), implication => {
+  NextClosure.forEachImplication( numAttributes, getClosure, implication => {
     if ( implication.consequent === invalidAttributeSet ) {
       return;
     }
