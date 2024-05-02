@@ -1,5 +1,4 @@
 import { Implication } from './Implication.ts';
-import { AttributeSet } from './AttributeSet.ts';
 
 export class NextClosure {
   public static forEachImplication(
@@ -76,7 +75,7 @@ export class NextClosure {
 
       if ( set !== closedSet ) {
         // Is a pseudo-intent
-        const implication = new Implication( AttributeSet.fromBinary( numAttributes, set ), AttributeSet.fromBinary( numAttributes, closedSet ) );
+        const implication = new Implication( set, closedSet );
         callback( implication );
         implications.push( implication );
 

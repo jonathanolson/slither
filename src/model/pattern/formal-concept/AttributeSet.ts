@@ -10,10 +10,6 @@ export class AttributeSet {
     public data: bigint
   ) {}
 
-  public getBits(): bigint {
-    return this.data;
-  }
-
   // Mutable
 
   public or( other: AttributeSet ): void {

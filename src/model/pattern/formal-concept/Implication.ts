@@ -1,9 +1,7 @@
-import { AttributeSet } from './AttributeSet.ts';
-
 export class Implication {
   public constructor(
-    public readonly antecedent: AttributeSet,
-    public readonly consequent: AttributeSet
+    public readonly antecedent: bigint,
+    public readonly consequent: bigint
   ) {}
 
   public toString(): string {
@@ -39,8 +37,8 @@ export class Implication {
         // for ( const implication of implications ) {
         const implication = implications[ i ];
 
-        const antecedentData = implication.antecedent.data;
-        const consequentData = implication.consequent.data;
+        const antecedent = implication.antecedent;
+        const consequent = implication.consequent;
         const setData = impliedAttributeSet;
 
         // isProperSubsetOf: return this.isSubsetOf( other ) && !this.equals( other );
@@ -50,14 +48,14 @@ export class Implication {
 
         if (
           // implication.antecedent.isProperSubsetOf( impliedAttributeSet )
-          ( antecedentData & setData ) === antecedentData &&
-          antecedentData !== setData &&
+          ( antecedent & setData ) === antecedent &&
+          antecedent !== setData &&
 
           // !implication.consequent.isSubsetOf( impliedAttributeSet )
-          ( consequentData & setData ) !== consequentData
+          ( consequent & setData ) !== consequent
         ) {
           // impliedAttributeSet.or( implication.consequent );
-          impliedAttributeSet |= consequentData;
+          impliedAttributeSet |= consequent;
           changed = true;
         }
       }
@@ -144,8 +142,8 @@ export class Implication {
         // for ( const implication of implications ) {
         const implication = implications[ i ];
 
-        const antecedentData = implication.antecedent.data;
-        const consequentData = implication.consequent.data;
+        const antecedent = implication.antecedent;
+        const consequent = implication.consequent;
 
         // isProperSubsetOf: return this.isSubsetOf( other ) && !this.equals( other );
         // isSubsetOf: return ( this.data & other.data ) === this.data;
@@ -154,19 +152,19 @@ export class Implication {
 
         if (
           // implication.antecedent.isProperSubsetOf( impliedAttributeSet )
-          ( antecedentData & bits ) === antecedentData &&
-          antecedentData !== bits &&
+          ( antecedent & bits ) === antecedent &&
+          antecedent !== bits &&
 
           // !implication.consequent.isSubsetOf( impliedAttributeSet )
-          ( consequentData & bits ) !== consequentData
+          ( consequent & bits ) !== consequent
         ) {
           // If it sets a bit above i, abort!
-          if ( consequentData & abortMask ) {
+          if ( consequent & abortMask ) {
             return null;
           }
 
           // impliedAttributeSet.or( implication.consequent );
-          bits |= consequentData;
+          bits |= consequent;
           changed = true;
         }
       }

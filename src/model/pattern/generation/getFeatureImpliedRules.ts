@@ -143,20 +143,20 @@ export const getFeatureImpliedRules = (
   //   formalContext.getClosure( input );
   // }
 
-  const invalidAttributeSet = AttributeSet.getFull( mapping.numBits );
+  const invalidAttributeSet = ( 1n << BigInt( mapping.numBits ) ) - 1n;
 
   const rules: PatternRule[] = [];
   NextClosure.forEachImplication( formalContext.numAttributes, formalContext.getClosure.bind( formalContext ), implication => {
-    if ( implication.consequent.equals( invalidAttributeSet ) ) {
+    if ( implication.consequent === invalidAttributeSet ) {
       return;
     }
 
     const inputFeatureSet = featureSet.clone();
-    const inputNumbers = mapping.getNumbers( implication.antecedent.getBits() );
+    const inputNumbers = mapping.getNumbers( implication.antecedent );
     SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, inputNumbers, inputFeatureSet );
 
     const outputFeatureSet = featureSet.clone();
-    const outputNumbers = mapping.getNumbers( implication.consequent.getBits() );
+    const outputNumbers = mapping.getNumbers( implication.consequent );
     SolutionSet.applyNumbersToFeatureSet( solutionSet.patternBoard, solutionSet.shape, outputNumbers, outputFeatureSet );
 
     // if ( assertEnabled() ) {
