@@ -6,6 +6,8 @@ import { PatternNode } from './view/pattern/PatternNode.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -62,7 +64,8 @@ console.log( 'test' );
 
   {
     // Solutions
-    const solutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray() );
+    // TODO: revert back
+    const solutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray().filter( rule => rule instanceof FaceFeature || ( rule instanceof RedEdgeFeature && rule.edge.isExit ) ) );
     const solutionFeatureSets = solutions.map( solution => FeatureSet.fromSolution( patternBoard, solution ) );
 
     const compatibleFeatureSets: FeatureSet[] = [];

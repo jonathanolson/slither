@@ -88,6 +88,11 @@
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- last one
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- last one!
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
+      - getHighlanderOnlyImpliedSquareBoardRules 2 0 [kitty 3]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 4]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 2 [kitty 5]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 6]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 4 [kitty 7]
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
