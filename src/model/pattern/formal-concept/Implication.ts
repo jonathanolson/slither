@@ -13,10 +13,10 @@ export class Implication {
   // Only applies non-full rules
   public static implicationSetClosure(
     implications: Implication[],
-    attributeSet: AttributeSet
-  ): AttributeSet {
+    attributeSet: bigint
+  ): bigint {
     // We will mutate
-    let impliedAttributeSet = attributeSet.clone();
+    let impliedAttributeSet = attributeSet;
 
     // TODO: improve complexity
     let changed = true;
@@ -41,7 +41,7 @@ export class Implication {
 
         const antecedentData = implication.antecedent.data;
         const consequentData = implication.consequent.data;
-        const setData = impliedAttributeSet.data;
+        const setData = impliedAttributeSet;
 
         // isProperSubsetOf: return this.isSubsetOf( other ) && !this.equals( other );
         // isSubsetOf: return ( this.data & other.data ) === this.data;
@@ -57,7 +57,7 @@ export class Implication {
           ( consequentData & setData ) !== consequentData
         ) {
           // impliedAttributeSet.or( implication.consequent );
-          impliedAttributeSet.data |= consequentData;
+          impliedAttributeSet |= consequentData;
           changed = true;
         }
       }
