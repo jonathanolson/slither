@@ -7,6 +7,7 @@ import { TablePruner } from '../formal-concept/TablePruner.ts';
 import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
 import { PatternBoardSolver } from '../PatternBoardSolver.ts';
 import { RichSolution } from './RichSolution.ts';
+import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;
@@ -44,11 +45,16 @@ export const getFeatureImpliedRules = (
   const solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatures );
   const richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions ) );
 
-
+  // TODO: collapse this logic if it is working
   let getClosure: ( attributeSet: bigint ) => bigint;
   if ( highlander ) {
-    // TODO: do highlander filtering
-    throw new Error();
+    const highlanderPruner = new HighlanderPruner( featureSet, binaryFeatureMap, richSolutions );
+
+    getClosure = ( attributeSet: bigint ) => {
+      const prunedSolutionSets = highlanderPruner.getSolutionAttributeSets( attributeSet );
+
+      return SolutionAttributeSet.solutionClosure( numAttributes, prunedSolutionSets, attributeSet );
+    };
   }
   else {
     const tablePruner = new TablePruner( numAttributes, richSolutions.map( solution => binaryFeatureMap.getSolutionAttributeSet( solution.solutionSet ) ) );
@@ -121,8 +127,7 @@ export const getFeatureImpliedRules = (
   }, {
     logModulo: options.logModulo,
     logModuloCallback: ( count, set, implications, seconds ) => {
-      // TODO: use BinaryFeatureMap to log this out better
-      console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${seconds}s` );
+      console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), [`${binaryFeatureMap.getBinaryString( set )} (${binaryFeatureMap.getIndicesString( set )})`], implications.length, `${seconds}s` );
     }
   } );
 
