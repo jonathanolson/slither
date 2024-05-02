@@ -196,50 +196,12 @@ export const getFeatureImpliedRules = (
     }
 
     rules.push( new PatternRule( solutionSet.patternBoard, inputFeatureSet, outputFeatureSet ) );
-
-  //   if ( inputFeatureSet.equals( FeatureSet.deserialize( {
-  //     "faceValues": [
-  //         {
-  //             "face": 0,
-  //             "value": 1
-  //         },
-  //         {
-  //             "face": 1,
-  //             "value": null
-  //         },
-  //         {
-  //             "face": 6,
-  //             "value": null
-  //         },
-  //         {
-  //             "face": 7,
-  //             "value": null
-  //         },
-  //         {
-  //             "face": 8,
-  //             "value": null
-  //         },
-  //         {
-  //             "face": 9,
-  //             "value": null
-  //         }
-  //     ],
-  //     "blackEdges": [
-  //         7
-  //     ],
-  //     "redEdges": [
-  //         8,
-  //         13
-  //     ]
-  // }, solutionSet.patternBoard ) ) ) {
-  //     debugger;
-  //   }
-
-    // if ( JSON.stringify( inputFeatureSet.serialize() ) === `{"faceValues":[{"face":0,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4]}` ) {
-    //   debugger;
-    // }
   }, {
-    logModulo: options.logModulo
+    logModulo: options.logModulo,
+    logModuloCallback: ( count, set, implications, seconds ) => {
+      // TODO: use BinaryFeatureMap to log this out better
+      console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${seconds}s` );
+    }
   } );
 
   return rules;

@@ -5,9 +5,13 @@ export class NextClosure {
     numAttributes: number,
     getClosure: ( attributeSet: bigint ) => bigint,
     callback: ( implication: Implication ) => void,
-    options?: { logModulo?: number }
+    options?: { 
+      logModulo?: number;
+      logModuloCallback?: ( count: number, set: bigint, implications: Implication[], seconds: number ) => void;
+    }
   ): void {
     const logModulo = options?.logModulo ?? 1000000;
+    const logModuloCallback = options?.logModuloCallback;
 
     // NOTE: We need to store implications to handle implication set closure(!)
     const implications: Implication[] = [];
@@ -68,7 +72,7 @@ export class NextClosure {
     while ( set !== null ) {
       count++;
       if ( count % logModulo === 0 ) {
-        console.log( count.toString().replace( /\B(?=(\d{3})+(?!\d))/g, ',' ), `${set.toString()}`, implications.length, `${Math.round( ( Date.now() - initialTime ) / 1000 )}s` );
+        logModuloCallback && logModuloCallback( count, set, implications, Math.round( ( Date.now() - initialTime ) / 1000 ) );
       }
 
       const closedSet = getClosure( set );
