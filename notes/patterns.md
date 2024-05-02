@@ -5,6 +5,18 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - HEY create "generations" that include BASIC boards(!)
+  - 
+  - Generalize the "closure" operator, so we can wrap it and call it with a FeatureSet (pattern)
+  - 
+  - Rule page(!)
+  - 
+  - Organization:
+    - NAME the ruleset BY ITS PATTERN BOARD NAME?
+      - (do basic boards have good names? we need that)
+    - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
+      - Could we... rely on AJAX to load rules?
+  - 
   - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
   - 
 - 
