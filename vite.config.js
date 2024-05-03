@@ -35,7 +35,6 @@ export default defineConfig( {
         'rule': '/rule.html',
         'curated-rules': '/curated-rules.html',
         'filtered-rules': '/filtered-rules.html',
-        'debug-rule': '/debug-rule.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
         'pattern-boards': '/pattern-boards.html',
         'export-ruleset-image': '/export-ruleset-image.html',

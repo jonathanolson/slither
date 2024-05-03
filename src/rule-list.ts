@@ -3,11 +3,6 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { basicEdgeRuleSets } from './model/pattern/data/basicEdgeRuleSets.ts';
 import { dualEdgeColorRuleSet } from './model/pattern/data/dualEdgeColorRuleSet.ts';
 import { basicColorOnly4RuleSet } from './model/pattern/data/basicColorOnly4RuleSet.ts';
-import { deprecatedSquareColorGeneration0RuleSets } from './model/pattern/data/deprecatedSquareColorGeneration0RuleSets.ts';
-import { deprecatedSquareOnlyEdgeGeneration0RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration0RuleSets.ts';
-import { deprecatedSquareColorGeneration1RuleSets } from './model/pattern/data/deprecatedSquareColorGeneration1RuleSets.ts';
-import { deprecatedSquareOnlyEdgeGeneration1RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration1RuleSets.ts';
-import { deprecatedSquareOnlyEdgeGeneration2RuleSets } from './model/pattern/data/deprecatedSquareOnlyEdgeGeneration2RuleSets.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -126,14 +121,6 @@ console.log( 'test' );
 
     dualEdgeColorRuleSet,
     basicColorOnly4RuleSet,
-
-    ...deprecatedSquareColorGeneration0RuleSets,
-    ...deprecatedSquareOnlyEdgeGeneration0RuleSets,
-
-    ...deprecatedSquareColorGeneration1RuleSets,
-    ...deprecatedSquareOnlyEdgeGeneration1RuleSets,
-
-    ...deprecatedSquareOnlyEdgeGeneration2RuleSets,
   ];
 
   // const ruleSets = [
