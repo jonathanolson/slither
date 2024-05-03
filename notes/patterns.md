@@ -10,11 +10,6 @@
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 3]
-      - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 4]
-      - - [kitty 5]
-      - - [kitty 6]
-      - - [kitty 7]
-      - getHighlanderOnlyImpliedAllSquareBoardRules 1 1 [kitty 8]
       - TODO
       - getOnlyImpliedAllSquareBoardRules 2 0
       - getOnlyImpliedAllSquareBoardRules 2 1
@@ -52,6 +47,8 @@
     - We probably already have generated ALL (or almost all) of the rules we will actually want.
     - Is this... essentially a unique infimum?
     - [!!!] NOTE: we only need this to be unique TO ISOMORPHISM
+  - 
+  - Also, "only" patterns that have a "generalization" (e.g. still valid without "only") would be good to filter out maybe?
   - 
   - Can we... categorize "usefulness" or how common it is for a pattern?
     - NOTE: Symmetry arguments probably help (if it has more automorphisms... it is more likely to be useful)
