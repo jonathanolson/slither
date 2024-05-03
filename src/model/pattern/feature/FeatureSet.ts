@@ -54,7 +54,7 @@ export class FeatureSet {
 
   public addFaceValue( face: TPatternFace, value: FaceValue ): void {
     const existingValue = this.faceValueMap.get( face );
-    if ( existingValue ) {
+    if ( existingValue !== undefined ) {
       if ( existingValue !== value ) {
         throw new IncompatibleFeatureError( new FaceFeature( face, value ), [ new FaceFeature( face, existingValue ) ] );
       }

@@ -1,11 +1,6 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { hexagonalEdgeHighlanderOnlyImplied0RuleSets } from './model/pattern/data/hexagonalEdgeHighlanderOnlyImplied0RuleSets.ts';
-import { generalEdgeImplied0RuleSets } from './model/pattern/data/generalEdgeImplied0RuleSets.ts';
-import { generalEdgeImplied1RuleSets } from './model/pattern/data/generalEdgeImplied1RuleSets.ts';
-
-// Load with `http://localhost:5173/rules-test.html?debugger`
 
 // @ts-expect-error
 window.assertions.enableAssert();

@@ -1,4 +1,4 @@
-import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
+import { PatternBoardRuleSet } from '../../PatternBoardRuleSet.ts';
 
 export const deprecatedCairoEdgeGeneration0RuleSets = [
   // PatternBoardRuleSet.deserialize( JSON.parse( '' ) ),

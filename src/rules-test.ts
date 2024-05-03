@@ -1,12 +1,10 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
-import { basicPatternBoards, edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations, vertexNonExitPatternBoards } from './model/pattern/patternBoards.ts';
+import { edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations, vertexNonExitPatternBoards } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-
-// Load with `http://localhost:5173/rules-test.html?debugger`
 
 // @ts-expect-error
 window.assertions.enableAssert();

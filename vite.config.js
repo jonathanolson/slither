@@ -33,6 +33,8 @@ export default defineConfig( {
         'rule-list': '/rule-list.html',
         'rule-image': '/rule-image.html',
         'rule': '/rule.html',
+        'curated-rules': '/curated-rules.html',
+        'filtered-rules': '/filtered-rules.html',
         'debug-rule': '/debug-rule.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
         'pattern-boards': '/pattern-boards.html',
