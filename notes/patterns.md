@@ -3,49 +3,11 @@
 
 - TODO
   - 
-  - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
-  - 
-  - HEY create "generations" that include BASIC boards(!)
-  - 
-  - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
-  - 
-  - Database of rules:
-    - NAME the ruleset BY ITS PATTERN BOARD NAME?
-      - (do basic boards have good names? we need that)
-    - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
-      - Could we... rely on AJAX to load rules?
-  - 
-  - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
-  - 
-  - rule.html
-    - Could just take an input pattern
-  - 
-  - Highlander + color:
-    - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
-    - This seems "solvable" in the "ALL" solving stage?
-  - 
-  - Highlander potential solving changes:
-    - (a) don't precompute closures, do it on demand (I mean, from persisted RichSolutions...)
-    - (b) precompute more efficiently (recursively)
-      - Can just "combine" bins as we recurse
-      - "no solutions possible" will recurse trivially
-    - Solutions with different vertex connections are NEVER in the same bin
-      - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
-      - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
-        - IMPORTANT: It will never INVALIDATE only part of a bin.
-    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
-  - 
-  - Run a ton of "completed puzzle testing" for RANDOM puzzles. --- HEY get this working with a PatternSolver(?)
-    - Ensure that highlander and other rules are ALWAYS correct within these! (VERY MUCH HIGHLANDER)
-  - 
-  - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
-    - Constraint!!!
-  - 
   - Generate:
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
-      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- last one
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- last one!
+      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- crashed, last one
+      - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - getHighlanderOnlyImpliedSquareBoardRules 2 0 [kitty 3]
       - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 4]
@@ -75,6 +37,49 @@
       - getOnlyImpliedSquareBoardRules 4 22 [PC]
     - Future:
       - Highlander on smaller boards(!)
+  - 
+  - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
+  - 
+  - CURATED RULES
+    - Should we create ONE curated list, and then SCAN 
+  - 
+  - HEY create "generations" that include BASIC boards(!)
+  - 
+  - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
+  - 
+  - Show embeddings, so we can do rule stuff?
+  - 
+  - Database of rules:
+    - NAME the ruleset BY ITS PATTERN BOARD NAME?
+      - (do basic boards have good names? we need that)
+    - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
+      - Could we... rely on AJAX to load rules?
+  - 
+  - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
+  - 
+  - Highlander + color:
+    - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
+    - This seems "solvable" in the "ALL" solving stage?
+  - 
+  - Highlander potential solving changes:
+    - (a) don't precompute closures, do it on demand (I mean, from persisted RichSolutions...)
+    - (b) precompute more efficiently (recursively)
+      - Can just "combine" bins as we recurse
+      - "no solutions possible" will recurse trivially
+    - Solutions with different vertex connections are NEVER in the same bin
+      - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
+      - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
+        - IMPORTANT: It will never INVALIDATE only part of a bin.
+    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
+  - 
+  - Run a ton of "completed puzzle testing" for RANDOM puzzles. --- HEY get this working with a PatternSolver(?)
+    - Ensure that highlander and other rules are ALWAYS correct within these! (VERY MUCH HIGHLANDER)
+  - 
+  - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
+    - Constraint!!!
+  - 
+  - rule.html
+    - Could just take an input pattern
   - 
   - Build failure, trying `npm run build --max-old-space-size`
     - export NODE_OPTIONS=--max-old-space-size=32768

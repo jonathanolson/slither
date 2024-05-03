@@ -57,7 +57,7 @@ const executablePath = [
       console.log( `checking ${file}` );
       const json = fs.readFileSync( file, 'utf8' );
       const data = JSON.parse( json );
-      if ( data.rules.length > 1000 ) {
+      if ( data.rules.length > 3000 ) {
         console.log( `skipping ${file} due to ${data.rules.length} rules` );
         // Lazy skip?
         await next();
