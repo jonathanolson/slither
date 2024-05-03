@@ -5,6 +5,7 @@ import { onlyRuleSetsWithFewerNonExitFaces } from '../onlyRuleSetsWithFewerNonEx
 import { combineOptions } from 'phet-lib/phet-core';
 import { basicAllRuleSets } from '../../data/basicAllRuleSets.ts';
 import { squareAllOnlyImplied0RuleSets } from '../../data/squareAllOnlyImplied0RuleSets.ts';
+import { squareAllOnlyImplied1RuleSets } from '../../data/squareAllOnlyImplied1RuleSets.ts';
 
 export const getOnlyImpliedAllSquareBoardRules = ( generationIndex: number, index: number, options?: GetRulesOptions ) => {
   return getImpliedRuleSet(
@@ -12,6 +13,7 @@ export const getOnlyImpliedAllSquareBoardRules = ( generationIndex: number, inde
     [
       ...basicAllRuleSets,
       ...squareAllOnlyImplied0RuleSets,
+      ...squareAllOnlyImplied1RuleSets,
     ].filter( onlyRuleSetsWithFewerNonExitFaces( generationIndex + 1 ) ),
     combineOptions<GetRulesOptions>( {
       solveEdges: true,

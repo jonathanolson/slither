@@ -9,11 +9,18 @@
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- crashed, last one
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - getHighlanderOnlyImpliedSquareBoardRules 2 0 [kitty 3]
-      - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 4]
-      - getHighlanderOnlyImpliedSquareBoardRules 2 2 [kitty 5]
-      - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 6]
-      - getHighlanderOnlyImpliedSquareBoardRules 2 4 [kitty 7]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 3]
+      - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 4]
+      - - [kitty 5]
+      - - [kitty 6]
+      - getHighlanderOnlyImpliedAllSquareBoardRules 1 0 [kitty 7]
+      - getHighlanderOnlyImpliedAllSquareBoardRules 1 1 [kitty 8]
+      - TODO
+      - getOnlyImpliedAllSquareBoardRules 2 0
+      - getOnlyImpliedAllSquareBoardRules 2 1
+      - getOnlyImpliedAllSquareBoardRules 2 2
+      - getOnlyImpliedAllSquareBoardRules 2 3
+      - getOnlyImpliedAllSquareBoardRules 2 4
       - 
       - Failure on node bin/generate.js getHighlanderImpliedGeneralBoardRules 0 2 --- error?
       - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
