@@ -41,6 +41,7 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
   - PRIORITIZE "all" before curating rules (since that is likely to affect things)
+    - OH YUP, we want them
   - 
   - CURATED RULES
     - Should we create ONE curated list, and then SCAN 
@@ -52,6 +53,7 @@
   - Show embeddings, so we can do rule stuff?
   - 
   - Database of rules:
+    - (pattern board)-(vertex-restriction?)-(edge/sector/face)-(highlander?)
     - NAME the ruleset BY ITS PATTERN BOARD NAME?
       - (do basic boards have good names? we need that)
     - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
