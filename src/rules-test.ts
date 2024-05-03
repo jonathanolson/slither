@@ -1,9 +1,10 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
-import { standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations, vertexNonExitPatternBoards } from './model/pattern/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
+import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -59,6 +60,16 @@ console.log( 'test' );
     // debugger;
   }
 
+  const allChained = PatternBoardRuleSet.createImpliedChained( [ edgePatternBoard, ...vertexNonExitPatternBoards ], [], {
+    solveEdges: true,
+    solveFaceColors: true,
+    solveSectors: true,
+    highlander: false,
+  } );
+
+  allChained.forEach( ruleSet => {
+    console.log( JSON.stringify( ruleSet.serialize() ) );
+  } );
 
   // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
   //

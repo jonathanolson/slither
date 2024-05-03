@@ -40,6 +40,8 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - PRIORITIZE "all" before curating rules (since that is likely to affect things)
+  - 
   - CURATED RULES
     - Should we create ONE curated list, and then SCAN 
   - 
