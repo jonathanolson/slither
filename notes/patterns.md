@@ -13,7 +13,7 @@
       - getHighlanderOnlyImpliedSquareBoardRules 2 3 [kitty 4]
       - - [kitty 5]
       - - [kitty 6]
-      - getHighlanderOnlyImpliedAllSquareBoardRules 1 0 [kitty 7]
+      - - [kitty 7]
       - getHighlanderOnlyImpliedAllSquareBoardRules 1 1 [kitty 8]
       - TODO
       - getOnlyImpliedAllSquareBoardRules 2 0
@@ -60,6 +60,8 @@
   - Show embeddings, so we can do rule stuff?
   - 
   - Database of rules:
+    - IMPORTANT!!!!!!!!!!!! Things that are "just based on the patternboard" not sufficient, since different "previous" rules affect future rules
+      - SO DO NOT MIX "only" and general-square, etc.
     - (pattern board)-(vertex-restriction?)-(edge/sector/face)-(highlander?)
     - NAME the ruleset BY ITS PATTERN BOARD NAME?
       - (do basic boards have good names? we need that)
