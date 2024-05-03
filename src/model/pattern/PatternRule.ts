@@ -16,6 +16,13 @@ export type SerializedPatternRule = {
   output: TSerializedFeatureSet;
 };
 
+export type CollectionSerializedPatternRule = {
+  patternBoard: number;
+  highlander?: true;
+  input: TSerializedFeatureSet;
+  output: TSerializedFeatureSet;
+};
+
 export class PatternRule {
   public constructor(
     public readonly patternBoard: TPatternBoard,
@@ -158,8 +165,29 @@ export class PatternRule {
     return result;
   }
 
+  public collectionSerialize( patternBoardNumber: number ): CollectionSerializedPatternRule {
+    const serialized = this.serialize();
+
+    return {
+      ...serialized,
+      patternBoard: patternBoardNumber
+    };
+  }
+
   public static deserialize( serialized: SerializedPatternRule ): PatternRule {
     const patternBoard = deserializePatternBoard( serialized.patternBoard );
+
+    return new PatternRule(
+      patternBoard,
+      FeatureSet.deserialize( serialized.input, patternBoard ),
+      FeatureSet.deserialize( serialized.output, patternBoard ),
+      serialized.highlander ?? false
+    );
+  }
+
+  public static collectionDeserialize( patternBoards: TPatternBoard[], serialized: CollectionSerializedPatternRule ): PatternRule {
+    const patternBoard = patternBoards[ serialized.patternBoard ];
+    assertEnabled() && assert( patternBoard, 'pattern board' );
 
     return new PatternRule(
       patternBoard,
