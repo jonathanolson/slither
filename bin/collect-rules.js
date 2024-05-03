@@ -20,17 +20,31 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
   let collection = emptyCollection;
 
   const addRuleSet = async ( dir, filename ) => {
+    console.log( `adding ${dir}/${filename}` );
+
     const ruleSetJSON = fs.readFileSync( `./data/${dir}/${filename}`, 'utf8' );
     collection = await browserEvaluate( browser, 'http://localhost/slither/dist/hooks.html', `addRuleSetToCollection( ${JSON.stringify( collection )}, ${ruleSetJSON} )` );
   };
 
-  console.log( getRuleSetFiles( 'square-edge-only-implied' ) );
-  console.log( getGenerationRuleSetFiles( 'square-edge-only-implied', 2 ) );
+  const addFullRuleSetDir = async dir => {
+    const files = getRuleSetFiles( dir );
 
-  const test = await browserEvaluate( browser, 'http://localhost/slither/dist/hooks.html', '1 + 2' );
-  console.log( test );
+    for ( const file of files ) {
+      await addRuleSet( dir, file );
+    }
+  };
 
-  await addRuleSet( 'basic-edge', 'basic-edge.json' );
+  const addRuleSetGeneration = async ( dir, generation ) => {
+    const files = getGenerationRuleSetFiles( dir, generation );
+
+    for ( const file of files ) {
+      await addRuleSet( dir, file );
+    }
+  };
+
+  await addFullRuleSetDir( 'basic-edge' );
+  await addRuleSetGeneration( 'square-edge-only-implied', 0 );
+  await addRuleSetGeneration( 'square-edge-only-implied', 1 );
 
   console.log( collection );
 
