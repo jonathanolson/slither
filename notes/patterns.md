@@ -29,9 +29,9 @@
       - getOnlyImpliedSquareBoardRules 4 22 [PC] (goes to 4,75)
       - getOnlyImpliedAllSquareBoardRules 2 0 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 1 [PC]
-      - getOnlyImpliedAllSquareBoardRules 2 2 [TODO]
-      - getOnlyImpliedAllSquareBoardRules 2 3 [TODO]
-      - getOnlyImpliedAllSquareBoardRules 2 4 [TODO]
+      - getOnlyImpliedAllSquareBoardRules 2 2 [PC]
+      - getOnlyImpliedAllSquareBoardRules 2 3 [PC]
+      - getOnlyImpliedAllSquareBoardRules 2 4 [PC]
     - Future:
       - Highlander on smaller boards(!)
   - 
@@ -45,6 +45,9 @@
   - 
   - Also, "only" patterns that have a "generalization" (e.g. still valid without "only") would be good to filter out maybe?
   - 
+  - Pattern Solver:
+    - FinClosure, once we have all embedded?
+  - 
   - Can we... categorize "usefulness" or how common it is for a pattern?
     - NOTE: Symmetry arguments probably help (if it has more automorphisms... it is more likely to be useful)
   - 
@@ -52,7 +55,13 @@
     - OH YUP, we want them
   - 
   - CURATED RULES
-    - Should we create ONE curated list, and then SCAN 
+    - OK to have "redundant" rules (if the simpler-to-recognize form is first)
+    - Different lists for each "solving style" (edge, edge + sector, face colors, all)
+      - OR have a primary ("all") list, where we put our helpful bits in
+        - THEN have a backup "edge-only" list?
+        - Can just include highlander patterns, since those are easy to filter out
+    - Should we create ONE curated list, and then SCAN
+    - Good way of showing "what rules are not redundant in collection X, given our collection Y"
   - 
   - HEY create "generations" that include BASIC boards(!)
   - 
