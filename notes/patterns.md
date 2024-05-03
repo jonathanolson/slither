@@ -37,6 +37,8 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - REDO basic color rule sets with... implied
+  - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
     - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)
     - We probably already have generated ALL (or almost all) of the rules we will actually want.
