@@ -10,12 +10,6 @@
       - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
       - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
       - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 3]
-      - TODO
-      - getOnlyImpliedAllSquareBoardRules 2 0
-      - getOnlyImpliedAllSquareBoardRules 2 1
-      - getOnlyImpliedAllSquareBoardRules 2 2
-      - getOnlyImpliedAllSquareBoardRules 2 3
-      - getOnlyImpliedAllSquareBoardRules 2 4
       - 
       - Failure on node bin/generate.js getHighlanderImpliedGeneralBoardRules 0 2 --- error?
       - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
@@ -25,18 +19,19 @@
         - getOnlyImpliedSquareBoardRules 4 9 <--- crash on complete? is it in console history? Try on browser direct macOS?
       - 
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
-      - getImpliedGeneralBoardRules 2 7 [PC + #46 ek + restart]
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
-      - getImpliedGeneralBoardRules 2 54 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
-      - getOnlyImpliedSquareBoardRules 4 16 [PC] (goes to 4,75)
       - getOnlyImpliedSquareBoardRules 4 17 [PC]
       - getOnlyImpliedSquareBoardRules 4 18 [PC]
       - getOnlyImpliedSquareBoardRules 4 19 [PC]
       - getOnlyImpliedSquareBoardRules 4 20 [PC]
-      - getOnlyImpliedSquareBoardRules 4 21 [PC]
-      - getOnlyImpliedSquareBoardRules 4 22 [PC]
+      - getOnlyImpliedSquareBoardRules 4 22 [PC] (goes to 4,75)
+      - getOnlyImpliedAllSquareBoardRules 2 0 [PC]
+      - getOnlyImpliedAllSquareBoardRules 2 1 [PC]
+      - getOnlyImpliedAllSquareBoardRules 2 2 [TODO]
+      - getOnlyImpliedAllSquareBoardRules 2 3 [TODO]
+      - getOnlyImpliedAllSquareBoardRules 2 4 [TODO]
     - Future:
       - Highlander on smaller boards(!)
   - 
