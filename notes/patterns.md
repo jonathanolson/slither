@@ -47,6 +47,15 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
+    - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)
+    - We probably already have generated ALL (or almost all) of the rules we will actually want.
+    - Is this... essentially a unique infimum?
+    - [!!!] NOTE: we only need this to be unique TO ISOMORPHISM
+  - 
+  - Can we... categorize "usefulness" or how common it is for a pattern?
+    - NOTE: Symmetry arguments probably help (if it has more automorphisms... it is more likely to be useful)
+  - 
   - PRIORITIZE "all" before curating rules (since that is likely to affect things)
     - OH YUP, we want them
   - 
