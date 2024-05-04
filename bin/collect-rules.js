@@ -93,8 +93,8 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
     await addFullRuleSetDir( 'basic-color' );
     await addAllGenerations( [
       'general-color-implied',
-      'square-color-only-implied',
-      'hexagonal-color-only-implied',
+      'square-color-implied',
+      'hexagonal-color-implied',
     ] );
   }
   else if ( type === 'all' ) {
