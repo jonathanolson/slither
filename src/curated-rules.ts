@@ -1,4 +1,4 @@
-import { AlignBox, Display, FireListener, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';

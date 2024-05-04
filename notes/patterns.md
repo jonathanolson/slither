@@ -37,6 +37,12 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - BoardPatternBoard ... memoize?
+    - Do we do the matching in pattern space or original state space?
+      - (a) create FeatureSet from state, match there (with normal matching functions)
+        - Preferred, less code? BUT [WE NEED TO MATCH WITHOUT CREATING EMBEDDED VERSIONS?]
+      - (b) Match directly into the state, through an adapter
+  - 
   - REDO basic color rule sets with... implied
   - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
