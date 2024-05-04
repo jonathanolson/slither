@@ -57,20 +57,28 @@ export const browserEvaluate = async ( browser, url, evaluate ) => {
     } );
 
     page.on( 'error', message => {
+      console.log( message );
       reject( message );
     } );
     page.on( 'pageerror', message => {
+      console.log( message );
       reject( message );
     } );
 
     page.on( 'load', async () => {
       await sleep( 500 );
 
-      const result = await page.evaluate( evaluate );
+      try {
+        const result = await page.evaluate( evaluate );
 
-      !page.isClosed() && await page.close();
+        !page.isClosed() && await page.close();
 
-      resolve( result );
+        resolve( result );
+      }
+      catch ( e ) {
+        console.log( e );
+        throw e;
+      }
     } );
 
     await page.goto( url, {

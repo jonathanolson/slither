@@ -2,7 +2,7 @@ import { CollectionSerializedPatternRule, PatternRule } from './PatternRule.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import { deserializePatternBoard } from './deserializePatternBoard.ts';
 import { serializePatternBoard } from './serializePatternBoard.ts';
-import { compressString, decompressString } from '../../util/compression.ts';
+import { compressString2, decompressString2 } from '../../util/compression.ts';
 import _ from '../../workarounds/_.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
 import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
@@ -14,7 +14,8 @@ export class PatternRuleCollection {
   private constructor(
     private readonly patternBoards: TPatternBoard[],
     private readonly serializedRules: CollectionSerializedPatternRule[],
-  ) {}
+  ) {
+  }
 
   public addRule( rule: PatternRule ): void {
     if ( !this.patternBoards.includes( rule.patternBoard ) ) {
@@ -38,30 +39,56 @@ export class PatternRuleCollection {
     }
   }
 
-  public addNonredundantRuleSet( ruleSet: PatternBoardRuleSet ): void {
+  public addNonredundantRuleSet( ruleSet: PatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ): void {
     const currentEmbeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, ruleSet.patternBoard ) ) );
 
+    let totalScoreSum = 0;
+    let count = 0;
+    let skipCount = 0;
+    let maxEncounteredScore = 0;
+
     for ( const rule of ruleSet.rules ) {
+      const score = rule.getInputDifficultyScoreA();
+
+      maxEncounteredScore = Math.max( maxEncounteredScore, score );
+
+      if ( ruleSet.patternBoard.faces.length > 1 && score > maxScore ) {
+        skipCount++;
+        continue;
+      }
+
       if ( !rule.isRedundant( currentEmbeddedRules ) ) {
         this.addRule( rule );
+
+        totalScoreSum += score;
+        count++;
 
         currentEmbeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, ruleSet.patternBoard ) ) );
       }
     }
+
+    console.log( `added ${count}, skipped ${skipCount} with average score ${Math.round( totalScoreSum / count )}, maxEncounteredScore ${maxEncounteredScore}` );
   }
 
   public serialize(): SerializedPatternRuleCollection {
     return {
       patternBoards: this.patternBoards.map( serializePatternBoard ),
-      rules: compressString( JSON.stringify( this.serializedRules ) )
+      rules: compressString2( JSON.stringify( this.serializedRules ) )
     };
   }
 
   public static deserialize( serialized: SerializedPatternRuleCollection ): PatternRuleCollection {
     const patternBoards = serialized.patternBoards.map( deserializePatternBoard );
-    const serializedRules = JSON.parse( decompressString( serialized.rules )! );
+    const decompressed = decompressString2( serialized.rules );
+    if ( decompressed === null ) {
+      console.log( serialized.rules );
+      throw new Error( 'Failed to decompress rules!' );
+    }
+    else {
+      const serializedRules = JSON.parse( decompressed );
 
-    return new PatternRuleCollection( patternBoards, serializedRules );
+      return new PatternRuleCollection( patternBoards, serializedRules );
+    }
   }
 
   public static fromRules( rules: PatternRule[] ): PatternRuleCollection {
