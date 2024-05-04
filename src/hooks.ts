@@ -49,7 +49,23 @@ window.addRuleSetToCollection = ( serializedCollection: SerializedPatternRuleCol
     return serialized;
   }
   catch ( e ) {
-    // TODO: stack?
+    // @ts-expect-error
+    console.log( `${e} ${e?.stack}` );
+    throw e;
+  }
+};
+
+// @ts-expect-error
+window.combineCollections = ( a: SerializedPatternRuleCollection, b: SerializedPatternRuleCollection ) => {
+  try {
+    const aCollection = PatternRuleCollection.deserialize( a );
+    const bCollection = PatternRuleCollection.deserialize( b );
+
+    aCollection.combineWith( bCollection );
+
+    return aCollection.serialize();
+  }
+  catch ( e ) {
     // @ts-expect-error
     console.log( `${e} ${e?.stack}` );
     throw e;

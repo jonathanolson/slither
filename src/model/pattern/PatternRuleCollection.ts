@@ -17,13 +17,6 @@ export class PatternRuleCollection {
   ) {
   }
 
-  public addRule( rule: PatternRule ): void {
-    if ( !this.patternBoards.includes( rule.patternBoard ) ) {
-      this.patternBoards.push( rule.patternBoard );
-    }
-    this.serializedRules.push( rule.collectionSerialize( this.patternBoards.indexOf( rule.patternBoard ) ) );
-  }
-
   public getRules(): PatternRule[] {
     const rules: PatternRule[] = [];
 
@@ -37,6 +30,13 @@ export class PatternRuleCollection {
       const rule = PatternRule.collectionDeserialize( this.patternBoards, this.serializedRules[ i ] );
       callback( rule );
     }
+  }
+
+  public addRule( rule: PatternRule ): void {
+    if ( !this.patternBoards.includes( rule.patternBoard ) ) {
+      this.patternBoards.push( rule.patternBoard );
+    }
+    this.serializedRules.push( rule.collectionSerialize( this.patternBoards.indexOf( rule.patternBoard ) ) );
   }
 
   public addNonredundantRuleSet( ruleSet: PatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ): void {
@@ -68,6 +68,32 @@ export class PatternRuleCollection {
     }
 
     console.log( `added ${count}, skipped ${skipCount} with average score ${Math.round( totalScoreSum / count )}, maxEncounteredScore ${maxEncounteredScore}` );
+  }
+
+  public combineWith( ruleCollection: PatternRuleCollection ): void {
+    const theirRules = ruleCollection.getRules();
+
+    let lastPatternBoard: TPatternBoard | null = null;
+    let embeddedRules: PatternRule[] = [];
+
+    for ( let i = 0; i < theirRules.length; i++ ) {
+      if ( i % 100 === 0 ) {
+        console.log( i, theirRules.length );
+      }
+      const rule = theirRules[ i ];
+
+      const targetPatternBoard = rule.patternBoard;
+
+      if ( targetPatternBoard !== lastPatternBoard ) {
+        embeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, targetPatternBoard ) ) );
+        lastPatternBoard = targetPatternBoard;
+      }
+
+      if ( !rule.isRedundant( embeddedRules ) ) {
+        this.addRule( rule );
+        embeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, targetPatternBoard ) ) );
+      }
+    }
   }
 
   public serialize(): SerializedPatternRuleCollection {
