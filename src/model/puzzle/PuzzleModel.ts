@@ -38,6 +38,8 @@ import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
 import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
+import { ScanPatternSolver } from '../solver/ScanPatternSolver.ts';
+import { all10Edge20HighlanderCollection } from '../pattern/data/all10Edge20HighlanderCollection.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -605,7 +607,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     else {
       const state = this.puzzle.stateProperty.value.clone();
 
-      const solver = standardSolverFactory( this.puzzle.board, state, true );
+      // TODO: figure out what is best here
+      // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
+      // const solver = standardSolverFactory( this.puzzle.board, state, true );
+      const solver = new ScanPatternSolver( this.puzzle.board, state, all10Edge20HighlanderCollection.getRules() );
 
       try {
         let action = solver.nextAction();

@@ -295,7 +295,8 @@ export const annotationSetsEdgeState = ( annotation: TAnnotation ): boolean => {
     annotation.type === 'DoubleMinusOneFaces' ||
     annotation.type === 'ForcedSector' ||
     annotation.type === 'VertexStateToEdge' ||
-    annotation.type === 'FaceStateToEdge';
+    annotation.type === 'FaceStateToEdge' ||
+    ( annotation.type === 'Pattern' && annotation.affectedEdges.size > 0 );
 };
 
 export const annotationSetsSimpleRegion = ( annotation: TAnnotation ): boolean => {
@@ -311,7 +312,8 @@ export const annotationSetsFaceColor = ( annotation: TAnnotation ): boolean => {
     annotation.type === 'VertexStateToSameFaceColor' ||
     annotation.type === 'VertexStateToOppositeFaceColor' ||
     annotation.type === 'FaceStateToSameFaceColor' ||
-    annotation.type === 'FaceStateToOppositeFaceColor';
+    annotation.type === 'FaceStateToOppositeFaceColor' ||
+    ( annotation.type === 'Pattern' && annotation.affectedFaces.size > 0 );
 };
 
 export const annotationSetsSectorState = ( annotation: TAnnotation ): boolean => {
@@ -319,7 +321,8 @@ export const annotationSetsSectorState = ( annotation: TAnnotation ): boolean =>
     annotation.type === 'DoubleEdgeToSector' ||
     annotation.type === 'StaticFaceSectors' ||
     annotation.type === 'VertexStateToSector' ||
-    annotation.type === 'FaceStateToSector';
+    annotation.type === 'FaceStateToSector' ||
+    ( annotation.type === 'Pattern' && annotation.affectedSectors.size > 0 );
 };
 
 export const annotationSetsVertexState = ( annotation: TAnnotation ): boolean => {

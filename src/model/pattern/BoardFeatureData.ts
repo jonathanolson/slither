@@ -25,12 +25,16 @@ export class BoardFeatureData implements TBoardFeatureData {
     public readonly inputData: TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData,
   ) {
     for ( const patternFace of boardPatternBoard.faces ) {
-      const boardFace = boardPatternBoard.getFace( patternFace )!;
-      assertEnabled() && assert( boardFace );
+      const boardFace = boardPatternBoard.getFace( patternFace );
 
-      this.faceValues.push( inputData.getFaceValue( boardFace ) );
+      if ( boardFace ) {
+        this.faceValues.push( inputData.getFaceValue( boardFace ) );
+      }
+      else {
+        this.faceValues.push( null );
+      }
 
-      const faceColor = inputData.getFaceColor( boardFace );
+      const faceColor = boardFace ? inputData.getFaceColor( boardFace ) : inputData.getOutsideColor();
       const oppositeFaceColor = inputData.getOppositeFaceColor( faceColor );
 
       this.faceColors.push( faceColor );
