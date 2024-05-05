@@ -33,22 +33,12 @@
       - getOnlyImpliedAllSquareBoardRules 2 2 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 4 [PC]
       - 
-      - getImpliedGeneralBoardRules 2 44 *
-      - getImpliedGeneralBoardRules 2 45 -
-      - getImpliedGeneralBoardRules 2 58 *
-      - getImpliedGeneralBoardRules 2 59 -
       - getImpliedGeneralBoardRules 2 60 *
-      - getImpliedGeneralBoardRules 2 61 -
       - getImpliedGeneralBoardRules 2 62 *
-      - getImpliedGeneralBoardRules 2 63 -
       - getImpliedGeneralBoardRules 2 64 *
-      - getImpliedGeneralBoardRules 2 65 -
       - getImpliedGeneralBoardRules 2 71 *
-      - getImpliedGeneralBoardRules 2 72 -
       - getImpliedGeneralBoardRules 2 73 *
-      - getImpliedGeneralBoardRules 2 74 -
       - getImpliedGeneralBoardRules 2 75 *
-      - getImpliedGeneralBoardRules 2 76 -
       - getImpliedGeneralBoardRules 2 77 *
       - 
     - Future:
@@ -65,6 +55,8 @@
   - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
   - 
     REDO basic color rule sets with... implied
+  - 
+  - Fun to create "rule generation" visualization? Show current solve state on left, show current rule list on right?
   - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
     - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)

@@ -5,6 +5,10 @@ import { TSector } from '../sector-state/TSector.ts';
 import SectorState from '../sector-state/SectorState.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
 import { FaceState } from '../face-state/FaceState.ts';
+import FaceValue from '../face-value/FaceValue.ts';
+import { PatternRule } from '../../pattern/PatternRule.ts';
+import { Embedding } from '../../pattern/Embedding.ts';
+import { BoardPatternBoard } from '../../pattern/BoardPatternBoard.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';
@@ -241,6 +245,39 @@ export type FaceStateToVertexStateAnnotation = {
   afterStates: VertexState[];
 };
 
+export type AnnotatedFaceValue = {
+  face: TFace | null;
+  value: FaceValue;
+};
+
+export type AnnotatedFaceColorDual = {
+  primaryFaces: ( TFace | null )[];
+  secondaryFaces: ( TFace | null )[];
+};
+
+export type AnnotatedPattern = {
+  faceValues: AnnotatedFaceValue[];
+  blackEdges: TEdge[];
+  redEdges: TEdge[];
+  sectorsNotZero: TSector[];
+  sectorsNotOne: TSector[];
+  sectorsNotTwo: TSector[];
+  sectorsOnlyOne: TSector[];
+  faceColorDuals: AnnotatedFaceColorDual[];
+};
+
+export type PatternAnnotation = {
+  type: 'Pattern';
+  rule: PatternRule;
+  embedding: Embedding;
+  boardPatternBoard: BoardPatternBoard;
+  input: AnnotatedPattern;
+  output: AnnotatedPattern;
+  affectedEdges: Set<TEdge>;
+  affectedSectors: Set<TSector>;
+  affectedFaces: Set<TFace>;
+};
+
 export const annotationSetsEdgeState = ( annotation: TAnnotation ): boolean => {
   return annotation.type === 'ForcedLine' ||
     annotation.type === 'AlmostEmptyToRed' ||
@@ -329,4 +366,5 @@ export type TAnnotation =
   | FaceStateToSectorAnnotation
   | FaceStateToSameFaceColorAnnotation
   | FaceStateToOppositeFaceColorAnnotation
-  | FaceStateToVertexStateAnnotation;
+  | FaceStateToVertexStateAnnotation
+  | PatternAnnotation;

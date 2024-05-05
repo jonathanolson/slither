@@ -188,6 +188,60 @@ export class AnnotationNode extends Node {
       const edges = annotation.face.edges.filter( edge => annotation.vertices.includes( edge.start ) || annotation.vertices.includes( edge.end ) );
       children = edges.map( edge => getEdgeColoredOutline( edge, 'red' ) );
     }
+    else if ( annotation.type === 'Pattern' ) {
+      const affectedEdges = new Set( annotation.affectedEdges );
+      annotation.affectedSectors.forEach( sector => {
+        affectedEdges.add( sector.edge );
+        affectedEdges.add( sector.next.edge );
+      } );
+      annotation.affectedFaces.forEach( face => {
+        face.edges.forEach( edge => affectedEdges.add( edge ) );
+      } );
+      children = [
+        // TODO: better sector/face display, OR deduplicate with edges(!)
+        ...[ ...affectedEdges ].map( edge => getEdgeColoredOutline( edge, 'red' ) ),
+      ];
+      /*
+
+export type AnnotatedFaceValue = {
+  face: TFace | null;
+  value: FaceValue;
+};
+
+export type AnnotatedFaceColorDual = {
+  primaryFaces: ( TFace | null )[];
+  secondaryFaces: ( TFace | null )[];
+};
+
+export type AnnotatedPattern = {
+  faceValues: AnnotatedFaceValue[];
+  blackEdges: TEdge[];
+  redEdges: TEdge[];
+  sectorsNotZero: TSector[];
+  sectorsNotOne: TSector[];
+  sectorsNotTwo: TSector[];
+  sectorsOnlyOne: TSector[];
+  faceColorDuals: AnnotatedFaceColorDual[];
+};
+
+export type PatternAnnotation = {
+  type: 'Pattern';
+  rule: PatternRule;
+  embedding: Embedding;
+  boardPatternBoard: BoardPatternBoard;
+  input: AnnotatedPattern;
+  output: AnnotatedPattern;
+  affectedEdges: Set<TEdge>;
+  affectedSectors: Set<TSector>;
+  affectedFaces: Set<TFace>;
+};
+
+       */
+      // TODO: show a clipped simplified "BEFORE" and "AFTER" pattern (ideally WITHIN THE CURRENT STYLE)
+      // TODO: create fully new "input" and "output" (clean) states, and apply input/output
+      // TODO: presumably run "safe solver" on these
+      // TODO: determine bounds of "affected region", clip to (same) padded on both.
+    }
     else {
       children = [];
       console.log( `unknown type: ${annotation.type}` );
