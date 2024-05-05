@@ -24,7 +24,6 @@
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
       - getOnlyImpliedSquareBoardRules 4 17 [PC] (goes to 4,75)
-      - getOnlyImpliedSquareBoardRules 4 23 [PC]
       - getOnlyImpliedSquareBoardRules 4 24 [PC]
       - getOnlyImpliedSquareBoardRules 4 25 [PC]
       - getOnlyImpliedSquareBoardRules 4 26 [PC]
@@ -33,6 +32,25 @@
       - getOnlyImpliedAllSquareBoardRules 2 0 [PC] <--- 2 1 nothing, 2 3 nothing
       - getOnlyImpliedAllSquareBoardRules 2 2 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 4 [PC]
+      - 
+      - getImpliedGeneralBoardRules 2 44 *
+      - getImpliedGeneralBoardRules 2 45 -
+      - getImpliedGeneralBoardRules 2 58 *
+      - getImpliedGeneralBoardRules 2 59 -
+      - getImpliedGeneralBoardRules 2 60 *
+      - getImpliedGeneralBoardRules 2 61 -
+      - getImpliedGeneralBoardRules 2 62 *
+      - getImpliedGeneralBoardRules 2 63 -
+      - getImpliedGeneralBoardRules 2 64 *
+      - getImpliedGeneralBoardRules 2 65 -
+      - getImpliedGeneralBoardRules 2 71 *
+      - getImpliedGeneralBoardRules 2 72 -
+      - getImpliedGeneralBoardRules 2 73 *
+      - getImpliedGeneralBoardRules 2 74 -
+      - getImpliedGeneralBoardRules 2 75 *
+      - getImpliedGeneralBoardRules 2 76 -
+      - getImpliedGeneralBoardRules 2 77 *
+      - 
     - Future:
       - Highlander on smaller boards(!)
   - 
