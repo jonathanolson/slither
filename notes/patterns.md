@@ -16,21 +16,22 @@
       - 
       - Missing:
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
-        - getOnlyImpliedSquareBoardRules 4 9 <--- crash on complete? is it in console history? Try on browser direct macOS?
+        - getOnlyImpliedSquareBoardRules 4 9, 4 15 <--- crash on complete? is it in console history? Try on browser direct macOS?
       - 
+      - !!!!!!!!!! WAIT we should start that triangle-containing REGENERATION(!!!!!)
       - getImpliedColorGeneralBoardRules 1 2 [PC #132 - eeek] -- last of its type
       - getImpliedGeneralBoardRules 2 46 [PC] <--- hahah OMG 101415 solutions(!) (at least minisat didn't die)
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
-      - getOnlyImpliedSquareBoardRules 4 17 [PC]
-      - getOnlyImpliedSquareBoardRules 4 18 [PC]
-      - getOnlyImpliedSquareBoardRules 4 19 [PC]
-      - getOnlyImpliedSquareBoardRules 4 20 [PC]
-      - getOnlyImpliedSquareBoardRules 4 22 [PC] (goes to 4,75)
-      - getOnlyImpliedAllSquareBoardRules 2 0 [PC]
-      - getOnlyImpliedAllSquareBoardRules 2 1 [PC]
+      - getOnlyImpliedSquareBoardRules 4 17 [PC] (goes to 4,75)
+      - getOnlyImpliedSquareBoardRules 4 23 [PC]
+      - getOnlyImpliedSquareBoardRules 4 24 [PC]
+      - getOnlyImpliedSquareBoardRules 4 25 [PC]
+      - getOnlyImpliedSquareBoardRules 4 26 [PC]
+      - getOnlyImpliedSquareBoardRules 4 27 [PC]
+      - getOnlyImpliedSquareBoardRules 4 28 [PC]
+      - getOnlyImpliedAllSquareBoardRules 2 0 [PC] <--- 2 1 nothing, 2 3 nothing
       - getOnlyImpliedAllSquareBoardRules 2 2 [PC]
-      - getOnlyImpliedAllSquareBoardRules 2 3 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 4 [PC]
     - Future:
       - Highlander on smaller boards(!)
@@ -43,7 +44,9 @@
         - Preferred, less code? BUT [WE NEED TO MATCH WITHOUT CREATING EMBEDDED VERSIONS?]
       - (b) Match directly into the state, through an adapter
   - 
-  - REDO basic color rule sets with... implied
+  - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
+  - 
+    REDO basic color rule sets with... implied
   - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
     - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)

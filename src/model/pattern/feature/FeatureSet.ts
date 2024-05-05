@@ -23,6 +23,8 @@ import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
 import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 import { getEmbeddings } from '../getEmbeddings.ts';
+import { TBoardFeatureData } from '../TBoardFeatureData.ts';
+import FeatureSetMatchState from '../FeatureSetMatchState.ts';
 
 const scratchEmbeddingsArray: Embedding[] = [];
 
@@ -948,6 +950,206 @@ export class FeatureSet {
       this.sectorsNotTwo.size === other.sectorsNotTwo.size &&
       this.sectorsOnlyOne.size === other.sectorsOnlyOne.size &&
       this.faceColorDualFeatures.size === other.faceColorDualFeatures.size;
+  }
+
+  // If abortIfNotMatch=true, any "failure to match" will be able to return a quick DORMANT state instead.
+  public getBoardMatchState( data: TBoardFeatureData, embedding: Embedding, abortIfNotMatch = false ): FeatureSetMatchState {
+
+    let matched = true;
+
+    for ( const [ face, patternValue ] of this.faceValueMap ) {
+      const targetValue = data.faceValues[ embedding.mapFace( face ).index ];
+
+      if ( targetValue !== patternValue ) {
+        // TODO: "assuming face values never change"
+        return FeatureSetMatchState.INCOMPATIBLE;
+      }
+    }
+
+    for ( const edge of this.blackEdges ) {
+      // TODO: only handling non-exit case, since we only do red exit edges right now
+      assertEnabled() && assert( !edge.isExit );
+
+      const index = embedding.mapNonExitEdge( edge ).index;
+
+      if ( !data.blackEdgeValues[ index ] ) {
+        matched = false;
+
+        if ( data.redEdgeValues[ index ] ) {
+          return FeatureSetMatchState.INCOMPATIBLE;
+        }
+        else if ( abortIfNotMatch ) {
+          return FeatureSetMatchState.DORMANT;
+        }
+      }
+    }
+
+    for ( const edge of this.redEdges ) {
+      if ( edge.isExit ) {
+        const mappedEdges = embedding.mapExitEdges( edge );
+
+        for ( const mappedEdge of mappedEdges ) {
+          const index = mappedEdge.index;
+
+          if ( !data.redEdgeValues[ index ] ) {
+            matched = false;
+
+            if ( data.blackEdgeValues[ index ] ) {
+              return FeatureSetMatchState.INCOMPATIBLE;
+            }
+            else if ( abortIfNotMatch ) {
+              return FeatureSetMatchState.DORMANT;
+            }
+          }
+
+        }
+      }
+      else {
+        const index = embedding.mapNonExitEdge( edge ).index;
+
+        if ( !data.redEdgeValues[ index ] ) {
+          matched = false;
+
+          if ( data.blackEdgeValues[ index ] ) {
+            return FeatureSetMatchState.INCOMPATIBLE;
+          }
+          else if ( abortIfNotMatch ) {
+            return FeatureSetMatchState.DORMANT;
+          }
+        }
+      }
+    }
+
+    for ( const sector of this.sectorsNotZero ) {
+      const index = embedding.mapSector( sector ).index;
+
+      if ( !data.sectorNotZeroValues[ index ] ) {
+        // TODO: potentially improve incompatibility check
+        matched = false;
+
+        if ( abortIfNotMatch ) {
+          return FeatureSetMatchState.DORMANT;
+        }
+      }
+    }
+
+    for ( const sector of this.sectorsNotOne ) {
+      const index = embedding.mapSector( sector ).index;
+
+      if ( !data.sectorNotOneValues[ index ] ) {
+        // TODO: potentially improve incompatibility check
+        matched = false;
+
+        if ( abortIfNotMatch ) {
+          return FeatureSetMatchState.DORMANT;
+        }
+      }
+    }
+
+    for ( const sector of this.sectorsNotTwo ) {
+      const index = embedding.mapSector( sector ).index;
+
+      if ( !data.sectorNotTwoValues[ index ] ) {
+        // TODO: potentially improve incompatibility check
+        matched = false;
+
+        if ( abortIfNotMatch ) {
+          return FeatureSetMatchState.DORMANT;
+        }
+      }
+    }
+
+    for ( const sector of this.sectorsOnlyOne ) {
+      const index = embedding.mapSector( sector ).index;
+
+      if ( !data.sectorOnlyOneValues[ index ] ) {
+        // TODO: potentially improve incompatibility check
+        matched = false;
+
+        if ( abortIfNotMatch ) {
+          return FeatureSetMatchState.DORMANT;
+        }
+      }
+    }
+
+    for ( const faceColorDualFeature of this.faceColorDualFeatures ) {
+      // TODO: optimize if this is a bottleneck
+
+      const primaryColors = faceColorDualFeature.primaryFaces.map( face => data.faceColors[ embedding.mapFace( face ).index ] );
+
+      const canonicalPrimaryColor = primaryColors[ 0 ];
+      assertEnabled() && assert( canonicalPrimaryColor );
+
+      // Quick abort check for primary (all primary colors should be the same)
+      for ( const primaryColor of primaryColors ) {
+        if ( primaryColor !== canonicalPrimaryColor ) {
+          matched = false;
+
+          if ( abortIfNotMatch ) {
+            return FeatureSetMatchState.DORMANT;
+          }
+        }
+      }
+
+      const secondaryColors = faceColorDualFeature.secondaryFaces.map( face => data.faceColors[ embedding.mapFace( face ).index ] );
+
+      if ( secondaryColors.length > 1 ) {
+        const canonicalSecondaryColor = secondaryColors[ 0 ];
+
+        // Quick abort check for secondary (all secondary colors should be the same)
+        for ( const secondaryColor of secondaryColors ) {
+          if ( secondaryColor !== canonicalSecondaryColor ) {
+            matched = false;
+
+            if ( abortIfNotMatch ) {
+              return FeatureSetMatchState.DORMANT;
+            }
+          }
+        }
+      }
+
+      if ( secondaryColors.length ) {
+        const secondaryOppositeColors = faceColorDualFeature.secondaryFaces.map( face => data.oppositeFaceColors[ embedding.mapFace( face ).index ] );
+
+        for ( const secondaryOppositeColor of secondaryOppositeColors ) {
+          if ( secondaryOppositeColor !== canonicalPrimaryColor ) {
+            matched = false;
+
+            if ( abortIfNotMatch ) {
+              return FeatureSetMatchState.DORMANT;
+            }
+          }
+        }
+
+        // Extra "opposite" checks to see if we are incompatible
+        if ( !matched && !abortIfNotMatch ) {
+          for ( const secondaryOppositeColor of secondaryOppositeColors ) {
+            if ( secondaryColors.includes( secondaryOppositeColor ) ) {
+              return FeatureSetMatchState.INCOMPATIBLE;
+            }
+          }
+        }
+      }
+
+      // Extra "opposite" checks to see if we are incompatible
+      if ( !matched && !abortIfNotMatch ) {
+        const primaryOppositeColors = faceColorDualFeature.primaryFaces.map( face => data.oppositeFaceColors[ embedding.mapFace( face ).index ] );
+
+        for ( const primaryColor of primaryColors ) {
+          if ( secondaryColors.includes( primaryColor ) ) {
+            return FeatureSetMatchState.INCOMPATIBLE;
+          }
+        }
+
+        for ( const primaryOppositeColor of primaryOppositeColors ) {
+          if ( primaryColors.includes( primaryOppositeColor ) ) {
+            return FeatureSetMatchState.INCOMPATIBLE;
+          }
+        }
+      }
+    }
+
+    return matched ? FeatureSetMatchState.MATCH : FeatureSetMatchState.DORMANT;
   }
 
   public getShapeString(): string {
