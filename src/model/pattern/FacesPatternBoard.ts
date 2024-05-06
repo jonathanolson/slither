@@ -15,7 +15,7 @@ import { TEdge } from '../board/core/TEdge.ts';
 import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
 import _ from '../../workarounds/_.ts';
 import { PolygonalBoard } from '../board/core/TiledBoard.ts';
-import { PolygonGenerator } from '../../view/GenerateNode.ts';
+import { PolygonGenerator } from '../board/PolygonGenerator.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
 

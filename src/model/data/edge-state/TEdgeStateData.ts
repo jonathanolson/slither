@@ -1,10 +1,10 @@
 import { TEdge } from '../../board/core/TEdge.ts';
 import EdgeState from './EdgeState.ts';
 import { TEmitter } from 'phet-lib/axon';
-import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeEdge } from '../../board/core/serializeEdge.ts';
 import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TEdgeStateData {
   getEdgeState( edge: TEdge ): EdgeState;

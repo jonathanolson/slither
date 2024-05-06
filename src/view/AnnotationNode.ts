@@ -245,9 +245,9 @@ export class AnnotationNode extends Node {
           } );
           [ annotatedPattern.sectorsNotZero, annotatedPattern.sectorsNotOne, annotatedPattern.sectorsNotTwo, annotatedPattern.sectorsOnlyOne ].forEach( sectors => {
             sectors.forEach( sector => {
-              patternBounds.addPoint( sector.edge.start.viewCoordinates );
-              patternBounds.addPoint( sector.edge.end.viewCoordinates );
-              patternBounds.addPoint( sector.next.edge.end.viewCoordinates );
+              patternBounds.addPoint( sector.start.viewCoordinates );
+              patternBounds.addPoint( sector.end.viewCoordinates );
+              patternBounds.addPoint( sector.next.end.viewCoordinates );
             } );
           } );
           annotatedPattern.faceColorDuals.forEach( faceColorDual => {

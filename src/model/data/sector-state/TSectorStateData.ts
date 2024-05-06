@@ -1,10 +1,10 @@
 import { TEmitter } from 'phet-lib/axon';
-import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import SectorState, { TSerializedSectorState } from './SectorState.ts';
 import { TSector } from './TSector.ts';
 import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
 import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TSectorStateData {
   // a sector is effectively halfEdge and halfEdge.next

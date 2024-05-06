@@ -2,12 +2,12 @@ import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from
 import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from '../edge-state/TEdgeStateData.ts';
 import { serializeSimpleRegionData, TSerializedSimpleRegionData, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TAnyData } from './TAnyData.ts';
-import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeFaceColorData, TFaceColorData, TSerializedFaceColorData } from '../face-color/TFaceColorData.ts';
 import { serializeSectorStateData, TSectorStateData, TSerializedSectorStateData } from '../sector-state/TSectorStateData.ts';
 import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { serializeFaceStateData, TFaceStateData, TSerializedFaceStateData } from '../face-state/TFaceStateData.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TCompleteData extends TFaceValueData, TEdgeStateData, TSimpleRegionData, TFaceColorData, TSectorStateData, TVertexStateData, TFaceStateData, TAnyData {}
 

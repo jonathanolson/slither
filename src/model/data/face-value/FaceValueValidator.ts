@@ -1,4 +1,4 @@
-import { TSerializedState, TState } from '../core/TState.ts';
+import { TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
@@ -6,6 +6,7 @@ import { TFaceValueData } from './TFaceValueData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import FaceValue from './FaceValue.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export class FaceValueValidator implements TState<TFaceValueData> {
 

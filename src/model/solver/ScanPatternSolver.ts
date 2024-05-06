@@ -44,12 +44,12 @@ type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
   private nextIndex: number;
-  private readonly boardPatternBoard: BoardPatternBoard;
 
   private readonly dirtyListener: () => void;
 
   public constructor(
     private readonly board: TBoard,
+    private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
     private readonly rules: PatternRule[],
     initialIndex = 0
@@ -64,10 +64,6 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
     this.state.edgeStateChangedEmitter.addListener( this.dirtyListener );
     this.state.sectorStateChangedEmitter.addListener( this.dirtyListener );
     this.state.faceColorsChangedEmitter.addListener( this.dirtyListener );
-
-    // TODO: HOW CAN WE CACHE THIS, it might memory leak getEmbeddings?
-    // TODO: We can side-step this and NOT use getEmbeddings(!)
-    this.boardPatternBoard = new BoardPatternBoard( board );
   }
 
   public get dirty(): boolean {
@@ -325,7 +321,7 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
   }
 
   public clone( equivalentState: TState<Data> ): ScanPatternSolver {
-    return new ScanPatternSolver( this.board, equivalentState, this.rules, this.nextIndex );
+    return new ScanPatternSolver( this.board, this.boardPatternBoard, equivalentState, this.rules, this.nextIndex );
   }
 
   public dispose(): void {

@@ -14,10 +14,11 @@ import { simpleRegionIsSolved } from './model/data/simple-region/TSimpleRegionDa
 import _ from './workarounds/_.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { PolygonalBoard } from './model/board/core/TiledBoard.ts';
-import { PolygonGenerator, polygonGenerators } from './view/GenerateNode.ts';
 import { AnnotationNode } from './view/AnnotationNode.ts';
 import { standardSolverFactory } from './model/solver/standardSolverFactory.ts';
 import { currentPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
+import { PolygonGenerator } from './model/board/PolygonGenerator.ts';
+import { polygonGenerators } from './model/board/generators/polygonGenerators.ts';
 
 // Load with `http://localhost:5173/solver-fuzz.html?debugger`
 

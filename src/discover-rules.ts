@@ -14,7 +14,6 @@ import assert, { assertEnabled } from './workarounds/assert.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
 import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
-import { getPeriodicTilingGenerator, PolygonGenerator } from './view/GenerateNode.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
 import { deserializePlanarMappedPatternBoard, serializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
 import { generateAllDisjointNonSingleSubsets, generateBinaryPartitions, getFaceFeatureCombinations } from './model/pattern/feature/getFaceFeatureCombinations.ts';
@@ -32,6 +31,8 @@ import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
 import { filterHighlanderSolutions } from './model/pattern/filterHighlanderSolutions.ts';
 import { getIndeterminateEdges } from './model/pattern/getIndeterminateEdges.ts';
+import { PolygonGenerator } from './model/board/PolygonGenerator.ts';
+import { getPeriodicTilingGenerator } from './model/board/getPeriodicTilingGenerator.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 

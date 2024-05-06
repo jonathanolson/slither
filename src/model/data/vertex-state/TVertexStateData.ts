@@ -1,10 +1,10 @@
 import { TEmitter } from 'phet-lib/axon';
-import { TSerializedState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
 import { TSerializedVertex } from '../../board/core/TSerializedVertex.ts';
 import { serializeVertex } from '../../board/core/serializeVertex.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TVertexStateData {
   getVertexState( vertex: TVertex ): VertexState;

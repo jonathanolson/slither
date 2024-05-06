@@ -1,4 +1,4 @@
-import { TSerializedState, TState } from '../core/TState.ts';
+import { TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TinyEmitter } from 'phet-lib/axon';
@@ -7,6 +7,7 @@ import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
 
 export class FaceColorValidator implements TState<TFaceColorData> {
 
