@@ -84,7 +84,6 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
 
     while ( this.nextIndex < this.rules.length ) {
       const rule = this.rules[ this.nextIndex ];
-      console.log( this.nextIndex );
       this.nextIndex++; // increment here, so if we return early, we'll be pointed to the next one.
 
       if ( rule.patternBoard !== lastPatternBoard ) {
