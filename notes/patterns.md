@@ -42,6 +42,7 @@
   - 
   - SHOW ?s on Pattern Annotations, since it is hard to see what highlander is
     - ALTERNATIVELY, also show the "pattern" node
+    - GET AN OPTIMIZED viewer?
   - 
   - FILTER out "rules that won't show up" somehow? (e.g. don't even try sector rules if sectors aren't enabled)
   - 
