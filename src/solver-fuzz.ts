@@ -115,7 +115,7 @@ const boards = [
       if ( action ) {
         console.log( action );
         const validator = new CompleteValidator( board, state, solvedState );
-        puzzleNode.addAnnotationNode( new AnnotationNode( action.annotation, currentPuzzleStyle ) );
+        puzzleNode.addAnnotationNode( new AnnotationNode( board, action.annotation, currentPuzzleStyle ) );
         updateView();
         await sleep( 0 );
         try {
@@ -137,7 +137,7 @@ const boards = [
         const freshSolver = standardSolverFactory( board, state, true );
         const freshSolverAction = freshSolver.nextAction();
         if ( freshSolverAction ) {
-          puzzleNode.addAnnotationNode( new AnnotationNode( freshSolverAction.annotation, currentPuzzleStyle ) );
+          puzzleNode.addAnnotationNode( new AnnotationNode( board, freshSolverAction.annotation, currentPuzzleStyle ) );
           updateView();
           await sleep( 0 );
           throw new Error( 'Fresh solver should not have any actions' );

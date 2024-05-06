@@ -27,6 +27,7 @@ import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzleStyles.ts';
+import { Bounds2 } from 'phet-lib/dot';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -54,6 +55,7 @@ export type BasicPuzzleNodeData = TCompleteData;
 export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends BasicPuzzleNodeData = BasicPuzzleNodeData> extends Node {
 
   private readonly annotationContainer: Node;
+  private readonly backgroundNode: Node;
 
   public constructor(
     public readonly puzzle: TPropertyPuzzle<Structure, Data>,
@@ -216,6 +218,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
       isSolvedProperty.dispose();
     } );
+
+    this.backgroundNode = backgroundNode;
   }
 
   public addAnnotationNode( node: Node ): void {
@@ -229,6 +233,10 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
   public clearAnnotationNodes(): void {
     // TODO: will we need to dispose?
     this.annotationContainer.removeAllChildren();
+  }
+
+  public getBackgroundBounds(): Bounds2 {
+    return this.backgroundNode.bounds;
   }
 }
 

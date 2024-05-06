@@ -63,7 +63,7 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       }
 
       if ( annotation ) {
-        const annotationNode = new AnnotationNode( annotation, puzzleModel.style );
+        const annotationNode = new AnnotationNode( puzzleModel.puzzle.board, annotation, puzzleModel.style, puzzleNode.getBackgroundBounds() );
         puzzleNode.addAnnotationNode( annotationNode );
         lastAnnotationNode = annotationNode;
       }

@@ -71,6 +71,7 @@ export const themeColorPropertyNames = [
   'barrierColorProperty',
   'generateAddedFaceColorProperty',
   'generateMinimizedFaceColorProperty',
+  'patternAnnotationBackgroundColorProperty',
 
 
   // TODO: can we actually use rainbow colors (culori-based) for the UI button colors?!? ZOMG
@@ -215,7 +216,8 @@ export const lightTheme = addThemeLUT( {
   uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(50,50,50)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' )
+  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' ),
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.4)' ),
 } );
 
 export const darkTheme = addThemeLUT( {
@@ -269,7 +271,8 @@ export const darkTheme = addThemeLUT( {
   uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(200,200,200)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
-  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' )
+  generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' ),
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.6)' ),
 } );
 
 export const fadeLightTheme = addThemeLUT( {
