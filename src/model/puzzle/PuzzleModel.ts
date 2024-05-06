@@ -609,7 +609,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       // TODO: figure out what is best here
       // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
       // const solver = standardSolverFactory( this.puzzle.board, state, true );
-      // const solver = new ScanPatternSolver( this.puzzle.board, state, all10Edge20HighlanderCollection.getRules() );
       const solver = patternSolverFactory( this.puzzle.board, state, true );
 
       try {
