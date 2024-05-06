@@ -24,27 +24,23 @@
       - getImpliedGeneralBoardRules 2 52 [PC]
       - getOnlyImpliedSquareBoardRules 4 15 [PC]
       - getOnlyImpliedSquareBoardRules 4 17 [PC] (goes to 4,75)
-      - getOnlyImpliedSquareBoardRules 4 24 [PC]
-      - getOnlyImpliedSquareBoardRules 4 25 [PC]
-      - getOnlyImpliedSquareBoardRules 4 26 [PC]
-      - getOnlyImpliedSquareBoardRules 4 27 [PC]
-      - getOnlyImpliedSquareBoardRules 4 28 [PC]
+      - getOnlyImpliedSquareBoardRules 4 29 [PC]
+      - getOnlyImpliedSquareBoardRules 4 30 [PC]
+      - getOnlyImpliedSquareBoardRules 4 31 [PC]
+      - getOnlyImpliedSquareBoardRules 4 32 [PC]
+      - getOnlyImpliedSquareBoardRules 4 33 [PC]
+      - getOnlyImpliedSquareBoardRules 4 34 [PC]
+      - getOnlyImpliedSquareBoardRules 4 35 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 0 [PC] <--- 2 1 nothing, 2 3 nothing
       - getOnlyImpliedAllSquareBoardRules 2 2 [PC]
       - getOnlyImpliedAllSquareBoardRules 2 4 [PC]
-      - 
-      - getImpliedGeneralBoardRules 2 60 *
-      - getImpliedGeneralBoardRules 2 62 *
-      - getImpliedGeneralBoardRules 2 64 *
-      - getImpliedGeneralBoardRules 2 71 *
-      - getImpliedGeneralBoardRules 2 73 *
-      - getImpliedGeneralBoardRules 2 75 *
-      - getImpliedGeneralBoardRules 2 77 *
       - 
     - Future:
       - Highlander on smaller boards(!)
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
+  - 
+  - FILTER out "rules that won't show up" somehow? (e.g. don't even try sector rules if sectors aren't enabled)
   - 
   - BoardPatternBoard ... memoize?
     - Do we do the matching in pattern space or original state space?
