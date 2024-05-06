@@ -40,6 +40,9 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - SHOW ?s on Pattern Annotations, since it is hard to see what highlander is
+    - ALTERNATIVELY, also show the "pattern" node
+  - 
   - FILTER out "rules that won't show up" somehow? (e.g. don't even try sector rules if sectors aren't enabled)
   - 
   - BoardPatternBoard ... memoize?
