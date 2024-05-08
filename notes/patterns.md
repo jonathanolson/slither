@@ -40,11 +40,26 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
-  - SHOW ?s on Pattern Annotations, since it is hard to see what highlander is
-    - ALTERNATIVELY, also show the "pattern" node
-    - GET AN OPTIMIZED viewer?
+  - For "face selection" - make it easier to select outside (not just that strip)
+  - 
+  - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
+  - FeatureSets take up a lot AND we want a faster way to compare against actual boards
+    - Make a compact "feature set" that stores/serializes small, and is QUICKLY CHECKABLE given an embedding.
+  - 
+  - FaceColorDualFeature should LAZILY handle its paths
   - 
   - FILTER out "rules that won't show up" somehow? (e.g. don't even try sector rules if sectors aren't enabled)
+    - e.g.: [if sectors are not visible, don't apply rules with sectors]
+  - 
+  - Replace PuzzleNode for patterns:
+    - (( reuse PuzzleNode components where possible ))
+      - MAYBE actually use PuzzleNode, but do board subsetting AND enable ?s ---- no!
+    - (a) ONLY include faces that will be part of the clipping area (DO BOUNDING BOX checks, not vertices)
+    - (b) Fix the clip region for sectors
+    - (C) SHOW ?s on Pattern Annotations, since it is hard to see what highlander is
+      - ALTERNATIVELY, also show the "pattern" node
+  - 
+  - Embed/display rules as examples (have a page perhaps that allows browsing these?)
   - 
   - BoardPatternBoard ... memoize?
     - Do we do the matching in pattern space or original state space?
