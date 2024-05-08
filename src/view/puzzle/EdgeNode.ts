@@ -18,6 +18,13 @@ export type EdgeNodeOptions = {
   backgroundOffsetDistance: number;
 };
 
+const halfSize = 0.06;
+const xShape = new Shape()
+  .moveTo( -halfSize, -halfSize )
+  .lineTo( halfSize, halfSize )
+  .moveTo( -halfSize, halfSize )
+  .lineTo( halfSize, -halfSize ).makeImmutable();
+
 export class EdgeNode extends Node {
 
   public constructor(
@@ -37,13 +44,6 @@ export class EdgeNode extends Node {
     const centerPoint = startPoint.average( endPoint );
 
     // TODO: We will want to display the actual CHAIN instead of just the link?
-
-    const halfSize = 0.06;
-    const xShape = new Shape()
-      .moveTo( -halfSize, -halfSize )
-      .lineTo( halfSize, halfSize )
-      .moveTo( -halfSize, halfSize )
-      .lineTo( halfSize, -halfSize );
 
     const xVisibleProperty = new DerivedProperty( [
       isSolvedProperty,
@@ -187,17 +187,9 @@ export class EdgeNode extends Node {
           halfEndPoint,
           halfEndPoint.plus( endDirection.times( options.backgroundOffsetDistance ) ),
           halfStartPoint.plus( startDirection.times( options.backgroundOffsetDistance ) )
-          // edge.faces[ 1 ].viewCoordinates
         ] );
       }
 
-      //
-      // const pointerArea = new Shape()
-      //   .moveTo( centerPoint.x - 0.5, centerPoint.y )
-      //   .lineTo( centerPoint.x, centerPoint.y - 0.5 )
-      //   .lineTo( centerPoint.x + 0.5, centerPoint.y )
-      //   .lineTo( centerPoint.x, centerPoint.y + 0.5 )
-      //   .close();
       this.mouseArea = this.touchArea = pointerArea;
 
       hookPuzzleListeners( edge, this, edgePressListener, options.edgeHoverListener );

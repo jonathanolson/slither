@@ -11,6 +11,7 @@ import { dotRandom, Vector2 } from 'phet-lib/dot';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { TFaceFilter } from './PuzzleNode.ts';
 
 export class SimpleRegionViewNode extends Node {
 
@@ -26,6 +27,7 @@ export class SimpleRegionViewNode extends Node {
   public constructor(
     public readonly board: TBoard,
     stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>,
+    private readonly faceFilter: TFaceFilter,
     private readonly style: TPuzzleStyle
   ) {
     super( {

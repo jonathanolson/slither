@@ -8,6 +8,13 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { Shape } from 'phet-lib/kite';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
+const smallRadius = 0.03;
+const largeRadius = 0.05;
+const smallCircle = Shape.circle( smallRadius ).makeImmutable();
+const largeCircle = Shape.circle( largeRadius ).makeImmutable();
+const smallSquare = Shape.rect( -smallRadius, -smallRadius, 2 * smallRadius, 2 * smallRadius ).makeImmutable();
+const largeSquare = Shape.rect( -largeRadius, -largeRadius, 2 * largeRadius, 2 * largeRadius ).makeImmutable();
+
 export class VertexNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
@@ -25,6 +32,7 @@ export class VertexNode extends Node {
     } );
     this.disposeEmitter.addListener( () => visibleProperty.dispose() );
 
+    // TODO: potentially just have our VertexNode be the path?
     const path = new Path( null, {
       translation: vertex.viewCoordinates,
       fill: style.theme.vertexColorProperty,
@@ -36,13 +44,11 @@ export class VertexNode extends Node {
       style.vertexStyleProperty,
       style.smallVertexProperty
     ], ( style, isSmall ) => {
-      const radius = isSmall ? 0.03 : 0.05;
-
       if ( style === 'round' ) {
-        path.shape = Shape.circle( radius );
+        path.shape = isSmall ? smallCircle : largeCircle;
       }
       else if ( style === 'square' ) {
-        path.shape = Shape.rect( -radius, -radius, 2 * radius, 2 * radius );
+        path.shape = isSmall ? smallSquare : largeSquare;
       }
       else {
         assertEnabled() && assert( false, `unhandled vertex style: ${style}` );

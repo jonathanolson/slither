@@ -11,6 +11,7 @@ import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { TFaceFilter } from './PuzzleNode.ts';
 
 export class FaceColorViewNode extends Node {
 
@@ -26,6 +27,7 @@ export class FaceColorViewNode extends Node {
   public constructor(
     public readonly board: TBoard,
     private readonly stateProperty: TReadOnlyProperty<TState<TFaceColorData>>,
+    private readonly faceFilter: TFaceFilter,
     private readonly style: TPuzzleStyle
   ) {
     const faceColorNodeContainer = new Node();
@@ -38,14 +40,16 @@ export class FaceColorViewNode extends Node {
     this.faceColorNodeContainer = faceColorNodeContainer;
 
     board.faces.forEach( face => {
-      this.adjacentFacesMap.set( face, face.edges.map( edge => edge.getOtherFace( face ) ).filter( face => face !== null ) as TFace[] );
+      if ( faceFilter( face ) ) {
+        this.adjacentFacesMap.set( face, face.edges.map( edge => edge.getOtherFace( face ) ).filter( face => face !== null ) as TFace[] );
+      }
     } );
 
     {
       const initialFaceColors = stateProperty.value.getFaceColors();
 
       for ( const faceColor of initialFaceColors ) {
-        this.addFaceColor( faceColor, stateProperty.value.getFacesWithColor( faceColor ) );
+        this.addFaceColor( faceColor, stateProperty.value.getFacesWithColor( faceColor ).filter( faceFilter ) );
       }
 
       this.addDualColorViews( stateProperty.value, initialFaceColors );
@@ -82,16 +86,16 @@ export class FaceColorViewNode extends Node {
 
         if ( this.faceColorIdMap.has( faceColor.id ) ) {
           const oldFaceColor = this.faceColorIdMap.get( faceColor.id )!;
-          this.replaceFaceColor( oldFaceColor, faceColor, state.getFacesWithColor( faceColor ) );
+          this.replaceFaceColor( oldFaceColor, faceColor, state.getFacesWithColor( faceColor ).filter( faceFilter ) );
           removals.delete( oldFaceColor ); // don't remove it!
         }
         else {
-          this.addFaceColor( faceColor, state.getFacesWithColor( faceColor ) );
+          this.addFaceColor( faceColor, state.getFacesWithColor( faceColor ).filter( faceFilter ) );
         }
       }
 
       for ( const faceColor of inBothFaceColors ) {
-        this.updateFaceColor( faceColor, state.getFacesWithColor( faceColor ) );
+        this.updateFaceColor( faceColor, state.getFacesWithColor( faceColor ).filter( faceFilter ) );
       }
 
       for ( const faceColor of removals ) {
@@ -261,7 +265,9 @@ export class FaceColorViewNode extends Node {
       const faceToDualColorViewMap = new Map<TFace, DualColorView[]>();
       const pairWeights: { a: DualColorView; b: DualColorView; weight: number }[] = [];
       this.board.faces.forEach( face => {
-        faceToDualColorViewMap.set( face, [] );
+        if ( this.faceFilter( face ) ) {
+          faceToDualColorViewMap.set( face, [] );
+        }
       } );
       for ( const dualColorView of dualColorViews ) {
         const primaryFaceSet = new Set<TFace>();

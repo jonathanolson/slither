@@ -339,20 +339,31 @@ export type AnnotatedPattern = {
         addState( inputState, annotation.input );
         addState( outputState, annotation.output );
 
+        const dilation = 0.2;
+        const dilatedPatternBounds = patternBounds.dilated( dilation );
+
+        const includedFaces = new Set( board.faces.filter( face => {
+          const faceBounds = Bounds2.NOTHING.copy();
+          face.vertices.forEach( vertex => {
+            faceBounds.addPoint( vertex.viewCoordinates );
+          } );
+          return faceBounds.intersectsBounds( dilatedPatternBounds );
+        } ) );
+        const faceFilter = ( face: TFace ) => includedFaces.has( face );
+
         // TODO: see if we can subset these? Because we are spending a LOT of CPU doing extra stuff
-        const inputNode = new PuzzleNode( new BasicPuzzle( board, inputState ) );
-        const outputNode = new PuzzleNode( new BasicPuzzle( board, outputState ) );
+        const inputNode = new PuzzleNode( new BasicPuzzle( board, inputState ), { faceFilter: faceFilter } );
+        const outputNode = new PuzzleNode( new BasicPuzzle( board, outputState ), { faceFilter: faceFilter } );
 
         disposeActions.push( () => {
           inputNode.dispose();
           outputNode.dispose();
         } );
 
-        const dilation = 0.2;
+
         const cornerRadius = 0.5;
         const scale = 0.5;
 
-        const dilatedPatternBounds = patternBounds.dilated( dilation );
         const patternOutlineShape = Shape.roundRectangle( dilatedPatternBounds.x, dilatedPatternBounds.y, dilatedPatternBounds.width, dilatedPatternBounds.height, cornerRadius, cornerRadius );
 
         const inputContainerNode = new Node( {

@@ -29,6 +29,8 @@ import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzleStyles.ts';
 import { Bounds2 } from 'phet-lib/dot';
 
+export type TFaceFilter = ( face: TFace ) => boolean;
+
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
@@ -42,26 +44,27 @@ type SelfOptions = {
   hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
+  faceFilter?: TFaceFilter; // If provided, we will only show items with faces that pass the filter
   style?: TPuzzleStyle;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
 
-export type BasicPuzzleNodeOptions = SelfOptions & ParentOptions;
+export type PuzzleNodeOptions = SelfOptions & ParentOptions;
 
-export type BasicPuzzleNodeData = TCompleteData;
+export type PuzzleNodeData = TCompleteData;
 
 // TODO: disposal!
-export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends BasicPuzzleNodeData = BasicPuzzleNodeData> extends Node {
+export default class PuzzleNode<Structure extends TStructure = TStructure, Data extends PuzzleNodeData = PuzzleNodeData> extends Node {
 
   private readonly annotationContainer: Node;
   private readonly backgroundNode: Node;
 
   public constructor(
     public readonly puzzle: TPropertyPuzzle<Structure, Data>,
-    providedOptions?: BasicPuzzleNodeOptions
+    providedOptions?: PuzzleNodeOptions
   ) {
-    const options = optionize<BasicPuzzleNodeOptions, SelfOptions, ParentOptions>()( {
+    const options = optionize<PuzzleNodeOptions, SelfOptions, ParentOptions>()( {
       // TODO: omg, have their own things do defaults, this is unclean
       textOptions: {
         font: puzzleFont,
@@ -79,6 +82,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null ),
       selectedSectorEditProperty: new Property( null ),
+      faceFilter: () => true,
       style: currentPuzzleStyle
     }, providedOptions );
 
@@ -122,11 +126,13 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       return regions.length === 1 && regions[ 0 ].isSolved;
     } );
 
-    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
+    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, options.faceFilter, style ) );
 
     puzzle.board.faces.forEach( face => {
-      faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
-      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
+      if ( options.faceFilter( face ) ) {
+        faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
+        faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
+      }
     } );
 
     const backgroundNode = new PuzzleBackgroundNode(
@@ -139,21 +145,27 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     // TODO: for performance, can we reduce the number of nodes here?
 
     puzzle.board.vertices.forEach( vertex => {
-      vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-      vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+      if ( vertex.faces.some( options.faceFilter ) ) {
+        vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+        vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+      }
     } );
 
     puzzle.board.edges.forEach( edge => {
-      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
+      if ( edge.faces.some( options.faceFilter ) ) {
+        edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
+      }
     } );
 
     puzzle.board.halfEdges.forEach( sector => {
-      sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
+      if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
+        sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
+      }
     } );
 
-    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, style ) );
+    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, options.faceFilter, style ) );
 
-    super( combineOptions<BasicPuzzleNodeOptions>( {
+    super( combineOptions<PuzzleNodeOptions>( {
       children: [
         backgroundNode,
         faceColorContainer,

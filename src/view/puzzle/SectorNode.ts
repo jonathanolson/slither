@@ -41,46 +41,46 @@ export class SectorNode extends Node {
   ) {
     super();
 
-    const startPoint = sector.start.viewCoordinates;
-    const vertexPoint = sector.end.viewCoordinates;
-    const endPoint = sector.next.end.viewCoordinates;
-
-    const startDelta = startPoint.minus( vertexPoint );
-    const endDelta = endPoint.minus( vertexPoint );
-
-    const startUnit = startDelta.normalized();
-    const endUnit = endDelta.normalized();
-
-    const startAngle = startDelta.angle;
-    let endAngle = endDelta.angle;
-    if ( endAngle < startAngle ) {
-      endAngle += 2 * Math.PI;
-    }
-
-    const halfAngle = endUnit.minus( startUnit ).angle + Math.PI / 2;
-
     const pointerArea = SectorNode.getSectorBaseShape( sector, options.backgroundOffsetDistance );
     this.mouseArea = pointerArea;
     this.touchArea = pointerArea;
 
     hookPuzzleListeners( sector, this, options.sectorPressListener, options.sectorHoverListener );
 
-    const addArc = ( shape: Shape, radius: number ) => {
-      shape.moveToPoint( startUnit.timesScalar( radius ) );
-      shape.arcPoint( Vector2.ZERO, radius, startAngle, endAngle, true );
-
-      return shape;
-    };
-
-    const addCircle = ( shape: Shape, center: Vector2, radius: number ) => {
-      shape.moveTo( center.x + radius, center.y );
-      shape.circle( center, radius );
-      return shape;
-    };
-
     // TODO: this is made for memory optimization, perhaps optimize back for performance again in the future?
     const getShape = ( sectorState: SectorState ) => {
+      const startPoint = sector.start.viewCoordinates;
+      const vertexPoint = sector.end.viewCoordinates;
+      const endPoint = sector.next.end.viewCoordinates;
+
+      const startDelta = startPoint.minus( vertexPoint );
+      const endDelta = endPoint.minus( vertexPoint );
+
+      const startUnit = startDelta.normalized();
+      const endUnit = endDelta.normalized();
+
+      const halfAngle = endUnit.minus( startUnit ).angle + Math.PI / 2;
+
+      const startAngle = startDelta.angle;
+      let endAngle = endDelta.angle;
+      if ( endAngle < startAngle ) {
+        endAngle += 2 * Math.PI;
+      }
+
       const iconCenter = Vector2.createPolar( 0.2, halfAngle );
+
+      const addArc = ( shape: Shape, radius: number ) => {
+        shape.moveToPoint( startUnit.timesScalar( radius ) );
+        shape.arcPoint( Vector2.ZERO, radius, startAngle, endAngle, true );
+
+        return shape;
+      };
+
+      const addCircle = ( shape: Shape, center: Vector2, radius: number ) => {
+        shape.moveTo( center.x + radius, center.y );
+        shape.circle( center, radius );
+        return shape;
+      };
 
       if ( sectorState === SectorState.NONE ) {
         return new Shape()
@@ -113,7 +113,7 @@ export class SectorNode extends Node {
     };
 
     const path = new Path( null, {
-      translation: vertexPoint,
+      translation: sector.end.viewCoordinates, // vertexPoint
       lineWidth: 0.01,
       lineCap: 'butt',
       visibleProperty: style.sectorsVisibleProperty
