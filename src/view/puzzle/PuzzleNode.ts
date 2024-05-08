@@ -217,6 +217,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       } );
 
       isSolvedProperty.dispose();
+      backgroundNode.dispose();
     } );
 
     this.backgroundNode = backgroundNode;

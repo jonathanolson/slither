@@ -25,6 +25,14 @@ export class PatternRuleCollection {
     return rules;
   }
 
+  public get size(): number {
+    return this.serializedRules.length;
+  }
+
+  public getRule( index: number ): PatternRule {
+    return PatternRule.collectionDeserialize( this.patternBoards, this.serializedRules[ index ] );
+  }
+
   public forEachRule( callback: ( rule: PatternRule ) => void ): void {
     for ( let i = 0; i < this.serializedRules.length; i++ ) {
       const rule = PatternRule.collectionDeserialize( this.patternBoards, this.serializedRules[ i ] );
@@ -115,6 +123,10 @@ export class PatternRuleCollection {
 
       return new PatternRuleCollection( patternBoards, serializedRules );
     }
+  }
+
+  public static empty(): PatternRuleCollection {
+    return new PatternRuleCollection( [], [] );
   }
 
   public static fromRules( rules: PatternRule[] ): PatternRuleCollection {

@@ -4,7 +4,7 @@ import { TState } from '../../model/data/core/TState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { Shape } from 'phet-lib/kite';
 import { TSector } from '../../model/data/sector-state/TSector.ts';
-import { DotUtils, Vector2 } from 'phet-lib/dot';
+import { Vector2 } from 'phet-lib/dot';
 import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { TSectorStateData } from '../../model/data/sector-state/TSectorStateData.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
@@ -16,6 +16,21 @@ export type SectorNodeOptions = {
   sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
   backgroundOffsetDistance: number;
 };
+
+const basicDash = [ 0.02, 0.02 ];
+const dashMap = new Map<SectorState, number[]>( [
+  [ SectorState.NONE, [] ],
+  [ SectorState.ONLY_ZERO, [] ],
+  [ SectorState.ONLY_ONE, [] ],
+  [ SectorState.ONLY_TWO, [] ],
+  [ SectorState.NOT_ZERO, basicDash ],
+  [ SectorState.NOT_ONE, [] ],
+  [ SectorState.NOT_TWO, basicDash ],
+  [ SectorState.ANY, [] ]
+] );
+
+const baseArcRadius = 0.2;
+const arcRadiusDelta = 0.02;
 
 export class SectorNode extends Node {
   public constructor(
@@ -43,14 +58,6 @@ export class SectorNode extends Node {
     }
 
     const halfAngle = endUnit.minus( startUnit ).angle + Math.PI / 2;
-    const diffAngle = endAngle - startAngle;
-
-    const baseArcRadius = 0.2;
-    const baseSplineRadius = 0.3;
-    const arcRadiusDelta = 0.02;
-    const splineRadiusDelta = 0.04;
-
-    const iconCenter = Vector2.createPolar( 0.2, halfAngle );
 
     const pointerArea = SectorNode.getSectorBaseShape( sector, options.backgroundOffsetDistance );
     this.mouseArea = pointerArea;
@@ -65,74 +72,45 @@ export class SectorNode extends Node {
       return shape;
     };
 
-    const addSpline = ( shape: Shape, radius: number ) => {
-
-      const middleRadius = DotUtils.linear( 0, 2 * Math.PI, radius * 0.5, 0, Math.abs( 2 * Math.PI - diffAngle ) );
-
-      const splineStart = startUnit.timesScalar( radius );
-      const splineEnd = endUnit.timesScalar( radius );
-
-      const middlePoint = Vector2.createPolar( middleRadius, halfAngle );
-
-      const middleControlPoint = middlePoint.timesScalar( 2 ).minus( splineStart.average( splineEnd ) );
-
-      shape.moveToPoint( splineStart );
-      shape.quadraticCurveToPoint( middleControlPoint, splineEnd );
-      // shape.lineToPoint( middlePoint );
-      // shape.lineToPoint( splineEnd );
-
-      return shape;
-    };
-
     const addCircle = ( shape: Shape, center: Vector2, radius: number ) => {
       shape.moveTo( center.x + radius, center.y );
       shape.circle( center, radius );
       return shape;
     };
 
-    const singleArcShape = addArc( new Shape(), baseArcRadius ).makeImmutable();
-    const doubleArcShape = addArc( addArc( new Shape(), baseArcRadius + arcRadiusDelta ), baseArcRadius - arcRadiusDelta ).makeImmutable();
-    // TODO: handle these, remove if we don't like?
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const singleSplineShape = addSpline( new Shape(), baseSplineRadius ).makeImmutable();
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const doubleSplineShape = addSpline( addSpline( new Shape(), baseSplineRadius + splineRadiusDelta ), baseSplineRadius - splineRadiusDelta ).makeImmutable();
-    const onlyZeroShape = addCircle( new Shape(), iconCenter, 0.05 ).makeImmutable();
-    const anyShape = addCircle( addCircle( addCircle( new Shape(), iconCenter, 0.05 ), iconCenter, 0.03 ), iconCenter, 0.01 ).makeImmutable();
-    const noneShape = new Shape()
-      .moveTo( iconCenter.x - 0.05, iconCenter.y - 0.05 )
-      .lineTo( iconCenter.x + 0.05, iconCenter.y + 0.05 )
-      .moveTo( iconCenter.x - 0.05, iconCenter.y + 0.05 )
-      .lineTo( iconCenter.x + 0.05, iconCenter.y - 0.05 ).makeImmutable();
-    const onlyTwoShape = new Shape()
-      .moveToPoint( startUnit.timesScalar( 0.1 ).plus( iconCenter.timesScalar( 0.7 ) ) )
-      .lineToPoint( iconCenter.timesScalar( 0.7 ) )
-      .lineToPoint( endUnit.timesScalar( 0.1 ).plus( iconCenter.timesScalar( 0.7 ) ) ).makeImmutable();
+    // TODO: this is made for memory optimization, perhaps optimize back for performance again in the future?
+    const getShape = ( sectorState: SectorState ) => {
+      const iconCenter = Vector2.createPolar( 0.2, halfAngle );
 
-    const shapeMap = new Map<SectorState, Shape | null>( [
-      [ SectorState.NONE, noneShape ],
-      [ SectorState.ONLY_ZERO, onlyZeroShape ],
-      [ SectorState.ONLY_ONE, singleArcShape ],
-      [ SectorState.ONLY_TWO, onlyTwoShape ],
-      [ SectorState.NOT_ZERO, doubleArcShape ],
-      [ SectorState.NOT_ONE, doubleArcShape ],
-      [ SectorState.NOT_TWO, singleArcShape ],
-      [ SectorState.ANY, anyShape ]
-    ] );
-
-    const basicDash = [ 0.02, 0.02 ];
-    const dashMap = new Map<SectorState, number[]>( [
-      [ SectorState.NONE, [] ],
-      [ SectorState.ONLY_ZERO, [] ],
-      [ SectorState.ONLY_ONE, [] ],
-      [ SectorState.ONLY_TWO, [] ],
-      [ SectorState.NOT_ZERO, basicDash ],
-      [ SectorState.NOT_ONE, [] ],
-      [ SectorState.NOT_TWO, basicDash ],
-      [ SectorState.ANY, [] ]
-    ] );
+      if ( sectorState === SectorState.NONE ) {
+        return new Shape()
+          .moveTo( iconCenter.x - 0.05, iconCenter.y - 0.05 )
+          .lineTo( iconCenter.x + 0.05, iconCenter.y + 0.05 )
+          .moveTo( iconCenter.x - 0.05, iconCenter.y + 0.05 )
+          .lineTo( iconCenter.x + 0.05, iconCenter.y - 0.05 ).makeImmutable();
+      }
+      else if ( sectorState === SectorState.ONLY_ZERO ) {
+        return addCircle( new Shape(), iconCenter, 0.05 ).makeImmutable();
+      }
+      else if ( sectorState === SectorState.ONLY_TWO ) {
+        return new Shape()
+          .moveToPoint( startUnit.timesScalar( 0.1 ).plus( iconCenter.timesScalar( 0.7 ) ) )
+          .lineToPoint( iconCenter.timesScalar( 0.7 ) )
+          .lineToPoint( endUnit.timesScalar( 0.1 ).plus( iconCenter.timesScalar( 0.7 ) ) ).makeImmutable();
+      }
+      else if ( sectorState === SectorState.ONLY_ONE || sectorState === SectorState.NOT_TWO ) {
+        return addArc( new Shape(), baseArcRadius ).makeImmutable();
+      }
+      else if ( sectorState === SectorState.NOT_ZERO || sectorState === SectorState.NOT_ONE ) {
+        return addArc( addArc( new Shape(), baseArcRadius + arcRadiusDelta ), baseArcRadius - arcRadiusDelta ).makeImmutable();
+      }
+      else if ( sectorState === SectorState.ANY ) {
+        return addCircle( addCircle( addCircle( new Shape(), iconCenter, 0.05 ), iconCenter, 0.03 ), iconCenter, 0.01 ).makeImmutable();
+      }
+      else {
+        throw new Error( 'Unhandled sector state' );
+      }
+    };
 
     const path = new Path( null, {
       translation: vertexPoint,
@@ -140,6 +118,7 @@ export class SectorNode extends Node {
       lineCap: 'butt',
       visibleProperty: style.sectorsVisibleProperty
     } );
+    this.disposeEmitter.addListener( () => path.dispose() );
     this.addChild( path );
 
     const multilink = Multilink.multilink( [
@@ -168,7 +147,7 @@ export class SectorNode extends Node {
           }
         }
         if ( trivialVisible || !isTrivial ) {
-          shape = shapeMap.get( sectorState ) ?? null;
+          shape = getShape( sectorState ) ?? null;
           stroke = SectorNode.getStrokeFromStyle( sectorState, style ) ?? null;
           dash = dashMap.get( sectorState ) ?? [];
           if ( dash.length ) {

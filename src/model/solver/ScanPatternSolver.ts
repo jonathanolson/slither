@@ -51,7 +51,8 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
     private readonly board: TBoard,
     private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
-    private readonly rules: PatternRule[],
+    private readonly numRules: number,
+    private readonly getRule: ( index: number ) => PatternRule,
     initialIndex = 0
   ) {
     this.nextIndex = initialIndex;
@@ -67,7 +68,7 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
   }
 
   public get dirty(): boolean {
-    return this.nextIndex < this.rules.length;
+    return this.nextIndex < this.numRules;
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
@@ -78,8 +79,8 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
     let lastEmbeddings: Embedding[] = [];
     let lastPatternBoard: TPatternBoard | null = null;
 
-    while ( this.nextIndex < this.rules.length ) {
-      const rule = this.rules[ this.nextIndex ];
+    while ( this.nextIndex < this.numRules ) {
+      const rule = this.getRule( this.nextIndex );
       this.nextIndex++; // increment here, so if we return early, we'll be pointed to the next one.
 
       if ( rule.patternBoard !== lastPatternBoard ) {
@@ -321,7 +322,7 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
   }
 
   public clone( equivalentState: TState<Data> ): ScanPatternSolver {
-    return new ScanPatternSolver( this.board, this.boardPatternBoard, equivalentState, this.rules, this.nextIndex );
+    return new ScanPatternSolver( this.board, this.boardPatternBoard, equivalentState, this.numRules, this.getRule, this.nextIndex );
   }
 
   public dispose(): void {

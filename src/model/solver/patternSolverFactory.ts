@@ -7,36 +7,38 @@ import { getAll10Edge20HighlanderCollection } from '../pattern/data/getAll10Edge
 import { ScanPatternSolver } from './ScanPatternSolver.ts';
 import { curatedRules } from '../pattern/data/curatedRules.ts';
 import { standardSolverFactory } from './standardSolverFactory.ts';
-import { PatternRule } from '../pattern/PatternRule.ts';
 import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
 import { getEmbeddings } from '../pattern/getEmbeddings.ts';
+import { PatternRuleCollection } from '../pattern/PatternRuleCollection.ts';
 
-let listOfEmbeddableRules: PatternRule[] = [];
+let embeddableCollection: PatternRuleCollection = PatternRuleCollection.empty();
 let lastBoard: TBoard | null = null;
 let lastBoardPatternBoard: BoardPatternBoard | null = null;
 
 export const patternSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+
   if ( board !== lastBoard ) {
     lastBoard = board;
     lastBoardPatternBoard = new BoardPatternBoard( board );
 
     const collection = getAll10Edge20HighlanderCollection();
 
-    listOfEmbeddableRules = [];
+    embeddableCollection = PatternRuleCollection.empty();
     collection.forEachRule( rule => {
       // TODO: HOW CAN WE CACHE THIS, it might memory leak getEmbeddings?
       // TODO: We can side-step this and NOT use getEmbeddings(!)
       if ( getEmbeddings( rule.patternBoard, lastBoardPatternBoard! ).length > 0 ) {
-        listOfEmbeddableRules.push( rule );
+        embeddableCollection.addRule( rule );
       }
     } );
   }
 
   const boardPatternBoard = lastBoardPatternBoard!;
+  const boardCollection = embeddableCollection;
 
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new ScanPatternSolver( board, boardPatternBoard, state, curatedRules ),
-    new ScanPatternSolver( board, boardPatternBoard, state, listOfEmbeddableRules ),
+    new ScanPatternSolver( board, boardPatternBoard, state, curatedRules.length, i => curatedRules[ i ] ),
+    new ScanPatternSolver( board, boardPatternBoard, state, boardCollection.size, i => boardCollection.getRule( i ) ),
     standardSolverFactory( board, state, dirty ),
   ] );
 };
