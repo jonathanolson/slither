@@ -40,6 +40,8 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
+  - 
   - For "face selection" - make it easier to select outside (not just that strip)
   - 
   - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
