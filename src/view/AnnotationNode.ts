@@ -1,4 +1,4 @@
-import { HBox, Node, Path, TPaint } from 'phet-lib/scenery';
+import { HBox, Node, Path, Text, TPaint } from 'phet-lib/scenery';
 import { AnnotatedPattern, TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
@@ -19,6 +19,7 @@ import { FaceColorMakeOppositeAction } from '../model/data/face-color/FaceColorM
 import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { Panel } from 'phet-lib/sun';
 import { safeSolve } from '../model/solver/safeSolve.ts';
+import { puzzleFont } from './Theme.ts';
 
 export class AnnotationNode extends Node {
   public constructor(
@@ -265,11 +266,13 @@ export class AnnotationNode extends Node {
 
         const inputState = CompleteData.empty( board );
         const outputState = CompleteData.empty( board );
+        const questionFaces = new Set<TFace>( board.faces );
 
         const addState = ( state: CompleteData, annotatedPattern: AnnotatedPattern ) => {
           annotatedPattern.faceValues.forEach( valueAnnotation => {
             if ( valueAnnotation.face ) {
               state.setFaceValue( valueAnnotation.face, valueAnnotation.value );
+              questionFaces.delete( valueAnnotation.face );
             }
           } );
           annotatedPattern.blackEdges.forEach( edge => {
@@ -345,13 +348,25 @@ export class AnnotationNode extends Node {
 
         const patternOutlineShape = Shape.roundRectangle( dilatedPatternBounds.x, dilatedPatternBounds.y, dilatedPatternBounds.width, dilatedPatternBounds.height, cornerRadius, cornerRadius );
 
+        const questionFacesNode = new Node( {
+          children: [ ...includedFaces ].filter( face => questionFaces.has( face ) ).map( face => {
+            return new Text( '?', {
+              font: puzzleFont,
+              maxWidth: 0.9,
+              maxHeight: 0.9,
+              fill: currentPuzzleStyle.theme.faceValueCompletedColorProperty,
+              center: face.viewCoordinates
+            } );
+          } )
+        } );
+
         const inputContainerNode = new Node( {
-          children: [ inputNode ],
+          children: [ inputNode, questionFacesNode ],
           clipArea: patternOutlineShape,
           scale: scale,
         } );
         const outputContainerNode = new Node( {
-          children: [ outputNode ],
+          children: [ outputNode, questionFacesNode ],
           clipArea: patternOutlineShape,
           scale: scale,
         } );

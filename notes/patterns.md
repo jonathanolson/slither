@@ -40,6 +40,10 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
   - 
+  - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
+  - 
+  - REALLY get a good way to view our "library" of patterns
+  - 
   - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
   - 
   - For "face selection" - make it easier to select outside (not just that strip)

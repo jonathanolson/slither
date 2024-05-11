@@ -284,6 +284,11 @@ export class FaceColorViewNode extends Node {
         for ( const face of finalSet ) {
           const otherDualColorViews = faceToDualColorViewMap.get( face )!;
 
+          // NOTE: Is this related to us having the faceFilter?
+          if ( !otherDualColorViews ) {
+            continue;
+          }
+
           if ( otherDualColorViews.length ) {
             for ( const otherFaceColorNode of otherDualColorViews ) {
               let found = false;
