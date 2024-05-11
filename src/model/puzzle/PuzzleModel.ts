@@ -636,6 +636,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
           if ( isAnnotationDisplayedForStyle( action.annotation, this.style ) ) {
             this.pendingHintActionProperty.value = action;
+            console.log( action.annotation );
             break;
           }
           else {

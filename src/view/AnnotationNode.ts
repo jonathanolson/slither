@@ -265,28 +265,7 @@ export class AnnotationNode extends Node {
 
         const inputState = CompleteData.empty( board );
         const outputState = CompleteData.empty( board );
-      /*
-export type AnnotatedFaceValue = {
-  face: TFace | null;
-  value: FaceValue;
-};
 
-export type AnnotatedFaceColorDual = {
-  primaryFaces: ( TFace | null )[];
-  secondaryFaces: ( TFace | null )[];
-};
-
-export type AnnotatedPattern = {
-  faceValues: AnnotatedFaceValue[];
-  blackEdges: TEdge[];
-  redEdges: TEdge[];
-  sectorsNotZero: TSector[];
-  sectorsNotOne: TSector[];
-  sectorsNotTwo: TSector[];
-  sectorsOnlyOne: TSector[];
-  faceColorDuals: AnnotatedFaceColorDual[];
-};
-       */
         const addState = ( state: CompleteData, annotatedPattern: AnnotatedPattern ) => {
           annotatedPattern.faceValues.forEach( valueAnnotation => {
             if ( valueAnnotation.face ) {
@@ -362,7 +341,7 @@ export type AnnotatedPattern = {
 
 
         const cornerRadius = 0.5;
-        const scale = 0.5;
+        const scale = 0.8;
 
         const patternOutlineShape = Shape.roundRectangle( dilatedPatternBounds.x, dilatedPatternBounds.y, dilatedPatternBounds.width, dilatedPatternBounds.height, cornerRadius, cornerRadius );
 
