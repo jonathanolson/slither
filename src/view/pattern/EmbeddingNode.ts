@@ -31,7 +31,7 @@ export class EmbeddingNode extends Node {
     this.addChild( Rectangle.bounds( boardNode.bounds.dilated( 5 ) ) );
 
     // Exit edges
-    for ( const [ patternEdge, targetEdges ] of embedding.exitEdgeMap ) {
+    for ( const [ patternEdge, targetEdges ] of embedding.getExitEdgeMap() ) {
       const index = patternEdge.index;
       for ( const targetEdge of targetEdges ) {
         const edge = targetBoard.getEdge( targetEdge );
@@ -54,7 +54,7 @@ export class EmbeddingNode extends Node {
     }
 
     // Non-exit edges
-    for ( const [ patternEdge, targetEdge ] of embedding.nonExitEdgeMap ) {
+    for ( const [ patternEdge, targetEdge ] of embedding.getNonExitEdgeMap() ) {
       const edge = targetBoard.getEdge( targetEdge );
       const index = patternEdge.index;
 
@@ -74,7 +74,7 @@ export class EmbeddingNode extends Node {
       boardNode.addChild( label );
     }
 
-    for ( const [ patternFace, targetFace ] of embedding.faceMap ) {
+    for ( const [ patternFace, targetFace ] of embedding.getFaceMap() ) {
       const face = targetBoard.getFace( targetFace );
       const index = patternFace.index;
       const isExit = patternFace.isExit;
@@ -89,7 +89,7 @@ export class EmbeddingNode extends Node {
 
       if ( face ) {
         const getExitLocation = () => {
-          const vertexPositions = targetBoard.getEdge( embedding.nonExitEdgeMap.get( patternFace.edges[ 0 ] )! ).vertices.map( v => v.viewCoordinates );
+          const vertexPositions = targetBoard.getEdge( embedding.getNonExitEdgeMap().get( patternFace.edges[ 0 ] )! ).vertices.map( v => v.viewCoordinates );
           return face.viewCoordinates.average( vertexPositions[ 0 ].average( vertexPositions[ 1 ] ) );
         };
 
@@ -104,7 +104,7 @@ export class EmbeddingNode extends Node {
       }
     }
 
-    for ( const [ patternVertex, targetVertex ] of embedding.vertexMap ) {
+    for ( const [ patternVertex, targetVertex ] of embedding.getVertexMap() ) {
       const vertex = targetBoard.getVertex( targetVertex );
       const index = patternVertex.index;
       const isExit = patternVertex.isExit;

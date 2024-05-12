@@ -23,14 +23,20 @@ export const patternSolverFactory = ( board: TBoard, state: TState<TCompleteData
 
     const collection = getAll10Edge20HighlanderCollection();
 
+    const bytes: number[] = [];
+
     embeddableCollection = PatternRuleCollection.empty();
     collection.forEachRule( rule => {
+        bytes.push( ...rule.getBinary( collection.patternBoards ) );
+
       // TODO: HOW CAN WE CACHE THIS, it might memory leak getEmbeddings?
       // TODO: We can side-step this and NOT use getEmbeddings(!)
       if ( getEmbeddings( rule.patternBoard, lastBoardPatternBoard! ).length > 0 ) {
         embeddableCollection.addRule( rule );
       }
     } );
+
+    debugger;
   }
 
   const boardPatternBoard = lastBoardPatternBoard!;

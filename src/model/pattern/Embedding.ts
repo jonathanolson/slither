@@ -20,11 +20,11 @@ export class Embedding {
     public readonly sourcePatternBoard: TPatternBoard,
     public readonly targetPatternBoard: TPatternBoard,
     // TODO: consider alternate implementation with fewer objects?
-    public readonly vertexMap: Map<TPatternVertex, TPatternVertex>,
-    public readonly nonExitEdgeMap: Map<TPatternEdge, TPatternEdge>,
-    public readonly exitEdgeMap: Map<TPatternEdge, TPatternEdge[]>,
-    public readonly sectorMap: Map<TPatternSector, TPatternSector>,
-    public readonly faceMap: Map<TPatternFace, TPatternFace>,
+    private readonly vertexMap: Map<TPatternVertex, TPatternVertex>,
+    private readonly nonExitEdgeMap: Map<TPatternEdge, TPatternEdge>,
+    private readonly exitEdgeMap: Map<TPatternEdge, TPatternEdge[]>,
+    private readonly sectorMap: Map<TPatternSector, TPatternSector>,
+    private readonly faceMap: Map<TPatternFace, TPatternFace>,
   ) {
     this.isAutomorphism = sourcePatternBoard === targetPatternBoard;
 
@@ -44,6 +44,26 @@ export class Embedding {
     }
 
     this.isIdentityAutomorphism = this.computeIsIdentityAutomorphism();
+  }
+
+  public getVertexMap(): Map<TPatternVertex, TPatternVertex> {
+    return this.vertexMap;
+  }
+
+  public getNonExitEdgeMap(): Map<TPatternEdge, TPatternEdge> {
+    return this.nonExitEdgeMap;
+  }
+
+  public getExitEdgeMap(): Map<TPatternEdge, TPatternEdge[]> {
+    return this.exitEdgeMap;
+  }
+
+  public getSectorMap(): Map<TPatternSector, TPatternSector> {
+    return this.sectorMap;
+  }
+
+  public getFaceMap(): Map<TPatternFace, TPatternFace> {
+    return this.faceMap;
   }
 
   public mapVertex( vertex: TPatternVertex ): TPatternVertex {

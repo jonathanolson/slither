@@ -12,10 +12,9 @@ import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
  */
 export class PatternRuleCollection {
   private constructor(
-    private readonly patternBoards: TPatternBoard[],
+    public readonly patternBoards: TPatternBoard[],
     private readonly serializedRules: CollectionSerializedPatternRule[],
-  ) {
-  }
+  ) {}
 
   public getRules(): PatternRule[] {
     const rules: PatternRule[] = [];

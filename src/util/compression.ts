@@ -55,3 +55,24 @@ export const decompressString2 = ( compressed: CompressedString ): string | null
     return null;
   }
 };
+
+export const compressByteArray = ( input: Uint8Array ): CompressedString => {
+  const output = pako.deflate( input );
+
+  let outputStr = '';
+  for ( let i = 0; i < output.length; i++ ) {
+    outputStr += String.fromCharCode( output[ i ] );
+  }
+  return btoa( outputStr );
+};
+
+export const decompressByteArray = ( compressed: CompressedString ): Uint8Array | null => {
+  try {
+    const input = new Uint8Array( atob( compressed ).split( '' ).map( c => c.charCodeAt( 0 ) ) );
+    return pako.inflate( input );
+  }
+  catch ( e ) {
+    console.log( `${e}` );
+    return null;
+  }
+};

@@ -8,6 +8,10 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { serializePatternBoard } from './serializePatternBoard.ts';
 import { deserializePatternBoard } from './deserializePatternBoard.ts';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
+import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
+import { TEmbeddableFeature } from './feature/TEmbeddableFeature.ts';
+import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
+import { TPatternFace } from './TPatternFace.ts';
 
 export type SerializedPatternRule = {
   patternBoard: string;
@@ -149,6 +153,125 @@ export class PatternRule {
 
   public toCanonicalString(): string {
     return `rule:${this.inputFeatureSet.toCanonicalString()}->${this.outputFeatureSet.toCanonicalString()}`;
+  }
+
+  public equals( other: PatternRule ): boolean {
+    return this.patternBoard === other.patternBoard && this.inputFeatureSet.equals( other.inputFeatureSet ) && this.outputFeatureSet.equals( other.outputFeatureSet ) && this.highlander === other.highlander;
+  }
+
+  public getBinary( patternBoards: TPatternBoard[] ): number[] {
+    const bytes: number[] = [];
+
+    // TODO: how to note that it is a highlander rule? do we want to store that? Just rely on knowing which collection it is from?
+
+    const patternBoardIndex = patternBoards.indexOf( this.patternBoard );
+    assertEnabled() && assert( patternBoardIndex !== -1 && patternBoardIndex < 256, 'pattern board index' );
+    bytes.push( patternBoardIndex );
+
+    const binaryMapping = getBinaryFeatureMapping( this.patternBoard );
+
+    const inputFeatures = this.inputFeatureSet.getFeaturesArray();
+
+    // TODO: better deduplication in the future
+    const outputOnlyFeatures = this.outputFeatureSet.getFeaturesArray().filter( feature => !inputFeatures.some( f => f.equals( feature ) ) );
+
+    const addFeatures = ( features: TEmbeddableFeature[] ) => {
+      const mappedFeatures = features.filter( feature => !( feature instanceof FaceColorDualFeature ) );
+      const faceColorDualFeatures = features.filter( feature => feature instanceof FaceColorDualFeature ) as FaceColorDualFeature[];
+
+      for ( const feature of mappedFeatures ) {
+        const index = binaryMapping.featureArray.findIndex( f => f.equals( feature ) );
+        assertEnabled() && assert( index !== -1, 'feature index' );
+        bytes.push( index );
+      }
+
+      for ( const feature of faceColorDualFeatures ) {
+        bytes.push( 0xfe );
+
+        for ( const face of feature.primaryFaces ) {
+          assertEnabled() && assert( face.index < 126, 'need room to disambiguate from 0xff/0xfe once high bit is set' );
+          bytes.push( face.index );
+        }
+
+        for ( const face of feature.secondaryFaces ) {
+          assertEnabled() && assert( face.index < 126, 'need room to disambiguate from 0xff/0xfe once high bit is set' );
+          bytes.push( face.index | 0x80 );
+        }
+      }
+    };
+
+    addFeatures( inputFeatures );
+    bytes.push( 0xff );
+    addFeatures( outputOnlyFeatures );
+    bytes.push( 0xff );
+
+    if ( assertEnabled() ) {
+      const array = new Uint8Array( bytes );
+      const { rule, nextByteIndex } = PatternRule.fromBinary( patternBoards, array, 0, this.highlander );
+      assert( rule.equals( this ), 'round-trip equality' );
+      assert( nextByteIndex === array.length, 'round-trip length' );
+    }
+
+    return bytes;
+  }
+
+  public static fromBinary( patternBoards: TPatternBoard[], data: Uint8Array | number[], byteIndex: number, highlander: boolean ): {
+    rule: PatternRule;
+    nextByteIndex: number;
+  } {
+    const patternBoardIndex = data[ byteIndex++ ];
+    const patternBoard = patternBoards[ patternBoardIndex ];
+    assertEnabled() && assert( patternBoard, 'pattern board' );
+
+    const binaryMapping = getBinaryFeatureMapping( patternBoard );
+
+    const readFeatures = (): FeatureSet => {
+      const featureSet = FeatureSet.empty( patternBoard );
+
+      while ( true ) {
+        const firstByte = data[ byteIndex++ ];
+
+        if ( firstByte === 0xff ) {
+          return featureSet;
+        }
+        else if ( firstByte === 0xfe ) {
+          const primaryFaces: TPatternFace[] = [];
+          const secondaryFaces: TPatternFace[] = [];
+
+          while ( true ) {
+            const nextByte = data[ byteIndex++ ];
+
+            // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+            if ( nextByte === 0xff || nextByte === 0xfe ) {
+              byteIndex--;
+              break;
+            }
+
+            if ( nextByte & 0x80 ) {
+              secondaryFaces.push( patternBoard.faces[ nextByte & 0x7f ] );
+            }
+            else {
+              primaryFaces.push( patternBoard.faces[ nextByte ] );
+            }
+          }
+
+          featureSet.addFeature( FaceColorDualFeature.fromPrimarySecondaryFaces( primaryFaces, secondaryFaces ) );
+        }
+        else {
+          // binary mapped feature
+          featureSet.addFeature( binaryMapping.featureArray[ firstByte ] );
+        }
+      }
+    };
+
+    const inputFeatureSet = readFeatures();
+    const outputFeatureSet = readFeatures().union( inputFeatureSet )!;
+    assertEnabled() && assert( outputFeatureSet );
+
+    return {
+      rule: new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet, highlander ),
+      nextByteIndex: byteIndex
+    };
   }
 
   public serialize(): SerializedPatternRule {
