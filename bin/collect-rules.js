@@ -22,7 +22,7 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
 ( async () => {
   const browser = await getBrowser();
 
-  const emptyCollection = { patternBoards: [], rules: `eJyLjgUAARUAuQ==` };
+  const emptyCollection = { patternBoards: [], rules: `eJwDAAAAAAE=`, highlander: false };
 
   let collection = emptyCollection;
 
@@ -30,7 +30,7 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
     console.log( `| ADDING ${dir}/${filename}` );
 
     const ruleSetJSON = fs.readFileSync( `./data/${dir}/${filename}`, 'utf8' );
-    collection = await browserEvaluate( browser, 'http://localhost/slither/dist/hooks.html', `addRuleSetToCollection( ${JSON.stringify( collection )}, ${ruleSetJSON}, ${maxScore} )` );
+    collection = await browserEvaluate( browser, 'http://localhost/slither/dist/hooks.html', `addRuleSetToBinaryCollection( ${JSON.stringify( collection )}, ${ruleSetJSON}, ${maxScore} )` );
 
     if ( !collection.rules ) {
       console.log( collection );
@@ -72,14 +72,6 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
   if ( type === 'edge' ) {
     await addFullRuleSetDir( 'basic-edge' );
     await addAllGenerations( [
-      'general-implied',
-      'square-edge-only-implied',
-      'hexagonal-edge-only-implied',
-    ] );
-  }
-  else if ( type === 'edge-highlander' ) {
-    await addFullRuleSetDir( 'basic-edge' );
-    await addAllGenerations( [
       'general-edge-highlander-implied',
       'general-implied',
       'square-edge-highlander-only-implied',
@@ -97,29 +89,49 @@ const getGenerationRuleSetFiles = ( name, generation ) => {
       'hexagonal-color-implied',
     ] );
   }
-  else if ( type === 'all' ) {
+  else if ( type === 'edge-sector' ) {
     await addFullRuleSetDir( 'basic-edge' );
     await addFullRuleSetDir( 'basic-sector-implied' );
-    await addFullRuleSetDir( 'basic-color-only' );
-    await addFullRuleSetDir( 'basic-color' );
     await addFullRuleSetDir( 'basic-all' );
-    await addFullRuleSetDir( 'dual-edge-color' );
     await addAllGenerations( [
+      'general-edge-highlander-implied',
       'general-implied',
+      'general-sector-highlander-implied',
       'general-sector-implied',
-      'general-color-implied',
+      'general-all-highlander-implied',
       'general-all-implied',
+      'square-edge-highlander-only-implied',
       'square-edge-only-implied',
+      'square-sector-highlander-only-implied',
       'square-sector-only-implied',
-      'square-color-implied',
+      'square-all-highlander-only-implied',
       'square-all-only-implied',
+      'hexagonal-edge-highlander-only-implied',
       'hexagonal-edge-only-implied',
+      'hexagonal-sector-highlander-only-implied',
       'hexagonal-sector-only-implied',
-      'hexagonal-color-implied',
+      'hexagonal-all-highlander-only-implied',
       'hexagonal-all-only-implied',
     ] );
   }
-  else if ( type === 'all-highlander' ) {
+  else if ( type === 'edge-color' ) {
+    await addFullRuleSetDir( 'dual-edge-color' );
+    await addFullRuleSetDir( 'basic-edge' );
+    await addFullRuleSetDir( 'basic-color-only' );
+    await addFullRuleSetDir( 'basic-color' );
+    await addAllGenerations( [
+      'general-edge-highlander-implied',
+      'general-implied',
+      'general-color-implied',
+      'square-edge-highlander-only-implied',
+      'square-edge-only-implied',
+      'square-color-implied',
+      'hexagonal-edge-highlander-only-implied',
+      'hexagonal-edge-only-implied',
+      'hexagonal-color-implied',
+    ] );
+  }
+  else if ( type === 'all' ) {
     await addFullRuleSetDir( 'basic-edge' );
     await addFullRuleSetDir( 'basic-sector-implied' );
     await addFullRuleSetDir( 'basic-color-only' );

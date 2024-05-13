@@ -3,7 +3,7 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import { getAll10Edge20HighlanderCollection } from './model/pattern/data/getAll10Edge20HighlanderCollection.ts';
+import { curatedRules } from './model/pattern/data/curatedRules.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();
@@ -44,7 +44,7 @@ console.log( 'test' );
     container.addChild( new AlignBox( node, { margin: 5 } ) );
   };
 
-  const rules: PatternRule[] = getAll10Edge20HighlanderCollection().getRules().filter( ( r, i ) => i % 1000 === 0 );
+  const rules: PatternRule[] = curatedRules;
 
   addPaddedNode( new VBox( {
     spacing: 20,

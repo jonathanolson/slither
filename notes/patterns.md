@@ -39,12 +39,43 @@
       - Highlander on smaller boards(!)
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
+    - Add dependencies.json for phet-lib builds!!!!
+  - 
+  - SAT.js (or alternative)
+    - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
+    - https://github.com/GJDuck/SAT.js/blob/master/SAT.js
+      - YES, it is GPLv3, we would license entire thing under GPLv3. Do it for now?
+        - Can ChatGPT give us code adapted from other versions perhaps?
+    - MINISAT FAILURE
+      - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
+      - 2 48 also
+      - minisat-OUT
+      - Perhaps we are giving it too many loops?
+      - CONSIDER:
+        - What if we... manually compute these? For these SMALL cases, it is probably practical
+    - 
+  - 
+  - "in-progress" collection type, that tracks:
+    - (a) boards that have completed processing (even if they are NOT in the list, they were empty)
+    - (b) boards that are currently in processing
+    - * check what the "next board in the current generation is" that we could process (might be none)
+    - * LOOP possible to "keep computing things for this solve type"
+    - solve types are:
+      - general / square (only) / hexagonal (only)
+        - Define the "board generations" and "way to compute initial feature set" for each ()
+      - edge / color / edge + sector / edge + color / all
+      - highlander / non-highlander
+  - 
+  - sorted() on binary collections [and better sorting]
+    - Come up with a better "rule complexity" metric, sectors are not THAT bad. ONLY measure the input size?
+      - ACTUALLY JUST MEASURE HOW OFTEN RULES COME UP ON RANDOM THINGS?
+        - can we iteratively improve the ranking of rules? Repeatedly solve generated puzzles (full difficulty), see how often we use each rule
+  - 
+  - Load collections by AJAX one-at-a-time when needed? So we don't hit memory issues
   - 
   - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
   - 
   - REALLY get a good way to view our "library" of patterns
-  - 
-  - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
   - 
   - For "face selection" - make it easier to select outside (not just that strip)
   - 
@@ -52,47 +83,10 @@
     - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
     - We should CHANGE the code that computes embeddings(!)
   - 
-  - BinaryRuleCollection:
-    - Backed by a Uint8Array, have indices into this as "rules", have an "end of rule" byte?
-    - INITIAL byte is an index into the "pattern board" array
-    - Enumerate potential features for each PatternBoard
-      - (0?),1,2,...,N-1,null for each face (or only nulls for exit faces, for highlander)
-      - black/red for each edge
-      - not-zero/not-one/not-two for each sector
-      - CAN WE USUALLY FIT THESE WITHIN 256 bits? YES
-        - Though, fit it into 254 bits:
-          - control character for "end of pattern"
-          - control character for "start face color dual"
-            - then 6 bits (?) for face index, 1 bit for "is it primary or secondary", 1 bit for disambiguation with "end of pattern" or a new "start face color dual"
-      - NOTE: is it possible for us to fixed-logic these, so we don't need to index into our features array? MIGHT BE FASTER
-        - Create boundary indices we can subtract off of (could be fast, if we go for it)
-    - End of pattern: 0xff (go through two of these, one for input, one for output, to get to the next rule)
-    - Start face color dual: 0xfe
-  - FeatureSets take up a lot AND we want a faster way to compare against actual boards
-    - Make a compact "feature set" that stores/serializes small, and is QUICKLY CHECKABLE given an embedding.
-      - [
-      -   [ 
-      -     index: number,
-      -     value:
-      -       0+ | null: faceValue
-      -       -1: blackEdge
-      -       -2: redEdge
-      -       -3: sector notzero
-      -       -4: sector notone
-      -       -5: sector nottwo
-      -       -6: sector onlyone ---- NO, just provide the other two codes?
-      -   ] --- NOTE, we could potentially try to bit-pack things nicely, into u8intarrays
-      -   11<x> is a sector
-        - a rule has an offset into the array, and can read out features until the "end of feature set" is marked
-      - [WE ONLY NEED TO store indices into the PATTERN BOARD, so indices are not huge. 4-4 has 20 sectors, 13 vertices, 5 faces]
-      - 
-        - [
-          - [ faceIndex: number, faceValue: number | null ]
-        - ] | null
-        - [ blackEdgeIndex: number ] | null
-        - [ redEdgeIndex: number ] | null,
-        - 
-      - ]
+  - BINARY collection FeatureSet.getBoardMatchState
+    - given index of rule?
+  - 
+  - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
   - 
   - Test with big puzzles:
     - 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
@@ -157,6 +151,9 @@
   - 
   - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
   - 
+  - Highlander implies BLACK EXIT EDGE PATTERNS - we have based things off of the wrong patterns.
+    - THIS might need edges not connected to faces? More general
+  - 
   - Show embeddings, so we can do rule stuff?
   - 
   - Database of rules:
@@ -169,6 +166,7 @@
       - Could we... rely on AJAX to load rules?
   - 
   - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
+    - Do the new binary collection generation approach
   - 
   - Highlander + color:
     - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
@@ -198,15 +196,8 @@
     - export NODE_OPTIONS=--max-old-space-size=32768
     - Maybe we should... ditch loading all the data? (remove references for the collections tests?)
   - 
-  - MINISAT FAILURE
-    - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
-    - 2 48 also
-    - minisat-OUT
-    - Perhaps we are giving it too many loops?
-    - CONSIDER:
-      - What if we... manually compute these? For these SMALL cases, it is probably practical
-  - 
   - [LinCb0!!!] General performance enhancements:
+    - HEY we need to generalize due to our "optional" attributes pattern.
     - [First, testing infrastructure] ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
       - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
     - See pruning discussion with ChatGPT
@@ -434,7 +425,7 @@
       - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
     - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
 
-- Exit edge decisions:
+- Exit edge decisions: [REVISIT because omg highlander cases]
   - Ignore "black" exit edges (no feature for that both for input and output).
   - No sectors for exit edges (no feature for that both for input and output).
 

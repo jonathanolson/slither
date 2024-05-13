@@ -5,6 +5,8 @@ import { deserializePatternBoard } from './deserializePatternBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { PatternRule } from './PatternRule.ts';
 import _ from '../../workarounds/_.ts';
+import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
+import { getEmbeddings } from './getEmbeddings.ts';
 
 export class BinaryRuleCollection {
 
@@ -69,6 +71,89 @@ export class BinaryRuleCollection {
     }
 
     return new BinaryRuleCollection( filteredPatternBoards, new Uint8Array( bytes ), this.highlander );
+  }
+
+  public withRules( rules: PatternRule[] ): BinaryRuleCollection {
+    const isHighlander = this.highlander || rules.some( rule => rule.highlander );
+    const patternBoards = _.uniq( [
+      ...this.patternBoards,
+      ...rules.map( rule => rule.patternBoard ),
+    ] );
+
+    const bytes: number[] = [
+      ...this.data
+    ];
+
+    for ( const rule of rules ) {
+      bytes.push( ...rule.getBinary( patternBoards ) );
+    }
+
+    return new BinaryRuleCollection( patternBoards, new Uint8Array( bytes ), isHighlander );
+  }
+
+  public withNonredundantRuleSet( ruleSet: PatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ): BinaryRuleCollection {
+    const currentEmbeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, ruleSet.patternBoard ) ) );
+
+    let totalScoreSum = 0;
+    let count = 0;
+    let skipCount = 0;
+    let maxEncounteredScore = 0;
+
+    const addedRules: PatternRule[] = [];
+
+    for ( const rule of ruleSet.rules ) {
+      const score = rule.getInputDifficultyScoreA();
+
+      maxEncounteredScore = Math.max( maxEncounteredScore, score );
+
+      if ( ruleSet.patternBoard.faces.length > 1 && score > maxScore ) {
+        skipCount++;
+        continue;
+      }
+
+      if ( !rule.isRedundant( currentEmbeddedRules ) ) {
+        addedRules.push( rule );
+
+        totalScoreSum += score;
+        count++;
+
+        currentEmbeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, ruleSet.patternBoard ) ) );
+      }
+    }
+
+    console.log( `added ${count}, skipped ${skipCount} with average score ${Math.round( totalScoreSum / count )}, maxEncounteredScore ${maxEncounteredScore}` );
+
+    return this.withRules( addedRules );
+  }
+
+  public withCollection( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+    const theirRules = ruleCollection.getRules();
+
+    let lastPatternBoard: TPatternBoard | null = null;
+    let embeddedRules: PatternRule[] = [];
+
+    const addedRules: PatternRule[] = [];
+
+    for ( let i = 0; i < theirRules.length; i++ ) {
+      if ( i % 100 === 0 ) {
+        console.log( i, theirRules.length );
+      }
+      const rule = theirRules[ i ];
+
+      const targetPatternBoard = rule.patternBoard;
+
+      if ( targetPatternBoard !== lastPatternBoard ) {
+        embeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, targetPatternBoard ) ) );
+        lastPatternBoard = targetPatternBoard;
+      }
+
+      if ( !rule.isRedundant( embeddedRules ) ) {
+        addedRules.push( rule );
+        embeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, targetPatternBoard ) ) );
+      }
+    }
+
+    return this.withRules( addedRules );
   }
 
   public serialize(): SerializedBinaryRuleCollection {
