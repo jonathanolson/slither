@@ -55,6 +55,9 @@
         - What if we... manually compute these? For these SMALL cases, it is probably practical
     - 
   - 
+  - USE our binary collection directly to do redundancy checks! (without having to create things?)
+    - So we don't have to create options while combining
+  - 
   - "in-progress" collection type, that tracks:
     - (a) boards that have completed processing (even if they are NOT in the list, they were empty)
     - (b) boards that are currently in processing
