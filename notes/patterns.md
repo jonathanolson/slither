@@ -42,6 +42,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - SAT.js (or alternative)
+    - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
     - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
     - https://github.com/GJDuck/SAT.js/blob/master/SAT.js
       - YES, it is GPLv3, we would license entire thing under GPLv3. Do it for now?
