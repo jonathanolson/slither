@@ -49,6 +49,7 @@ export class Lit {
   }
 
   public var(): number {
+    // TODO: figure out if this should ever be called on undef/error.
     return this.x >>> 1;
   }
 
