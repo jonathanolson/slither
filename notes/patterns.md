@@ -41,6 +41,8 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - PatternRule.withRulesApplied with BinaryRuleCollection(!)
+  - 
   - SAT.js (or alternative)
     - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
     - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)

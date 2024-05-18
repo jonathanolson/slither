@@ -3,7 +3,6 @@ import { PatternBoardRuleSet, SerializedPatternBoardRuleSet } from './model/patt
 import { PatternRuleCollection, SerializedPatternRuleCollection } from './model/pattern/PatternRuleCollection.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
-import './model/logic/CDCLSolver.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
