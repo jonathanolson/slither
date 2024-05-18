@@ -55,7 +55,7 @@ export class BinaryRuleCollection {
   }
 
   public getRule( index: number ): PatternRule {
-    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ index ], this.highlander ).rule;
+    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ index ], this.highlander );
   }
 
   public forEachRule( callback: ( rule: PatternRule ) => void ): void {

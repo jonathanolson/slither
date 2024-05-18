@@ -207,18 +207,14 @@ export class PatternRule {
 
     if ( assertEnabled() ) {
       const array = new Uint8Array( bytes );
-      const { rule, nextByteIndex } = PatternRule.fromBinary( patternBoards, array, 0, this.highlander );
+      const rule = PatternRule.fromBinary( patternBoards, array, 0, this.highlander );
       assert( rule.equals( this ), 'round-trip equality' );
-      assert( nextByteIndex === array.length, 'round-trip length' );
     }
 
     return bytes;
   }
 
-  public static fromBinary( patternBoards: TPatternBoard[], data: Uint8Array | number[], byteIndex: number, highlander: boolean ): {
-    rule: PatternRule;
-    nextByteIndex: number;
-  } {
+  public static fromBinary( patternBoards: TPatternBoard[], data: Uint8Array | number[], byteIndex: number, highlander: boolean ): PatternRule {
     const patternBoardIndex = data[ byteIndex++ ];
     const patternBoard = patternBoards[ patternBoardIndex ];
     assertEnabled() && assert( patternBoard, 'pattern board' );
@@ -268,10 +264,7 @@ export class PatternRule {
     const outputFeatureSet = readFeatures().union( inputFeatureSet )!;
     assertEnabled() && assert( outputFeatureSet );
 
-    return {
-      rule: new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet, highlander ),
-      nextByteIndex: byteIndex
-    };
+    return new PatternRule( patternBoard, inputFeatureSet, outputFeatureSet, highlander );
   }
 
   public serialize(): SerializedPatternRule {

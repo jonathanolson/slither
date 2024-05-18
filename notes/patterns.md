@@ -42,6 +42,10 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - PatternRule.withRulesApplied with BinaryRuleCollection(!)
+    - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
+      - Use PatternRule.fromBinary as guide
+      - Take the last bit of FeatureSet.getBoardMatchState (for matching FaceColorDualFeatures)
+      - Do the Pattern quick match with the binary AND a specific embedding.
   - 
   - SAT.js (or alternative)
     - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
