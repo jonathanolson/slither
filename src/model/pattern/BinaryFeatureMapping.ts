@@ -41,21 +41,46 @@ export class BinaryFeatureMapping {
       // red
       this.featureArray.push( new RedEdgeFeature( edge ) );
       this.featureMatchers.push( ( data, embedding ) => {
-        const index = embedding.mapNonExitEdge( edge ).index;
+        if ( edge.isExit ) {
+          // TODO: index mappings
+          const edges = embedding.mapExitEdges( edge );
 
-        const isRed = data.redEdgeValues[ index ];
+          let allMatched = true;
+          for ( const edge of edges ) {
+            const index = edge.index;
 
-        if ( isRed ) {
-          return FeatureSetMatchState.MATCH;
-        }
+            const isRed = data.redEdgeValues[ index ];
 
-        const isBlack = data.blackEdgeValues[ index ];
+            if ( isRed ) {
+              continue;
+            }
 
-        if ( isBlack ) {
-          return FeatureSetMatchState.INCOMPATIBLE;
+            const isBlack = data.blackEdgeValues[ index ];
+
+            if ( isBlack ) {
+              return FeatureSetMatchState.INCOMPATIBLE;
+            }
+          }
+
+          return allMatched ? FeatureSetMatchState.MATCH : FeatureSetMatchState.DORMANT;
         }
         else {
-          return FeatureSetMatchState.DORMANT;
+          const index = embedding.mapNonExitEdge( edge ).index;
+
+          const isRed = data.redEdgeValues[ index ];
+
+          if ( isRed ) {
+            return FeatureSetMatchState.MATCH;
+          }
+
+          const isBlack = data.blackEdgeValues[ index ];
+
+          if ( isBlack ) {
+            return FeatureSetMatchState.INCOMPATIBLE;
+          }
+          else {
+            return FeatureSetMatchState.DORMANT;
+          }
         }
       } );
 

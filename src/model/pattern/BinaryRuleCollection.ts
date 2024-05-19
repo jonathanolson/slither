@@ -7,6 +7,11 @@ import { PatternRule } from './PatternRule.ts';
 import _ from '../../workarounds/_.ts';
 import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
 import { getEmbeddings } from './getEmbeddings.ts';
+import { TBoardFeatureData } from './TBoardFeatureData.ts';
+import { Embedding } from './Embedding.ts';
+import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
+import FeatureSetMatchState from './FeatureSetMatchState.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 
 export class BinaryRuleCollection {
 
@@ -180,6 +185,369 @@ export class BinaryRuleCollection {
     }
 
     return this.withRules( addedRules );
+  }
+
+  // TODO: see which is faster, isActionableEmbeddingFromData or getActionableEmbeddingsFromData
+  public findNextActionableEmbeddedRuleFromData(
+    targetPatternBoard: TPatternBoard,
+    boardData: TBoardFeatureData,
+    initialRuleIndex = 0
+  ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null {
+    for ( let ruleIndex = initialRuleIndex; ruleIndex < this.ruleIndices.length; ruleIndex++ ) {
+
+      const byteIndex = this.ruleIndices[ ruleIndex ];
+      const patternBoardIndex = this.data[ byteIndex ];
+      const patternBoard = this.patternBoards[ patternBoardIndex ];
+
+      // TODO: don't memory leak this!
+      const embeddings = getEmbeddings( patternBoard, targetPatternBoard );
+
+      for ( const embedding of embeddings ) {
+        if ( this.isActionableEmbeddingFromData( targetPatternBoard, boardData, ruleIndex, embedding ) ) {
+          // TODO: in what cases will this NOT return a rule???
+          const rule = this.getRule( ruleIndex );
+          const embeddedRule = rule.embedded( targetPatternBoard, embedding );
+          if ( embeddedRule ) {
+            return {
+              rule,
+              embeddedRule,
+              embedding,
+              ruleIndex
+            };
+          }
+          else {
+            throw new Error( 'Why would this happen' );
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  public isActionableEmbeddingFromData( targetPatternBoard: TPatternBoard, boardData: TBoardFeatureData, ruleIndex: number, embedding: Embedding ): boolean {
+    let byteIndex = this.ruleIndices[ ruleIndex ];
+    const patternBoardIndex = this.data[ byteIndex++ ];
+    const patternBoard = this.patternBoards[ patternBoardIndex ];
+    assertEnabled() && assert( patternBoard, 'pattern board' );
+
+    const binaryMapping = getBinaryFeatureMapping( patternBoard );
+
+    // Input features, filter by the "input" of the pattern
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+            const secondaryColorFromFirstPrimary = boardData.oppositeFaceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+            const secondaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] ).index ];
+
+            if ( secondaryColorFromFirstPrimary !== secondaryColorDirect ) {
+              return false;
+            }
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+            const primaryColorFromFirstPrimary = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+            const primaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] ).index ];
+
+            if ( primaryColorFromFirstPrimary !== primaryColorDirect ) {
+              return false;
+            }
+          }
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureMatcher = binaryMapping.featureMatchers[ firstByte ];
+
+        if ( featureMatcher( boardData, embedding ) !== FeatureSetMatchState.MATCH ) {
+          return false;
+        }
+      }
+    }
+
+    // Output features, see which embedded rules are actionable (would change the state)
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+            const secondaryColorFromFirstPrimary = boardData.oppositeFaceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+            const secondaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] ).index ];
+
+            if ( secondaryColorFromFirstPrimary !== secondaryColorDirect ) {
+              return true;
+            }
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+            const primaryColorFromFirstPrimary = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+            const primaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] ).index ];
+
+            if ( primaryColorFromFirstPrimary !== primaryColorDirect ) {
+              return true;
+            }
+          }
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureMatcher = binaryMapping.featureMatchers[ firstByte ];
+
+        if ( featureMatcher( boardData, embedding ) !== FeatureSetMatchState.MATCH ) {
+          return true;
+        }
+      }
+    }
+
+    // this is "inconsequential", state already contains the rule input and output
+    return false;
+  }
+
+  // TODO: Or just take BoardPatternBoard right now?
+  public getActionableEmbeddingsFromData( targetPatternBoard: TPatternBoard, boardData: TBoardFeatureData, ruleIndex: number ): Embedding[] {
+    let byteIndex = this.ruleIndices[ ruleIndex ];
+    const patternBoardIndex = this.data[ byteIndex++ ];
+    const patternBoard = this.patternBoards[ patternBoardIndex ];
+    assertEnabled() && assert( patternBoard, 'pattern board' );
+
+    const binaryMapping = getBinaryFeatureMapping( patternBoard );
+
+    // ping-pong back-and-forth between the two
+    let embeddings = getEmbeddings( patternBoard, targetPatternBoard );
+    let nextEmbeddings = embeddings.slice();
+
+    // Input features, filter by the "input" of the pattern
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+      let nextEmbeddingIndex = 0;
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            for ( let i = 0; i < embeddings.length; i++ ) {
+              const embedding = embeddings[ i ];
+
+              // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+              const secondaryColorFromFirstPrimary = boardData.oppositeFaceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+              const secondaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] ).index ];
+
+              if ( secondaryColorFromFirstPrimary === secondaryColorDirect ) {
+                nextEmbeddings[ nextEmbeddingIndex++ ] = embedding;
+              }
+            }
+
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            for ( let i = 0; i < embeddings.length; i++ ) {
+              const embedding = embeddings[ i ];
+
+              // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+              const primaryColorFromFirstPrimary = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+              const primaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] ).index ];
+
+              if ( primaryColorFromFirstPrimary === primaryColorDirect ) {
+                nextEmbeddings[ nextEmbeddingIndex++ ] = embedding;
+              }
+            }
+          }
+
+          /////////////////////
+
+          // Trim the next embeddings array
+          nextEmbeddings.length = nextEmbeddingIndex;
+
+          // Early-abort check (if no more embeddings are possible, abort)
+          if ( nextEmbeddingIndex === 0 ) {
+            return nextEmbeddings;
+          }
+
+          // Swap embeddings
+          const temp = embeddings;
+          embeddings = nextEmbeddings;
+          nextEmbeddings = temp;
+          nextEmbeddingIndex = 0;
+          /////////////////////
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureMatcher = binaryMapping.featureMatchers[ firstByte ];
+
+        for ( let i = 0; i < embeddings.length; i++ ) {
+          const embedding = embeddings[ i ];
+
+          if ( featureMatcher( boardData, embedding ) === FeatureSetMatchState.MATCH ) {
+            nextEmbeddings[ nextEmbeddingIndex++ ] = embedding;
+          }
+        }
+
+        /////////////////////
+
+        // Trim the next embeddings array
+        nextEmbeddings.length = nextEmbeddingIndex;
+
+        // Early-abort check (if no more embeddings are possible, abort)
+        if ( nextEmbeddingIndex === 0 ) {
+          return nextEmbeddings;
+        }
+
+        // Swap embeddings
+        const temp = embeddings;
+        embeddings = nextEmbeddings;
+        nextEmbeddings = temp;
+        nextEmbeddingIndex = 0;
+        /////////////////////
+      }
+    }
+
+    // Output features, see which embedded rules are actionable (would change the state)
+    const isActionable = embeddings.map( () => false );
+    let actionableCount = 0;
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            for ( let i = 0; i < embeddings.length; i++ ) {
+              if ( !isActionable[ i ] ) {
+                const embedding = embeddings[ i ];
+
+                // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+                const secondaryColorFromFirstPrimary = boardData.oppositeFaceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+                const secondaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] ).index ];
+
+                if ( secondaryColorFromFirstPrimary !== secondaryColorDirect ) {
+                  isActionable[ i ] = true;
+                  actionableCount++;
+                }
+              }
+            }
+
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            for ( let i = 0; i < embeddings.length; i++ ) {
+              if ( !isActionable[ i ] ) {
+                const embedding = embeddings[ i ];
+
+                // TODO: have embeddings with a DIRECT index map, instead of this. We do not need such complex lookups
+                const primaryColorFromFirstPrimary = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] ).index ];
+                const primaryColorDirect = boardData.faceColors[ embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] ).index ];
+
+                if ( primaryColorFromFirstPrimary !== primaryColorDirect ) {
+                  isActionable[ i ] = true;
+                  actionableCount++;
+                }
+              }
+            }
+          }
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureMatcher = binaryMapping.featureMatchers[ firstByte ];
+
+        for ( let i = 0; i < embeddings.length; i++ ) {
+          if ( !isActionable[ i ] ) {
+            const embedding = embeddings[ i ];
+
+            if ( featureMatcher( boardData, embedding ) !== FeatureSetMatchState.MATCH ) {
+              isActionable[ i ] = true;
+              actionableCount++;
+            }
+          }
+        }
+      }
+    }
+
+    if ( actionableCount ) {
+      return embeddings.filter( ( _, i ) => isActionable[ i ] );
+    }
+    else {
+      return []; // TODO: see if we should reduce the size of an array and return that instead for GC
+    }
   }
 
   public serialize(): SerializedBinaryRuleCollection {

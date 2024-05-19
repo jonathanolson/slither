@@ -41,9 +41,15 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - Debug why BinaryPatternSolver is failing (in patternSolverFactory) 
+  - 
+  - Embeddings be index-based (we can still reproduce the effects of the maps)
+  - Rule reduction using BinaryPatternSolver-like handling (apply rules)
+  - 
   - PatternRule.withRulesApplied with BinaryRuleCollection(!)
     - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
     - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
+      - Use FeatureSet.getBoardMatchState as a guide too (we have a TBoardFeatureData) 
       - Use PatternRule.fromBinary as guide
       - Take the last bit of FeatureSet.getBoardMatchState (for matching FaceColorDualFeatures)
       - Do the Pattern quick match with the binary AND a specific embedding.

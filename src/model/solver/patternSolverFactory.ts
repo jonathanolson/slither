@@ -34,6 +34,7 @@ export const patternSolverFactory = ( board: TBoard, state: TState<TCompleteData
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new ScanPatternSolver( board, boardPatternBoard, state, curatedRules.length, i => curatedRules[ i ] ),
     new ScanPatternSolver( board, boardPatternBoard, state, boardCollection.size, i => boardCollection.getRule( i ) ),
+    // new BinaryPatternSolver( board, boardPatternBoard, state, boardCollection ),
     standardSolverFactory( board, state, dirty ),
   ] );
 };
