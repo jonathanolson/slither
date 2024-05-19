@@ -42,6 +42,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - PatternRule.withRulesApplied with BinaryRuleCollection(!)
+    - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
     - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
       - Use PatternRule.fromBinary as guide
       - Take the last bit of FeatureSet.getBoardMatchState (for matching FaceColorDualFeatures)
