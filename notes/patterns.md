@@ -4,6 +4,9 @@
 - TODO
   - 
   - Generate:
+    - general edge
+    - general edge unrestricted
+    - 
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
       - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- crashed, last one

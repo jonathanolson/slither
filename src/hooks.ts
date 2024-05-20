@@ -38,6 +38,7 @@ declare global {
     getEmptySequence: ( sequenceSpecifier: SequenceSpecifier ) => SerializedBinaryRuleSequence;
     getNextBoardInSequence: ( serializedSequence: SerializedBinaryRuleSequence ) => string | null;
     getSequenceWithProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
+    getSequenceWithoutProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
     getSequenceWithCollection: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ) => SerializedBinaryRuleSequence;
     getCollectionForSequence: ( serializedSequence: SerializedBinaryRuleSequence, board: string ) => SerializedBinaryRuleCollection;
   }
@@ -66,6 +67,15 @@ window.getSequenceWithProcessingBoard = ( serializedSequence: SerializedBinaryRu
   const board = deserializePatternBoard( serializedBoard );
 
   sequence.addProcessingBoard( board );
+
+  return sequence.serialize();
+};
+
+window.getSequenceWithoutProcessingBoard = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+  const board = deserializePatternBoard( serializedBoard );
+
+  sequence.removeProcessingBoard( board );
 
   return sequence.serialize();
 };

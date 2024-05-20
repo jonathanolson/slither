@@ -1,7 +1,33 @@
 import fs from 'fs';
 import os from 'os';
+import readline from 'readline';
 import { browserEvaluate, disposeBrowser, getBrowser, sleep } from './puppeteer-tools.js';
 import lockfile from 'proper-lockfile';
+
+// Create readline interface to read from stdin
+const rl = readline.createInterface( {
+  input: process.stdin,
+  output: process.stdout
+} );
+
+// Set raw mode to true to listen for individual key presses
+process.stdin.setRawMode( true );
+
+let abortFunction = async () => {};
+let aborted = false;
+
+rl.input.on( 'keypress', async ( str, key ) => {
+  if ( key.name === 'q' ) {
+    console.log( 'received quit request, aborting' );
+
+    aborted = true;
+    await abortFunction();
+
+    console.log( 'abort complete' );
+
+    process.exit( 0 );
+  }
+} );
 
 const boardType = process.argv.find( arg => arg === 'general' || arg === 'square' || arg === 'hexagonal' );
 const highlander = !process.argv.includes( 'unrestricted' );
@@ -109,40 +135,78 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     // console.log( 'unlocked' );
   };
 
-  // Grab the next board
-  let sequenceForNextBoard;
-  let nextBoard;
-  {
-    const release = await getLock();
+  const cleanup = async () => {
+    rl.close();
 
-    sequenceForNextBoard = readSequence();
-    nextBoard = await evaluateHooks( `getNextBoardInSequence( ${JSON.stringify( sequenceForNextBoard )} )` );
+    await disposeBrowser( browser );
+  };
+
+  {
+    if ( aborted ) {
+      return;
+    }
+    abortFunction = cleanup; // default when we aren't doing something
+
+    // Grab the next board
+    let sequenceForNextBoard;
+    let nextBoard;
+    {
+      const release = await getLock();
+
+      sequenceForNextBoard = readSequence();
+      nextBoard = await evaluateHooks( `getNextBoardInSequence( ${JSON.stringify( sequenceForNextBoard )} )` );
+
+      if ( nextBoard ) {
+        console.log( nextBoard );
+        const sequenceWithProcessingNextBoard = await evaluateHooks( `getSequenceWithProcessingBoard( ${JSON.stringify( sequenceForNextBoard )}, ${JSON.stringify( nextBoard )} )` );
+        saveSequence( sequenceWithProcessingNextBoard );
+      }
+      else {
+        console.log( 'no next board' );
+      }
+
+      await releaseLock( release );
+    }
 
     if ( nextBoard ) {
-      console.log( nextBoard );
-      const sequenceWithProcessingNextBoard = await evaluateHooks( `getSequenceWithProcessingBoard( ${JSON.stringify( sequenceForNextBoard )}, ${JSON.stringify( nextBoard )} )` );
-      saveSequence( sequenceWithProcessingNextBoard );
-    }
-    else {
-      console.log( 'no next board' );
-    }
+      abortFunction = async () => {
 
-    await releaseLock( release );
+        console.log( 'removing processing board' );
+
+        const release = await getLock();
+
+        const sequenceForAbort = readSequence();
+        const sequenceWithoutProcessingNextBoard = await evaluateHooks( `getSequenceWithoutProcessingBoard( ${JSON.stringify( sequenceForAbort )}, ${JSON.stringify( nextBoard )} )` );
+        saveSequence( sequenceWithoutProcessingNextBoard );
+
+        console.log( 'removed processing board' );
+
+        await releaseLock( release );
+
+        await cleanup();
+      }
+      // TODO: add abort listening (based on a keypress) that will remove the board from the processing list
+
+      const collection = await evaluateHooks( `getCollectionForSequence( ${JSON.stringify( sequenceForNextBoard )}, ${JSON.stringify( nextBoard )} )` );
+
+      if ( aborted ) {
+        return;
+      }
+      else {
+        abortFunction = cleanup; // back to no abort, because we're going through with things (don't abort during the critical parts?)
+      }
+
+      {
+        const release = await getLock();
+
+        const sequenceWithProcessingNextBoard = readSequence();
+        const appendedCollection = await evaluateHooks( `getSequenceWithCollection( ${JSON.stringify( sequenceWithProcessingNextBoard )}, ${JSON.stringify( nextBoard )}, ${JSON.stringify( collection )} )` );
+        saveSequence( appendedCollection );
+
+        await releaseLock( release );
+      }
+    }
   }
 
-  // TODO: add abort listening (based on a keypress) that will remove the board from the processing list
-
-  const collection = await evaluateHooks( `getCollectionForSequence( ${JSON.stringify( sequenceForNextBoard )}, ${JSON.stringify( nextBoard )} )` );
-
-  {
-    const release = await getLock();
-
-    const sequenceWithProcessingNextBoard = readSequence();
-    const appendedCollection = await evaluateHooks( `getSequenceWithCollection( ${JSON.stringify( sequenceWithProcessingNextBoard )}, ${JSON.stringify( nextBoard )}, ${JSON.stringify( collection )} )` );
-    saveSequence( appendedCollection );
-
-    await releaseLock( release );
-  }
-
-  await disposeBrowser( browser );
+  await cleanup();
 } )();

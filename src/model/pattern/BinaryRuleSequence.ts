@@ -119,12 +119,16 @@ export class BinaryRuleSequence {
     this.currentBoards.push( patternBoard );
   }
 
+  public removeProcessingBoard( patternBoard: TPatternBoard ): void {
+    this.currentBoards = this.currentBoards.filter( board => board !== patternBoard );
+  }
+
   public addProcessedBoardCollection( patternBoard: TPatternBoard, collection: BinaryRuleCollection ): void {
     // TODO: is this OK for memory? should be, right?
     this.collection = this.collection.withRules( collection.getRules() );
 
     this.processedBoards.push( patternBoard );
-    this.currentBoards = this.currentBoards.filter( board => board !== patternBoard );
+    this.removeProcessingBoard( patternBoard );
   }
 
   public serialize(): SerializedBinaryRuleSequence {

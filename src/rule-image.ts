@@ -2,7 +2,7 @@ import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scen
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import serializedGeneralEdgeSequence from '../data-sequences/general-edge.json';
+import serializedGeneralEdgeUnrestrictedSequence from '../data-sequences/general-edge-unrestricted.json';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
 
@@ -125,7 +125,7 @@ console.log( 'test' );
     } ) );
   };
 
-  const rules = BinaryRuleSequence.deserialize( serializedGeneralEdgeSequence as SerializedBinaryRuleSequence ).collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
+  const rules = BinaryRuleSequence.deserialize( serializedGeneralEdgeUnrestrictedSequence as SerializedBinaryRuleSequence ).collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
   showRules( rules );
 
 
