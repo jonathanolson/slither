@@ -54,6 +54,9 @@ export class BinaryFeatureMapping {
             if ( isRed ) {
               continue;
             }
+            else {
+              allMatched = false;
+            }
 
             const isBlack = data.blackEdgeValues[ index ];
 

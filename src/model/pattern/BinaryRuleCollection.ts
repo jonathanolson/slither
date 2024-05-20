@@ -207,6 +207,21 @@ export class BinaryRuleCollection {
           // TODO: in what cases will this NOT return a rule???
           const rule = this.getRule( ruleIndex );
           const embeddedRule = rule.embedded( targetPatternBoard, embedding );
+
+          if ( assertEnabled() ) {
+            // if ( !( rule.inputFeatureSet.getBoardMatchState( boardData, embedding, true ) === FeatureSetMatchState.MATCH ) ) {
+            //   debugger;
+            //   const tmp = this.isActionableEmbeddingFromData( targetPatternBoard, boardData, ruleIndex, embedding );
+            // }
+            assert( rule.inputFeatureSet.getBoardMatchState( boardData, embedding, true ) === FeatureSetMatchState.MATCH );
+
+
+            // Is our output not fully satisfied!
+            assert( rule.outputFeatureSet.getBoardMatchState( boardData, embedding, true ) !== FeatureSetMatchState.MATCH );
+
+            assert( !!rule.inputFeatureSet.embedded( patternBoard, embedding ) );
+          }
+
           if ( embeddedRule ) {
             return {
               rule,
