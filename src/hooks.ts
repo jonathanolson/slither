@@ -3,11 +3,15 @@ import { PatternBoardRuleSet, SerializedPatternBoardRuleSet } from './model/patt
 import { PatternRuleCollection, SerializedPatternRuleCollection } from './model/pattern/PatternRuleCollection.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
+import { serializePatternBoard } from './model/pattern/serializePatternBoard.ts';
+import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { deserializePatternBoard } from './model/pattern/deserializePatternBoard.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
-// @ts-expect-error
-window.assertions.enableAssert();
+// // @ts-expect-error
+// window.assertions.enableAssert();
 
 const scene = new Node();
 
@@ -25,10 +29,64 @@ document.body.appendChild( display.domElement );
 
 display.setWidthHeight( window.innerWidth, window.innerHeight );
 
-// @ts-expect-error
+// TODO: use this more to get rid of the other globals
+declare global {
+  interface Window {
+    standardSquareBoardGenerations: TPatternBoard[][];
+
+    getSequenceName: ( sequenceSpecifier: SequenceSpecifier ) => string;
+    getEmptySequence: ( sequenceSpecifier: SequenceSpecifier ) => SerializedBinaryRuleSequence;
+    getNextBoardInSequence: ( serializedSequence: SerializedBinaryRuleSequence ) => string | null;
+    getSequenceWithProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
+    getSequenceWithCollection: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ) => SerializedBinaryRuleSequence;
+    getCollectionForSequence: ( serializedSequence: SerializedBinaryRuleSequence, board: string ) => SerializedBinaryRuleCollection;
+  }
+}
+
 window.standardSquareBoardGenerations = standardSquareBoardGenerations;
 
 // console.log( JSON.stringify( BinaryRuleCollection.empty().serialize() ) );
+
+window.getSequenceName = ( sequenceSpecifier: SequenceSpecifier ): string => {
+  return BinaryRuleSequence.getName( sequenceSpecifier );
+};
+
+window.getEmptySequence = ( sequenceSpecifier: SequenceSpecifier ): SerializedBinaryRuleSequence => {
+  return BinaryRuleSequence.empty( sequenceSpecifier ).serialize();
+};
+
+window.getNextBoardInSequence = ( serializedSequence: SerializedBinaryRuleSequence ): string | null => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+  const nextBoard = sequence.getNextBoard();
+  return nextBoard ? serializePatternBoard( nextBoard ) : null;
+};
+
+window.getSequenceWithProcessingBoard = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+  const board = deserializePatternBoard( serializedBoard );
+
+  sequence.addProcessingBoard( board );
+
+  return sequence.serialize();
+};
+
+window.getSequenceWithCollection = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+  const board = deserializePatternBoard( serializedBoard );
+  const collection = BinaryRuleCollection.deserialize( serializedCollection );
+
+  sequence.addProcessedBoardCollection( board, collection );
+
+  return sequence.serialize();
+};
+
+window.getCollectionForSequence = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleCollection => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+  const board = deserializePatternBoard( serializedBoard );
+
+  const collection = sequence.getCollectionForBoard( board );
+  return collection.serialize();
+};
 
 // @ts-expect-error
 window.addRuleSetToCollection = ( serializedCollection: SerializedPatternRuleCollection, serializedRuleSet: SerializedPatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ) => {

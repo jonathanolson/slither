@@ -1605,15 +1605,15 @@ export class FeatureSet {
 
 export type BasicSolveOptions = {
   solveEdges?: boolean;
-  solveFaceColors?: boolean;
   solveSectors?: boolean;
+  solveFaceColors?: boolean;
   highlander?: boolean;
 };
 
 export const BASIC_SOLVE_DEFAULTS = {
   solveEdges: true,
-  solveFaceColors: false,
   solveSectors: false,
+  solveFaceColors: false,
   highlander: false
 } as const;
 

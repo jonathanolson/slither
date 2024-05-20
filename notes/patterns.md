@@ -70,6 +70,11 @@
     - So we don't have to create options while combining
   - 
   - "in-progress" collection type, that tracks:
+    - COMPOSE a collection
+    - store boards that:
+      - have been processed
+      - are currently being processed
+      - generations of boards to do??? (or is this implicit?)
     - (a) boards that have completed processing (even if they are NOT in the list, they were empty)
     - (b) boards that are currently in processing
     - * check what the "next board in the current generation is" that we could process (might be none)
@@ -79,6 +84,8 @@
         - Define the "board generations" and "way to compute initial feature set" for each ()
       - edge / color / edge + sector / edge + color / all
       - highlander / non-highlander
+  - 
+  - Pattern solvers are NOT checking to see if they could be the entire closed loop. FIX THAT.
   - 
   - sorted() on binary collections [and better sorting]
     - Come up with a better "rule complexity" metric, sectors are not THAT bad. ONLY measure the input size?
