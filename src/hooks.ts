@@ -36,6 +36,7 @@ declare global {
 
     getSequenceName: ( sequenceSpecifier: SequenceSpecifier ) => string;
     getEmptySequence: ( sequenceSpecifier: SequenceSpecifier ) => SerializedBinaryRuleSequence;
+    getSequenceStatus: ( serializedSequence: SerializedBinaryRuleSequence ) => string;
     getNextBoardInSequence: ( serializedSequence: SerializedBinaryRuleSequence ) => string | null;
     getSequenceWithProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
     getSequenceWithoutProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
@@ -54,6 +55,12 @@ window.getSequenceName = ( sequenceSpecifier: SequenceSpecifier ): string => {
 
 window.getEmptySequence = ( sequenceSpecifier: SequenceSpecifier ): SerializedBinaryRuleSequence => {
   return BinaryRuleSequence.empty( sequenceSpecifier ).serialize();
+};
+
+window.getSequenceStatus = ( serializedSequence: SerializedBinaryRuleSequence ): string => {
+  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+
+  return sequence.getStatusString();
 };
 
 window.getNextBoardInSequence = ( serializedSequence: SerializedBinaryRuleSequence ): string | null => {

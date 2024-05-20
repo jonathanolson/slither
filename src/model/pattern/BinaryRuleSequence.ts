@@ -47,8 +47,8 @@ export class BinaryRuleSequence {
     return BinaryRuleSequence.getName( this );
   }
 
-  public getNextBoard(): TPatternBoard | null {
-    const generations: TPatternBoard[][] = {
+  public getGenerations(): TPatternBoard[][] {
+    const generations = {
       general: [
         ...basicPatternBoards.map( board => [ board ] ), // each generation
         ...generalPatternBoardGenerations
@@ -73,9 +73,19 @@ export class BinaryRuleSequence {
     }[ this.boardType ];
     assertEnabled() && assert( generations, `Unknown board type: ${this.boardType}` );
 
-    const currentGenerationBoards = generations.find( generation => generation.some( board => !this.processedBoards.includes( board ) ) );
-    if ( currentGenerationBoards ) {
-      const remainingBoards = currentGenerationBoards.filter( board => {
+    return generations;
+  }
+
+  public getCurrentGeneration(): TPatternBoard[] | null {
+    const generations = this.getGenerations();
+
+    return generations.find( generation => generation.some( board => !this.processedBoards.includes( board ) ) ) ?? null;
+  }
+
+  public getNextBoard(): TPatternBoard | null {
+    const currentGeneration = this.getCurrentGeneration();
+    if ( currentGeneration ) {
+      const remainingBoards = currentGeneration.filter( board => {
         return !this.processedBoards.includes( board ) && !this.currentBoards.includes( board );
       } );
 
@@ -90,6 +100,47 @@ export class BinaryRuleSequence {
     else {
       // We are complete!!!!
       return null;
+    }
+  }
+
+  public getStatusString(): string {
+    const name = this.getName();
+    const currentGeneration = this.getCurrentGeneration();
+
+    if ( currentGeneration ) {
+      let status = `${name}\n`;
+
+      const processedBoards = currentGeneration.filter( board => this.processedBoards.includes( board ) );
+      const currentBoards = currentGeneration.filter( board => this.currentBoards.includes( board ) );
+      assertEnabled() && assert( currentBoards.length === this.currentBoards.length );
+
+      const remainingBoards = currentGeneration.filter( board => {
+        return !this.processedBoards.includes( board ) && !this.currentBoards.includes( board );
+      } );
+
+      const lengthString = ( length: number ) => {
+        let percentageString = `${Math.floor( 100 * length / currentGeneration.length )}`;
+        if ( percentageString.length === 1 ) {
+          percentageString = ' ' + percentageString;
+        }
+        let lengthString = `${length}`;
+        while ( lengthString.length < `${currentGeneration.length}`.length ) {
+          lengthString = ' ' + lengthString;
+        }
+        return `${percentageString}% ${lengthString}/${currentGeneration.length}`;
+      };
+      const boardsString = ( boards: TPatternBoard[], name: string ) => {
+        return `  ${lengthString( boards.length )} ${name} ${boards.map( board => board.name ).join( ', ' )}\n`;
+      };
+
+      status += boardsString( processedBoards, 'processed | ' );
+      status += boardsString( currentBoards, 'current   | ' );
+      status += boardsString( remainingBoards, 'remaining | ' );
+
+      return status;
+    }
+    else {
+      return `${name} (complete)`;
     }
   }
 
