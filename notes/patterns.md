@@ -6,6 +6,21 @@
   - Generate:
     - general edge
     - general edge unrestricted
+    - general color
+    - general color unrestricted
+    - general edge sector
+    - general edge sector unrestricted
+    - general all
+    - general all unrestricted
+    - 
+    - square only edge
+    - square only edge unrestricted
+    - square only color
+    - square only color unrestricted
+    - square only edge sector
+    - square only edge sector unrestricted
+    - square only all
+    - square only all unrestricted
     - 
     - HEY HEY -- highlander can be added like "only"? 
     - Current:

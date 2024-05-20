@@ -141,7 +141,8 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     await disposeBrowser( browser );
   };
 
-  {
+  // Loop until abort
+  while ( true ) {
     if ( aborted ) {
       return;
     }
@@ -157,7 +158,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
       nextBoard = await evaluateHooks( `getNextBoardInSequence( ${JSON.stringify( sequenceForNextBoard )} )` );
 
       if ( nextBoard ) {
-        console.log( nextBoard );
+        console.log( sequenceName, nextBoard );
         const sequenceWithProcessingNextBoard = await evaluateHooks( `getSequenceWithProcessingBoard( ${JSON.stringify( sequenceForNextBoard )}, ${JSON.stringify( nextBoard )} )` );
         saveSequence( sequenceWithProcessingNextBoard );
       }
@@ -205,6 +206,10 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
 
         await releaseLock( release );
       }
+    }
+    else {
+      console.log( 'waiting a chunk for more work' );
+      await sleep( 240000 );
     }
   }
 
