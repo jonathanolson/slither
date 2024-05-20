@@ -77,12 +77,22 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
   }
 
   public embedded( embedding: Embedding ): FaceColorDualFeature[] {
-    return [ new FaceColorDualFeature(
-      this.primaryFaces.map( face => embedding.mapFace( face ) ),
-      this.secondaryFaces.map( face => embedding.mapFace( face ) ),
-      this.sameColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) ),
-      this.oppositeColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) )
-    ) ];
+    const primaryFaces = _.uniq( this.primaryFaces.map( face => embedding.mapFace( face ) ) );
+    const secondaryFaces = _.uniq( this.secondaryFaces.map( face => embedding.mapFace( face ) ) );
+
+    if ( primaryFaces.length === 1 && secondaryFaces.length === 0 ) {
+      return [];
+    }
+    else {
+      return [ new FaceColorDualFeature(
+        primaryFaces,
+        secondaryFaces,
+
+        // TODO: potentially improve these paths, or deduplicate?
+        this.sameColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) ),
+        this.oppositeColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) )
+      ) ];
+    }
   }
 
   public equals( other: TFeature ): boolean {

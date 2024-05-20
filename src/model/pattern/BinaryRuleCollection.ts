@@ -11,7 +11,6 @@ import { TBoardFeatureData } from './TBoardFeatureData.ts';
 import { Embedding } from './Embedding.ts';
 import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
 import FeatureSetMatchState from './FeatureSetMatchState.ts';
-import { TBoard } from '../board/core/TBoard.ts';
 
 export class BinaryRuleCollection {
 
@@ -21,7 +20,13 @@ export class BinaryRuleCollection {
     public readonly ruleIndices: number[],
     public nextRuleIndex: number,
     public highlander: boolean,
-  ) {}
+  ) {
+    if ( assertEnabled() ) {
+      for ( let i = 0; i < ruleIndices.length; i++ ) {
+        assert( data[ ruleIndices[ i ] ] < patternBoards.length, 'pattern board index' );
+      }
+    }
+  }
 
   public addRule( rule: PatternRule ): void {
     if ( !this.patternBoards.includes( rule.patternBoard ) ) {
@@ -74,19 +79,25 @@ export class BinaryRuleCollection {
     const filteredPatternBoards = this.patternBoards.filter( ( _, i ) => includedMap[ i ] );
 
     const bytes: number[] = [];
-    const ruleIndices = [
-      ...this.ruleIndices
-    ];
-    let nextRuleIndex = this.nextRuleIndex;
+    const ruleIndices: number[] = [];
+    let nextRuleIndex = 0;
 
     for ( let i = 0; i < this.ruleIndices.length; i++ ) {
       const startIndex = this.ruleIndices[ i ];
       const patternBoardIndex = this.data[ startIndex ];
+      assertEnabled() && assert( patternBoardIndex < this.patternBoards.length, 'pattern board index' );
 
       if ( includedMap[ patternBoardIndex ] ) {
+        const newPatternBoardIndex = filteredPatternBoards.indexOf( this.patternBoards[ patternBoardIndex ] );
+        assertEnabled() && assert( newPatternBoardIndex !== -1, 'pattern board index' );
+
         const endIndex = i + 1 < this.ruleIndices.length ? this.ruleIndices[ i + 1 ] : this.data.length;
-        bytes.push( ...this.data.slice( startIndex, endIndex ) );
+
+        // Replace the first byte with the new pattern board index
+        bytes.push( newPatternBoardIndex, ...this.data.slice( startIndex + 1, endIndex ) );
+
         ruleIndices.push( nextRuleIndex );
+        assertEnabled() && assert( bytes[ nextRuleIndex ] === newPatternBoardIndex, 'pattern board index' );
         nextRuleIndex = bytes.length;
       }
     }
@@ -219,7 +230,7 @@ export class BinaryRuleCollection {
             // Is our output not fully satisfied!
             assert( rule.outputFeatureSet.getBoardMatchState( boardData, embedding, true ) !== FeatureSetMatchState.MATCH );
 
-            assert( !!rule.inputFeatureSet.embedded( patternBoard, embedding ) );
+            assert( !embeddedRule || !!rule.inputFeatureSet.embedded( patternBoard, embedding ) );
           }
 
           if ( embeddedRule ) {
@@ -231,6 +242,7 @@ export class BinaryRuleCollection {
             };
           }
           else {
+            debugger;
             throw new Error( 'Why would this happen' );
           }
         }
@@ -584,6 +596,8 @@ export class BinaryRuleCollection {
     const ruleIndices: number[] = [];
     while ( index < data.length ) {
       ruleIndices.push( index );
+
+      assertEnabled() && assert( data[ index ] !== 0xfe );
 
       let patternEndCount = 0;
       while ( patternEndCount < 2 ) {

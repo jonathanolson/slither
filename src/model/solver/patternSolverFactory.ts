@@ -10,6 +10,7 @@ import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
 import { getEmbeddings } from '../pattern/getEmbeddings.ts';
 import { BinaryRuleCollection } from '../pattern/BinaryRuleCollection.ts';
 import allBinaryData from '../../../data-collections/binary-all-10-edge-20-highlander.json';
+import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 
 let embeddableCollection: BinaryRuleCollection = BinaryRuleCollection.empty();
 let lastBoard: TBoard | null = null;
@@ -33,8 +34,8 @@ export const patternSolverFactory = ( board: TBoard, state: TState<TCompleteData
 
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
     new ScanPatternSolver( board, boardPatternBoard, state, curatedRules.length, i => curatedRules[ i ] ),
-    new ScanPatternSolver( board, boardPatternBoard, state, boardCollection.size, i => boardCollection.getRule( i ) ),
-    // new BinaryPatternSolver( board, boardPatternBoard, state, boardCollection ),
+    // new ScanPatternSolver( board, boardPatternBoard, state, boardCollection.size, i => boardCollection.getRule( i ) ),
+    new BinaryPatternSolver( board, boardPatternBoard, state, boardCollection ),
     standardSolverFactory( board, state, dirty ),
   ] );
 };
