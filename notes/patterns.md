@@ -12,7 +12,6 @@
     - general edge sector unrestricted
     - general all
     - general all unrestricted
-    - 
     - square only edge
     - square only edge unrestricted
     - square only color
@@ -21,6 +20,7 @@
     - square only edge sector unrestricted
     - square only all
     - square only all unrestricted
+    - 
     - 
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
@@ -58,6 +58,11 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
+  - 
+  - Get the ability to semi-manually clear current boards
+  - 
+  - Verify we are pruning symmetric highlander cases
+  - Write "status" script (iterate through sequences JSONs, list current generation, show percent done, show current running)
   - 
   - REGENERATE RULES
     - FaceColorDual-embeddings AND triangles were messed up. 
