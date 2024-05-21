@@ -59,6 +59,9 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - ASSERTIONS?
+    - UNIT TEST all of the BinaryRuleCollection things! isRedundant, etc., verify with other implementation
+  - 
   - Pause execution
     - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
     - https://pptr.dev/api/puppeteer.page.emulateidlestate

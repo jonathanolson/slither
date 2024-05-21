@@ -685,6 +685,10 @@ export class FeatureSet {
     return this.faceValueMap.get( face );
   }
 
+  public getFaceColorDualFromFace( face: TPatternFace ): FaceColorDualFeature | null {
+    return this.faceToColorDualMap.get( face ) ?? null;
+  }
+
   public impliesFaceValue( face: TPatternFace, value: FaceValue ): boolean {
     const existingValue = this.faceValueMap.get( face );
     return existingValue !== undefined && existingValue === value;

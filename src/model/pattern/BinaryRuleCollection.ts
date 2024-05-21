@@ -11,6 +11,7 @@ import { TBoardFeatureData } from './TBoardFeatureData.ts';
 import { Embedding } from './Embedding.ts';
 import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
 import FeatureSetMatchState from './FeatureSetMatchState.ts';
+import { FeatureSet } from './feature/FeatureSet.ts';
 
 export class BinaryRuleCollection {
 
@@ -26,6 +27,10 @@ export class BinaryRuleCollection {
         assert( data[ ruleIndices[ i ] ] < patternBoards.length, 'pattern board index' );
       }
     }
+  }
+
+  public clone(): BinaryRuleCollection {
+    return new BinaryRuleCollection( this.patternBoards.slice(), new Uint8Array( this.data ), this.ruleIndices.slice(), this.nextRuleIndex, this.highlander );
   }
 
   public addRule( rule: PatternRule ): void {
@@ -168,34 +173,65 @@ export class BinaryRuleCollection {
     return this.withRules( addedRules );
   }
 
-  public withCollection( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
-    const theirRules = ruleCollection.getRules();
+  public withCollectionNonredundant( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
 
-    let lastPatternBoard: TPatternBoard | null = null;
-    let embeddedRules: PatternRule[] = [];
+    const combinedCollection = this.clone();
 
-    const addedRules: PatternRule[] = [];
-
-    for ( let i = 0; i < theirRules.length; i++ ) {
-      if ( i % 100 === 0 ) {
-        console.log( i, theirRules.length );
+    ruleCollection.forEachRule( rule => {
+      if ( !this.isRuleRedundant( rule ) ) {
+        combinedCollection.addRule( rule );
       }
-      const rule = theirRules[ i ];
+    } );
 
-      const targetPatternBoard = rule.patternBoard;
+    return combinedCollection;
+  }
 
-      if ( targetPatternBoard !== lastPatternBoard ) {
-        embeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, targetPatternBoard ) ) );
-        lastPatternBoard = targetPatternBoard;
-      }
+  public withRulesApplied( initialFeatureSet: FeatureSet ): FeatureSet {
+    // TODO: do full rule matching(?) but it seems like subsetting would be more difficult...? This is more about memory optimization, no? Otherwise just use PatternRule version
 
-      if ( !rule.isRedundant( embeddedRules ) ) {
-        addedRules.push( rule );
-        embeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, targetPatternBoard ) ) );
+    const featureState = initialFeatureSet.clone();
+
+    let changed = true;
+
+    while ( changed ) {
+      changed = false;
+
+      // isActionableEmbeddingFromFeatureSet( featureSet: FeatureSet, ruleIndex: number, embedding: Embedding )
+      // TODO: see if we can share embeddings from previous rules?
+
+      let lastPatternBoard: TPatternBoard | null = null;
+      let lastEmbeddings: Embedding[] = [];
+
+      for ( let ruleIndex = 0; ruleIndex < this.ruleIndices.length; ruleIndex++ ) {
+        const byteIndex = this.ruleIndices[ ruleIndex ];
+        const patternBoardIndex = this.data[ byteIndex ];
+        const patternBoard = this.patternBoards[ patternBoardIndex ];
+
+        if ( patternBoard !== lastPatternBoard ) {
+          lastPatternBoard = patternBoard;
+          lastEmbeddings = getEmbeddings( patternBoard, initialFeatureSet.patternBoard );
+        }
+
+        const embeddings = lastEmbeddings;
+
+        for ( const embedding of embeddings ) {
+          if ( this.isActionableEmbeddingFromFeatureSet( featureState, ruleIndex, embedding ) ) {
+            this.getRule( ruleIndex ).embedded( featureState.patternBoard, embedding )!.apply( featureState );
+            changed = true;
+          }
+        }
       }
     }
 
-    return this.withRules( addedRules );
+    return featureState;
+  }
+
+  public isRuleRedundant( rule: PatternRule ): boolean {
+    if ( rule.isTrivial() ) {
+      return true;
+    }
+
+    return rule.outputFeatureSet.isSubsetOf( this.withRulesApplied( rule.inputFeatureSet ) );
   }
 
   // TODO: see which is faster, isActionableEmbeddingFromData or getActionableEmbeddingsFromData
@@ -365,6 +401,139 @@ export class BinaryRuleCollection {
         const featureMatcher = binaryMapping.featureMatchers[ firstByte ];
 
         if ( featureMatcher( boardData, embedding ) !== FeatureSetMatchState.MATCH ) {
+          return true;
+        }
+      }
+    }
+
+    // this is "inconsequential", state already contains the rule input and output
+    return false;
+  }
+
+  public isActionableEmbeddingFromFeatureSet( featureSet: FeatureSet, ruleIndex: number, embedding: Embedding ): boolean {
+    let byteIndex = this.ruleIndices[ ruleIndex ];
+    const patternBoardIndex = this.data[ byteIndex++ ];
+    const patternBoard = this.patternBoards[ patternBoardIndex ];
+    assertEnabled() && assert( patternBoard, 'pattern board' );
+
+    const binaryMapping = getBinaryFeatureMapping( patternBoard );
+
+    // Input features, filter by the "input" of the pattern
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        // TODO: reduce duplication? NOTE IT IS SUBTLY DIFFERENT!!!
+        const targetMainPrimaryFace = embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] );
+        const candidateFaceColorDual = featureSet.getFaceColorDualFromFace( targetMainPrimaryFace );
+        if ( !candidateFaceColorDual ) {
+          return false;
+        }
+        const isReversed = candidateFaceColorDual.secondaryFaces.includes( targetMainPrimaryFace );
+        assertEnabled() && assert( isReversed || candidateFaceColorDual.primaryFaces.includes( targetMainPrimaryFace ) );
+
+        const candidatePrimaryFaces = isReversed ? candidateFaceColorDual.secondaryFaces : candidateFaceColorDual.primaryFaces;
+        const candidateSecondaryFaces = isReversed ? candidateFaceColorDual.primaryFaces : candidateFaceColorDual.secondaryFaces;
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            const targetSecondaryFace = embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] );
+            if ( !candidateSecondaryFaces.includes( targetSecondaryFace ) ) {
+              return false;
+            }
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            const targetPrimaryFace = embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] );
+            if ( !candidatePrimaryFaces.includes( targetPrimaryFace ) ) {
+              return false;
+            }
+          }
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureSetMatcher = binaryMapping.featureSetMatchers[ firstByte ];
+
+        if ( featureSetMatcher( featureSet, embedding ) !== FeatureSetMatchState.MATCH ) {
+          return false;
+        }
+      }
+    }
+
+    // Output features, see which embedded rules are actionable (would change the state)
+    while ( true ) {
+      const firstByte = this.data[ byteIndex++ ];
+
+      if ( firstByte === 0xff ) {
+        break;
+      }
+      else if ( firstByte === 0xfe ) {
+        // First "next byte" should always be a primary face
+        const mainPrimaryFaceIndex = this.data[ byteIndex++ ];
+        assertEnabled() && assert( mainPrimaryFaceIndex < 0x80 );
+
+        const targetMainPrimaryFace = embedding.mapFace( patternBoard.faces[ mainPrimaryFaceIndex ] );
+        const candidateFaceColorDual = featureSet.getFaceColorDualFromFace( targetMainPrimaryFace );
+        if ( !candidateFaceColorDual ) {
+          return true; // success now that it is the output
+        }
+        const isReversed = candidateFaceColorDual.secondaryFaces.includes( targetMainPrimaryFace );
+        assertEnabled() && assert( isReversed || candidateFaceColorDual.primaryFaces.includes( targetMainPrimaryFace ) );
+
+        const candidatePrimaryFaces = isReversed ? candidateFaceColorDual.secondaryFaces : candidateFaceColorDual.primaryFaces;
+        const candidateSecondaryFaces = isReversed ? candidateFaceColorDual.primaryFaces : candidateFaceColorDual.secondaryFaces;
+
+        while ( true ) {
+          const nextByte = this.data[ byteIndex++ ];
+
+          // Rewind if the next byte is a control signal (the only way we exit the face color dual section)
+          if ( nextByte === 0xff || nextByte === 0xfe ) {
+            byteIndex--;
+            break;
+          }
+
+          if ( nextByte & 0x80 ) {
+            const secondaryFaceIndex = nextByte & 0x7f;
+
+            const targetSecondaryFace = embedding.mapFace( patternBoard.faces[ secondaryFaceIndex ] );
+            if ( !candidateSecondaryFaces.includes( targetSecondaryFace ) ) {
+              return true;
+            }
+          }
+          else {
+            const primaryFaceIndex = nextByte;
+
+            const targetPrimaryFace = embedding.mapFace( patternBoard.faces[ primaryFaceIndex ] );
+            if ( !candidatePrimaryFaces.includes( targetPrimaryFace ) ) {
+              return true;
+            }
+          }
+        }
+      }
+      else {
+        // binary mapped feature
+        const featureSetMatcher = binaryMapping.featureSetMatchers[ firstByte ];
+
+        if ( featureSetMatcher( featureSet, embedding ) !== FeatureSetMatchState.MATCH ) {
           return true;
         }
       }

@@ -42,6 +42,7 @@ declare global {
     getSequenceWithoutProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
     getSequenceWithCollection: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ) => SerializedBinaryRuleSequence;
     getCollectionForSequence: ( serializedSequence: SerializedBinaryRuleSequence, board: string ) => SerializedBinaryRuleCollection;
+    getCombinedNonredundantBinaryCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
   }
 }
 
@@ -104,6 +105,15 @@ window.getCollectionForSequence = ( serializedSequence: SerializedBinaryRuleSequ
   const collection = sequence.getCollectionForBoard( board );
   return collection.serialize();
 };
+
+window.getCombinedNonredundantBinaryCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize( a );
+  const bCollection = BinaryRuleCollection.deserialize( b );
+  const resultCollection = aCollection.withCollectionNonredundant( bCollection );
+  return resultCollection.serialize();
+};
+
+
 
 // @ts-expect-error
 window.addRuleSetToCollection = ( serializedCollection: SerializedPatternRuleCollection, serializedRuleSet: SerializedPatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ) => {
