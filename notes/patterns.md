@@ -64,6 +64,8 @@
       - Get a rule inspector. We'll use it ANYWAY for debugging?
         - ... are face colors buggered up?
     - Consider... testing rule correctness? Perhaps (a) compute a solution-set for a board, (b) filter solutions by input, (c) filter solutions by highlander, (d) check against output.
+      - RichSolutions for a board, HighlanderPruner.filterWithFeatureSet BEFORE filtering solutions by the feature set (see which one are possible)
+      - THIS is an EFFICIENT way of checking?
   - 
   - ASSERTIONS?
     - UNIT TEST all of the BinaryRuleCollection things! isRedundant, etc., verify with other implementation
