@@ -59,6 +59,12 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - combine-collections failing with incompatible on color.
+    - INSPECT RULES
+      - Get a rule inspector. We'll use it ANYWAY for debugging?
+        - ... are face colors buggered up?
+    - Consider... testing rule correctness? Perhaps (a) compute a solution-set for a board, (b) filter solutions by input, (c) filter solutions by highlander, (d) check against output.
+  - 
   - ASSERTIONS?
     - UNIT TEST all of the BinaryRuleCollection things! isRedundant, etc., verify with other implementation
   - 

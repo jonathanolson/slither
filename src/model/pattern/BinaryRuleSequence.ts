@@ -278,6 +278,7 @@ export type SequenceSpecifier = {
 export type SerializedBinaryRuleSequence = SequenceSpecifier & {
 
   // Rule collection
+  // NOTE: used directly in combine-collections script so we avoid more browser stuff
   collection: SerializedBinaryRuleCollection;
 
   // Boards that have been completed, even if they provided no rules
