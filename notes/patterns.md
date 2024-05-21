@@ -11,15 +11,15 @@
     - general edge sector
     - general edge sector unrestricted
     - general all
-    - general all unrestricted
+    - [macOS - PAUSE EMERGENCY] general all unrestricted
     - square only edge
     - square only edge unrestricted
     - square only color
     - square only color unrestricted
     - square only edge sector
-    - square only edge sector unrestricted
+    - [macOS - PAUSE EMERGENCY] square only edge sector unrestricted
     - square only all
-    - square only all unrestricted
+    - [macOS - PAUSE EMERGENCY] square only all unrestricted
     - 
     - 
     - HEY HEY -- highlander can be added like "only"? 
@@ -59,6 +59,11 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - Pause execution
+    - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
+    - https://pptr.dev/api/puppeteer.page.emulateidlestate
+    - OR... JUST RUN THIS STUFF IN A VM, that we can snapshot on the regular?
+      - DOCKER it, so we can pause?
   - Get the ability to semi-manually clear current boards
   - 
   - Verify we are pruning symmetric highlander cases
