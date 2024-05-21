@@ -64,6 +64,9 @@
     - https://pptr.dev/api/puppeteer.page.emulateidlestate
     - OR... JUST RUN THIS STUFF IN A VM, that we can snapshot on the regular?
       - DOCKER it, so we can pause?
+    - OR.... just:
+      - kill -SIGSTOP <pid>
+      - kill -SIGCONT <pid>
   - Get the ability to semi-manually clear current boards
   - 
   - Verify we are pruning symmetric highlander cases
