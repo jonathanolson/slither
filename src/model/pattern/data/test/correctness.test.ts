@@ -1,93 +1,51 @@
+import generalEdgeSequence from '../../../../../data-sequences/general-edge.json';
+import generalEdgeUnrestrictedSequence from '../../../../../data-sequences/general-edge-unrestricted.json';
+import generalColorSequence from '../../../../../data-sequences/general-color.json';
+import generalColorUnrestrictedSequence from '../../../../../data-sequences/general-color-unrestricted.json';
+import generalEdgeSectorSequence from '../../../../../data-sequences/general-edge-sector.json';
+import generalEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/general-edge-sector-unrestricted.json';
+import generalAllSequence from '../../../../../data-sequences/general-all.json';
+import generalAllUnrestrictedSequence from '../../../../../data-sequences/general-all-unrestricted.json';
+import squareOnlyEdgeSequence from '../../../../../data-sequences/square-only-edge.json';
+import squareOnlyEdgeUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-unrestricted.json';
+import squareOnlyColorSequence from '../../../../../data-sequences/square-only-color.json';
+import squareOnlyColorUnrestrictedSequence from '../../../../../data-sequences/square-only-color-unrestricted.json';
+import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-only-edge-sector.json';
+import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
+import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
+import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
+import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../BinaryRuleSequence.ts';
+import { BinaryRuleCollection } from '../../BinaryRuleCollection.ts';
+import { isPatternRuleValid } from '../../isPatternRuleValid.ts';
 import QUnit from 'qunit';
-import { PatternRule } from '../../PatternRule.ts';
-import { PatternBoardRuleSet } from '../../PatternBoardRuleSet.ts';
-import { PatternBoardSolver } from '../../PatternBoardSolver.ts';
-import { TPatternEdge } from '../../TPatternEdge.ts';
-import { dualEdgeColorRuleSet } from '../dualEdgeColorRuleSet.ts';
-import { basicEdgeRuleSets } from '../basicEdgeRuleSets.ts';
-import { basicSectorImpliedRuleSets } from '../basicSectorImpliedRuleSets.ts';
-import { basicColorRuleSets } from '../basicColorRuleSets.ts';
-import { basicColorOnly4RuleSet } from '../basicColorOnly4RuleSet.ts';
-import { basicColorOnly5RuleSet } from '../basicColorOnly5RuleSet.ts';
-import { basicColorOnly6RuleSet } from '../basicColorOnly6RuleSet.ts';
 
 QUnit.module( 'pattern rule correctness', () => {
-  const getFirstIncorrectRule = ( ruleSet: PatternBoardRuleSet ): PatternRule | null => {
 
-    const allSolutions = PatternBoardSolver.getSolutions( ruleSet.patternBoard, [] );
-
-    const ruleInputFeatures = ruleSet.rules.map( rule => rule.inputFeatureSet.getFeaturesArray() );
-    const ruleOutputFeatures = ruleSet.rules.map( rule => rule.outputFeatureSet.getFeaturesArray() );
-
-    for ( const solution of allSolutions ) {
-      const isEdgeBlack = ( edge: TPatternEdge ) => {
-        return solution.includes( edge );
-      };
-
-      for ( let i = 0; i < ruleSet.rules.length; i++ ) {
-        const rule = ruleSet.rules[ i ];
-        const inputFeatures = ruleInputFeatures[ i ];
-        const outputFeatures = ruleOutputFeatures[ i ];
-
-        if ( inputFeatures.every( feature => feature.isPossibleWith( isEdgeBlack ) ) ) {
-          if ( !outputFeatures.every( feature => feature.isPossibleWith( isEdgeBlack ) ) ) {
-            return rule;
-          }
-        }
-      }
-    }
-
-    return null;
-  };
-
-  const testRuleSets = ( ruleSets: PatternBoardRuleSet[], name: string ) => {
+  const testCollection = ( name: string, collection: BinaryRuleCollection ) => {
     QUnit.test( name, assert => {
+      collection.forEachRule( rule => {
+        const isValid = isPatternRuleValid( rule, true );
 
-      ruleSets.forEach( ( ruleSet, i ) => {
-        const badRule = getFirstIncorrectRule( ruleSet );
-
-        assert.equal( badRule, null, `${i} ${name} ${badRule?.toCanonicalString()}` );
+        assert.ok( isValid, rule.toCanonicalString() );
       } );
     } );
   };
 
-  testRuleSets( [ dualEdgeColorRuleSet ], 'dualEdgeColorRuleSet' );
+  testCollection( 'square-only-edge', BinaryRuleSequence.deserialize( squareOnlyEdgeSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-edge-unrestricted', BinaryRuleSequence.deserialize( squareOnlyEdgeUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-color', BinaryRuleSequence.deserialize( squareOnlyColorSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-color-unrestricted', BinaryRuleSequence.deserialize( squareOnlyColorUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-edge-sector', BinaryRuleSequence.deserialize( squareOnlyEdgeSectorSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-edge-sector-unrestricted', BinaryRuleSequence.deserialize( squareOnlyEdgeSectorUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-all', BinaryRuleSequence.deserialize( squareOnlyAllSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'square-only-all-unrestricted', BinaryRuleSequence.deserialize( squareOnlyAllUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
 
-  testRuleSets( basicEdgeRuleSets, 'basicEdgeRuleSets' );
-
-  testRuleSets( basicSectorImpliedRuleSets, 'basicSectorImpliedRuleSets' );
-
-  testRuleSets( basicColorRuleSets, 'basicColorRuleSets' );
-  testRuleSets( [ basicColorOnly4RuleSet ], 'basicColorOnly4RuleSet' );
-  testRuleSets( [ basicColorOnly5RuleSet ], 'basicColorOnly5RuleSet' );
-  testRuleSets( [ basicColorOnly6RuleSet ], 'basicColorOnly6RuleSet' );
-
-  // testRuleSets( squareEdgeOnlyImplied0RuleSets, 'squareEdgeOnlyImplied0RuleSets' );
-  // testRuleSets( squareEdgeOnlyImplied1RuleSets, 'squareEdgeOnlyImplied1RuleSets' );
-  // testRuleSets( squareEdgeOnlyImplied2RuleSets, 'squareEdgeOnlyImplied2RuleSets' );
-  // testRuleSets( squareEdgeOnlyImplied3RuleSets, 'squareEdgeOnlyImplied3RuleSets' );
-  // testRuleSets( squareEdgeOnlyImplied4RuleSets, 'squareEdgeOnlyImplied4RuleSets' );
-  //
-  // testRuleSets( squareSectorOnlyImplied0RuleSets, 'squareSectorOnlyImplied0RuleSets' );
-  // testRuleSets( squareSectorOnlyImplied1RuleSets, 'squareSectorOnlyImplied1RuleSets' );
-  // testRuleSets( squareSectorOnlyImplied2RuleSets, 'squareSectorOnlyImplied2RuleSets' );
-  //
-  // testRuleSets( squareColorImplied0RuleSets, 'squareColorImplied0RuleSets' );
-  // testRuleSets( squareColorImplied1RuleSets, 'squareColorImplied1RuleSets' );
-  // testRuleSets( squareColorImplied2RuleSets, 'squareColorImplied2RuleSets' );
-  //
-  // testRuleSets( hexagonalEdgeOnlyImplied0RuleSets, 'hexagonalEdgeOnlyImplied0RuleSets' );
-  // testRuleSets( hexagonalEdgeOnlyImplied1RuleSets, 'hexagonalEdgeOnlyImplied1RuleSets' );
-  // testRuleSets( hexagonalEdgeOnlyImplied2RuleSets, 'hexagonalEdgeOnlyImplied2RuleSets' );
-  //
-  // testRuleSets( hexagonalSectorOnlyImplied0RuleSets, 'hexagonalSectorOnlyImplied0RuleSets' );
-  //
-  // testRuleSets( hexagonalColorImplied0RuleSets, 'hexagonalColorImplied0RuleSets' );
-  //
-  // testRuleSets( generalEdgeImplied0RuleSets, 'generalEdgeImplied0RuleSets' );
-  // testRuleSets( generalEdgeImplied1RuleSets, 'generalEdgeImplied1RuleSets' );
-  //
-  // testRuleSets( generalSectorImplied0RuleSets, 'generalSectorImplied0RuleSets' );
-  //
-  // testRuleSets( generalColorImplied0RuleSets, 'generalColorImplied0RuleSets' );
+  testCollection( 'general-edge', BinaryRuleSequence.deserialize( generalEdgeSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-edge-unrestricted', BinaryRuleSequence.deserialize( generalEdgeUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-color', BinaryRuleSequence.deserialize( generalColorSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-color-unrestricted', BinaryRuleSequence.deserialize( generalColorUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-edge-sector', BinaryRuleSequence.deserialize( generalEdgeSectorSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-edge-sector-unrestricted', BinaryRuleSequence.deserialize( generalEdgeSectorUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-all', BinaryRuleSequence.deserialize( generalAllSequence as SerializedBinaryRuleSequence ).collection );
+  testCollection( 'general-all-unrestricted', BinaryRuleSequence.deserialize( generalAllUnrestrictedSequence as SerializedBinaryRuleSequence ).collection );
 } );

@@ -110,12 +110,7 @@ console.log( 'test' );
       solveFaceColors: false
     } );
     const widerSolutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getHighlanderFeaturesArray() );
-    const widerRichSolutions = widerSolutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, {
-      solveEdges: true,
-      solveSectors: false,
-      solveFaceColors: false,
-      highlander: true
-    } ) );
+    const widerRichSolutions = widerSolutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, true ) );
 
     const highlanderFilteredRichSolutions = HighlanderPruner.filterWithFeatureSet( widerRichSolutions, rule.inputFeatureSet );
 

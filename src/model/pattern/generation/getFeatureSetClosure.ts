@@ -30,7 +30,7 @@ export const getFeatureSetClosure = (
   let inputSolveFeatures = highlander ? featureSet.getHighlanderFeaturesArray() : featureSet.getFeaturesArray();
 
   const solutions = PatternBoardSolver.getSolutions( patternBoard, inputSolveFeatures );
-  let richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions ) );
+  let richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions.highlander ) );
 
   if ( highlander ) {
     richSolutions = HighlanderPruner.filterWithFeatureSet( richSolutions, featureSet );

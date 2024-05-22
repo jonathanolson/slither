@@ -43,7 +43,7 @@ export const getFeatureImpliedRules = (
   const numAttributes = binaryFeatureMap.numAttributes;
 
   const solutions = PatternBoardSolver.getSolutions( patternBoard, inputFeatures );
-  const richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions ) );
+  const richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions.highlander ) );
 
   // TODO: collapse this logic if it is working
   let getClosure: ( attributeSet: bigint ) => bigint;

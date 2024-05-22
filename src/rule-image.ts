@@ -4,7 +4,9 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
-import aaa from '../data-sequences/square-only-edge.json';
+import aaa from '../data-sequences/square-only-color.json';
+// import aaa from '../data-sequences/square-only-edge-sector-unrestricted.json';
+//import aaa from '../data-sequences/general-color-unrestricted.json';
 import bbb from '../data-sequences/square-only-edge-unrestricted.json';
 
 // @ts-expect-error
@@ -110,9 +112,10 @@ console.log( 'test' );
   // showRuleSet( new PatternBoardRuleSet( rule.patternBoard, planarPatternMaps.get( rule.patternBoard )!, [ rule ], false ) );
 
   const aSequence = BinaryRuleSequence.deserialize( aaa as SerializedBinaryRuleSequence );
-  const bSequence = BinaryRuleSequence.deserialize( bbb as SerializedBinaryRuleSequence );
-
-  const collection = aSequence.collection.withCollectionNonredundant( bSequence.collection );
+  // const bSequence = BinaryRuleSequence.deserialize( bbb as SerializedBinaryRuleSequence );
+  //
+  // const collection = aSequence.collection.withCollectionNonredundant( bSequence.collection );
+  const collection = aSequence.collection;
 
   const showRules = ( rules: PatternRule[] ) => {
     addPaddedNode( new GridBox( {
@@ -132,122 +135,8 @@ console.log( 'test' );
 
   // const rules = BinaryRuleSequence.deserialize( serializedGeneralEdgeUnrestrictedSequence as SerializedBinaryRuleSequence ).collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
   // const rules = collection.getRules().slice( aSequence.collection.size - 10, aSequence.collection.size + 50 );
-
-  const rules = [
-    PatternRule.deserialize( {
-      'patternBoard': 'vertex-3-exit-two-adjacent',
-      'input': {
-        'faceColorDualFeatures': [
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              0
-            ],
-            'secondaryFaces': [
-              1
-            ],
-            'sameColorPaths': [],
-            'oppositeColorPaths': [
-              [
-                1
-              ]
-            ]
-          }
-        ]
-      },
-      'output': {
-        'faceColorDualFeatures': [
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              2,
-              3
-            ],
-            'secondaryFaces': [],
-            'sameColorPaths': [
-              [
-                0,
-                1,
-                2
-              ]
-            ],
-            'oppositeColorPaths': []
-          },
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              0
-            ],
-            'secondaryFaces': [
-              1
-            ],
-            'sameColorPaths': [],
-            'oppositeColorPaths': [
-              [
-                1
-              ]
-            ]
-          }
-        ]
-      },
-      'highlander': true
-    } ),
-    PatternRule.deserialize( {
-      'patternBoard': 'vertex-2-exit-none',
-      'input': {
-        'faceColorDualFeatures': [
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              2,
-              3
-            ],
-            'secondaryFaces': [],
-            'sameColorPaths': [
-              [
-                1
-              ]
-            ],
-            'oppositeColorPaths': []
-          }
-        ]
-      },
-      'output': {
-        'faceColorDualFeatures': [
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              0,
-              1
-            ],
-            'secondaryFaces': [],
-            'sameColorPaths': [
-              [
-                0
-              ]
-            ],
-            'oppositeColorPaths': []
-          },
-          {
-            'type': 'face-color-dual',
-            'primaryFaces': [
-              2,
-              3
-            ],
-            'secondaryFaces': [],
-            'sameColorPaths': [
-              [
-                1
-              ]
-            ],
-            'oppositeColorPaths': []
-          }
-        ]
-      },
-      'highlander': true
-    } )
-  ];
-
+  // const rules = collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
+  const rules = collection.getRules().slice( 0, 300 );
   showRules( rules );
 
 

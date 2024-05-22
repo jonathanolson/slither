@@ -1,10 +1,13 @@
 import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
-import { RichEdgeState, RichSolution } from '../generation/RichSolution.ts';
+import { RichSolution } from '../generation/RichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
 import { TPatternEdge } from '../TPatternEdge.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
+import { RichEdgeState } from '../generation/RichEdgeState.ts';
+import { GenericRichSolution } from '../generation/GenericRichSolution.ts';
 
 export class HighlanderPruner {
 
@@ -14,6 +17,8 @@ export class HighlanderPruner {
   public constructor(
     public readonly initialFeatureSet: FeatureSet,
     public readonly binaryFeatureMap: BinaryFeatureMap,
+
+    // require full RichSolutions so we can effectively prune
     public readonly richSolutions: RichSolution[],
   ) {
     const patternBoard = initialFeatureSet.patternBoard;
@@ -60,10 +65,10 @@ export class HighlanderPruner {
     return this.solutionAttributeSetLists[ highlanderIndex ];
   }
 
-  public static filterWithFeatureSet(
-    richSolutions: RichSolution[],
+  public static filterWithFeatureSet<SolutionType extends GenericRichSolution>(
+    richSolutions: SolutionType[],
     featureSet: FeatureSet
-  ): RichSolution[] {
+  ): SolutionType[] {
     // TODO: optimize this, or move it into this type?
     const indeterminateEdges = getIndeterminateEdges( featureSet.patternBoard, featureSet.getFeaturesArray() );
 
@@ -73,7 +78,7 @@ export class HighlanderPruner {
   }
 
   public static getHighlanderKeyWithFeatureSet(
-    richSolution: RichSolution,
+    richSolution: GenericRichSolution,
     featureSet: FeatureSet
   ): string {
     // TODO: optimize this, or move it into this type?
@@ -85,7 +90,7 @@ export class HighlanderPruner {
   }
 
   public static getHighlanderKeyWithInfo(
-    richSolution: RichSolution,
+    richSolution: GenericRichSolution,
     indeterminateEdges: TPatternEdge[],
     redExitEdgeSet: Set<TPatternEdge>
   ): string {
@@ -116,12 +121,12 @@ export class HighlanderPruner {
     } ).join( '' ) + '/' + richSolution.vertexConnectionKey;
   }
 
-  public static filterWithInfo(
-    richSolutions: RichSolution[],
+  public static filterWithInfo<SolutionType extends GenericRichSolution>(
+    richSolutions: SolutionType[],
     indeterminateEdges: TPatternEdge[],
     redExitEdges: TPatternEdge[]
-  ): RichSolution[] {
-    const solutionMap = new Map<string, RichSolution | null>();
+  ): SolutionType[] {
+    const solutionMap = new Map<string, SolutionType | null>();
 
     const redExitEdgeSet = new Set( redExitEdges );
 
@@ -152,6 +157,6 @@ export class HighlanderPruner {
       }
 
       return true;
-    } ) as RichSolution[] );
+    } ) as SolutionType[] );
   }
 }

@@ -20,7 +20,7 @@ QUnit.module( 'RichSolution', () => {
     const binaryFeatureMap = new BinaryFeatureMap( squareBoard, solutionOptions );
 
     const solutions = PatternBoardSolver.getSolutions( squareBoard, [] );
-    const richSolutions = solutions.map( solution => new RichSolution( squareBoard, binaryFeatureMap, solution, solutionOptions ) );
+    const richSolutions = solutions.map( solution => new RichSolution( squareBoard, binaryFeatureMap, solution, solutionOptions.highlander ) );
 
     for ( const richSolution of richSolutions ) {
       console.log( richSolution.toDebugString() );
@@ -78,7 +78,7 @@ QUnit.module( 'RichSolution', () => {
     const binaryFeatureMap = new BinaryFeatureMap( squareBoard, solutionOptions );
 
     const solutions = PatternBoardSolver.getSolutions( squareBoard, [] );
-    const richSolutions = solutions.map( solution => new RichSolution( squareBoard, binaryFeatureMap, solution, solutionOptions ) );
+    const richSolutions = solutions.map( solution => new RichSolution( squareBoard, binaryFeatureMap, solution, solutionOptions.highlander ) );
 
     for ( const richSolution of richSolutions ) {
       console.log( richSolution.toDebugString() );
