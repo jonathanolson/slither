@@ -60,6 +60,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - square-only-color buggy? (go with unrestricted?)
+    - TEST ALL RULES OMG WTF BBQ
   - 
   - combine-collections failing with incompatible on color.
     - INSPECT RULES
