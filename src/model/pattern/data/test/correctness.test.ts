@@ -19,18 +19,22 @@ import { BinaryRuleCollection } from '../../BinaryRuleCollection.ts';
 import { isPatternRuleValid } from '../../isPatternRuleValid.ts';
 import QUnit from 'qunit';
 import { serializePatternBoard } from '../../serializePatternBoard.ts';
-import { PatternRule } from '../../PatternRule.ts';
+import { getPatternBoardGenericRichSolutions } from '../../getPatternBoardGenericRichSolutions.ts';
 
 QUnit.module( 'pattern rule correctness', () => {
 
   const testCollection = ( collectionName: string, collection: BinaryRuleCollection ) => {
     collection.patternBoards.forEach( patternBoard => {
       const boardName = serializePatternBoard( patternBoard );
+
       QUnit.test( `${collectionName} ${boardName}`, assert => {
         let count = 0;
 
+        const solutions = getPatternBoardGenericRichSolutions( patternBoard, false );
+
         let passed = true;
-        let firstBrokenRule: PatternRule | null = null;
+        let firstBrokenString: string | null = null;
+
         collection.forEachRule( rule => {
 
           if ( passed && rule.patternBoard === patternBoard ) {
@@ -38,18 +42,16 @@ QUnit.module( 'pattern rule correctness', () => {
               console.log( collectionName, boardName, count - 1 );
             }
 
-            const isValid = isPatternRuleValid( rule, true );
+            const isValid = isPatternRuleValid( rule, true, solutions );
 
             if ( !isValid ) {
               passed = false;
-              firstBrokenRule = rule;
+              firstBrokenString = rule.toCanonicalString();
             }
-
-            assert.ok( isValid, rule.toCanonicalString() );
           }
         } );
 
-        assert.ok( passed, firstBrokenRule ? firstBrokenRule.toCanonicalString() : 'all rules passed' );
+        assert.ok( passed, firstBrokenString ?? 'all rules passed' );
       } );
     } );
   };

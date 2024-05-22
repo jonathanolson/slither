@@ -6,13 +6,18 @@ import { getPatternBoardSolutions } from './getPatternBoardSolutions.ts';
 const globalPatternBoardGenericRichSolutionsMap = new WeakMap<TPatternBoard, GenericRichSolution[]>();
 
 // memoized/cached (but with weak maps)
-export const getPatternBoardGenericRichSolutions = ( patternBoard: TPatternBoard ): GenericRichSolution[] => {
+export const getPatternBoardGenericRichSolutions = (
+  patternBoard: TPatternBoard,
+  cache = false,
+): GenericRichSolution[] => {
   assertEnabled() && assert( patternBoard );
 
   let solutions = globalPatternBoardGenericRichSolutionsMap.get( patternBoard ) ?? null;
   if ( !solutions ) {
-    solutions = getPatternBoardSolutions( patternBoard ).map( solution => new GenericRichSolution( patternBoard, solution, true ) );
-    globalPatternBoardGenericRichSolutionsMap.set( patternBoard, solutions );
+    solutions = getPatternBoardSolutions( patternBoard ).map( solution => new GenericRichSolution( patternBoard, solution, true ), cache );
+    if ( cache ) {
+      globalPatternBoardGenericRichSolutionsMap.set( patternBoard, solutions );
+    }
   }
 
   return solutions;
