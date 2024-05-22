@@ -131,7 +131,123 @@ console.log( 'test' );
   };
 
   // const rules = BinaryRuleSequence.deserialize( serializedGeneralEdgeUnrestrictedSequence as SerializedBinaryRuleSequence ).collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
-  const rules = collection.getRules().slice( aSequence.collection.size - 10, aSequence.collection.size + 50 );
+  // const rules = collection.getRules().slice( aSequence.collection.size - 10, aSequence.collection.size + 50 );
+
+  const rules = [
+    PatternRule.deserialize( {
+      'patternBoard': 'vertex-3-exit-two-adjacent',
+      'input': {
+        'faceColorDualFeatures': [
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              0
+            ],
+            'secondaryFaces': [
+              1
+            ],
+            'sameColorPaths': [],
+            'oppositeColorPaths': [
+              [
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      'output': {
+        'faceColorDualFeatures': [
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              2,
+              3
+            ],
+            'secondaryFaces': [],
+            'sameColorPaths': [
+              [
+                0,
+                1,
+                2
+              ]
+            ],
+            'oppositeColorPaths': []
+          },
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              0
+            ],
+            'secondaryFaces': [
+              1
+            ],
+            'sameColorPaths': [],
+            'oppositeColorPaths': [
+              [
+                1
+              ]
+            ]
+          }
+        ]
+      },
+      'highlander': true
+    } ),
+    PatternRule.deserialize( {
+      'patternBoard': 'vertex-2-exit-none',
+      'input': {
+        'faceColorDualFeatures': [
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              2,
+              3
+            ],
+            'secondaryFaces': [],
+            'sameColorPaths': [
+              [
+                1
+              ]
+            ],
+            'oppositeColorPaths': []
+          }
+        ]
+      },
+      'output': {
+        'faceColorDualFeatures': [
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              0,
+              1
+            ],
+            'secondaryFaces': [],
+            'sameColorPaths': [
+              [
+                0
+              ]
+            ],
+            'oppositeColorPaths': []
+          },
+          {
+            'type': 'face-color-dual',
+            'primaryFaces': [
+              2,
+              3
+            ],
+            'secondaryFaces': [],
+            'sameColorPaths': [
+              [
+                1
+              ]
+            ],
+            'oppositeColorPaths': []
+          }
+        ]
+      },
+      'highlander': true
+    } )
+  ];
+
   showRules( rules );
 
 
@@ -175,7 +291,6 @@ console.log( 'test' );
   //   ...hexEdgeGeneration0RuleSets,
   //   ...hexEdgeGeneration1RuleSets,
   // ];
-
 
 
   // addPaddedNode( new HBox( {

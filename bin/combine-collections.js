@@ -43,10 +43,12 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     fs.writeFileSync( `./data-collections/snapshot-${name}.json`, JSON.stringify( collection ), 'utf8' );
   };
 
+  // TODO: find a better way than ignoring square-only / general color? do we just get color from ... general? Really want more
+
   const squareOnlyEdge = await combine( 'squareOnlyEdge', loadCollectionFromSequence( 'square-only-edge' ), loadCollectionFromSequence( 'square-only-edge-unrestricted' ) );
   writeCollection( 'square-only-edge', squareOnlyEdge );
 
-  const squareOnlyColor = await combine( 'squareOnlyColor', loadCollectionFromSequence( 'square-only-color' ), loadCollectionFromSequence( 'square-only-color-unrestricted' ) );
+  const squareOnlyColor = loadCollectionFromSequence( 'square-only-color-unrestricted' );
   writeCollection( 'square-only-color', squareOnlyColor );
 
   const squareOnlyEdgeSector = await combineArray( 'squareOnlyEdgeSector', [
@@ -72,7 +74,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   writeCollection( 'general-edge', generalEdge );
 
   const generalColor = await combineArray( 'generalColor', [
-    loadCollectionFromSequence( 'general-color' ),
+    // loadCollectionFromSequence( 'general-color' ),
     loadCollectionFromSequence( 'general-color-unrestricted' ),
     squareOnlyColor
   ] );

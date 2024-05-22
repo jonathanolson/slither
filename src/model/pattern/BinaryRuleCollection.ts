@@ -193,6 +193,8 @@ export class BinaryRuleCollection {
 
     let changed = true;
 
+    // const debugApplied: { rule: PatternRule; embedding: Embedding; embeddedRule: PatternRule; ruleIndex: number }[] = [];
+
     while ( changed ) {
       changed = false;
 
@@ -216,7 +218,12 @@ export class BinaryRuleCollection {
 
         for ( const embedding of embeddings ) {
           if ( this.isActionableEmbeddingFromFeatureSet( featureState, ruleIndex, embedding ) ) {
-            this.getRule( ruleIndex ).embedded( featureState.patternBoard, embedding )!.apply( featureState );
+            const rule = this.getRule( ruleIndex );
+            const embeddedRule = rule.embedded( featureState.patternBoard, embedding )!;
+
+            // debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
+
+            embeddedRule.apply( featureState );
             changed = true;
           }
         }

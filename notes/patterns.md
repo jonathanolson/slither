@@ -11,7 +11,7 @@
     - general edge sector
     - general edge sector unrestricted
     - general all
-    - [macOS - PAUSE EMERGENCY] general all unrestricted
+    - general all unrestricted - hexagonal-1-0 MANY params, we need pruning or SOMETHING. cairo-1-0 also... fairly intense, trihexagonal-1-2/portugal-1-1 also
     - square only edge
     - square only edge unrestricted
     - square only color
@@ -58,6 +58,8 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
+  - 
+  - square-only-color buggy? (go with unrestricted?)
   - 
   - combine-collections failing with incompatible on color.
     - INSPECT RULES

@@ -7,8 +7,24 @@ import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeat
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { Solver } from './model/logic/minisat/core/Solver.ts';
 
+// import squareOnlyEdge from '../data-sequences/square-only-edge.json';
+// import squareOnlyEdgeUnrestricted from '../data-sequences/square-only-edge-unrestricted.json';
+// import squareOnlyColor from '../data-sequences/square-only-color.json';
+// import squareOnlyColorUnrestricted from '../data-sequences/square-only-color-unrestricted.json';
+// import { BinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+
 // @ts-expect-error
 window.assertions.enableAssert();
+
+// const squareOnlyEdgeCollection = BinaryRuleCollection.deserialize( squareOnlyEdge.collection );
+// const squareOnlyEdgeUnrestrictedCollection = BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestricted.collection );
+// const squareOnlyColorCollection = BinaryRuleCollection.deserialize( squareOnlyColor.collection );
+// const squareOnlyColorUnrestrictedCollection = BinaryRuleCollection.deserialize( squareOnlyColorUnrestricted.collection );
+//
+// const a = squareOnlyEdgeCollection.withCollectionNonredundant( squareOnlyEdgeUnrestrictedCollection );
+// const b = squareOnlyColorCollection.withCollectionNonredundant( squareOnlyColorUnrestrictedCollection );
+
+debugger;
 
 const scene = new Node();
 
