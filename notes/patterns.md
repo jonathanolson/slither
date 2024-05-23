@@ -59,6 +59,9 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - ditch square-only-color, general-color (add throw in next-board script if we try those)
+    - Delete them and references
+  - 
   - square-only-color buggy? (go with unrestricted?)
     - TEST ALL RULES OMG WTF BBQ
   - 

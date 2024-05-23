@@ -74,7 +74,6 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   writeCollection( 'general-edge', generalEdge );
 
   const generalColor = await combineArray( 'generalColor', [
-    // loadCollectionFromSequence( 'general-color' ),
     loadCollectionFromSequence( 'general-color-unrestricted' ),
     squareOnlyColor
   ] );

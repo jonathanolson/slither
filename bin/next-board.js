@@ -63,6 +63,9 @@ if ( vertexOrderLimit === -1 ) {
 if ( !solveEdges && !solveSectors && !solveFaceColors ) {
   throw new Error( `at least one of edge, sector, or face color must be specified` );
 }
+if ( highlander && !solveEdges && !solveSectors ) {
+  throw new Error( 'Need edge/sector for highlander currently' );
+}
 
 const sequenceSpecifier = {
   boardType,
