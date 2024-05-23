@@ -48,6 +48,22 @@ const writeCollection = ( name: string, collection: BinaryRuleCollection ) => {
   console.log( 'DONE WITH', name, collection );
 };
 
+/*
+        'square-only-all-unrestricted',
+        'square-only-color-unrestricted',
+        'square-only-edge-sector-unrestricted',
+        'square-only-edge-unrestricted',
+ */
+
+const collectionarino = combineArray( 'foo', [
+  BinaryRuleCollection.deserialize( squareOnlyAllUnrestrictedSequence.collection ),
+  BinaryRuleCollection.deserialize( squareOnlyColorUnrestrictedSequence.collection ),
+  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorUnrestrictedSequence.collection ),
+  BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestrictedSequence.collection ),
+] );
+
+debugger;
+
 const squareOnlyEdge = combine( 'squareOnlyEdge', BinaryRuleCollection.deserialize( squareOnlyEdgeSequence.collection ), BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestrictedSequence.collection ) );
 writeCollection( 'square-only-edge', squareOnlyEdge );
 

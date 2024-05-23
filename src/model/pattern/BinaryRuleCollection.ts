@@ -273,12 +273,15 @@ export class BinaryRuleCollection {
             const rule = this.getRule( ruleIndex );
             const embeddedRule = rule.embedded( featureState.patternBoard, embedding )!;
 
-            if ( embeddedRule.getMatchState( featureState ) !== PatternRuleMatchState.ACTIONABLE ) {
-              debugger;
-              throw new Error( 'Why would this happen' );
-            }
+            if ( assertEnabled() ) {
+              window.isPatternRuleValid = isPatternRuleValid;
 
-            window.isPatternRuleValid = isPatternRuleValid;
+              const matchState = embeddedRule.getMatchState( featureState );
+              if ( matchState === PatternRuleMatchState.INCOMPATIBLE || matchState === PatternRuleMatchState.DORMANT ) {
+                debugger;
+                throw new Error( 'Why would this happen' );
+              }
+            }
 
             debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
 
