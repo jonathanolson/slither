@@ -9,8 +9,8 @@
     - general color unrestricted
     - general edge sector
     - general edge sector unrestricted
-    - general edge color
-    - general edge color unrestricted
+    - general edge color *
+    - general edge color unrestricted *
     - general all
     - general all unrestricted - hexagonal-1-0 MANY params, we need pruning or SOMETHING. cairo-1-0 also... fairly intense, trihexagonal-1-2/portugal-1-1 also
     - square only edge
@@ -18,11 +18,16 @@
     - square only color unrestricted
     - square only edge sector
     - square only edge sector unrestricted
-    - square only edge color
-    - square only edge color unrestricted
+    - square only edge color *
+    - square only edge color unrestricted *
     - square only all
     - square only all unrestricted
     - 
+    - remaining general edge sector unrestricted
+    - 
+    - collections:
+      - node bin/combine-collections.js square-only-all
+      - node bin/combine-collections.js general-all
     - 
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
