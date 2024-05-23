@@ -4,10 +4,8 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
-// import aaa from '../data-sequences/square-only-color.json';
-import aaa from '../data-sequences/square-only-edge-sector-unrestricted.json';
-//import aaa from '../data-sequences/general-color-unrestricted.json';
-import bbb from '../data-sequences/square-only-edge-unrestricted.json';
+import squareOnlyEdgeCollection from '../data-collections/snapshot-square-only-edge.json';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();
@@ -111,11 +109,11 @@ console.log( 'test' );
   // const rule = PatternRule.deserialize( {"patternBoard":"vertex-3-exit-two-adjacent","input":{"sectorsNotTwo":[0,1],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[2,3],"secondaryFaces":[],"sameColorPaths":[[0,1,2]],"oppositeColorPaths":[]}]},"output":{"redEdges":[1],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[2,3],"secondaryFaces":[],"sameColorPaths":[[0,1,2]],"oppositeColorPaths":[]}]},"highlander":true} );
   // showRuleSet( new PatternBoardRuleSet( rule.patternBoard, planarPatternMaps.get( rule.patternBoard )!, [ rule ], false ) );
 
-  const aSequence = BinaryRuleSequence.deserialize( aaa as SerializedBinaryRuleSequence );
+  // const aSequence = BinaryRuleSequence.deserialize( aaa as SerializedBinaryRuleSequence );
   // const bSequence = BinaryRuleSequence.deserialize( bbb as SerializedBinaryRuleSequence );
   //
   // const collection = aSequence.collection.withCollectionNonredundant( bSequence.collection );
-  const collection = aSequence.collection;
+  // const collection = aSequence.collection;
 
   const showRules = ( rules: PatternRule[] ) => {
     addPaddedNode( new GridBox( {
@@ -138,22 +136,24 @@ console.log( 'test' );
   // const rules = collection.getRules().filter( ( rule, i ) => i % 100 === 0 );
   // const rules = collection.getRules().slice( 0, 300 );
 
-  const rules = [
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,10,12]},"output":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[1,2,4,7],"redEdges":[8,10,12,0,3,5,6]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"redEdges":[10]},"output":{"redEdges":[10],"sectorsNotOne":[1]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"redEdges":[12]},"output":{"redEdges":[12],"sectorsNotOne":[7]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[10]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[10],"sectorsNotOne":[3,1],"sectorsOnlyOne":[2,0]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2}],"redEdges":[12]},"output":{"faceValues":[{"face":1,"value":2}],"redEdges":[12],"sectorsNotOne":[5,7],"sectorsOnlyOne":[4,6]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2},{"face":4,"value":null},{"face":5,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"redEdges":[8,10],"sectorsNotOne":[5,3,1],"sectorsOnlyOne":[2,0]},"output":{"faceValues":[{"face":0,"value":2},{"face":4,"value":null},{"face":5,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"blackEdges":[6,5,2,1],"redEdges":[8,10,3,0],"sectorsNotTwo":[7]},"highlander":true}` ) ),
+  // const rules = [
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,10,12]},"output":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[1,2,4,7],"redEdges":[8,10,12,0,3,5,6]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"redEdges":[10]},"output":{"redEdges":[10],"sectorsNotOne":[1]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"redEdges":[12]},"output":{"redEdges":[12],"sectorsNotOne":[7]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[10]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[10],"sectorsNotOne":[3,1],"sectorsOnlyOne":[2,0]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2}],"redEdges":[12]},"output":{"faceValues":[{"face":1,"value":2}],"redEdges":[12],"sectorsNotOne":[5,7],"sectorsOnlyOne":[4,6]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":0,"value":2},{"face":4,"value":null},{"face":5,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"redEdges":[8,10],"sectorsNotOne":[5,3,1],"sectorsOnlyOne":[2,0]},"output":{"faceValues":[{"face":0,"value":2},{"face":4,"value":null},{"face":5,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"blackEdges":[6,5,2,1],"redEdges":[8,10,3,0],"sectorsNotTwo":[7]},"highlander":true}` ) ),
+  //
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"vertex-2-exit-one","input":{"redEdges":[2]},"output":{"redEdges":[2],"sectorsNotOne":[0]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"vertex-2-exit-one","input":{"redEdges":[2]},"output":{"redEdges":[2],"sectorsNotOne":[0]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-0-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[4],"sectorsNotOne":[1,3],"sectorsOnlyOne":[0,2]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-0-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[4],"sectorsNotOne":[1,3],"sectorsOnlyOne":[0,2]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
+  //   PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
+  // ];
 
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"vertex-2-exit-one","input":{"redEdges":[2]},"output":{"redEdges":[2],"sectorsNotOne":[0]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"vertex-2-exit-one","input":{"redEdges":[2]},"output":{"redEdges":[2],"sectorsNotOne":[0]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-0-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[4],"sectorsNotOne":[1,3],"sectorsOnlyOne":[0,2]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-0-0","input":{"faceValues":[{"face":0,"value":2}],"redEdges":[4]},"output":{"faceValues":[{"face":0,"value":2}],"redEdges":[4],"sectorsNotOne":[1,3],"sectorsOnlyOne":[0,2]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
-    PatternRule.deserialize( JSON.parse( `{"patternBoard":"square-1-0","input":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"redEdges":[8,12],"sectorsNotOne":[3,5,7],"sectorsOnlyOne":[4,6]},"output":{"faceValues":[{"face":1,"value":2},{"face":6,"value":null},{"face":7,"value":null},{"face":8,"value":null},{"face":9,"value":null}],"blackEdges":[0,3,4,7],"redEdges":[8,12,5,6],"sectorsNotTwo":[1]},"highlander":true}` ) ),
-  ];
+  const rules = BinaryRuleCollection.deserialize( squareOnlyEdgeCollection as SerializedBinaryRuleCollection ).getRules().filter( ( rule, i ) => i % 1000 === 0 );
 
   showRules( rules );
 

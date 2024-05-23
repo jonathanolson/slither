@@ -277,6 +277,8 @@ export class BinaryRuleCollection {
             if ( assertEnabled() ) {
               window.isPatternRuleValid = isPatternRuleValid;
 
+              // TODO: WHY are we potentially getting INCONSEQUENTIAL? Buggy?
+
               const matchState = embeddedRule.getMatchState( featureState );
               if ( matchState === PatternRuleMatchState.INCOMPATIBLE || matchState === PatternRuleMatchState.DORMANT ) {
                 debugger;
