@@ -59,6 +59,8 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - BREAKING HIGHLANDER ERROR, we will need to RE-EVALUATE THINGS
+  - 
   - ditch square-only-color, general-color (add throw in next-board script if we try those)
     - Delete them and references
   - 

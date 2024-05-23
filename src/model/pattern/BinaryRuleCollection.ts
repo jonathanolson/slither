@@ -13,6 +13,7 @@ import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
 import FeatureSetMatchState from './FeatureSetMatchState.ts';
 import { FeatureSet } from './feature/FeatureSet.ts';
 import PatternRuleMatchState from './PatternRuleMatchState.ts';
+import { isPatternRuleValid } from './isPatternRuleValid.ts';
 
 export class BinaryRuleCollection {
 
@@ -226,6 +227,8 @@ export class BinaryRuleCollection {
               debugger;
               throw new Error( 'Why would this happen' );
             }
+
+            window.isPatternRuleValid = isPatternRuleValid;
 
             debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
 

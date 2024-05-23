@@ -45,21 +45,28 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
 
   // TODO: find a better way than ignoring square-only / general color? do we just get color from ... general? Really want more
 
-  const squareOnlyEdge = await combine( 'squareOnlyEdge', loadCollectionFromSequence( 'square-only-edge' ), loadCollectionFromSequence( 'square-only-edge-unrestricted' ) );
+
+
+  // TODO: EEEEK highlander has ISSUES
+
+  const squareOnlyEdge = await combineArray( 'squareOnlyEdge', [
+    // loadCollectionFromSequence( 'square-only-edge' ),
+    loadCollectionFromSequence( 'square-only-edge-unrestricted' )
+  ] );
   writeCollection( 'square-only-edge', squareOnlyEdge );
 
   const squareOnlyColor = loadCollectionFromSequence( 'square-only-color-unrestricted' );
   writeCollection( 'square-only-color', squareOnlyColor );
 
   const squareOnlyEdgeSector = await combineArray( 'squareOnlyEdgeSector', [
-    loadCollectionFromSequence( 'square-only-edge-sector' ),
+    // loadCollectionFromSequence( 'square-only-edge-sector' ),
     loadCollectionFromSequence( 'square-only-edge-sector-unrestricted' ),
     squareOnlyEdge,
   ] );
   writeCollection( 'square-only-edge-sector', squareOnlyEdgeSector );
 
   const squareOnlyAll = await combineArray( 'squareOnlyAll', [
-    loadCollectionFromSequence( 'square-only-all' ),
+    // loadCollectionFromSequence( 'square-only-all' ),
     loadCollectionFromSequence( 'square-only-all-unrestricted' ),
     squareOnlyColor,
     squareOnlyEdgeSector,
@@ -67,7 +74,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   writeCollection( 'square-only-all', squareOnlyAll );
 
   const generalEdge = await combineArray( 'generalEdge', [
-    loadCollectionFromSequence( 'general-edge' ),
+    // loadCollectionFromSequence( 'general-edge' ),
     loadCollectionFromSequence( 'general-edge-unrestricted' ),
     squareOnlyEdge
   ] );
@@ -80,7 +87,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   writeCollection( 'general-color', generalColor );
 
   const generalEdgeSector = await combineArray( 'generalEdgeSector', [
-    loadCollectionFromSequence( 'general-edge-sector' ),
+    // loadCollectionFromSequence( 'general-edge-sector' ),
     loadCollectionFromSequence( 'general-edge-sector-unrestricted' ),
     generalEdge,
     squareOnlyEdgeSector,
@@ -88,7 +95,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   writeCollection( 'general-edge-sector', generalEdgeSector );
 
   const generalAll = await combineArray( 'generalAll', [
-    loadCollectionFromSequence( 'general-all' ),
+    // loadCollectionFromSequence( 'general-all' ),
     loadCollectionFromSequence( 'general-all-unrestricted' ),
     generalColor,
     generalEdgeSector,

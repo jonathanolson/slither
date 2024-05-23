@@ -118,6 +118,7 @@ export class FeatureSet {
     }
 
     if ( this.redEdges.has( edge ) ) {
+      debugger;
       throw new IncompatibleFeatureError( new BlackEdgeFeature( edge ), [ new RedEdgeFeature( edge ) ] );
     }
 

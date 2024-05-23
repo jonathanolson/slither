@@ -6,23 +6,98 @@ import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { Solver } from './model/logic/minisat/core/Solver.ts';
+import { BinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
 
-// import squareOnlyEdge from '../data-sequences/square-only-edge.json';
-// import squareOnlyEdgeUnrestricted from '../data-sequences/square-only-edge-unrestricted.json';
-// import squareOnlyColor from '../data-sequences/square-only-color.json';
-// import squareOnlyColorUnrestricted from '../data-sequences/square-only-color-unrestricted.json';
-// import { BinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+import generalEdgeSequence from '../data-sequences/general-edge.json';
+import generalEdgeUnrestrictedSequence from '../data-sequences/general-edge-unrestricted.json';
+import generalColorUnrestrictedSequence from '../data-sequences/general-color-unrestricted.json';
+import generalEdgeSectorSequence from '../data-sequences/general-edge-sector.json';
+import generalEdgeSectorUnrestrictedSequence from '../data-sequences/general-edge-sector-unrestricted.json';
+import generalAllSequence from '../data-sequences/general-all.json';
+import generalAllUnrestrictedSequence from '../data-sequences/general-all-unrestricted.json';
+import squareOnlyEdgeSequence from '../data-sequences/square-only-edge.json';
+import squareOnlyEdgeUnrestrictedSequence from '../data-sequences/square-only-edge-unrestricted.json';
+import squareOnlyColorUnrestrictedSequence from '../data-sequences/square-only-color-unrestricted.json';
+import squareOnlyEdgeSectorSequence from '../data-sequences/square-only-edge-sector.json';
+import squareOnlyEdgeSectorUnrestrictedSequence from '../data-sequences/square-only-edge-sector-unrestricted.json';
+import squareOnlyAllSequence from '../data-sequences/square-only-all.json';
+import squareOnlyAllUnrestrictedSequence from '../data-sequences/square-only-all-unrestricted.json';
 
 // @ts-expect-error
 window.assertions.enableAssert();
 
-// const squareOnlyEdgeCollection = BinaryRuleCollection.deserialize( squareOnlyEdge.collection );
-// const squareOnlyEdgeUnrestrictedCollection = BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestricted.collection );
-// const squareOnlyColorCollection = BinaryRuleCollection.deserialize( squareOnlyColor.collection );
-// const squareOnlyColorUnrestrictedCollection = BinaryRuleCollection.deserialize( squareOnlyColorUnrestricted.collection );
-//
-// const a = squareOnlyEdgeCollection.withCollectionNonredundant( squareOnlyEdgeUnrestrictedCollection );
-// const b = squareOnlyColorCollection.withCollectionNonredundant( squareOnlyColorUnrestrictedCollection );
+const combine = ( name: string, a: BinaryRuleCollection, b: BinaryRuleCollection ) => {
+  console.log( name );
+
+  return a.withCollectionNonredundant( b );
+};
+
+const combineArray = ( name: string, collections: BinaryRuleCollection[] ) => {
+  console.log( name, 'composite' );
+
+  let result = collections[ 0 ];
+
+  for ( let i = 1; i < collections.length; i++ ) {
+    result = combine( `${name} ${i}`, result, collections[ i ] );
+  }
+
+  return result;
+};
+
+const writeCollection = ( name: string, collection: BinaryRuleCollection ) => {
+  console.log( 'DONE WITH', name, collection );
+};
+
+const squareOnlyEdge = combine( 'squareOnlyEdge', BinaryRuleCollection.deserialize( squareOnlyEdgeSequence.collection ), BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestrictedSequence.collection ) );
+writeCollection( 'square-only-edge', squareOnlyEdge );
+
+const squareOnlyColor = BinaryRuleCollection.deserialize( squareOnlyColorUnrestrictedSequence.collection );
+writeCollection( 'square-only-color', squareOnlyColor );
+
+const squareOnlyEdgeSector = combineArray( 'squareOnlyEdgeSector', [
+  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorSequence.collection ),
+  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorUnrestrictedSequence.collection ),
+  squareOnlyEdge,
+] );
+writeCollection( 'square-only-edge-sector', squareOnlyEdgeSector );
+
+const squareOnlyAll = combineArray( 'squareOnlyAll', [
+  BinaryRuleCollection.deserialize( squareOnlyAllSequence.collection ),
+  BinaryRuleCollection.deserialize( squareOnlyAllUnrestrictedSequence.collection ),
+  squareOnlyColor,
+  squareOnlyEdgeSector,
+] );
+writeCollection( 'square-only-all', squareOnlyAll );
+
+const generalEdge = combineArray( 'generalEdge', [
+  BinaryRuleCollection.deserialize( generalEdgeSequence.collection ),
+  BinaryRuleCollection.deserialize( generalEdgeUnrestrictedSequence.collection ),
+  squareOnlyEdge
+] );
+writeCollection( 'general-edge', generalEdge );
+
+const generalColor = combineArray( 'generalColor', [
+  BinaryRuleCollection.deserialize( generalColorUnrestrictedSequence.collection ),
+  squareOnlyColor
+] );
+writeCollection( 'general-color', generalColor );
+
+const generalEdgeSector = combineArray( 'generalEdgeSector', [
+  BinaryRuleCollection.deserialize( generalEdgeSectorSequence.collection ),
+  BinaryRuleCollection.deserialize( generalEdgeSectorUnrestrictedSequence.collection ),
+  generalEdge,
+  squareOnlyEdgeSector,
+] );
+writeCollection( 'general-edge-sector', generalEdgeSector );
+
+const generalAll = combineArray( 'generalAll', [
+  BinaryRuleCollection.deserialize( generalAllSequence.collection ),
+  BinaryRuleCollection.deserialize( generalAllUnrestrictedSequence.collection ),
+  generalColor,
+  generalEdgeSector,
+  squareOnlyAll,
+] );
+writeCollection( 'general-all', generalAll );
 
 debugger;
 
