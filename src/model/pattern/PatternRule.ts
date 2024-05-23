@@ -159,6 +159,38 @@ export class PatternRule {
     return this.patternBoard === other.patternBoard && this.inputFeatureSet.equals( other.inputFeatureSet ) && this.outputFeatureSet.equals( other.outputFeatureSet ) && this.highlander === other.highlander;
   }
 
+  public getBinaryIdentifier(): string {
+    const patternBoardName = this.patternBoard.name;
+
+    if ( !patternBoardName ) {
+      throw new Error( 'Pattern board must have a name' );
+    }
+
+    const binaryData = this.getBinary( [ this.patternBoard ] ).slice( 1 );
+    const binaryString = btoa( String.fromCharCode.apply( null, [ ...binaryData ] ) );
+
+    const binaryIdentifier = `${patternBoardName}/${binaryString}`;
+
+    if ( assertEnabled() ) {
+      const rule = PatternRule.fromBinaryIdentifier( binaryIdentifier );
+      assert( rule.equals( this ), 'round-trip equality' );
+    }
+
+    return binaryIdentifier;
+  }
+
+  public static fromBinaryIdentifier( identifier: string ): PatternRule {
+    const slashIndex = identifier.indexOf( '/' );
+    const patternBoardName = identifier.slice( 0, slashIndex );
+    const binaryString = identifier.slice( slashIndex + 1 );
+    const binaryData = atob( binaryString ).split( '' ).map( c => c.charCodeAt( 0 ) );
+
+    const patternBoard = deserializePatternBoard( patternBoardName );
+
+    // TODO: include highlander in binary...>?
+    return PatternRule.fromBinary( [ patternBoard ], [ 0, ...binaryData ], 0, true );
+  }
+
   public getBinary( patternBoards: TPatternBoard[] ): number[] {
     const bytes: number[] = [];
 

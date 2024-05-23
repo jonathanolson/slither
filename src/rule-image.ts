@@ -3,7 +3,6 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
-import { BinaryRuleSequence, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
 import squareOnlyEdgeCollection from '../data-collections/snapshot-square-only-edge.json';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
 
@@ -124,6 +123,8 @@ console.log( 'test' );
       autoColumns: rules.length < 9 ? 1 : Math.floor( 0.5 * Math.sqrt( rules.length ) ),
       children: rules.map( rule => {
         console.log( JSON.stringify( rule.serialize() ) );
+        console.log( rule.getBinaryIdentifier() );
+
         const planarPatternMap = planarPatternMaps.get( rule.patternBoard )!;
         assertEnabled() && assert( planarPatternMap );
         return new PatternRuleNode( rule, planarPatternMap );

@@ -71,6 +71,9 @@
   - ONLY do `general`?
   - 
   - RULE VIEWER
+    - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
+      - getBinaryIdentifier()
+    - 
     - Select collection:
       - (edge / color / edge-color / edge-sector / all)
     - Sort by:
