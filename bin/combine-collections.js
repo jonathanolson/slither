@@ -151,15 +151,15 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     await writeWith( 'general-edge',
       [
         'general-edge-unrestricted',
-      ],
-      [
         'square-only-edge-unrestricted',
       ],
       [
-        'general-edge',
       ],
       [
+        'general-edge',
         'square-only-edge',
+      ],
+      [
       ],
     );
   }
@@ -167,9 +167,9 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     await writeWith( 'general-color',
       [
         'general-color-unrestricted',
+        'square-only-color-unrestricted',
       ],
       [
-        'square-only-color-unrestricted',
       ],
       [
         // 'general-color', TODO: nope, BAD!
