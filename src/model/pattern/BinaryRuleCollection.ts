@@ -175,11 +175,61 @@ export class BinaryRuleCollection {
     return this.withRules( addedRules );
   }
 
+  public withCollection( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+
+    const combinedCollection = this.clone();
+
+    let count = 0;
+
+    const ourRules = this.getRules();
+
+    ruleCollection.forEachRule( rule => {
+      if ( count % 1000 === 0 ) {
+        console.log( count, `${this.size} + ${ruleCollection.size}` );
+      }
+      count++;
+
+      // Handle "exact" duplicate rule removal
+      if ( ourRules.every( ourRule => !rule.equals( ourRule ) ) ) {
+        combinedCollection.addRule( rule );
+      }
+    } );
+
+    return combinedCollection;
+  }
+
   public withCollectionNonredundant( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
 
     const combinedCollection = this.clone();
 
+    let count = 0;
+
     ruleCollection.forEachRule( rule => {
+      if ( count % 1000 === 0 ) {
+        console.log( count, `${this.size} + ${ruleCollection.size}` );
+      }
+      count++;
+
+      if ( !combinedCollection.isRuleRedundant( rule ) ) {
+        combinedCollection.addRule( rule );
+      }
+    } );
+
+    return combinedCollection;
+  }
+
+  public withCollectionNonredundantFromFirst( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+
+    const combinedCollection = this.clone();
+
+    let count = 0;
+
+    ruleCollection.forEachRule( rule => {
+      if ( count % 1000 === 0 ) {
+        console.log( count, `${this.size} + ${ruleCollection.size}` );
+      }
+      count++;
+
       if ( !this.isRuleRedundant( rule ) ) {
         combinedCollection.addRule( rule );
       }

@@ -60,6 +60,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - BREAKING HIGHLANDER ERROR, we will need to RE-EVALUATE THINGS
+    - OMG... is it that we CANNOT COMBINE HIGHLANDER RULES?
   - 
   - ditch square-only-color, general-color (add throw in next-board script if we try those)
     - Delete them and references

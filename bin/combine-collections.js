@@ -23,24 +23,48 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
 
   const combine = async ( name, a, b ) => {
     console.log( name );
+    return evaluateHooks( `getCombinedBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  };
+
+  const combineNonredundant = async ( name, a, b ) => {
+    console.log( name );
     return evaluateHooks( `getCombinedNonredundantBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
   };
 
-  const combineArray = async ( name, collections ) => {
-    console.log( name, 'composite' );
-
-    let result = collections[ 0 ];
-
-    for ( let i = 1; i < collections.length; i++ ) {
-      result = await combine( `${name} ${i}`, result, collections[ i ] );
-    }
-
-    return result;
+  const combineNonredundantFromFirst = async ( name, a, b ) => {
+    console.log( name );
+    return evaluateHooks( `getCombinedNonredundantFromFirstBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
   };
 
-  const writeCollection = async ( name, collection ) => {
+  const combineWith = async ( name, unrestrictedCollectionNames, highlanderCollectionNames ) => {
+    let unrestrictedCollection = loadCollectionFromSequence( unrestrictedCollectionNames[ 0 ] );
+
+    for ( let i = 1; i < unrestrictedCollectionNames.length; i++ ) {
+      unrestrictedCollection = await combineNonredundant( `${name} unrestricted ${i}`, unrestrictedCollection, loadCollectionFromSequence( unrestrictedCollectionNames[ i ] ) );
+    }
+
+    if ( highlanderCollectionNames.length ) {
+      let highlanderCollection = loadCollectionFromSequence( highlanderCollectionNames[ 0 ] );
+
+      for ( let i = 1; i < highlanderCollectionNames.length; i++ ) {
+        highlanderCollection = await combine( `${name} highlander ${i}`, highlanderCollection, loadCollectionFromSequence( highlanderCollectionNames[ i ] ) );
+      }
+
+      return await combineNonredundantFromFirst( `${name} final`, unrestrictedCollection, highlanderCollection );
+    }
+    else {
+      return unrestrictedCollection;
+    }
+  };
+
+  const writeCollection = ( name, collection ) => {
     console.log( `writing ${name}` );
     fs.writeFileSync( `./data-collections/snapshot-${name}.json`, JSON.stringify( collection ), 'utf8' );
+  };
+
+  const writeWith = async ( name, unrestrictedCollectionNames, highlanderCollectionNames ) => {
+    const collection = await combineWith( name, unrestrictedCollectionNames, highlanderCollectionNames );
+    writeCollection( name, collection );
   };
 
   // TODO: find a better way than ignoring square-only / general color? do we just get color from ... general? Really want more
@@ -49,59 +73,107 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
 
   // TODO: EEEEK highlander has ISSUES
 
-  const squareOnlyEdge = await combineArray( 'squareOnlyEdge', [
-    // loadCollectionFromSequence( 'square-only-edge' ),
-    loadCollectionFromSequence( 'square-only-edge-unrestricted' )
-  ] );
-  writeCollection( 'square-only-edge', squareOnlyEdge );
 
-  const squareOnlyColor = loadCollectionFromSequence( 'square-only-color-unrestricted' );
-  writeCollection( 'square-only-color', squareOnlyColor );
+  await writeWith( 'square-only-edge',
+    [
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'square-only-edge',
+    ]
+  );
 
-  const squareOnlyEdgeSector = await combineArray( 'squareOnlyEdgeSector', [
-    // loadCollectionFromSequence( 'square-only-edge-sector' ),
-    loadCollectionFromSequence( 'square-only-edge-sector-unrestricted' ),
-    squareOnlyEdge,
-  ] );
-  writeCollection( 'square-only-edge-sector', squareOnlyEdgeSector );
+  await writeWith( 'square-only-color',
+    [
+      'square-only-color-unrestricted',
+    ],
+    [
+      // 'square-only-color', TODO: nope, BAD!
+    ]
+  );
 
-  const squareOnlyAll = await combineArray( 'squareOnlyAll', [
-    // loadCollectionFromSequence( 'square-only-all' ),
-    loadCollectionFromSequence( 'square-only-all-unrestricted' ),
-    squareOnlyColor,
-    squareOnlyEdgeSector,
-  ] );
-  writeCollection( 'square-only-all', squareOnlyAll );
+  await writeWith( 'square-only-edge-sector',
+    [
+      'square-only-edge-sector-unrestricted',
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'square-only-edge-sector',
+      'square-only-edge',
+    ]
+  );
 
-  const generalEdge = await combineArray( 'generalEdge', [
-    // loadCollectionFromSequence( 'general-edge' ),
-    loadCollectionFromSequence( 'general-edge-unrestricted' ),
-    squareOnlyEdge
-  ] );
-  writeCollection( 'general-edge', generalEdge );
+  await writeWith( 'square-only-all',
+    [
+      'square-only-all-unrestricted',
+      'square-only-color-unrestricted',
+      'square-only-edge-sector-unrestricted',
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'square-only-all',
+      'square-only-edge-sector',
+      'square-only-edge',
+    ]
+  );
 
-  const generalColor = await combineArray( 'generalColor', [
-    loadCollectionFromSequence( 'general-color-unrestricted' ),
-    squareOnlyColor
-  ] );
-  writeCollection( 'general-color', generalColor );
+  await writeWith( 'general-edge',
+    [
+      'general-edge-unrestricted',
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'general-edge',
+      'square-only-edge',
+    ]
+  );
 
-  const generalEdgeSector = await combineArray( 'generalEdgeSector', [
-    // loadCollectionFromSequence( 'general-edge-sector' ),
-    loadCollectionFromSequence( 'general-edge-sector-unrestricted' ),
-    generalEdge,
-    squareOnlyEdgeSector,
-  ] );
-  writeCollection( 'general-edge-sector', generalEdgeSector );
+  await writeWith( 'general-color',
+    [
+      'general-color-unrestricted',
+      'square-only-color-unrestricted',
+    ],
+    [
+      // 'general-color', TODO: nope, BAD!
+      // 'square-only-color', TODO: nope, BAD!
+    ]
+  );
 
-  const generalAll = await combineArray( 'generalAll', [
-    // loadCollectionFromSequence( 'general-all' ),
-    loadCollectionFromSequence( 'general-all-unrestricted' ),
-    generalColor,
-    generalEdgeSector,
-    squareOnlyAll,
-  ] );
-  writeCollection( 'general-all', generalAll );
+  await writeWith( 'general-edge-sector',
+    [
+      'general-edge-sector-unrestricted',
+      'general-edge-unrestricted',
+      'square-only-edge-sector-unrestricted',
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'general-edge-sector',
+      'general-edge',
+      'square-only-edge-sector',
+      'square-only-edge',
+    ]
+  );
+
+  await writeWith( 'general-all',
+    [
+      'general-all-unrestricted',
+      'general-color-unrestricted',
+      'general-edge-sector-unrestricted',
+      'general-edge-unrestricted',
+      'square-only-all-unrestricted',
+      'square-only-color-unrestricted',
+      'square-only-edge-sector-unrestricted',
+      'square-only-edge-unrestricted',
+    ],
+    [
+      'general-all',
+      'general-edge-sector',
+      'general-edge',
+      'square-only-all',
+      'square-only-edge-sector',
+      'square-only-edge',
+    ]
+  );
 
   await disposeBrowser( browser );
 } )();
