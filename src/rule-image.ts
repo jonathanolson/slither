@@ -4,8 +4,8 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
-import aaa from '../data-sequences/square-only-color.json';
-// import aaa from '../data-sequences/square-only-edge-sector-unrestricted.json';
+// import aaa from '../data-sequences/square-only-color.json';
+import aaa from '../data-sequences/square-only-edge-sector-unrestricted.json';
 //import aaa from '../data-sequences/general-color-unrestricted.json';
 import bbb from '../data-sequences/square-only-edge-unrestricted.json';
 

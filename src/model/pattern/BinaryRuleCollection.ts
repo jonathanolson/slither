@@ -12,6 +12,7 @@ import { Embedding } from './Embedding.ts';
 import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
 import FeatureSetMatchState from './FeatureSetMatchState.ts';
 import { FeatureSet } from './feature/FeatureSet.ts';
+import PatternRuleMatchState from './PatternRuleMatchState.ts';
 
 export class BinaryRuleCollection {
 
@@ -193,7 +194,7 @@ export class BinaryRuleCollection {
 
     let changed = true;
 
-    // const debugApplied: { rule: PatternRule; embedding: Embedding; embeddedRule: PatternRule; ruleIndex: number }[] = [];
+    const debugApplied: { rule: PatternRule; embedding: Embedding; embeddedRule: PatternRule; ruleIndex: number }[] = [];
 
     while ( changed ) {
       changed = false;
@@ -221,7 +222,12 @@ export class BinaryRuleCollection {
             const rule = this.getRule( ruleIndex );
             const embeddedRule = rule.embedded( featureState.patternBoard, embedding )!;
 
-            // debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
+            if ( embeddedRule.getMatchState( featureState ) !== PatternRuleMatchState.ACTIONABLE ) {
+              debugger;
+              throw new Error( 'Why would this happen' );
+            }
+
+            debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
 
             embeddedRule.apply( featureState );
             changed = true;
