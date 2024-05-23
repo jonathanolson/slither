@@ -6,20 +6,22 @@
   - Generate:
     - general edge
     - general edge unrestricted
-    - general color
     - general color unrestricted
     - general edge sector
     - general edge sector unrestricted
+    - general edge color
+    - general edge color unrestricted
     - general all
     - general all unrestricted - hexagonal-1-0 MANY params, we need pruning or SOMETHING. cairo-1-0 also... fairly intense, trihexagonal-1-2/portugal-1-1 also
     - square only edge
     - square only edge unrestricted
-    - square only color
     - square only color unrestricted
     - square only edge sector
-    - [macOS - PAUSE EMERGENCY] square only edge sector unrestricted
+    - square only edge sector unrestricted
+    - square only edge color
+    - square only edge color unrestricted
     - square only all
-    - [macOS - PAUSE EMERGENCY] square only all unrestricted
+    - square only all unrestricted
     - 
     - 
     - HEY HEY -- highlander can be added like "only"? 
