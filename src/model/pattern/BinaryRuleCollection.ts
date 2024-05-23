@@ -184,7 +184,7 @@ export class BinaryRuleCollection {
     const ourRules = this.getRules();
 
     ruleCollection.forEachRule( rule => {
-      if ( count % 1000 === 0 ) {
+      if ( count % 100 === 0 ) {
         console.log( count, `${this.size} + ${ruleCollection.size}` );
       }
       count++;
@@ -205,7 +205,7 @@ export class BinaryRuleCollection {
     let count = 0;
 
     ruleCollection.forEachRule( rule => {
-      if ( count % 1000 === 0 ) {
+      if ( count % 100 === 0 ) {
         console.log( count, `${this.size} + ${ruleCollection.size}` );
       }
       count++;
@@ -225,7 +225,7 @@ export class BinaryRuleCollection {
     let count = 0;
 
     ruleCollection.forEachRule( rule => {
-      if ( count % 1000 === 0 ) {
+      if ( count % 100 === 0 ) {
         console.log( count, `${this.size} + ${ruleCollection.size}` );
       }
       count++;
@@ -238,17 +238,18 @@ export class BinaryRuleCollection {
     return combinedCollection;
   }
 
-  public withRulesApplied( initialFeatureSet: FeatureSet ): FeatureSet {
+  public withRulesApplied(
+    initialFeatureSet: FeatureSet,
+    canStopEarly: ( currentFeatureSet: FeatureSet ) => boolean = () => false
+  ): FeatureSet {
     // TODO: do full rule matching(?) but it seems like subsetting would be more difficult...? This is more about memory optimization, no? Otherwise just use PatternRule version
 
     const featureState = initialFeatureSet.clone();
 
-    let changed = true;
+    // const debugApplied: { rule: PatternRule; embedding: Embedding; embeddedRule: PatternRule; ruleIndex: number }[] = [];
 
-    const debugApplied: { rule: PatternRule; embedding: Embedding; embeddedRule: PatternRule; ruleIndex: number }[] = [];
-
-    while ( changed ) {
-      changed = false;
+    while ( true ) {
+      const initialState = featureState.clone();
 
       // isActionableEmbeddingFromFeatureSet( featureSet: FeatureSet, ruleIndex: number, embedding: Embedding )
       // TODO: see if we can share embeddings from previous rules?
@@ -283,12 +284,19 @@ export class BinaryRuleCollection {
               }
             }
 
-            debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
+            // debugApplied.push( { rule, embedding, embeddedRule, ruleIndex } );
 
             embeddedRule.apply( featureState );
-            changed = true;
           }
         }
+      }
+
+      if ( canStopEarly( featureState ) ) {
+        break;
+      }
+
+      if ( initialState.equals( featureState ) ) {
+        break;
       }
     }
 
@@ -300,7 +308,7 @@ export class BinaryRuleCollection {
       return true;
     }
 
-    return rule.outputFeatureSet.isSubsetOf( this.withRulesApplied( rule.inputFeatureSet ) );
+    return rule.outputFeatureSet.isSubsetOf( this.withRulesApplied( rule.inputFeatureSet, currentFeatureSet => rule.outputFeatureSet.isSubsetOf( currentFeatureSet ) ) );
   }
 
   // TODO: see which is faster, isActionableEmbeddingFromData or getActionableEmbeddingsFromData

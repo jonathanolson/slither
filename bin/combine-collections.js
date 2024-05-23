@@ -96,6 +96,20 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
       ]
     );
   }
+  else if ( name === 'square-only-edge-color' ) {
+    await writeWith( 'square-only-edge-color',
+      [
+        'square-only-edge-color-unrestricted',
+        'square-only-color-unrestricted',
+        'square-only-edge-unrestricted',
+      ],
+      [
+        'square-only-edge-color',
+        'square-only-color',
+        'square-only-edge',
+      ]
+    );
+  }
   else if ( name === 'square-only-edge-sector' ) {
     await writeWith( 'square-only-edge-sector',
       [
@@ -112,12 +126,14 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     await writeWith( 'square-only-all',
       [
         'square-only-all-unrestricted',
+        'square-only-edge-color-unrestricted',
         'square-only-color-unrestricted',
         'square-only-edge-sector-unrestricted',
         'square-only-edge-unrestricted',
       ],
       [
         'square-only-all',
+        'square-only-edge-color',
         'square-only-edge-sector',
         'square-only-edge',
       ]
@@ -147,6 +163,26 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
       ]
     );
   }
+  else if ( name === 'general-edge-color' ) {
+    await writeWith( 'general-edge-color',
+      [
+        'general-edge-color-unrestricted',
+        'general-color-unrestricted',
+        'general-edge-unrestricted',
+        'square-only-edge-color-unrestricted',
+        'square-only-color-unrestricted',
+        'square-only-edge-unrestricted',
+      ],
+      [
+        'general-edge-color',
+        // 'general-color',
+        'general-edge',
+        'square-only-edge-color',
+        // 'square-only-color',
+        'square-only-edge',
+      ]
+    );
+  }
   else if ( name === 'general-edge-sector' ) {
     await writeWith( 'general-edge-sector',
       [
@@ -167,19 +203,23 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     await writeWith( 'general-all',
       [
         'general-all-unrestricted',
+        'general-edge-color-unrestricted',
         'general-color-unrestricted',
         'general-edge-sector-unrestricted',
         'general-edge-unrestricted',
         'square-only-all-unrestricted',
+        'square-only-edge-color-unrestricted',
         'square-only-color-unrestricted',
         'square-only-edge-sector-unrestricted',
         'square-only-edge-unrestricted',
       ],
       [
         'general-all',
+        'general-edge-color',
         'general-edge-sector',
         'general-edge',
         'square-only-all',
+        'square-only-edge-color',
         'square-only-edge-sector',
         'square-only-edge',
       ]
