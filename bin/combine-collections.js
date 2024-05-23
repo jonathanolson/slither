@@ -125,7 +125,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
   }
   else if ( name === 'general-edge' ) {
     await writeWith( 'general-edge',
-
+      [
         'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
