@@ -179,6 +179,17 @@ export class BinaryRuleCollection {
 
     const combinedCollection = this.clone();
 
+    ruleCollection.forEachRule( rule => {
+      combinedCollection.addRule( rule );
+    } );
+
+    return combinedCollection;
+  }
+
+  public withCollectionNonequal( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+
+    const combinedCollection = this.clone();
+
     let count = 0;
 
     const ourRules = this.getRules();
@@ -218,24 +229,48 @@ export class BinaryRuleCollection {
     return combinedCollection;
   }
 
-  public withCollectionNonredundantFromFirst( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+  public withoutCollectionNonequal( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
 
-    const combinedCollection = this.clone();
+    const subtractedCollection = BinaryRuleCollection.empty();
 
     let count = 0;
 
-    ruleCollection.forEachRule( rule => {
+    const theirRules = ruleCollection.getRules();
+
+    this.forEachRule( rule => {
       if ( count % 100 === 0 ) {
-        console.log( count, `${this.size} + ${ruleCollection.size}` );
+        console.log( count, `${this.size} - ${ruleCollection.size}` );
       }
       count++;
 
-      if ( !this.isRuleRedundant( rule ) ) {
-        combinedCollection.addRule( rule );
+      if ( theirRules.every( theirRule => !rule.equals( theirRule ) ) ) {
+        subtractedCollection.addRule( rule );
       }
     } );
 
-    return combinedCollection;
+    return subtractedCollection;
+  }
+
+  // Kind of opposite of above. Returns rules in THIS collection that are not redundant with the other collection
+  // Meant to be called on a highlander collection, with the corresponding non-highlander collection as parameter.
+  public withoutCollectionNonredundant( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {
+
+    const subtractedCollection = BinaryRuleCollection.empty();
+
+    let count = 0;
+
+    this.forEachRule( rule => {
+      if ( count % 100 === 0 ) {
+        console.log( count, `${this.size} - ${ruleCollection.size}` );
+      }
+      count++;
+
+      if ( !ruleCollection.isRuleRedundant( rule ) ) {
+        subtractedCollection.addRule( rule );
+      }
+    } );
+
+    return subtractedCollection;
   }
 
   public withRulesApplied(

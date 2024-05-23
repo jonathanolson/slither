@@ -23,205 +23,234 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     return sequence.collection;
   };
 
-  const combine = async ( name, a, b ) => {
+  const withCollection = async ( name, a, b ) => {
     console.log( name );
-    return evaluateHooks( `getCombinedBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+    return evaluateHooks( `withCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
   };
 
-  const combineNonredundant = async ( name, a, b ) => {
+  const withCollectionNonequal = async ( name, a, b ) => {
     console.log( name );
-    return evaluateHooks( `getCombinedNonredundantBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+    return evaluateHooks( `withCollectionNonequal( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
   };
 
-  const combineNonredundantFromFirst = async ( name, a, b ) => {
+  const withCollectionNonredundant = async ( name, a, b ) => {
     console.log( name );
-    return evaluateHooks( `getCombinedNonredundantFromFirstBinaryCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+    return evaluateHooks( `withCollectionNonredundant( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
   };
 
-  const combineWith = async ( name, unrestrictedCollectionNames, highlanderCollectionNames ) => {
-    let unrestrictedCollection = loadCollectionFromSequence( unrestrictedCollectionNames[ 0 ] );
+  const withoutCollectionNonequal = async ( name, a, b ) => {
+    console.log( name );
+    return evaluateHooks( `withoutCollectionNonequal( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  };
 
-    for ( let i = 1; i < unrestrictedCollectionNames.length; i++ ) {
-      unrestrictedCollection = await combineNonredundant( `${name} unrestricted ${i}`, unrestrictedCollection, loadCollectionFromSequence( unrestrictedCollectionNames[ i ] ) );
+  const withoutCollectionNonredundant = async ( name, a, b ) => {
+    console.log( name );
+    return evaluateHooks( `withoutCollectionNonredundant( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  };
+
+  const arrayCombine = async ( name, f, array ) => {
+    let result = array[ 0 ];
+
+    for ( let i = 1; i < array.length; i++ ) {
+      result = await f( `${name} ${i}`, result, array[ i ] );
     }
 
-    if ( highlanderCollectionNames.length ) {
-      let highlanderCollection = loadCollectionFromSequence( highlanderCollectionNames[ 0 ] );
+    return result;
+  };
 
-      for ( let i = 1; i < highlanderCollectionNames.length; i++ ) {
-        highlanderCollection = await combine( `${name} highlander ${i}`, highlanderCollection, loadCollectionFromSequence( highlanderCollectionNames[ i ] ) );
-      }
+  const writeToFile = ( name, collection ) => {
+    console.log( `writing ${name}` );
+    fs.writeFileSync( `./data/collections/${name}.json`, JSON.stringify( collection ), 'utf8' );
+  };
 
-      return await combineNonredundantFromFirst( `${name} final`, unrestrictedCollection, highlanderCollection );
+  const writeWith = async (
+    name,
+    unrestrictedFullNames,
+    unrestrictedFallbackNames,
+    highlanderFullNames,
+    highlanderFallbackNames,
+  ) => {
+    // non-redundant combine of all "unrestricted full"
+    const unrestrictedFullCollection = await arrayCombine(
+      `${name} unrestricted full`,
+      withCollectionNonredundant,
+      unrestrictedFullNames.map( loadCollectionFromSequence )
+    );
+    writeToFile( `${name}`, unrestrictedFullCollection );
+
+    let unrestrictedCollection;
+    if ( unrestrictedFallbackNames.length ) {
+
+      // non-redundant combine all "unrestricted" (so we will filter out ANYTHING that can be derived IN ORDER)
+      // NOTE: doing this combination so PARTS of the fallbacks get considered for redundancy when computing next things
+      unrestrictedCollection = await arrayCombine(
+        `${name} unrestricted fallback combine`,
+        withCollectionNonredundant,
+        [
+          unrestrictedFullCollection,
+          ...unrestrictedFallbackNames.map( loadCollectionFromSequence ),
+        ]
+      );
+
+      // Now, just filter out the DIRECT/EXACT rules from the "full"
+      const unrestrictedFallbackCollection = await withoutCollectionNonequal(
+        `${name} unrestricted fallback filter`,
+        unrestrictedCollection,
+        unrestrictedFullCollection,
+      );
+      writeToFile( `${name}-fallback`, unrestrictedFallbackCollection );
     }
     else {
-      return unrestrictedCollection;
+      unrestrictedCollection = unrestrictedFullCollection;
+    }
+
+    if ( highlanderFullNames.length ) {
+      // non-equal combine all "highlander full"
+      const combinedHighlanderFullCollection = await arrayCombine(
+        `${name} highlander full`,
+        withCollectionNonequal,
+        highlanderFullNames.map( loadCollectionFromSequence )
+      );
+
+      // non-redundant filter based on unrestricted
+      const highlanderFullCollection = await withoutCollectionNonredundant(
+        `${name} highlander full filter`,
+        combinedHighlanderFullCollection,
+        unrestrictedCollection,
+      );
+      writeToFile( `${name}-highlander`, highlanderFullCollection );
+
+      if ( highlanderFallbackNames.length ) {
+        // non-equal combine all "highlander fallback"
+        const combinedHighlanderFallbackCollection = await arrayCombine(
+          `${name} highlander fallback initial`,
+          withCollectionNonequal,
+          highlanderFallbackNames.map( loadCollectionFromSequence )
+        );
+
+        // non-equal filter (ignore the full-highlander rules)
+        // TODO: in the future, we should filter out DOMINATING rules? IS THAT SAFE?
+        const initialFilteredCollection = await withoutCollectionNonequal(
+          `${name} highlander fallback initial non-equal filter`,
+          combinedHighlanderFallbackCollection,
+          combinedHighlanderFullCollection,
+        );
+
+        // non-redundant filter based on unrestricted
+        const highlanderFallbackCollection = await withoutCollectionNonredundant(
+          `${name} highlander fallback main filter`,
+          initialFilteredCollection,
+          unrestrictedCollection,
+        );
+        writeToFile( `${name}-highlander-fallback`, highlanderFallbackCollection );
+      }
     }
   };
 
-  const writeCollection = ( name, collection ) => {
-    console.log( `writing ${name}` );
-    fs.writeFileSync( `./data-collections/snapshot-${name}.json`, JSON.stringify( collection ), 'utf8' );
-  };
-
-  const writeWith = async ( name, unrestrictedCollectionNames, highlanderCollectionNames ) => {
-    const collection = await combineWith( name, unrestrictedCollectionNames, highlanderCollectionNames );
-    writeCollection( name, collection );
-  };
-
-  // TODO: find a better way than ignoring square-only / general color? do we just get color from ... general? Really want more
-
-
-
-  // TODO: EEEEK highlander has ISSUES
-
-
-  if ( name === 'square-only-edge' ) {
-    await writeWith( 'square-only-edge',
-      [
-        'square-only-edge-unrestricted',
-      ],
-      [
-        'square-only-edge',
-      ]
-    );
-  }
-  else if ( name === 'square-only-color' ) {
-    await writeWith( 'square-only-color',
-      [
-        'square-only-color-unrestricted',
-      ],
-      [
-        // 'square-only-color', TODO: nope, BAD!
-      ]
-    );
-  }
-  else if ( name === 'square-only-edge-color' ) {
-    await writeWith( 'square-only-edge-color',
-      [
-        'square-only-edge-color-unrestricted',
-        'square-only-color-unrestricted',
-        'square-only-edge-unrestricted',
-      ],
-      [
-        'square-only-edge-color',
-        'square-only-edge',
-      ]
-    );
-  }
-  else if ( name === 'square-only-edge-sector' ) {
-    await writeWith( 'square-only-edge-sector',
-      [
-        'square-only-edge-sector-unrestricted',
-        'square-only-edge-unrestricted',
-      ],
-      [
-        'square-only-edge-sector',
-        'square-only-edge',
-      ]
-    );
-  }
-  else if ( name === 'square-only-all' ) {
-    await writeWith( 'square-only-all',
-      [
-        'square-only-all-unrestricted',
-        'square-only-edge-color-unrestricted',
-        'square-only-color-unrestricted',
-        'square-only-edge-sector-unrestricted',
-        'square-only-edge-unrestricted',
-      ],
-      [
-        'square-only-all',
-        'square-only-edge-color',
-        'square-only-edge-sector',
-        'square-only-edge',
-      ]
-    );
-  }
-  else if ( name === 'general-edge' ) {
+  if ( name === 'general-edge' ) {
     await writeWith( 'general-edge',
       [
         'general-edge-unrestricted',
+      ],
+      [
         'square-only-edge-unrestricted',
       ],
       [
         'general-edge',
+      ],
+      [
         'square-only-edge',
-      ]
+      ],
     );
   }
   else if ( name === 'general-color' ) {
     await writeWith( 'general-color',
       [
         'general-color-unrestricted',
+      ],
+      [
         'square-only-color-unrestricted',
       ],
       [
         // 'general-color', TODO: nope, BAD!
+      ],
+      [
         // 'square-only-color', TODO: nope, BAD!
-      ]
+      ],
     );
   }
   else if ( name === 'general-edge-color' ) {
     await writeWith( 'general-edge-color',
       [
         'general-edge-color-unrestricted',
-        'general-color-unrestricted',
-        'general-edge-unrestricted',
         'square-only-edge-color-unrestricted',
+      ],
+      [
+        'general-color-unrestricted',
         'square-only-color-unrestricted',
+        'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
       [
         'general-edge-color',
+        'square-only-edge-color',
+      ],
+      [
         // 'general-color',
         'general-edge',
-        'square-only-edge-color',
         // 'square-only-color',
         'square-only-edge',
-      ]
+      ],
     );
   }
   else if ( name === 'general-edge-sector' ) {
     await writeWith( 'general-edge-sector',
       [
         'general-edge-sector-unrestricted',
-        'general-edge-unrestricted',
         'square-only-edge-sector-unrestricted',
+      ],
+      [
+        'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
       [
         'general-edge-sector',
-        'general-edge',
         'square-only-edge-sector',
+      ],
+      [
+        'general-edge',
         'square-only-edge',
-      ]
+      ],
     );
   }
   else if ( name === 'general-all' ) {
     await writeWith( 'general-all',
       [
         'general-all-unrestricted',
-        'general-edge-color-unrestricted',
-        'general-color-unrestricted',
-        'general-edge-sector-unrestricted',
-        'general-edge-unrestricted',
         'square-only-all-unrestricted',
+      ],
+      [
+        'general-edge-color-unrestricted',
         'square-only-edge-color-unrestricted',
+        'general-color-unrestricted',
         'square-only-color-unrestricted',
+        'general-edge-sector-unrestricted',
         'square-only-edge-sector-unrestricted',
+        'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
       [
         'general-all',
-        'general-edge-color',
-        'general-edge-sector',
-        'general-edge',
         'square-only-all',
+      ],
+      [
+        'general-edge-color',
         'square-only-edge-color',
+        'general-edge-sector',
         'square-only-edge-sector',
+        'general-edge',
         'square-only-edge',
-      ]
+      ],
     );
   }
   else {

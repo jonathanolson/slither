@@ -42,9 +42,11 @@ declare global {
     getSequenceWithoutProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
     getSequenceWithCollection: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ) => SerializedBinaryRuleSequence;
     getCollectionForSequence: ( serializedSequence: SerializedBinaryRuleSequence, board: string ) => SerializedBinaryRuleCollection;
-    getCombinedBinaryCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    getCombinedNonredundantBinaryCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    getCombinedNonredundantFromFirstBinaryCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    withCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    withCollectionNonequal: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    withCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    withoutCollectionNonequal: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    withoutCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
   }
 }
 
@@ -108,24 +110,38 @@ window.getCollectionForSequence = ( serializedSequence: SerializedBinaryRuleSequ
   return collection.serialize();
 };
 
-window.getCombinedBinaryCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+window.withCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
   const aCollection = BinaryRuleCollection.deserialize( a );
   const bCollection = BinaryRuleCollection.deserialize( b );
   const resultCollection = aCollection.withCollection( bCollection );
   return resultCollection.serialize();
 };
 
-window.getCombinedNonredundantBinaryCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+window.withCollectionNonequal = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize( a );
+  const bCollection = BinaryRuleCollection.deserialize( b );
+  const resultCollection = aCollection.withCollectionNonequal( bCollection );
+  return resultCollection.serialize();
+};
+
+window.withCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
   const aCollection = BinaryRuleCollection.deserialize( a );
   const bCollection = BinaryRuleCollection.deserialize( b );
   const resultCollection = aCollection.withCollectionNonredundant( bCollection );
   return resultCollection.serialize();
 };
 
-window.getCombinedNonredundantFromFirstBinaryCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+window.withoutCollectionNonequal = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
   const aCollection = BinaryRuleCollection.deserialize( a );
   const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withCollectionNonredundantFromFirst( bCollection );
+  const resultCollection = aCollection.withoutCollectionNonequal( bCollection );
+  return resultCollection.serialize();
+};
+
+window.withoutCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize( a );
+  const bCollection = BinaryRuleCollection.deserialize( b );
+  const resultCollection = aCollection.withoutCollectionNonredundant( bCollection );
   return resultCollection.serialize();
 };
 
