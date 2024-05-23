@@ -105,7 +105,6 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
       ],
       [
         'square-only-edge-color',
-        'square-only-color',
         'square-only-edge',
       ]
     );

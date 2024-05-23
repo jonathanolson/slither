@@ -66,25 +66,30 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
-  - BREAKING HIGHLANDER ERROR, we will need to RE-EVALUATE THINGS
-    - OMG... is it that we CANNOT COMBINE HIGHLANDER RULES?
+  - RULE VIEWER
+    - Do we... group by tiling? Group by pattern-board? Sorting????
+    - 
+    - Show embeddings(!), this is REALLY HELPFUL for larger ones
+    - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
+      - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
+    - REALLY get a good way to view our "library" of patterns
   - 
-  - ditch square-only-color, general-color (add throw in next-board script if we try those)
-    - Delete them and references
+  - DOC note somewhere approaches, especially "we can't combine highlander rules"
   - 
-  - square-only-color buggy? (go with unrestricted?)
-    - TEST ALL RULES OMG WTF BBQ
+  - Add testing to edge-color (in correctness)
+    - Actually, we seem to be limiting this because it takes a while... should we find a better way to test?
   - 
-  - combine-collections failing with incompatible on color.
-    - INSPECT RULES
-      - Get a rule inspector. We'll use it ANYWAY for debugging?
-        - ... are face colors buggered up?
-    - Consider... testing rule correctness? Perhaps (a) compute a solution-set for a board, (b) filter solutions by input, (c) filter solutions by highlander, (d) check against output.
-      - RichSolutions for a board, HighlanderPruner.filterWithFeatureSet BEFORE filtering solutions by the feature set (see which one are possible)
-      - THIS is an EFFICIENT way of checking?
+  - sorted() on binary collections [and better sorting]
+    - Come up with a better "rule complexity" metric, sectors are not THAT bad. ONLY measure the input size?
+      - ACTUALLY JUST MEASURE HOW OFTEN RULES COME UP ON RANDOM THINGS?
+        - can we iteratively improve the ranking of rules? Repeatedly solve generated puzzles (full difficulty), see how often we use each rule
   - 
   - ASSERTIONS?
     - UNIT TEST all of the BinaryRuleCollection things! isRedundant, etc., verify with other implementation
+  - 
+  - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
+    - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
+    - We should CHANGE the code that computes embeddings(!)
   - 
   - Pause execution
     - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
@@ -95,13 +100,6 @@
       - kill -SIGSTOP <pid>
       - kill -SIGCONT <pid>
   - Get the ability to semi-manually clear current boards
-  - 
-  - Verify we are pruning symmetric highlander cases
-  - Write "status" script (iterate through sequences JSONs, list current generation, show percent done, show current running)
-  - 
-  - REGENERATE RULES
-    - FaceColorDual-embeddings AND triangles were messed up. 
-    - Create that "better vision for generation"
   - 
   - Embeddings be index-based (we can still reproduce the effects of the maps)
   - Rule reduction using BinaryPatternSolver-like handling (apply rules)
@@ -122,48 +120,14 @@
       - Perhaps we are giving it too many loops?
       - CONSIDER:
         - What if we... manually compute these? For these SMALL cases, it is probably practical
-    - 
-  - 
-  - USE our binary collection directly to do redundancy checks! (without having to create things?)
-    - So we don't have to create options while combining
-  - 
-  - "in-progress" collection type, that tracks:
-    - COMPOSE a collection
-    - store boards that:
-      - have been processed
-      - are currently being processed
-      - generations of boards to do??? (or is this implicit?)
-    - (a) boards that have completed processing (even if they are NOT in the list, they were empty)
-    - (b) boards that are currently in processing
-    - * check what the "next board in the current generation is" that we could process (might be none)
-    - * LOOP possible to "keep computing things for this solve type"
-    - solve types are:
-      - general / square (only) / hexagonal (only)
-        - Define the "board generations" and "way to compute initial feature set" for each ()
-      - edge / color / edge + sector / edge + color / all
-      - highlander / non-highlander
   - 
   - Pattern solvers are NOT checking to see if they could be the entire closed loop. FIX THAT.
-  - 
-  - sorted() on binary collections [and better sorting]
-    - Come up with a better "rule complexity" metric, sectors are not THAT bad. ONLY measure the input size?
-      - ACTUALLY JUST MEASURE HOW OFTEN RULES COME UP ON RANDOM THINGS?
-        - can we iteratively improve the ranking of rules? Repeatedly solve generated puzzles (full difficulty), see how often we use each rule
   - 
   - Load collections by AJAX one-at-a-time when needed? So we don't hit memory issues
   - 
   - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
   - 
-  - REALLY get a good way to view our "library" of patterns
-  - 
   - For "face selection" - make it easier to select outside (not just that strip)
-  - 
-  - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
-    - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
-    - We should CHANGE the code that computes embeddings(!)
-  - 
-  - BINARY collection FeatureSet.getBoardMatchState
-    - given index of rule?
   - 
   - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
   - 
@@ -195,8 +159,6 @@
       - (b) Match directly into the state, through an adapter
   - 
   - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
-  - 
-    REDO basic color rule sets with... implied
   - 
   - Fun to create "rule generation" visualization? Show current solve state on left, show current rule list on right?
   - 
