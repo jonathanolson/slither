@@ -66,8 +66,20 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - Split out -highlander rules into their own files?
+  - Split out -fallback rules????
+  - ONLY do `general`?
+  - 
   - RULE VIEWER
-    - Do we... group by tiling? Group by pattern-board? Sorting????
+    - Select collection:
+      - (edge / color / edge-color / edge-sector / all)
+    - Sort by:
+      - score
+      - pattern boards
+    - Filter by:
+      - pattern board
+      - embeddable in tiling (can we show tiling of the pattern board?)
+      - HIGHLANDER only? (or the opposite)
     - 
     - Show embeddings(!), this is REALLY HELPFUL for larger ones
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)

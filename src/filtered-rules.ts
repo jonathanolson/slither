@@ -6,7 +6,6 @@ import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { curatedRules } from './model/pattern/data/curatedRules.ts';
 import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
-import { generalAllHighlanderImplied0RuleSets } from './model/pattern/data/generalAllHighlanderImplied0RuleSets.ts';
 
 const DO_FILTER = true;
 
@@ -52,8 +51,9 @@ console.log( 'test' );
   let rules: PatternRule[] = [];
 
   // const ruleSet = PatternBoardRuleSet.deserialize( JSON.parse( `{"patternBoard":"[1,0,\\"non-exit-vertex\\",4]","mapping":"[[[0,0]],[[0,[1,0]],[0,[6.123233995736766e-17,1]],[0,[-1,1.2246467991473532e-16]],[0,[-1.8369701987210297e-16,-1]]],[[[6.123233995736766e-17,1],[0,0],[1,0]],[[-1,1.2246467991473532e-16],[0,0],[6.123233995736766e-17,1]],[[-1.8369701987210297e-16,-1],[0,0],[-1,1.2246467991473532e-16]],[[1,0],[0,0],[-1.8369701987210297e-16,-1]]],[[[6.123233995736766e-17,1],[0,0],[1,0]],[[-1,1.2246467991473532e-16],[0,0],[6.123233995736766e-17,1]],[[-1.8369701987210297e-16,-1],[0,0],[-1,1.2246467991473532e-16]],[[1,0],[0,0],[-1.8369701987210297e-16,-1]]]]","rules":[{"input":{"blackEdges":[0]},"output":{"blackEdges":[0],"sectorsNotTwo":[1,2]}},{"input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,2],"secondaryFaces":[],"sameColorPaths":[[0,3]],"oppositeColorPaths":[]}]},"output":{"sectorsNotOne":[1,3],"sectorsNotTwo":[0,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,2],"secondaryFaces":[],"sameColorPaths":[[0,3]],"oppositeColorPaths":[]}]}},{"input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0],"secondaryFaces":[2],"sameColorPaths":[],"oppositeColorPaths":[[0,3]]}]},"output":{"sectorsOnlyOne":[1,3],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0],"secondaryFaces":[2],"sameColorPaths":[],"oppositeColorPaths":[[0,3]]}]}},{"input":{"sectorsNotOne":[0]},"output":{"sectorsNotOne":[0,2],"sectorsNotTwo":[1,3],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1,3],"secondaryFaces":[],"sameColorPaths":[[1,0]],"oppositeColorPaths":[]}]}},{"input":{"sectorsNotZero":[0]},"output":{"sectorsNotZero":[0],"sectorsNotTwo":[2]}},{"input":{"sectorsNotTwo":[2],"sectorsOnlyOne":[0]},"output":{"sectorsOnlyOne":[0,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1],"secondaryFaces":[3],"sameColorPaths":[],"oppositeColorPaths":[[1,0]]}]}},{"input":{"redEdges":[0],"sectorsNotTwo":[1,2]},"output":{"redEdges":[0,2]}},{"input":{"sectorsNotZero":[2],"sectorsNotTwo":[0,1]},"output":{"sectorsNotZero":[2,3],"sectorsNotTwo":[0,1]}}]}` ) );
-  const ruleSet = generalAllHighlanderImplied0RuleSets[ 3 ];
-  rules.push( ...ruleSet.rules );
+  // const ruleSet = generalAllHighlanderImplied0RuleSets[ 3 ];
+  // rules.push( ...ruleSet.rules );
+  // TODO: add back in rules
 
   const embeddedRuleMap = new Map<TPatternBoard, PatternRule[]>;
 

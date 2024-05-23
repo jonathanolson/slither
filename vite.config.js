@@ -29,7 +29,6 @@ export default defineConfig( {
         'solver-fuzz': '/solver-fuzz.html',
         'discover-rules': '/discover-rules.html',
         'rules-test': '/rules-test.html',
-        'rule-gen': '/rule-gen.html',
         'rule-list': '/rule-list.html',
         'rule-image': '/rule-image.html',
         'rule': '/rule.html',
