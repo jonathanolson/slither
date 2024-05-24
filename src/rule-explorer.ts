@@ -7,7 +7,7 @@ import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { Enumeration, EnumerationValue, platform } from 'phet-lib/phet-core';
-import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty } from './util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty } from './util/localStorage.ts';
 import { getGeneralColorGroup } from './model/pattern/rule-group/getGeneralColorGroup.ts';
 import { getGeneralEdgeColorGroup } from './model/pattern/rule-group/getGeneralEdgeColorGroup.ts';
 import { getGeneralEdgeSectorGroup } from './model/pattern/rule-group/getGeneralEdgeSectorGroup.ts';
@@ -15,6 +15,12 @@ import { getGeneralAllGroup } from './model/pattern/rule-group/getGeneralAllGrou
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
+import { standardCairoBoard, standardDeltoidalTrihexagonalBoard, standardElongatedTriangularBoard, standardFloretPentagonalBoard, standardHexagonalBoard, standardPortugalBoard, standardPrismaticPentagonalBoard, standardRhombilleBoard, standardRhombitrihexagonalBoard, standardSnubSquareBoard, standardSquareBoard, standardTriangularBoard, standardTrihexagonalBoard } from './model/pattern/patternBoards.ts';
+import { TBoard } from './model/board/core/TBoard.ts';
+import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
+import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { Embedding } from './model/pattern/Embedding.ts';
+import { computeEmbeddings } from './model/pattern/computeEmbeddings.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -94,11 +100,59 @@ class HighlanderMode extends EnumerationValue {
   public static readonly enumeration = new Enumeration( HighlanderMode );
 }
 
+class DisplayTiling extends EnumerationValue {
+  public constructor(
+    public readonly displayName: string,
+    public readonly board: TBoard,
+    public readonly boardPatternBoard: BoardPatternBoard,
+  ) {
+    super();
+  }
+
+  public static readonly SQUARE = new DisplayTiling( 'Square', standardSquareBoard, new BoardPatternBoard( standardSquareBoard ) );
+  public static readonly HEXAGONAL = new DisplayTiling( 'Hexagonal', standardHexagonalBoard, new BoardPatternBoard( standardHexagonalBoard ) );
+  public static readonly CAIRO = new DisplayTiling( 'Cairo', standardCairoBoard, new BoardPatternBoard( standardCairoBoard ) );
+  public static readonly TRIANGULAR = new DisplayTiling( 'Triangular', standardTriangularBoard, new BoardPatternBoard( standardTriangularBoard ) );
+  public static readonly RHOMBILLE = new DisplayTiling( 'Rhombille', standardRhombilleBoard, new BoardPatternBoard( standardRhombilleBoard ) );
+  public static readonly SNUB_SQUARE = new DisplayTiling( 'Snub Square', standardSnubSquareBoard, new BoardPatternBoard( standardSnubSquareBoard ) );
+  public static readonly TRIHEXAGONAL = new DisplayTiling( 'Trihexagonal', standardTrihexagonalBoard, new BoardPatternBoard( standardTrihexagonalBoard ) );
+  public static readonly FLORET_PENTAGONAL = new DisplayTiling( 'Floret Pentagonal', standardFloretPentagonalBoard, new BoardPatternBoard( standardFloretPentagonalBoard ) );
+  public static readonly DELTOIDAL_TRIHEXAGONAL = new DisplayTiling( 'Deltoidal Trihexagonal', standardDeltoidalTrihexagonalBoard, new BoardPatternBoard( standardDeltoidalTrihexagonalBoard ) );
+  public static readonly PORTUGAL = new DisplayTiling( 'Portugal', standardPortugalBoard, new BoardPatternBoard( standardPortugalBoard ) );
+  public static readonly RHOMBITRIHEXAGONAL = new DisplayTiling( 'Rhombitrihexagonal', standardRhombitrihexagonalBoard, new BoardPatternBoard( standardRhombitrihexagonalBoard ) );
+  public static readonly PRISMATIC_PENTAGONAL = new DisplayTiling( 'Prismatic Pentagonal', standardPrismaticPentagonalBoard, new BoardPatternBoard( standardPrismaticPentagonalBoard ) );
+  public static readonly ELONGATED_TRIANGULAR = new DisplayTiling( 'Elongated Triangular', standardElongatedTriangularBoard, new BoardPatternBoard( standardElongatedTriangularBoard ) );
+
+  public static readonly enumeration = new Enumeration( DisplayTiling );
+}
+
+// TODO: precompute these, fix up Embedding, and serialize/deserialize them (so it loads immediately)
+const embeddingMap = new Map<TPatternBoard, Map<DisplayTiling, Embedding | null>>();
+const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): Embedding | null => {
+  let patternMap = embeddingMap.get( patternBoard );
+
+  if ( !patternMap ) {
+    patternMap = new Map();
+    embeddingMap.set( patternBoard, patternMap );
+  }
+
+  let embedding = patternMap.get( displayTiling );
+
+  if ( embedding === undefined ) {
+    const embeddings = computeEmbeddings( patternBoard, displayTiling.boardPatternBoard );
+    embedding = embeddings.length > 0 ? embeddings[ 0 ] : null;
+    patternMap.set( displayTiling, embedding );
+  }
+
+  return embedding;
+};
+
 ( async () => {
 
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.REGULAR );
   const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
+  const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
 
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
@@ -128,11 +182,13 @@ class HighlanderMode extends EnumerationValue {
     baseGroupProperty,
     highlanderModeProperty,
     includeFallbackProperty,
+    displayTilingProperty,
     pageIndexProperty
   ], (
     baseGroup,
     highlanderMode,
     includeFallback,
+    displayTiling,
     pageIndex,
   ) => {
     let group = baseGroup;
@@ -148,8 +204,19 @@ class HighlanderMode extends EnumerationValue {
       group = group.withoutFallback();
     }
 
+    if ( displayTiling ) {
+      group = group.withPatternBoardFilter( patternBoard => {
+        return getBestEmbedding( patternBoard, displayTiling ) !== null;
+      } );
+    }
+
+    const baseIndex = pageIndex * rulesPerPage;
+
+    const minIndex = Math.min( baseIndex, group.size );
+    const maxIndex = Math.min( baseIndex + rulesPerPage, group.size );
+
     console.log( baseGroup.size / rulesPerPage );
-    return _.range( 0, rulesPerPage ).map( i => group.getRule( i + pageIndex * rulesPerPage ) );
+    return _.range( minIndex, maxIndex ).map( i => group.getRule( i + pageIndex * rulesPerPage ) );
   } );
 
   const collectionRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Collection', collectionModeProperty, [
@@ -200,6 +267,21 @@ class HighlanderMode extends EnumerationValue {
 
   const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
 
+  const tilingRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Compatible Tiling', displayTilingProperty, [
+    {
+      value: null,
+      labelContent: 'All',
+      createNode: () => new UIText( 'All' ),
+    },
+    ...DisplayTiling.enumeration.values.map( displayTiling => {
+      return {
+        value: displayTiling,
+        labelContent: displayTiling.displayName,
+        createNode: () => new UIText( displayTiling.displayName ),
+      };
+    } )
+  ] );
+
   const leftBox = new VBox( {
     align: 'left',
     spacing: 20,
@@ -207,6 +289,7 @@ class HighlanderMode extends EnumerationValue {
       collectionRadioButtonGroup,
       highlanderRadioButtonGroup,
       fallbackCheckbox,
+      tilingRadioButtonGroup,
     ]
   } );
 

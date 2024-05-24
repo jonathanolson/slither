@@ -59,6 +59,19 @@ export class LocalStorageEnumerationProperty<T extends EnumerationValue> extends
   }
 }
 
+export class LocalStorageNullableEnumerationProperty<T extends EnumerationValue> extends LocalStorageProperty<T | null> {
+  public constructor(
+    key: string,
+    enumeration: T[ 'enumeration' ],
+    defaultValue: T | null
+  ) {
+    super( key, {
+      serialize: value => value === null ? 'null' : value.name,
+      deserialize: value => value ? ( value === 'null' ? null : enumeration.getValue( value ) as T ) || defaultValue : defaultValue
+    } );
+  }
+}
+
 export class LocalStorageStringProperty<T extends string> extends LocalStorageProperty<T> {
   public constructor( key: string, defaultValue: T ) {
     super( key, {

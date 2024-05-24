@@ -1,6 +1,7 @@
 import { BinaryRuleCollection } from '../BinaryRuleCollection.ts';
 import { PatternRule } from '../PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
+import { TPatternBoard } from '../TPatternBoard.ts';
 
 export class BinaryRuleGroup {
 
@@ -61,6 +62,15 @@ export class BinaryRuleGroup {
       null,
       this.highlanderCollection,
       null,
+    );
+  }
+
+  public withPatternBoardFilter( patternBoardFilter: ( patternBoard: TPatternBoard ) => boolean ): BinaryRuleGroup {
+    return new BinaryRuleGroup(
+      this.mainCollection && this.mainCollection.withPatternBoardFilter( patternBoardFilter ),
+      this.fallbackCollection && this.fallbackCollection.withPatternBoardFilter( patternBoardFilter ),
+      this.highlanderCollection && this.highlanderCollection.withPatternBoardFilter( patternBoardFilter ),
+      this.highlanderFallbackCollection && this.highlanderFallbackCollection.withPatternBoardFilter( patternBoardFilter ),
     );
   }
 }
