@@ -310,6 +310,7 @@ export class BinaryRuleCollection {
             const embeddedRule = rule.embedded( featureState.patternBoard, embedding )!;
 
             if ( assertEnabled() ) {
+              // @ts-expect-error
               window.isPatternRuleValid = isPatternRuleValid;
 
               // TODO: WHY are we potentially getting INCONSEQUENTIAL? Buggy?

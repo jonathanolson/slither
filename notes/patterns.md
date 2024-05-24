@@ -71,8 +71,15 @@
   - ONLY do `general`?
   - 
   - RULE VIEWER
-    - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
-      - getBinaryIdentifier()
+    - rules.html
+      - Rule finder pages (rules) --- use pagination(!) until we have better infinite scroll?
+        - But... how do we find things quickly, or browse for interesting ones? Need some nice way
+    - 
+    - rule.html
+      - [ADD highlander status to getBinaryIdentifier] 
+      - ?r=${getBinaryIdentifier()} 
+      - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
+        - getBinaryIdentifier()
     - 
     - Select collection:
       - (edge / color / edge-color / edge-sector / all)
@@ -83,6 +90,7 @@
       - pattern board
       - embeddable in tiling (can we show tiling of the pattern board?)
       - HIGHLANDER only? (or the opposite)
+      - Quantity of features(!) -- no black edges? no red edges? hmmm
     - 
     - Show embeddings(!), this is REALLY HELPFUL for larger ones
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
