@@ -1,13 +1,13 @@
-import { AlignBox, Display, GridBox, HBox, Node, VBox } from 'phet-lib/scenery';
+import { Bounds2, Range } from 'phet-lib/dot';
+import { AlignBox, Display, FireListener, GridBox, HBox, Node, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { DerivedProperty, NumberProperty, Property } from 'phet-lib/axon';
+import { DerivedProperty, Multilink, NumberProperty, Property } from 'phet-lib/axon';
 import { getGeneralEdgeGroup } from './model/pattern/rule-group/getGeneralEdgeGroup.ts';
 import _ from './workarounds/_.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
-import { Bounds2 } from 'phet-lib/dot';
-import { Enumeration, EnumerationValue, platform } from 'phet-lib/phet-core';
-import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty } from './util/localStorage.ts';
+import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
+import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty } from './util/localStorage.ts';
 import { getGeneralColorGroup } from './model/pattern/rule-group/getGeneralColorGroup.ts';
 import { getGeneralEdgeColorGroup } from './model/pattern/rule-group/getGeneralEdgeColorGroup.ts';
 import { getGeneralEdgeSectorGroup } from './model/pattern/rule-group/getGeneralEdgeSectorGroup.ts';
@@ -21,6 +21,8 @@ import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { Embedding } from './model/pattern/Embedding.ts';
 import { computeEmbeddings } from './model/pattern/computeEmbeddings.ts';
+import { ArrowButton, Slider } from 'phet-lib/sun';
+import { copyToClipboard } from './util/copyToClipboard.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -49,36 +51,6 @@ document.body.appendChild( display.domElement );
 window.oncontextmenu = e => e.preventDefault();
 
 export const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
-
-display.initializeEvents();
-
-let resizePending = true;
-const resize = () => {
-  resizePending = false;
-
-  const layoutBounds = new Bounds2( 0, 0, window.innerWidth, window.innerHeight );
-  display.setWidthHeight( layoutBounds.width, layoutBounds.height );
-  layoutBoundsProperty.value = layoutBounds;
-
-  if ( platform.mobileSafari ) {
-    window.scrollTo( 0, 0 );
-  }
-};
-
-const resizeListener = () => { resizePending = true; };
-$( window ).resize( resizeListener );
-window.addEventListener( 'resize', resizeListener );
-window.addEventListener( 'orientationchange', resizeListener );
-window.visualViewport && window.visualViewport.addEventListener( 'resize', resizeListener );
-resize();
-
-display.updateOnRequestAnimationFrame( dt => {
-  if ( resizePending ) {
-    resize();
-  }
-
-  // TODO: step?
-} );
 
 class CollectionMode extends EnumerationValue {
 
@@ -126,6 +98,8 @@ class DisplayTiling extends EnumerationValue {
   public static readonly enumeration = new Enumeration( DisplayTiling );
 }
 
+// TODO: add reset on fail conditions
+
 // TODO: precompute these, fix up Embedding, and serialize/deserialize them (so it loads immediately)
 const embeddingMap = new Map<TPatternBoard, Map<DisplayTiling, Embedding | null>>();
 const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): Embedding | null => {
@@ -171,25 +145,16 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
     }
   } );
 
-  const pageIndexProperty = new NumberProperty( 0 );
-
-  const columns = 4;
-  const rows = 7;
-
-  const rulesPerPage = rows * columns;
-
-  const rulesProperty = new DerivedProperty( [
+  const groupProperty = new DerivedProperty( [
     baseGroupProperty,
     highlanderModeProperty,
     includeFallbackProperty,
     displayTilingProperty,
-    pageIndexProperty
   ], (
     baseGroup,
     highlanderMode,
     includeFallback,
     displayTiling,
-    pageIndex,
   ) => {
     let group = baseGroup;
 
@@ -210,13 +175,34 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
       } );
     }
 
+    return group;
+  } );
+
+
+
+  const rulesPerPage = 30;
+
+  const pageIndexRangeProperty = new DerivedProperty( [ groupProperty ], group => new Range(
+    0,
+    Math.max( 0, Math.ceil( group.size / rulesPerPage ) - 1 )
+  ) );
+
+  const pageIndexProperty = new LocalStorageNumberProperty( 'pageIndexProperty', 0 );
+
+  const rulesProperty = new DerivedProperty( [
+    groupProperty,
+    pageIndexProperty,
+  ], (
+    group,
+    pageIndex,
+  ) => {
     const baseIndex = pageIndex * rulesPerPage;
 
     const minIndex = Math.min( baseIndex, group.size );
     const maxIndex = Math.min( baseIndex + rulesPerPage, group.size );
 
-    console.log( baseGroup.size / rulesPerPage );
-    return _.range( minIndex, maxIndex ).map( i => group.getRule( i + pageIndex * rulesPerPage ) );
+    console.log( group.size / rulesPerPage );
+    return _.range( minIndex, maxIndex ).map( i => group.getRule( i ) );
   } );
 
   const collectionRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Collection', collectionModeProperty, [
@@ -232,18 +218,18 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
     },
     {
       value: CollectionMode.EDGE_COLOR,
-      labelContent: 'Edge Color',
-      createNode: () => new UIText( 'Edge Color' ),
+      labelContent: 'Edge + Color',
+      createNode: () => new UIText( 'Edge + Color' ),
     },
     {
       value: CollectionMode.EDGE_SECTOR,
-      labelContent: 'Edge Sector',
-      createNode: () => new UIText( 'Edge Sector' ),
+      labelContent: 'Edge + Sector',
+      createNode: () => new UIText( 'Edge + Sector' ),
     },
     {
       value: CollectionMode.ALL,
-      labelContent: 'All',
-      createNode: () => new UIText( 'All' ),
+      labelContent: 'Edge + Color + Sector',
+      createNode: () => new UIText( 'Edge + Color + Sector' ),
     },
   ] );
 
@@ -255,14 +241,14 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
     },
     {
       value: HighlanderMode.HIGHLANDER,
-      labelContent: 'Highlander',
-      createNode: () => new UIText( 'Highlander' ),
+      labelContent: 'Highlander Only',
+      createNode: () => new UIText( 'Highlander Only' ),
     },
-    {
-      value: HighlanderMode.ALL,
-      labelContent: 'All',
-      createNode: () => new UIText( 'All' ),
-    },
+    // {
+    //   value: HighlanderMode.ALL,
+    //   labelContent: 'All',
+    //   createNode: () => new UIText( 'All' ),
+    // },
   ] );
 
   const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
@@ -282,6 +268,38 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
     } )
   ] );
 
+  const previousPageButton = new ArrowButton( 'left', () => {
+    pageIndexProperty.value--;
+  }, {
+    touchAreaXDilation: 5,
+    touchAreaYDilation: 5,
+    enabledProperty: new DerivedProperty( [ pageIndexProperty, pageIndexRangeProperty ], ( pageIndex, pageIndexRange ) => {
+      return pageIndex > pageIndexRange.min;
+    } )
+  } );
+
+  const nextPageButton = new ArrowButton( 'right', () => {
+    pageIndexProperty.value++;
+  }, {
+    touchAreaXDilation: 5,
+    touchAreaYDilation: 5,
+    enabledProperty: new DerivedProperty( [ pageIndexProperty, pageIndexRangeProperty ], ( pageIndex, pageIndexRange ) => {
+      return pageIndex < pageIndexRange.max;
+    } )
+  } );
+
+  const pageSlider = new Slider( pageIndexProperty, new DerivedProperty( [ pageIndexRangeProperty ], range => new Range( range.min, Math.max( 0.1, range.max ) ) ), {
+    orientation: Orientation.HORIZONTAL,
+    constrainValue: value => Math.round( value ),
+  } );
+
+  const pageNumberText = new UIText( new DerivedProperty( [ pageIndexProperty ], pageIndex => `Page ${pageIndex}` ), {
+    fontWeight: 'bold'
+  } );
+
+  const MARGIN = 10;
+  const HORIZONTAL_GAP = 30;
+
   const leftBox = new VBox( {
     align: 'left',
     spacing: 20,
@@ -290,44 +308,136 @@ const getBestEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTi
       highlanderRadioButtonGroup,
       fallbackCheckbox,
       tilingRadioButtonGroup,
+      new VBox( {
+        spacing: 5,
+        children: [
+          pageNumberText,
+          new HBox( {
+            spacing: 5,
+            children: [
+              previousPageButton,
+              pageSlider,
+              nextPageButton,
+            ]
+          } ),
+        ]
+      } ),
     ]
   } );
 
-  // TODO: SCALE the gridbox(!)
   const rulesGridBox = new GridBox( {
     xSpacing: 40,
     ySpacing: 20,
     // xAlign: 'origin',
     // yAlign: 'origin',
-    autoColumns: columns,
   } );
 
-  rulesProperty.link( rules => {
+  Multilink.multilink( [ rulesProperty, layoutBoundsProperty ], ( rules, layoutBounds ) => {
+    const availableHeight = layoutBounds.height - 2 * MARGIN;
+
+    leftBox.maxHeight = availableHeight;
+
+    const availableWidth = layoutBounds.width - 2 * MARGIN - leftBox.width - HORIZONTAL_GAP;
+
     const oldChildren = rulesGridBox.children.slice();
 
-    rulesGridBox.children = rules.map( rule => {
-      const planarPatternMap = planarPatternMaps.get( rule.patternBoard )!;
-      assertEnabled() && assert( planarPatternMap );
-      return new PatternRuleNode( rule, planarPatternMap );
-    } );
+    if ( rules.length ) {
+      rulesGridBox.children = rules.map( rule => {
+        const planarPatternMap = planarPatternMaps.get( rule.patternBoard )!;
+        assertEnabled() && assert( planarPatternMap );
 
-    // TODO: gridbox scaling!
+
+
+        return new PatternRuleNode( rule, planarPatternMap, {
+          cursor: 'pointer',
+          inputListeners: [
+            new FireListener( {
+              fire: () => {
+                copyToClipboard( rule.getBinaryIdentifier() );
+                console.log( rule.getBinaryIdentifier() );
+
+                // TODO: GO TO the link bit
+              }
+            } )
+          ]
+        } );
+      } );
+    }
+    else {
+      rulesGridBox.removeAllChildren();
+    }
 
     oldChildren.forEach( child => child.dispose() );
+
+    if ( rules.length ) {
+      // TODO: This might not be worth the CPU?
+      let bestScale = 0;
+      let bestColumns = 0;
+      _.range( 3, 11 ).forEach( columns => {
+        rulesGridBox.autoColumns = columns;
+
+        const idealScale = Math.min(
+          availableWidth / rulesGridBox.localBounds.width,
+          availableHeight / rulesGridBox.localBounds.height,
+        );
+
+        if ( idealScale > bestScale ) {
+          bestScale = idealScale;
+          bestColumns = columns;
+        }
+      } );
+
+      rulesGridBox.autoColumns = bestColumns;
+      rulesGridBox.setScaleMagnitude( bestScale );
+    }
   } );
 
   scene.addChild( new AlignBox( new HBox( {
-    spacing: 30,
+    spacing: HORIZONTAL_GAP,
     align: 'top',
     children: [
       leftBox,
       rulesGridBox,
     ]
   } ), {
-    margin: 10,
+    margin: MARGIN,
     xAlign: 'left',
     yAlign: 'top',
     alignBoundsProperty: layoutBoundsProperty,
   } ) );
+
+
+
+
+
+  display.initializeEvents();
+
+  let resizePending = true;
+  const resize = () => {
+    resizePending = false;
+
+    const layoutBounds = new Bounds2( 0, 0, window.innerWidth, window.innerHeight );
+    display.setWidthHeight( layoutBounds.width, layoutBounds.height );
+    layoutBoundsProperty.value = layoutBounds;
+
+    if ( platform.mobileSafari ) {
+      window.scrollTo( 0, 0 );
+    }
+  };
+
+  const resizeListener = () => { resizePending = true; };
+  $( window ).resize( resizeListener );
+  window.addEventListener( 'resize', resizeListener );
+  window.addEventListener( 'orientationchange', resizeListener );
+  window.visualViewport && window.visualViewport.addEventListener( 'resize', resizeListener );
+  resize();
+
+  display.updateOnRequestAnimationFrame( dt => {
+    if ( resizePending ) {
+      resize();
+    }
+
+    // TODO: step?
+  } );
 
 } )();

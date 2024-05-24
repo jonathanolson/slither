@@ -72,28 +72,25 @@
   - 
   - RULE VIEWER
     - rules.html
-      - Rule finder pages (rules) --- use pagination(!) until we have better infinite scroll?
-        - But... how do we find things quickly, or browse for interesting ones? Need some nice way
+      - MOVE the "page control" to bottom of the grid area
+      - Show embeddings(!), this is REALLY HELPFUL for larger ones
+      - 
+      - Work with themes
+      - Better than pagination -- infinite scroll?
+      - Sort by:
+        - score
+        - pattern boards
+      - Filter by:
+        - pattern board
+        - Quantity of features(!) -- no black edges? no red edges? hmmm
     - 
     - rule.html
       - ?r=${getBinaryIdentifier()} 
       - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
         - getBinaryIdentifier()
     - 
-    - Select collection:
-      - (edge / color / edge-color / edge-sector / all)
-    - Sort by:
-      - score
-      - pattern boards
-    - Filter by:
-      - pattern board
-      - embeddable in tiling (can we show tiling of the pattern board?)
-      - Quantity of features(!) -- no black edges? no red edges? hmmm
-    - 
-    - Show embeddings(!), this is REALLY HELPFUL for larger ones
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
       - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
-    - REALLY get a good way to view our "library" of patterns
   - 
   - "INCREMENTAL" way of computing progress --- also one that WILL NOT CRASH when it has results?
   - 

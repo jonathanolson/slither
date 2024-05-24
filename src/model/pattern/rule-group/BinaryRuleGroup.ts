@@ -2,6 +2,7 @@ import { BinaryRuleCollection } from '../BinaryRuleCollection.ts';
 import { PatternRule } from '../PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BinaryRuleGroup {
 
@@ -26,6 +27,8 @@ export class BinaryRuleGroup {
   }
 
   public getRule( index: number ): PatternRule {
+    assertEnabled() && assert( index < this.size );
+
     for ( const collection of this.collections ) {
       if ( index < collection.size ) {
         return collection.getRule( index );
