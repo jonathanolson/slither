@@ -22,6 +22,10 @@
     - square only edge color unrestricted *
     - square only all
     - square only all unrestricted
+  - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
+  - 
+  - 
+  - old generation?
     - 
     - remaining general edge sector unrestricted
     - 
@@ -96,6 +100,8 @@
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
       - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
     - REALLY get a good way to view our "library" of patterns
+  - 
+  - "INCREMENTAL" way of computing progress --- also one that WILL NOT CRASH when it has results?
   - 
   - DOC note somewhere approaches, especially "we can't combine highlander rules"
   - 
