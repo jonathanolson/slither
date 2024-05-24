@@ -167,7 +167,7 @@ export class PatternRule {
     }
 
     const binaryData = this.getBinary( [ this.patternBoard ] ).slice( 1 );
-    const binaryString = btoa( String.fromCharCode.apply( null, [ ...binaryData ] ) );
+    const binaryString = btoa( String.fromCharCode.apply( null, [ this.highlander ? 1 : 0, ...binaryData ] ) );
 
     const binaryIdentifier = `${patternBoardName}/${binaryString}`;
 
@@ -188,7 +188,7 @@ export class PatternRule {
     const patternBoard = deserializePatternBoard( patternBoardName );
 
     // TODO: include highlander in binary...>?
-    return PatternRule.fromBinary( [ patternBoard ], [ 0, ...binaryData ], 0, true );
+    return PatternRule.fromBinary( [ patternBoard ], [ 0, ...binaryData.slice( 1 ) ], 0, binaryData[ 0 ] !== 0 );
   }
 
   public getBinary( patternBoards: TPatternBoard[] ): number[] {

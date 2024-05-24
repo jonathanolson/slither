@@ -24,14 +24,14 @@ export default defineConfig( {
   build: {
     rollupOptions: {
       input: {
-        main: '/index.html',
+        'main': '/index.html',
+        'rule-explorer': '/rules.html',
+        'rule': '/rule.html',
         'scan-test': '/scan-test.html',
         'solver-fuzz': '/solver-fuzz.html',
         'discover-rules': '/discover-rules.html',
         'rules-test': '/rules-test.html',
-        'rule-list': '/rule-list.html',
         'rule-image': '/rule-image.html',
-        'rule': '/rule.html',
         'curated-rules': '/curated-rules.html',
         'filtered-rules': '/filtered-rules.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
