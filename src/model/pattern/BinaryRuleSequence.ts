@@ -11,7 +11,7 @@ import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts
 
 export type SequenceBoardType = 'general' | 'square' | 'hexagonal';
 
-export class BinaryRuleSequence {
+export class BinaryRuleSequence implements SequenceSpecifier {
 
   public readonly boardType: SequenceBoardType;
 
