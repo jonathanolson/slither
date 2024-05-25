@@ -56,13 +56,18 @@
     - And theme(!)
   - 
   - PuzzleNode perf
+    - "StaticPuzzleNode" - creates minimalistic view, and can show ?s.
+      - e.g. factor out the simple creation stuff
+      - HAVE IT TAKE IN COLOR OVERRIDES!!!
+    - 
     - FaceStateNode lazy creation
     - OMG share listeners, so we don't create so many for PuzzleNode?
   - 
   - RULE VIEWER
     - rule-explorer.html
       - MOVE the "page control" to bottom of the grid area
-      - Show embeddings(!), this is REALLY HELPFUL for larger ones
+      - Embeddings:
+        - Should we "gray out" satisfied face values???
       - 
       - Work with themes
       - Better than pagination -- infinite scroll?
