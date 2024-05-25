@@ -50,12 +50,14 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
-  - STYLE SWAPPING in rule explorer
-  - 
   - SWAP IN the "better rule collection that matches our display mode" solving!!!
   - 
-  - EmbeddedRuleNode(!!!!) 
-    - extract DisplayTiling / DisplayEmbedding (or something similar)
+  - STYLE SWAPPING in rule explorer
+    - And theme(!)
+  - 
+  - PuzzleNode perf
+    - FaceStateNode lazy creation
+    - OMG share listeners, so we don't create so many for PuzzleNode?
   - 
   - RULE VIEWER
     - rule-explorer.html
@@ -70,6 +72,7 @@
       - Filter by:
         - pattern board
         - Quantity of features(!) -- no black edges? no red edges? hmmm
+      - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
     - 
     - rule.html
       - ?r=${getBinaryIdentifier()} 

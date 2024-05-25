@@ -12,9 +12,11 @@ import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type SectorNodeOptions = {
+  backgroundOffsetDistance: number;
+
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
   sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
-  backgroundOffsetDistance: number;
+  noninteractive?: boolean;
 };
 
 const basicDash = [ 0.02, 0.02 ];
@@ -45,7 +47,7 @@ export class SectorNode extends Node {
     this.mouseArea = pointerArea;
     this.touchArea = pointerArea;
 
-    hookPuzzleListeners( sector, this, options.sectorPressListener, options.sectorHoverListener );
+    !options.noninteractive && hookPuzzleListeners( sector, this, options.sectorPressListener, options.sectorHoverListener );
 
     // TODO: this is made for memory optimization, perhaps optimize back for performance again in the future?
     const getShape = ( sectorState: SectorState ) => {

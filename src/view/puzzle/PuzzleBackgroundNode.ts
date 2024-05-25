@@ -14,6 +14,7 @@ export type PuzzleBackgroundNodeOptions = {
   backgroundOffsetDistance?: number;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
   faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
+  noninteractive?: boolean;
 };
 
 export class PuzzleBackgroundNode extends Node {
@@ -28,14 +29,15 @@ export class PuzzleBackgroundNode extends Node {
       useBackgroundOffsetStroke: false,
       backgroundOffsetDistance: 0.3,
       facePressListener: () => {},
-      faceHoverListener: () => {}
+      faceHoverListener: () => {},
+      noninteractive: false,
     }, providedOptions );
 
     super( {
       pickableProperty: isFaceColorEditModeProperty
     } );
 
-    hookPuzzleListeners( null, this, options.facePressListener, options.faceHoverListener );
+    !options.noninteractive && hookPuzzleListeners( null, this, options.facePressListener, options.faceHoverListener );
 
     const outerBoundaryPoints = outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates );
 

@@ -336,8 +336,14 @@ export class AnnotationNode extends Node {
         const faceFilter = ( face: TFace ) => includedFaces.has( face );
 
         // TODO: see if we can subset these? Because we are spending a LOT of CPU doing extra stuff
-        const inputNode = new PuzzleNode( new BasicPuzzle( board, inputState ), { faceFilter: faceFilter } );
-        const outputNode = new PuzzleNode( new BasicPuzzle( board, outputState ), { faceFilter: faceFilter } );
+        const inputNode = new PuzzleNode( new BasicPuzzle( board, inputState ), {
+          noninteractive: true,
+          faceFilter: faceFilter
+        } );
+        const outputNode = new PuzzleNode( new BasicPuzzle( board, outputState ), {
+          noninteractive: true,
+          faceFilter: faceFilter
+        } );
 
         disposeActions.push( () => {
           inputNode.dispose();

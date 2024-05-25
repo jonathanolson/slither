@@ -16,6 +16,7 @@ export type EdgeNodeOptions = {
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   edgeHoverListener?: ( edge: TEdge, isOver: boolean ) => void;
   backgroundOffsetDistance: number;
+  noninteractive?: boolean;
 };
 
 const halfSize = 0.06;
@@ -192,7 +193,7 @@ export class EdgeNode extends Node {
 
       this.mouseArea = this.touchArea = pointerArea;
 
-      hookPuzzleListeners( edge, this, edgePressListener, options.edgeHoverListener );
+      !options.noninteractive && hookPuzzleListeners( edge, this, edgePressListener, options.edgeHoverListener );
     }
 
     edgeStateProperty.link( edgeState => {

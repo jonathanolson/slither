@@ -21,8 +21,12 @@ export class EmbeddedPatternRuleNode extends Node {
     const inputState = displayEmbedding.getEmbeddedCompleteData( rule.inputFeatureSet );
     const outputState = displayEmbedding.getEmbeddedCompleteData( rule.outputFeatureSet );
 
-    const inputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, inputState ), {} );
-    const outputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, outputState ), {} );
+    const inputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, inputState ), {
+      noninteractive: true,
+    } );
+    const outputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, outputState ), {
+      noninteractive: true,
+    } );
 
     const questionFacesNode = new Node( {
       children: displayEmbedding.getEmbeddedQuestionFaces( rule.inputFeatureSet ).map( face => {

@@ -46,6 +46,7 @@ type SelfOptions = {
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
   faceFilter?: TFaceFilter; // If provided, we will only show items with faces that pass the filter
   style?: TPuzzleStyle;
+  noninteractive?: boolean;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
@@ -83,7 +84,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       selectedFaceColorHighlightProperty: new Property( null ),
       selectedSectorEditProperty: new Property( null ),
       faceFilter: () => true,
-      style: currentPuzzleStyle
+      style: currentPuzzleStyle,
+      noninteractive: false,
     }, providedOptions );
 
     const style = options.style;
@@ -131,6 +133,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     puzzle.board.faces.forEach( face => {
       if ( options.faceFilter( face ) ) {
         faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
+
+        // TODO: add the "optional create" for FaceStateNode?
         faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
       }
     } );
