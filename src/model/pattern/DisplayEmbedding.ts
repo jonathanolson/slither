@@ -41,7 +41,9 @@ export class DisplayEmbedding {
     public readonly smallBoard: TBoard,
     public readonly toSmallFaceMap: Map<TFace, TFace>,
     public readonly toSmallEdgeMap: Map<TEdge, TEdge>,
-    public readonly toSmallSectorMap: Map<TSector, TSector>
+    public readonly toSmallSectorMap: Map<TSector, TSector>,
+    public readonly tightBounds: Bounds2,
+    public readonly expandedBounds: Bounds2,
   ) {}
 
   public mapFace( face: TPatternFace ): TFace | null {
@@ -76,6 +78,21 @@ export class DisplayEmbedding {
     assertEnabled() && assert( smallSector );
 
     return smallSector;
+  }
+
+  public getEmbeddedQuestionFaces( featureSet: FeatureSet ): Set<TFace> {
+    const result = new Set<TFace>();
+
+    for ( const patternFace of featureSet.patternBoard.faces ) {
+      if ( featureSet.getFaceValue( patternFace ) === undefined ) {
+        const face = this.mapFace( patternFace );
+        if ( face ) {
+          result.add( face );
+        }
+      }
+    }
+
+    return result;
   }
 
   // TODO: how to better handle "question" mark features
@@ -277,7 +294,9 @@ export class DisplayEmbedding {
       smallBoard,
       toSmallFaceMap,
       toSmallEdgeMap,
-      toSmallSectorMap
+      toSmallSectorMap,
+      bestBounds!,
+      expandedBoardBounds,
     );
   }
 }
