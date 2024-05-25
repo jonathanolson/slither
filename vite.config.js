@@ -25,7 +25,7 @@ export default defineConfig( {
     rollupOptions: {
       input: {
         'main': '/index.html',
-        'rule-explorer': '/rules.html',
+        'rule-explorer': '/rule-explorer.html',
         'rule': '/rule.html',
         'scan-test': '/scan-test.html',
         'solver-fuzz': '/solver-fuzz.html',

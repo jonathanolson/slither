@@ -50,12 +50,9 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
-  - SWAP IN the "better rule collection that matches our display mode" solving!!!
+  - STYLE SWAPPING in rule explorer
   - 
-  - embeddings in rule-explorer
-    - DisplayEmbedding.getEmbeddedCompleteData complete, USE IT
-    - Model off of AnnotationNode
-    - Create getRuleNode( patternRule: PatternRule )? --- or have EmbeddedRuleNode take this in
+  - SWAP IN the "better rule collection that matches our display mode" solving!!!
   - 
   - EmbeddedRuleNode(!!!!) 
     - extract DisplayTiling / DisplayEmbedding (or something similar)

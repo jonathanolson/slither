@@ -144,12 +144,33 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     // TODO: for performance, can we reduce the number of nodes here?
 
-    puzzle.board.vertices.forEach( vertex => {
-      if ( vertex.faces.some( options.faceFilter ) ) {
-        vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-        vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+    const vertexVisibilityListener = ( verticesVisible: boolean ) => {
+      if ( verticesVisible ) {
+        puzzle.board.vertices.forEach( vertex => {
+          if ( vertex.faces.some( options.faceFilter ) ) {
+            vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+          }
+        } );
       }
-    } );
+      else {
+        vertexContainer.children.forEach( child => child.dispose() );
+      }
+    };
+    style.verticesVisibleProperty.link( vertexVisibilityListener );
+
+    const vertexStateVisibilityListener = ( vertexStatesVisible: boolean ) => {
+      if ( vertexStatesVisible ) {
+        puzzle.board.vertices.forEach( vertex => {
+          if ( vertex.faces.some( options.faceFilter ) ) {
+            vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
+          }
+        } );
+      }
+      else {
+        vertexStateContainer.children.forEach( child => child.dispose() );
+      }
+    };
+    style.vertexStateVisibleProperty.link( vertexStateVisibilityListener );
 
     puzzle.board.edges.forEach( edge => {
       if ( edge.faces.some( options.faceFilter ) ) {
@@ -157,11 +178,26 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       }
     } );
 
-    puzzle.board.halfEdges.forEach( sector => {
-      if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
-        sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
-      }
-    } );
+    // TODO: why are we getting an error when we swap in the listeners below
+    // TODO OMG DO NOT LEAK THESE, if we enable, unlink sectorVisibilityListener
+        puzzle.board.halfEdges.forEach( sector => {
+          if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
+            sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
+          }
+        } );
+    // const sectorVisibilityListener = ( sectorsVisible: boolean ) => {
+    //   if ( sectorsVisible ) {
+    //     puzzle.board.halfEdges.forEach( sector => {
+    //       if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
+    //         sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
+    //       }
+    //     } );
+    //   }
+    //   else {
+    //     sectorContainer.children.forEach( child => child.dispose() );
+    //   }
+    // };
+    // style.sectorsVisibleProperty.link( sectorVisibilityListener );
 
     simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, options.faceFilter, style ) );
 
@@ -213,6 +249,10 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     this.disposeEmitter.addListener( () => options.selectedSectorEditProperty.unlink( selectedSectorEditListener ) );
 
     this.disposeEmitter.addListener( () => {
+      style.verticesVisibleProperty.unlink( vertexVisibilityListener );
+      style.vertexStateVisibleProperty.unlink( vertexStateVisibilityListener );
+      // style.sectorsVisibleProperty.unlink( sectorVisibilityListener );
+
       const containers = [
         faceColorContainer,
         faceContainer,

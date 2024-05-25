@@ -80,19 +80,19 @@ export class DisplayEmbedding {
     return smallSector;
   }
 
-  public getEmbeddedQuestionFaces( featureSet: FeatureSet ): Set<TFace> {
-    const result = new Set<TFace>();
+  public getEmbeddedQuestionFaces( featureSet: FeatureSet ): TFace[] {
+    const definedSmallFaces = new Set<TFace>();
 
     for ( const patternFace of featureSet.patternBoard.faces ) {
-      if ( featureSet.getFaceValue( patternFace ) === undefined ) {
+      if ( featureSet.getFaceValue( patternFace ) !== undefined ) {
         const face = this.mapFace( patternFace );
         if ( face ) {
-          result.add( face );
+          definedSmallFaces.add( face );
         }
       }
     }
 
-    return result;
+    return this.smallBoard.faces.filter( face => !definedSmallFaces.has( face ) );
   }
 
   // TODO: how to better handle "question" mark features

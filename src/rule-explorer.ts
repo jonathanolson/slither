@@ -1,5 +1,5 @@
 import { Bounds2, Range } from 'phet-lib/dot';
-import { AlignBox, Display, FireListener, GridBox, HBox, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, FireListener, GridBox, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { DerivedProperty, Multilink, Property } from 'phet-lib/axon';
 import { getGeneralEdgeGroup } from './model/pattern/rule-group/getGeneralEdgeGroup.ts';
@@ -22,6 +22,7 @@ import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
 import { ArrowButton, Slider } from 'phet-lib/sun';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { DisplayEmbedding } from './model/pattern/DisplayEmbedding.ts';
+import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -126,6 +127,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.REGULAR );
   const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
   const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
+  const showEmbeddedProperty = new LocalStorageBooleanProperty( 'showEmbeddedProperty', false );
 
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
@@ -178,8 +180,8 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   } );
 
 
-
-  const rulesPerPage = 30;
+  // TODO: boo, can we change this?
+  const rulesPerPage = 6;
 
   const pageIndexRangeProperty = new DerivedProperty( [ groupProperty ], group => new Range(
     0,
@@ -252,6 +254,8 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
 
   const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
 
+  const showEmbeddedCheckbox = new UITextCheckbox( 'Show Embedded', showEmbeddedProperty );
+
   const tilingRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Compatible Tiling', displayTilingProperty, [
     {
       value: null,
@@ -296,8 +300,20 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     fontWeight: 'bold'
   } );
 
-  const MARGIN = 10;
-  const HORIZONTAL_GAP = 30;
+  const pageNumberBox = new VBox( {
+    spacing: 5,
+    children: [
+      pageNumberText,
+      new HBox( {
+        spacing: 5,
+        children: [
+          previousPageButton,
+          pageSlider,
+          nextPageButton,
+        ]
+      } ),
+    ]
+  } );
 
   const leftBox = new VBox( {
     align: 'left',
@@ -307,22 +323,13 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
       highlanderRadioButtonGroup,
       fallbackCheckbox,
       tilingRadioButtonGroup,
-      new VBox( {
-        spacing: 5,
-        children: [
-          pageNumberText,
-          new HBox( {
-            spacing: 5,
-            children: [
-              previousPageButton,
-              pageSlider,
-              nextPageButton,
-            ]
-          } ),
-        ]
-      } ),
+      showEmbeddedCheckbox,
+      pageNumberBox,
     ]
   } );
+
+  const MARGIN = 10;
+  const HORIZONTAL_GAP = 30;
 
   const rulesGridBox = new GridBox( {
     xSpacing: 40,
@@ -331,7 +338,17 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     // yAlign: 'origin',
   } );
 
-  Multilink.multilink( [ rulesProperty, layoutBoundsProperty ], ( rules, layoutBounds ) => {
+  Multilink.multilink( [
+    rulesProperty,
+    layoutBoundsProperty,
+    displayTilingProperty, // TODO: it seems like our rulesProperty will ALSO change on this, so we have unnecessary performance hits
+    showEmbeddedProperty,
+  ], (
+    rules,
+    layoutBounds,
+    displayTiling,
+    showEmbedded,
+  ) => {
     const availableHeight = layoutBounds.height - 2 * MARGIN;
 
     leftBox.maxHeight = availableHeight;
@@ -345,21 +362,34 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
         const planarPatternMap = planarPatternMaps.get( rule.patternBoard )!;
         assertEnabled() && assert( planarPatternMap );
 
+        const inputListener = new FireListener( {
+          fire: () => {
+            copyToClipboard( rule.getBinaryIdentifier() );
+            console.log( rule.getBinaryIdentifier() );
 
-
-        return new PatternRuleNode( rule, planarPatternMap, {
-          cursor: 'pointer',
-          inputListeners: [
-            new FireListener( {
-              fire: () => {
-                copyToClipboard( rule.getBinaryIdentifier() );
-                console.log( rule.getBinaryIdentifier() );
-
-                // TODO: GO TO the link bit
-              }
-            } )
-          ]
+            // TODO: GO TO the link bit
+          }
         } );
+
+        let displayEmbedding: DisplayEmbedding | null = null;
+        if ( showEmbedded && displayTiling ) {
+          displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
+        }
+
+        if ( displayEmbedding ) {
+          return new EmbeddedPatternRuleNode( rule, displayEmbedding, {
+            cursor: 'pointer',
+            inputListeners: [ inputListener ],
+            scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
+          } );
+          // return new Rectangle( 0, 0, 2, 2, { fill: 'red' } );
+        }
+        else {
+          return new PatternRuleNode( rule, planarPatternMap, {
+            cursor: 'pointer',
+            inputListeners: [ inputListener ],
+          } );
+        }
       } );
     }
     else {
@@ -372,7 +402,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
       // TODO: This might not be worth the CPU?
       let bestScale = 0;
       let bestColumns = 0;
-      _.range( 3, 11 ).forEach( columns => {
+      _.range( 1, 11 ).forEach( columns => {
         rulesGridBox.autoColumns = columns;
 
         const idealScale = Math.min(
