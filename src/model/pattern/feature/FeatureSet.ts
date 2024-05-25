@@ -846,7 +846,7 @@ export class FeatureSet {
         for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
           const embedding = scratchEmbeddingsArray[ j ];
 
-          const embeddedFace = embedding.faceInverseMap!.get( face )!;
+          const embeddedFace = embedding.inverseMapFace( face );
           assertEnabled() && assert( embeddedFace );
 
           const embeddedFaceValue = this.faceValueMap.get( embeddedFace );
@@ -872,7 +872,7 @@ export class FeatureSet {
         for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
           const embedding = scratchEmbeddingsArray[ j ];
 
-          const embeddedEdge = embedding.edgeInverseMap!.get( edge )!;
+          const embeddedEdge = embedding.inverseMapEdge( edge );
           assertEnabled() && assert( embeddedEdge );
 
           const embeddedEdgeComparable = this.blackEdges.has( embeddedEdge ) ? 1 : ( this.redEdges.has( embeddedEdge ) ? 2 : 0 );
@@ -900,7 +900,7 @@ export class FeatureSet {
         for ( let j = 0; j < scratchEmbeddingsArray.length; j++ ) {
           const embedding = scratchEmbeddingsArray[ j ];
 
-          const embeddedSector = embedding.sectorInverseMap!.get( sector )!;
+          const embeddedSector = embedding.inverseMapSector( sector );
           assertEnabled() && assert( embeddedSector );
 
           const embeddedSectorComparable = ( this.sectorsOnlyOne.has( embeddedSector ) ? 1 : 0 ) +

@@ -71,7 +71,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   - 
   - RULE VIEWER
-    - rules.html
+    - rule-explorer.html
       - MOVE the "page control" to bottom of the grid area
       - Show embeddings(!), this is REALLY HELPFUL for larger ones
       - 

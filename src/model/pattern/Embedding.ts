@@ -11,12 +11,12 @@ export class Embedding {
   public readonly isIdentityAutomorphism: boolean;
 
   // Defined if it is an automorphism
-  public readonly vertexInverseMap?: Map<TPatternVertex, TPatternVertex>;
-  public readonly edgeInverseMap?: Map<TPatternEdge, TPatternEdge>;
-  public readonly sectorInverseMap?: Map<TPatternSector, TPatternSector>;
-  public readonly faceInverseMap?: Map<TPatternFace, TPatternFace>;
+  private readonly vertexInverseMap?: Map<TPatternVertex, TPatternVertex>;
+  private readonly edgeInverseMap?: Map<TPatternEdge, TPatternEdge>;
+  private readonly sectorInverseMap?: Map<TPatternSector, TPatternSector>;
+  private readonly faceInverseMap?: Map<TPatternFace, TPatternFace>;
 
-  public constructor(
+  private constructor(
     public readonly sourcePatternBoard: TPatternBoard,
     public readonly targetPatternBoard: TPatternBoard,
     // TODO: consider alternate implementation with fewer objects?
@@ -117,6 +117,34 @@ export class Embedding {
 
   public mapFace( face: TPatternFace ): TPatternFace {
     const result = this.faceMap.get( face )!;
+    assertEnabled() && assert( result );
+
+    return result;
+  }
+
+  public inverseMapVertex( vertex: TPatternVertex ): TPatternVertex {
+    const result = this.vertexInverseMap!.get( vertex )!;
+    assertEnabled() && assert( result );
+
+    return result;
+  }
+
+  public inverseMapEdge( edge: TPatternEdge ): TPatternEdge {
+    const result = this.edgeInverseMap!.get( edge )!;
+    assertEnabled() && assert( result );
+
+    return result;
+  }
+
+  public inverseMapSector( sector: TPatternSector ): TPatternSector {
+    const result = this.sectorInverseMap!.get( sector )!;
+    assertEnabled() && assert( result );
+
+    return result;
+  }
+
+  public inverseMapFace( face: TPatternFace ): TPatternFace {
+    const result = this.faceInverseMap!.get( face )!;
     assertEnabled() && assert( result );
 
     return result;
