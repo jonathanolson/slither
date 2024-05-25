@@ -30,6 +30,9 @@ import { createBoardDescriptor } from './model/board/core/createBoardDescriptor.
 import { BaseBoard } from './model/board/core/BaseBoard.ts';
 import { TFace } from './model/board/core/TFace.ts';
 import { TSector } from './model/data/sector-state/TSector.ts';
+import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
+import { CompleteData } from './model/data/combined/CompleteData.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -106,7 +109,9 @@ class DisplayTiling extends EnumerationValue {
 }
 
 class DisplayEmbedding {
+
   public constructor(
+    public readonly patternBoard: TPatternBoard,
     public readonly displayTiling: DisplayTiling,
     public readonly embedding: Embedding,
     public readonly smallBoard: TBoard,
@@ -114,6 +119,160 @@ class DisplayEmbedding {
     public readonly toSmallEdgeMap: Map<TEdge, TEdge>,
     public readonly toSmallSectorMap: Map<TSector, TSector>,
   ) {}
+
+  public mapFace( face: TPatternFace ): TFace | null {
+    const embeddedFace = this.embedding.mapFace( face );
+    const largeFace = this.displayTiling.boardPatternBoard.getFace( embeddedFace );
+    if ( largeFace ) {
+      const smallFace = this.toSmallFaceMap.get( largeFace )!;
+      assertEnabled() && assert( smallFace );
+
+      return smallFace;
+    }
+    else {
+      return null;
+    }
+  }
+
+  // TODO: how to better handle "question" mark features
+  public getEmbeddedCompleteData( featureSet: FeatureSet ): CompleteData {
+    for ( const feature of featureSet.getFeaturesArray() ) {
+      if ( feature instanceof FaceFeature ) {
+
+      }
+    }
+  }
+
+  public static getBest( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): DisplayEmbedding | null {
+    const embeddings = computeEmbeddings( patternBoard, displayTiling.boardPatternBoard );
+
+    if ( embeddings.length === 0 ) {
+      return null;
+    }
+
+    const displayTilingBounds = Bounds2.NOTHING.copy();
+    displayTiling.board.vertices.forEach( vertex => displayTilingBounds.addPoint( vertex.viewCoordinates ) );
+
+    const displayTilingCenter = displayTilingBounds.center;
+
+    let bestEmbedding: Embedding | null = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    let bestBounds: Bounds2 | null = null;
+
+    for ( let i = 0; i < embeddings.length; i++ ) {
+      const embedding = embeddings[ i ];
+
+      const embeddingBounds = Bounds2.NOTHING.copy();
+
+      const addPatternVertex = ( vertex: TPatternVertex ) => {
+        embeddingBounds.addPoint( displayTiling.boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
+      };
+      patternBoard.vertices.forEach( addPatternVertex );
+
+      const addPatternFace = ( face: TPatternFace ) => {
+        const mappedFace = displayTiling.boardPatternBoard.getFace( embedding.mapFace( face ) );
+        if ( mappedFace ) {
+          mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
+        }
+      };
+      patternBoard.faces.forEach( addPatternFace );
+
+      patternBoard.edges.forEach( edge => {
+        let edges: TEdge[];
+        if ( edge.isExit ) {
+          edges = embedding.mapExitEdges( edge ).map( exitEdge => displayTiling.boardPatternBoard.getEdge( exitEdge ) );
+        }
+        else {
+          edges = [ displayTiling.boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
+        }
+        edges.forEach( mappedEdge => {
+          embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
+          embeddingBounds.addPoint( mappedEdge.end.viewCoordinates );
+        } );
+      } );
+
+      const embeddingCenter = embeddingBounds.center;
+
+      const distance = displayTilingCenter.distance( embeddingCenter );
+
+      if ( distance < bestDistance ) {
+        bestDistance = distance;
+        bestEmbedding = embedding;
+        bestBounds = embeddingBounds;
+      }
+    }
+
+    // TODO: do this improved TBoard handling for AnnotationNode(!), then get rid of the face filtering stuff
+
+    const expandedBoardBounds = bestBounds!.dilated( 0.5 ); // TODO: we might want to update this to be larger
+
+    const includedBoardFaces = displayTiling.board.faces.filter( face => {
+      const faceBounds = Bounds2.NOTHING.copy();
+      face.vertices.forEach( vertex => faceBounds.addPoint( vertex.viewCoordinates ) );
+      return expandedBoardBounds.intersectsBounds( faceBounds );
+    } );
+    const includedBoardVertices = displayTiling.board.vertices.filter( vertex => vertex.faces.some( face => includedBoardFaces.includes( face ) ) );
+
+    const boardDescriptor = createBoardDescriptor( {
+      vertices: includedBoardVertices.map( vertex => {
+        return {
+          logicalCoordinates: vertex.logicalCoordinates,
+          viewCoordinates: vertex.viewCoordinates,
+        };
+      } ),
+      faces: includedBoardFaces.map( face => {
+        return {
+          logicalCoordinates: face.logicalCoordinates,
+          vertices: face.vertices.map( vertex => {
+            return {
+              logicalCoordinates: vertex.logicalCoordinates,
+              viewCoordinates: vertex.viewCoordinates,
+            };
+          } ),
+        };
+      } ),
+    } );
+
+    const smallBoard = new BaseBoard( boardDescriptor );
+
+    const epsilon = 1e-6;
+
+    const toSmallFaceMap = new Map<TFace, TFace>( includedBoardFaces.map( ( face, index ) => {
+      const smallFace = smallBoard.faces.find( f => f.viewCoordinates.equalsEpsilon( face.viewCoordinates, epsilon ) )!;
+      assertEnabled() && assert( smallFace );
+
+      return [ face, smallFace ];
+    } ) );
+
+    const toSmallEdgeMap = new Map<TEdge, TEdge>( displayTiling.board.edges.map( edge => {
+      const smallEdge = smallBoard.edges.find( e => {
+        return ( e.start.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) ) ||
+               ( e.start.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) );
+      } ) ?? null;
+
+      return smallEdge ? [ edge, smallEdge ] : null;
+    } ).filter( e => e !== null ) as [ TEdge, TEdge ][] );
+
+    const toSmallSectorMap = new Map<TSector, TSector>( displayTiling.board.halfEdges.map( sector => {
+      const smallSector = smallBoard.halfEdges.find( s => {
+        return s.start.viewCoordinates.equalsEpsilon( sector.start.viewCoordinates, epsilon ) && s.end.viewCoordinates.equalsEpsilon( sector.end.viewCoordinates, epsilon );
+      } ) ?? null;
+
+      return smallSector ? [ sector, smallSector ] : null;
+    } ).filter( e => e !== null ) as [ TSector, TSector ][] );
+
+    assertEnabled() && assert( bestEmbedding );
+
+    return new DisplayEmbedding(
+      patternBoard,
+      displayTiling,
+      bestEmbedding!,
+      smallBoard,
+      toSmallFaceMap,
+      toSmallEdgeMap,
+      toSmallSectorMap,
+    );
+  }
 }
 
 // TODO: add reset on fail conditions
@@ -131,134 +290,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   let embedding = patternMap.get( displayTiling );
 
   if ( embedding === undefined ) {
-    const embeddings = computeEmbeddings( patternBoard, displayTiling.boardPatternBoard );
-
-    if ( embeddings.length ) {
-      const displayTilingBounds = Bounds2.NOTHING.copy();
-      displayTiling.board.vertices.forEach( vertex => displayTilingBounds.addPoint( vertex.viewCoordinates ) );
-
-      const displayTilingCenter = displayTilingBounds.center;
-
-      let bestEmbedding: Embedding | null = null;
-      let bestDistance = Number.POSITIVE_INFINITY;
-      let bestBounds: Bounds2 | null = null;
-
-      for ( let i = 0; i < embeddings.length; i++ ) {
-        const embedding = embeddings[ i ];
-
-        const embeddingBounds = Bounds2.NOTHING.copy();
-
-        const addPatternVertex = ( vertex: TPatternVertex ) => {
-          embeddingBounds.addPoint( displayTiling.boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
-        };
-        patternBoard.vertices.forEach( addPatternVertex );
-
-        const addPatternFace = ( face: TPatternFace ) => {
-          const mappedFace = displayTiling.boardPatternBoard.getFace( embedding.mapFace( face ) );
-          if ( mappedFace ) {
-            mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
-          }
-        };
-        patternBoard.faces.forEach( addPatternFace );
-
-        patternBoard.edges.forEach( edge => {
-          let edges: TEdge[];
-          if ( edge.isExit ) {
-            edges = embedding.mapExitEdges( edge ).map( exitEdge => displayTiling.boardPatternBoard.getEdge( exitEdge ) );
-          }
-          else {
-            edges = [ displayTiling.boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
-          }
-          edges.forEach( mappedEdge => {
-            embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
-            embeddingBounds.addPoint( mappedEdge.end.viewCoordinates );
-          } );
-        } );
-
-        const embeddingCenter = embeddingBounds.center;
-
-        const distance = displayTilingCenter.distance( embeddingCenter );
-
-        if ( distance < bestDistance ) {
-          bestDistance = distance;
-          bestEmbedding = embedding;
-          bestBounds = embeddingBounds;
-        }
-      }
-
-      // TODO: do this improved TBoard handling for AnnotationNode(!), then get rid of the face filtering stuff
-
-      const expandedBoardBounds = bestBounds!.dilated( 0.5 ); // TODO: we might want to update this to be larger
-
-      const includedBoardFaces = displayTiling.board.faces.filter( face => {
-        const faceBounds = Bounds2.NOTHING.copy();
-        face.vertices.forEach( vertex => faceBounds.addPoint( vertex.viewCoordinates ) );
-        return expandedBoardBounds.intersectsBounds( faceBounds );
-      } );
-      const includedBoardVertices = displayTiling.board.vertices.filter( vertex => vertex.faces.some( face => includedBoardFaces.includes( face ) ) );
-
-      const boardDescriptor = createBoardDescriptor( {
-        vertices: includedBoardVertices.map( vertex => {
-          return {
-            logicalCoordinates: vertex.logicalCoordinates,
-            viewCoordinates: vertex.viewCoordinates,
-          };
-        } ),
-        faces: includedBoardFaces.map( face => {
-          return {
-            logicalCoordinates: face.logicalCoordinates,
-            vertices: face.vertices.map( vertex => {
-              return {
-                logicalCoordinates: vertex.logicalCoordinates,
-                viewCoordinates: vertex.viewCoordinates,
-              };
-            } ),
-          };
-        } ),
-      } );
-
-      const smallBoard = new BaseBoard( boardDescriptor );
-
-      const epsilon = 1e-6;
-
-      const toSmallFaceMap = new Map<TFace, TFace>( includedBoardFaces.map( ( face, index ) => {
-        const smallFace = smallBoard.faces.find( f => f.viewCoordinates.equalsEpsilon( face.viewCoordinates, epsilon ) )!;
-        assertEnabled() && assert( smallFace );
-
-        return [ face, smallFace ];
-      } ) );
-
-      const toSmallEdgeMap = new Map<TEdge, TEdge>( displayTiling.board.edges.map( edge => {
-        const smallEdge = smallBoard.edges.find( e => {
-          return ( e.start.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) ) ||
-                 ( e.start.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) );
-        } ) ?? null;
-
-        return smallEdge ? [ edge, smallEdge ] : null;
-      } ).filter( e => e !== null ) as [ TEdge, TEdge ][] );
-
-      const toSmallSectorMap = new Map<TSector, TSector>( displayTiling.board.halfEdges.map( sector => {
-        const smallSector = smallBoard.halfEdges.find( s => {
-          return s.start.viewCoordinates.equalsEpsilon( sector.start.viewCoordinates, epsilon ) && s.end.viewCoordinates.equalsEpsilon( sector.end.viewCoordinates, epsilon );
-        } ) ?? null;
-
-        return smallSector ? [ sector, smallSector ] : null;
-      } ).filter( e => e !== null ) as [ TSector, TSector ][] );
-
-      assertEnabled() && assert( bestEmbedding );
-
-      embedding = new DisplayEmbedding(
-        displayTiling,
-        bestEmbedding!,
-        smallBoard,
-        toSmallFaceMap,
-        toSmallEdgeMap,
-        toSmallSectorMap,
-      );
-    }
-    else {
-      embedding = null;
-    }
+    embedding = DisplayEmbedding.getBest( patternBoard, displayTiling );
 
     patternMap.set( displayTiling, embedding );
   }
