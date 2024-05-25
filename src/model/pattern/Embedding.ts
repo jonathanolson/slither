@@ -46,6 +46,27 @@ export class Embedding {
     this.isIdentityAutomorphism = this.computeIsIdentityAutomorphism();
   }
 
+  public static fromMaps(
+    sourcePatternBoard: TPatternBoard,
+    targetPatternBoard: TPatternBoard,
+    // TODO: consider alternate implementation with fewer objects?
+    vertexMap: Map<TPatternVertex, TPatternVertex>,
+    nonExitEdgeMap: Map<TPatternEdge, TPatternEdge>,
+    exitEdgeMap: Map<TPatternEdge, TPatternEdge[]>,
+    sectorMap: Map<TPatternSector, TPatternSector>,
+    faceMap: Map<TPatternFace, TPatternFace>,
+  ) {
+    return new Embedding(
+      sourcePatternBoard,
+      targetPatternBoard,
+      vertexMap,
+      nonExitEdgeMap,
+      exitEdgeMap,
+      sectorMap,
+      faceMap,
+    );
+  }
+
   public getVertexMap(): Map<TPatternVertex, TPatternVertex> {
     return this.vertexMap;
   }

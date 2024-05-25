@@ -233,7 +233,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               sectorMap.set( patternSector, targetSector );
             }
 
-            // console.log( new Embedding(
+            // console.log( Embedding.fromMaps(
             //   vertexMap,
             //   nonExitEdgeMap,
             //   exitEdgeMap,
@@ -241,7 +241,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             //   faceMap,
             // ).toString() );
 
-            embeddings.push( new Embedding(
+            embeddings.push( Embedding.fromMaps(
               pattern,
               board,
               vertexMap,
@@ -620,7 +620,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             }
           }
 
-          embeddings.push( new Embedding(
+          embeddings.push( Embedding.fromMaps(
             pattern,
             board,
             vertexMap,
@@ -693,7 +693,7 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
     const patternEdge = pattern.edges[ 0 ];
 
     for ( const targetEdge of board.edges.filter( boardEdge => !boardEdge.isExit ) ) {
-      embeddings.push( new Embedding(
+      embeddings.push( Embedding.fromMaps(
         pattern,
         board,
         new Map(),
