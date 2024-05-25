@@ -268,6 +268,8 @@ export class AnnotationNode extends Node {
         const outputState = CompleteData.empty( board );
         const questionFaces = new Set<TFace>( board.faces );
 
+        // TODO: use things from rule-explorer?
+
         const addState = ( state: CompleteData, annotatedPattern: AnnotatedPattern ) => {
           annotatedPattern.faceValues.forEach( valueAnnotation => {
             if ( valueAnnotation.face ) {

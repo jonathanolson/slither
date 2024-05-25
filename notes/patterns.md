@@ -52,6 +52,11 @@
   - 
   - SWAP IN the "better rule collection that matches our display mode" solving!!!
   - 
+  - embeddings in rule-explorer
+    - DisplayEmbedding.getEmbeddedCompleteData complete, USE IT
+    - Model off of AnnotationNode
+    - Create getRuleNode( patternRule: PatternRule )? --- or have EmbeddedRuleNode take this in
+  - 
   - EmbeddedRuleNode(!!!!) 
     - extract DisplayTiling / DisplayEmbedding (or something similar)
   - 

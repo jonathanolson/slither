@@ -33,6 +33,21 @@ import { TSector } from './model/data/sector-state/TSector.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import { CompleteData } from './model/data/combined/CompleteData.ts';
 import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { TPatternEdge } from './model/pattern/TPatternEdge.ts';
+import { TPatternSector } from './model/pattern/TPatternSector.ts';
+import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
+import EdgeState from './model/data/edge-state/EdgeState.ts';
+import { SectorNotZeroFeature } from './model/pattern/feature/SectorNotZeroFeature.ts';
+import SectorState from './model/data/sector-state/SectorState.ts';
+import { SectorNotOneFeature } from './model/pattern/feature/SectorNotOneFeature.ts';
+import { SectorNotTwoFeature } from './model/pattern/feature/SectorNotTwoFeature.ts';
+import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
+import { safeSolve } from './model/solver/safeSolve.ts';
+import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
+import { FaceColorMakeSameAction } from './model/data/face-color/FaceColorMakeSameAction.ts';
+import { getFaceColorPointer } from './model/data/face-color/FaceColorPointer.ts';
+import { FaceColorMakeOppositeAction } from './model/data/face-color/FaceColorMakeOppositeAction.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -134,13 +149,91 @@ class DisplayEmbedding {
     }
   }
 
+  public mapEdge( edge: TPatternEdge ): TEdge[] {
+    const embeddedEdges = edge.isExit ? this.embedding.mapExitEdges( edge ) : [ this.embedding.mapNonExitEdge( edge ) ];
+    const largeEdges = embeddedEdges.map( embeddedEdge => this.displayTiling.boardPatternBoard.getEdge( embeddedEdge ) );
+    return largeEdges.map( largeEdge => {
+      const smallEdge = this.toSmallEdgeMap.get( largeEdge )!;
+      assertEnabled() && assert( smallEdge );
+
+      return smallEdge;
+    } );
+  }
+
+  public mapSector( sector: TPatternSector ): TSector {
+    const embeddedSector = this.embedding.mapSector( sector );
+    const largeSector = this.displayTiling.boardPatternBoard.getSector( embeddedSector );
+    const smallSector = this.toSmallSectorMap.get( largeSector )!;
+    assertEnabled() && assert( smallSector );
+
+    return smallSector;
+  }
+
   // TODO: how to better handle "question" mark features
   public getEmbeddedCompleteData( featureSet: FeatureSet ): CompleteData {
+    const state = CompleteData.empty( this.smallBoard );
+
     for ( const feature of featureSet.getFeaturesArray() ) {
       if ( feature instanceof FaceFeature ) {
+        if ( feature.value !== null ) {
+          state.setFaceValue( this.mapFace( feature.face )!, feature.value );
+        }
+      }
+      else if ( feature instanceof BlackEdgeFeature ) {
+        this.mapEdge( feature.edge ).forEach( edge => state.setEdgeState( edge, EdgeState.BLACK ) );
+      }
+      else if ( feature instanceof RedEdgeFeature ) {
+        this.mapEdge( feature.edge ).forEach( edge => state.setEdgeState( edge, EdgeState.RED ) );
+      }
+      else if ( feature instanceof SectorNotZeroFeature ) {
+        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_ZERO );
+      }
+      else if ( feature instanceof SectorNotOneFeature ) {
+        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_ONE );
+      }
+      else if ( feature instanceof SectorNotTwoFeature ) {
+        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_TWO );
+      }
+      else if ( feature instanceof SectorOnlyOneFeature ) {
+        state.setSectorState( this.mapSector( feature.sector ), SectorState.ONLY_ONE );
+      }
+      else if ( feature instanceof FaceColorDualFeature ) {
+        const makeSame = ( a: TPatternFace, b: TPatternFace ) => {
+          const mappedA = this.mapFace( a );
+          const mappedB = this.mapFace( b );
 
+          const aColor = mappedA ? state.getFaceColor( mappedA ) : state.getOutsideColor();
+          const bColor = mappedB ? state.getFaceColor( mappedB ) : state.getOutsideColor();
+
+          new FaceColorMakeSameAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
+        };
+        const makeOpposite = ( a: TPatternFace, b: TPatternFace ) => {
+          const mappedA = this.mapFace( a );
+          const mappedB = this.mapFace( b );
+
+          const aColor = mappedA ? state.getFaceColor( mappedA ) : state.getOutsideColor();
+          const bColor = mappedB ? state.getFaceColor( mappedB ) : state.getOutsideColor();
+
+          new FaceColorMakeOppositeAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
+        };
+        for ( let i = 1; i < feature.primaryFaces.length; i++ ) {
+          makeSame( feature.primaryFaces[ i - 1 ], feature.primaryFaces[ i ] );
+        }
+        for ( let j = 1; j < feature.secondaryFaces.length; j++ ) {
+          makeSame( feature.secondaryFaces[ j - 1 ], feature.secondaryFaces[ j ] );
+        }
+        if ( feature.secondaryFaces.length ) {
+          makeOpposite( feature.primaryFaces[ 0 ], feature.secondaryFaces[ 0 ] );
+        }
+      }
+      else {
+        throw new Error( `unhandled feature: ${feature}` );
       }
     }
+
+    safeSolve( this.smallBoard, state );
+
+    return state;
   }
 
   public static getBest( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): DisplayEmbedding | null {
