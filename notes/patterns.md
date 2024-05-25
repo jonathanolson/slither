@@ -70,6 +70,9 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - EmbeddedRuleNode(!!!!) 
+    - extract DisplayTiling / DisplayEmbedding (or something similar)
+  - 
   - RULE VIEWER
     - rule-explorer.html
       - MOVE the "page control" to bottom of the grid area
@@ -91,6 +94,15 @@
     - 
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
       - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
+  - 
+  - ZOMG ZOMG ZOMG ZOMG OMZG OMZOGMZOGMOSMGOSRIMGOSIMRGOSIRMGOSIMRGOSIRMGOSGIMROSIMRG
+  - ------------------
+  - PatternRule TRUE INCIDENCE
+    - Generate "uniform" puzzles (TRULY UNIFORMLY?)
+    - Then examine how many of the unique embeddings MATCH (check embedding equality!) across many puzzles!!!
+  - SOLVING INCIDENCE
+    - As we are solving a puzzle, how often does a rule come up?
+      - Clearly changes with rankings? - but we can also note how often a rule sits unused? THINK
   - 
   - "INCREMENTAL" way of computing progress --- also one that WILL NOT CRASH when it has results?
   - 
