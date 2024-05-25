@@ -127,6 +127,8 @@ class DisplayEmbedding {
 
   public constructor(
     public readonly patternBoard: TPatternBoard,
+
+    // TODO: unhook this from DisplayTiling. We only need the board and boardPatternBoard
     public readonly displayTiling: DisplayTiling,
     public readonly embedding: Embedding,
     public readonly smallBoard: TBoard,
