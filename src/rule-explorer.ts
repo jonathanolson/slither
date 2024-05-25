@@ -126,10 +126,9 @@ class DisplayTiling extends EnumerationValue {
 class DisplayEmbedding {
 
   public constructor(
-    public readonly patternBoard: TPatternBoard,
-
-    // TODO: unhook this from DisplayTiling. We only need the board and boardPatternBoard
-    public readonly displayTiling: DisplayTiling,
+    public readonly sourcePatternBoard: TPatternBoard,
+    public readonly boardPatternBoard: BoardPatternBoard,
+    public readonly largeBoard: TBoard,
     public readonly embedding: Embedding,
     public readonly smallBoard: TBoard,
     public readonly toSmallFaceMap: Map<TFace, TFace>,
@@ -139,7 +138,7 @@ class DisplayEmbedding {
 
   public mapFace( face: TPatternFace ): TFace | null {
     const embeddedFace = this.embedding.mapFace( face );
-    const largeFace = this.displayTiling.boardPatternBoard.getFace( embeddedFace );
+    const largeFace = this.boardPatternBoard.getFace( embeddedFace );
     if ( largeFace ) {
       const smallFace = this.toSmallFaceMap.get( largeFace )!;
       assertEnabled() && assert( smallFace );
@@ -153,7 +152,7 @@ class DisplayEmbedding {
 
   public mapEdge( edge: TPatternEdge ): TEdge[] {
     const embeddedEdges = edge.isExit ? this.embedding.mapExitEdges( edge ) : [ this.embedding.mapNonExitEdge( edge ) ];
-    const largeEdges = embeddedEdges.map( embeddedEdge => this.displayTiling.boardPatternBoard.getEdge( embeddedEdge ) );
+    const largeEdges = embeddedEdges.map( embeddedEdge => this.boardPatternBoard.getEdge( embeddedEdge ) );
     return largeEdges.map( largeEdge => {
       const smallEdge = this.toSmallEdgeMap.get( largeEdge )!;
       assertEnabled() && assert( smallEdge );
@@ -164,7 +163,7 @@ class DisplayEmbedding {
 
   public mapSector( sector: TPatternSector ): TSector {
     const embeddedSector = this.embedding.mapSector( sector );
-    const largeSector = this.displayTiling.boardPatternBoard.getSector( embeddedSector );
+    const largeSector = this.boardPatternBoard.getSector( embeddedSector );
     const smallSector = this.toSmallSectorMap.get( largeSector )!;
     assertEnabled() && assert( smallSector );
 
@@ -238,15 +237,19 @@ class DisplayEmbedding {
     return state;
   }
 
-  public static getBest( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): DisplayEmbedding | null {
-    const embeddings = computeEmbeddings( patternBoard, displayTiling.boardPatternBoard );
+  public static getBest(
+    sourcePatternBoard: TPatternBoard,
+    boardPatternBoard: BoardPatternBoard,
+    largeBoard: TBoard,
+  ): DisplayEmbedding | null {
+    const embeddings = computeEmbeddings( sourcePatternBoard, boardPatternBoard );
 
     if ( embeddings.length === 0 ) {
       return null;
     }
 
     const displayTilingBounds = Bounds2.NOTHING.copy();
-    displayTiling.board.vertices.forEach( vertex => displayTilingBounds.addPoint( vertex.viewCoordinates ) );
+    largeBoard.vertices.forEach( vertex => displayTilingBounds.addPoint( vertex.viewCoordinates ) );
 
     const displayTilingCenter = displayTilingBounds.center;
 
@@ -260,25 +263,25 @@ class DisplayEmbedding {
       const embeddingBounds = Bounds2.NOTHING.copy();
 
       const addPatternVertex = ( vertex: TPatternVertex ) => {
-        embeddingBounds.addPoint( displayTiling.boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
+        embeddingBounds.addPoint( boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
       };
-      patternBoard.vertices.forEach( addPatternVertex );
+      sourcePatternBoard.vertices.forEach( addPatternVertex );
 
       const addPatternFace = ( face: TPatternFace ) => {
-        const mappedFace = displayTiling.boardPatternBoard.getFace( embedding.mapFace( face ) );
+        const mappedFace = boardPatternBoard.getFace( embedding.mapFace( face ) );
         if ( mappedFace ) {
           mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
         }
       };
-      patternBoard.faces.forEach( addPatternFace );
+      sourcePatternBoard.faces.forEach( addPatternFace );
 
-      patternBoard.edges.forEach( edge => {
+      sourcePatternBoard.edges.forEach( edge => {
         let edges: TEdge[];
         if ( edge.isExit ) {
-          edges = embedding.mapExitEdges( edge ).map( exitEdge => displayTiling.boardPatternBoard.getEdge( exitEdge ) );
+          edges = embedding.mapExitEdges( edge ).map( exitEdge => boardPatternBoard.getEdge( exitEdge ) );
         }
         else {
-          edges = [ displayTiling.boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
+          edges = [ boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
         }
         edges.forEach( mappedEdge => {
           embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
@@ -301,12 +304,12 @@ class DisplayEmbedding {
 
     const expandedBoardBounds = bestBounds!.dilated( 0.5 ); // TODO: we might want to update this to be larger
 
-    const includedBoardFaces = displayTiling.board.faces.filter( face => {
+    const includedBoardFaces = largeBoard.faces.filter( face => {
       const faceBounds = Bounds2.NOTHING.copy();
       face.vertices.forEach( vertex => faceBounds.addPoint( vertex.viewCoordinates ) );
       return expandedBoardBounds.intersectsBounds( faceBounds );
     } );
-    const includedBoardVertices = displayTiling.board.vertices.filter( vertex => vertex.faces.some( face => includedBoardFaces.includes( face ) ) );
+    const includedBoardVertices = largeBoard.vertices.filter( vertex => vertex.faces.some( face => includedBoardFaces.includes( face ) ) );
 
     const boardDescriptor = createBoardDescriptor( {
       vertices: includedBoardVertices.map( vertex => {
@@ -339,7 +342,7 @@ class DisplayEmbedding {
       return [ face, smallFace ];
     } ) );
 
-    const toSmallEdgeMap = new Map<TEdge, TEdge>( displayTiling.board.edges.map( edge => {
+    const toSmallEdgeMap = new Map<TEdge, TEdge>( largeBoard.edges.map( edge => {
       const smallEdge = smallBoard.edges.find( e => {
         return ( e.start.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) ) ||
                ( e.start.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) );
@@ -348,7 +351,7 @@ class DisplayEmbedding {
       return smallEdge ? [ edge, smallEdge ] : null;
     } ).filter( e => e !== null ) as [ TEdge, TEdge ][] );
 
-    const toSmallSectorMap = new Map<TSector, TSector>( displayTiling.board.halfEdges.map( sector => {
+    const toSmallSectorMap = new Map<TSector, TSector>( largeBoard.halfEdges.map( sector => {
       const smallSector = smallBoard.halfEdges.find( s => {
         return s.start.viewCoordinates.equalsEpsilon( sector.start.viewCoordinates, epsilon ) && s.end.viewCoordinates.equalsEpsilon( sector.end.viewCoordinates, epsilon );
       } ) ?? null;
@@ -359,8 +362,9 @@ class DisplayEmbedding {
     assertEnabled() && assert( bestEmbedding );
 
     return new DisplayEmbedding(
-      patternBoard,
-      displayTiling,
+      sourcePatternBoard,
+      boardPatternBoard,
+      largeBoard,
       bestEmbedding!,
       smallBoard,
       toSmallFaceMap,
@@ -385,7 +389,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   let embedding = patternMap.get( displayTiling );
 
   if ( embedding === undefined ) {
-    embedding = DisplayEmbedding.getBest( patternBoard, displayTiling );
+    embedding = DisplayEmbedding.getBest( patternBoard, displayTiling.boardPatternBoard, displayTiling.board );
 
     patternMap.set( displayTiling, embedding );
   }
