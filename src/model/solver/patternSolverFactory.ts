@@ -3,39 +3,52 @@ import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { ScanPatternSolver } from './ScanPatternSolver.ts';
-import { curatedRules } from '../pattern/data/curatedRules.ts';
 import { standardSolverFactory } from './standardSolverFactory.ts';
 import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
-import { getEmbeddings } from '../pattern/getEmbeddings.ts';
-import { BinaryRuleCollection } from '../pattern/BinaryRuleCollection.ts';
-import allBinaryData from '../../../data-collections/binary-all-10-edge-20-highlander.json';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
+import { BinaryRuleGroup } from '../pattern/rule-group/BinaryRuleGroup.ts';
+import { getGeneralEdgeGroup } from '../pattern/rule-group/getGeneralEdgeGroup.ts';
+import { TinyProperty } from 'phet-lib/axon';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { getGeneralColorGroup } from '../pattern/rule-group/getGeneralColorGroup.ts';
+import { getGeneralEdgeColorGroup } from '../pattern/rule-group/getGeneralEdgeColorGroup.ts';
+import { getGeneralEdgeSectorGroup } from '../pattern/rule-group/getGeneralEdgeSectorGroup.ts';
+import { getGeneralAllGroup } from '../pattern/rule-group/getGeneralAllGroup.ts';
+import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
+import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
+import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 
-let embeddableCollection: BinaryRuleCollection = BinaryRuleCollection.empty();
-let lastBoard: TBoard | null = null;
-let lastBoardPatternBoard: BoardPatternBoard | null = null;
+const generalEdgePatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
+const generalColorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
+const generalEdgeColorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
+const generalEdgeSectorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
+const generalAllPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
 
-export const patternSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+const getFactory = ( groupProperty: TinyProperty<BinaryRuleGroup | null>, getGroup: () => BinaryRuleGroup ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    if ( !groupProperty.value ) {
+      groupProperty.value = getGroup();
+    }
 
-  if ( board !== lastBoard ) {
-    lastBoard = board;
-    lastBoardPatternBoard = new BoardPatternBoard( board );
+    const group = groupProperty.value!;
+    assertEnabled() && assert( group );
 
-    const binaryCollection = BinaryRuleCollection.deserialize( allBinaryData );
+    // TODO: how can we NOT leak things? Embeddings...? Lazy creation?
+    const boardPatternBoard = new BoardPatternBoard( board );
 
-    embeddableCollection = binaryCollection.withPatternBoardFilter( patternBoard => {
-      return getEmbeddings( patternBoard, lastBoardPatternBoard! ).length > 0;
-    } );
-  }
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      new SafeEdgeToSimpleRegionSolver( board, state ),
+      new SafeSolvedEdgeSolver( board, state ),
+      new SafeEdgeToFaceColorSolver( board, state ),
 
-  const boardPatternBoard = lastBoardPatternBoard!;
-  const boardCollection = embeddableCollection;
-
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new ScanPatternSolver( board, boardPatternBoard, state, curatedRules.length, i => curatedRules[ i ] ),
-    // new ScanPatternSolver( board, boardPatternBoard, state, boardCollection.size, i => boardCollection.getRule( i ) ),
-    new BinaryPatternSolver( board, boardPatternBoard, state, boardCollection ),
-    standardSolverFactory( board, state, dirty ),
-  ] );
+      ...group.collections.map( collection => new BinaryPatternSolver( board, boardPatternBoard, state, collection ) ),
+      standardSolverFactory( board, state, dirty ),
+    ] );
+  };
 };
+
+export const generalEdgePatternSolverFactory = getFactory( generalEdgePatternGroupProperty, getGeneralEdgeGroup );
+export const generalColorPatternSolverFactory = getFactory( generalColorPatternGroupProperty, getGeneralColorGroup );
+export const generalEdgeColorPatternSolverFactory = getFactory( generalEdgeColorPatternGroupProperty, getGeneralEdgeColorGroup );
+export const generalEdgeSectorPatternSolverFactory = getFactory( generalEdgeSectorPatternGroupProperty, getGeneralEdgeSectorGroup );
+export const generalAllPatternSolverFactory = getFactory( generalAllPatternGroupProperty, getGeneralAllGroup );

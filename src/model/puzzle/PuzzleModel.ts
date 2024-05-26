@@ -1,7 +1,7 @@
 import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory, TSolver, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
@@ -38,7 +38,7 @@ import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
 import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
-import { patternSolverFactory } from '../solver/patternSolverFactory.ts';
+import { generalAllPatternSolverFactory, generalColorPatternSolverFactory, generalEdgeColorPatternSolverFactory, generalEdgePatternSolverFactory, generalEdgeSectorPatternSolverFactory } from '../solver/patternSolverFactory.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -609,7 +609,30 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       // TODO: figure out what is best here
       // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
       // const solver = standardSolverFactory( this.puzzle.board, state, true );
-      const solver = patternSolverFactory( this.puzzle.board, state, true );
+      // const solver = patternSolverFactory( this.puzzle.board, state, true );
+
+      const solveEdges = currentPuzzleStyle.edgesVisibleProperty.value;
+      const solveColors = currentPuzzleStyle.faceColorsVisibleProperty.value;
+      const solveSectors = currentPuzzleStyle.sectorsVisibleProperty.value;
+
+      let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
+      if ( solveEdges && !solveColors && !solveSectors ) {
+        factory = generalColorPatternSolverFactory;
+      }
+      else if ( solveColors && !solveEdges && !solveSectors ) {
+        factory = generalEdgePatternSolverFactory;
+      }
+      else if ( solveEdges && solveColors && !solveSectors ) {
+        factory = generalEdgeColorPatternSolverFactory;
+      }
+      else if ( solveEdges && solveSectors && !solveColors ) {
+        factory = generalEdgeSectorPatternSolverFactory;
+      }
+      else {
+        factory = generalAllPatternSolverFactory;
+      }
+
+      const solver = factory( this.puzzle.board, state, true );
 
       try {
         let action = solver.nextAction();

@@ -50,6 +50,13 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   - 
+  - PERFORMANCE BLOCKER:
+    - FaceColorDualFeature.fromPrimarySecondaryFaces on BoardPatternBoard super slow. -- or broken?
+      - LAZILY DO THIS
+  - 
+  - 
+  - SORT rules for the collections, so we aren't shooting off COMPLEX color/edge/sector things when simpler things would do.
+  - 
   - SWAP IN the "better rule collection that matches our display mode" solving!!!
   - 
   - STYLE SWAPPING in rule explorer
@@ -65,6 +72,10 @@
   - 
   - RULE VIEWER
     - rule-explorer.html
+      - handle "isomorphic when embedded"
+        - Which rules match other rules' embeddings?
+      - handle "collapse when embedded"
+        - PRECOMPUTE for rule explorer?
       - MOVE the "page control" to bottom of the grid area
       - Embeddings:
         - Should we "gray out" satisfied face values???
@@ -75,7 +86,6 @@
         - score
         - pattern boards
       - Filter by:
-        - pattern board
         - Quantity of features(!) -- no black edges? no red edges? hmmm
       - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
     - 
@@ -83,6 +93,8 @@
       - ?r=${getBinaryIdentifier()} 
       - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
         - getBinaryIdentifier()
+      - Show embeddings in the common tilings(!)
+        - POTENTIALLY show "unique to rotation/symmetry" embeddings?
     - 
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
       - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
