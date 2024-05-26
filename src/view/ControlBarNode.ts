@@ -1,4 +1,4 @@
-import { BooleanProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { HBox, Node } from 'phet-lib/scenery';
 import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
@@ -41,6 +41,14 @@ export default class ControlBarNode extends HBox {
         return puzzleModel ? puzzleModel.redoPossibleProperty : falseProperty;
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
+
+    const isSolvedProperty = new DynamicProperty( puzzleModelProperty, {
+      derive: ( puzzleModel: PuzzleModel | null ) => {
+        return puzzleModel ? puzzleModel.isSolvedProperty : falseProperty;
+      }
+    } ) as TReadOnlyProperty<boolean>; // Why, TS?
+
+    const isUnsolvedProperty = new DerivedProperty( [ isSolvedProperty ], isSolved => !isSolved );
 
     let genNode: GenNode | null = null;
     let shareNode: ShareNode | null = null;
@@ -155,7 +163,7 @@ export default class ControlBarNode extends HBox {
             }
           },
 
-          // TODO: enabledProperty
+          enabledProperty: isUnsolvedProperty,
 
           // TODO: factor these out
           textFill: currentTheme.uiButtonForegroundProperty,
@@ -173,7 +181,7 @@ export default class ControlBarNode extends HBox {
             }
           },
 
-          // TODO: enabledProperty
+          enabledProperty: isUnsolvedProperty,
 
           // TODO: factor these out
           textFill: currentTheme.uiButtonForegroundProperty,

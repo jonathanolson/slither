@@ -595,6 +595,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserRequestHint(): void {
+    // TODO: disable button?
+    if ( this.isSolvedProperty.value ) {
+      return;
+    }
+
     if ( this.pendingHintActionProperty.value ) {
       const action = this.pendingHintActionProperty.value;
       this.pendingHintActionProperty.value = null;
