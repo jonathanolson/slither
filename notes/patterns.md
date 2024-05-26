@@ -50,14 +50,11 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   -
-  - More spacing(!) on pattern rule views for hints(!)
+  - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
   - 
   - SORT rules for the collections, so we aren't shooting off COMPLEX color/edge/sector things when simpler things would do.
   - 
   - AnnotationNode use the other pattern helpful bits? (better for sector rules?)
-  - 
-  - STYLE SWAPPING in rule explorer
-    - And theme(!)
   - 
   - PuzzleNode perf
     - "StaticPuzzleNode" - creates minimalistic view, and can show ?s.
@@ -77,7 +74,6 @@
       - Embeddings:
         - Should we "gray out" satisfied face values???
       - 
-      - Work with themes
       - Better than pagination -- infinite scroll?
       - Sort by:
         - score

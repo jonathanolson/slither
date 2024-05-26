@@ -1,5 +1,5 @@
 import { Bounds2, Range } from 'phet-lib/dot';
-import { AlignBox, Display, FireListener, GridBox, HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { DerivedProperty, Multilink, Property } from 'phet-lib/axon';
 import { getGeneralEdgeGroup } from './model/pattern/rule-group/getGeneralEdgeGroup.ts';
@@ -7,7 +7,7 @@ import _ from './workarounds/_.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
-import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty } from './util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty, LocalStorageProperty } from './util/localStorage.ts';
 import { getGeneralColorGroup } from './model/pattern/rule-group/getGeneralColorGroup.ts';
 import { getGeneralEdgeColorGroup } from './model/pattern/rule-group/getGeneralEdgeColorGroup.ts';
 import { getGeneralEdgeSectorGroup } from './model/pattern/rule-group/getGeneralEdgeSectorGroup.ts';
@@ -23,6 +23,10 @@ import { ArrowButton, Slider } from 'phet-lib/sun';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { DisplayEmbedding } from './model/pattern/DisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
+import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
+import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
+import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -47,6 +51,10 @@ const display = new Display( rootNode, {
   listenToOnlyElement: false
 } );
 document.body.appendChild( display.domElement );
+
+currentPuzzleStyle.theme.uiBackgroundColorProperty.link( backgroundColor => {
+  display.backgroundColor = backgroundColor;
+} );
 
 window.oncontextmenu = e => e.preventDefault();
 
@@ -123,6 +131,14 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
 
 ( async () => {
 
+  const explorerPuzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'puzzleStyle', {
+    serialize: style => Object.keys( puzzleStyleMap ).find( key => puzzleStyleMap[ key as keyof typeof puzzleStyleMap ] === style )!,
+
+    // NOTE: Default to CLASSIC!
+    deserialize: name => name ? puzzleStyleMap[ name as keyof typeof puzzleStyleMap ] ?? classicPuzzleStyle : classicPuzzleStyle
+  } );
+  const explorerCurrentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( explorerPuzzleStyleProperty );
+
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.REGULAR );
   const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
@@ -179,6 +195,31 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     return group;
   } );
 
+  // Don't allow showing collections that we can't with our current style
+  Multilink.multilink( [
+    explorerCurrentPuzzleStyle.edgesVisibleProperty,
+    explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
+    explorerCurrentPuzzleStyle.sectorsVisibleProperty,
+  ], ( edgesVisible, colorsVisible, sectorsVisible ) => {
+    const currentMode = collectionModeProperty.value;
+
+    const currentNeedsEdges = currentMode !== CollectionMode.COLOR;
+    const currentNeedsColors = currentMode === CollectionMode.COLOR || currentMode === CollectionMode.EDGE_COLOR || currentMode === CollectionMode.ALL;
+    const currentNeedsSectors = currentMode === CollectionMode.EDGE_SECTOR || currentMode === CollectionMode.ALL;
+
+    if ( currentNeedsEdges && !edgesVisible ) {
+      collectionModeProperty.value = CollectionMode.COLOR;
+    }
+    else {
+      if ( currentNeedsColors && !colorsVisible ) {
+        collectionModeProperty.value = currentMode === CollectionMode.ALL ? CollectionMode.EDGE_SECTOR : CollectionMode.EDGE;
+      }
+      if ( currentNeedsSectors && !sectorsVisible ) {
+        collectionModeProperty.value = currentMode === CollectionMode.ALL ? CollectionMode.EDGE_COLOR : CollectionMode.EDGE;
+      }
+    }
+  } );
+
 
   // TODO: boo, can we change this?
   const rulesPerPage = 6;
@@ -206,31 +247,118 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     return _.range( minIndex, maxIndex ).map( i => group.getRule( i ) );
   } );
 
+
+  const viewStyleIcons = ViewStyleBarNode.getIcons();
+  const getViewLabel = ( icon: Node, text: string ) => new HBox( {
+    spacing: 5,
+    children: [
+      new UIText( text ),
+      icon,
+    ]
+  } );
+
+  const viewStyleNode = new UILabeledVerticalAquaRadioButtonGroup(
+    'View Style',
+    explorerPuzzleStyleProperty,
+    [
+      {
+        value: classicPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
+        labelContent: 'Classic'
+      },
+      {
+        value: basicLinesPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
+        labelContent: 'Basic Lines'
+      },
+      {
+        value: basicFaceColoringPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
+        labelContent: 'Basic Face Colors'
+      },
+      {
+        value: pureFaceColorPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
+        labelContent: 'Pure Face Colors'
+      },
+      {
+        value: basicSectorsPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Basic Sectors' ),
+        labelContent: 'Basic Sectors',
+      },
+      {
+        value: sectorsWithColorsPuzzleStyle,
+        createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Sectors With Colors' ),
+        labelContent: 'Sectors With Colors',
+      },
+    ]
+  );
+
+  const themeNode = new UILabeledVerticalAquaRadioButtonGroup(
+    'Theme',
+    themeProperty,
+    availableThemes.map( theme => {
+      return {
+        value: theme,
+        createNode: () => new Text( theme.name, {
+          font: uiFont,
+          fill: currentTheme.uiForegroundColorProperty
+        } ),
+        a11yName: theme.name
+      };
+    } )
+  );
+
   const collectionRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Collection', collectionModeProperty, [
     {
       value: CollectionMode.EDGE,
       labelContent: 'Edge',
       createNode: () => new UIText( 'Edge' ),
+      options: {
+        enabledProperty: explorerCurrentPuzzleStyle.edgesVisibleProperty,
+      },
     },
     {
       value: CollectionMode.COLOR,
       labelContent: 'Color',
       createNode: () => new UIText( 'Color' ),
+      options: {
+        enabledProperty: explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
+      },
     },
     {
       value: CollectionMode.EDGE_COLOR,
       labelContent: 'Edge + Color',
       createNode: () => new UIText( 'Edge + Color' ),
+      options: {
+        enabledProperty: DerivedProperty.and( [
+          explorerCurrentPuzzleStyle.edgesVisibleProperty,
+          explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
+        ] ),
+      },
     },
     {
       value: CollectionMode.EDGE_SECTOR,
       labelContent: 'Edge + Sector',
       createNode: () => new UIText( 'Edge + Sector' ),
+      options: {
+        enabledProperty: DerivedProperty.and( [
+          explorerCurrentPuzzleStyle.edgesVisibleProperty,
+          explorerCurrentPuzzleStyle.sectorsVisibleProperty,
+        ] ),
+      },
     },
     {
       value: CollectionMode.ALL,
       labelContent: 'Edge + Color + Sector',
       createNode: () => new UIText( 'Edge + Color + Sector' ),
+      options: {
+        enabledProperty: DerivedProperty.and( [
+          explorerCurrentPuzzleStyle.edgesVisibleProperty,
+          explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
+          explorerCurrentPuzzleStyle.sectorsVisibleProperty,
+        ] ),
+      },
     },
   ] );
 
@@ -324,6 +452,8 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
       fallbackCheckbox,
       tilingRadioButtonGroup,
       showEmbeddedCheckbox,
+      viewStyleNode,
+      themeNode,
       pageNumberBox,
     ]
   } );
@@ -381,6 +511,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
             cursor: 'pointer',
             inputListeners: [ inputListener ],
             scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
+            style: explorerCurrentPuzzleStyle,
           } );
           // return new Rectangle( 0, 0, 2, 2, { fill: 'red' } );
         }

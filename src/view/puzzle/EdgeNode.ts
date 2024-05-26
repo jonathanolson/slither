@@ -19,7 +19,7 @@ export type EdgeNodeOptions = {
   noninteractive?: boolean;
 };
 
-const halfSize = 0.06;
+const halfSize = 0.07;
 const xShape = new Shape()
   .moveTo( -halfSize, -halfSize )
   .lineTo( halfSize, halfSize )
@@ -56,7 +56,7 @@ export class EdgeNode extends Node {
 
     const x = new Path( xShape, {
       stroke: style.theme.xColorProperty,
-      lineWidth: 0.02,
+      lineWidth: 0.025,
       center: centerPoint,
       visibleProperty: xVisibleProperty
     } );

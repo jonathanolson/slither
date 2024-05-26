@@ -3,13 +3,19 @@ import { PatternRule } from '../../model/pattern/PatternRule.ts';
 import { DisplayEmbedding } from '../../model/pattern/DisplayEmbedding.ts';
 import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
 import PuzzleNode from '../puzzle/PuzzleNode.ts';
-import { puzzleFont } from '../Theme.ts';
+import { currentTheme, puzzleFont } from '../Theme.ts';
 import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
 import { Shape } from 'phet-lib/kite';
 import { Panel } from 'phet-lib/sun';
-import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
+import { optionize } from 'phet-lib/phet-core';
+import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
+import { ArrowNode } from 'phet-lib/scenery-phet';
 
-export type EmbeddedPatternRuleNodeOptions = NodeOptions;
+type SelfOptions = {
+  style?: TPuzzleStyle;
+};
+
+export type EmbeddedPatternRuleNodeOptions = NodeOptions & SelfOptions;
 
 export class EmbeddedPatternRuleNode extends Node {
   public constructor(
@@ -18,29 +24,38 @@ export class EmbeddedPatternRuleNode extends Node {
     providedOptions: EmbeddedPatternRuleNodeOptions
   ) {
 
+    const options = optionize<EmbeddedPatternRuleNodeOptions, SelfOptions, NodeOptions>()( {
+      style: currentPuzzleStyle,
+    }, providedOptions );
+
     const inputState = displayEmbedding.getEmbeddedCompleteData( rule.inputFeatureSet );
     const outputState = displayEmbedding.getEmbeddedCompleteData( rule.outputFeatureSet );
 
     const inputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, inputState ), {
       noninteractive: true,
+      style: options.style,
     } );
     const outputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, outputState ), {
       noninteractive: true,
+      style: options.style,
     } );
 
-    const questionFacesNode = new Node( {
+    const questionFacesNode = rule.highlander ? new Node( {
       children: displayEmbedding.getEmbeddedQuestionFaces( rule.inputFeatureSet ).map( face => {
         return new Text( '?', {
           font: puzzleFont,
           maxWidth: 0.9,
           maxHeight: 0.9,
-          fill: currentPuzzleStyle.theme.faceValueCompletedColorProperty,
+          // TODO: Make a theme entry for this?
+          opacity: 0.5,
+          // TODO: we are only showing now when... highlander?
+          fill: rule.highlander ? currentPuzzleStyle.theme.faceValueColorProperty : currentPuzzleStyle.theme.faceValueCompletedColorProperty,
           center: face.viewCoordinates
         } );
       } )
-    } );
+    } ) : new Node();
 
-    const dilation = 0.2;
+    const dilation = 0.5;
     const dilatedPatternBounds = displayEmbedding.tightBounds.dilated( dilation );
 
     const cornerRadius = 0.5;
@@ -60,6 +75,19 @@ export class EmbeddedPatternRuleNode extends Node {
       spacing: 0.2,
       children: [
         inputContainerNode,
+        new ArrowNode( 0, 0, 20, 0, {
+          // TODO: theme
+          fill: currentTheme.uiForegroundColorProperty,
+          stroke: currentTheme.uiForegroundColorProperty,
+          headHeight: 7,
+          headWidth: 7,
+          tailWidth: 1,
+          layoutOptions: {
+            align: 'center'
+          },
+          opacity: 0.6,
+          scale: 1 / 30,
+        } ),
         outputContainerNode,
       ]
     } ), {
@@ -71,9 +99,7 @@ export class EmbeddedPatternRuleNode extends Node {
       fill: currentPuzzleStyle.theme.patternAnnotationBackgroundColorProperty,
     } );
 
-    const options = optionize<EmbeddedPatternRuleNodeOptions, EmptySelfOptions, NodeOptions>()( {
-      children: [ patternDescriptionNode ],
-    }, providedOptions );
+    options.children = [ patternDescriptionNode ];
 
     super( options );
 
