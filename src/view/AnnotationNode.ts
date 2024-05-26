@@ -1,25 +1,15 @@
-import { HBox, Node, Path, Text, TPaint } from 'phet-lib/scenery';
-import { AnnotatedPattern, TAnnotation } from '../model/data/core/TAnnotation.ts';
+import { Node, Path, TPaint } from 'phet-lib/scenery';
+import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
 import { UIText } from './UIText.ts';
 import _ from '../workarounds/_.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { Bounds2 } from 'phet-lib/dot';
-import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { TBoard } from '../model/board/core/TBoard.ts';
-import PuzzleNode from './puzzle/PuzzleNode.ts';
-import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import EdgeState from '../model/data/edge-state/EdgeState.ts';
-import SectorState from '../model/data/sector-state/SectorState.ts';
-import { FaceColorMakeSameAction } from '../model/data/face-color/FaceColorMakeSameAction.ts';
-import { getFaceColorPointer } from '../model/data/face-color/FaceColorPointer.ts';
-import { TFace } from '../model/board/core/TFace.ts';
-import { FaceColorMakeOppositeAction } from '../model/data/face-color/FaceColorMakeOppositeAction.ts';
-import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
-import { Panel } from 'phet-lib/sun';
-import { safeSolve } from '../model/solver/safeSolve.ts';
-import { puzzleFont } from './Theme.ts';
+import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
+import { DisplayEmbedding } from '../model/pattern/DisplayEmbedding.ts';
+import { currentTheme } from './Theme.ts';
 
 export class AnnotationNode extends Node {
   public constructor(
@@ -211,195 +201,41 @@ export class AnnotationNode extends Node {
     }
     else if ( annotation.type === 'Pattern' ) {
 
-      const affectedEdges = new Set( annotation.affectedEdges );
-      annotation.affectedSectors.forEach( sector => {
-        affectedEdges.add( sector.edge );
-        affectedEdges.add( sector.next.edge );
-      } );
-      annotation.affectedFaces.forEach( face => {
-        face.edges.forEach( edge => affectedEdges.add( edge ) );
-      } );
-      const temporaryInPlaceNode = new Node( {
-        children: [ ...affectedEdges ].map( edge => getEdgeColoredOutline( edge, 'red' ) )
-      } );
+      // const affectedEdges = new Set( annotation.affectedEdges );
+      // annotation.affectedSectors.forEach( sector => {
+      //   affectedEdges.add( sector.edge );
+      //   affectedEdges.add( sector.next.edge );
+      // } );
+      // annotation.affectedFaces.forEach( face => {
+      //   face.edges.forEach( edge => affectedEdges.add( edge ) );
+      // } );
+      // const temporaryInPlaceNode = new Node( {
+      //   children: [ ...affectedEdges ].map( edge => getEdgeColoredOutline( edge, 'red' ) )
+      // } );
 
       children = [
-        temporaryInPlaceNode,
+        // temporaryInPlaceNode,
       ];
 
       if ( additionalContentLayoutBounds ) {
-        const patternBounds = Bounds2.NOTHING.copy();
+        const displayEmbedding = DisplayEmbedding.getDisplayEmbedding(
+          annotation.rule.patternBoard,
+          annotation.boardPatternBoard,
+          annotation.boardPatternBoard.board,
+          annotation.embedding,
+        );
 
-        [ annotation.input, annotation.output ].forEach( annotatedPattern => {
-          annotatedPattern.faceValues.forEach( faceValue => {
-            if ( faceValue.face ) {
-              faceValue.face.vertices.forEach( vertex => {
-                patternBounds.addPoint( vertex.viewCoordinates );
-              } );
-            }
-          } );
-          [ annotatedPattern.blackEdges, annotatedPattern.redEdges ].forEach( edges => {
-            edges.forEach( edge => {
-              patternBounds.addPoint( edge.start.viewCoordinates );
-              patternBounds.addPoint( edge.end.viewCoordinates );
-            } );
-          } );
-          [ annotatedPattern.sectorsNotZero, annotatedPattern.sectorsNotOne, annotatedPattern.sectorsNotTwo, annotatedPattern.sectorsOnlyOne ].forEach( sectors => {
-            sectors.forEach( sector => {
-              patternBounds.addPoint( sector.start.viewCoordinates );
-              patternBounds.addPoint( sector.end.viewCoordinates );
-              patternBounds.addPoint( sector.next.end.viewCoordinates );
-            } );
-          } );
-          annotatedPattern.faceColorDuals.forEach( faceColorDual => {
-            [ faceColorDual.primaryFaces, faceColorDual.secondaryFaces ].forEach( faces => {
-              faces.forEach( face => {
-                if ( face ) {
-                  face.vertices.forEach( vertex => {
-                    patternBounds.addPoint( vertex.viewCoordinates );
-                  } );
-                }
-              } );
-            } );
-          } );
-        } );
+        const margin = 0.5 + 0.05;
 
-        const inputState = CompleteData.empty( board );
-        const outputState = CompleteData.empty( board );
-        const questionFaces = new Set<TFace>( board.faces );
-
-        // TODO: use things from rule-explorer?
-
-        const addState = ( state: CompleteData, annotatedPattern: AnnotatedPattern ) => {
-          annotatedPattern.faceValues.forEach( valueAnnotation => {
-            if ( valueAnnotation.face ) {
-              state.setFaceValue( valueAnnotation.face, valueAnnotation.value );
-              questionFaces.delete( valueAnnotation.face );
-            }
-          } );
-          annotatedPattern.blackEdges.forEach( edge => {
-            state.setEdgeState( edge, EdgeState.BLACK );
-          } );
-          annotatedPattern.redEdges.forEach( edge => {
-            state.setEdgeState( edge, EdgeState.RED );
-          } );
-          annotatedPattern.sectorsNotZero.forEach( sector => {
-            state.setSectorState( sector, SectorState.NOT_ZERO );
-          } );
-          annotatedPattern.sectorsNotOne.forEach( sector => {
-            state.setSectorState( sector, SectorState.NOT_ONE );
-          } );
-          annotatedPattern.sectorsNotTwo.forEach( sector => {
-            state.setSectorState( sector, SectorState.NOT_TWO );
-          } );
-          annotatedPattern.sectorsOnlyOne.forEach( sector => {
-            state.setSectorState( sector, SectorState.ONLY_ONE );
-          } );
-          annotatedPattern.faceColorDuals.forEach( faceColorDual => {
-            const makeSame = ( a: TFace | null, b: TFace | null ) => {
-              const aColor = a ? state.getFaceColor( a ) : state.getOutsideColor();
-              const bColor = b ? state.getFaceColor( b ) : state.getOutsideColor();
-
-              new FaceColorMakeSameAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
-            };
-            const makeOpposite = ( a: TFace | null, b: TFace | null ) => {
-              const aColor = a ? state.getFaceColor( a ) : state.getOutsideColor();
-              const bColor = b ? state.getFaceColor( b ) : state.getOutsideColor();
-
-              new FaceColorMakeOppositeAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
-            };
-            for ( let i = 1; i < faceColorDual.primaryFaces.length; i++ ) {
-              makeSame( faceColorDual.primaryFaces[ i - 1 ], faceColorDual.primaryFaces[ i ] );
-            }
-            for ( let j = 1; j < faceColorDual.secondaryFaces.length; j++ ) {
-              makeSame( faceColorDual.secondaryFaces[ j - 1 ], faceColorDual.secondaryFaces[ j ] );
-            }
-            if ( faceColorDual.secondaryFaces.length ) {
-              makeOpposite( faceColorDual.primaryFaces[ 0 ], faceColorDual.secondaryFaces[ 0 ] );
-            }
-          } );
-          safeSolve( board, state );
-        };
-        addState( inputState, annotation.input );
-        addState( outputState, annotation.output );
-
-        const dilation = 0.2;
-        const dilatedPatternBounds = patternBounds.dilated( dilation );
-
-        const includedFaces = new Set( board.faces.filter( face => {
-          const faceBounds = Bounds2.NOTHING.copy();
-          face.vertices.forEach( vertex => {
-            faceBounds.addPoint( vertex.viewCoordinates );
-          } );
-          return faceBounds.intersectsBounds( dilatedPatternBounds );
-        } ) );
-        const faceFilter = ( face: TFace ) => includedFaces.has( face );
-
-        // TODO: see if we can subset these? Because we are spending a LOT of CPU doing extra stuff
-        const inputNode = new PuzzleNode( new BasicPuzzle( board, inputState ), {
-          noninteractive: true,
-          faceFilter: faceFilter
-        } );
-        const outputNode = new PuzzleNode( new BasicPuzzle( board, outputState ), {
-          noninteractive: true,
-          faceFilter: faceFilter
-        } );
-
-        disposeActions.push( () => {
-          inputNode.dispose();
-          outputNode.dispose();
-        } );
-
-
-        const cornerRadius = 0.5;
-        const scale = 0.8;
-
-        const patternOutlineShape = Shape.roundRectangle( dilatedPatternBounds.x, dilatedPatternBounds.y, dilatedPatternBounds.width, dilatedPatternBounds.height, cornerRadius, cornerRadius );
-
-        const questionFacesNode = new Node( {
-          children: [ ...includedFaces ].filter( face => questionFaces.has( face ) ).map( face => {
-            return new Text( '?', {
-              font: puzzleFont,
-              maxWidth: 0.9,
-              maxHeight: 0.9,
-              fill: currentPuzzleStyle.theme.faceValueCompletedColorProperty,
-              center: face.viewCoordinates
-            } );
-          } )
-        } );
-
-        const inputContainerNode = new Node( {
-          children: [ inputNode, questionFacesNode ],
-          clipArea: patternOutlineShape,
-          scale: scale,
-        } );
-        const outputContainerNode = new Node( {
-          children: [ outputNode, questionFacesNode ],
-          clipArea: patternOutlineShape,
-          scale: scale,
-        } );
-
-        const patternDescriptionNode = new Panel( new HBox( {
-          spacing: 0.2,
-          children: [
-            inputContainerNode,
-            outputContainerNode,
-          ]
-        } ), {
-          cornerRadius: cornerRadius * ( scale + 0.2 ),
-          xMargin: 0.1,
-          yMargin: 0.1,
-          lineWidth: 0.05,
-          stroke: null,
-          fill: currentPuzzleStyle.theme.patternAnnotationBackgroundColorProperty,
-        } );
-
-        const margin = dilation + 0.05;
+        const patternDescriptionNode = new EmbeddedPatternRuleNode( annotation.rule, displayEmbedding, {
+          maxWidth: additionalContentLayoutBounds.width - 2 * margin,
+          maxHeight: additionalContentLayoutBounds.height - 2 * margin,
+        }, );
 
         // TODO: don't rely on the bounds of the "change", we don't want to overlap other things
-        patternDescriptionNode.centerBottom = patternBounds.centerTop.plusXY( 0, -0.15 );
+        patternDescriptionNode.centerBottom = displayEmbedding.expandedBounds.centerTop.plusXY( 0, -0.15 );
         if ( patternDescriptionNode.top < additionalContentLayoutBounds.top + margin ) {
-          patternDescriptionNode.centerTop = patternBounds.centerBottom.plusXY( 0, 0.15 );
+          patternDescriptionNode.centerTop = displayEmbedding.expandedBounds.centerBottom.plusXY( 0, 0.15 );
         }
         if ( patternDescriptionNode.left < additionalContentLayoutBounds.left + margin ) {
           patternDescriptionNode.left = additionalContentLayoutBounds.left + margin;
@@ -408,10 +244,12 @@ export class AnnotationNode extends Node {
           patternDescriptionNode.right = additionalContentLayoutBounds.right - margin;
         }
 
-        // children.push( new Path( patternOutlineShape, {
-        //   stroke: currentPuzzleStyle.theme.uiButtonForegroundProperty,
-        //   lineWidth: 0.02
-        // } ) );
+        const highlightBounds = displayEmbedding.tightBounds.dilated( 0.2 );
+        const cornerRadius = 0.1;
+        children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
+          stroke: currentTheme.uiButtonBaseColorProperty,
+          lineWidth: 0.04
+        } ) );
         children.push( patternDescriptionNode );
       }
 

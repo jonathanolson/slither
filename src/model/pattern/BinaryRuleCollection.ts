@@ -355,7 +355,12 @@ export class BinaryRuleCollection {
     boardData: TBoardFeatureData,
     initialRuleIndex = 0
   ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null {
+    let count = 0;
     for ( let ruleIndex = initialRuleIndex; ruleIndex < this.ruleIndices.length; ruleIndex++ ) {
+      if ( count % 1000 === 0 ) {
+        console.log( 'search', count );
+      }
+      count++;
 
       const byteIndex = this.ruleIndices[ ruleIndex ];
       const patternBoardIndex = this.data[ byteIndex ];

@@ -21,7 +21,7 @@ export class EmbeddedPatternRuleNode extends Node {
   public constructor(
     public readonly rule: PatternRule,
     public readonly displayEmbedding: DisplayEmbedding,
-    providedOptions: EmbeddedPatternRuleNodeOptions
+    providedOptions?: EmbeddedPatternRuleNodeOptions
   ) {
 
     const options = optionize<EmbeddedPatternRuleNodeOptions, SelfOptions, NodeOptions>()( {

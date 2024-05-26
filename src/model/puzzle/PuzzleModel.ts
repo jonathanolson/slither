@@ -617,10 +617,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
       let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
       if ( solveEdges && !solveColors && !solveSectors ) {
-        factory = generalColorPatternSolverFactory;
+        factory = generalEdgePatternSolverFactory;
       }
       else if ( solveColors && !solveEdges && !solveSectors ) {
-        factory = generalEdgePatternSolverFactory;
+        factory = generalColorPatternSolverFactory;
       }
       else if ( solveEdges && solveColors && !solveSectors ) {
         factory = generalEdgeColorPatternSolverFactory;

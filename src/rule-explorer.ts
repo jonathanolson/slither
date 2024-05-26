@@ -139,7 +139,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
 
 ( async () => {
 
-  const explorerPuzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'puzzleStyle', {
+  const explorerPuzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'explorerPuzzleStyleProperty', {
     serialize: style => Object.keys( puzzleStyleMap ).find( key => puzzleStyleMap[ key as keyof typeof puzzleStyleMap ] === style )!,
 
     // NOTE: Default to CLASSIC!
