@@ -227,16 +227,22 @@ export class AnnotationNode extends Node {
 
         const margin = 0.5 + 0.05;
 
+        const yMargin = 0.15;
+        const spaceAbove = ( displayEmbedding.expandedBounds.top + yMargin ) - ( additionalContentLayoutBounds.top + margin );
+        const spaceBelow = ( additionalContentLayoutBounds.bottom - margin ) - ( displayEmbedding.expandedBounds.bottom - yMargin );
+
         const patternDescriptionNode = new EmbeddedPatternRuleNode( annotation.rule, displayEmbedding, {
           maxWidth: additionalContentLayoutBounds.width - 2 * margin,
-          maxHeight: additionalContentLayoutBounds.height - 2 * margin,
+          maxHeight: Math.max( spaceAbove, spaceBelow ),
         }, );
 
-        // TODO: don't rely on the bounds of the "change", we don't want to overlap other things
-        patternDescriptionNode.centerBottom = displayEmbedding.expandedBounds.centerTop.plusXY( 0, -0.15 );
-        if ( patternDescriptionNode.top < additionalContentLayoutBounds.top + margin ) {
-          patternDescriptionNode.centerTop = displayEmbedding.expandedBounds.centerBottom.plusXY( 0, 0.15 );
+        if ( spaceAbove > spaceBelow ) {
+          patternDescriptionNode.centerBottom = displayEmbedding.expandedBounds.centerTop.plusXY( 0, -yMargin );
         }
+        else {
+          patternDescriptionNode.centerTop = displayEmbedding.expandedBounds.centerBottom.plusXY( 0, yMargin );
+        }
+
         if ( patternDescriptionNode.left < additionalContentLayoutBounds.left + margin ) {
           patternDescriptionNode.left = additionalContentLayoutBounds.left + margin;
         }
