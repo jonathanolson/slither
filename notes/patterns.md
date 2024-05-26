@@ -53,6 +53,7 @@
   - Improvements:
     - SORT rules for the collections, so we aren't shooting off COMPLEX color/edge/sector things when simpler things would do.
       - e.g. highlander should be "UP THERE" as far as simplicity is concerned
+    - Pattern SOLVE in difficulty(!)
   - 
   - Bugs:
     - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
