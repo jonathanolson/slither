@@ -3,7 +3,6 @@ import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { standardSolverFactory } from './standardSolverFactory.ts';
 import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 import { BinaryRuleGroup } from '../pattern/rule-group/BinaryRuleGroup.ts';
@@ -17,6 +16,7 @@ import { getGeneralAllGroup } from '../pattern/rule-group/getGeneralAllGroup.ts'
 import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
+import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 
 const generalEdgePatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
 const generalColorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
@@ -42,7 +42,12 @@ const getFactory = ( groupProperty: TinyProperty<BinaryRuleGroup | null>, getGro
       new SafeEdgeToFaceColorSolver( board, state ),
 
       ...group.collections.map( collection => new BinaryPatternSolver( board, boardPatternBoard, state, collection ) ),
-      standardSolverFactory( board, state, dirty ),
+
+      new SimpleLoopSolver( board, state, {
+        solveToRed: true,
+        solveToBlack: true,
+        resolveAllRegions: false // NOTE: this will be faster
+      } ),
     ] );
   };
 };
