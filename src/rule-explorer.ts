@@ -121,7 +121,15 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   let embedding = patternMap.get( displayTiling );
 
   if ( embedding === undefined ) {
-    embedding = DisplayEmbedding.getBest( patternBoard, displayTiling.boardPatternBoard, displayTiling.board );
+
+    const actualEmbedding = DisplayEmbedding.findBestEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board );
+
+    if ( actualEmbedding ) {
+      embedding = DisplayEmbedding.getDisplayEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board, actualEmbedding );
+    }
+    else {
+      embedding = null;
+    }
 
     patternMap.set( displayTiling, embedding );
   }

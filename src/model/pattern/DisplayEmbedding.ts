@@ -162,11 +162,48 @@ export class DisplayEmbedding {
     return state;
   }
 
-  public static getBest(
+  public static getEmbeddingBounds(
     sourcePatternBoard: TPatternBoard,
     boardPatternBoard: BoardPatternBoard,
-    largeBoard: TBoard
-  ): DisplayEmbedding | null {
+    embedding: Embedding
+  ): Bounds2 {
+    const embeddingBounds = Bounds2.NOTHING.copy();
+
+    const addPatternVertex = ( vertex: TPatternVertex ) => {
+      embeddingBounds.addPoint( boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
+    };
+    sourcePatternBoard.vertices.forEach( addPatternVertex );
+
+    const addPatternFace = ( face: TPatternFace ) => {
+      const mappedFace = boardPatternBoard.getFace( embedding.mapFace( face ) );
+      if ( mappedFace ) {
+        mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
+      }
+    };
+    sourcePatternBoard.faces.forEach( addPatternFace );
+
+    sourcePatternBoard.edges.forEach( edge => {
+      let edges: TEdge[];
+      if ( edge.isExit ) {
+        edges = embedding.mapExitEdges( edge ).map( exitEdge => boardPatternBoard.getEdge( exitEdge ) );
+      }
+      else {
+        edges = [ boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
+      }
+      edges.forEach( mappedEdge => {
+        embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
+        embeddingBounds.addPoint( mappedEdge.end.viewCoordinates );
+      } );
+    } );
+
+    return embeddingBounds;
+  }
+
+  public static findBestEmbedding(
+    sourcePatternBoard: TPatternBoard,
+    boardPatternBoard: BoardPatternBoard,
+    largeBoard: TBoard,
+  ): Embedding | null {
     const embeddings = computeEmbeddings( sourcePatternBoard, boardPatternBoard );
 
     if ( embeddings.length === 0 ) {
@@ -180,39 +217,11 @@ export class DisplayEmbedding {
 
     let bestEmbedding: Embedding | null = null;
     let bestDistance = Number.POSITIVE_INFINITY;
-    let bestBounds: Bounds2 | null = null;
 
     for ( let i = 0; i < embeddings.length; i++ ) {
       const embedding = embeddings[ i ];
 
-      const embeddingBounds = Bounds2.NOTHING.copy();
-
-      const addPatternVertex = ( vertex: TPatternVertex ) => {
-        embeddingBounds.addPoint( boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
-      };
-      sourcePatternBoard.vertices.forEach( addPatternVertex );
-
-      const addPatternFace = ( face: TPatternFace ) => {
-        const mappedFace = boardPatternBoard.getFace( embedding.mapFace( face ) );
-        if ( mappedFace ) {
-          mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
-        }
-      };
-      sourcePatternBoard.faces.forEach( addPatternFace );
-
-      sourcePatternBoard.edges.forEach( edge => {
-        let edges: TEdge[];
-        if ( edge.isExit ) {
-          edges = embedding.mapExitEdges( edge ).map( exitEdge => boardPatternBoard.getEdge( exitEdge ) );
-        }
-        else {
-          edges = [ boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
-        }
-        edges.forEach( mappedEdge => {
-          embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
-          embeddingBounds.addPoint( mappedEdge.end.viewCoordinates );
-        } );
-      } );
+      const embeddingBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding );
 
       const embeddingCenter = embeddingBounds.center;
 
@@ -221,13 +230,24 @@ export class DisplayEmbedding {
       if ( distance < bestDistance ) {
         bestDistance = distance;
         bestEmbedding = embedding;
-        bestBounds = embeddingBounds;
       }
     }
 
+    return bestEmbedding;
+  }
+
+  public static getDisplayEmbedding(
+    sourcePatternBoard: TPatternBoard,
+    boardPatternBoard: BoardPatternBoard,
+    largeBoard: TBoard,
+    embedding: Embedding,
+  ): DisplayEmbedding {
+
+    const tightBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding );
+
     // TODO: do this improved TBoard handling for AnnotationNode(!), then get rid of the face filtering stuff
 
-    const expandedBoardBounds = bestBounds!.dilated( 0.5 ); // TODO: we might want to update this to be larger
+    const expandedBoardBounds = tightBounds.dilated( 0.5 ); // TODO: we might want to update this to be larger
 
     const includedBoardFaces = largeBoard.faces.filter( face => {
       const faceBounds = Bounds2.NOTHING.copy();
@@ -284,18 +304,18 @@ export class DisplayEmbedding {
       return smallSector ? [ sector, smallSector ] : null;
     } ).filter( e => e !== null ) as [ TSector, TSector ][] );
 
-    assertEnabled() && assert( bestEmbedding );
+    assertEnabled() && assert( embedding );
 
     return new DisplayEmbedding(
       sourcePatternBoard,
       boardPatternBoard,
       largeBoard,
-      bestEmbedding!,
+      embedding,
       smallBoard,
       toSmallFaceMap,
       toSmallEdgeMap,
       toSmallSectorMap,
-      bestBounds!,
+      tightBounds,
       expandedBoardBounds,
     );
   }
