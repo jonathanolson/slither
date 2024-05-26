@@ -16,8 +16,8 @@ export class BinaryRuleGroup {
   ) {
     this.collections = [
       mainCollection,
-      fallbackCollection,
       highlanderCollection,
+      fallbackCollection,
       highlanderFallbackCollection,
     ].filter( collection => collection !== null ) as BinaryRuleCollection[];
   }
