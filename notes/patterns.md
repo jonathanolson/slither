@@ -49,15 +49,12 @@
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
-  - 
-  - PERFORMANCE BLOCKER:
-    - FaceColorDualFeature.fromPrimarySecondaryFaces on BoardPatternBoard super slow. -- or broken?
-      - LAZILY DO THIS
-  - 
+  -
+  - More spacing(!) on pattern rule views for hints(!)
   - 
   - SORT rules for the collections, so we aren't shooting off COMPLEX color/edge/sector things when simpler things would do.
   - 
-  - SWAP IN the "better rule collection that matches our display mode" solving!!!
+  - AnnotationNode use the other pattern helpful bits? (better for sector rules?)
   - 
   - STYLE SWAPPING in rule explorer
     - And theme(!)

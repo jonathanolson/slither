@@ -12,8 +12,6 @@ export type TSerializedEmbeddableFeature = {
   type: 'face-color-dual';
   primaryFaces: number[];
   secondaryFaces: number[];
-  sameColorPaths: number[][];
-  oppositeColorPaths: number[][];
 } | {
   type: 'sector-only-one';
   sector: number;

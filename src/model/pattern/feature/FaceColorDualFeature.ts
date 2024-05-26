@@ -17,11 +17,13 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
   public readonly allFaces: Set<TPatternFace> = new Set();
   private canonicalString: string | null = null;
 
+  // lazily computed
+  private sameColorPaths: TPatternEdge[][] | null = null;
+  private oppositeColorPaths: TPatternEdge[][] | null = null;
+
   public constructor(
     public readonly primaryFaces: TPatternFace[],
     public readonly secondaryFaces: TPatternFace[],
-    public readonly sameColorPaths: TPatternEdge[][],
-    public readonly oppositeColorPaths: TPatternEdge[][]
   ) {
     assertEnabled() && assert( primaryFaces.length + secondaryFaces.length > 1 );
     assertEnabled() && assert( primaryFaces.length );
@@ -52,13 +54,13 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
   public isPossibleWith(
     isEdgeBlack: ( edge: TPatternEdge ) => boolean
   ): boolean {
-    for ( const path of this.sameColorPaths ) {
+    for ( const path of this.getSameColorPaths() ) {
       if ( path.filter( edge => isEdgeBlack( edge ) ).length % 2 !== 0 ) {
         return false;
       }
     }
 
-    for ( const path of this.oppositeColorPaths ) {
+    for ( const path of this.getOppositeColorPaths() ) {
       if ( path.filter( edge => isEdgeBlack( edge ) ).length % 2 === 0 ) {
         return false;
       }
@@ -71,8 +73,8 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>
   ): Formula<TPatternEdge> {
     return logicAnd( [
-      ...this.sameColorPaths.map( path => logicEven( path.map( edge => getFormula( edge ) ) ) ),
-      ...this.oppositeColorPaths.map( path => logicOdd( path.map( edge => getFormula( edge ) ) ) )
+      ...this.getSameColorPaths().map( path => logicEven( path.map( edge => getFormula( edge ) ) ) ),
+      ...this.getOppositeColorPaths().map( path => logicOdd( path.map( edge => getFormula( edge ) ) ) )
     ] );
   }
 
@@ -87,10 +89,6 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
       return [ new FaceColorDualFeature(
         primaryFaces,
         secondaryFaces,
-
-        // TODO: potentially improve these paths, or deduplicate?
-        this.sameColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) ),
-        this.oppositeColorPaths.map( path => path.map( edge => embedding.mapNonExitEdge( edge ) ) )
       ) ];
     }
   }
@@ -167,8 +165,6 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
       type: 'face-color-dual',
       primaryFaces: this.primaryFaces.map( face => face.index ),
       secondaryFaces: this.secondaryFaces.map( face => face.index ),
-      sameColorPaths: this.sameColorPaths.map( path => path.map( edge => edge.index ) ),
-      oppositeColorPaths: this.oppositeColorPaths.map( path => path.map( edge => edge.index ) )
     };
   }
 
@@ -202,6 +198,83 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
         [ ...new Set( [ ...this.primaryFaces, ...other.secondaryFaces ] ) ],
         [ ...new Set( [ ...this.secondaryFaces, ...other.primaryFaces ] ) ] );
     }
+  }
+
+  private ensurePaths(): void {
+    if ( this.sameColorPaths === null ) {
+
+      const sameColorPaths: TPatternEdge[][] = [];
+      const oppositeColorPaths: TPatternEdge[][] = [];
+
+      const allFaces = new Set( [ ...this.primaryFaces, ...this.secondaryFaces ] );
+      const firstFace = this.primaryFaces[ 0 ];
+      const visitedFaces = new Set( [ firstFace ] );
+
+      for ( let hops = 1; visitedFaces.size < allFaces.size; hops++ ) {
+        if ( hops > 100 ) {
+          throw new Error( 'FaceColorDualFeature.fromPrimarySecondaryFaces: could not find all connections' );
+        }
+        const recur = ( face: TPatternFace, path: TPatternEdge[], initialFace: TPatternFace ) => {
+          for ( const edge of face.edges ) {
+
+            if ( edge.faces.length !== 2 ) {
+              continue;
+            }
+
+            if ( path.includes( edge ) ) {
+              continue;
+            }
+
+            const nextFace = edge.faces.find( f => f !== face )!;
+            assertEnabled() && assert( nextFace );
+
+            if ( visitedFaces.has( nextFace ) ) {
+              continue;
+            }
+
+            if ( allFaces.has( nextFace ) ) {
+              // Made a connection!!!!
+              const completePath = [ ...path, edge ];
+
+              const startFace = initialFace;
+              const endFace = nextFace;
+
+              const isSameColor = this.primaryFaces.includes( startFace ) === this.primaryFaces.includes( endFace );
+
+              if ( isSameColor ) {
+                sameColorPaths.push( completePath );
+              }
+              else {
+                oppositeColorPaths.push( completePath );
+              }
+
+              // IMPORTANT: mark this face as solved!
+              visitedFaces.add( nextFace );
+            }
+            else {
+              recur( nextFace, [ ...path, edge ], initialFace );
+            }
+          }
+        };
+
+        [ ...visitedFaces ].forEach( face => recur( face, [], face ) );
+      }
+
+      this.sameColorPaths = sameColorPaths;
+      this.oppositeColorPaths = oppositeColorPaths;
+    }
+  }
+
+  public getSameColorPaths(): TPatternEdge[][] {
+    this.ensurePaths();
+
+    return this.sameColorPaths!;
+  }
+
+  public getOppositeColorPaths(): TPatternEdge[][] {
+    this.ensurePaths();
+
+    return this.oppositeColorPaths!;
   }
 
   public isCompatibleWith( other: FaceColorDualFeature ): boolean {
@@ -262,8 +335,6 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     return new FaceColorDualFeature(
       serialized.primaryFaces.map( index => patternBoard.faces[ index ] ),
       serialized.secondaryFaces.map( index => patternBoard.faces[ index ] ),
-      serialized.sameColorPaths.map( path => path.map( index => patternBoard.edges[ index ] ) ),
-      serialized.oppositeColorPaths.map( path => path.map( index => patternBoard.edges[ index ] ) )
     );
   }
 
@@ -271,63 +342,6 @@ export class FaceColorDualFeature implements TEmbeddableFeature {
     assertEnabled() && assert( primaryFaces.length + secondaryFaces.length > 1 );
     assertEnabled() && assert( primaryFaces.length );
 
-    const sameColorPaths: TPatternEdge[][] = [];
-    const oppositeColorPaths: TPatternEdge[][] = [];
-
-    const allFaces = new Set( [ ...primaryFaces, ...secondaryFaces ] );
-    const firstFace = primaryFaces[ 0 ];
-    const visitedFaces = new Set( [ firstFace ] );
-
-    for ( let hops = 1; visitedFaces.size < allFaces.size; hops++ ) {
-      if ( hops > 100 ) {
-        throw new Error( 'FaceColorDualFeature.fromPrimarySecondaryFaces: could not find all connections' );
-      }
-      const recur = ( face: TPatternFace, path: TPatternEdge[], initialFace: TPatternFace ) => {
-        for ( const edge of face.edges ) {
-
-          if ( edge.faces.length !== 2 ) {
-            continue;
-          }
-
-          if ( path.includes( edge ) ) {
-            continue;
-          }
-
-          const nextFace = edge.faces.find( f => f !== face )!;
-          assertEnabled() && assert( nextFace );
-
-          if ( visitedFaces.has( nextFace ) ) {
-            continue;
-          }
-
-          if ( allFaces.has( nextFace ) ) {
-            // Made a connection!!!!
-            const completePath = [ ...path, edge ];
-
-            const startFace = initialFace;
-            const endFace = nextFace;
-
-            const isSameColor = primaryFaces.includes( startFace ) === primaryFaces.includes( endFace );
-
-            if ( isSameColor ) {
-              sameColorPaths.push( completePath );
-            }
-            else {
-              oppositeColorPaths.push( completePath );
-            }
-
-            // IMPORTANT: mark this face as solved!
-            visitedFaces.add( nextFace );
-          }
-          else {
-            recur( nextFace, [ ...path, edge ], initialFace );
-          }
-        }
-      };
-
-      [ ...visitedFaces ].forEach( face => recur( face, [], face ) );
-    }
-
-    return new FaceColorDualFeature( primaryFaces, secondaryFaces, sameColorPaths, oppositeColorPaths );
+    return new FaceColorDualFeature( primaryFaces, secondaryFaces );
   }
 }
