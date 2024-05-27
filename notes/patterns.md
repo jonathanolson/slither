@@ -3,25 +3,6 @@
 
 - TODO
   -
-  - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
-  - 
-  - old generation?
-    - 1
-    - remaining general edge sector unrestricted
-    - 
-    - HEY HEY -- highlander can be added like "only"? 
-    - Current:
-      - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- crashed, last one
-      - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
-      - getImpliedColorHexBoardRules 1 0 [kitty 2] <--- #132, but OMG it is chugging!!!
-      - getHighlanderOnlyImpliedSquareBoardRules 2 1 [kitty 3]
-      - 
-      - Failure on node bin/generate.js getHighlanderImpliedGeneralBoardRules 0 2 --- error?
-      - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
-      - 
-      - Missing:
-        - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
-        - getOnlyImpliedSquareBoardRules 4 9, 4 15 <--- crash on complete? is it in console history? Try on browser direct macOS?
   - 
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
@@ -38,29 +19,27 @@
   - 
   - Bugs:
     - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
+      - Once resolved, do the "don't show sectors" bit?
   - 
   - Performance:
-    - General performance for... HUGE puzzles?
     - PuzzleNode perf
-      - "StaticPuzzleNode" - creates minimalistic view, and can show ?s.
-        - e.g. factor out the simple creation stuff
-        - HAVE IT TAKE IN COLOR OVERRIDES!!!
-      - 
       - FaceStateNode lazy creation
       - OMG share listeners, so we don't create so many for PuzzleNode?
   - 
   - rule.html
     - ?r=${getBinaryIdentifier()}
     - ?embedding=...
+    - [defer] POTENTIALLY have it just take in an input pattern
     - 
-    - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
-      - getBinaryIdentifier()
-    - Show embeddings in the common tilings(!)
-      - POTENTIALLY show "unique to rotation/symmetry" embeddings?
-    - DO A FULL SOLVE(?)
-    - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
-      - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
-    - POTENTIALLY have it just take in an input pattern
+    - Views:
+      - PatternRuleNode (on dark background)
+      - PatternBoard???
+      - Embeddings (in tilings)
+        - All embeddings (unique to rotation/symmetry)?
+        - [defer] full solve IN embedding? (shows if incomplete)
+      - Solutions (in the pattern board representation? in embeddings/tilings?)
+        - Highlander: show the "filtered solutions" (and the example filtered-out match with one example)
+          - (i.e. what are input-matching solutions that get filtered, and what is one example)
   - 
   - rule-explorer.html
     - [defer] handle "isomorphic when embedded"
@@ -76,53 +55,37 @@
       - Quantity of features(!) -- no black edges? no red edges? hmmm
     - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
   - 
+  - Embedded rules issues
+    - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
+      - Certain topology (red exit vertex, etc.) features will probably unlock more things
+    - Also when we show embedded versions:
+      - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
+    - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
+    - Rule collapse on embedding too (consolidate)
+      - (do this in places where we are ... solving?)
+  - 
+  - Image output to a static form?
+    - Every 2 bytes in an SVG image is (!) 1MB of rule images(!!!!!) --- we have half a million rules
+  - 
   - ZOMG ZOMG ZOMG ZOMG OMZG OMZOGMZOGMOSMGOSRIMGOSIMRGOSIRMGOSIMRGOSIRMGOSGIMROSIMRG
   - ------------------
   - PatternRule TRUE INCIDENCE
     - Generate "uniform" puzzles (TRULY UNIFORMLY?)
     - Then examine how many of the unique embeddings MATCH (check embedding equality!) across many puzzles!!!
+    - Can we... categorize "usefulness" or how common it is for a pattern?
+      - NOTE: Symmetry arguments probably help (if it has more automorphisms... it is more likely to be useful)
   - SOLVING INCIDENCE
     - As we are solving a puzzle, how often does a rule come up?
       - Clearly changes with rankings? - but we can also note how often a rule sits unused? THINK
-  - 
-  - "INCREMENTAL" way of computing progress --- also one that WILL NOT CRASH when it has results?
-  - 
-  - DOC note somewhere approaches, especially "we can't combine highlander rules"
   - 
   - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
     - Embeddings be index-based (we can still reproduce the effects of the maps)
       - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
       - We should CHANGE the code that computes embeddings(!)
   - 
-  - Pause execution
-    - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
-    - https://pptr.dev/api/puppeteer.page.emulateidlestate
-    - OR... JUST RUN THIS STUFF IN A VM, that we can snapshot on the regular?
-      - DOCKER it, so we can pause?
-    - OR.... just:
-      - kill -SIGSTOP <pid>
-      - kill -SIGCONT <pid>
-  - Get the ability to semi-manually clear current boards
-  - 
-  - SAT.js (or alternative)
-    - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
-    - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
-    - https://github.com/GJDuck/SAT.js/blob/master/SAT.js
-      - YES, it is GPLv3, we would license entire thing under GPLv3. Do it for now?
-        - Can ChatGPT give us code adapted from other versions perhaps?
-    - MINISAT FAILURE
-      - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
-      - 2 48 also
-      - minisat-OUT
-      - Perhaps we are giving it too many loops?
-      - CONSIDER:
-        - What if we... manually compute these? For these SMALL cases, it is probably practical
-  - 
   - Pattern solvers are NOT checking to see if they could be the entire closed loop. FIX THAT.
   - 
   - Load collections by AJAX one-at-a-time when needed? So we don't hit memory issues
-  - 
-  - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
   - 
   - Test with big puzzles:
     - 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
@@ -135,37 +98,14 @@
         - Preferred, less code? BUT [WE NEED TO MATCH WITHOUT CREATING EMBEDDED VERSIONS?]
       - (b) Match directly into the state, through an adapter
   - 
-  - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
-  - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
     - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)
     - We probably already have generated ALL (or almost all) of the rules we will actually want.
     - Is this... essentially a unique infimum?
     - [!!!] NOTE: we only need this to be unique TO ISOMORPHISM
   - 
-  - Also, "only" patterns that have a "generalization" (e.g. still valid without "only") would be good to filter out maybe?
-  - 
   - Pattern Solver:
     - FinClosure, once we have all embedded?
-  - 
-  - Can we... categorize "usefulness" or how common it is for a pattern?
-    - NOTE: Symmetry arguments probably help (if it has more automorphisms... it is more likely to be useful)
-  - 
-  - PRIORITIZE "all" before curating rules (since that is likely to affect things)
-    - OH YUP, we want them
-  - 
-  - CURATED RULES
-    - OK to have "redundant" rules (if the simpler-to-recognize form is first)
-    - Different lists for each "solving style" (edge, edge + sector, face colors, all)
-      - OR have a primary ("all") list, where we put our helpful bits in
-        - THEN have a backup "edge-only" list?
-        - Can just include highlander patterns, since those are easy to filter out
-    - Should we create ONE curated list, and then SCAN
-    - Good way of showing "what rules are not redundant in collection X, given our collection Y"
-  - 
-  - HEY create "generations" that include BASIC boards(!)
-  - 
-  - PatternRule should have input, output, but also MINIMAL_MATCH_INPUT?
   - 
   - Highlander implies BLACK EXIT EDGE PATTERNS - we have based things off of the wrong patterns.
     - THIS might need edges not connected to faces? More general
@@ -174,143 +114,56 @@
     - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
     - This seems "solvable" in the "ALL" solving stage?
   - 
-  - Highlander potential solving changes:
-    - (a) don't precompute closures, do it on demand (I mean, from persisted RichSolutions...)
-    - (b) precompute more efficiently (recursively)
-      - Can just "combine" bins as we recurse
-      - "no solutions possible" will recurse trivially
-    - Solutions with different vertex connections are NEVER in the same bin
-      - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
-      - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
-        - IMPORTANT: It will never INVALIDATE only part of a bin.
-    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
-  - 
-  - Run a ton of "completed puzzle testing" for RANDOM puzzles. --- HEY get this working with a PatternSolver(?)
-    - Ensure that highlander and other rules are ALWAYS correct within these! (VERY MUCH HIGHLANDER)
-  - 
-  - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
+  - [defer] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
     - Constraint!!!
   - 
-  - Build failure, trying `npm run build --max-old-space-size`
-    - export NODE_OPTIONS=--max-old-space-size=32768
-    - Maybe we should... ditch loading all the data? (remove references for the collections tests?)
-  - 
-  - [LinCb0!!!] General performance enhancements:
-    - HEY we need to generalize due to our "optional" attributes pattern.
-    - [First, testing infrastructure] ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
-      - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
-    - See pruning discussion with ChatGPT
-      - [implement LinCb0] - from https://arxiv.org/pdf/2011.04928, etc.
-        - Looks important for e.g. getImpliedColorSquareBoardRules 2 4, which is going up to 47k implications 
-      - [implement pruning] from the paper
-      - We can see if implications would be VIOLATED by adding an attribute (early termination)
-      - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
-        - Still keep those in our implications,
-        - Consider showing how many non-to-invalid implications we have in our set (in our debugging info)
-    - Performance test best way to handle bit vectors - 110 bits seems slow?
-    - CONSIDER reordering of attributes or objects!!!!
-      - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
-        - Wait, what would this do...?
-      - [probably not - only after adding pruning] REORDER ATTRIBUTES?
-  -
-  - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
-  - 
-  - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
-  - 
-  - Check if implied is using isCanonicalWith (we might want to only use canonical rules, should be guaranteed to have them, no?)
-    - Maybe not?
+  - FeatureSet improvements:
+    - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
+    - Sector only-one is... internally redundant (see the BINARY forms)
   - 
   - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
     - Filter these out where possible, so we're not doing more computation? 
   - 
-  - WebGPU general-purpose FCA "solver"
-    - NOTE: multiple approaches
-      - (a) do the "parallel" full approach suggested by that paper. how would we handle the massive amount of memory?
-      - (b) do the next-closure, BUT parallelize the parts (both checking multiple i's, AND parallel-apply of SolutionFormalContext.getClosure/Implication.implicationSetClosure)
-  - 
   - TPatternBoard cleanup:
-    - 
     - !!!!!! GET RID OF TPatternBoard, just make BasePatternBoard => PatternBoard.
       - Then we can store PatternBoard-related info (e.g. automorphisms, planar mappings, bit-packing metadata) on it
-    - 
     - default planar mapping on TPatternBoard
+  - 
+  - Performance: PatternRule.withRulesApplied
+    - Looks so much like [LinClosure] noted from LinCbO paper.
     - 
-    - QUICK:
-      - Make a "pattern-boards" page that shows pattern boards
-        - ESTABLISH a registry of "tiling" types
-    - Description and mapping on TPatternBoard(!)
-      - Registry of simplest-mapping pattern boards (based on isomorphism)
-        - We attach the rules to these
-  - 
-  - Symmetry pruning
-    - Store stacks of choices. Can evaluate whether it is canonical.
-    - NOTE: We can calculate AT WHAT stack index we should potentially check for WHAT automorphism!!!
-      - Of course, ignore identity automorphism 
-      - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
-  - 
-  - Rules Solver!
-    - (for plugging into the UI, puzzle generation, difficulty estimation(!))
-    - Performance: PatternRule.withRulesApplied
-      - Looks so much like [LinClosure] noted from LinCbO paper.
+    - Make sure to combine embedded rules that have the same embedded input feature set 
+    - 
+    - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
+      - PatternRule.isRedundant will:
+        - (a) scan for what parts of the rule are "missing" (edges, sectors, faces/duals?)
+        - (b) if missing, start an applicator
+          - it will find a match, and apply it, then return back to us (noting WHAT CHANGED)
+          - we see if we are redundant yet, if not, continue until NO MORE MATCHES
+      - Applicator will:
+        - Store arrays for (edges, sectors, faces/duals?) that get rules with "those parts missing"
+          - Whenever we apply a rule that hits these, we put them "back in the queue"
+          - Obviously we ditch rules that can't be applied (incompatible OR not face values)
+      - duals for "missing" - can be noted by their canonical string (so we can easily match/remove)
       - 
-      - Make sure to combine embedded rules that have the same embedded input feature set 
-      - 
-      - PatternRuleApplicator (keep finding matching rules, apply them, then wait for more)
-        - PatternRule.isRedundant will:
-          - (a) scan for what parts of the rule are "missing" (edges, sectors, faces/duals?)
-          - (b) if missing, start an applicator
-            - it will find a match, and apply it, then return back to us (noting WHAT CHANGED)
-            - we see if we are redundant yet, if not, continue until NO MORE MATCHES
-        - Applicator will:
-          - Store arrays for (edges, sectors, faces/duals?) that get rules with "those parts missing"
-            - Whenever we apply a rule that hits these, we put them "back in the queue"
-            - Obviously we ditch rules that can't be applied (incompatible OR not face values)
-        - duals for "missing" - can be noted by their canonical string (so we can easily match/remove)
-        - 
-        - NOTE!!!!!! : For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
-      - 
-      - Rule search tree for fast solving?
-      - Dirty rules:
-        - Store "dormant" rules with <needs feature> for faster solving
-        - Basically "don't keep trying to match rules when we haven't changed any of their input features"
-      - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
-        - Would this reduce the number of rules?
-          - !!!!!!!#$!#$!#$
-          - #$!#$!#$
-          - Yes just include this condition in the "redundancy" check solve
-      - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
+      - NOTE!!!!!! : For redundancy, we know that rules that are INCONSISTENT with our "output" will never be applied
+    - 
+    - Rule search tree for fast solving?
+    - Dirty rules:
+      - Store "dormant" rules with <needs feature> for faster solving
+      - Basically "don't keep trying to match rules when we haven't changed any of their input features"
+    - ... we could just BAKE the "no simple loops" thing into our rules, with potentially faster checks?
+      - Would this reduce the number of rules?
+        - !!!!!!!#$!#$!#$
+        - #$!#$!#$
+        - Yes just include this condition in the "redundancy" check solve
+    - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
   - 
   - Face colors!
     - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
     - Add the "color matching" so the pattern rules are more... viewable?
   - 
-  - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
-    - Certain topology (red exit vertex, etc.) features will probably unlock more things
-  - Also when we show embedded versions:
-    - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
-  - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
-  - 
   - Check code TODOs
-  - 
-  - Rule collapse on embedding too (consolidate)
-    - (do this in places where we are ... solving?)
-  - 
-  - Parallel running:
-    - https://github.com/deThread/dethread?tab=readme-ov-file / https://socket.io/docs/v4/
-  - 
-  - FeatureSet.difference (things we can apply, essentially the pattern rule output)
-    - (performance, but also "hey we can show what actually changed")
-    - Also, our matching is partially based on this(!)
-  - 
-  - Highlander canonical:
-    - For each solution, we can extract out the string for its (a) indeterminate edges, and (b) exit connections in a canonical form
-      - Easily allows searching for highlander-duplicates
-  - [ HEY HEY!!!! ]
-    - Let's just output both FeatureSets of non-highlander AND highlander (from the solve process)
-  - 
-  - Matching!!!
-    - !!! Match exit edges (red) with either absence or just red edges. no white/black!
-    - ... Almost everything else needs to have an exact analogue? (sectors, face colors, non-exit edge features, etc.)
   - 
   - !!! For feature equality (of a list that is nonredundant) - just get canonical strings, sort, append, compare!
     - NOTE: We can't exactly deduplicate embeddings with this, due to FACE COLOR DUALS that start to "overlap"
@@ -351,49 +204,14 @@
     - Features:
       - .. All the other things we are used to
   - 
-  - Highlander:
-    - Q: Do we need to iterate through all solutions for highlander?
-      - Can "hash" highlander solutions by:
-        - (a) string of booleans (one per indeterminate edge)
-        - (b) lexicographically ordered "exit vertex (or edge) index pairs that are connected", e.g. 0-5, 2-3, etc. (exit vertex 0 connects to exit vertex 5)
-    - Edges that are adjacent to an exit-face OR non-valued (non-blank) face are "indeterminate" edges (exit edges are indeterminate)
-    - Two solutions with the same values on indeterminate edges AND same exit connections are both excluded in highlander rules
-    - NOTE(!) Highlander rules might NOT require blank faces (especially once sectors and colors are in play)
-      - (we will have highlander color rules)
-    - How to mark/display these? question marks on unspecified faces?
-  - 
-  - Storage/Serialization of patternboards / patterns / rules
-    - PatternBoard
-      - Naming prefixes? square, "4x4" for "there are four 4-order faces"? not sure how we would disambiguate
-        - Actually, fixed strings for the "edge/vertex" ones, and... STORE the face indices in a string for the face ones?
-    - We want to consolidate references to PatternBoards, so that the embeddings computation is "spread across all the rules"
-    - Wait, CAN WE skip storing the mappings, since we can just find embeddings in tilings and report those out?
-      - But... we should determine isomorphic pattern boards... take in strings and cache isomorphic ones?
-        - Would we need to "remap" patterns/rules?
-  - 
-  - PatternEmbeddingNode - PatternBoard in PatternBoard (without state at first)
-  - 
-  - Pattern = pattern-board + pattern-state (features?)
-    - Face values are part of the pattern/features, no? 
-    - How to think of highlander?
-  - 
+  - [defer] FeatureSet.difference (things we can apply, essentially the pattern rule output)
+    - (performance, but also "hey we can show what actually changed")
+    - Also, our matching is partially based on this(!)
   - [defer] Nonzero (or 2+) crossing type - compute possible paths
-  - 
   - [defer] Rule reduction using BinaryPatternSolver-like handling (apply rules)
     - PatternRule.withRulesApplied with BinaryRuleCollection(!)
       - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
       - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
-  - 
-  - !!!!!!!!!
-  - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
-  - !!!!! THEN GET the "current features/state" of it (from the board+puzzle=state) => "featured board" so we can scan efficiently
-  - !!! (extract features from board+state, into a featured board)
-  - !!!!!!!!!
-  - We do NOT apply "black exit edges" with the pattern, or exit sectors, etc. Keep things simpler, rely in "larger" patterns for those
-  - Vertex topology updates to be... like there are "face portions" and non-face portions
-    - [no] WAIT, are most "vertex" rules... really "face" rules???
-      - NO NO, we really DO have vertex topology setups 
-  - [ignore, we will not infer in invalid puzzle] How to "pattern match" an "exit edge" if it will contain... 2 black? (patterns will not really apply well)
 
 - We are able to apply patterns without OR WITH the "topological simplification"(!)
   - Ooo, this might be good for generating puzzles?
@@ -441,35 +259,3 @@ Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!
   - IF we deal with a single part of a face, we can "generalize" the rest of the face?
   - RED EDGES essentially CHANGES the topology
     - Make rules that can be applied to ANY cases 
-
-[Deprecated]
-
-- [deprecated - use implication search] "Solution Search" Performance wins:
-  - (!!!!!!!!) - What if we do a BFS-like search (but keeping canonical at each step?)
-    - This gets us "instant incremental"
-    - WOULD NEED TO BRING BACK THAT "DUAL"
-    - ---- wait, won't this take up a LOT of memory? (!)
-  - (!!!) WE can use "output feature sets" / solution sets to ACCELERATE the search?
-    - If we have said feature sets A => B, then it makes no sense testing anything between A and B
-    - WAIT think about this (recall, if we are going for MINIMAL, there might be A* with a different feature that is minimal)
-      - And thus we can't just "skip" to B
-        - (!!!) WAIT, but we CAN just "delay" those features, and focus on others (since exploring them will give no info)
-          - (!!!!!!!)
-            - Can we "choose" features to select, based on their frequency?
-              - Will splitting with a more "binary" search be more efficient?
-              - CAN WE INITIALLY ORDER FEATURES so that the isomorphism checks can prune large amounts?
-                - ... e.g. start with unique "corners", if we have set all N of what it can map to, we can
-                  - START SYMMETRY PRUNING.
-                - (obviously, don't do this on boards with only the identity isomorphism)
-    - BUT BUT we can just... do a "quick check" when it's time to decide a feature, see if it can only take one path(!)
-      - This is almost... like a "skip"
-  - (!) OMG keep the rule that we "branched" from, and see if it directly solves the next one (with a single feature added)
-    - Possibly with a tiny subset of features?
-  - (x) Don't use that "stack", just pass parameters?
-  - (a) minimize amount of new objects created for each SolutionFeatureSet
-    - can we store just a "row index" of the solutions? lightweight view
-    - can we store just a "new feature" list? Why are we... doing FeatureSets? ---- OMG why are we storing FeatureSets?
-  - (c) potentially prune automorphisms EARLIER!
-    - We could at least do automorphism/canonical checks AT END OF FACES(!)
-- [deprecated, solved by implication search] 3-face colors running into... generateAllDisjointNonSingleSubsets blowing UP!!!
-  - ... do we just make this more of a callback iterator (or generator)?

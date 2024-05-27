@@ -49,6 +49,7 @@
     - Undo/redo larger (and at the bottom, with edit modes?)
     - REVIEW SLITHERLINK DISCORD (PuzzleTeam, slither-link channel)
     - "Automatic" auto-solve icon
+    - General performance for... HUGE puzzles?
   - 
   - 
   - Edit modes (row for all of this?):

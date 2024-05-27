@@ -1,0 +1,91 @@
+
+- 
+  - Generation Failures
+    - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
+        - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
+    - getOnlyImpliedSectorHexBoardRules 1 0 [kitty 0] <--- crashed, last one
+    - getImpliedSectorGeneralBoardRules 1 2 [kitty 1] <--- crashed, last one
+    - Failure on node bin/generate.js getHighlanderImpliedGeneralBoardRules 0 2 --- error?
+    - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
+    - getOnlyImpliedSquareBoardRules 4 9, 4 15 <--- crash on complete? is it in console history? Try on browser direct macOS?
+  - 
+  - getFeatureImpliedRules DIRECT to binary collection (less memory, fewer crashes)
+    - [YES] - remember a bunch of these will be redundant. do forEach in getSolutionImpliedRules 
+    - [nono - we filter highlander faces canonical, might conflict] getFeatureImpliedRules NOT using isCanonicalWith(?) - can we add that to relieve memory pressure?
+  - 
+  - "INCREMENTAL" way of computing progress --- also one that WILL NOT CRASH when it has results?
+  - 
+  - DOC note somewhere approaches, especially "we can't combine highlander rules"
+  - 
+  - Pause execution
+    - OR RUN STUFF IN A VM that I can snapshot, and run at night(!!!!)
+    - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
+    - https://pptr.dev/api/puppeteer.page.emulateidlestate
+    - OR... JUST RUN THIS STUFF IN A VM, that we can snapshot on the regular?
+      - DOCKER it, so we can pause?
+    - OR.... just:
+      - kill -SIGSTOP <pid>
+      - kill -SIGCONT <pid>
+  - Parallel running:
+    - https://github.com/deThread/dethread?tab=readme-ov-file / https://socket.io/docs/v4/
+  - 
+  - Get the ability to semi-manually clear current boards
+  - 
+  - [LinCb0!!!] General performance enhancements:
+    - HEY we need to generalize due to our "optional" attributes pattern.
+    - [First, testing infrastructure] ADD IN TESTING TO ENSURE GENERATION IS STABLE!!!
+      - Then have a way to UNIT TEST to see if our rule generations are EQUAL to what is there.
+    - See pruning discussion with ChatGPT
+      - [implement LinCb0] - from https://arxiv.org/pdf/2011.04928, etc.
+        - Looks important for e.g. getImpliedColorSquareBoardRules 2 4, which is going up to 47k implications 
+      - [implement pruning] from the paper
+      - We can see if implications would be VIOLATED by adding an attribute (early termination)
+      - OMG OMG - treat implications maybe differently if they "imply everything" (invalid)
+        - Still keep those in our implications,
+        - Consider showing how many non-to-invalid implications we have in our set (in our debugging info)
+    - Performance test best way to handle bit vectors - 110 bits seems slow?
+    - CONSIDER reordering of attributes or objects!!!!
+      - [NO] START WITH OBJECTS WITH SMALLER INTENTS, OR ONES THAT INTERSECT WITH MANY OTHER OBJECTS INTENTS
+        - Wait, what would this do...?
+      - [probably not - only after adding pruning] REORDER ATTRIBUTES?
+  -
+  - SAT.js (or alternative)
+    - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
+    - OMFG, minisat (emscripten) is taking up 134MB OF HEAP (HEAPF32)
+    - https://github.com/GJDuck/SAT.js/blob/master/SAT.js
+      - YES, it is GPLv3, we would license entire thing under GPLv3. Do it for now?
+        - Can ChatGPT give us code adapted from other versions perhaps?
+    - MINISAT FAILURE
+      - getImpliedGeneralBoardRules 2 47 [PC] <<<<------- WAIT WAIT we have.... minisat FAILULRE
+      - 2 48 also
+      - minisat-OUT
+      - Perhaps we are giving it too many loops?
+      - CONSIDER:
+        - What if we... manually compute these? For these SMALL cases, it is probably practical
+  - 
+  - Feature limits during search:
+    - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
+    - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
+  -
+  - Highlander potential solving changes:
+    - (a) don't precompute closures, do it on demand (I mean, from persisted RichSolutions...)
+    - (b) precompute more efficiently (recursively)
+      - Can just "combine" bins as we recurse
+      - "no solutions possible" will recurse trivially
+    - Solutions with different vertex connections are NEVER in the same bin
+      - Corollary: Solutions with a black exit edge are NEVER in the same bin as a hard-red or soft-red-or-double-black
+      - Corollary: Adding a red exit edge as a feature will ONLY (a) filter out bins with black exit edges, and (b) combine bins with hard-red and soft-red-or-double-black exits
+        - IMPORTANT: It will never INVALIDATE only part of a bin.
+    - [OOO] - If none of the potential solutions has vertex connection overlap, we gain no information from highlander (and could skip)
+  -  
+  - [defer] WebGPU general-purpose FCA "solver"
+    - NOTE: multiple approaches
+      - (a) do the "parallel" full approach suggested by that paper. how would we handle the massive amount of memory?
+      - (b) do the next-closure, BUT parallelize the parts (both checking multiple i's, AND parallel-apply of SolutionFormalContext.getClosure/Implication.implicationSetClosure)
+  - 
+  - Symmetry pruning
+    - Store stacks of choices. Can evaluate whether it is canonical.
+    - NOTE: We can calculate AT WHAT stack index we should potentially check for WHAT automorphism!!!
+      - Of course, ignore identity automorphism 
+      - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
+  - 

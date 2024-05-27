@@ -3,6 +3,12 @@ import { defineConfig } from 'vite';
 
 // Using js/ts compatibility from https://github.com/vitejs/vite/issues/3040
 
+/*
+  - Build failure, trying `npm run build --max-old-space-size`
+    - export NODE_OPTIONS=--max-old-space-size=32768
+    - Maybe we should... ditch loading all the data? (remove references for the collections tests?)
+ */
+
 // https://vitejs.dev/config/
 export default defineConfig( {
   base: '',
