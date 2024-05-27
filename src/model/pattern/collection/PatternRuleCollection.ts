@@ -1,11 +1,11 @@
-import { CollectionSerializedPatternRule, PatternRule } from './pattern-rule/PatternRule.ts';
-import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
-import { deserializePatternBoard } from './pattern-board/deserializePatternBoard.ts';
-import { serializePatternBoard } from './pattern-board/serializePatternBoard.ts';
-import { compressString2, decompressString2 } from '../../util/compression.ts';
-import _ from '../../workarounds/_.ts';
-import { getEmbeddings } from './embedding/getEmbeddings.ts';
-import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
+import { CollectionSerializedPatternRule, PatternRule } from '../pattern-rule/PatternRule.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
+import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
+import { compressString2, decompressString2 } from '../../../util/compression.ts';
+import _ from '../../../workarounds/_.ts';
+import { getEmbeddings } from '../embedding/getEmbeddings.ts';
+import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 
 /**
  * Exists to have a memory/disk friendly way of storing a collection of rules.

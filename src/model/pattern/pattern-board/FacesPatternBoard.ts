@@ -1,21 +1,21 @@
-import { BasePatternBoard } from './pattern-board/BasePatternBoard.ts';
-import { TPlanarMappedPatternBoard } from './pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
-import { TBoard } from '../board/core/TBoard.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { TPlanarPatternMap } from './pattern-board/planar-map/TPlanarPatternMap.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import { TPatternVertex } from './pattern-board/TPatternVertex.ts';
+import { BasePatternBoard } from './BasePatternBoard.ts';
+import { TPlanarMappedPatternBoard } from './planar-map/TPlanarMappedPatternBoard.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { TPlanarPatternMap } from './planar-map/TPlanarPatternMap.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
 import { Vector2 } from 'phet-lib/dot';
-import { TPatternEdge } from './pattern-board/TPatternEdge.ts';
-import { TPatternSector } from './pattern-board/TPatternSector.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { getSectorFromEdgePair } from '../data/sector-state/getSectorFromEdgePair.ts';
-import { TPatternFace } from './pattern-board/TPatternFace.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { arePatternBoardsIsomorphic } from './pattern-board/arePatternBoardsIsomorphic.ts';
-import _ from '../../workarounds/_.ts';
-import { PolygonalBoard } from '../board/core/TiledBoard.ts';
-import { PolygonGenerator } from '../board/PolygonGenerator.ts';
+import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternSector } from './TPatternSector.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { getSectorFromEdgePair } from '../../data/sector-state/getSectorFromEdgePair.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
+import _ from '../../../workarounds/_.ts';
+import { PolygonalBoard } from '../../board/core/TiledBoard.ts';
+import { PolygonGenerator } from '../../board/PolygonGenerator.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
 

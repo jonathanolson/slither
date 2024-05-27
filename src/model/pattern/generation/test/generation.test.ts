@@ -1,5 +1,5 @@
 import QUnit from 'qunit';
-import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../BinaryRuleSequence.ts';
+import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
 
 import generalEdgeSequence from '../../../../../data-sequences/general-edge.json';
 import generalEdgeUnrestrictedSequence from '../../../../../data-sequences/general-edge-unrestricted.json';

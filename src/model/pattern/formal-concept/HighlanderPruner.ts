@@ -1,5 +1,5 @@
 import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
-import { RichSolution } from '../generation/RichSolution.ts';
+import { RichSolution } from '../solve/RichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
 import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';

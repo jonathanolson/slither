@@ -1,4 +1,4 @@
-import { GenericRichSolution } from '../generation/GenericRichSolution.ts';
+import { GenericRichSolution } from '../solve/GenericRichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
 import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';

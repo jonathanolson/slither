@@ -5,7 +5,7 @@ import { TPatternBoard } from './TPatternBoard.ts';
 import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import _ from '../../../workarounds/_.ts';
 import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
-import { FacesPatternBoard } from '../FacesPatternBoard.ts';
+import { FacesPatternBoard } from './FacesPatternBoard.ts';
 import { HexagonalBoard } from '../../board/hex/HexagonalBoard.ts';
 import { cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, PolygonalBoard, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from '../../board/core/TiledBoard.ts';
 import { SquareBoard } from '../../board/square/SquareBoard.ts';

@@ -2,7 +2,7 @@ import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
 import { TPatternFace } from '../pattern-board/TPatternFace.ts';
 import _ from '../../../workarounds/_.ts';
-import { FaceConnectivity } from '../FaceConnectivity.ts';
+import { FaceConnectivity } from '../pattern-board/FaceConnectivity.ts';
 
 export const getFaceFeatureCombinations = ( patternBoard: TPatternBoard ): FaceColorDualFeature[][] => {
   const featureMap = new Map<string, FaceColorDualFeature>();

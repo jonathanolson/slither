@@ -12,7 +12,7 @@ import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPattern
 import _ from './workarounds/_.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
-import { FacesPatternBoard } from './model/pattern/FacesPatternBoard.ts';
+import { FacesPatternBoard } from './model/pattern/pattern-board/FacesPatternBoard.ts';
 import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
 import { cairoPentagonalTiling, PolygonalBoard, rhombilleTiling, snubSquareTiling, triangularTiling, trihexagonalTiling } from './model/board/core/TiledBoard.ts';
 import { deserializePlanarMappedPatternBoard, serializePlanarMappedPatternBoard } from './model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';

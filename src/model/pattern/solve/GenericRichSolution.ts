@@ -5,7 +5,7 @@ import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { VertexConnection } from '../highlander/VertexConnection.ts';
 import _ from '../../../workarounds/_.ts';
-import { RichEdgeState } from './RichEdgeState.ts';
+import { RichEdgeState } from '../generation/RichEdgeState.ts';
 
 // A single solution, with metadata (that is NOT binary/solve-state dependent)
 export class GenericRichSolution {

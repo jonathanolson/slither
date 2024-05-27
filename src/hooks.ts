@@ -1,9 +1,9 @@
 import { Display, Node } from 'phet-lib/scenery';
 import { PatternBoardRuleSet, SerializedPatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
-import { PatternRuleCollection, SerializedPatternRuleCollection } from './model/pattern/PatternRuleCollection.ts';
+import { PatternRuleCollection, SerializedPatternRuleCollection } from './model/pattern/collection/PatternRuleCollection.ts';
 import { standardSquareBoardGenerations } from './model/pattern/pattern-board/patternBoards.ts';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
-import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
+import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } from './model/pattern/collection/BinaryRuleSequence.ts';
 import { serializePatternBoard } from './model/pattern/pattern-board/serializePatternBoard.ts';
 import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from './model/pattern/pattern-board/deserializePatternBoard.ts';

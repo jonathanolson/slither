@@ -12,12 +12,12 @@ import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-o
 import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
 import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
 import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
-import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../BinaryRuleSequence.ts';
+import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
 import { BinaryRuleCollection } from '../../collection/BinaryRuleCollection.ts';
 import { isPatternRuleValid } from '../../pattern-rule/isPatternRuleValid.ts';
 import QUnit from 'qunit';
 import { serializePatternBoard } from '../../pattern-board/serializePatternBoard.ts';
-import { getPatternBoardGenericRichSolutions } from '../../getPatternBoardGenericRichSolutions.ts';
+import { getPatternBoardGenericRichSolutions } from '../../solve/getPatternBoardGenericRichSolutions.ts';
 
 QUnit.module( 'pattern rule correctness', () => {
 

@@ -11,9 +11,9 @@ import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
 import { Embedding } from '../pattern/embedding/Embedding.ts';
 import { getEmbeddings } from '../pattern/embedding/getEmbeddings.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
-import { BoardFeatureData } from '../pattern/BoardFeatureData.ts';
-import FeatureSetMatchState from '../pattern/FeatureSetMatchState.ts';
-import { getPatternRuleAction } from '../pattern/getPatternRuleAction.ts';
+import { BoardFeatureData } from '../pattern/feature/BoardFeatureData.ts';
+import FeatureSetMatchState from '../pattern/feature/FeatureSetMatchState.ts';
+import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 

@@ -21,10 +21,10 @@ import FaceValue from '../../data/face-value/FaceValue.ts';
 import { TPatternSector } from '../pattern-board/TPatternSector.ts';
 import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
 import FeatureCompatibility from './FeatureCompatibility.ts';
-import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
+import { ConnectedFacePair, FaceConnectivity } from '../pattern-board/FaceConnectivity.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import { TBoardFeatureData } from '../TBoardFeatureData.ts';
-import FeatureSetMatchState from '../FeatureSetMatchState.ts';
+import { TBoardFeatureData } from './TBoardFeatureData.ts';
+import FeatureSetMatchState from './FeatureSetMatchState.ts';
 
 const scratchEmbeddingsArray: Embedding[] = [];
 

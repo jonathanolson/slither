@@ -3,7 +3,7 @@ import generalEdgeColorCollection from '../../../../data/collections/general-edg
 import generalEdgeColorFallbackCollection from '../../../../data/collections/general-edge-color-fallback.json';
 import generalEdgeColorHighlanderCollection from '../../../../data/collections/general-edge-color-highlander.json';
 import generalEdgeColorHighlanderFallbackCollection from '../../../../data/collections/general-edge-color-highlander-fallback.json';
-import { BinaryRuleCollection } from '../collection/BinaryRuleCollection.ts';
+import { BinaryRuleCollection } from './BinaryRuleCollection.ts';
 
 export const getGeneralEdgeColorGroup = (): BinaryRuleGroup => {
   return new BinaryRuleGroup(

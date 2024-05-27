@@ -1,4 +1,4 @@
-import FaceValue from '../data/face-value/FaceValue.ts';
+import FaceValue from '../../data/face-value/FaceValue.ts';
 
 // Interface exists so we can avoid pulling in a ton of other code
 export interface TBoardFeatureData {

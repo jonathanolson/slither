@@ -8,7 +8,7 @@ import assert, { assertEnabled } from './workarounds/assert.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
 import { BinaryFeatureMap } from './model/pattern/generation/BinaryFeatureMap.ts';
-import { RichSolution } from './model/pattern/generation/RichSolution.ts';
+import { RichSolution } from './model/pattern/solve/RichSolution.ts';
 import { HighlanderPruner } from './model/pattern/formal-concept/HighlanderPruner.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
 import _ from './workarounds/_.ts';

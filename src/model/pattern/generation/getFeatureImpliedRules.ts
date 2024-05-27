@@ -6,7 +6,7 @@ import { NextClosure } from '../formal-concept/NextClosure.ts';
 import { TablePruner } from '../formal-concept/TablePruner.ts';
 import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
 import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
-import { RichSolution } from './RichSolution.ts';
+import { RichSolution } from '../solve/RichSolution.ts';
 import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 
 export type GetFeatureImpliedRulesOptions = {

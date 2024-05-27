@@ -1,5 +1,5 @@
 import { BinaryRuleGroup } from './BinaryRuleGroup.ts';
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from '../collection/BinaryRuleCollection.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
 import _ from '../../../workarounds/_.ts';

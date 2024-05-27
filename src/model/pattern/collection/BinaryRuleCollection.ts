@@ -7,12 +7,12 @@ import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
 import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import { TBoardFeatureData } from '../TBoardFeatureData.ts';
+import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import { getBinaryFeatureMapping } from '../BinaryFeatureMapping.ts';
-import FeatureSetMatchState from '../FeatureSetMatchState.ts';
+import { getBinaryFeatureMapping } from '../generation/BinaryFeatureMapping.ts';
+import FeatureSetMatchState from '../feature/FeatureSetMatchState.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import PatternRuleMatchState from '../PatternRuleMatchState.ts';
+import PatternRuleMatchState from '../pattern-rule/PatternRuleMatchState.ts';
 import { isPatternRuleValid } from '../pattern-rule/isPatternRuleValid.ts';
 
 export class BinaryRuleCollection {

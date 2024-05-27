@@ -1,6 +1,6 @@
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
+import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { GenericRichSolution } from './GenericRichSolution.ts';

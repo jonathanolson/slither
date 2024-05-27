@@ -1,4 +1,4 @@
-import { BinaryRuleCollection } from '../collection/BinaryRuleCollection.ts';
+import { BinaryRuleCollection } from './BinaryRuleCollection.ts';
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
