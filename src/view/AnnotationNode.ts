@@ -1,4 +1,4 @@
-import { Node, Path, TPaint } from 'phet-lib/scenery';
+import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
@@ -234,6 +234,18 @@ export class AnnotationNode extends Node {
         const patternDescriptionNode = new EmbeddedPatternRuleNode( annotation.rule, displayEmbedding, {
           maxWidth: additionalContentLayoutBounds.width - 2 * margin,
           maxHeight: Math.max( spaceAbove, spaceBelow ),
+          inputListeners: [
+            new FireListener( {
+              fire: () => {
+                // copyToClipboard( rule.getBinaryIdentifier() );
+                console.log( annotation.rule.getBinaryIdentifier() );
+
+                const popupWindow = window.open( `./rule?r=${encodeURIComponent( annotation.rule.getBinaryIdentifier() )}`, '_blank' );
+                popupWindow && popupWindow.focus();
+              }
+            } )
+          ],
+          cursor: 'pointer',
         }, );
 
         if ( spaceAbove > spaceBelow ) {
@@ -254,7 +266,8 @@ export class AnnotationNode extends Node {
         const cornerRadius = 0.1;
         children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
           stroke: currentTheme.uiButtonBaseColorProperty,
-          lineWidth: 0.04
+          lineWidth: 0.04,
+          pickable: false,
         } ) );
         children.push( patternDescriptionNode );
       }
@@ -271,7 +284,7 @@ export class AnnotationNode extends Node {
 
     super( {
       children: children,
-      pickable: false
+      pickable: annotation.type === 'Pattern' ? null : false,
     } );
 
     this.disposeEmitter.addListener( () => disposeActions.forEach( action => action() ) );

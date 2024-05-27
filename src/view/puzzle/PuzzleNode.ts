@@ -107,7 +107,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const faceStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const annotationContainer = new Node( {
-      pickable: false
+      pickable: null // TODO: note that we have annotations that we can click on now?
     } );
     const selectedFaceColorHighlightContainer = new Node( {
       pickable: false

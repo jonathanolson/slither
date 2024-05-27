@@ -71,7 +71,9 @@ export class PatternRuleAnalysisNode extends Node {
     // Rule
     {
       addHeader( `Generic Rule${rule.highlander ? ' (Highlander)' : ''}`, 0 );
-      addPaddedNode( new PatternRuleNode( rule, planarPatternMap ) );
+      addPaddedNode( new PatternRuleNode( rule, planarPatternMap, {
+        scale: 1.5,
+      } ) );
     }
 
     // Solutions
