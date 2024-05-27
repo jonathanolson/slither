@@ -402,6 +402,9 @@ class ViewStyleMode extends EnumerationValue {
 
   const pageNumberBox = new VBox( {
     spacing: 5,
+    layoutOptions: {
+      align: 'center',
+    },
     children: [
       pageNumberText,
       new HBox( {
@@ -425,14 +428,20 @@ class ViewStyleMode extends EnumerationValue {
           highlanderRadioButtonGroup,
           filterRadioButtonGroup,
           tilingRadioButtonGroup,
-          viewStyleNode,
-          themeNode,
         ]
       } )
     ]
   } );
 
-  const bottomBox = pageNumberBox;
+  const bottomBox = new HBox( {
+    spacing: 30,
+    align: 'top',
+    children: [
+      viewStyleNode,
+      pageNumberBox,
+      themeNode,
+    ]
+  } );
 
   const MARGIN = 10;
   const HORIZONTAL_GAP = 30;
