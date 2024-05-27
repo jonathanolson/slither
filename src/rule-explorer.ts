@@ -518,7 +518,7 @@ class FilterMode extends EnumerationValue {
             // copyToClipboard( rule.getBinaryIdentifier() );
             console.log( rule.getBinaryIdentifier() );
 
-            const popupWindow = window.open( `./rule.html?r=${encodeURIComponent( rule.getBinaryIdentifier() )}`, '_blank' );
+            const popupWindow = window.open( `./rule?r=${encodeURIComponent( rule.getBinaryIdentifier() )}`, '_blank' );
             popupWindow && popupWindow.focus();
           }
         } );

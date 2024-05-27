@@ -30,7 +30,8 @@ export default defineConfig( {
   build: {
     rollupOptions: {
       input: {
-        'main': '/index.html',
+        'index': '/index.html',
+        'play': '/play.html',
         'rule-explorer': '/rule-explorer.html',
         'rule': '/rule.html',
         'scan-test': '/scan-test.html',
