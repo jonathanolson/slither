@@ -29,6 +29,8 @@
   - Improvements:
     - Clicking Pattern Annotation (in play mode) opens up more about the rule(!) including its typical embedding. 
     - Pattern SOLVE in difficulty(!)
+      - Levels?
+        - ... depends on colors / sectors or not?
     - Rule colors: sync them!
       - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
   - 
