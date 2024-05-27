@@ -80,6 +80,19 @@ export class BinaryMixedRuleGroup {
     );
   }
 
+  public sortedDefault(): BinaryMixedRuleGroup {
+    return this.sortedIndex( ruleIndex => {
+      let score = this.getRule( ruleIndex ).getInputDifficultyScoreB();
+
+      // Put fallbacks at the end(!)
+      if ( this.isRuleIndexFallback( ruleIndex ) ) {
+        score += 1000;
+      }
+
+      return score;
+    } );
+  }
+
   public serialize(): SerializedBinaryMixedRuleGroup {
     return {
       collection: this.collection.serialize(),

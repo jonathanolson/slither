@@ -5,6 +5,8 @@ import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } f
 import { serializePatternBoard } from './model/pattern/pattern-board/serializePatternBoard.ts';
 import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from './model/pattern/pattern-board/deserializePatternBoard.ts';
+import { BinaryMixedRuleGroup, SerializedBinaryMixedRuleGroup } from './model/pattern/collection/BinaryMixedRuleGroup.ts';
+import { BinaryRuleGroup } from './model/pattern/collection/BinaryRuleGroup.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -45,6 +47,13 @@ declare global {
     withCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
     withoutCollectionNonequal: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
     withoutCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+
+    collectionsToSortedMixedGroup: (
+      mainCollection: SerializedBinaryRuleCollection | null,
+      fallbackCollection: SerializedBinaryRuleCollection | null,
+      highlanderCollection: SerializedBinaryRuleCollection | null,
+      highlanderFallbackCollection: SerializedBinaryRuleCollection | null,
+    ) => SerializedBinaryMixedRuleGroup;
   }
 }
 
@@ -141,4 +150,22 @@ window.withoutCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: S
   const bCollection = BinaryRuleCollection.deserialize( b );
   const resultCollection = aCollection.withoutCollectionNonredundant( bCollection );
   return resultCollection.serialize();
+};
+
+window.collectionsToSortedMixedGroup = (
+  mainCollection: SerializedBinaryRuleCollection | null,
+  fallbackCollection: SerializedBinaryRuleCollection | null,
+  highlanderCollection: SerializedBinaryRuleCollection | null,
+  highlanderFallbackCollection: SerializedBinaryRuleCollection | null,
+): SerializedBinaryMixedRuleGroup => {
+  const main = mainCollection ? BinaryRuleCollection.deserialize( mainCollection ) : null;
+  const fallback = fallbackCollection ? BinaryRuleCollection.deserialize( fallbackCollection ) : null;
+  const highlander = highlanderCollection ? BinaryRuleCollection.deserialize( highlanderCollection ) : null;
+  const highlanderFallback = highlanderFallbackCollection ? BinaryRuleCollection.deserialize( highlanderFallbackCollection ) : null;
+
+  const normalGroup = new BinaryRuleGroup( main, fallback, highlander, highlanderFallback );
+
+  const mixedGroup = BinaryMixedRuleGroup.fromGroup( normalGroup );
+
+  return mixedGroup.sortedDefault().serialize();
 };

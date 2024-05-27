@@ -608,9 +608,9 @@ export class FeatureSet {
     let score = 0;
 
     const blackEdgeContribution = 1;
-    const redEdgeContribution = 1.2; // TODO: figure out the balance between red and black that we like
+    const redEdgeContribution = 0.8; // TODO: figure out the balance between red and black that we like
 
-    score += 0.4 * this.patternBoard.vertices.length;
+    score += 1.3 * this.patternBoard.faces.filter( face => !face.isExit ).length;
     if ( this.patternBoard.vertices.length === 0 ) {
       score -= 10;
     }
@@ -620,7 +620,7 @@ export class FeatureSet {
 
     for ( const value of this.faceValueMap.values() ) {
       if ( value === null ) {
-        score += 0.25;
+        score += 0.01;
       }
       else if ( value === 0 ) {
         score += 0.4;

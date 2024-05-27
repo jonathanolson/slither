@@ -1,11 +1,6 @@
 import fs from 'fs';
 import os from 'os';
-import lockfile from 'proper-lockfile';
 import { browserEvaluate, disposeBrowser, getBrowser } from './puppeteer-tools.js';
-
-const lockfileOptions = {
-  stale: 60000,
-};
 
 const name = process.argv[ 2 ];
 

@@ -202,16 +202,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     }
 
     // TODO
-    group = group.sortedIndex( ruleIndex => {
-      let score = group.getRule( ruleIndex ).getInputDifficultyScoreB();
-
-      // Put fallbacks at the end(!)
-      if ( group.isRuleIndexFallback( ruleIndex ) ) {
-        score += 1000;
-      }
-
-      return score;
-    } );
+    group = group.sortedDefault();
 
     return group;
   } );
@@ -394,11 +385,11 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
       labelContent: 'Highlander Only',
       createNode: () => new UIText( 'Highlander Only' ),
     },
-    // {
-    //   value: HighlanderMode.ALL,
-    //   labelContent: 'All',
-    //   createNode: () => new UIText( 'All' ),
-    // },
+    {
+      value: HighlanderMode.ALL,
+      labelContent: 'All',
+      createNode: () => new UIText( 'All' ),
+    },
   ] );
 
   const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
