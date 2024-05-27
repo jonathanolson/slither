@@ -79,8 +79,8 @@ export class EmbeddedPatternRuleNode extends Node {
         inputContainerNode,
         new ArrowNode( 0, 0, 20, 0, {
           // TODO: theme
-          fill: currentTheme.uiForegroundColorProperty,
-          stroke: currentTheme.uiForegroundColorProperty,
+          fill: options.style.theme.uiForegroundColorProperty,
+          stroke: options.style.theme.uiForegroundColorProperty,
           headHeight: 7,
           headWidth: 7,
           tailWidth: 1,
@@ -98,7 +98,7 @@ export class EmbeddedPatternRuleNode extends Node {
       yMargin: 0.1,
       lineWidth: 0.05,
       stroke: null,
-      fill: currentTheme.patternAnnotationBackgroundColorProperty,
+      fill: options.style.theme.patternAnnotationBackgroundColorProperty,
     } );
 
     options.children = [ patternDescriptionNode ];
