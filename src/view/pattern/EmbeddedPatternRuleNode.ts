@@ -3,7 +3,7 @@ import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
 import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
 import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
 import PuzzleNode from '../puzzle/PuzzleNode.ts';
-import { currentTheme, puzzleFont } from '../Theme.ts';
+import { puzzleFont } from '../Theme.ts';
 import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
 import { Shape } from 'phet-lib/kite';
 import { Panel } from 'phet-lib/sun';

@@ -439,7 +439,7 @@ class ViewStyleMode extends EnumerationValue {
     ]
   } );
 
-  const bottomBox = new HBox( {
+  const topBox = new HBox( {
     spacing: 30,
     align: 'top',
     children: [
@@ -468,8 +468,8 @@ class ViewStyleMode extends EnumerationValue {
       stretch: true,
     },
     children: [
+      topBox,
       rulesGridBox,
-      bottomBox,
     ],
   } );
 
@@ -494,7 +494,7 @@ class ViewStyleMode extends EnumerationValue {
     viewStyleMode,
   ) => {
     const availableFullHeight = layoutBounds.height - 2 * MARGIN;
-    const availableHeight = availableFullHeight - bottomBox.height - VERTICAL_GAP;
+    const availableHeight = availableFullHeight - topBox.height - VERTICAL_GAP;
 
     leftBox.maxHeight = availableFullHeight;
     rightBox.preferredHeight = availableFullHeight;
