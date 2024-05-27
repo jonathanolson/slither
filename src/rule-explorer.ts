@@ -1,21 +1,19 @@
 import { Bounds2, Range } from 'phet-lib/dot';
 import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { DerivedProperty, Multilink, Property } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, Multilink, Property } from 'phet-lib/axon';
 import _ from './workarounds/_.ts';
 import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
-import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty, LocalStorageProperty } from './util/localStorage.ts';
+import { LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty } from './util/localStorage.ts';
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
-import { UITextCheckbox } from './view/UITextCheckbox.ts';
 import { ArrowButton, Panel, Slider } from 'phet-lib/sun';
 import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
-import { basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
+import { basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, puzzleStyleFromProperty, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
-import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
 import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
 import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
@@ -27,7 +25,7 @@ import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixed
 import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
 import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
 
-// Load with `http://localhost:5173/rules.html?debugger`
+// Load with `http://localhost:5173/rule-explorer?debugger`
 
 // @ts-expect-error
 window.assertions.enableAssert();
@@ -87,22 +85,40 @@ class FilterMode extends EnumerationValue {
   public static readonly enumeration = new Enumeration( FilterMode );
 }
 
+class ViewStyleMode extends EnumerationValue {
+
+  public static readonly CLASSIC = new ViewStyleMode();
+  public static readonly GENERIC = new ViewStyleMode();
+  public static readonly LINES = new ViewStyleMode();
+  public static readonly COLORS = new ViewStyleMode();
+
+  public static readonly enumeration = new Enumeration( ViewStyleMode );
+}
+
 // TODO: add reset on fail conditions
 ( async () => {
 
-  const explorerPuzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'explorerPuzzleStyleProperty', {
-    serialize: style => Object.keys( puzzleStyleMap ).find( key => puzzleStyleMap[ key as keyof typeof puzzleStyleMap ] === style )!,
+  const viewStyleModeProperty = new LocalStorageEnumerationProperty( 'viewStyleModeProperty', ViewStyleMode.CLASSIC );
 
-    // NOTE: Default to CLASSIC!
-    deserialize: name => name ? puzzleStyleMap[ name as keyof typeof puzzleStyleMap ] ?? classicPuzzleStyle : classicPuzzleStyle
-  } );
-  const explorerCurrentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( explorerPuzzleStyleProperty );
+  const explorerCurrentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( new DerivedProperty( [ viewStyleModeProperty ], viewStyle => {
+    if ( viewStyle === ViewStyleMode.CLASSIC || viewStyle === ViewStyleMode.GENERIC ) {
+      return classicPuzzleStyle;
+    }
+    else if ( viewStyle === ViewStyleMode.LINES ) {
+      return basicSectorsPuzzleStyle;
+    }
+    else if ( viewStyle === ViewStyleMode.COLORS ) {
+      return sectorsWithColorsPuzzleStyle;
+    }
+    else {
+      throw new Error( `unhandled view style: ${viewStyle}` );
+    }
+  } ) );
 
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.ALL );
   const filterModeProperty = new LocalStorageEnumerationProperty( 'filterModeProperty', FilterMode.NONE );
   const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
-  const showEmbeddedProperty = new LocalStorageBooleanProperty( 'showEmbeddedProperty', false );
 
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
@@ -174,11 +190,11 @@ class FilterMode extends EnumerationValue {
   } );
 
   // Don't allow showing collections that we can't with our current style
-  Multilink.multilink( [
-    explorerCurrentPuzzleStyle.edgesVisibleProperty,
-    explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
-    explorerCurrentPuzzleStyle.sectorsVisibleProperty,
-  ], ( edgesVisible, colorsVisible, sectorsVisible ) => {
+  Multilink.multilink( [ viewStyleModeProperty ], ( viewStyleMode ) => {
+    const edgesVisible = true;
+    const colorsVisible = viewStyleMode !== ViewStyleMode.CLASSIC && viewStyleMode !== ViewStyleMode.LINES;
+    const sectorsVisible = viewStyleMode !== ViewStyleMode.CLASSIC;
+
     const currentMode = collectionModeProperty.value;
 
     const currentNeedsEdges = currentMode !== CollectionMode.COLOR;
@@ -224,49 +240,29 @@ class FilterMode extends EnumerationValue {
     return _.range( minIndex, maxIndex ).map( i => group.getRule( i ) );
   } );
 
-
-  const viewStyleIcons = ViewStyleBarNode.getIcons();
-  const getViewLabel = ( icon: Node, text: string ) => new HBox( {
-    spacing: 5,
-    children: [
-      new UIText( text ),
-      icon,
-    ]
-  } );
-
   const viewStyleNode = new UILabeledVerticalAquaRadioButtonGroup(
     'View Style',
-    explorerPuzzleStyleProperty,
+    viewStyleModeProperty,
     [
       {
-        value: classicPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
+        value: ViewStyleMode.CLASSIC,
+        createNode: () => new UIText( 'Classic' ),
         labelContent: 'Classic'
       },
-      // {
-      //   value: basicLinesPuzzleStyle,
-      //   createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
-      //   labelContent: 'Basic Lines'
-      // },
-      // {
-      //   value: basicFaceColoringPuzzleStyle,
-      //   createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
-      //   labelContent: 'Basic Face Colors'
-      // },
-      // {
-      //   value: pureFaceColorPuzzleStyle,
-      //   createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
-      //   labelContent: 'Pure Face Colors'
-      // },
       {
-        value: basicSectorsPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Lines' ),
-        labelContent: 'Basic Sectors',
+        value: ViewStyleMode.GENERIC,
+        createNode: () => new UIText( 'Generic' ),
+        labelContent: 'Generic'
       },
       {
-        value: sectorsWithColorsPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Colors' ),
-        labelContent: 'Sectors With Colors',
+        value: ViewStyleMode.LINES,
+        createNode: () => new UIText( 'Lines' ),
+        labelContent: 'Lines',
+      },
+      {
+        value: ViewStyleMode.COLORS,
+        createNode: () => new UIText( 'Colors' ),
+        labelContent: 'Colors',
       },
     ]
   );
@@ -292,7 +288,7 @@ class FilterMode extends EnumerationValue {
       labelContent: 'Edge',
       createNode: () => new UIText( 'Edge' ),
       options: {
-        enabledProperty: explorerCurrentPuzzleStyle.edgesVisibleProperty,
+        enabledProperty: new BooleanProperty( true ),
       },
     },
     {
@@ -300,7 +296,7 @@ class FilterMode extends EnumerationValue {
       labelContent: 'Color',
       createNode: () => new UIText( 'Color' ),
       options: {
-        enabledProperty: explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
+        enabledProperty: new DerivedProperty( [ viewStyleModeProperty ], viewStyleMode => viewStyleMode !== ViewStyleMode.CLASSIC && viewStyleMode !== ViewStyleMode.LINES ),
       },
     },
     {
@@ -308,10 +304,7 @@ class FilterMode extends EnumerationValue {
       labelContent: 'Edge + Color',
       createNode: () => new UIText( 'Edge + Color' ),
       options: {
-        enabledProperty: DerivedProperty.and( [
-          explorerCurrentPuzzleStyle.edgesVisibleProperty,
-          explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
-        ] ),
+        enabledProperty: new DerivedProperty( [ viewStyleModeProperty ], viewStyleMode => viewStyleMode !== ViewStyleMode.CLASSIC && viewStyleMode !== ViewStyleMode.LINES ),
       },
     },
     {
@@ -319,10 +312,7 @@ class FilterMode extends EnumerationValue {
       labelContent: 'Edge + Sector',
       createNode: () => new UIText( 'Edge + Sector' ),
       options: {
-        enabledProperty: DerivedProperty.and( [
-          explorerCurrentPuzzleStyle.edgesVisibleProperty,
-          explorerCurrentPuzzleStyle.sectorsVisibleProperty,
-        ] ),
+        enabledProperty: new DerivedProperty( [ viewStyleModeProperty ], viewStyleMode => viewStyleMode !== ViewStyleMode.CLASSIC ),
       },
     },
     {
@@ -330,11 +320,7 @@ class FilterMode extends EnumerationValue {
       labelContent: 'Edge + Color + Sector',
       createNode: () => new UIText( 'Edge + Color + Sector' ),
       options: {
-        enabledProperty: DerivedProperty.and( [
-          explorerCurrentPuzzleStyle.edgesVisibleProperty,
-          explorerCurrentPuzzleStyle.faceColorsVisibleProperty,
-          explorerCurrentPuzzleStyle.sectorsVisibleProperty,
-        ] ),
+        enabledProperty: new DerivedProperty( [ viewStyleModeProperty ], viewStyleMode => viewStyleMode !== ViewStyleMode.CLASSIC && viewStyleMode !== ViewStyleMode.LINES ),
       },
     },
   ] );
@@ -369,8 +355,6 @@ class FilterMode extends EnumerationValue {
       createNode: () => new UIText( 'Only Numbers and Red' ),
     },
   ] );
-
-  const showEmbeddedCheckbox = new UITextCheckbox( 'Show Embedded', showEmbeddedProperty );
 
   const tilingRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Compatible Tiling', displayTilingProperty, [
     {
@@ -441,7 +425,6 @@ class FilterMode extends EnumerationValue {
           highlanderRadioButtonGroup,
           filterRadioButtonGroup,
           tilingRadioButtonGroup,
-          showEmbeddedCheckbox,
           viewStyleNode,
           themeNode,
         ]
@@ -488,12 +471,12 @@ class FilterMode extends EnumerationValue {
     rulesProperty,
     layoutBoundsProperty,
     displayTilingProperty, // TODO: it seems like our rulesProperty will ALSO change on this, so we have unnecessary performance hits
-    showEmbeddedProperty,
+    viewStyleModeProperty,
   ], (
     rules,
     layoutBounds,
     displayTiling,
-    showEmbedded,
+    viewStyleMode,
   ) => {
     const availableFullHeight = layoutBounds.height - 2 * MARGIN;
     const availableHeight = availableFullHeight - bottomBox.height - VERTICAL_GAP;
@@ -524,7 +507,7 @@ class FilterMode extends EnumerationValue {
         } );
 
         let displayEmbedding: DisplayEmbedding | null = null;
-        if ( showEmbedded && displayTiling ) {
+        if ( viewStyleMode !== ViewStyleMode.GENERIC && displayTiling ) {
           displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
         }
 

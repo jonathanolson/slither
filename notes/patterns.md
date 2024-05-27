@@ -15,6 +15,8 @@
     - Rule colors: sync them!
       - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
   - 
+  - LOADING message for play / rule explorer / rule
+  - 
   - Bugs:
     - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
       - Once resolved, do the "don't show sectors" bit?
