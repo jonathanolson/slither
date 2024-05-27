@@ -10,10 +10,10 @@ import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStor
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
-import { ArrowButton, Slider } from 'phet-lib/sun';
+import { ArrowButton, Panel, Slider } from 'phet-lib/sun';
 import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
-import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
+import { basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
@@ -243,29 +243,29 @@ class FilterMode extends EnumerationValue {
         createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
         labelContent: 'Classic'
       },
-      {
-        value: basicLinesPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
-        labelContent: 'Basic Lines'
-      },
-      {
-        value: basicFaceColoringPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
-        labelContent: 'Basic Face Colors'
-      },
-      {
-        value: pureFaceColorPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
-        labelContent: 'Pure Face Colors'
-      },
+      // {
+      //   value: basicLinesPuzzleStyle,
+      //   createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
+      //   labelContent: 'Basic Lines'
+      // },
+      // {
+      //   value: basicFaceColoringPuzzleStyle,
+      //   createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
+      //   labelContent: 'Basic Face Colors'
+      // },
+      // {
+      //   value: pureFaceColorPuzzleStyle,
+      //   createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
+      //   labelContent: 'Pure Face Colors'
+      // },
       {
         value: basicSectorsPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Basic Sectors' ),
+        createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Lines' ),
         labelContent: 'Basic Sectors',
       },
       {
         value: sectorsWithColorsPuzzleStyle,
-        createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Sectors With Colors' ),
+        createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Colors' ),
         labelContent: 'Sectors With Colors',
       },
     ]
@@ -274,7 +274,7 @@ class FilterMode extends EnumerationValue {
   const themeNode = new UILabeledVerticalAquaRadioButtonGroup(
     'Theme',
     themeProperty,
-    availableThemes.map( theme => {
+    availableThemes.slice( 0, 3 ).map( theme => {
       return {
         value: theme,
         createNode: () => new Text( theme.name, {
@@ -538,9 +538,12 @@ class FilterMode extends EnumerationValue {
           // return new Rectangle( 0, 0, 2, 2, { fill: 'red' } );
         }
         else {
-          return new PatternRuleNode( rule, planarPatternMap, {
+          return new Panel( new PatternRuleNode( rule, planarPatternMap, {
             cursor: 'pointer',
-            inputListeners: [ inputListener ],
+          } ), {
+            fill: '#333',
+            stroke: null,
+            inputListeners: [ inputListener ]
           } );
         }
       } );
