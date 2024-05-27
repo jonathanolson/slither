@@ -8,7 +8,11 @@ import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { TPatternSector } from '../pattern-board/TPatternSector.ts';
 
 // NOTE: Only works for the specific types of patterns we create.
-export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard ): Embedding[] => {
+export const computeEmbeddings = (
+  pattern: TPatternBoard,
+  board: TPatternBoard,
+  abortOnFirstEmbedding = false,
+): Embedding[] => {
   // Can't stuff bigger patterns into smaller boards
   if (
     pattern.faces.filter( face => !face.isExit ).length > board.faces.filter( face => !face.isExit ).length ||
@@ -250,6 +254,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               sectorMap,
               faceMap,
             ) );
+            if ( abortOnFirstEmbedding ) {
+              return;
+            }
           }
           else {
             const patternFace = orderedFaces[ orderedFacesIndex ];
@@ -372,6 +379,10 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
               mappingMap.set( patternFace, mapping );
 
               recur( orderedFacesIndex + 1, mappingMap, faceMap, faceInverseMap, vertexMap, vertexInverseMap );
+
+              if ( abortOnFirstEmbedding && embeddings.length ) {
+                return;
+              }
             }
             else {
               // Well, we're connected, so we share a vertex with a previous face. For each candidate face, we'll have
@@ -480,12 +491,20 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
                   newMappingMap.set( patternFace, mapping );
 
                   recur( orderedFacesIndex + 1, newMappingMap, newFaceMap, newFaceInverseMap, newVertexMap, newVertexInverseMap );
+
+                  if ( abortOnFirstEmbedding && embeddings.length ) {
+                    return;
+                  }
                 }
               }
             }
           }
         };
         recur( 1, rootMappingMap, rootFaceMap, rootFaceInverseMap, rootVertexMap, rootVertexInverseMap );
+
+        if ( abortOnFirstEmbedding && embeddings.length ) {
+          return embeddings;
+        }
       }
     }
   }
@@ -629,6 +648,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
             sectorMap,
             faceMap
           ) );
+          if ( abortOnFirstEmbedding ) {
+            return;
+          }
         }
         else {
           const patternEdge = realEdges[ edgeIndex ];
@@ -705,6 +727,9 @@ export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard 
           [ patternEdge.faces[ 1 ], targetEdge.faces[ 1 ] ],
         ] )
       ) );
+      if ( abortOnFirstEmbedding ) {
+        return embeddings;
+      }
     }
   }
   else {

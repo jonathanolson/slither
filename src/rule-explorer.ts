@@ -24,6 +24,7 @@ import { generalEdgeSectorMixedGroup } from './model/pattern/collection/generalE
 import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixedGroup.ts';
 import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
 import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
+import { computeEmbeddings } from './model/pattern/embedding/computeEmbeddings.ts';
 
 // Load with `http://localhost:5173/rule-explorer?debugger`
 
@@ -155,6 +156,11 @@ class ViewStyleMode extends EnumerationValue {
     const filterTiling = !!displayTiling;
     const filterGeneral = filterMode !== FilterMode.NONE;
 
+    const patternBoardSet = new Set( displayTiling ? group.collection.patternBoards.filter( patternBoard => {
+      // NOTE: early-abort flag
+      return computeEmbeddings( patternBoard, displayTiling.boardPatternBoard, true ).length > 0;
+    } ) : [] );
+
     if (
       withoutHighlander ||
       onlyHighlander ||
@@ -171,7 +177,7 @@ class ViewStyleMode extends EnumerationValue {
 
         const rule = group.getRule( ruleIndex );
 
-        if ( displayTiling && getBestDisplayEmbedding( rule.patternBoard, displayTiling ) === null ) {
+        if ( displayTiling && !patternBoardSet.has( rule.patternBoard )  ) {
           return false;
         }
 
