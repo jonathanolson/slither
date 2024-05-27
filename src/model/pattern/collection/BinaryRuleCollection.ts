@@ -5,7 +5,6 @@ import { deserializePatternBoard } from '../pattern-board/deserializePatternBoar
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
-import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
 import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
 import { Embedding } from '../embedding/Embedding.ts';
@@ -135,45 +134,6 @@ export class BinaryRuleCollection {
     }
 
     return new BinaryRuleCollection( patternBoards, new Uint8Array( bytes ), ruleIndices, nextRuleIndex, isHighlander );
-  }
-
-  public withNonredundantRuleSet( ruleSet: PatternBoardRuleSet, maxScore = Number.POSITIVE_INFINITY ): BinaryRuleCollection {
-    const currentEmbeddedRules = this.getRules().flatMap( currentRule => currentRule.getEmbeddedRules( getEmbeddings( currentRule.patternBoard, ruleSet.patternBoard ) ) );
-    console.log( 'embedded', currentEmbeddedRules.length );
-
-    let totalScoreSum = 0;
-    let count = 0;
-    let skipCount = 0;
-    let maxEncounteredScore = 0;
-
-    const addedRules: PatternRule[] = [];
-
-    for ( const rule of ruleSet.rules ) {
-      const score = rule.getInputDifficultyScoreA();
-
-      maxEncounteredScore = Math.max( maxEncounteredScore, score );
-
-      if ( ruleSet.patternBoard.faces.length > 1 && score > maxScore ) {
-        skipCount++;
-        continue;
-      }
-
-      if ( !rule.isRedundant( currentEmbeddedRules ) ) {
-        addedRules.push( rule );
-
-        totalScoreSum += score;
-        count++;
-
-        currentEmbeddedRules.push( ...rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, ruleSet.patternBoard ) ) );
-        if ( addedRules.length % 100 === 0 ) {
-          console.log( 'embedded X', currentEmbeddedRules.length );
-        }
-      }
-    }
-
-    console.log( `added ${count}, skipped ${skipCount} with average score ${Math.round( totalScoreSum / count )}, maxEncounteredScore ${maxEncounteredScore}` );
-
-    return this.withRules( addedRules );
   }
 
   public withCollection( ruleCollection: BinaryRuleCollection ): BinaryRuleCollection {

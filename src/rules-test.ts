@@ -1,121 +1,14 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
-import { edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations, vertexNonExitPatternBoards } from './model/pattern/pattern-board/patternBoards.ts';
+import { standardSquareBoardGenerations, standardTriangularBoardGenerations } from './model/pattern/pattern-board/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { PatternBoardSolver } from './model/pattern/solve/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
-import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { Solver } from './model/logic/minisat/core/Solver.ts';
-import { BinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
-
-import generalEdgeSequence from '../data-sequences/general-edge.json';
-import generalEdgeUnrestrictedSequence from '../data-sequences/general-edge-unrestricted.json';
-import generalColorUnrestrictedSequence from '../data-sequences/general-color-unrestricted.json';
-import generalEdgeSectorSequence from '../data-sequences/general-edge-sector.json';
-import generalEdgeSectorUnrestrictedSequence from '../data-sequences/general-edge-sector-unrestricted.json';
-import generalAllSequence from '../data-sequences/general-all.json';
-import generalAllUnrestrictedSequence from '../data-sequences/general-all-unrestricted.json';
-import squareOnlyEdgeSequence from '../data-sequences/square-only-edge.json';
-import squareOnlyEdgeUnrestrictedSequence from '../data-sequences/square-only-edge-unrestricted.json';
-import squareOnlyColorUnrestrictedSequence from '../data-sequences/square-only-color-unrestricted.json';
-import squareOnlyEdgeSectorSequence from '../data-sequences/square-only-edge-sector.json';
-import squareOnlyEdgeSectorUnrestrictedSequence from '../data-sequences/square-only-edge-sector-unrestricted.json';
-import squareOnlyAllSequence from '../data-sequences/square-only-all.json';
-import squareOnlyAllUnrestrictedSequence from '../data-sequences/square-only-all-unrestricted.json';
 
 // @ts-expect-error
 window.assertions.enableAssert();
 
-const combine = ( name: string, a: BinaryRuleCollection, b: BinaryRuleCollection ) => {
-  console.log( name );
-
-  return a.withCollectionNonredundant( b );
-};
-
-const combineArray = ( name: string, collections: BinaryRuleCollection[] ) => {
-  console.log( name, 'composite' );
-
-  let result = collections[ 0 ];
-
-  for ( let i = 1; i < collections.length; i++ ) {
-    result = combine( `${name} ${i}`, result, collections[ i ] );
-  }
-
-  return result;
-};
-
-const writeCollection = ( name: string, collection: BinaryRuleCollection ) => {
-  console.log( 'DONE WITH', name, collection );
-};
-
-/*
-        'square-only-all-unrestricted',
-        'square-only-color-unrestricted',
-        'square-only-edge-sector-unrestricted',
-        'square-only-edge-unrestricted',
- */
-
-const collectionarino = combineArray( 'foo', [
-  BinaryRuleCollection.deserialize( squareOnlyAllUnrestrictedSequence.collection ),
-  BinaryRuleCollection.deserialize( squareOnlyColorUnrestrictedSequence.collection ),
-  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorUnrestrictedSequence.collection ),
-  BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestrictedSequence.collection ),
-] );
-
-debugger;
-
-const squareOnlyEdge = combine( 'squareOnlyEdge', BinaryRuleCollection.deserialize( squareOnlyEdgeSequence.collection ), BinaryRuleCollection.deserialize( squareOnlyEdgeUnrestrictedSequence.collection ) );
-writeCollection( 'square-only-edge', squareOnlyEdge );
-
-const squareOnlyColor = BinaryRuleCollection.deserialize( squareOnlyColorUnrestrictedSequence.collection );
-writeCollection( 'square-only-color', squareOnlyColor );
-
-const squareOnlyEdgeSector = combineArray( 'squareOnlyEdgeSector', [
-  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorSequence.collection ),
-  BinaryRuleCollection.deserialize( squareOnlyEdgeSectorUnrestrictedSequence.collection ),
-  squareOnlyEdge,
-] );
-writeCollection( 'square-only-edge-sector', squareOnlyEdgeSector );
-
-const squareOnlyAll = combineArray( 'squareOnlyAll', [
-  BinaryRuleCollection.deserialize( squareOnlyAllSequence.collection ),
-  BinaryRuleCollection.deserialize( squareOnlyAllUnrestrictedSequence.collection ),
-  squareOnlyColor,
-  squareOnlyEdgeSector,
-] );
-writeCollection( 'square-only-all', squareOnlyAll );
-
-const generalEdge = combineArray( 'generalEdge', [
-  BinaryRuleCollection.deserialize( generalEdgeSequence.collection ),
-  BinaryRuleCollection.deserialize( generalEdgeUnrestrictedSequence.collection ),
-  squareOnlyEdge
-] );
-writeCollection( 'general-edge', generalEdge );
-
-const generalColor = combineArray( 'generalColor', [
-  BinaryRuleCollection.deserialize( generalColorUnrestrictedSequence.collection ),
-  squareOnlyColor
-] );
-writeCollection( 'general-color', generalColor );
-
-const generalEdgeSector = combineArray( 'generalEdgeSector', [
-  BinaryRuleCollection.deserialize( generalEdgeSectorSequence.collection ),
-  BinaryRuleCollection.deserialize( generalEdgeSectorUnrestrictedSequence.collection ),
-  generalEdge,
-  squareOnlyEdgeSector,
-] );
-writeCollection( 'general-edge-sector', generalEdgeSector );
-
-const generalAll = combineArray( 'generalAll', [
-  BinaryRuleCollection.deserialize( generalAllSequence.collection ),
-  BinaryRuleCollection.deserialize( generalAllUnrestrictedSequence.collection ),
-  generalColor,
-  generalEdgeSector,
-  squareOnlyAll,
-] );
-writeCollection( 'general-all', generalAll );
-
-debugger;
 
 const scene = new Node();
 
@@ -165,40 +58,6 @@ console.log( 'test' );
 
     // debugger;
   }
-
-  const allChained = PatternBoardRuleSet.createImpliedChained( [ edgePatternBoard, ...vertexNonExitPatternBoards ], [], {
-    solveEdges: true,
-    solveFaceColors: true,
-    solveSectors: true,
-    highlander: false,
-  } );
-
-  allChained.forEach( ruleSet => {
-    console.log( JSON.stringify( ruleSet.serialize() ) );
-  } );
-
-  // const generations = FacesPatternBoard.getFirstNGenerations( new SquareBoard( 20, 20 ), 5 );
-  //
-  // const patternBoard = generations[ 1 ][ 1 ];
-  // const ruleSet = PatternBoardRuleSet.create( patternBoard, patternBoard.planarPatternMap, [
-  //   ...basicColorRuleSets,
-  //   ...squareColorGeneration0RuleSets,
-  // ], {
-  //   solveEdges: false,
-  //   solveFaceColors: true
-  // } );
-  // console.log( JSON.stringify( ruleSet.serialize() ) );
-
-
-  // const getSolutionCount = ( patternBoard: TPatternBoard ) => {
-  //   return PatternBoardSolver.getSolutions( patternBoard, [] ).length;
-  // };
-  //
-  // console.log( 'square', getSolutionCount( squarePatternBoard ) );
-  // console.log( 'diagonal', getSolutionCount( squareBoardGenerations[ 1 ][ 0 ] ) );
-  // console.log( '3rd gen', getSolutionCount( squareBoardGenerations[ 2 ][ 0 ] ) );
-  // console.log( '4th gen', getSolutionCount( squareBoardGenerations[ 3 ][ 0 ] ) );
-  // console.log( '5th gen', getSolutionCount( squareBoardGenerations[ 4 ][ 0 ] ) );
 
   const solver = new Solver();
 
