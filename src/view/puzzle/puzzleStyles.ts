@@ -110,6 +110,20 @@ const basicSolverFactoryProperty = new DerivedProperty( [
     ] );
   };
 } );
+const basicWithColorToEdgeSolverFactoryProperty = new DerivedProperty( [
+  basicSolverFactoryProperty
+], ( basicSolverFactory ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      basicSolverFactory( board, state, dirty ),
+
+      new SimpleFaceColorSolver( board, state, {
+        solveToRed: true,
+        solveToBlack: true,
+      } )
+    ] );
+  };
+} );
 const sectorSolverFactoryProperty = new DerivedProperty( [
   basicSolverFactoryProperty
 ], ( basicSolverFactory ) => {
@@ -159,7 +173,7 @@ export const basicLinesPuzzleStyle: TPuzzleStyle = {
   joinedLinesCapProperty: new TinyProperty( 'round' )
 };
 export const basicFaceColoringPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, false, false, false, basicSolverFactoryProperty ),
+  ...getPartialPuzzleStyle( true, false, false, false, basicWithColorToEdgeSolverFactoryProperty ),
   theme: currentTheme,
 
   edgesVisibleProperty: new TinyProperty( true ),
