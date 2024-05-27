@@ -2,28 +2,8 @@
 # Patterns
 
 - TODO
-  - 
-  - Generate:
-    - general edge
-    - general edge unrestricted
-    - general color unrestricted
-    - general edge sector
-    - general edge sector unrestricted
-    - general edge color *
-    - general edge color unrestricted *
-    - general all
-    - general all unrestricted - hexagonal-1-0 MANY params, we need pruning or SOMETHING. cairo-1-0 also... fairly intense, trihexagonal-1-2/portugal-1-1 also
-    - square only edge
-    - square only edge unrestricted
-    - square only color unrestricted
-    - square only edge sector
-    - square only edge sector unrestricted
-    - square only edge color *
-    - square only edge color unrestricted *
-    - square only all
-    - square only all unrestricted
+  -
   - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
-  - 
   - 
   - old generation?
     - 1
@@ -47,8 +27,12 @@
     - Add dependencies.json for phet-lib builds!!!!
   -
   - Improvements:
-    - Clicking Pattern Annotation opens up more about the rule(!) including its typical embedding. 
+    - Clicking Pattern Annotation (in play mode) opens up more about the rule(!) including its typical embedding. 
     - Pattern SOLVE in difficulty(!)
+    - Rule colors: sync them!
+      - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
+  - 
+  - For "face selection" - make it easier to select outside (not just that strip)
   - 
   - Bugs:
     - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
@@ -63,34 +47,34 @@
       - FaceStateNode lazy creation
       - OMG share listeners, so we don't create so many for PuzzleNode?
   - 
-  - RULE VIEWER
-    - rule-explorer.html
-      - handle "isomorphic when embedded"
-        - Which rules match other rules' embeddings?
-      - handle "collapse when embedded"
-        - PRECOMPUTE for rule explorer?
-      - MOVE the "page control" to bottom of the grid area
-      - Embeddings:
-        - Should we "gray out" satisfied face values???
-      - 
-      - Better than pagination -- infinite scroll?
-      - Sort by:
-        - score
-        - pattern boards
-      - Filter by:
-        - Quantity of features(!) -- no black edges? no red edges? hmmm
-      - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
-    - 
-    - rule.html
-      - ?r=${getBinaryIdentifier()} 
-      - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
-        - getBinaryIdentifier()
-      - Show embeddings in the common tilings(!)
-        - POTENTIALLY show "unique to rotation/symmetry" embeddings?
-      - DO A FULL SOLVE(?)
-    - 
+  - rule.html
+    - ?r=${getBinaryIdentifier()} 
+    - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
+      - getBinaryIdentifier()
+    - Show embeddings in the common tilings(!)
+      - POTENTIALLY show "unique to rotation/symmetry" embeddings?
+    - DO A FULL SOLVE(?)
     - If highlander, SHOW SOLUTION STUFF and how it filters out? (i.e. what are input-matching solutions that get filtered, and what is one example)
       - Using isPatternRuleValid, we can DETECT whether it requires highlander or not
+    - POTENTIALLY have it just take in an input pattern
+  - 
+  - rule-explorer.html
+    - MOVE the "page control" to bottom of the grid area
+    - 
+    - Show patterns that ONLY TAKE FACES (or maybe red exit edges - and could be on borders)
+    - 
+    - [defer] handle "isomorphic when embedded"
+      - Which rules match other rules' embeddings?
+    - [defer] handle "collapse when embedded"
+      - PRECOMPUTE for rule explorer?
+    - 
+    - Better than pagination -- infinite scroll?
+    - [defer] Sort by:
+      - score
+      - pattern boards
+    - [defer] Filter by:
+      - Quantity of features(!) -- no black edges? no red edges? hmmm
+    - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
   - 
   - ZOMG ZOMG ZOMG ZOMG OMZG OMZOGMZOGMOSMGOSRIMGOSIMRGOSIRMGOSIMRGOSIRMGOSGIMROSIMRG
   - ------------------
@@ -105,20 +89,10 @@
   - 
   - DOC note somewhere approaches, especially "we can't combine highlander rules"
   - 
-  - Add testing to edge-color (in correctness)
-    - Actually, we seem to be limiting this because it takes a while... should we find a better way to test?
-  - 
-  - sorted() on binary collections [and better sorting]
-    - Come up with a better "rule complexity" metric, sectors are not THAT bad. ONLY measure the input size?
-      - ACTUALLY JUST MEASURE HOW OFTEN RULES COME UP ON RANDOM THINGS?
-        - can we iteratively improve the ranking of rules? Repeatedly solve generated puzzles (full difficulty), see how often we use each rule
-  - 
-  - ASSERTIONS?
-    - UNIT TEST all of the BinaryRuleCollection things! isRedundant, etc., verify with other implementation
-  - 
   - Embeddings taking up 44MB, lets switch to index arrays (instead of maps). Compact and fast, since we have contiguous indices, right? (maps ALL of something)
-    - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
-    - We should CHANGE the code that computes embeddings(!)
+    - Embeddings be index-based (we can still reproduce the effects of the maps)
+      - Sounds great. Have edge indices map to edge index OR array index (based on whether it is an exit)
+      - We should CHANGE the code that computes embeddings(!)
   - 
   - Pause execution
     - https://pptr.dev/api/puppeteer.page.emulatecputhrottling
@@ -129,12 +103,6 @@
       - kill -SIGSTOP <pid>
       - kill -SIGCONT <pid>
   - Get the ability to semi-manually clear current boards
-  - 
-  - Embeddings be index-based (we can still reproduce the effects of the maps)
-  - Rule reduction using BinaryPatternSolver-like handling (apply rules)
-    - PatternRule.withRulesApplied with BinaryRuleCollection(!)
-      - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
-      - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
   - 
   - SAT.js (or alternative)
     - Check against https://www.inf.ufpr.br/dpasqualin/d3-dpll/ 
@@ -154,32 +122,12 @@
   - 
   - Load collections by AJAX one-at-a-time when needed? So we don't hit memory issues
   - 
-  - Fix a seed of random numbers, so we can reproduce the same face coloring (particularly for showing patterns)
-  - 
-  - For "face selection" - make it easier to select outside (not just that strip)
-  - 
   - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
   - 
   - Test with big puzzles:
     - 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
       - IS BAD... is it due to memory? We have SO MANY NODES?
         - For hit testing, we should 
-  - 
-  - FaceColorDualFeature should LAZILY handle its paths
-  - 
-  - FILTER out "rules that won't show up" somehow? (e.g. don't even try sector rules if sectors aren't enabled)
-    - e.g.: [if sectors are not visible, don't apply rules with sectors]
-  - 
-  - Replace PuzzleNode for patterns:
-    - (( reuse PuzzleNode components where possible ))
-      - MAYBE actually use PuzzleNode, but do board subsetting AND enable ?s ---- no!
-    - (a) ONLY include faces that will be part of the clipping area (DO BOUNDING BOX checks, not vertices)
-    - (b) Fix the clip region for sectors
-    - (C) SHOW ?s on Pattern Annotations, since it is hard to see what highlander is
-      - ALTERNATIVELY, also show the "pattern" node
-      - Test with puzzleString "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"
-  - 
-  - Embed/display rules as examples (have a page perhaps that allows browsing these?)
   - 
   - BoardPatternBoard ... memoize?
     - Do we do the matching in pattern space or original state space?
@@ -188,8 +136,6 @@
       - (b) Match directly into the state, through an adapter
   - 
   - What if we... limit "number of rules" during the closure(), and return invalid if there are too many input features?
-  - 
-  - Fun to create "rule generation" visualization? Show current solve state on left, show current rule list on right?
   - 
   - [!!!] Pattern smaller than pseudo-intent - are there UNIQUE reductions (even if not complete) that we can make?
     - The Duquenne-Guigues basis is only great for "include all of the rules" (or at least the subset*)
@@ -224,20 +170,6 @@
   - Highlander implies BLACK EXIT EDGE PATTERNS - we have based things off of the wrong patterns.
     - THIS might need edges not connected to faces? More general
   - 
-  - Show embeddings, so we can do rule stuff?
-  - 
-  - Database of rules:
-    - IMPORTANT!!!!!!!!!!!! Things that are "just based on the patternboard" not sufficient, since different "previous" rules affect future rules
-      - SO DO NOT MIX "only" and general-square, etc.
-    - (pattern board)-(vertex-restriction?)-(edge/sector/face)-(highlander?)
-    - NAME the ruleset BY ITS PATTERN BOARD NAME?
-      - (do basic boards have good names? we need that)
-    - [HOW TO LOOK UP POTENTIAL RULES - have a rule database?]
-      - Could we... rely on AJAX to load rules?
-  - 
-  - HOW TO REGENERATE RULES THAT INVOLVE TRIANGLES... omg (we had a loop fix)
-    - Do the new binary collection generation approach
-  - 
   - Highlander + color:
     - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
     - This seems "solvable" in the "ALL" solving stage?
@@ -258,9 +190,6 @@
   - 
   - [future] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
     - Constraint!!!
-  - 
-  - rule.html
-    - Could just take an input pattern
   - 
   - Build failure, trying `npm run build --max-old-space-size`
     - export NODE_OPTIONS=--max-old-space-size=32768
@@ -285,8 +214,6 @@
       - [probably not - only after adding pruning] REORDER ATTRIBUTES?
   -
   - Image output robustness: if a ruleset has more than N rules, split it up into chunks!
-  - 
-  - FIX NAMING eventually, 'general-implied' should be 'general-edge-implied'?
   - 
   - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
   - 
@@ -320,8 +247,6 @@
     - NOTE: We can calculate AT WHAT stack index we should potentially check for WHAT automorphism!!!
       - Of course, ignore identity automorphism 
       - What if the pattern is equal when the automorphism is applied? (then we will rely on the "filter" later to remove it)
-  - 
-  - Make a good "viewer" for patterns/rules (ideally one we can scroll through though)
   - 
   - Rules Solver!
     - (for plugging into the UI, puzzle generation, difficulty estimation(!))
@@ -370,12 +295,6 @@
   - Rule collapse on embedding too (consolidate)
     - (do this in places where we are ... solving?)
   - 
-  - Testing
-    - SolutionSet unit tests
-    - Rule set fuzzing (ensure "random feature set" that is valid is properly solved by our rules)
-  - 
-  - Highlander with FACE COLORS (!)
-  - 
   - Parallel running:
     - https://github.com/deThread/dethread?tab=readme-ov-file / https://socket.io/docs/v4/
   - 
@@ -406,8 +325,6 @@
     - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
   - 
   - [NOTE: not a bottleneck for patterns] Can we use Solver.solveAssuming
-  - 
-  - NOTE: Handle FaceColorDualFeature differently, no redundancy checking
   - 
   - Face Color Annoyance:
     - DO SMART FACE COLOR DUAL features? (not... named?)
@@ -461,6 +378,11 @@
     - How to think of highlander?
   - 
   - [defer] Nonzero (or 2+) crossing type - compute possible paths
+  - 
+  - [defer] Rule reduction using BinaryPatternSolver-like handling (apply rules)
+    - PatternRule.withRulesApplied with BinaryRuleCollection(!)
+      - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
+      - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
   - 
   - !!!!!!!!!
   - !!! Find all embeddings of a specific (shared) patternboard in a board-pattern-board
