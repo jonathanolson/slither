@@ -49,7 +49,7 @@ export class EmbeddedPatternRuleNode extends Node {
           // TODO: Make a theme entry for this?
           opacity: 0.5,
           // TODO: we are only showing now when... highlander?
-          fill: rule.highlander ? currentPuzzleStyle.theme.faceValueColorProperty : currentPuzzleStyle.theme.faceValueCompletedColorProperty,
+          fill: rule.highlander ? options.style.theme.faceValueColorProperty : options.style.theme.faceValueCompletedColorProperty,
           center: face.viewCoordinates
         } );
       } )
@@ -98,7 +98,7 @@ export class EmbeddedPatternRuleNode extends Node {
       yMargin: 0.1,
       lineWidth: 0.05,
       stroke: null,
-      fill: currentPuzzleStyle.theme.patternAnnotationBackgroundColorProperty,
+      fill: currentTheme.patternAnnotationBackgroundColorProperty,
     } );
 
     options.children = [ patternDescriptionNode ];

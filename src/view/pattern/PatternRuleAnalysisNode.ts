@@ -16,19 +16,25 @@ import { IncompatibleFeatureError } from '../../model/pattern/feature/Incompatib
 import { PatternNode } from './PatternNode.ts';
 import _ from '../../workarounds/_.ts';
 import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
-import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
+import { getClassicPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from '../puzzle/puzzleStyles.ts';
 import { DisplayTiling } from './DisplayTiling.ts';
 import { getBestDisplayEmbedding } from './getBestDisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './EmbeddedPatternRuleNode.ts';
+import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
+import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
+import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
+import { darkTheme, lightTheme } from '../Theme.ts';
 
 type SelfOptions = {
-  style?: TPuzzleStyle;
   layoutWidth?: number;
 };
 
 export type PatternRuleAnalysisNodeOptions = NodeOptions & SelfOptions;
 
 const solutionScale = 0.5;
+
+const lightClassicPuzzleStyle = getClassicPuzzleStyleWithTheme( lightTheme );
+const darkAllPuzzleStyle = getSectorsWithColorsPuzzleStyleWithTheme( darkTheme );
 
 export class PatternRuleAnalysisNode extends Node {
   public constructor(
@@ -37,7 +43,6 @@ export class PatternRuleAnalysisNode extends Node {
   ) {
 
     const options = optionize<PatternRuleAnalysisNodeOptions, SelfOptions, NodeOptions>()( {
-      style: currentPuzzleStyle,
       layoutWidth: 1000,
     }, providedOptions );
 
@@ -273,26 +278,47 @@ export class PatternRuleAnalysisNode extends Node {
 
     // Embeddings
     {
+      const getEmbeddingNode = ( name: string, displayEmbedding: DisplayEmbedding, style: TPuzzleStyle ) => {
+        return new VBox( {
+          spacing: 10,
+          children: [
+            new Text( name, { font: '16px Arial', fill: '#ccc' } ),
+            new EmbeddedPatternRuleNode( rule, displayEmbedding, {
+              cursor: 'pointer',
+              scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
+              style: style,
+            } )
+          ]
+        } );
+      };
+
+      // TODO: light classic for "classic" capable
+      // TODO: dark edge-color-sector for "normal"
+
       const embeddingNodes = DisplayTiling.enumeration.values.map( displayTiling => {
         const displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
 
         if ( displayEmbedding ) {
-          return new VBox( {
-            spacing: 10,
-            children: [
-              new Text( displayTiling.displayName, { font: '16px Arial', fill: '#ccc' } ),
-              new EmbeddedPatternRuleNode( rule, displayEmbedding, {
-                cursor: 'pointer',
-                scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
-                style: options.style,
-              } )
-            ]
-          } );
+          return getEmbeddingNode( displayTiling.displayName, displayEmbedding, darkAllPuzzleStyle );
         }
         else {
           return null;
         }
       } ).filter( node => !!node ) as Node[];
+
+      // Classic case
+      {
+        const squareDisplayEmbedding = getBestDisplayEmbedding( rule.patternBoard, DisplayTiling.SQUARE );
+        if ( squareDisplayEmbedding ) {
+          const allFeaturesEdgeLike = rule.inputFeatureSet.getFeaturesArray().every( feature => {
+            return feature instanceof FaceFeature || feature instanceof BlackEdgeFeature || feature instanceof RedEdgeFeature;
+          } );
+
+          if ( allFeaturesEdgeLike ) {
+            embeddingNodes.unshift( getEmbeddingNode( 'Classic Square', squareDisplayEmbedding, lightClassicPuzzleStyle ) );
+          }
+        }
+      }
 
       addHeader( 'Example Embeddings' );
       container.addChild( new Node( {

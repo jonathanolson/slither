@@ -11,7 +11,6 @@ import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
 import { ArrowButton, Slider } from 'phet-lib/sun';
-import { copyToClipboard } from './util/copyToClipboard.ts';
 import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
@@ -516,10 +515,11 @@ class FilterMode extends EnumerationValue {
 
         const inputListener = new FireListener( {
           fire: () => {
-            copyToClipboard( rule.getBinaryIdentifier() );
+            // copyToClipboard( rule.getBinaryIdentifier() );
             console.log( rule.getBinaryIdentifier() );
 
-            // TODO: GO TO the link bit
+            const popupWindow = window.open( `./rule.html?r=${encodeURIComponent( rule.getBinaryIdentifier() )}`, '_blank' );
+            popupWindow && popupWindow.focus();
           }
         } );
 
