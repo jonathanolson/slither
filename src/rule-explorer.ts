@@ -27,6 +27,8 @@ import { getGeneralColorMixedGroup } from './model/pattern/collection/getGeneral
 import { getGeneralEdgeColorMixedGroup } from './model/pattern/collection/getGeneralEdgeColorMixedGroup.ts';
 import { getGeneralEdgeSectorMixedGroup } from './model/pattern/collection/getGeneralEdgeSectorMixedGroup.ts';
 import { getGeneralAllMixedGroup } from './model/pattern/collection/getGeneralAllMixedGroup.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -78,6 +80,14 @@ class HighlanderMode extends EnumerationValue {
   public static readonly ALL = new HighlanderMode();
 
   public static readonly enumeration = new Enumeration( HighlanderMode );
+}
+
+class FilterMode extends EnumerationValue {
+
+  public static readonly NONE = new FilterMode();
+  public static readonly ONLY_NUMBERS_AND_EXIT_RED = new FilterMode();
+
+  public static readonly enumeration = new Enumeration( FilterMode );
 }
 
 class DisplayTiling extends EnumerationValue {
@@ -149,6 +159,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
 
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.ALL );
+  const filterModeProperty = new LocalStorageEnumerationProperty( 'filterModeProperty', FilterMode.NONE );
   const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
   const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
   const showEmbeddedProperty = new LocalStorageBooleanProperty( 'showEmbeddedProperty', false );
@@ -173,11 +184,13 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const groupProperty = new DerivedProperty( [
     baseGroupProperty,
     highlanderModeProperty,
+    filterModeProperty,
     includeFallbackProperty,
     displayTilingProperty,
   ], (
     baseGroup,
     highlanderMode,
+    filterMode,
     includeFallback,
     displayTiling,
   ) => {
@@ -197,6 +210,14 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     if ( displayTiling ) {
       group = group.withPatternBoardFilter( patternBoard => {
         return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
+      } );
+    }
+
+    if ( filterMode === FilterMode.ONLY_NUMBERS_AND_EXIT_RED ) {
+      group = group.filterIndex( ruleIndex => {
+        const rule = group.getRule( ruleIndex );
+        const features = rule.inputFeatureSet.getFeaturesArray();
+        return features.every( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
       } );
     }
 
@@ -387,6 +408,19 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     },
   ] );
 
+  const filterRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Filter', filterModeProperty, [
+    {
+      value: FilterMode.NONE,
+      labelContent: 'None',
+      createNode: () => new UIText( 'None' ),
+    },
+    {
+      value: FilterMode.ONLY_NUMBERS_AND_EXIT_RED,
+      labelContent: 'Only Numbers and Red',
+      createNode: () => new UIText( 'Only Numbers and Red' ),
+    },
+  ] );
+
   const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
 
   const showEmbeddedCheckbox = new UITextCheckbox( 'Show Embedded', showEmbeddedProperty );
@@ -458,6 +492,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
         children: [
           collectionRadioButtonGroup,
           highlanderRadioButtonGroup,
+          filterRadioButtonGroup,
           fallbackCheckbox,
           tilingRadioButtonGroup,
           showEmbeddedCheckbox,

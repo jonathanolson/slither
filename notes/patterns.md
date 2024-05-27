@@ -50,7 +50,9 @@
       - OMG share listeners, so we don't create so many for PuzzleNode?
   - 
   - rule.html
-    - ?r=${getBinaryIdentifier()} 
+    - ?r=${getBinaryIdentifier()}
+    - ?embedding=...
+    - 
     - Individual rule pages: index by... pattern-board name and BINARY representation (base-64)?
       - getBinaryIdentifier()
     - Show embeddings in the common tilings(!)
@@ -61,8 +63,6 @@
     - POTENTIALLY have it just take in an input pattern
   - 
   - rule-explorer.html
-    - Show patterns that ONLY TAKE FACES (or maybe red exit edges - and could be on borders)
-    - 
     - [defer] handle "isomorphic when embedded"
       - Which rules match other rules' embeddings?
     - [defer] handle "collapse when embedded"
