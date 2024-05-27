@@ -1,4 +1,4 @@
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './collection/BinaryRuleCollection.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import { deserializePatternBoard } from './deserializePatternBoard.ts';
 import { serializePatternBoard } from './serializePatternBoard.ts';

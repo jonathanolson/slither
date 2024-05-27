@@ -2,7 +2,7 @@ import { Display, Node } from 'phet-lib/scenery';
 import { PatternBoardRuleSet, SerializedPatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { PatternRuleCollection, SerializedPatternRuleCollection } from './model/pattern/PatternRuleCollection.ts';
 import { standardSquareBoardGenerations } from './model/pattern/patternBoards.ts';
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
 import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } from './model/pattern/BinaryRuleSequence.ts';
 import { serializePatternBoard } from './model/pattern/serializePatternBoard.ts';
 import { TPatternBoard } from './model/pattern/TPatternBoard.ts';

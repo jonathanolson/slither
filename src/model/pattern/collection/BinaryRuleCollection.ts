@@ -1,22 +1,23 @@
-import { TPatternBoard } from './TPatternBoard.ts';
-import { serializePatternBoard } from './serializePatternBoard.ts';
-import { compressByteArray, decompressByteArray } from '../../util/compression.ts';
-import { deserializePatternBoard } from './deserializePatternBoard.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { PatternRule } from './PatternRule.ts';
-import _ from '../../workarounds/_.ts';
-import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
-import { getEmbeddings } from './getEmbeddings.ts';
-import { TBoardFeatureData } from './TBoardFeatureData.ts';
-import { Embedding } from './Embedding.ts';
-import { getBinaryFeatureMapping } from './BinaryFeatureMapping.ts';
-import FeatureSetMatchState from './FeatureSetMatchState.ts';
-import { FeatureSet } from './feature/FeatureSet.ts';
-import PatternRuleMatchState from './PatternRuleMatchState.ts';
-import { isPatternRuleValid } from './isPatternRuleValid.ts';
+import { TPatternBoard } from '../TPatternBoard.ts';
+import { serializePatternBoard } from '../serializePatternBoard.ts';
+import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
+import { deserializePatternBoard } from '../deserializePatternBoard.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { PatternRule } from '../PatternRule.ts';
+import _ from '../../../workarounds/_.ts';
+import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
+import { getEmbeddings } from '../getEmbeddings.ts';
+import { TBoardFeatureData } from '../TBoardFeatureData.ts';
+import { Embedding } from '../Embedding.ts';
+import { getBinaryFeatureMapping } from '../BinaryFeatureMapping.ts';
+import FeatureSetMatchState from '../FeatureSetMatchState.ts';
+import { FeatureSet } from '../feature/FeatureSet.ts';
+import PatternRuleMatchState from '../PatternRuleMatchState.ts';
+import { isPatternRuleValid } from '../isPatternRuleValid.ts';
 
 export class BinaryRuleCollection {
 
+  // TODO: note that BinaryMixedRuleCollection... extends this(!)
   private constructor(
     public readonly patternBoards: TPatternBoard[],
     public data: Uint8Array,
@@ -71,8 +72,8 @@ export class BinaryRuleCollection {
     this.data = newData;
   }
 
-  public getRule( index: number ): PatternRule {
-    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ index ], this.highlander );
+  public getRule( index: number, highlanderOverride?: boolean ): PatternRule {
+    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ index ], highlanderOverride === undefined ? this.highlander : highlanderOverride );
   }
 
   public forEachRule( callback: ( rule: PatternRule ) => void ): void {

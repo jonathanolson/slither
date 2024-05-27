@@ -13,7 +13,7 @@ import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequen
 import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
 import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../BinaryRuleSequence.ts';
-import { BinaryRuleCollection } from '../../BinaryRuleCollection.ts';
+import { BinaryRuleCollection } from '../../collection/BinaryRuleCollection.ts';
 import { isPatternRuleValid } from '../../isPatternRuleValid.ts';
 import QUnit from 'qunit';
 import { serializePatternBoard } from '../../serializePatternBoard.ts';

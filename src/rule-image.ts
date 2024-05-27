@@ -4,7 +4,7 @@ import { PatternRule } from './model/pattern/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import squareOnlyEdgeCollection from '../data-collections/snapshot-square-only-edge.json';
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();

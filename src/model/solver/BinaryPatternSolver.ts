@@ -8,7 +8,7 @@ import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
 import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
 import { BoardFeatureData } from '../pattern/BoardFeatureData.ts';
-import { BinaryRuleCollection } from '../pattern/BinaryRuleCollection.ts';
+import { BinaryRuleCollection } from '../pattern/collection/BinaryRuleCollection.ts';
 import { getPatternRuleAction } from '../pattern/getPatternRuleAction.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;

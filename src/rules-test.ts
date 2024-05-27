@@ -6,7 +6,7 @@ import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { Solver } from './model/logic/minisat/core/Solver.ts';
-import { BinaryRuleCollection } from './model/pattern/BinaryRuleCollection.ts';
+import { BinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
 
 import generalEdgeSequence from '../data-sequences/general-edge.json';
 import generalEdgeUnrestrictedSequence from '../data-sequences/general-edge-unrestricted.json';
