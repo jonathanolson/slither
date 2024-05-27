@@ -27,6 +27,7 @@ import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzle
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
+import { BinaryMixedRuleGroup } from './model/pattern/collection/BinaryMixedRuleGroup.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -156,15 +157,15 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
       case CollectionMode.EDGE:
-        return getGeneralEdgeGroup();
+        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeGroup() );
       case CollectionMode.COLOR:
-        return getGeneralColorGroup();
+        return BinaryMixedRuleGroup.fromGroup( getGeneralColorGroup() );
       case CollectionMode.EDGE_COLOR:
-        return getGeneralEdgeColorGroup();
+        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeColorGroup() );
       case CollectionMode.EDGE_SECTOR:
-        return getGeneralEdgeSectorGroup();
+        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeSectorGroup() );
       case CollectionMode.ALL:
-        return getGeneralAllGroup();
+        return BinaryMixedRuleGroup.fromGroup( getGeneralAllGroup() );
       default:
         throw new Error( `unhandled collection mode: ${collectionMode}` );
     }
@@ -199,6 +200,18 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
         return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
       } );
     }
+
+    // TODO
+    group = group.sortedIndex( ruleIndex => {
+      let score = group.getRule( ruleIndex ).getInputDifficultyScoreB();
+
+      // Put fallbacks at the end(!)
+      if ( group.isRuleIndexFallback( ruleIndex ) ) {
+        score += 1000;
+      }
+
+      return score;
+    } );
 
     return group;
   } );

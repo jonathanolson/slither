@@ -604,6 +604,60 @@ export class FeatureSet {
     return score;
   };
 
+  public getInputDifficultyScoreB(): number {
+    let score = 0;
+
+    const blackEdgeContribution = 1;
+    const redEdgeContribution = 1.2; // TODO: figure out the balance between red and black that we like
+
+    score += 0.4 * this.patternBoard.vertices.length;
+    if ( this.patternBoard.vertices.length === 0 ) {
+      score -= 10;
+    }
+    else if ( this.patternBoard.vertices.length === 1 ) {
+      score -= 4;
+    }
+
+    for ( const value of this.faceValueMap.values() ) {
+      if ( value === null ) {
+        score += 0.25;
+      }
+      else if ( value === 0 ) {
+        score += 0.4;
+      }
+      else {
+        score += 0.5;
+      }
+    }
+
+    score += this.blackEdges.size * blackEdgeContribution;
+    for ( const redEdge of this.redEdges ) {
+      if ( redEdge.isExit ) {
+        const numEdges = redEdge.exitVertex!.edges.length; // NOTE: our exit edge is presumably included
+
+        if ( numEdges >= 4 ) {
+          score += redEdgeContribution;
+        }
+        else {
+          score += 2 * redEdgeContribution;
+        }
+      }
+      else {
+        score += redEdgeContribution;
+      }
+    }
+
+    score += this.sectorsOnlyOne.size * 1.5;
+    score += this.sectorsNotOne.size * 1.6;
+    score += this.sectorsNotTwo.size * 1.7;
+    score += this.sectorsNotZero.size * 1.8;
+    for ( const feature of this.faceColorDualFeatures ) {
+      score += feature.allFaces.size - 1;
+    }
+
+    return score;
+  }
+
   // TODO: eventually other feature types
 
   public static empty( patternBoard: TPatternBoard ): FeatureSet {

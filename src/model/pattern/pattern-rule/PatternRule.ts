@@ -39,6 +39,10 @@ export class PatternRule {
     return this.inputFeatureSet.getInputDifficultyScoreA() + 0.75 * this.patternBoard.vertices.length;
   }
 
+  public getInputDifficultyScoreB(): number {
+    return this.inputFeatureSet.getInputDifficultyScoreB();
+  }
+
   // TODO: now that we have input/output targets, the patternBoard here is redundant
   public embedded( patternBoard: TPatternBoard, embedding: Embedding ): PatternRule | null {
     const inputFeatureSet = this.inputFeatureSet.embedded( patternBoard, embedding );
