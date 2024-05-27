@@ -1,4 +1,4 @@
-import { Circle, Node, Path, Text } from 'phet-lib/scenery';
+import { Circle, Node, NodeOptions, Path, Text } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
 import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
@@ -16,11 +16,13 @@ import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
 import { TPlanarPatternMap } from '../../model/pattern/pattern-board/planar-map/TPlanarPatternMap.ts';
 import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
 
-export type PatternNodeOptions = {
+type SelfOptions = {
   showQuestionMarks?: boolean;
   labels?: boolean;
   // TODO: face color matching for a previous pattern node
 };
+
+export type PatternNodeOptions = NodeOptions & SelfOptions;
 
 export class PatternNode extends Node {
   public constructor(
@@ -30,7 +32,7 @@ export class PatternNode extends Node {
     providedOptions?: PatternNodeOptions
   ) {
 
-    const options = optionize<PatternNodeOptions>()( {
+    const options = optionize<PatternNodeOptions, SelfOptions, NodeOptions>()( {
       showQuestionMarks: true,
       labels: false
     }, providedOptions );
@@ -325,8 +327,8 @@ export class PatternNode extends Node {
       } );
     }
 
-    super( {
-      children: [ container ]
-    } );
+    options.children = [ container ];
+
+    super( options );
   }
 }

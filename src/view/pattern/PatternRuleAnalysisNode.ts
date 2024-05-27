@@ -11,14 +11,24 @@ import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
 import { BinaryFeatureMap } from '../../model/pattern/generation/BinaryFeatureMap.ts';
 import { RichSolution } from '../../model/pattern/solve/RichSolution.ts';
 import { Highlander } from '../../model/pattern/highlander/Highlander.ts';
-import { arrayRemove, EmptySelfOptions, optionize } from 'phet-lib/phet-core';
+import { arrayRemove, optionize } from 'phet-lib/phet-core';
 import { IncompatibleFeatureError } from '../../model/pattern/feature/IncompatibleFeatureError.ts';
 import { PatternNode } from './PatternNode.ts';
 import _ from '../../workarounds/_.ts';
+import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
+import { DisplayTiling } from './DisplayTiling.ts';
+import { getBestDisplayEmbedding } from './getBestDisplayEmbedding.ts';
+import { EmbeddedPatternRuleNode } from './EmbeddedPatternRuleNode.ts';
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+  style?: TPuzzleStyle;
+  layoutWidth?: number;
+};
 
 export type PatternRuleAnalysisNodeOptions = NodeOptions & SelfOptions;
+
+const solutionScale = 0.5;
 
 export class PatternRuleAnalysisNode extends Node {
   public constructor(
@@ -27,7 +37,8 @@ export class PatternRuleAnalysisNode extends Node {
   ) {
 
     const options = optionize<PatternRuleAnalysisNodeOptions, SelfOptions, NodeOptions>()( {
-
+      style: currentPuzzleStyle,
+      layoutWidth: 1000,
     }, providedOptions );
 
     const container = new VBox( {
@@ -44,186 +55,262 @@ export class PatternRuleAnalysisNode extends Node {
     const planarPatternMap = planarPatternMaps.get( patternBoard )!;
     assertEnabled() && assert( planarPatternMap );
 
-    // Rule
-    addPaddedNode( new PatternRuleNode( rule, planarPatternMap ) );
-
-    // {
-    //   const edgeClosure = getFeatureSetClosure( rule.inputFeatureSet, true, false, false, false );
-    //   addPaddedNode( new PatternNode( patternBoard, edgeClosure!, planarPatternMap ) );
-    // }
-    //
-    // if ( rule.highlander ) {
-    //   const highlanderEdgeClosure = getFeatureSetClosure( rule.inputFeatureSet, true, false, false, true );
-    //   addPaddedNode( new PatternNode( patternBoard, highlanderEdgeClosure!, planarPatternMap ) );
-    // }
-
-    const directSolutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray() );
-
-    const solutionToDisplayFeatureSet = ( solution: TPatternEdge[] ): FeatureSet => {
-      const featureSet = FeatureSet.empty( patternBoard );
-
-      rule.inputFeatureSet.getFeaturesArray().forEach( inputFeature => {
-        if ( inputFeature instanceof FaceFeature ) {
-          featureSet.addFeature( inputFeature );
-        }
-      } );
-
-      patternBoard.edges.forEach( edge => {
-        if ( !edge.isExit ) {
-          if ( solution.includes( edge ) ) {
-            featureSet.addBlackEdge( edge );
-          }
-          else {
-            featureSet.addRedEdge( edge );
-          }
-        }
-      } );
-
-      return featureSet;
+    const addHeader = ( text: string, topMargin = 20 ) => {
+      container.addChild( new AlignBox( new Text( text, {
+        font: 'bold 20px Arial',
+        fill: '#ccc',
+        tagName: 'h1',
+      } ), { topMargin: topMargin } ) );
     };
 
-    if ( rule.highlander ) {
-      const binaryFeatureMap = new BinaryFeatureMap( patternBoard, {
-        solveEdges: true,
-        solveSectors: false,
-        solveFaceColors: false
-      } );
-      const widerSolutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getHighlanderFeaturesArray() );
-      const widerRichSolutions = widerSolutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, true ) );
+    // Rule
+    {
+      addHeader( `Generic Rule${rule.highlander ? ' (Highlander)' : ''}`, 0 );
+      addPaddedNode( new PatternRuleNode( rule, planarPatternMap ) );
+    }
 
-      const highlanderFilteredRichSolutions = Highlander.filterWithFeatureSet( widerRichSolutions, rule.inputFeatureSet );
+    // Solutions
+    {
+      const directSolutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray() );
 
-      const highlanderFinalRichSolutions = highlanderFilteredRichSolutions.filter( richSolution => {
-        return richSolution.isCompatibleWithFeatureSet( rule.inputFeatureSet );
-      } );
+      const solutionToDisplayFeatureSet = ( solution: TPatternEdge[] ): FeatureSet => {
+        const featureSet = FeatureSet.empty( patternBoard );
 
-      const filteredSolutions = directSolutions.slice();
-      highlanderFinalRichSolutions.forEach( richSolution => {
-        const solution = filteredSolutions.find( solution => {
-          return solution.length === richSolution.solution.length && solution.every( edge => richSolution.solutionSet.has( edge ) );
-        } )!;
+        rule.inputFeatureSet.getFeaturesArray().forEach( inputFeature => {
+          if ( inputFeature instanceof FaceFeature ) {
+            featureSet.addFeature( inputFeature );
+          }
+        } );
 
-        assertEnabled() && assert( solution );
-
-        // TODO: performance (if it matters)
-        arrayRemove( filteredSolutions, solution );
-      } );
-
-      const highlanderMap = new Map<string, RichSolution[]>;
-
-      widerRichSolutions.forEach( richSolution => {
-        // TODO: efficiency
-        const key = Highlander.getHighlanderKeyWithFeatureSet( richSolution, rule.inputFeatureSet );
-        if ( highlanderMap.has( key ) ) {
-          highlanderMap.get( key )!.push( richSolution );
-        }
-        else {
-          highlanderMap.set( key, [ richSolution ] );
-        }
-      } );
-
-      const highlanderArrays = _.sortBy( [ ...highlanderMap.values() ], arr => -arr.length );
-      const filteredHighlanderArrays = highlanderArrays.filter( arr => arr.length > 1 );
-      const singleHighlanderSolutions = highlanderArrays.filter( arr => arr.length === 1 ).map( arr => arr[ 0 ] );
-
-      const matchingSingleHighlanderSolutions: RichSolution[] = [];
-      const nonMatchingSingleHighlanderSolutions: RichSolution[] = [];
-
-      // TODO: improve, lazy
-      singleHighlanderSolutions.forEach( solution => {
-        const testFeatureSet = rule.inputFeatureSet.clone();
-
-        try {
-          // TODO: omg
-          solution.solution.forEach( blackEdge => {
-            testFeatureSet.addBlackEdge( blackEdge );
-          } );
-
-          patternBoard.edges.forEach( edge => {
-            if ( !solution.solutionSet.has( edge ) ) {
-              testFeatureSet.addRedEdge( edge );
+        patternBoard.edges.forEach( edge => {
+          if ( !edge.isExit ) {
+            if ( solution.includes( edge ) ) {
+              featureSet.addBlackEdge( edge );
             }
-          } );
+            else {
+              featureSet.addRedEdge( edge );
+            }
+          }
+        } );
 
-          matchingSingleHighlanderSolutions.push( solution );
-        }
-        catch ( e ) {
-          if ( e instanceof IncompatibleFeatureError ) {
-            nonMatchingSingleHighlanderSolutions.push( solution );
+        return featureSet;
+      };
+
+      if ( rule.highlander ) {
+        const binaryFeatureMap = new BinaryFeatureMap( patternBoard, {
+          solveEdges: true,
+          solveSectors: false,
+          solveFaceColors: false
+        } );
+        const widerSolutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getHighlanderFeaturesArray() );
+        const widerRichSolutions = widerSolutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, true ) );
+
+        const highlanderFilteredRichSolutions = Highlander.filterWithFeatureSet( widerRichSolutions, rule.inputFeatureSet );
+
+        const highlanderFinalRichSolutions = highlanderFilteredRichSolutions.filter( richSolution => {
+          return richSolution.isCompatibleWithFeatureSet( rule.inputFeatureSet );
+        } );
+
+        const filteredSolutions = directSolutions.slice();
+        highlanderFinalRichSolutions.forEach( richSolution => {
+          const solution = filteredSolutions.find( solution => {
+            return solution.length === richSolution.solution.length && solution.every( edge => richSolution.solutionSet.has( edge ) );
+          } )!;
+
+          assertEnabled() && assert( solution );
+
+          // TODO: performance (if it matters)
+          arrayRemove( filteredSolutions, solution );
+        } );
+
+        const highlanderMap = new Map<string, RichSolution[]>;
+
+        widerRichSolutions.forEach( richSolution => {
+          // TODO: efficiency
+          const key = Highlander.getHighlanderKeyWithFeatureSet( richSolution, rule.inputFeatureSet );
+          if ( highlanderMap.has( key ) ) {
+            highlanderMap.get( key )!.push( richSolution );
           }
           else {
-            throw e;
+            highlanderMap.set( key, [ richSolution ] );
           }
-        }
-      } );
+        } );
 
-      container.addChild( new AlignBox( new Text( 'Valid Solutions', { font: '16px Arial', fill: '#ccc' } ), { topMargin: 10 } ) );
+        const highlanderArrays = _.sortBy( [ ...highlanderMap.values() ], arr => -arr.length );
+        const filteredHighlanderArrays = highlanderArrays.filter( arr => arr.length > 1 );
+        const singleHighlanderSolutions = highlanderArrays.filter( arr => arr.length === 1 ).map( arr => arr[ 0 ] );
 
-      container.addChild( new AlignBox( new HBox( {
-        spacing: 10,
-        children: [
-          ...matchingSingleHighlanderSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap ) ),
+        const matchingSingleHighlanderSolutions: RichSolution[] = [];
+        const nonMatchingSingleHighlanderSolutions: RichSolution[] = [];
 
-        ]
-      } ), { margin: 5 } ) );
+        // TODO: improve, lazy
+        singleHighlanderSolutions.forEach( solution => {
+          const testFeatureSet = rule.inputFeatureSet.clone();
 
-      container.addChild( new AlignBox( new Text( 'Highlander Duplicates (Invalid)', { font: '16px Arial', fill: '#ccc' } ), { topMargin: 10 } ) );
+          try {
+            // TODO: omg
+            solution.solution.forEach( blackEdge => {
+              testFeatureSet.addBlackEdge( blackEdge );
+            } );
 
-      filteredHighlanderArrays.forEach( richSolutions => {
+            patternBoard.edges.forEach( edge => {
+              if ( !solution.solutionSet.has( edge ) ) {
+                testFeatureSet.addRedEdge( edge );
+              }
+            } );
+
+            matchingSingleHighlanderSolutions.push( solution );
+          }
+          catch ( e ) {
+            if ( e instanceof IncompatibleFeatureError ) {
+              nonMatchingSingleHighlanderSolutions.push( solution );
+            }
+            else {
+              throw e;
+            }
+          }
+        } );
+
+        addHeader( 'Valid Solutions' );
+
         container.addChild( new AlignBox( new HBox( {
-          spacing: 10,
+          spacing: 5,
+          wrap: true,
+          justify: 'left',
+          lineSpacing: 30,
+          preferredWidth: options.layoutWidth,
           children: [
-            ...richSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap ) ),
-
+            ...matchingSingleHighlanderSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap, {
+              scale: solutionScale,
+            } ) ),
           ]
         } ), { margin: 5 } ) );
-      } );
 
-      // container.addChild( new AlignBox( new Text( 'Invalid Solutions', { font: '16px Arial', fill: '#ccc' } ) ) );
-      //
-      // container.addChild( new AlignBox( new HBox( {
-      //   spacing: 10,
-      //   children: [
-      //     ...matchingSingleHighlanderSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap ) ),
-      //
-      //   ]
-      // } ), { margin: 5 } ) );
+        addHeader( 'Highlander Duplicates (Invalid)' );
 
-      //
-      // container.addChild( new AlignBox( new HBox( {
-      //   spacing: 10,
-      //   children: widerSolutions.map( solution => new PatternNode( patternBoard, FeatureSet.fromSolution( patternBoard, solution ), planarPatternMap ) )
-      // } ), { margin: 5 } ) );
-      //
+        container.addChild( new AlignBox( new HBox( {
+          spacing: 40,
+          wrap: true,
+          justify: 'left',
+          lineSpacing: 30,
+          preferredWidth: options.layoutWidth,
+          children: filteredHighlanderArrays.map( richSolutions => {
+            return new HBox( {
+              spacing: 5,
+              children: [
+                ...richSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap, {
+                  scale: solutionScale,
+                } ) ),
+              ]
+            } );
+          } )
+        } ), { margin: 5 } ) );
 
 
+        // filteredHighlanderArrays.forEach( richSolutions => {
+        //   container.addChild( new AlignBox( new HBox( {
+        //     spacing: 10,
+        //     children: [
+        //       ...richSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap ) ),
+        //
+        //     ]
+        //   } ), { margin: 5 } ) );
+        // } );
+
+        //
+        // container.addChild( new AlignBox( new HBox( {
+        //   spacing: 10,
+        //   children: [
+        //     ...matchingSingleHighlanderSolutions.map( solution => new PatternNode( patternBoard, solutionToDisplayFeatureSet( solution.solution ), planarPatternMap ) ),
+        //
+        //   ]
+        // } ), { margin: 5 } ) );
+
+        //
+        // container.addChild( new AlignBox( new HBox( {
+        //   spacing: 10,
+        //   children: widerSolutions.map( solution => new PatternNode( patternBoard, FeatureSet.fromSolution( patternBoard, solution ), planarPatternMap ) )
+        // } ), { margin: 5 } ) );
+        //
+
+
+      }
+      else {
+        // Solutions
+        const solutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray() );
+        const solutionFeatureSets = solutions.map( solution => FeatureSet.fromSolution( patternBoard, solution ) );
+
+        const compatibleFeatureSets: FeatureSet[] = [];
+        const incompatibleFeatureSets: FeatureSet[] = [];
+        for ( const solutionFeatureSet of solutionFeatureSets ) {
+          if ( rule.outputFeatureSet.isCompatibleWith( solutionFeatureSet ) ) {
+            compatibleFeatureSets.push( solutionFeatureSet );
+          }
+          else {
+            // TODO: these should only exist for highlander rules
+            incompatibleFeatureSets.push( solutionFeatureSet );
+          }
+        }
+
+        assertEnabled() && assert( incompatibleFeatureSets.length === 0 );
+
+        addHeader( 'Valid Solutions' );
+
+        container.addChild( new AlignBox( new HBox( {
+          spacing: 5,
+          wrap: true,
+          justify: 'left',
+          lineSpacing: 30,
+          preferredWidth: options.layoutWidth,
+          children: [
+            ...compatibleFeatureSets.map( solutionFeatureSet => new PatternNode( patternBoard, solutionFeatureSet, planarPatternMap, {
+              scale: solutionScale,
+            } ) ),
+          ]
+        } ), { margin: 5 } ) );
+      }
     }
-    else {
-      // Solutions
-      const solutions = PatternBoardSolver.getSolutions( patternBoard, rule.inputFeatureSet.getFeaturesArray() );
-      const solutionFeatureSets = solutions.map( solution => FeatureSet.fromSolution( patternBoard, solution ) );
 
-      const compatibleFeatureSets: FeatureSet[] = [];
-      const incompatibleFeatureSets: FeatureSet[] = [];
-      for ( const solutionFeatureSet of solutionFeatureSets ) {
-        if ( rule.outputFeatureSet.isCompatibleWith( solutionFeatureSet ) ) {
-          compatibleFeatureSets.push( solutionFeatureSet );
+    // Embeddings
+    {
+      const embeddingNodes = DisplayTiling.enumeration.values.map( displayTiling => {
+        const displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
+
+        if ( displayEmbedding ) {
+          return new VBox( {
+            spacing: 10,
+            children: [
+              new Text( displayTiling.displayName, { font: '16px Arial', fill: '#ccc' } ),
+              new EmbeddedPatternRuleNode( rule, displayEmbedding, {
+                cursor: 'pointer',
+                scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
+                style: options.style,
+              } )
+            ]
+          } );
         }
         else {
-          // TODO: these should only exist for highlander rules
-          incompatibleFeatureSets.push( solutionFeatureSet );
+          return null;
         }
-      }
+      } ).filter( node => !!node ) as Node[];
 
-      container.addChild( new AlignBox( new HBox( {
-        spacing: 10,
-        children: compatibleFeatureSets.map( solutionFeatureSet => new PatternNode( patternBoard, solutionFeatureSet, planarPatternMap ) )
-      } ), { margin: 5 } ) );
-
-      container.addChild( new AlignBox( new HBox( {
-        spacing: 10,
-        children: incompatibleFeatureSets.map( solutionFeatureSet => new PatternNode( patternBoard, solutionFeatureSet, planarPatternMap ) )
-      } ), { margin: 5 } ) );
+      addHeader( 'Example Embeddings' );
+      container.addChild( new Node( {
+        layoutOptions: {
+          topMargin: 20,
+        },
+        children: [
+          new HBox( {
+            spacing: 30,
+            align: 'top',
+            wrap: true,
+            justify: 'left',
+            lineSpacing: 30,
+            preferredWidth: options.layoutWidth,
+            children: embeddingNodes,
+          } )
+        ]
+      } ) );
     }
 
     options.children = [

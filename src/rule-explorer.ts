@@ -10,10 +10,6 @@ import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStor
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
-import { standardCairoBoard, standardDeltoidalTrihexagonalBoard, standardElongatedTriangularBoard, standardFloretPentagonalBoard, standardHexagonalBoard, standardPortugalBoard, standardPrismaticPentagonalBoard, standardRhombilleBoard, standardRhombitrihexagonalBoard, standardSnubSquareBoard, standardSquareBoard, standardTriangularBoard, standardTrihexagonalBoard } from './model/pattern/pattern-board/patternBoards.ts';
-import { TBoard } from './model/board/core/TBoard.ts';
-import { BoardPatternBoard } from './model/pattern/pattern-board/BoardPatternBoard.ts';
-import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { ArrowButton, Slider } from 'phet-lib/sun';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
@@ -29,6 +25,8 @@ import { generalEdgeColorMixedGroup } from './model/pattern/collection/generalEd
 import { generalColorMixedGroup } from './model/pattern/collection/generalColorMixedGroup.ts';
 import { generalEdgeSectorMixedGroup } from './model/pattern/collection/generalEdgeSectorMixedGroup.ts';
 import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixedGroup.ts';
+import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
+import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -90,63 +88,7 @@ class FilterMode extends EnumerationValue {
   public static readonly enumeration = new Enumeration( FilterMode );
 }
 
-class DisplayTiling extends EnumerationValue {
-  public constructor(
-    public readonly displayName: string,
-    public readonly board: TBoard,
-    public readonly boardPatternBoard: BoardPatternBoard,
-  ) {
-    super();
-  }
-
-  public static readonly SQUARE = new DisplayTiling( 'Square', standardSquareBoard, new BoardPatternBoard( standardSquareBoard ) );
-  public static readonly HEXAGONAL = new DisplayTiling( 'Hexagonal', standardHexagonalBoard, new BoardPatternBoard( standardHexagonalBoard ) );
-  public static readonly CAIRO = new DisplayTiling( 'Cairo', standardCairoBoard, new BoardPatternBoard( standardCairoBoard ) );
-  public static readonly TRIANGULAR = new DisplayTiling( 'Triangular', standardTriangularBoard, new BoardPatternBoard( standardTriangularBoard ) );
-  public static readonly RHOMBILLE = new DisplayTiling( 'Rhombille', standardRhombilleBoard, new BoardPatternBoard( standardRhombilleBoard ) );
-  public static readonly SNUB_SQUARE = new DisplayTiling( 'Snub Square', standardSnubSquareBoard, new BoardPatternBoard( standardSnubSquareBoard ) );
-  public static readonly TRIHEXAGONAL = new DisplayTiling( 'Trihexagonal', standardTrihexagonalBoard, new BoardPatternBoard( standardTrihexagonalBoard ) );
-  public static readonly FLORET_PENTAGONAL = new DisplayTiling( 'Floret Pentagonal', standardFloretPentagonalBoard, new BoardPatternBoard( standardFloretPentagonalBoard ) );
-  public static readonly DELTOIDAL_TRIHEXAGONAL = new DisplayTiling( 'Deltoidal Trihexagonal', standardDeltoidalTrihexagonalBoard, new BoardPatternBoard( standardDeltoidalTrihexagonalBoard ) );
-  public static readonly PORTUGAL = new DisplayTiling( 'Portugal', standardPortugalBoard, new BoardPatternBoard( standardPortugalBoard ) );
-  public static readonly RHOMBITRIHEXAGONAL = new DisplayTiling( 'Rhombitrihexagonal', standardRhombitrihexagonalBoard, new BoardPatternBoard( standardRhombitrihexagonalBoard ) );
-  public static readonly PRISMATIC_PENTAGONAL = new DisplayTiling( 'Prismatic Pentagonal', standardPrismaticPentagonalBoard, new BoardPatternBoard( standardPrismaticPentagonalBoard ) );
-  public static readonly ELONGATED_TRIANGULAR = new DisplayTiling( 'Elongated Triangular', standardElongatedTriangularBoard, new BoardPatternBoard( standardElongatedTriangularBoard ) );
-
-  public static readonly enumeration = new Enumeration( DisplayTiling );
-}
-
 // TODO: add reset on fail conditions
-
-// TODO: precompute these, fix up Embedding, and serialize/deserialize them (so it loads immediately)
-const embeddingMap = new Map<TPatternBoard, Map<DisplayTiling, DisplayEmbedding | null>>();
-const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: DisplayTiling ): DisplayEmbedding | null => {
-  let patternMap = embeddingMap.get( patternBoard );
-
-  if ( !patternMap ) {
-    patternMap = new Map();
-    embeddingMap.set( patternBoard, patternMap );
-  }
-
-  let embedding = patternMap.get( displayTiling );
-
-  if ( embedding === undefined ) {
-
-    const actualEmbedding = DisplayEmbedding.findBestEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board );
-
-    if ( actualEmbedding ) {
-      embedding = DisplayEmbedding.getDisplayEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board, actualEmbedding );
-    }
-    else {
-      embedding = null;
-    }
-
-    patternMap.set( displayTiling, embedding );
-  }
-
-  return embedding;
-};
-
 ( async () => {
 
   const explorerPuzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'explorerPuzzleStyleProperty', {
