@@ -27,6 +27,9 @@ export type CollectionSerializedPatternRule = {
   output: TSerializedFeatureSet;
 };
 
+/**
+ * Assumes that this rule does NOT include the entire solution (a loop within this PatternBoard is disallowed).
+ */
 export class PatternRule {
   public constructor(
     public readonly patternBoard: TPatternBoard,

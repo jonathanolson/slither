@@ -42,11 +42,6 @@
           - (i.e. what are input-matching solutions that get filtered, and what is one example)
   - 
   - rule-explorer.html
-    - [defer] handle "isomorphic when embedded"
-      - Which rules match other rules' embeddings?
-    - [defer] handle "collapse when embedded"
-      - PRECOMPUTE for rule explorer?
-    - 
     - Better than pagination -- infinite scroll?
     - [defer] Sort by:
       - score
@@ -54,15 +49,6 @@
     - [defer] Filter by:
       - Quantity of features(!) -- no black edges? no red edges? hmmm
     - Perf: potentially reuse PuzzleNode, but with a new state (if they have the same pattern board)
-  - 
-  - Embedded rules issues
-    - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
-      - Certain topology (red exit vertex, etc.) features will probably unlock more things
-    - Also when we show embedded versions:
-      - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
-    - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
-    - Rule collapse on embedding too (consolidate)
-      - (do this in places where we are ... solving?)
   - 
   - Image output to a static form?
     - Every 2 bytes in an SVG image is (!) 1MB of rule images(!!!!!) --- we have half a million rules
@@ -84,8 +70,6 @@
       - We should CHANGE the code that computes embeddings(!)
   - 
   - Pattern solvers are NOT checking to see if they could be the entire closed loop. FIX THAT.
-  - 
-  - Load collections by AJAX one-at-a-time when needed? So we don't hit memory issues
   - 
   - Test with big puzzles:
     - 80x50 ..2223.1...3.2..31..1.0.2.2..2..22..1.32...211.3..23.22232..2.3..2..11..2.2212....1322.2.1..00....1...2..31.11.12..1.1.1.12...0..322.1..1..210..22.2..2.22.1.0..1.11..10.1.....3.22.3.01...22..22111..3..221...3....3..2...11.1.3.3...12.120...2.3.00....2.3..11.1..2.0.21..2..21.0..1.2.2.1.3.110....2.223.32..1...2...1...1311..1..1...33.....3..3..1..2...110..2.0.2.2..121......222212.1.....3..3.0.3.1..2...22..1.1.2.1.1111.1.1.3112........20133.2..3...2.11.311.2....12.....0...02.1.22.1.101....2.2.3.332..1...13..2..32.3....12.0.12.012.131...201..102..321...2.2.0.11..21212.2....1....2123..1.3..0..2.1...1...1....2.....01.2...1....11....3.13.2.1.3...1..0..11...2..2.22.3..2.32..3.1..1.0223.22.22..3.3..1..211.3....3....32....31..0...1.2111.13123.......223..2..21...23....02..1...11..1.012..1.1.0.......1...1..10222.....3.3..2.2..3.2.122.2..1..0.3.213...22.......120...2221.1.321..3..21..11...22.2..0.111.3122.2...2.....211...1.....31..2.223......21.........131.1.2021..112.3..12..1..3.2.22...22..201...0.2........0.2.12..0.3.23.2.111.3.10...12...12.2131..1....3..2..21..212..2...12.2....3.133.2.1112.........211.....1.1..31..1..1.3..22.201..111.2.2..1.1.0..3..0.....11..2..2...2.1.22.23..2....10..1.21.11.......2..3.3...13.2322...31..........1.0.32.2....211..0..21.2.10.2..1..0..2...1..31..2.122..22...3...223.12..31...33...2..1.2..0.20.1.3..1.......0.12.....02...222.23.3.122.2.....23.20...20...1..0..101.32......21..0.03.22130.00..32.31...3..0...11.1..0.2.123.2..13.1....1.20..1.3...21..1.33.32...1...2.1.3...31...22231.131.2...1232..211..223222..22..3.01..1.0..1.....3....1.0.3..2121.21..12..10.2....2.1.132..12..1..2........3.212.....01.1..2..22..1113.1.122..1...21...3.1..121112.3...1..22.2..1323202.2.2.1..13..2...23...2132.32.....2.1.2.2.21.1.12..01.21....1..12......013...20..1212..0..211...3..001.112...11...2.13221..2.23..13..3.1111.1.22.132..........1.22..11...12...1.2..1.01..131.1...21.2...12.2...........12...0.231...2.20.2.1.1..311..2.3..22201.12233..33..1..212.10.12.3.3....3.....21.2....21..2022..3.0..2..0..2.2.2.0.222.1....1..1...1.1.1.........11..0122.2111..02.3..0....1..3.1....2..23...3...2..11.2.112232.2.1..21.232.22.1..11....122.2..21.3.2.2.11121...21.0..1.11.2..13..22.2.1......210131...22.1.10....3.32.2.3210.......2..31.....213.1..12...131...02.12...122.........3.22.1.1..1232.1..1.0.2112..2...32..0.3.2..2.1..1..03..11..32.2..21.....0..11.3.222..1.1112.1.2.21...1.1.2..000...3.2.1....2...32..3.1.....2.2.1.2.3.21210..31...133.2.22...1.2.2.31....1.......1.122...01.1.223..2..1.3.3.220...2.0..221..1..322.12221...2.111.23.2...32.13..2..20..2.10.3.1.......20122..2.3...3..1...20.0...1....1..1.112.2..1.02..2..213..2..2.2.2.0....12..3......22.......31..1...2..1132220..2.12.2...21...3..1212...201...1221...23.3...133..0....2.11.1..3.0.222221.........1.22...22323..10.11...221111.2..1...1.13.211.0..1.1212.231........1.1..2.12.221..2.3.1.2..1.0....1222......2...11.3.......1...232.....2..2.10.0..3.2..21.013.3.3.212...3.1.2..022.2....2.3..0...31..0111...10..11.1.2.21..22..2....1..2.32.1.......1.1...2.13.......22.22...2.1..1.0..1.10.0...1.1102..201111213.12..322.2.2.....2.1..2.3.1...11.32.1...2..1.1.3.0..0.....1.22213...22....2....20...2..3.1.2..1.31310.0.2..1.1......23.223..1..3.12..213.3..1.3...1.0..1....3..2...12.21.13..2.....2....1...30.3.31......1.220.3.2..1.....13..22...0....13......1.21.2..0..23..311..20..33.1...1..312.3.32..2..1.22...3.23222...1.02.20.2....0.21..1.31..0.2..3.12.2.1.1...2.0.1.1..3....3..21....222.1....12112.......02.3..1.2..2213...1...0112..2..23.....1.3..13...011......22...0.2.1..3....112.3..3..1..3...1.2.121.01........2..1.1221....2..3.02.231130..223..2332....2013....10......3.2..22...0..112...2..11...21.1..1.1........2..10.1.3.3.....311.1.......101223...23....222.3..1...3.1.12...12..0...1.3.3...32..112......13..22..32.112..2.1..2.21.02111...2..222.3.0..112.0...33.12.0....1.....1...1323.2..13..2112.21.1222..221.11..23.132..3...3...1..2.........0.1..1.22.10..0..2...1.0....0..2...22.3.3.1.311.2..1..2.2212..1..1..1332223.0.....21..0...3.12
@@ -113,23 +97,100 @@
   - Highlander + color:
     - Essentially a "red exit edge" is where the color is forced to be the same for the entire exit
     - This seems "solvable" in the "ALL" solving stage?
-  - 
-  - [defer] - we can solve based on vertex connection info, could this be a feature/constraint in the future?
-    - Constraint!!!
-  - 
+  -  
   - FeatureSet improvements:
     - "all" feature set - how to check to see if faces IMPLY edges, and vice versa?
     - Sector only-one is... internally redundant (see the BINARY forms)
   - 
-  - [meh, we don't have huge amounts of implications] HEY! getEmbeddedRules might be giving us some "duplicates". I think we were filtering these out before
-    - Filter these out where possible, so we're not doing more computation? 
+  - getSolutionImpliedRules embeddedRules
+    - duplicated "embedded" rules might reduce memory
+    - [action] console.log embeddedRules length, see if it is getting out of hand? Is that what is causing crashes?
   - 
   - TPatternBoard cleanup:
     - !!!!!! GET RID OF TPatternBoard, just make BasePatternBoard => PatternBoard.
       - Then we can store PatternBoard-related info (e.g. automorphisms, planar mappings, bit-packing metadata) on it
+        - WeakMaps of embeddings on each PatternBoard?
     - default planar mapping on TPatternBoard
   - 
-  - Performance: PatternRule.withRulesApplied
+  - Apply patterns with "topological simplification"(!)
+  - 
+  - Check code TODOs
+  - 
+  - !!! For feature equality (of a list that is nonredundant) - just get canonical strings, sort, append, compare!
+    - NOTE: We can't exactly deduplicate embeddings with this, due to FACE COLOR DUALS that start to "overlap"
+      - HEY, for embeddings, COMBINE FACE COLOR DUALS that have overlap(!)
+        - embedFeatures( features ) => features, handles overlapping things (face color duals) and removes redundancies
+          - then sort to "canonical order"?
+  - 
+  - View for pattern - canonicalize which face features get which coloring (lowest index ordering) so those don't... change? hmm awkward
+    - We... actually want to try to keep face colors consistent? (allow passing in a previous mapping?)
+  - 
+  - !!!! When we have a set of features we are adding, we can potentially RULE OUT other features (intelligent exploration)
+    - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
+  - 
+  - Face Color Annoyance:
+    - DO SMART FACE COLOR DUAL features? (not... named?)
+      - Storing duals means:
+        - (1) FASTER matching (since we don't do O(n^2) checks for large regions)
+        - (2) Can provide the exhaustive O(n^2) for computing all solutions and analyzing
+        - (3) our "output" state change can be a "list of the face color actions needed to be done"
+    - Our booleans are VERY over-specified. Are dual-color with faces representations possible?
+      - (though this is... so simple)
+      - HEY this causes our logic-solver to get a LOT of complicated rules that it probably doesn't need(!), O(n^2)
+        - O(n^2)!!!!!!!!!!!!! 
+      - Could just be consistent and compute duals, and:
+        - (a) fully specify all color relations based on the relationships (fill them out)
+        - (b) minimize them when we actually... scan for patterns?
+  - 
+  - [defer] Embedded rules issues
+    - "trivial / isomorphic when embedded"
+    - "collapse when embedded" - e.g. incomplete rule
+    - 
+    - WHEN WE SHOW EMBEDDED VERSIONS, execute MULTIPLE PatternRules on the "simpler" embedded version
+      - Certain topology (red exit vertex, etc.) features will probably unlock more things
+    - Also when we show embedded versions:
+      - We have a lot of rules for "preventing simple loops" or "preventing simple loops after we do something trivial"
+    - Hex 1-0 has tons of these... anything with an exit vertex on the connection is... essentially not a rule
+    - Rule collapse on embedding too (consolidate)
+      - (do this in places where we are ... solving?)
+  - [defer] "Constraints" vs "Features"
+    - Constraints: We add constraints at the start of solving, and they don't change
+      - (can use Feature interface for adding solving constraints) 
+      - Highlander
+      - [defer] Nonzero-crossing (NEW: 2+ crossing) - both could be used in the future
+      - [defer] NEW: certain exit vertices NEED to connect together? Or need NOT to?
+      - Vertex 0-or-2 rules
+      - Face values (including blank)
+      - [defer] - we can solve based on vertex connection info, could this be a constraint in the future?
+    - Features:
+      - .. All the other things we are used to
+  - [defer] FeatureSet.difference (things we can apply, essentially the pattern rule output)
+    - (performance, but also "hey we can show what actually changed")
+    - Also, our matching is partially based on this(!)
+  - [defer] Nonzero (or 2+) crossing type - compute possible paths
+  - [defer] Rule reduction using BinaryPatternSolver-like handling (apply rules)
+    - PatternRule.withRulesApplied with BinaryRuleCollection(!)
+      - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
+      - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
+  - [defer] "Invalidity" patterns
+  - [defer] Faster SAT enumeration
+    - Running through all SAT solutions is possible, but can do better
+      - First, do pre-checks (quick) to see if the pattern is clearly impossible 
+      - Keep a running list of loops (that will always be negated)
+      - FIRST find a no-added-constraint no-loop solution
+        - IF none, then the pattern won't occur in a valid puzzle
+      - If a no-loop solution is found, mark all of the POSSIBLE things immediately.
+      - After we have one solution, we can:
+        - Find a NOT_FOUND boolean, restart with a constraint that it must be possible, and see if we can find a solution:
+          - If we can't, mark it IMPOSSIBLE
+          - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
+        - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
+  - [defer] PatternBoard Generation: 
+    - [defer] Prevent combinations where... a face isn't included but all of its neighbors are? (or perhaps... if all its vertices are included, include it?) THINK
+  - [defer] PatternBoard Canonicalize:
+    - [defer] Find the vertex permutation that gives us the lexicographically smallest order of states.
+    - [defer] Then we can use equality to check isomorphism (and we can store this in a hash table)
+  - [defer] Performance: PatternRule.withRulesApplied
     - Looks so much like [LinClosure] noted from LinCbO paper.
     - 
     - Make sure to combine embedded rules that have the same embedded input feature set 
@@ -159,92 +220,6 @@
         - Yes just include this condition in the "redundancy" check solve
     - Is there a pre-sorting or pre-processing of rules that could be done to make this faster? (besides collapsing)
   - 
-  - Face colors!
-    - !! How to collapse face color rules nicely? (from exit vertex to... non-exit?)
-    - Add the "color matching" so the pattern rules are more... viewable?
-  - 
-  - Check code TODOs
-  - 
-  - !!! For feature equality (of a list that is nonredundant) - just get canonical strings, sort, append, compare!
-    - NOTE: We can't exactly deduplicate embeddings with this, due to FACE COLOR DUALS that start to "overlap"
-      - HEY, for embeddings, COMBINE FACE COLOR DUALS that have overlap(!)
-        - embedFeatures( features ) => features, handles overlapping things (face color duals) and removes redundancies
-          - then sort to "canonical order"?
-  - 
-  - View for pattern - canonicalize which face features get which coloring (lowest index ordering) so those don't... change? hmm awkward
-    - We... actually want to try to keep face colors consistent? (allow passing in a previous mapping?)
-  - 
-  - !!!! When we have a set of features we are adding, we can potentially RULE OUT other features (intelligent exploration)
-    - e.g. pick face color features. we can then use the solver to enumerate all solutions, and RULE OUT other features that are not present in any solution
-  - 
-  - [NOTE: not a bottleneck for patterns] Can we use Solver.solveAssuming
-  - 
-  - Face Color Annoyance:
-    - DO SMART FACE COLOR DUAL features? (not... named?)
-      - Storing duals means:
-        - (1) FASTER matching (since we don't do O(n^2) checks for large regions)
-        - (2) Can provide the exhaustive O(n^2) for computing all solutions and analyzing
-        - (3) our "output" state change can be a "list of the face color actions needed to be done"
-    - Our booleans are VERY over-specified. Are dual-color with faces representations possible?
-      - (though this is... so simple)
-      - HEY this causes our logic-solver to get a LOT of complicated rules that it probably doesn't need(!), O(n^2)
-        - O(n^2)!!!!!!!!!!!!! 
-      - Could just be consistent and compute duals, and:
-        - (a) fully specify all color relations based on the relationships (fill them out)
-        - (b) minimize them when we actually... scan for patterns?
-  - 
-  - "Constraints" vs "Features"
-    - Constraints: We add constraints at the start of solving, and they don't change
-      - (can use Feature interface for adding solving constraints) 
-      - Highlander
-      - [defer] Nonzero-crossing (NEW: 2+ crossing) - both could be used in the future
-      - [defer] NEW: certain exit vertices NEED to connect together? Or need NOT to?
-      - Vertex 0-or-2 rules
-      - Face values (including blank)
-    - Features:
-      - .. All the other things we are used to
-  - 
-  - [defer] FeatureSet.difference (things we can apply, essentially the pattern rule output)
-    - (performance, but also "hey we can show what actually changed")
-    - Also, our matching is partially based on this(!)
-  - [defer] Nonzero (or 2+) crossing type - compute possible paths
-  - [defer] Rule reduction using BinaryPatternSolver-like handling (apply rules)
-    - PatternRule.withRulesApplied with BinaryRuleCollection(!)
-      - WE NEED a "bail out condition" (like, either if FULLY SOLVED, or if when checking redundancy "we reached our pattern")
-      - BinaryRuleCollection.matchXXX( targetFeatureSet, embedding, ruleIndex )
-
-- We are able to apply patterns without OR WITH the "topological simplification"(!)
-  - Ooo, this might be good for generating puzzles?
-
-- Assume patterns/rules only applied if they don't include the entire solution (can't be the loop, loops prevented)
-
-[API needs to be compatible with boards, maybe with adapter]
-  - Can we put an 'index' on everything in a board?
-
-- [defer] "Invalidity" patterns?
-
-- Running through all SAT solutions is possible, but can do better
-  - First, do pre-checks (quick) to see if the pattern is clearly impossible 
-  - Keep a running list of loops (that will always be negated)
-  - FIRST find a no-added-constraint no-loop solution
-    - IF none, then the pattern won't occur in a valid puzzle
-  - If a no-loop solution is found, mark all of the POSSIBLE things immediately.
-  - After we have one solution, we can:
-    - Find a NOT_FOUND boolean, restart with a constraint that it must be possible, and see if we can find a solution:
-      - If we can't, mark it IMPOSSIBLE
-      - If we can, do the normal "mark POSSIBLE" things and start again with another NOT_FOUND BOOLEAN
-    - NOTE: Might be more efficient to run through a fixed (N=10) number of solutions, to get more possible bits?
-
-- Exit edge decisions: [REVISIT because omg highlander cases]
-  - Ignore "black" exit edges (no feature for that both for input and output).
-  - No sectors for exit edges (no feature for that both for input and output).
-
-- PatternBoard:
-  - [defer] Generation: 
-    - [defer] Prevent combinations where... a face isn't included but all of its neighbors are? (or perhaps... if all its vertices are included, include it?) THINK
-  - [defer] Canonicalize:
-    - [defer] Find the vertex permutation that gives us the lexicographically smallest order of states.
-    - [defer] Then we can use equality to check isomorphism (and we can store this in a hash table)
 
 https://github.com/timhutton/slinker ---> has the "solving rules"
 Review https://github.com/timhutton/slinker/blob/main/src/SlinkerGrid.cpp !!!!

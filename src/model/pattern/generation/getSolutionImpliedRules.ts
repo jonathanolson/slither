@@ -78,6 +78,7 @@ export const getSolutionImpliedRules = ( patternBoard: TPatternBoard, providedOp
   faceValueRecur( rootFeatureSet, 0 );
 
   // We will append to this list as we go
+  // TODO: are we burning a lot of memory on "duplicated" embedded rules? (we aren't filtering out isomorphisms)
   const embeddedRules = ( options.prefilterRules ?? [] ).flatMap( rule => rule.getEmbeddedRules( getEmbeddings( rule.patternBoard, patternBoard ) ) );
 
   const filteredRules: PatternRule[] = [];

@@ -62,6 +62,7 @@
       - Perhaps we are giving it too many loops?
       - CONSIDER:
         - What if we... manually compute these? For these SMALL cases, it is probably practical
+    - [defer] [NOTE: not a bottleneck for patterns] Can we use Solver.solveAssuming
   - 
   - Feature limits during search:
     - Can we use "closure where everything over X number of features closes to invalid" to skip subtrees of the search tree that have too many features?
