@@ -61,8 +61,6 @@
     - POTENTIALLY have it just take in an input pattern
   - 
   - rule-explorer.html
-    - MOVE the "page control" to bottom of the grid area
-    - 
     - Show patterns that ONLY TAKE FACES (or maybe red exit edges - and could be on borders)
     - 
     - [defer] handle "isomorphic when embedded"

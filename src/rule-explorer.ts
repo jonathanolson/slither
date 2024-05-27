@@ -251,7 +251,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     const minIndex = Math.min( baseIndex, group.size );
     const maxIndex = Math.min( baseIndex + rulesPerPage, group.size );
 
-    console.log( group.size / rulesPerPage );
     return _.range( minIndex, maxIndex ).map( i => group.getRule( i ) );
   } );
 
@@ -432,7 +431,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     constrainValue: value => Math.round( value ),
   } );
 
-  const pageNumberText = new UIText( new DerivedProperty( [ pageIndexProperty ], pageIndex => `Page ${pageIndex}` ), {
+  const pageNumberText = new UIText( new DerivedProperty( [ pageIndexProperty, pageIndexRangeProperty ], ( pageIndex, pageIndexRange ) => `Page ${pageIndex} of ${pageIndexRange.max + 1}` ), {
     fontWeight: 'bold'
   } );
 
@@ -451,29 +450,57 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     ]
   } );
 
-  const leftBox = new VBox( {
-    align: 'left',
-    spacing: 20,
+  const leftBox = new Node( {
     children: [
-      collectionRadioButtonGroup,
-      highlanderRadioButtonGroup,
-      fallbackCheckbox,
-      tilingRadioButtonGroup,
-      showEmbeddedCheckbox,
-      viewStyleNode,
-      themeNode,
-      pageNumberBox,
+      new VBox( {
+        align: 'left',
+        spacing: 20,
+        children: [
+          collectionRadioButtonGroup,
+          highlanderRadioButtonGroup,
+          fallbackCheckbox,
+          tilingRadioButtonGroup,
+          showEmbeddedCheckbox,
+          viewStyleNode,
+          themeNode,
+        ]
+      } )
     ]
   } );
 
+  const bottomBox = pageNumberBox;
+
   const MARGIN = 10;
   const HORIZONTAL_GAP = 30;
+  const VERTICAL_GAP = 30;
 
   const rulesGridBox = new GridBox( {
     xSpacing: 40,
     ySpacing: 20,
     // xAlign: 'origin',
     // yAlign: 'origin',
+  } );
+
+  const rightBox = new VBox( {
+    spacing: VERTICAL_GAP,
+    justify: 'spaceBetween',
+    layoutOptions: {
+      grow: 1,
+      stretch: true,
+    },
+    children: [
+      rulesGridBox,
+      bottomBox,
+    ],
+  } );
+
+  const mainBox = new HBox( {
+    spacing: HORIZONTAL_GAP,
+    align: 'top',
+    children: [
+      leftBox,
+      rightBox,
+    ]
   } );
 
   Multilink.multilink( [
@@ -487,11 +514,16 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     displayTiling,
     showEmbedded,
   ) => {
-    const availableHeight = layoutBounds.height - 2 * MARGIN;
+    const availableFullHeight = layoutBounds.height - 2 * MARGIN;
+    const availableHeight = availableFullHeight - bottomBox.height - VERTICAL_GAP;
 
-    leftBox.maxHeight = availableHeight;
+    leftBox.maxHeight = availableFullHeight;
+    rightBox.preferredHeight = availableFullHeight;
 
-    const availableWidth = layoutBounds.width - 2 * MARGIN - leftBox.width - HORIZONTAL_GAP;
+    const availableFullWidth = layoutBounds.width - 2 * MARGIN;
+    const availableWidth = availableFullWidth - leftBox.width - HORIZONTAL_GAP;
+
+    mainBox.preferredWidth = availableFullWidth;
 
     const oldChildren = rulesGridBox.children.slice();
 
@@ -560,14 +592,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     }
   } );
 
-  scene.addChild( new AlignBox( new HBox( {
-    spacing: HORIZONTAL_GAP,
-    align: 'top',
-    children: [
-      leftBox,
-      rulesGridBox,
-    ]
-  } ), {
+  scene.addChild( new AlignBox( mainBox, {
     margin: MARGIN,
     xAlign: 'left',
     yAlign: 'top',
