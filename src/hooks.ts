@@ -167,5 +167,7 @@ window.collectionsToSortedMixedGroup = (
 
   const mixedGroup = BinaryMixedRuleGroup.fromGroup( normalGroup );
 
+  console.log( 'rule count', mixedGroup.size );
+
   return mixedGroup.sortedDefault().serialize();
 };
