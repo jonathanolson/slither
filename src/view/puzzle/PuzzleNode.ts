@@ -44,7 +44,6 @@ type SelfOptions = {
   hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
-  faceFilter?: TFaceFilter; // If provided, we will only show items with faces that pass the filter
   style?: TPuzzleStyle;
   noninteractive?: boolean;
 };
@@ -83,7 +82,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null ),
       selectedSectorEditProperty: new Property( null ),
-      faceFilter: () => true,
       style: currentPuzzleStyle,
       noninteractive: false,
     }, providedOptions );
@@ -128,15 +126,13 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       return regions.length === 1 && regions[ 0 ].isSolved;
     } );
 
-    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, options.faceFilter, style ) );
+    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
     puzzle.board.faces.forEach( face => {
-      if ( options.faceFilter( face ) ) {
-        faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
+      faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
 
-        // TODO: add the "optional create" for FaceStateNode?
-        faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
-      }
+      // TODO: add the "optional create" for FaceStateNode?
+      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
     } );
 
     const backgroundNode = new PuzzleBackgroundNode(
@@ -151,9 +147,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const vertexVisibilityListener = ( verticesVisible: boolean ) => {
       if ( verticesVisible ) {
         puzzle.board.vertices.forEach( vertex => {
-          if ( vertex.faces.some( options.faceFilter ) ) {
-            vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-          }
+          vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
         } );
       }
       else {
@@ -165,9 +159,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const vertexStateVisibilityListener = ( vertexStatesVisible: boolean ) => {
       if ( vertexStatesVisible ) {
         puzzle.board.vertices.forEach( vertex => {
-          if ( vertex.faces.some( options.faceFilter ) ) {
-            vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-          }
+          vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
         } );
       }
       else {
@@ -177,24 +169,18 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     style.vertexStateVisibleProperty.link( vertexStateVisibilityListener );
 
     puzzle.board.edges.forEach( edge => {
-      if ( edge.faces.some( options.faceFilter ) ) {
-        edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
-      }
+      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
     } );
 
     // TODO: why are we getting an error when we swap in the listeners below
     // TODO OMG DO NOT LEAK THESE, if we enable, unlink sectorVisibilityListener
         puzzle.board.halfEdges.forEach( sector => {
-          if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
-            sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
-          }
+          sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
         } );
     // const sectorVisibilityListener = ( sectorsVisible: boolean ) => {
     //   if ( sectorsVisible ) {
     //     puzzle.board.halfEdges.forEach( sector => {
-    //       if ( sector.face ? options.faceFilter( sector.face ) : options.faceFilter( sector.reversed.face! ) ) {
-    //         sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
-    //       }
+    //       sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
     //     } );
     //   }
     //   else {
@@ -203,7 +189,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     // };
     // style.sectorsVisibleProperty.link( sectorVisibilityListener );
 
-    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, options.faceFilter, style ) );
+    simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
     super( combineOptions<PuzzleNodeOptions>( {
       children: [
