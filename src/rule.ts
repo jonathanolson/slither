@@ -12,7 +12,7 @@ import { RichSolution } from './model/pattern/generation/RichSolution.ts';
 import { HighlanderPruner } from './model/pattern/formal-concept/HighlanderPruner.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
 import _ from './workarounds/_.ts';
-import { TPatternEdge } from './model/pattern/TPatternEdge.ts';
+import { TPatternEdge } from './model/pattern/pattern-board/TPatternEdge.ts';
 import { IncompatibleFeatureError } from './model/pattern/feature/IncompatibleFeatureError.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`

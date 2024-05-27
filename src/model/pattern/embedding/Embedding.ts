@@ -1,9 +1,9 @@
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TPatternVertex } from './TPatternVertex.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
-import { TPatternFace } from './TPatternFace.ts';
-import { TPatternBoard } from './TPatternBoard.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 
 export class Embedding {
 

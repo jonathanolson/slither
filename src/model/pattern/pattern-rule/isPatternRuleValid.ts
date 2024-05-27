@@ -1,7 +1,7 @@
 import { PatternRule } from './PatternRule.ts';
-import { getPatternBoardGenericRichSolutions } from './getPatternBoardGenericRichSolutions.ts';
-import { HighlanderPruner } from './formal-concept/HighlanderPruner.ts';
-import { GenericRichSolution } from './generation/GenericRichSolution.ts';
+import { getPatternBoardGenericRichSolutions } from '../getPatternBoardGenericRichSolutions.ts';
+import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
+import { GenericRichSolution } from '../generation/GenericRichSolution.ts';
 
 // TODO: PatternRule SHOULD keep track of whether it is a highlander rule, right?
 export const isPatternRuleValid = (

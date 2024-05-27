@@ -1,4 +1,4 @@
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
 

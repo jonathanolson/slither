@@ -1,6 +1,6 @@
 import { TFeature } from './TFeature.ts';
-import { TPatternVertex } from '../TPatternVertex.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
 import { logicZeroOrTwo } from '../../logic/operations.ts';

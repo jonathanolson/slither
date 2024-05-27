@@ -1,9 +1,9 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { ConnectedFacePair, FaceConnectivity } from '../FaceConnectivity.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
-import { TPatternSector } from '../TPatternSector.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { BlackEdgeFeature } from '../feature/BlackEdgeFeature.ts';

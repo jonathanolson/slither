@@ -14,9 +14,9 @@ import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all
 import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
 import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../BinaryRuleSequence.ts';
 import { BinaryRuleCollection } from '../../collection/BinaryRuleCollection.ts';
-import { isPatternRuleValid } from '../../isPatternRuleValid.ts';
+import { isPatternRuleValid } from '../../pattern-rule/isPatternRuleValid.ts';
 import QUnit from 'qunit';
-import { serializePatternBoard } from '../../serializePatternBoard.ts';
+import { serializePatternBoard } from '../../pattern-board/serializePatternBoard.ts';
 import { getPatternBoardGenericRichSolutions } from '../../getPatternBoardGenericRichSolutions.ts';
 
 QUnit.module( 'pattern rule correctness', () => {

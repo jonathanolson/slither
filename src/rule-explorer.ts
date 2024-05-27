@@ -15,13 +15,13 @@ import { getGeneralAllGroup } from './model/pattern/rule-group/getGeneralAllGrou
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
-import { standardCairoBoard, standardDeltoidalTrihexagonalBoard, standardElongatedTriangularBoard, standardFloretPentagonalBoard, standardHexagonalBoard, standardPortugalBoard, standardPrismaticPentagonalBoard, standardRhombilleBoard, standardRhombitrihexagonalBoard, standardSnubSquareBoard, standardSquareBoard, standardTriangularBoard, standardTrihexagonalBoard } from './model/pattern/patternBoards.ts';
+import { standardCairoBoard, standardDeltoidalTrihexagonalBoard, standardElongatedTriangularBoard, standardFloretPentagonalBoard, standardHexagonalBoard, standardPortugalBoard, standardPrismaticPentagonalBoard, standardRhombilleBoard, standardRhombitrihexagonalBoard, standardSnubSquareBoard, standardSquareBoard, standardTriangularBoard, standardTrihexagonalBoard } from './model/pattern/pattern-board/patternBoards.ts';
 import { TBoard } from './model/board/core/TBoard.ts';
-import { BoardPatternBoard } from './model/pattern/BoardPatternBoard.ts';
-import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { BoardPatternBoard } from './model/pattern/pattern-board/BoardPatternBoard.ts';
+import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { ArrowButton, Slider } from 'phet-lib/sun';
 import { copyToClipboard } from './util/copyToClipboard.ts';
-import { DisplayEmbedding } from './model/pattern/DisplayEmbedding.ts';
+import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, currentPuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleFromProperty, puzzleStyleMap, sectorsWithColorsPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';

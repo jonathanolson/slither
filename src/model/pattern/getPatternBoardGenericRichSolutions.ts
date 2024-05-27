@@ -1,4 +1,4 @@
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { GenericRichSolution } from './generation/GenericRichSolution.ts';
 import { getPatternBoardSolutions } from './getPatternBoardSolutions.ts';

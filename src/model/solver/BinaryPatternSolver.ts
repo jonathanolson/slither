@@ -6,7 +6,7 @@ import { TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
-import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
+import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BoardFeatureData } from '../pattern/BoardFeatureData.ts';
 import { BinaryRuleCollection } from '../pattern/collection/BinaryRuleCollection.ts';
 import { getPatternRuleAction } from '../pattern/getPatternRuleAction.ts';

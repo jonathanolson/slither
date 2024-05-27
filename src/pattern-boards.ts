@@ -1,9 +1,9 @@
 import { AlignBox, Display, HBox, Node, VBox, Text, AlignGroup } from 'phet-lib/scenery';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
 import { deserializePlanarMappedPatternBoard } from './model/pattern/TPlanarMappedPatternBoard.ts';
-import { basicPatternBoards, standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './model/pattern/patternBoards.ts';
+import { basicPatternBoards, standardCairoBoardGenerations, standardHexagonalBoardGenerations, standardRhombilleBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './model/pattern/pattern-board/patternBoards.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { generalPatternBoardGenerations } from './model/pattern/generalPatternBoardGenerations.ts';
 
 // Load with `http://localhost:5173/pattern-boards.html?debugger`

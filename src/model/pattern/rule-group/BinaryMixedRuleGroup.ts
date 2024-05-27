@@ -1,9 +1,9 @@
 import { BinaryRuleGroup } from './BinaryRuleGroup.ts';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from '../collection/BinaryRuleCollection.ts';
-import { PatternRule } from '../PatternRule.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
 import _ from '../../../workarounds/_.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 
 export class BinaryMixedRuleGroup {
   private constructor(

@@ -1,7 +1,7 @@
 import { Line, Node, Path, Rectangle, Text } from 'phet-lib/scenery';
-import { TPatternBoard } from '../../model/pattern/TPatternBoard.ts';
-import { BoardPatternBoard } from '../../model/pattern/BoardPatternBoard.ts';
-import { Embedding } from '../../model/pattern/Embedding.ts';
+import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
+import { BoardPatternBoard } from '../../model/pattern/pattern-board/BoardPatternBoard.ts';
+import { Embedding } from '../../model/pattern/embedding/Embedding.ts';
 import { Shape } from 'phet-lib/kite';
 import { puzzleFont } from '../Theme.ts';
 

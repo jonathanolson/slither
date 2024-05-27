@@ -1,6 +1,6 @@
 import { HBox, Node, NodeOptions, Text } from 'phet-lib/scenery';
-import { PatternRule } from '../../model/pattern/PatternRule.ts';
-import { DisplayEmbedding } from '../../model/pattern/DisplayEmbedding.ts';
+import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
+import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
 import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
 import PuzzleNode from '../puzzle/PuzzleNode.ts';
 import { currentTheme, puzzleFont } from '../Theme.ts';

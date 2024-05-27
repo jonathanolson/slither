@@ -1,4 +1,4 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 import { GetRulesOptions } from './GetRulesOptions.ts';
 import { planarPatternMaps } from '../planarPatternMaps.ts';

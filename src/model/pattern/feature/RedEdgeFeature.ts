@@ -1,12 +1,12 @@
 import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
 import { logicNot } from '../../logic/operations.ts';
-import { Embedding } from '../Embedding.ts';
+import { Embedding } from '../embedding/Embedding.ts';
 import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 
 export class RedEdgeFeature implements TEmbeddableFeature {
   public constructor(

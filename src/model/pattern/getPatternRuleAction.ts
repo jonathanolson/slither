@@ -1,10 +1,10 @@
-import { PatternRule } from './PatternRule.ts';
+import { PatternRule } from './pattern-rule/PatternRule.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
 import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
-import { BoardPatternBoard } from './BoardPatternBoard.ts';
+import { BoardPatternBoard } from './pattern-board/BoardPatternBoard.ts';
 import { TState } from '../data/core/TState.ts';
 import { TAction } from '../data/core/TAction.ts';
 import { TEdge } from '../board/core/TEdge.ts';
@@ -21,7 +21,7 @@ import { SectorNotTwoFeature } from './feature/SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from './feature/SectorOnlyOneFeature.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
 import { FaceColorDualFeature } from './feature/FaceColorDualFeature.ts';
-import { TPatternFace } from './TPatternFace.ts';
+import { TPatternFace } from './pattern-board/TPatternFace.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
@@ -31,7 +31,7 @@ import { AnnotatedFaceColorDual, AnnotatedFaceValue } from '../data/core/TAnnota
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import _ from '../../workarounds/_.ts';
-import { Embedding } from './Embedding.ts';
+import { Embedding } from './embedding/Embedding.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 

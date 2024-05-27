@@ -1,7 +1,7 @@
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import { TEmbeddableFeature } from './feature/TEmbeddableFeature.ts';
 import { TBoardFeatureData } from './TBoardFeatureData.ts';
-import { Embedding } from './Embedding.ts';
+import { Embedding } from './embedding/Embedding.ts';
 import FeatureSetMatchState from './FeatureSetMatchState.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import _ from '../../workarounds/_.ts';

@@ -1,4 +1,4 @@
-import { BoardPatternBoard } from './BoardPatternBoard.ts';
+import { BoardPatternBoard } from './pattern-board/BoardPatternBoard.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';

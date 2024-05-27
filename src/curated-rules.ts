@@ -1,7 +1,7 @@
 import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { copyToClipboard } from './util/copyToClipboard.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
+import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
 import { curatedRules } from './model/pattern/data/curatedRules.ts';
 

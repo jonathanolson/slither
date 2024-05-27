@@ -1,4 +1,4 @@
-import { PatternRule } from '../PatternRule.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 
 export const curatedRules: PatternRule[] = [
   // 2 black => others red

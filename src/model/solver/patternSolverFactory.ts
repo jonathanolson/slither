@@ -3,7 +3,7 @@ import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { BoardPatternBoard } from '../pattern/BoardPatternBoard.ts';
+import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 import { BinaryRuleGroup } from '../pattern/rule-group/BinaryRuleGroup.ts';
 import { getGeneralEdgeGroup } from '../pattern/rule-group/getGeneralEdgeGroup.ts';

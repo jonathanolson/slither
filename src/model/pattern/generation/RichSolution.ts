@@ -1,5 +1,5 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';

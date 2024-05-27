@@ -6,9 +6,9 @@ import SectorState from '../sector-state/SectorState.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
 import { FaceState } from '../face-state/FaceState.ts';
 import FaceValue from '../face-value/FaceValue.ts';
-import { PatternRule } from '../../pattern/PatternRule.ts';
-import { Embedding } from '../../pattern/Embedding.ts';
-import { BoardPatternBoard } from '../../pattern/BoardPatternBoard.ts';
+import { PatternRule } from '../../pattern/pattern-rule/PatternRule.ts';
+import { Embedding } from '../../pattern/embedding/Embedding.ts';
+import { BoardPatternBoard } from '../../pattern/pattern-board/BoardPatternBoard.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';

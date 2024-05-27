@@ -1,10 +1,10 @@
-import { CollectionSerializedPatternRule, PatternRule } from './PatternRule.ts';
-import { TPatternBoard } from './TPatternBoard.ts';
-import { deserializePatternBoard } from './deserializePatternBoard.ts';
-import { serializePatternBoard } from './serializePatternBoard.ts';
+import { CollectionSerializedPatternRule, PatternRule } from './pattern-rule/PatternRule.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
+import { deserializePatternBoard } from './pattern-board/deserializePatternBoard.ts';
+import { serializePatternBoard } from './pattern-board/serializePatternBoard.ts';
 import { compressString2, decompressString2 } from '../../util/compression.ts';
 import _ from '../../workarounds/_.ts';
-import { getEmbeddings } from './getEmbeddings.ts';
+import { getEmbeddings } from './embedding/getEmbeddings.ts';
 import { PatternBoardRuleSet } from './PatternBoardRuleSet.ts';
 
 /**

@@ -1,4 +1,4 @@
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import { TFeature } from './feature/TFeature.ts';
 import { TPlanarPatternMap } from './TPlanarPatternMap.ts';
 

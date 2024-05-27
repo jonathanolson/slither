@@ -1,15 +1,15 @@
 import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
-import { PatternRule } from './PatternRule.ts';
+import { PatternRule } from './pattern-rule/PatternRule.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FeatureSet, TSerializedFeatureSet } from './feature/FeatureSet.ts';
-import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
-import { BasePatternBoard } from './BasePatternBoard.ts';
+import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from './pattern-board/TPatternBoardDescriptor.ts';
+import { BasePatternBoard } from './pattern-board/BasePatternBoard.ts';
 import { planarPatternMaps } from './planarPatternMaps.ts';
 import { combineOptions } from 'phet-lib/phet-core';
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import { GetRulesOptions } from './generation/GetRulesOptions.ts';
 import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
-import { getStandardDescribedPatternBoard } from './patternBoards.ts';
+import { getStandardDescribedPatternBoard } from './pattern-board/patternBoards.ts';
 
 export class PatternBoardRuleSet {
   public constructor(

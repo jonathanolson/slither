@@ -1,7 +1,7 @@
 import { BinaryRuleCollection } from '../collection/BinaryRuleCollection.ts';
-import { PatternRule } from '../PatternRule.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import _ from '../../../workarounds/_.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BinaryRuleGroup {

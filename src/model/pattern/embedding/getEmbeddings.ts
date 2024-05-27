@@ -1,7 +1,7 @@
 import { Embedding } from './Embedding.ts';
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { computeEmbeddings } from './computeEmbeddings.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 const globalEmbeddingMap = new WeakMap<TPatternBoard, WeakMap<TPatternBoard, Embedding[]>>();
 

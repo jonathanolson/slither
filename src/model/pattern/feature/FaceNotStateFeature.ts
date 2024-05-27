@@ -1,15 +1,15 @@
 import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternFace } from '../TPatternFace.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
 import { logicNot, logicOr } from '../../logic/operations.ts';
-import { Embedding } from '../Embedding.ts';
+import { Embedding } from '../embedding/Embedding.ts';
 import { TFeature } from './TFeature.ts';
 import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './RedEdgeFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import _ from '../../../workarounds/_.ts';
 
 export class FaceNotStateFeature implements TEmbeddableFeature {

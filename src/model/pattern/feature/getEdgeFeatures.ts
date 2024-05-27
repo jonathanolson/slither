@@ -1,4 +1,4 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './RedEdgeFeature.ts';
 

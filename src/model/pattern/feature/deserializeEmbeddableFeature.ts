@@ -1,5 +1,5 @@
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { FaceFeature } from './FaceFeature.ts';
 import { BlackEdgeFeature } from './BlackEdgeFeature.ts';

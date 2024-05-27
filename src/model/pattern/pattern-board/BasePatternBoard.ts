@@ -5,10 +5,10 @@ import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
 import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor, TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import { BasePatternVertex } from './BasePatternVertex.ts';
-import _ from '../../workarounds/_.ts';
+import _ from '../../../workarounds/_.ts';
 import { BasePatternEdge } from './BasePatternEdge.ts';
 import { BasePatternSector } from './BasePatternSector.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { BasePatternFace } from './BasePatternFace.ts';
 
 export class BasePatternBoard implements TPatternBoard {

@@ -1,6 +1,6 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { TPatternFace } from '../TPatternFace.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
 import _ from '../../../workarounds/_.ts';
 import { FaceConnectivity } from '../FaceConnectivity.ts';
 

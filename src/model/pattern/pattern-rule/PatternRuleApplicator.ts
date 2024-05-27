@@ -1,7 +1,7 @@
-import { TPatternBoard } from './TPatternBoard.ts';
-import { FeatureSet } from './feature/FeatureSet.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { FeatureSet } from '../feature/FeatureSet.ts';
 import { PatternRule } from './PatternRule.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class PatternRuleApplicator {
 

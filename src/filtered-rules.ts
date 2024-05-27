@@ -1,11 +1,11 @@
 import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { copyToClipboard } from './util/copyToClipboard.ts';
-import { PatternRule } from './model/pattern/PatternRule.ts';
+import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
 import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import { TPatternBoard } from './model/pattern/TPatternBoard.ts';
+import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { curatedRules } from './model/pattern/data/curatedRules.ts';
-import { getEmbeddings } from './model/pattern/getEmbeddings.ts';
+import { getEmbeddings } from './model/pattern/embedding/getEmbeddings.ts';
 
 const DO_FILTER = true;
 

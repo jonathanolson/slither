@@ -14,7 +14,7 @@ import { SectorNotZeroFeature } from '../../model/pattern/feature/SectorNotZeroF
 import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneFeature.ts';
 import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
 import { TPlanarPatternMap } from '../../model/pattern/TPlanarPatternMap.ts';
-import { TPatternBoard } from '../../model/pattern/TPatternBoard.ts';
+import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
 
 export type PatternNodeOptions = {
   showQuestionMarks?: boolean;

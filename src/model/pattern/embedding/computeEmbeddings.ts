@@ -1,11 +1,11 @@
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { Embedding } from './Embedding.ts';
-import _ from '../../workarounds/_.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TPatternFace } from './TPatternFace.ts';
-import { TPatternVertex } from './TPatternVertex.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
 
 // NOTE: Only works for the specific types of patterns we create.
 export const computeEmbeddings = ( pattern: TPatternBoard, board: TPatternBoard ): Embedding[] => {

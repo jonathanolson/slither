@@ -2,7 +2,7 @@ import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
 import { RichSolution } from '../generation/RichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { getIndeterminateEdges } from '../getIndeterminateEdges.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 

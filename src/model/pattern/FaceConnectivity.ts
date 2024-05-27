@@ -1,7 +1,7 @@
-import { TPatternBoard } from './TPatternBoard.ts';
-import { TPatternFace } from './TPatternFace.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
+import { TPatternFace } from './pattern-board/TPatternFace.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternEdge } from './pattern-board/TPatternEdge.ts';
 
 const cacheMap = new WeakMap<TPatternBoard, FaceConnectivity>();
 

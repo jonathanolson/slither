@@ -1,6 +1,6 @@
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import { TPatternEdge } from '../TPatternEdge.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { VertexConnection } from '../VertexConnection.ts';

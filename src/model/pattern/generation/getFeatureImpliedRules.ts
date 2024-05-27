@@ -1,4 +1,4 @@
-import { PatternRule } from '../PatternRule.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { optionize3 } from 'phet-lib/phet-core';

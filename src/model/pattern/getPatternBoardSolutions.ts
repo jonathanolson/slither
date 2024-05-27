@@ -1,6 +1,6 @@
-import { TPatternBoard } from './TPatternBoard.ts';
+import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternEdge } from './pattern-board/TPatternEdge.ts';
 import { PatternBoardSolver } from './PatternBoardSolver.ts';
 
 const globalPatternBoardSolutionsMap = new WeakMap<TPatternBoard, TPatternEdge[][]>();

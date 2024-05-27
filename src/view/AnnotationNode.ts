@@ -8,7 +8,7 @@ import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { TBoard } from '../model/board/core/TBoard.ts';
 import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
-import { DisplayEmbedding } from '../model/pattern/DisplayEmbedding.ts';
+import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
 import { currentTheme } from './Theme.ts';
 
 export class AnnotationNode extends Node {

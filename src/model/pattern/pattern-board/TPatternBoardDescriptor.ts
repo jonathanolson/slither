@@ -1,4 +1,4 @@
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export type TPatternBoardDescriptor = {
   numNonExitVertices: number;

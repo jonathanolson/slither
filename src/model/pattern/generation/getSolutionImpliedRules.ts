@@ -1,11 +1,11 @@
 import { optionize3 } from 'phet-lib/phet-core';
-import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { GET_RULES_DEFAULTS, GetRulesOptions, GetRulesSelfOptions } from './GetRulesOptions.ts';
-import { PatternRule } from '../PatternRule.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { BasicSolveOptions, FeatureSet } from '../feature/FeatureSet.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import FaceValue from '../../data/face-value/FaceValue.ts';
-import { getEmbeddings } from '../getEmbeddings.ts';
+import { getEmbeddings } from '../embedding/getEmbeddings.ts';
 import _ from '../../../workarounds/_.ts';
 import { getFeatureImpliedRules } from './getFeatureImpliedRules.ts';
 
