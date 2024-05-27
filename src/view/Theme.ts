@@ -217,7 +217,7 @@ export const lightTheme = addThemeLUT( {
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' ),
-  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(232,232,232)' )
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(184,184,184)' )
 } );
 
 export const darkTheme = addThemeLUT( {
@@ -272,7 +272,7 @@ export const darkTheme = addThemeLUT( {
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' ),
-  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(33,33,33)' )
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' )
 } );
 
 export const fadeLightTheme = addThemeLUT( {
