@@ -47,6 +47,7 @@
     - Add dependencies.json for phet-lib builds!!!!
   -
   - Improvements:
+    - Clicking Pattern Annotation opens up more about the rule(!) including its typical embedding. 
     - Pattern SOLVE in difficulty(!)
   - 
   - Bugs:
