@@ -65,10 +65,12 @@ export class EmbeddedPatternRuleNode extends Node {
     const inputContainerNode = new Node( {
       children: [ inputNode, questionFacesNode ],
       clipArea: patternOutlineShape,
+      localBounds: dilatedPatternBounds,
     } );
     const outputContainerNode = new Node( {
       children: [ outputNode, questionFacesNode ],
       clipArea: patternOutlineShape,
+      localBounds: dilatedPatternBounds,
     } );
 
     const patternDescriptionNode = new Panel( new HBox( {
