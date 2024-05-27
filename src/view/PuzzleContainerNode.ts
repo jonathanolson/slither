@@ -9,6 +9,8 @@ import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
+import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
+import { isFaceEditModeProperty } from '../model/puzzle/EditMode.ts';
 
 type SelfOptions = {
   topological?: boolean;
@@ -41,13 +43,24 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     super( options );
 
     this.backgroundRect = new Rectangle( {
-      fill: style.theme.playAreaBackgroundColorProperty
+      fill: style.theme.playAreaBackgroundColorProperty,
+      pickableProperty: isFaceEditModeProperty,
     } );
+
+    // TODO: adjust pickable based on edit mode
+
+    hookPuzzleListeners( null, this.backgroundRect, ( face, button ) => {
+      puzzleModelProperty.value?.onUserFacePress( face, button );
+    },
+    ( face, isOver ) => {
+      puzzleModelProperty.value?.onUserFaceHover( face, isOver );
+    }, );
+
     this.rectangularGradientRect = new Rectangle( {
-      // TODO: don't require this
+      pickable: false,
     } );
     this.circularGradientRect = new Rectangle( {
-      // TODO: don't require this
+      pickable: false,
     } );
 
     this.puzzleWrapper = new Node( {
