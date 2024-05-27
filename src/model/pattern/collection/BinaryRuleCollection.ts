@@ -314,7 +314,8 @@ export class BinaryRuleCollection {
   public findNextActionableEmbeddedRuleFromData(
     targetPatternBoard: TPatternBoard,
     boardData: TBoardFeatureData,
-    initialRuleIndex = 0
+    initialRuleIndex = 0,
+    highlanderOverride?: ( ruleIndex: number ) => boolean,
   ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null {
     let count = 0;
     for ( let ruleIndex = initialRuleIndex; ruleIndex < this.ruleIndices.length; ruleIndex++ ) {
@@ -333,7 +334,7 @@ export class BinaryRuleCollection {
       for ( const embedding of embeddings ) {
         if ( this.isActionableEmbeddingFromData( targetPatternBoard, boardData, ruleIndex, embedding ) ) {
           // TODO: in what cases will this NOT return a rule???
-          const rule = this.getRule( ruleIndex );
+          const rule = highlanderOverride ? this.getRule( ruleIndex, highlanderOverride( ruleIndex ) ) : this.getRule( ruleIndex );
           const embeddedRule = rule.embedded( targetPatternBoard, embedding );
 
           if ( assertEnabled() ) {

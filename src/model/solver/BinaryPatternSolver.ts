@@ -8,10 +8,22 @@ import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BoardFeatureData } from '../pattern/feature/BoardFeatureData.ts';
-import { BinaryRuleCollection } from '../pattern/collection/BinaryRuleCollection.ts';
 import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
+import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
+import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
+import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
+import { Embedding } from '../pattern/embedding/Embedding.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
+
+export type BinaryPatternSolverData = {
+  size: number;
+  findNextActionableEmbeddedRuleFromData: (
+    targetPatternBoard: TPatternBoard,
+    boardData: TBoardFeatureData,
+    initialRuleIndex?: number,
+  ) => { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null;
+};
 
 export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> {
 
@@ -23,7 +35,7 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
     private readonly board: TBoard,
     private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
-    private readonly binaryRuleCollection: BinaryRuleCollection,
+    private readonly binaryRuleCollection: BinaryPatternSolverData,
     initialIndex = 0
   ) {
     this.nextIndex = initialIndex;

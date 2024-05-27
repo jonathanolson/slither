@@ -2,16 +2,11 @@ import { Bounds2, Range } from 'phet-lib/dot';
 import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { DerivedProperty, Multilink, Property } from 'phet-lib/axon';
-import { getGeneralEdgeGroup } from './model/pattern/collection/getGeneralEdgeGroup.ts';
 import _ from './workarounds/_.ts';
 import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
 import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty, LocalStorageProperty } from './util/localStorage.ts';
-import { getGeneralColorGroup } from './model/pattern/collection/getGeneralColorGroup.ts';
-import { getGeneralEdgeColorGroup } from './model/pattern/collection/getGeneralEdgeColorGroup.ts';
-import { getGeneralEdgeSectorGroup } from './model/pattern/collection/getGeneralEdgeSectorGroup.ts';
-import { getGeneralAllGroup } from './model/pattern/collection/getGeneralAllGroup.ts';
 import { UIText } from './view/UIText.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { UITextCheckbox } from './view/UITextCheckbox.ts';
@@ -27,7 +22,11 @@ import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzle
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
-import { BinaryMixedRuleGroup } from './model/pattern/collection/BinaryMixedRuleGroup.ts';
+import { getGeneralEdgeMixedGroup } from './model/pattern/collection/getGeneralEdgeMixedGroup.ts';
+import { getGeneralColorMixedGroup } from './model/pattern/collection/getGeneralColorMixedGroup.ts';
+import { getGeneralEdgeColorMixedGroup } from './model/pattern/collection/getGeneralEdgeColorMixedGroup.ts';
+import { getGeneralEdgeSectorMixedGroup } from './model/pattern/collection/getGeneralEdgeSectorMixedGroup.ts';
+import { getGeneralAllMixedGroup } from './model/pattern/collection/getGeneralAllMixedGroup.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -149,7 +148,7 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const explorerCurrentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( explorerPuzzleStyleProperty );
 
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
-  const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.REGULAR );
+  const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.ALL );
   const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
   const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
   const showEmbeddedProperty = new LocalStorageBooleanProperty( 'showEmbeddedProperty', false );
@@ -157,15 +156,15 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
       case CollectionMode.EDGE:
-        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeGroup() );
+        return getGeneralEdgeMixedGroup();
       case CollectionMode.COLOR:
-        return BinaryMixedRuleGroup.fromGroup( getGeneralColorGroup() );
+        return getGeneralColorMixedGroup();
       case CollectionMode.EDGE_COLOR:
-        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeColorGroup() );
+        return getGeneralEdgeColorMixedGroup();
       case CollectionMode.EDGE_SECTOR:
-        return BinaryMixedRuleGroup.fromGroup( getGeneralEdgeSectorGroup() );
+        return getGeneralEdgeSectorMixedGroup();
       case CollectionMode.ALL:
-        return BinaryMixedRuleGroup.fromGroup( getGeneralAllGroup() );
+        return getGeneralAllMixedGroup();
       default:
         throw new Error( `unhandled collection mode: ${collectionMode}` );
     }
@@ -200,9 +199,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
         return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
       } );
     }
-
-    // TODO
-    group = group.sortedDefault();
 
     return group;
   } );
@@ -376,6 +372,11 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
 
   const highlanderRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Highlander', highlanderModeProperty, [
     {
+      value: HighlanderMode.ALL,
+      labelContent: 'All',
+      createNode: () => new UIText( 'All' ),
+    },
+    {
       value: HighlanderMode.REGULAR,
       labelContent: 'Regular',
       createNode: () => new UIText( 'Regular' ),
@@ -384,11 +385,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
       value: HighlanderMode.HIGHLANDER,
       labelContent: 'Highlander Only',
       createNode: () => new UIText( 'Highlander Only' ),
-    },
-    {
-      value: HighlanderMode.ALL,
-      labelContent: 'All',
-      createNode: () => new UIText( 'All' ),
     },
   ] );
 

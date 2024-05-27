@@ -5,26 +5,30 @@ import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
-import { BinaryRuleGroup } from '../pattern/collection/BinaryRuleGroup.ts';
-import { getGeneralEdgeGroup } from '../pattern/collection/getGeneralEdgeGroup.ts';
 import { TinyProperty } from 'phet-lib/axon';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { getGeneralColorGroup } from '../pattern/collection/getGeneralColorGroup.ts';
-import { getGeneralEdgeColorGroup } from '../pattern/collection/getGeneralEdgeColorGroup.ts';
-import { getGeneralEdgeSectorGroup } from '../pattern/collection/getGeneralEdgeSectorGroup.ts';
-import { getGeneralAllGroup } from '../pattern/collection/getGeneralAllGroup.ts';
 import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
+import { getGeneralEdgeMixedGroup } from '../pattern/collection/getGeneralEdgeMixedGroup.ts';
+import { getGeneralColorMixedGroup } from '../pattern/collection/getGeneralColorMixedGroup.ts';
+import { getGeneralEdgeColorMixedGroup } from '../pattern/collection/getGeneralEdgeColorMixedGroup.ts';
+import { getGeneralEdgeSectorMixedGroup } from '../pattern/collection/getGeneralEdgeSectorMixedGroup.ts';
+import { getGeneralAllMixedGroup } from '../pattern/collection/getGeneralAllMixedGroup.ts';
+import { BinaryMixedRuleGroup } from '../pattern/collection/BinaryMixedRuleGroup.ts';
+import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
+import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
+import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
+import { Embedding } from '../pattern/embedding/Embedding.ts';
 
-const generalEdgePatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
-const generalColorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
-const generalEdgeColorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
-const generalEdgeSectorPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
-const generalAllPatternGroupProperty = new TinyProperty<BinaryRuleGroup | null>( null );
+const generalEdgePatternGroupProperty = new TinyProperty<BinaryMixedRuleGroup | null>( null );
+const generalColorPatternGroupProperty = new TinyProperty<BinaryMixedRuleGroup | null>( null );
+const generalEdgeColorPatternGroupProperty = new TinyProperty<BinaryMixedRuleGroup | null>( null );
+const generalEdgeSectorPatternGroupProperty = new TinyProperty<BinaryMixedRuleGroup | null>( null );
+const generalAllPatternGroupProperty = new TinyProperty<BinaryMixedRuleGroup | null>( null );
 
-const getFactory = ( groupProperty: TinyProperty<BinaryRuleGroup | null>, getGroup: () => BinaryRuleGroup ) => {
+const getFactory = ( groupProperty: TinyProperty<BinaryMixedRuleGroup | null>, getGroup: () => BinaryMixedRuleGroup ) => {
   return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
     if ( !groupProperty.value ) {
       groupProperty.value = getGroup();
@@ -41,7 +45,19 @@ const getFactory = ( groupProperty: TinyProperty<BinaryRuleGroup | null>, getGro
       new SafeSolvedEdgeSolver( board, state ),
       new SafeEdgeToFaceColorSolver( board, state ),
 
-      ...group.collections.map( collection => new BinaryPatternSolver( board, boardPatternBoard, state, collection ) ),
+      // TODO: should we move this code into BinaryMixedRuleGroup?
+      new BinaryPatternSolver( board, boardPatternBoard, state, {
+        size: group.size,
+        findNextActionableEmbeddedRuleFromData: (
+          targetPatternBoard: TPatternBoard,
+          boardData: TBoardFeatureData,
+          initialRuleIndex = 0
+        ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null => {
+          return group.collection.findNextActionableEmbeddedRuleFromData( targetPatternBoard, boardData, initialRuleIndex, ruleIndex => {
+            return group.isRuleIndexHighlander( ruleIndex );
+          } );
+        }
+      } ),
 
       new SimpleLoopSolver( board, state, {
         solveToRed: true,
@@ -52,8 +68,8 @@ const getFactory = ( groupProperty: TinyProperty<BinaryRuleGroup | null>, getGro
   };
 };
 
-export const generalEdgePatternSolverFactory = getFactory( generalEdgePatternGroupProperty, getGeneralEdgeGroup );
-export const generalColorPatternSolverFactory = getFactory( generalColorPatternGroupProperty, getGeneralColorGroup );
-export const generalEdgeColorPatternSolverFactory = getFactory( generalEdgeColorPatternGroupProperty, getGeneralEdgeColorGroup );
-export const generalEdgeSectorPatternSolverFactory = getFactory( generalEdgeSectorPatternGroupProperty, getGeneralEdgeSectorGroup );
-export const generalAllPatternSolverFactory = getFactory( generalAllPatternGroupProperty, getGeneralAllGroup );
+export const generalEdgePatternSolverFactory = getFactory( generalEdgePatternGroupProperty, getGeneralEdgeMixedGroup );
+export const generalColorPatternSolverFactory = getFactory( generalColorPatternGroupProperty, getGeneralColorMixedGroup );
+export const generalEdgeColorPatternSolverFactory = getFactory( generalEdgeColorPatternGroupProperty, getGeneralEdgeColorMixedGroup );
+export const generalEdgeSectorPatternSolverFactory = getFactory( generalEdgeSectorPatternGroupProperty, getGeneralEdgeSectorMixedGroup );
+export const generalAllPatternSolverFactory = getFactory( generalAllPatternGroupProperty, getGeneralAllMixedGroup );
