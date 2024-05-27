@@ -1,7 +1,7 @@
 import { AlignBox, Display, HBox, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
-import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
+import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { PatternBoardSolver } from './model/pattern/solve/PatternBoardSolver.ts';
 import { PatternNode } from './view/pattern/PatternNode.ts';
 import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';

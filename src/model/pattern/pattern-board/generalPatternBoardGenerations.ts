@@ -1,6 +1,6 @@
-import { standardCairoBoardGenerations, standardDeltoidalTrihexagonalBoardGenerations, standardElongatedTriangularBoardGenerations, standardFloretPentagonalBoardGenerations, standardHexagonalBoardGenerations, standardPortugalBoardGenerations, standardPrismaticPentagonalBoardGenerations, standardRhombilleBoardGenerations, standardRhombitrihexagonalBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './pattern-board/patternBoards.ts';
-import _ from '../../workarounds/_.ts';
-import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
+import { standardCairoBoardGenerations, standardDeltoidalTrihexagonalBoardGenerations, standardElongatedTriangularBoardGenerations, standardFloretPentagonalBoardGenerations, standardHexagonalBoardGenerations, standardPortugalBoardGenerations, standardPrismaticPentagonalBoardGenerations, standardRhombilleBoardGenerations, standardRhombitrihexagonalBoardGenerations, standardSnubSquareBoardGenerations, standardSquareBoardGenerations, standardTriangularBoardGenerations, standardTrihexagonalBoardGenerations } from './patternBoards.ts';
+import _ from '../../../workarounds/_.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 const generationsOrder = [
   standardSquareBoardGenerations,

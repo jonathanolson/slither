@@ -1,7 +1,7 @@
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { PatternBoardRuleSet } from '../PatternBoardRuleSet.ts';
 import { GetRulesOptions } from './GetRulesOptions.ts';
-import { planarPatternMaps } from '../planarPatternMaps.ts';
+import { planarPatternMaps } from '../pattern-board/planar-map/planarPatternMaps.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 

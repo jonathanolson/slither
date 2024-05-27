@@ -1,5 +1,5 @@
 import QUnit from 'qunit';
-import { PatternBoardSolver } from '../../PatternBoardSolver.ts';
+import { PatternBoardSolver } from '../../solve/PatternBoardSolver.ts';
 import { standardSquareBoardGenerations } from '../../pattern-board/patternBoards.ts';
 import { RichSolution } from '../RichSolution.ts';
 import { BinaryFeatureMap } from '../BinaryFeatureMap.ts';

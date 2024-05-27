@@ -1,6 +1,6 @@
 import { BasePatternBoard } from './BasePatternBoard.ts';
-import { planarPatternMaps } from '../planarPatternMaps.ts';
-import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap, TPlanarPatternMap } from '../TPlanarPatternMap.ts';
+import { planarPatternMaps } from './planar-map/planarPatternMaps.ts';
+import { getSingleEdgePlanarPatternMap, getVertexPlanarPatternMap, TPlanarPatternMap } from './planar-map/TPlanarPatternMap.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
 import { TPatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import _ from '../../../workarounds/_.ts';

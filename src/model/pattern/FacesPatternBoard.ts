@@ -1,8 +1,8 @@
 import { BasePatternBoard } from './pattern-board/BasePatternBoard.ts';
-import { TPlanarMappedPatternBoard } from './TPlanarMappedPatternBoard.ts';
+import { TPlanarMappedPatternBoard } from './pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { TPlanarPatternMap } from './TPlanarPatternMap.ts';
+import { TPlanarPatternMap } from './pattern-board/planar-map/TPlanarPatternMap.ts';
 import { TVertex } from '../board/core/TVertex.ts';
 import { TPatternVertex } from './pattern-board/TPatternVertex.ts';
 import { Vector2 } from 'phet-lib/dot';

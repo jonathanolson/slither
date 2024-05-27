@@ -2,10 +2,10 @@ import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './collecti
 import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from './pattern-board/deserializePatternBoard.ts';
 import { serializePatternBoard } from './pattern-board/serializePatternBoard.ts';
-import { generalPatternBoardGenerations } from './generalPatternBoardGenerations.ts';
+import { generalPatternBoardGenerations } from './pattern-board/generalPatternBoardGenerations.ts';
 import { basicPatternBoards, edgePatternBoard, standardHexagonalBoardGenerations, standardSquareBoardGenerations, vertexExit2NoSectorsPatternBoard, vertexExit2OneSectorPatternBoard, vertexExit3TwoAdjacentSectorsPatternBoard, vertexExit4ThreeAdjacentSectorsPatternBoard, vertexExit4TwoOppositeSectorsPatternBoard, vertexNonExit2PatternBoard, vertexNonExit3PatternBoard, vertexNonExit4PatternBoard } from './pattern-board/patternBoards.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { planarPatternMaps } from './planarPatternMaps.ts';
+import { planarPatternMaps } from './pattern-board/planar-map/planarPatternMaps.ts';
 import { getEmbeddings } from './embedding/getEmbeddings.ts';
 import { getSolutionImpliedRules } from './generation/getSolutionImpliedRules.ts';
 

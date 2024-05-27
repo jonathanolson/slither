@@ -4,7 +4,7 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { DerivedProperty, Multilink, Property } from 'phet-lib/axon';
 import { getGeneralEdgeGroup } from './model/pattern/rule-group/getGeneralEdgeGroup.ts';
 import _ from './workarounds/_.ts';
-import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
+import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
 import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty, LocalStorageNullableEnumerationProperty, LocalStorageNumberProperty, LocalStorageProperty } from './util/localStorage.ts';

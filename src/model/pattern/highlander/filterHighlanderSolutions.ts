@@ -1,7 +1,7 @@
-import { TPatternEdge } from './pattern-board/TPatternEdge.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { arrayRemove } from 'phet-lib/phet-core';
-import _ from '../../workarounds/_.ts';
+import _ from '../../../workarounds/_.ts';
 
 export const filterHighlanderSolutions = (
   solutions: TPatternEdge[][],

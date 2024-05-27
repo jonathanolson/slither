@@ -1,10 +1,10 @@
-import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
+import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './pattern-board/planar-map/TPlanarPatternMap.ts';
 import { PatternRule } from './pattern-rule/PatternRule.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FeatureSet, TSerializedFeatureSet } from './feature/FeatureSet.ts';
 import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from './pattern-board/TPatternBoardDescriptor.ts';
 import { BasePatternBoard } from './pattern-board/BasePatternBoard.ts';
-import { planarPatternMaps } from './planarPatternMaps.ts';
+import { planarPatternMaps } from './pattern-board/planar-map/planarPatternMaps.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TPatternBoard } from './pattern-board/TPatternBoard.ts';
 import { GetRulesOptions } from './generation/GetRulesOptions.ts';

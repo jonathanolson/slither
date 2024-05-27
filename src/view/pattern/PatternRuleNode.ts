@@ -2,7 +2,7 @@ import { HBox, Node, NodeOptions } from 'phet-lib/scenery';
 import { optionize } from 'phet-lib/phet-core';
 import { PatternNode, PatternNodeOptions } from './PatternNode.ts';
 import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
-import { TPlanarPatternMap } from '../../model/pattern/TPlanarPatternMap.ts';
+import { TPlanarPatternMap } from '../../model/pattern/pattern-board/planar-map/TPlanarPatternMap.ts';
 import { ArrowNode } from 'phet-lib/scenery-phet';
 
 type SelfOptions = {

@@ -1,8 +1,8 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
 import { edgePatternBoard, standardSquareBoardGenerations, standardTriangularBoardGenerations, vertexNonExitPatternBoards } from './model/pattern/pattern-board/patternBoards.ts';
-import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
+import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
-import { PatternBoardSolver } from './model/pattern/PatternBoardSolver.ts';
+import { PatternBoardSolver } from './model/pattern/solve/PatternBoardSolver.ts';
 import { getStructuralFeatures } from './model/pattern/feature/getStructuralFeatures.ts';
 import { PatternBoardRuleSet } from './model/pattern/PatternBoardRuleSet.ts';
 import { Solver } from './model/logic/minisat/core/Solver.ts';

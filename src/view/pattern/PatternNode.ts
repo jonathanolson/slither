@@ -13,7 +13,7 @@ import { SectorNotTwoFeature } from '../../model/pattern/feature/SectorNotTwoFea
 import { SectorNotZeroFeature } from '../../model/pattern/feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneFeature.ts';
 import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
-import { TPlanarPatternMap } from '../../model/pattern/TPlanarPatternMap.ts';
+import { TPlanarPatternMap } from '../../model/pattern/pattern-board/planar-map/TPlanarPatternMap.ts';
 import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
 
 export type PatternNodeOptions = {

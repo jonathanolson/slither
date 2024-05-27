@@ -1,7 +1,7 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
-import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
+import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import assert, { assertEnabled } from './workarounds/assert.ts';
 import squareOnlyEdgeCollection from '../data-collections/snapshot-square-only-edge.json';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';

@@ -2,7 +2,7 @@ import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { copyToClipboard } from './util/copyToClipboard.ts';
 import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
-import { planarPatternMaps } from './model/pattern/planarPatternMaps.ts';
+import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { curatedRules } from './model/pattern/data/curatedRules.ts';
 import { getEmbeddings } from './model/pattern/embedding/getEmbeddings.ts';

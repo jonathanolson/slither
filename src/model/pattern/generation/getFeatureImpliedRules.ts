@@ -5,7 +5,7 @@ import { optionize3 } from 'phet-lib/phet-core';
 import { NextClosure } from '../formal-concept/NextClosure.ts';
 import { TablePruner } from '../formal-concept/TablePruner.ts';
 import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
-import { PatternBoardSolver } from '../PatternBoardSolver.ts';
+import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
 import { RichSolution } from './RichSolution.ts';
 import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 

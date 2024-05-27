@@ -7,7 +7,7 @@ import FeatureCompatibility from '../feature/FeatureCompatibility.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
 import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
-import { PatternBoardSolver } from '../PatternBoardSolver.ts';
+import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
 import { getBinaryFeatureMapping } from '../BinaryFeatureMapping.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';

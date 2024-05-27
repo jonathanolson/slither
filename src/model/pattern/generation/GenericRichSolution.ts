@@ -3,7 +3,7 @@ import { FeatureSet } from '../feature/FeatureSet.ts';
 import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { VertexConnection } from '../VertexConnection.ts';
+import { VertexConnection } from '../highlander/VertexConnection.ts';
 import _ from '../../../workarounds/_.ts';
 import { RichEdgeState } from './RichEdgeState.ts';
 
