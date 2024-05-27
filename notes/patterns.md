@@ -7,8 +7,6 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   -
-  - Strip out "fallback" bits from everywhere? NOT WORTH SHIPPING THOSE when we just use the actual (duplicated) rules
-  - 
   - Improvements:
     - Clicking Pattern Annotation (in play mode) opens up more about the rule(!) including its typical embedding. 
     - Pattern SOLVE in difficulty(!)
