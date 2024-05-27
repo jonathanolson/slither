@@ -136,6 +136,20 @@ const sectorSolverFactoryProperty = new DerivedProperty( [
     ] );
   };
 } );
+const sectorWithColorToEdgeSolverFactoryProperty = new DerivedProperty( [
+  sectorSolverFactoryProperty
+], ( basicSolverFactory ) => {
+  return ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
+    return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
+      basicSolverFactory( board, state, dirty ),
+
+      new SimpleFaceColorSolver( board, state, {
+        solveToRed: true,
+        solveToBlack: true,
+      } )
+    ] );
+  };
+} );
 export const basicLinesPuzzleStyle: TPuzzleStyle = {
   ...getPartialPuzzleStyle( true, false, false, false, basicSolverFactoryProperty ),
   theme: currentTheme,
@@ -310,7 +324,7 @@ export const basicSectorsPuzzleStyle: TPuzzleStyle = {
   joinedLinesCapProperty: new TinyProperty( 'round' )
 };
 export const sectorsWithColorsPuzzleStyle: TPuzzleStyle = {
-  ...getPartialPuzzleStyle( true, true, false, false, sectorSolverFactoryProperty ),
+  ...getPartialPuzzleStyle( true, true, false, false, sectorWithColorToEdgeSolverFactoryProperty ),
   theme: currentTheme,
 
   // TODO: Control directly what "edit bar" options are available
