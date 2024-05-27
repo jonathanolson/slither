@@ -196,30 +196,71 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   ) => {
     let group = baseGroup;
 
-    if ( highlanderMode === HighlanderMode.REGULAR ) {
-      group = group.withoutHighlander();
-    }
-    else if ( highlanderMode === HighlanderMode.HIGHLANDER ) {
-      group = group.withOnlyHighlander();
-    }
+    const withoutHighlander = highlanderMode === HighlanderMode.REGULAR;
+    const onlyHighlander = highlanderMode === HighlanderMode.HIGHLANDER;
+    const noFallback = !includeFallback;
+    const filterTiling = !!displayTiling;
+    const filterGeneral = filterMode !== FilterMode.NONE;
 
-    if ( !includeFallback ) {
-      group = group.withoutFallback();
-    }
-
-    if ( displayTiling ) {
-      group = group.withPatternBoardFilter( patternBoard => {
-        return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
-      } );
-    }
-
-    if ( filterMode === FilterMode.ONLY_NUMBERS_AND_EXIT_RED ) {
+    if (
+      withoutHighlander ||
+      onlyHighlander ||
+      noFallback ||
+      filterTiling ||
+      filterGeneral
+    ) {
       group = group.filterIndex( ruleIndex => {
+        if ( withoutHighlander && group.isRuleIndexHighlander( ruleIndex ) ) {
+          return false;
+        }
+        if ( onlyHighlander && !group.isRuleIndexHighlander( ruleIndex ) ) {
+          return false;
+        }
+        if ( noFallback && group.isRuleIndexFallback( ruleIndex ) ) {
+          return false;
+        }
+
         const rule = group.getRule( ruleIndex );
-        const features = rule.inputFeatureSet.getFeaturesArray();
-        return features.every( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
+
+        if ( displayTiling && getBestDisplayEmbedding( rule.patternBoard, displayTiling ) === null ) {
+          return false;
+        }
+
+        if ( filterMode === FilterMode.ONLY_NUMBERS_AND_EXIT_RED ) {
+          const features = rule.inputFeatureSet.getFeaturesArray();
+          if ( !features.every( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) ) ) {
+            return false;
+          }
+        }
+
+        return true;
       } );
     }
+    //
+    // if ( highlanderMode === HighlanderMode.REGULAR ) {
+    //   group = group.withoutHighlander();
+    // }
+    // else if ( highlanderMode === HighlanderMode.HIGHLANDER ) {
+    //   group = group.withOnlyHighlander();
+    // }
+    //
+    // if ( !includeFallback ) {
+    //   group = group.withoutFallback();
+    // }
+    //
+    // if ( displayTiling ) {
+    //   group = group.withPatternBoardFilter( patternBoard => {
+    //     return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
+    //   } );
+    // }
+    //
+    // if ( filterMode === FilterMode.ONLY_NUMBERS_AND_EXIT_RED ) {
+    //   group = group.filterIndex( ruleIndex => {
+    //     const rule = group.getRule( ruleIndex );
+    //     const features = rule.inputFeatureSet.getFeaturesArray();
+    //     return features.every( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
+    //   } );
+    // }
 
     return group;
   } );

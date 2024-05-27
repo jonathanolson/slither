@@ -51,9 +51,8 @@ export class BinaryMixedRuleGroup {
     const mixedData = new Uint8Array( this.mixedData.length );
 
     let index = 0;
-    const addRule = ( rule: PatternRule, isHighlander: boolean, isFallback: boolean ) => {
-      // TODO: could optimize in the future, we really don't have to take things OUT of binary form here.
-      collection.addRule( rule );
+    const addRule = ( patternBoard: TPatternBoard, bytesSuffix: number[], isHighlander: boolean, isFallback: boolean ) => {
+      collection.addRuleSuffixBytes( patternBoard, bytesSuffix, isHighlander );
       mixedData[ Math.floor( index / 4 ) ] |= ( isHighlander ? 1 : 0 ) << ( 2 * ( index % 4 ) );
       mixedData[ Math.floor( index / 4 ) ] |= ( isFallback ? 1 : 0 ) << ( 2 * ( index % 4 ) + 1 );
       index++;
@@ -62,7 +61,11 @@ export class BinaryMixedRuleGroup {
     for ( let i = 0; i < ruleIndices.length; i++ ) {
       const ruleIndex = ruleIndices[ i ];
 
-      addRule( this.getRule( ruleIndex ), this.isRuleIndexHighlander( ruleIndex ), this.isRuleIndexFallback( ruleIndex ) );
+      // For efficiency, we strip this stuff out so we don't have to convert between binary and not
+      const patternBoard = this.collection.getRulePatternBoard( ruleIndex );
+      const bytesSuffix = this.collection.getRuleBytes( ruleIndex, false );
+
+      addRule( patternBoard, bytesSuffix, this.isRuleIndexHighlander( ruleIndex ), this.isRuleIndexFallback( ruleIndex ) );
     }
 
     return new BinaryMixedRuleGroup( collection, mixedData );

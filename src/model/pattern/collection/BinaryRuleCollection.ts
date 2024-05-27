@@ -51,6 +51,31 @@ export class BinaryRuleCollection {
     this.nextRuleIndex += addedBytes.length;
   }
 
+  // TODO: factor out shared code above?!?
+  public addRuleSuffixBytes(
+    patternBoard: TPatternBoard,
+    bytesSuffix: number[], // NOT including the patternBoard byte
+    isHighlander: boolean,
+  ): void {
+    if ( !this.patternBoards.includes( patternBoard ) ) {
+      this.patternBoards.push( patternBoard );
+    }
+
+    const addedBytes = [
+      this.patternBoards.indexOf( patternBoard ),
+      ...bytesSuffix,
+    ];
+
+    if ( this.nextRuleIndex + addedBytes.length > this.data.length ) {
+      this.allocateMoreSpace( addedBytes.length );
+    }
+
+    this.highlander ||= isHighlander;
+    this.data.set( addedBytes, this.nextRuleIndex );
+    this.ruleIndices.push( this.nextRuleIndex );
+    this.nextRuleIndex += addedBytes.length;
+  }
+
   public getRules(): PatternRule[] {
     const rules: PatternRule[] = [];
 
@@ -71,8 +96,28 @@ export class BinaryRuleCollection {
     this.data = newData;
   }
 
-  public getRule( index: number, highlanderOverride?: boolean ): PatternRule {
-    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ index ], highlanderOverride === undefined ? this.highlander : highlanderOverride );
+  // Gets the rule at a specific index (e.g. 0 for rule 0, 1 for rule 1, etc.)
+  public getRule( ruleIndex: number, highlanderOverride?: boolean ): PatternRule {
+    return PatternRule.fromBinary( this.patternBoards, this.data, this.ruleIndices[ ruleIndex ], highlanderOverride === undefined ? this.highlander : highlanderOverride );
+  }
+
+  // Gets the bytes for a rule at a specific index (e.g. 0 for rule 0, 1 for rule 1, etc.)
+  // First byte includes pattern board info, and may not be desired for some approaches
+  public getRuleBytes( ruleIndex: number, includeFirstByte: boolean ): number[] {
+    const startIndex = this.ruleIndices[ ruleIndex ];
+    const endIndex = ruleIndex + 1 < this.ruleIndices.length ? this.ruleIndices[ ruleIndex + 1 ] : this.nextRuleIndex;
+
+    const bytes: number[] = [];
+    for ( let i = ( includeFirstByte ? startIndex : startIndex + 1 ); i < endIndex; i++ ) {
+      bytes.push( this.data[ i ] );
+    }
+
+    return bytes;
+  }
+
+  // Gets the pattern board for a rule at a specific index.
+  public getRulePatternBoard( ruleIndex: number ): TPatternBoard {
+    return this.patternBoards[ this.data[ this.ruleIndices[ ruleIndex ] ] ];
   }
 
   public forEachRule( callback: ( rule: PatternRule ) => void ): void {
