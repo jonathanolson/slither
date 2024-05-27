@@ -617,7 +617,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       // const solver = patternSolverFactory( this.puzzle.board, state, true );
 
       const solveEdges = currentPuzzleStyle.edgesVisibleProperty.value;
-      const solveColors = currentPuzzleStyle.faceColorsVisibleProperty.value;
+      const solveColors = currentPuzzleStyle.faceColorsVisibleProperty.value && isFinite( currentPuzzleStyle.faceColorThresholdProperty.value );
       const solveSectors = currentPuzzleStyle.sectorsVisibleProperty.value;
 
       let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;

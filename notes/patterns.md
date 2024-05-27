@@ -26,12 +26,8 @@
   - 
   - 
   - old generation?
-    - 
+    - 1
     - remaining general edge sector unrestricted
-    - 
-    - collections:
-      - node bin/combine-collections.js square-only-all
-      - node bin/combine-collections.js general-all
     - 
     - HEY HEY -- highlander can be added like "only"? 
     - Current:
@@ -59,6 +55,7 @@
     - Assertion failures in rule-explorer (!!!!) - especially swapping to/from color
   - 
   - Performance:
+    - General performance for... HUGE puzzles?
     - PuzzleNode perf
       - "StaticPuzzleNode" - creates minimalistic view, and can show ?s.
         - e.g. factor out the simple creation stuff
