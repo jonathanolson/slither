@@ -8,7 +8,7 @@ export class BinaryMixedRuleGroup {
   private constructor(
     public readonly collection: BinaryRuleCollection,
 
-    // alternates bits, low-bit highlander, high-bit fallback
+    // "highlander" bits"
     private readonly mixedData: Uint8Array,
   ) {}
 
@@ -21,11 +21,7 @@ export class BinaryMixedRuleGroup {
   }
 
   public isRuleIndexHighlander( index: number ): boolean {
-    return ( this.mixedData[ Math.floor( index / 4 ) ] & ( 1 << ( 2 * ( index % 4 ) ) ) ) !== 0;
-  }
-
-  public isRuleIndexFallback( index: number ): boolean {
-    return ( this.mixedData[ Math.floor( index / 4 ) ] & ( 1 << ( 2 * ( index % 4 ) + 1 ) ) ) !== 0;
+    return ( this.mixedData[ Math.floor( index / 8 ) ] & ( 1 << ( index % 8 ) ) ) !== 0;
   }
 
   public withOnlyHighlander(): BinaryMixedRuleGroup {
@@ -34,10 +30,6 @@ export class BinaryMixedRuleGroup {
 
   public withoutHighlander(): BinaryMixedRuleGroup {
     return this.filterIndex( ruleIndex => !this.isRuleIndexHighlander( ruleIndex ) );
-  }
-
-  public withoutFallback(): BinaryMixedRuleGroup {
-    return this.filterIndex( ruleIndex => !this.isRuleIndexFallback( ruleIndex ) );
   }
 
   public withPatternBoardFilter( patternBoardFilter: ( patternBoard: TPatternBoard ) => boolean ): BinaryMixedRuleGroup {
@@ -50,10 +42,11 @@ export class BinaryMixedRuleGroup {
     const mixedData = new Uint8Array( this.mixedData.length );
 
     let index = 0;
-    const addRule = ( patternBoard: TPatternBoard, bytesSuffix: number[], isHighlander: boolean, isFallback: boolean ) => {
+    const addRule = ( patternBoard: TPatternBoard, bytesSuffix: number[], isHighlander: boolean ) => {
       collection.addRuleSuffixBytes( patternBoard, bytesSuffix, isHighlander );
-      mixedData[ Math.floor( index / 4 ) ] |= ( isHighlander ? 1 : 0 ) << ( 2 * ( index % 4 ) );
-      mixedData[ Math.floor( index / 4 ) ] |= ( isFallback ? 1 : 0 ) << ( 2 * ( index % 4 ) + 1 );
+      if ( isHighlander ) {
+        mixedData[ Math.floor( index / 8 ) ] |= 1 << ( index % 8 );
+      }
       index++;
     };
 
@@ -64,7 +57,7 @@ export class BinaryMixedRuleGroup {
       const patternBoard = this.collection.getRulePatternBoard( ruleIndex );
       const bytesSuffix = this.collection.getRuleBytes( ruleIndex, false );
 
-      addRule( patternBoard, bytesSuffix, this.isRuleIndexHighlander( ruleIndex ), this.isRuleIndexFallback( ruleIndex ) );
+      addRule( patternBoard, bytesSuffix, this.isRuleIndexHighlander( ruleIndex ) );
     }
 
     return new BinaryMixedRuleGroup( collection, mixedData );
@@ -84,14 +77,7 @@ export class BinaryMixedRuleGroup {
 
   public sortedDefault(): BinaryMixedRuleGroup {
     return this.sortedIndex( ruleIndex => {
-      let score = this.getRule( ruleIndex ).getInputDifficultyScoreB();
-
-      // Put fallbacks at the end(!)
-      if ( this.isRuleIndexFallback( ruleIndex ) ) {
-        score += 1000;
-      }
-
-      return score;
+      return this.getRule( ruleIndex ).getInputDifficultyScoreB();
     } );
   }
 
@@ -124,18 +110,19 @@ export class BinaryMixedRuleGroup {
     const size = ( mainCollection ? mainCollection.size : 0 ) + ( highlanderCollection ? highlanderCollection.size : 0 );
 
     const collection = BinaryRuleCollection.empty();
-    const mixedData = new Uint8Array( Math.ceil( size / 4 ) );
+    const mixedData = new Uint8Array( Math.ceil( size / 8 ) );
 
     let index = 0;
-    const addRule = ( rule: PatternRule, isHighlander: boolean, isFallback: boolean ) => {
+    const addRule = ( rule: PatternRule, isHighlander: boolean ) => {
       collection.addRule( rule );
-      mixedData[ Math.floor( index / 4 ) ] |= ( isHighlander ? 1 : 0 ) << ( 2 * ( index % 4 ) );
-      mixedData[ Math.floor( index / 4 ) ] |= ( isFallback ? 1 : 0 ) << ( 2 * ( index % 4 ) + 1 );
+      if ( isHighlander ) {
+        mixedData[ Math.floor( index / 8 ) ] |= 1 << ( index % 8 );
+      }
       index++;
     };
 
-    mainCollection && mainCollection.forEachRule( rule => addRule( rule, false, false ) );
-    highlanderCollection && highlanderCollection.forEachRule( rule => addRule( rule, true, false ) );
+    mainCollection && mainCollection.forEachRule( rule => addRule( rule, false ) );
+    highlanderCollection && highlanderCollection.forEachRule( rule => addRule( rule, true ) );
 
     return new BinaryMixedRuleGroup( collection, mixedData );
   }
