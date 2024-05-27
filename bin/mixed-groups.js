@@ -25,12 +25,10 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     };
 
     const mainCollection = loadCollection( '' );
-    const fallbackCollection = loadCollection( '-fallback' );
     const highlanderCollection = loadCollection( '-highlander' );
-    const highlanderFallbackCollection = loadCollection( '-highlander-fallback' );
 
     console.log( mainName );
-    const mixedGroup = await evaluateHooks( `collectionsToSortedMixedGroup( ${JSON.stringify( mainCollection )}, ${JSON.stringify( fallbackCollection )}, ${JSON.stringify( highlanderCollection )}, ${JSON.stringify( highlanderFallbackCollection )},  )` );
+    const mixedGroup = await evaluateHooks( `collectionsToSortedMixedGroup( ${JSON.stringify( mainCollection )}, ${JSON.stringify( highlanderCollection )} )` );
 
     fs.writeFileSync( `./data/mixed-groups/${mainName}.json`, JSON.stringify( mixedGroup ), 'utf8' );
   }

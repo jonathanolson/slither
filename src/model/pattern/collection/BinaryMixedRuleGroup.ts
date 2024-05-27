@@ -1,4 +1,3 @@
-import { BinaryRuleGroup } from './BinaryRuleGroup.ts';
 import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
@@ -117,10 +116,15 @@ export class BinaryMixedRuleGroup {
     }
   }
 
-  public static fromGroup( group: BinaryRuleGroup ): BinaryMixedRuleGroup {
+  public static fromCollections(
+    mainCollection: BinaryRuleCollection | null,
+    highlanderCollection: BinaryRuleCollection | null,
+  ): BinaryMixedRuleGroup {
+
+    const size = ( mainCollection ? mainCollection.size : 0 ) + ( highlanderCollection ? highlanderCollection.size : 0 );
 
     const collection = BinaryRuleCollection.empty();
-    const mixedData = new Uint8Array( Math.ceil( group.size / 4 ) );
+    const mixedData = new Uint8Array( Math.ceil( size / 4 ) );
 
     let index = 0;
     const addRule = ( rule: PatternRule, isHighlander: boolean, isFallback: boolean ) => {
@@ -130,10 +134,8 @@ export class BinaryMixedRuleGroup {
       index++;
     };
 
-    group.mainCollection && group.mainCollection.forEachRule( rule => addRule( rule, false, false ) );
-    group.highlanderCollection && group.highlanderCollection.forEachRule( rule => addRule( rule, true, false ) );
-    group.fallbackCollection && group.fallbackCollection.forEachRule( rule => addRule( rule, false, true ) );
-    group.highlanderFallbackCollection && group.highlanderFallbackCollection.forEachRule( rule => addRule( rule, true, true ) );
+    mainCollection && mainCollection.forEachRule( rule => addRule( rule, false, false ) );
+    highlanderCollection && highlanderCollection.forEachRule( rule => addRule( rule, true, false ) );
 
     return new BinaryMixedRuleGroup( collection, mixedData );
   }

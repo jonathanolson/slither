@@ -160,7 +160,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const collectionModeProperty = new LocalStorageEnumerationProperty( 'collectionModeProperty', CollectionMode.EDGE );
   const highlanderModeProperty = new LocalStorageEnumerationProperty( 'highlanderModeProperty', HighlanderMode.ALL );
   const filterModeProperty = new LocalStorageEnumerationProperty( 'filterModeProperty', FilterMode.NONE );
-  const includeFallbackProperty = new LocalStorageBooleanProperty( 'includeFallbackProperty', false );
   const displayTilingProperty = new LocalStorageNullableEnumerationProperty<DisplayTiling>( 'displayTilingProperty', DisplayTiling.enumeration, null );
   const showEmbeddedProperty = new LocalStorageBooleanProperty( 'showEmbeddedProperty', false );
 
@@ -185,27 +184,23 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     baseGroupProperty,
     highlanderModeProperty,
     filterModeProperty,
-    includeFallbackProperty,
     displayTilingProperty,
   ], (
     baseGroup,
     highlanderMode,
     filterMode,
-    includeFallback,
     displayTiling,
   ) => {
     let group = baseGroup;
 
     const withoutHighlander = highlanderMode === HighlanderMode.REGULAR;
     const onlyHighlander = highlanderMode === HighlanderMode.HIGHLANDER;
-    const noFallback = !includeFallback;
     const filterTiling = !!displayTiling;
     const filterGeneral = filterMode !== FilterMode.NONE;
 
     if (
       withoutHighlander ||
       onlyHighlander ||
-      noFallback ||
       filterTiling ||
       filterGeneral
     ) {
@@ -214,9 +209,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
           return false;
         }
         if ( onlyHighlander && !group.isRuleIndexHighlander( ruleIndex ) ) {
-          return false;
-        }
-        if ( noFallback && group.isRuleIndexFallback( ruleIndex ) ) {
           return false;
         }
 
@@ -437,8 +429,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
     },
   ] );
 
-  const fallbackCheckbox = new UITextCheckbox( 'Include Fallback', includeFallbackProperty );
-
   const showEmbeddedCheckbox = new UITextCheckbox( 'Show Embedded', showEmbeddedProperty );
 
   const tilingRadioButtonGroup = new UILabeledVerticalAquaRadioButtonGroup( 'Compatible Tiling', displayTilingProperty, [
@@ -509,7 +499,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
           collectionRadioButtonGroup,
           highlanderRadioButtonGroup,
           filterRadioButtonGroup,
-          fallbackCheckbox,
           tilingRadioButtonGroup,
           showEmbeddedCheckbox,
           viewStyleNode,

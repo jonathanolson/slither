@@ -6,7 +6,6 @@ import { serializePatternBoard } from './model/pattern/pattern-board/serializePa
 import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from './model/pattern/pattern-board/deserializePatternBoard.ts';
 import { BinaryMixedRuleGroup, SerializedBinaryMixedRuleGroup } from './model/pattern/collection/BinaryMixedRuleGroup.ts';
-import { BinaryRuleGroup } from './model/pattern/collection/BinaryRuleGroup.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -50,9 +49,7 @@ declare global {
 
     collectionsToSortedMixedGroup: (
       mainCollection: SerializedBinaryRuleCollection | null,
-      fallbackCollection: SerializedBinaryRuleCollection | null,
       highlanderCollection: SerializedBinaryRuleCollection | null,
-      highlanderFallbackCollection: SerializedBinaryRuleCollection | null,
     ) => SerializedBinaryMixedRuleGroup;
   }
 }
@@ -154,9 +151,7 @@ window.withoutCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: S
 
 window.collectionsToSortedMixedGroup = (
   mainCollection: SerializedBinaryRuleCollection | null,
-  fallbackCollection: SerializedBinaryRuleCollection | null,
   highlanderCollection: SerializedBinaryRuleCollection | null,
-  highlanderFallbackCollection: SerializedBinaryRuleCollection | null,
 ): SerializedBinaryMixedRuleGroup => {
   const main = mainCollection ? BinaryRuleCollection.deserialize( mainCollection ) : null;
   const highlander = highlanderCollection ? BinaryRuleCollection.deserialize( highlanderCollection ) : null;
@@ -164,10 +159,7 @@ window.collectionsToSortedMixedGroup = (
   console.log( 'main count', main ? main.size : 0 );
   console.log( 'highlander count', highlander ? highlander.size : 0 );
 
-  // TODO: strip out "fallback" support?
-  const normalGroup = new BinaryRuleGroup( main, null, highlander, null );
-
-  const mixedGroup = BinaryMixedRuleGroup.fromGroup( normalGroup );
+  const mixedGroup = BinaryMixedRuleGroup.fromCollections( main, highlander );
 
   console.log( 'rule count', mixedGroup.size );
 
