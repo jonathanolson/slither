@@ -22,13 +22,13 @@ import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzle
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
-import { getGeneralEdgeMixedGroup } from './model/pattern/collection/getGeneralEdgeMixedGroup.ts';
-import { getGeneralColorMixedGroup } from './model/pattern/collection/getGeneralColorMixedGroup.ts';
-import { getGeneralEdgeColorMixedGroup } from './model/pattern/collection/getGeneralEdgeColorMixedGroup.ts';
-import { getGeneralEdgeSectorMixedGroup } from './model/pattern/collection/getGeneralEdgeSectorMixedGroup.ts';
-import { getGeneralAllMixedGroup } from './model/pattern/collection/getGeneralAllMixedGroup.ts';
 import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
 import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
+import { generalEdgeMixedGroup } from './model/pattern/collection/generalEdgeMixedGroup.ts';
+import { generalEdgeColorMixedGroup } from './model/pattern/collection/generalEdgeColorMixedGroup.ts';
+import { generalColorMixedGroup } from './model/pattern/collection/generalColorMixedGroup.ts';
+import { generalEdgeSectorMixedGroup } from './model/pattern/collection/generalEdgeSectorMixedGroup.ts';
+import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixedGroup.ts';
 
 // Load with `http://localhost:5173/rules.html?debugger`
 
@@ -167,15 +167,15 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
   const baseGroupProperty = new DerivedProperty( [ collectionModeProperty ], collectionMode => {
     switch ( collectionMode ) {
       case CollectionMode.EDGE:
-        return getGeneralEdgeMixedGroup();
+        return generalEdgeMixedGroup;
       case CollectionMode.COLOR:
-        return getGeneralColorMixedGroup();
+        return generalColorMixedGroup;
       case CollectionMode.EDGE_COLOR:
-        return getGeneralEdgeColorMixedGroup();
+        return generalEdgeColorMixedGroup;
       case CollectionMode.EDGE_SECTOR:
-        return getGeneralEdgeSectorMixedGroup();
+        return generalEdgeSectorMixedGroup;
       case CollectionMode.ALL:
-        return getGeneralAllMixedGroup();
+        return generalAllMixedGroup;
       default:
         throw new Error( `unhandled collection mode: ${collectionMode}` );
     }
@@ -236,31 +236,6 @@ const getBestDisplayEmbedding = ( patternBoard: TPatternBoard, displayTiling: Di
         return true;
       } );
     }
-    //
-    // if ( highlanderMode === HighlanderMode.REGULAR ) {
-    //   group = group.withoutHighlander();
-    // }
-    // else if ( highlanderMode === HighlanderMode.HIGHLANDER ) {
-    //   group = group.withOnlyHighlander();
-    // }
-    //
-    // if ( !includeFallback ) {
-    //   group = group.withoutFallback();
-    // }
-    //
-    // if ( displayTiling ) {
-    //   group = group.withPatternBoardFilter( patternBoard => {
-    //     return getBestDisplayEmbedding( patternBoard, displayTiling ) !== null;
-    //   } );
-    // }
-    //
-    // if ( filterMode === FilterMode.ONLY_NUMBERS_AND_EXIT_RED ) {
-    //   group = group.filterIndex( ruleIndex => {
-    //     const rule = group.getRule( ruleIndex );
-    //     const features = rule.inputFeatureSet.getFeaturesArray();
-    //     return features.every( feature => feature instanceof FaceFeature || ( feature instanceof RedEdgeFeature && feature.edge.isExit ) );
-    //   } );
-    // }
 
     return group;
   } );

@@ -159,16 +159,13 @@ window.collectionsToSortedMixedGroup = (
   highlanderFallbackCollection: SerializedBinaryRuleCollection | null,
 ): SerializedBinaryMixedRuleGroup => {
   const main = mainCollection ? BinaryRuleCollection.deserialize( mainCollection ) : null;
-  const fallback = fallbackCollection ? BinaryRuleCollection.deserialize( fallbackCollection ) : null;
   const highlander = highlanderCollection ? BinaryRuleCollection.deserialize( highlanderCollection ) : null;
-  const highlanderFallback = highlanderFallbackCollection ? BinaryRuleCollection.deserialize( highlanderFallbackCollection ) : null;
 
   console.log( 'main count', main ? main.size : 0 );
-  console.log( 'fallback count', fallback ? fallback.size : 0 );
   console.log( 'highlander count', highlander ? highlander.size : 0 );
-  console.log( 'highlanderFallback count', highlanderFallback ? highlanderFallback.size : 0 );
 
-  const normalGroup = new BinaryRuleGroup( main, fallback, highlander, highlanderFallback );
+  // TODO: strip out "fallback" support?
+  const normalGroup = new BinaryRuleGroup( main, null, highlander, null );
 
   const mixedGroup = BinaryMixedRuleGroup.fromGroup( normalGroup );
 
