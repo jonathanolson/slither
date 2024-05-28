@@ -1,6 +1,6 @@
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { Line, Node, Path } from 'phet-lib/scenery';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { TRedLineStyle } from '../Theme.ts';
 import { Shape } from 'phet-lib/kite';
@@ -37,107 +37,34 @@ export class EdgeNode extends Node {
   ) {
     super( {} );
 
-    const edgeStateProperty = new DerivedProperty( [ stateProperty ], state => state.getEdgeState( edge ) );
-    this.disposeEmitter.addListener( () => edgeStateProperty.dispose() );
-
     const startPoint = edge.start.viewCoordinates;
     const endPoint = edge.end.viewCoordinates;
     const centerPoint = startPoint.average( endPoint );
 
     // TODO: We will want to display the actual CHAIN instead of just the link?
 
-    const xVisibleProperty = new DerivedProperty( [
-      isSolvedProperty,
-      style.redXsVisibleProperty
-    ], ( isSolved, visible ) => {
-      return !isSolved && visible;
-    } );
-    this.disposeEmitter.addListener( () => xVisibleProperty.dispose() );
-
     const x = new Path( xShape, {
       stroke: style.theme.xColorProperty,
       lineWidth: 0.025,
       center: centerPoint,
-      visibleProperty: xVisibleProperty
     } );
-    const alignListener = ( aligned: boolean ) => {
-      x.rotation = aligned ? endPoint.minus( startPoint ).getAngle() : 0;
-    };
-    style.redXsAlignedProperty.link( alignListener );
-    this.disposeEmitter.addListener( () => style.redXsAlignedProperty.unlink( alignListener ) );
-
-    const whiteVisibleProperty = new DerivedProperty( [
-      isSolvedProperty,
-      style.whiteLineVisibleProperty
-    ], ( isSolved, visible ) => {
-      return !isSolved && visible;
-    } );
-    this.disposeEmitter.addListener( () => whiteVisibleProperty.dispose() );
 
     const whiteLine = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.02,
       stroke: style.theme.whiteLineColorProperty,
       // lineDash: [ 0.05, 0.05 ],
-      visibleProperty: whiteVisibleProperty
     } );
-
-    const redVisibleProperty = new DerivedProperty( [
-      isSolvedProperty,
-      style.redLineVisibleProperty
-    ], ( isSolved, visible ) => {
-      // return !isSolved && visible;
-      return visible; // TODO: see how this looks, with it displayed during the finish
-    } );
-    this.disposeEmitter.addListener( () => redVisibleProperty.dispose() );
 
     // TODO: layer these, or get the "join" correct
     const redLine = new Path( null, {
       lineWidth: 0.02,
       stroke: style.theme.redLineColorProperty,
       lineDash: [ 0.03, 0.05 ],
-      visibleProperty: redVisibleProperty
     } );
-
-    const redLineStyleListener = ( style: TRedLineStyle ) => {
-      // TODO: adjust shortening
-      const redLineProportion = 0.35;
-
-      if ( style === 'middle' ) {
-        redLine.shape = new Shape().moveToPoint(
-          centerPoint.blend( startPoint, redLineProportion )
-        ).lineToPoint(
-          centerPoint.blend( endPoint, redLineProportion )
-        ).makeImmutable();
-      }
-      else if ( style === 'gap' ) {
-        redLine.shape = new Shape().moveToPoint(
-          startPoint
-        ).lineToPoint(
-          startPoint.blend( centerPoint, redLineProportion )
-        ).moveToPoint(
-          endPoint.blend( centerPoint, redLineProportion )
-        ).lineToPoint(
-          endPoint
-        ).makeImmutable();
-      }
-      else if ( style === 'full' ) {
-        redLine.shape = new Shape().moveToPoint(
-          startPoint
-        ).lineToPoint(
-          endPoint
-        ).makeImmutable();
-      }
-      else {
-        assertEnabled() && assert( false, `Unknown red line style: ${style}` );
-      }
-    };
-    style.redLineStyleProperty.link( redLineStyleListener );
-    this.disposeEmitter.addListener( () => style.redLineStyleProperty.unlink( redLineStyleListener ) );
-
 
     // TODO: ALLOW DRAGGING TO SET LINES
     const edgePressListener = options?.edgePressListener;
-    if ( edgePressListener ) {
+    if ( !options.noninteractive && edgePressListener ) {
       const pointerArea = new Shape();
 
       if ( edge.faces.length === 2 ) {
@@ -196,7 +123,70 @@ export class EdgeNode extends Node {
       !options.noninteractive && hookPuzzleListeners( edge, this, edgePressListener, options.edgeHoverListener );
     }
 
-    edgeStateProperty.link( edgeState => {
+    const xVisibleListener = () => {
+      x.visible = !isSolvedProperty.value && style.redXsVisibleProperty.value;
+    };
+    xVisibleListener();
+    isSolvedProperty.lazyLink( xVisibleListener );
+    style.redXsVisibleProperty.lazyLink( xVisibleListener );
+
+    const xAlignListener = ( aligned: boolean ) => {
+      x.rotation = aligned ? endPoint.minus( startPoint ).getAngle() : 0;
+    };
+    style.redXsAlignedProperty.link( xAlignListener );
+
+    const whiteVisibleListener = () => {
+      whiteLine.visible = !isSolvedProperty.value && style.whiteLineVisibleProperty.value;
+    };
+    whiteVisibleListener();
+    isSolvedProperty.lazyLink( whiteVisibleListener );
+    style.whiteLineVisibleProperty.lazyLink( whiteVisibleListener );
+
+    const redVisibleListener = () => {
+      redLine.visible = !isSolvedProperty.value && style.redLineVisibleProperty.value;
+    };
+    redVisibleListener();
+    isSolvedProperty.lazyLink( redVisibleListener );
+    style.redLineVisibleProperty.lazyLink( redVisibleListener );
+
+    const redLineStyleListener = ( style: TRedLineStyle ) => {
+      // TODO: adjust shortening
+      const redLineProportion = 0.35;
+
+      if ( style === 'middle' ) {
+        redLine.shape = new Shape().moveToPoint(
+          centerPoint.blend( startPoint, redLineProportion )
+        ).lineToPoint(
+          centerPoint.blend( endPoint, redLineProportion )
+        ).makeImmutable();
+      }
+      else if ( style === 'gap' ) {
+        redLine.shape = new Shape().moveToPoint(
+          startPoint
+        ).lineToPoint(
+          startPoint.blend( centerPoint, redLineProportion )
+        ).moveToPoint(
+          endPoint.blend( centerPoint, redLineProportion )
+        ).lineToPoint(
+          endPoint
+        ).makeImmutable();
+      }
+      else if ( style === 'full' ) {
+        redLine.shape = new Shape().moveToPoint(
+          startPoint
+        ).lineToPoint(
+          endPoint
+        ).makeImmutable();
+      }
+      else {
+        assertEnabled() && assert( false, `Unknown red line style: ${style}` );
+      }
+    };
+    style.redLineStyleProperty.link( redLineStyleListener );
+
+    const stateListener = ( state: TState<TEdgeStateData> ) => {
+      const edgeState = state.getEdgeState( edge );
+
       if ( edgeState === EdgeState.WHITE ) {
         this.children = [ whiteLine ];
       }
@@ -206,6 +196,25 @@ export class EdgeNode extends Node {
       else {
         this.children = [ redLine, x ];
       }
+    };
+    stateProperty.link( stateListener );
+
+    // NOTE: grouped disposal, since we need to be memory-efficient
+    this.disposeEmitter.addListener( () => {
+      isSolvedProperty.unlink( xVisibleListener );
+      style.redXsVisibleProperty.unlink( xVisibleListener );
+
+      style.redXsAlignedProperty.unlink( xAlignListener );
+
+      isSolvedProperty.unlink( whiteVisibleListener );
+      style.whiteLineVisibleProperty.unlink( whiteVisibleListener );
+
+      isSolvedProperty.unlink( redVisibleListener );
+      style.redLineVisibleProperty.unlink( redVisibleListener );
+
+      style.redLineStyleProperty.unlink( redLineStyleListener );
+
+      stateProperty.unlink( stateListener );
     } );
   }
 }
