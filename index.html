@@ -32,18 +32,24 @@ I want to create a Slitherlink interface that explores the limits of Slitherlink
 
 <h2>What is Slitherlink?</h2>
 
-<div style="text-align: center; margin: 0 auto;">
-  <div style="display: inline-block; text-align: center; margin-bottom: 10px;">
-    <div id="simple-puzzle-empty"></div>
-    Unsolved puzzle
+<div class="examples">
+  <div class="example">
+    <div id="simple-puzzle-empty" class="example-div"></div>
+    <span class="caption">
+      Unsolved puzzle
+    </span>
   </div>
-  <div style="display: inline-block; text-align: center; margin-bottom: 10px;">
-    <div id="simple-puzzle-partial"></div>
-    Partially solved puzzle
+  <div class="example">
+    <div id="simple-puzzle-partial" class="example-div"></div>
+    <span class="caption">
+      Partially solved puzzle
+    </span>
   </div>
-  <div style="display: inline-block; text-align: center; margin-bottom: 10px;">
-    <div id="simple-puzzle-complete"></div>
-    Completed puzzle
+  <div class="example">
+    <div id="simple-puzzle-complete" class="example-div"></div>
+    <span class="caption">
+      Completed puzzle
+    </span>
   </div>
 </div>
 
@@ -54,45 +60,19 @@ I want to create a Slitherlink interface that explores the limits of Slitherlink
 </p>
 
 <p>
-  I'll use the following mathematics-oriented terminology to describe things:
-</p>
-
-<ul>
-  <li>
-    <strong>Vertices:</strong> Dots where the loop can turn.
-  </li>
-  <li>
-    <strong>Edges:</strong> Lines between vertices that may be part of the loop.
-  </li>
-  <li>
-    <strong>Faces:</strong> Areas surrounded by edges, with some faces containing numbers indicating the number of edges that must surround them.
-  </li>
-</ul>
-
-<p>
   The loop must satisfy the following rules:
 </p>
 
 <ul>
   <li>The loop cannot cross or touch itself.</li>
-  <li>Each numbered face must have exactly that many edges of the loop around it.</li>
+  <li>Each numbered cell must have exactly that number of sides in the loop.</li>
 </ul>
 
 <p>
-  Valid puzzles have a single solution, allowing the use of
-  <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a> rules ("there can be only one").
+  A <em>valid</em> puzzle consists of a grid of cells with numbers in some of them, such that there is a unique solution.
 </p>
 
-<p>
-  Puzzles are a configuration of numbers on a <em>board</em> (originally a grid of squares, but it can be any
-  <a href="https://en.wikipedia.org/wiki/Planar_graphs">planar graph</a>).
-</p>
-
-<p>
-  Note: the terminology I'm using is a bit more mathematically skewed than the typical Slitherlink terminology.
-</p>
-
-<h2>How is Slitherlink Typically Solved?</h2>
+<h2>Introduction to Solving</h2>
 
 <p>
   If you're new to Slitherlink, the <a href="https://en.wikipedia.org/wiki/Slitherlink">Wikipedia article</a> is a great
@@ -101,10 +81,81 @@ I want to create a Slitherlink interface that explores the limits of Slitherlink
   <a href="https://puzzleparasite.blogspot.com/2011/11/slitherlink-pattern-guide_23.html">guides</a> available online.
 </p>
 
+<h3>Marking X's</h3>
+
+<div class="examples">
+  <div class="example">
+    <div id="notation-red-x" class="example-div"></div>
+    <span class="caption">
+      Marked X's where lines cannot go
+    </span>
+  </div>
+</div>
+
 <p>
-  Typically, solvers learn to recognize specific patterns of numbers, lines, and x's that allow them to deduce where
-  other lines or x's must go.
+  One common technique is to mark cells where lines cannot go with an "X". This helps you visualize where lines must go.
 </p>
+
+<h3>Basic Patterns</h3>
+
+<h4>Lines and Dots</h4>
+
+<p>
+  Since the loop cannot cross itself, this means each dot will have either <strong>zero or two</strong> lines connected
+  to it.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="rule-two-black-to-red" class="example-div"></div>
+    <span class="caption">
+      Two lines connected to a dot prevent any other lines connecting to that dot.
+      <br>
+      <strong>Note:</strong> When you see the left pattern when solving, you can mark the changes on the right.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="rule-two-red-to-black" class="example-div"></div>
+    <span class="caption">
+      If there is one line connected to a dot, and all other potential lines are marked with an X except for one, that line must be connected.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="rule-three-red-to-red" class="example-div"></div>
+    <span class="caption">
+      If there is only space for one line to connect to a dot, no lines can connect to that dot.
+    </span>
+  </div>
+</div>
+
+<h4>Borders are X's</h4>
+
+<p>
+  For patterns, it is useful to treat the border of the puzzle as if it extended out and was marked with X's.
+  This applies to corners and edges, and is useful for starting a puzzle!
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div style="display: flex; gap: 50px; justify: center; margin: 0 auto;">
+      <div id="edge-clipped-puzzle" class="example-flexed-div"></div>
+      <div id="edge-red-puzzle" class="example-flexed-div"></div>
+    </div>
+    <span class="caption">
+      The corner on the left is equivalent to the (extended) example on the right by adding X's.
+    </span>
+  </div>
+</div>
+
+
+
+
 
 <h2>Solving with Edges</h2>
 
@@ -114,8 +165,32 @@ I want to create a Slitherlink interface that explores the limits of Slitherlink
 
 <h2>Solving with Highlander</h2>
 
+<p>
+  Since valid puzzles mut have a single unique solution, <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a> rules ("there can be only one") may apply.
+</p>
+
 <h2>Solving with Loops and Regions</h2>
 
-<h2>Pattern Discovery</h2>
+<h2>Technical Details</h2>
+
+<p>
+  For this part, I'll use some different terminology that is a bit more mathematically-oriented:
+</p>
+
+<ul>
+  <li>
+    <strong>Vertices:</strong> "Dots" where the loop can turn.
+  </li>
+  <li>
+    <strong>Edges:</strong> "Lines" between vertices that may be part of the loop.
+  </li>
+  <li>
+    <strong>Faces:</strong> "Cells" (areas surrounded by edges), with some faces containing numbers indicating the number of edges that must surround them.
+  </li>
+  <li>
+    <strong>Board:</strong> The combination of vertices, edges, and faces, that make up the
+    <a href="https://en.wikipedia.org/wiki/Planar_graphs">planar graph</a> (grid) of the puzzle.
+  </li>
+</ul>
 
 <script type="module" src="/src/index.ts" async></script>
