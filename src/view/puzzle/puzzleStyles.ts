@@ -455,7 +455,7 @@ export const puzzleStyleMap = {
   faceState: faceStatePuzzleStyle,
   custom: customPuzzleStyle
 };
-export const defaultPuzzleStyle = basicLinesPuzzleStyle;
+export const defaultPuzzleStyle = classicPuzzleStyle;
 export const puzzleStyleFromProperty = ( puzzleStyleProperty: TReadOnlyProperty<TPuzzleStyle> ): TPuzzleStyle => {
   // TODO: reduce duplication...
   return {
@@ -504,4 +504,4 @@ export const puzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'puzz
   deserialize: name => name ? puzzleStyleMap[ name as keyof typeof puzzleStyleMap ] ?? defaultPuzzleStyle : defaultPuzzleStyle
 } );
 export const currentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( puzzleStyleProperty );
-export const showPuzzleStyleProperty = new LocalStorageBooleanProperty( 'showPuzzleStyleProperty', false );
+export const showPuzzleStyleProperty = new LocalStorageBooleanProperty( 'showPuzzleStyleProperty', true );
