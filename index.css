@@ -4,6 +4,13 @@
   margin: 0 auto;
 }
 
+.examples-flex {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
 .example {
   display: inline-flex;
   justify-content: center;
