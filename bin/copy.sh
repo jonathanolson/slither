@@ -1,4 +1,16 @@
 #!/bin/bash
 
-rm -Rf ../jonathanolson.github.com/slither/*
-cp -R ./dist/* ../jonathanolson.github.com/slither/
+rm -Rf ../jonathanolson.github.com/slitherlink/*
+cp -R ./dist/* ../jonathanolson.github.com/slitherlink/
+
+# the index.html
+echo "---
+layout: simple
+title: Slitherlink
+categories: experiments
+mathjax: false
+hidecomments: true
+---
+" > ../jonathanolson.github.com/slitherlink/index.html
+
+cat ./dist/index.html >> ../jonathanolson.github.com/slitherlink/index.html

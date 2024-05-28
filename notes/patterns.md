@@ -7,6 +7,8 @@
   - DO THE LOCALE STUFF, and then... sneak and phet-lib TS so we don't keep having all of the chunk issues? hopefully?
     - Add dependencies.json for phet-lib builds!!!!
   -
+  - Note https://puzzleparasite.blogspot.com/2011/11/slitherlink-pattern-guide_23.html in solving guide
+  - 
   - Improvements:
     - Pattern SOLVE in difficulty(!)
       - Levels?

@@ -1,33 +1,98 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slither</title>
-    <link rel="icon" href="./favicon.ico">
-    <style>
-      html, body {
-        border: 0;
-        padding: 0;
-      }
 
-      @media (prefers-color-scheme: light) {
-        body {
-          background-color: #eee;
-        }
-      }
+<h1>Slitherlink</h1>
 
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #222;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>
-      Slitherlink placeholder! Go to <a href="./play">play</a> or <a href="./rule-explorer">rule explorer</a>.
-    </h1>
-<!--    <script type="module" src="/src/main.ts"></script>-->
-  </body>
-</html>
+I want to create a Slitherlink interface that explores the limits of Slitherlink solving that works on my phone and desktop.
+
+<div class="row">
+  <div class="span6" style="width: 350px !important;">
+    <h2><a href="./play">Play</a></h2>
+
+    <p>
+      Solve puzzles using assorted techniques and strategies.
+    </p>
+
+    <p>
+      <a href="./play"><img src="./images/example-play-classic.png" style="width: auto; height: auto; max-width: 150px;"></a>
+      <a href="./play"><img src="./images/example-play-dark.png" style="width: auto; height: auto; max-width: 150px;"></a>
+    </p>
+  </div>
+  <div class="span6" style="width: 350px !important;">
+    <h2><a href="./rule-explorer">Patterns</a></h2>
+
+    <p>
+      Browse through a library of patterns to learn, including coloring and highlander rules.
+    </p>
+
+    <p>
+      <a href="./rule-explorer"><img src="./images/example-pattern-classic.png" style="width: auto; height: auto; max-width: 300px;"></a>
+      <a href="./rule-explorer"><img src="./images/example-pattern-color.png" style="width: auto; height: auto; max-width: 300px;"></a>
+    </p>
+  </div>
+</div>
+
+<h2>What is Slitherlink?</h2>
+
+<p>
+  <a href="https://en.wikipedia.org/wiki/Slitherlink">Slitherlink</a> is a puzzle where you need to draw a single
+  continuous loop on a <a href="https://en.wikipedia.org/wiki/Planar_graphs">planar graph</a> that has:
+</p>
+
+<ul>
+  <li>
+    <strong><a href="https://en.wikipedia.org/wiki/Vertex_(graph_theory)">Vertices</a>:</strong> Dots/points where the loop can turn.
+  </li>
+  <li>
+    <strong><a href="https://en.wikipedia.org/wiki/Edge_(graph_theory)">Edges</a>:</strong> Connections between vertices that are either part of the loop or not.
+  </li>
+  <li>
+    <strong>Faces:</strong> Regions surrounded by edges that are either inside or outside the loop. Some faces contain a
+    number.
+  </li>
+</ul>
+
+<p>
+  The loop must satisfy the following rules:
+</p>
+
+<ul>
+  <li>
+    The loop cannot cross or touch itself.
+  </li>
+  <li>
+    Each face with a number must have <em>exactly</em> that many edges of the loop around it.
+  </li>
+</ul>
+
+<p>
+  Furthermore, <em>valid</em> puzzles will have a single possible solution. This enables a class of techniques called
+  <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a> rules ("there can be only one").
+</p>
+
+<p>
+  Note: the terminology I'm using is a bit more mathematically skewed than the typical Slitherlink terminology.
+</p>
+
+<h2>How is it Typically Solved?</h2>
+
+<p>
+  <a href="https://en.wikipedia.org/wiki/Slitherlink">Wikipedia's article</a> is a great introduction, if you haven't read it,
+  and there are <a href="https://www.conceptispuzzles.com/index.aspx?uri=puzzle/slitherlink/techniques">other</a>
+  good <a href="https://puzzleparasite.blogspot.com/2011/11/slitherlink-pattern-guide_23.html">resources</a>.
+</p>
+
+<p>
+  Most often, people will learn certain patterns of numbers, lines, and x's where other lines or x's can be deduced.
+</p>
+
+<h2>Solving with Edges</h2>
+
+<h2>Solving with Colors</h2>
+
+<h2>Solving with Sectors and Parity</h2>
+
+<h2>Solving with Highlander</h2>
+
+<h2>Solving with Loops and Regions</h2>
+
+<!--<script type="module" src="/src/main.ts"></script>-->
+
