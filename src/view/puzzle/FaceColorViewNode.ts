@@ -319,7 +319,10 @@ export class FaceColorViewNode extends Node {
 
         const dot = a.hueVector.dot( b.hueVector );
         // TODO: don't we want to normalize this?
-        const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector ).normalize();
+        const diff = scratchHue.set( b.hueVector ).subtract( a.hueVector );
+        if ( diff.magnitudeSquared > 1e-11 ) {
+          diff.normalize();
+        }
 
         const zero = 0.2;
         const absDot = Math.abs( dot );
