@@ -9,6 +9,9 @@
     - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
     - getOnlyImpliedSquareBoardRules 4 9, 4 15 <--- crash on complete? is it in console history? Try on browser direct macOS?
   - 
+  - HEY! Allow "skipping" generations to things where all sub-pattern-boards are already handled
+    - THEN potentially sort by "difficulty" of the board (edges + faces?) - faces matter more for highlander
+  - 
   - getFeatureImpliedRules DIRECT to binary collection (less memory, fewer crashes)
     - [YES] - remember a bunch of these will be redundant. do forEach in getSolutionImpliedRules 
     - [nono - we filter highlander faces canonical, might conflict] getFeatureImpliedRules NOT using isCanonicalWith(?) - can we add that to relieve memory pressure?

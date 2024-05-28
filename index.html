@@ -98,6 +98,10 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
 
 <h3>Basic Patterns</h3>
 
+<p>
+  Some of the patterns only apply to puzzles that are larger than the pattern (i.e. they assume that a small loop would not be the solution to the entire puzzle).
+</p>
+
 <h4>Lines and Dots</h4>
 
 <p>
@@ -153,17 +157,186 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
   </div>
 </div>
 
+<h4>No Loops</h4>
+
+<div class="examples">
+  <div class="example">
+    <div id="no-trivial-loop" class="example-div"></div>
+    <span class="caption">
+      If a line would create a small loop (that is not the solution to the entire puzzle), it cannot be connected, and can be marked with an X.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="no-loop-a" class="example-div"></div>
+    <span class="caption">
+      Similarly, any "forced" loops can be marked with X's. Here, a line going up would create a square loop.
+    </span>
+  </div>
+</div>
+
+<h4>Basic Numbers</h4>
+
+<p>
+  Lines and X's can sometimes be deduced just from the number of a cell.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="basic-number-zero" class="example-div"></div>
+    <span class="caption">
+      No lines can surround a 0.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="basic-number-three-red" class="example-div"></div>
+    <span class="caption">
+      A single X on a 3 will result in lines.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="basic-number-one-black" class="example-div"></div>
+    <span class="caption">
+      A single line on a 1 will result in X's.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="basic-number-one-red" class="example-div"></div>
+    <span class="caption">
+      Three X's on a 1 will result in a single line.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="basic-number-two-black-a" class="example-div"></div>
+    <div id="basic-number-two-black-b" class="example-div"></div>
+    <div id="basic-number-two-red-a" class="example-div"></div>
+    <div id="basic-number-two-red-b" class="example-div"></div>
+    <span class="caption">
+      Similar cases apply to 2's.
+    </span>
+  </div>
+</div>
+
+<h4>Corner Cases</h4>
+
+<div class="examples">
+  <div class="example">
+    <div id="corner-one" class="example-div"></div>
+    <span class="caption">
+      A 1 in the corner will get two X's (remember, corners are like X's!)
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="corner-three" class="example-div"></div>
+    <span class="caption">
+      A 3 in the corner will get two lines (remember, corners are like X's!)
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="corner-two-general" class="example-div"></div>
+    <span class="caption">
+      This is the general case for a 2 with corner-like X's. If it is in a true corner, you will get two lines.
+    </span>
+  </div>
+</div>
+
+<h4>Edge Cases</h4>
+
+<div class="examples">
+  <div class="example">
+    <div id="edge-three-one" class="example-div"></div>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="edge-one-one" class="example-div"></div>
+  </div>
+</div>
+
+<h4>Common Patterns</h4>
+
+<div class="examples">
+  <div class="example">
+    <div id="three-three-diagonal" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="three-three-adjacent" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="three-incident-line" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="two-spiked-red" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="two-spiked-black" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="three-two-red" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="two-two-red" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="one-incident" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="one-anti-incident-a" class="example-div"></div>
+  </div>
+</div>
+<div class="examples">
+  <div class="example">
+    <div id="one-anti-incident-b" class="example-div"></div>
+  </div>
+</div>
 
 
+<h2>Parity and Sectors</h2>
 
+<h2>Alternative Representations</h2>
 
-<h2>Solving with Edges</h2>
+<h2>Alternative Tilings</h2>
 
-<h2>Solving with Colors</h2>
+<h2>Coloring</h2>
 
-<h2>Solving with Sectors and Parity</h2>
-
-<h2>Solving with Highlander</h2>
+<h2>Highlander</h2>
 
 <p>
   Since valid puzzles mut have a single unique solution, <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a> rules ("there can be only one") may apply.
