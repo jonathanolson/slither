@@ -274,7 +274,142 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
   </div>
 </div>
 
-<h4>Common Patterns</h4>
+<h3>Annotated Example</h3>
+
+<p>
+  Given the patterns above, let's solve a simple puzzle.
+</p>
+
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-0" class="example-div"></div>
+    <span class="caption">
+      Our starting puzzle.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-1" class="example-div"></div>
+    <span class="caption">
+      We can mark X's around all of the 0's in the puzzle.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-2" class="example-div"></div>
+    <span class="caption">
+      There is a 3 with an X, so we can fill in lines.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-3" class="example-div"></div>
+    <span class="caption">
+      There are two dots that have two lines each; other potential lines get X'ed out.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-4" class="example-div"></div>
+    <span class="caption">
+      This also applies for the corner dots (but it may be harder to see).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-5" class="example-div"></div>
+    <span class="caption">
+      We have two vertices where a single line meets two X's. They both must take the only remaining path.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-6" class="example-div"></div>
+    <span class="caption">
+      Similarly, this happens for the edge dots (the implicit X's at the corner apply).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-7" class="example-div"></div>
+    <span class="caption">
+      Let's apply a more complicated pattern: the 3 has a dot that, while not in the corner, matches the corner-like
+      pattern. It gets two lines.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-7a" class="example-div"></div>
+    <span class="caption">
+      We created a joint-like two lines on a dot, so we mark in the remaining X.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-7b" class="example-div"></div>
+    <span class="caption">
+      A 3 with an X can have its remaining lines filled in.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-8" class="example-div"></div>
+    <span class="caption">
+      We can use the "line on a 1" and "X's if there are two lines on a dot" rules to fill in some additional X's.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-9" class="example-div"></div>
+    <span class="caption">
+      We can repeatedly add lines where there are no other options (either edges, corners, or X's on all other options).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-10" class="example-div"></div>
+    <span class="caption">
+      A 1 with a line will create X's.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="annotated-simple-11" class="example-div"></div>
+    <span class="caption">
+      We finish the puzzle with forced lines!
+    </span>
+  </div>
+</div>
+
+
+<h3>Common Patterns</h3>
 
 <div class="examples examples-flex">
   <div class="example">
