@@ -20,9 +20,6 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       edgePressListener: ( edge, button ) => {
         puzzleModel.onUserEdgePress( edge, button );
       },
-      edgeHoverListener: ( edge, isOver ) => {
-        puzzleModel.onUserEdgeHover( edge, isOver );
-      },
       facePressListener: ( face, button ) => {
         puzzleModel.onUserFacePress( face, button );
       },

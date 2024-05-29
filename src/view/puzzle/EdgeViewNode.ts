@@ -21,7 +21,6 @@ export class EdgeViewNode extends Node {
     const whitePath = new Path( null, {
       lineWidth: 0.02,
       stroke: style.theme.whiteLineColorProperty,
-      pickable: false,
     } );
 
     const redXPath = new Path( null, {
@@ -39,7 +38,8 @@ export class EdgeViewNode extends Node {
         whitePath,
         redXPath,
         redLinePath,
-      ]
+      ],
+      pickable: false,
     } );
 
     // NOTE: this is actually a valid start state

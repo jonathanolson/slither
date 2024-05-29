@@ -7,7 +7,6 @@ import { TStructure } from '../../model/board/core/TStructure.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
 import { VertexNode } from './VertexNode.ts';
 import { FaceNode } from './FaceNode.ts';
-import { EdgeNode } from './EdgeNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
@@ -29,13 +28,13 @@ import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzleStyles.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { EdgeViewNode } from './EdgeViewNode.ts';
+import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
 
 export type TFaceFilter = ( face: TFace ) => boolean;
 
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
-  edgeHoverListener?: ( edge: TEdge, isOver: boolean ) => void;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
   faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
@@ -73,7 +72,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         maxHeight: 0.9
       },
       edgePressListener: () => {},
-      edgeHoverListener: () => {},
       facePressListener: () => {},
       faceHoverListener: () => {},
       sectorPressListener: () => {},
@@ -171,9 +169,13 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     edgeContainer.addChild( new EdgeViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
-    puzzle.board.edges.forEach( edge => {
-      edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
-    } );
+    if ( !options.noninteractive ) {
+      edgeContainer.addChild( new EdgeViewInteractionNode( puzzle.board, options ) );
+    }
+
+    // puzzle.board.edges.forEach( edge => {
+    //   edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
+    // } );
 
     // TODO: why are we getting an error when we swap in the listeners below
     // TODO OMG DO NOT LEAK THESE, if we enable, unlink sectorVisibilityListener

@@ -72,7 +72,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   private readonly pendingActionFaceColorProperty: TProperty<PendingFaceColor | null> = new Property( null );
   private readonly pendingActionSectorProperty: TProperty<TSector | null> = new Property( null );
 
-  private readonly hoverEdgeProperty: TProperty<TEdge | null> = new Property( null );
   private readonly hoverFaceProperty: TProperty<TFace | null | false> = new Property( false ); // null is exterior face, false is no face (TODO this is bad)
   private readonly hoverSectorProperty: TProperty<TSector | null> = new Property( null );
 
@@ -148,26 +147,13 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.hoverHighlightProperty = new DerivedProperty( [
       puzzle.stateProperty,
       editModeProperty,
-      this.hoverEdgeProperty,
       this.hoverFaceProperty,
       this.hoverSectorProperty,
       showHoverHighlightsProperty,
-    ], ( state, editMode, hoverEdge, hoverFace, hoverSector, showHoverHighlights ) => {
+    ], ( state, editMode, hoverFace, hoverSector, showHoverHighlights ) => {
+      // TODO: deprecate!!!!
       if ( editMode === EditMode.EDGE_STATE || editMode === EditMode.EDGE_STATE_REVERSED ) {
-        if ( hoverEdge && showHoverHighlights ) {
-          const currentEdgeState = state.getEdgeState( hoverEdge );
-          const newEdgeState = this.getNewEdgeState( currentEdgeState, editMode === EditMode.EDGE_STATE_REVERSED ? 2 : 0 );
-
-          return {
-            type: 'edge-state',
-            edge: hoverEdge,
-            simpleRegion: currentEdgeState === EdgeState.BLACK ? state.getSimpleRegionWithEdge( hoverEdge ) : null,
-            potentialEdgeState: newEdgeState
-          };
-        }
-        else {
-          return null;
-        }
+        return null;
       }
       else if ( editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE ) {
         if ( hoverFace !== false && showHoverHighlights ) {
@@ -498,15 +484,6 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.pendingActionSectorProperty.value = null;
 
     this.updateState();
-  }
-
-  public onUserEdgeHover( edge: TEdge, isOver: boolean ): void {
-    if ( isOver ) {
-      this.hoverEdgeProperty.value = edge;
-    }
-    else {
-      this.hoverEdgeProperty.value = null;
-    }
   }
 
   public onUserFaceHover( face: TFace | null, isOver: boolean ): void {
