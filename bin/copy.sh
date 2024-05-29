@@ -6,7 +6,7 @@ cp -R ./dist/* ../jonathanolson.github.com/slitherlink/
 # the index.html
 echo "---
 layout: simple
-title: Slitherlink
+title: How Slitherlink Should be Solved
 categories: experiments
 mathjax: false
 hidecomments: true

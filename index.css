@@ -1,4 +1,12 @@
 
+.main-bullets {
+  font-size: 18px;
+}
+
+.main-bullets li {
+  margin-bottom: 10px;
+}
+
 .examples {
   text-align: center;
   margin: 0 auto;
@@ -29,4 +37,5 @@
 
 .caption {
   text-align: left;
+  margin: 0 auto;
 }
