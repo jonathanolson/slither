@@ -9,6 +9,8 @@
     - Failure on node bin/generate.js getHighlanderImpliedSectorGeneralBoardRules 0 2 --- error?
     - getOnlyImpliedSquareBoardRules 4 9, 4 15 <--- crash on complete? is it in console history? Try on browser direct macOS?
   - 
+  - Do more: square only edge sector unrestricted (a few days) and 
+  - 
   - HEY! Allow "skipping" generations to things where all sub-pattern-boards are already handled
     - THEN potentially sort by "difficulty" of the board (edges + faces?) - faces matter more for highlander
   - 
