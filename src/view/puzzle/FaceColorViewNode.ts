@@ -32,7 +32,7 @@ export class FaceColorViewNode extends Node {
 
     super( {
       pickable: false,
-      children: [ faceColorNodeContainer ]
+      children: [ faceColorNodeContainer ],
     } );
 
     this.faceColorNodeContainer = faceColorNodeContainer;

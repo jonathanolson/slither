@@ -114,7 +114,18 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       return regions.length === 1 && regions[ 0 ].isSolved;
     } );
 
-    faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
+    // Face Colors (for now, lazily added)
+    const faceColorListener = ( faceColorsVisible: boolean ) => {
+      if ( faceColorsVisible ) {
+        faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
+      }
+      else {
+        faceColorContainer.children.forEach( child => child.dispose() );
+      }
+    };
+    style.faceColorsVisibleProperty.link( faceColorListener );
+
+    // TODO: consider getting rid of excess containers here
 
     faceContainer.addChild( new FaceViewNode( puzzle.board, puzzle.stateProperty, style, options ) );
 
@@ -187,6 +198,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     this.disposeEmitter.addListener( () => options.selectedSectorEditProperty.unlink( selectedSectorEditListener ) );
 
     this.disposeEmitter.addListener( () => {
+      style.faceColorsVisibleProperty.unlink( faceColorListener );
+
       const containers = [
         faceColorContainer,
         faceContainer,
