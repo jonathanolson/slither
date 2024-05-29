@@ -2,15 +2,15 @@ import { Node } from 'phet-lib/scenery';
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
-import { TFaceStateData } from '../../model/data/face-state/TFaceStateData.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
-import { FaceStateNode } from './FaceStateNode.ts';
+import { VertexStateNode } from './VertexStateNode.ts';
+import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
 
-export class FaceStateViewNode extends Node {
+export class VertexStateViewNode extends Node {
   public constructor(
     board: TBoard,
-    stateProperty: TReadOnlyProperty<TState<TFaceStateData & TEdgeStateData>>,
+    stateProperty: TReadOnlyProperty<TState<TVertexStateData & TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
     style: TPuzzleStyle
   ) {
@@ -20,14 +20,14 @@ export class FaceStateViewNode extends Node {
 
     const multilink = Multilink.multilink( [
       stateProperty,
-      style.faceStateVisibleProperty
-    ], ( state, isFaceStateVisible ) => {
+      style.vertexStateVisibleProperty
+    ], ( state, isVertexStateVisible ) => {
       this.children.forEach( child => child.dispose() );
       this.children = [];
 
-      if ( isFaceStateVisible ) {
-        board.faces.forEach( face => {
-          this.addChild( new FaceStateNode( face, stateProperty, style ) );
+      if ( isVertexStateVisible ) {
+        board.vertices.forEach( vertex => {
+          this.addChild( new VertexStateNode( vertex, stateProperty, style ) );
         } );
       }
     } );

@@ -15,7 +15,6 @@ export class VertexStateNode extends Node {
   public constructor(
     public readonly vertex: TVertex,
     stateProperty: TReadOnlyProperty<TState<TVertexStateData & TEdgeStateData>>,
-    isSolvedProperty: TReadOnlyProperty<boolean>,
     style: TPuzzleStyle
   ) {
     super( {
@@ -120,12 +119,5 @@ export class VertexStateNode extends Node {
       ];
     } );
     this.disposeEmitter.addListener( () => multilink.dispose() );
-
-    // Apply effects when solved
-    const isSolvedListener = ( isSolved: boolean ) => {
-      this.visible = !isSolved;
-    };
-    isSolvedProperty.link( isSolvedListener );
-    this.disposeEmitter.addListener( () => isSolvedProperty.unlink( isSolvedListener ) );
   }
 }

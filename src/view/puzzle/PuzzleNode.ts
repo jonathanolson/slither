@@ -10,7 +10,6 @@ import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
-import { VertexStateNode } from './VertexStateNode.ts';
 import { isEdgeEditModeProperty, isFaceEditModeProperty, isSectorEditModeProperty, isVertexEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
@@ -29,6 +28,7 @@ import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
 import { FaceStateViewNode } from './FaceStateViewNode.ts';
 import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
 import { FaceViewNode } from './FaceViewNode.ts';
+import { VertexStateViewNode } from './VertexStateViewNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -145,17 +145,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     };
     style.verticesVisibleProperty.link( vertexVisibilityListener );
 
-    const vertexStateVisibilityListener = ( vertexStatesVisible: boolean ) => {
-      if ( vertexStatesVisible ) {
-        puzzle.board.vertices.forEach( vertex => {
-          vertexStateContainer.addChild( new VertexStateNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-        } );
-      }
-      else {
-        vertexStateContainer.children.forEach( child => child.dispose() );
-      }
-    };
-    style.vertexStateVisibleProperty.link( vertexStateVisibilityListener );
+    vertexStateContainer.addChild( new VertexStateViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
     edgeContainer.addChild( new EdgeViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
@@ -210,8 +200,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     this.disposeEmitter.addListener( () => {
       style.verticesVisibleProperty.unlink( vertexVisibilityListener );
-      style.vertexStateVisibleProperty.unlink( vertexStateVisibilityListener );
-      // style.sectorsVisibleProperty.unlink( sectorVisibilityListener );
 
       const containers = [
         faceColorContainer,

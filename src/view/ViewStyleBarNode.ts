@@ -199,7 +199,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
     const demoPuzzle = puzzleFromCompressedString( 'eJytV11v2jAU/S9+9oOvv4PUh7VQqS+dNtZK08RDVlwUjQIiKWuF8t9nJw2JjWGJygtKfE7OuR/Oxdmjndnm2XqFRoDR73W6naPRHhXvG4NG6DrNzXW1hh2vyJ5Mjka/9ugNjQhG79Xvrr7ZubsSdzCoMYhh1MPAw5in6WO8xmhMU3iY/5ysMRZ7TnmY/5z24qQelnhx+hgQL5gABM8xAP3SMB/0axOAfnECUHierJxh9JxG+9k2mmDAFLPZhxJEKIA5Fpg2FBqhcCyxwqKhsAiFWRuNk4bCIxRqbWxVdcMREY6wPra4QBqSjJAS62SLDIe0VISknZctKBwy07HkSWVnA+Oz0hJRXqSF6bxAN+uXzdIUZpwWKaoL/pguX+v7lnbrrXcb464csW1Q61Lt1A5BhAQWEFRIoAFBHyu4rMx8YaZuIQh7Ytc/InYUF3FVhMwl/d0s7FgJnpiGkM+uFDD6a7LtfNJRdCHerJfrbaRu7TpGT+66Llxm5xiTIhESGNdaccnZB2Fa54a+PvyY3o0nnXpb7/Vms86zwhyk76yQ1QBOOFeESZ0w5cqWRdYDg7v7nvphoI0+EEEJIcIaJIoyCPQf7seTG+swRvF3uTzlt3pdLhsPRmXCtdAEEkpUfw8Y4KEp1ZpwpaWQjBHR14MOyQMEkTQhYK2EpL092AAPxaRilJKEckbFUb9PevAhHoqDtG2XTNreJ737IYb0I1ECqOBCJMDtzu3rIQd4cHBdUEwntlCgeuehhtTKblhCpSB2byXWp6+H7uNhwWy1S5fZ/ICh0XO6zI2bceap+DAKR1yANNzavL52dDtht8XRaDerubcGZTuMpUv7nABEBOgQARoRYEMEWESADBEQEQHVEeD/rUGsimKIgoq1AQbFEGsEkE+nMTAK/vkoookMqibEOmpD60q4v3h3qjJvsRfqMUCCT5H6wVNnJPTty9UVckFGeNDh5Wd4tMNji9M81lNPdPXO8FSHx8/l0U2YniNCX0Xel9jNZVERmwNbrJe33nrfg+6+PThX546XtNhmloh+OkM7pvMvq/dmNgdHWjgr5gZ9R6/VKravR1L0clLsclL8clJHHxCeFOutIy8X0tEniydFe+scfdmcTO1PbE/NyrL8B0eOKVk=' )!;
     assertEnabled() && assert( demoPuzzle );
 
-    const vertexStateNode = new VertexStateNode( demoPuzzle.board.vertices[ 5 ], demoPuzzle.stateProperty, new TinyProperty( false ), {
+    const vertexStateNode = new VertexStateNode( demoPuzzle.board.vertices[ 5 ], demoPuzzle.stateProperty, {
       ...vertexStatePuzzleStyle,
       allVertexStateVisibleProperty: new TinyProperty( true )
     } );
