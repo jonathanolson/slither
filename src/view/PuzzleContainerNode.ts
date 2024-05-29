@@ -51,10 +51,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
     hookPuzzleListeners( null, this.backgroundRect, ( face, button ) => {
       puzzleModelProperty.value?.onUserFacePress( face, button );
-    },
-    ( face, isOver ) => {
-      puzzleModelProperty.value?.onUserFaceHover( face, isOver );
-    }, );
+    } );
 
     this.rectangularGradientRect = new Rectangle( {
       pickable: false,

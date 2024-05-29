@@ -32,7 +32,6 @@ export const themeColorPropertyNames = [
   'whiteLineColorProperty',
   'selectedFaceColorHighlightColorProperty',
   'selectedSectorEditColorProperty',
-  'hoverHighlightColorProperty',
 
   // Alpha affects how much the hue gets shifted toward the target color. value and saturation used directly
   'simpleRegionTargetColorProperty',
@@ -185,7 +184,6 @@ export const lightTheme = addThemeLUT( {
   whiteLineColorProperty: new PaintColorProperty( 'rgb(153,153,153)' ),
   selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.5)' ),
   selectedSectorEditColorProperty: new PaintColorProperty( 'rgba(0,0,0,0.80000000000000004441)' ),
-  hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.5999999999999999778)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(79,140,238,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(240,214,214,0)' ),
   faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(245,224,224,0)' ),
@@ -240,7 +238,6 @@ export const darkTheme = addThemeLUT( {
   whiteLineColorProperty: new PaintColorProperty( 'rgb(85,85,85)' ),
   selectedFaceColorHighlightColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.5)' ),
   selectedSectorEditColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.80000000000000004441)' ),
-  hoverHighlightColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.5999999999999999778)' ),
   simpleRegionTargetColorProperty: new PaintColorProperty( 'rgba(207,80,128,0)' ),
   faceColorBasicTargetColorProperty: new PaintColorProperty( 'rgba(74,18,18,0)' ),
   faceColorLightTargetColorProperty: new PaintColorProperty( 'rgba(101,43,40,0)' ),
@@ -470,8 +467,6 @@ export const whiteLineVisibleProperty = new LocalStorageBooleanProperty( 'whiteL
 export const verticesVisibleProperty = new LocalStorageBooleanProperty( 'verticesVisibleProperty', false );
 export const redXsVisibleProperty = new LocalStorageBooleanProperty( 'redXsVisibleProperty', false );
 export const redXsAlignedProperty = new LocalStorageBooleanProperty( 'redXsAlignedProperty', false );
-
-export const showHoverHighlightsProperty = new LocalStorageBooleanProperty( 'showHoverHighlightsProperty', false );
 
 export const faceColorThresholdProperty = new LocalStorageNumberProperty( 'faceColorThresholdProperty', Number.POSITIVE_INFINITY );
 

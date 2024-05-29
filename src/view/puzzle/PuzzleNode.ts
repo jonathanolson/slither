@@ -16,8 +16,6 @@ import { VertexStateNode } from './VertexStateNode.ts';
 import { FaceStateNode } from './FaceStateNode.ts';
 import { isEdgeEditModeProperty, isFaceEditModeProperty, isSectorEditModeProperty, isVertexEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
-import { HoverHighlight } from '../../model/puzzle/HoverHighlight.ts';
-import { HoverHighlightNode } from './HoverHighlightNode.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
 import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
 import { TSector } from '../../model/data/sector-state/TSector.ts';
@@ -36,12 +34,9 @@ type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
-  faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
-  sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
   sectorSetListener?: ( sector: TSector, state: SectorState ) => void;
   backgroundOffsetDistance?: number;
-  hoverHighlightProperty?: TReadOnlyProperty<HoverHighlight | null>;
   selectedFaceColorHighlightProperty?: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
   style?: TPuzzleStyle;
@@ -73,12 +68,9 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       },
       edgePressListener: () => {},
       facePressListener: () => {},
-      faceHoverListener: () => {},
       sectorPressListener: () => {},
-      sectorHoverListener: () => {},
       sectorSetListener: () => {},
       backgroundOffsetDistance: 0.3,
-      hoverHighlightProperty: new Property( null ),
       selectedFaceColorHighlightProperty: new Property( null ),
       selectedSectorEditProperty: new Property( null ),
       style: currentPuzzleStyle,
@@ -109,9 +101,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       pickable: null // TODO: note that we have annotations that we can click on now?
     } );
     const selectedFaceColorHighlightContainer = new Node( {
-      pickable: false
-    } );
-    const hoverHighlightContainer = new Node( {
       pickable: false
     } );
     const selectedSectorEditContainer = new Node();
@@ -209,21 +198,11 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         faceStateContainer,
         annotationContainer,
         selectedFaceColorHighlightContainer,
-        hoverHighlightContainer,
         selectedSectorEditContainer
       ]
     }, options ) );
 
     this.annotationContainer = annotationContainer;
-
-    const hoverListener = ( hoverHighlight: HoverHighlight | null ) => {
-      hoverHighlightContainer.children.forEach( child => child.dispose() );
-      if ( hoverHighlight ) {
-        hoverHighlightContainer.addChild( new HoverHighlightNode( hoverHighlight, options.backgroundOffsetDistance, style ) ); // no unlink necessary
-      }
-    };
-    options.hoverHighlightProperty.link( hoverListener );
-    this.disposeEmitter.addListener( () => options.hoverHighlightProperty.unlink( hoverListener ) );
 
     const selectedFaceColorListener = ( selectedFaceColorHighlight: SelectedFaceColorHighlight | null ) => {
       selectedFaceColorHighlightContainer.children.forEach( child => child.dispose() );

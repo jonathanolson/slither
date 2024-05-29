@@ -14,7 +14,6 @@ import { TPuzzleStyle } from './TPuzzleStyle.ts';
 export type FaceNodeOptions = {
   textOptions?: RichTextOptions;
   facePressListener?: ( face: TFace | null, button: 0 | 1 | 2 ) => void; // null is the "outside" face
-  faceHoverListener?: ( face: TFace | null, isOver: boolean ) => void; // null is the "outside" face
   noninteractive?: boolean;
 };
 
@@ -34,7 +33,6 @@ export class FaceNode extends Node {
         maxHeight: 0.9,
       },
       facePressListener: () => {},
-      faceHoverListener: () => {},
       noninteractive: false,
     }, providedOptions );
 
@@ -44,7 +42,7 @@ export class FaceNode extends Node {
     this.mouseArea = pointerArea;
     this.touchArea = pointerArea;
 
-    !options.noninteractive && hookPuzzleListeners( face, this, options.facePressListener, options.faceHoverListener );
+    !options.noninteractive && hookPuzzleListeners( face, this, options.facePressListener );
 
     const text = new RichText( '', combineOptions<RichTextOptions>( {
       subScale: 0.7

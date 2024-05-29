@@ -15,7 +15,6 @@ export type SectorNodeOptions = {
   backgroundOffsetDistance: number;
 
   sectorPressListener?: ( sector: TSector, button: 0 | 1 | 2 ) => void;
-  sectorHoverListener?: ( sector: TSector, isOver: boolean ) => void;
   noninteractive?: boolean;
 };
 
@@ -47,7 +46,7 @@ export class SectorNode extends Node {
     this.mouseArea = pointerArea;
     this.touchArea = pointerArea;
 
-    !options.noninteractive && hookPuzzleListeners( sector, this, options.sectorPressListener, options.sectorHoverListener );
+    !options.noninteractive && hookPuzzleListeners( sector, this, options.sectorPressListener );
 
     // TODO: this is made for memory optimization, perhaps optimize back for performance again in the future?
     const getShape = ( sectorState: SectorState ) => {

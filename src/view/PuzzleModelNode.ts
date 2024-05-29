@@ -23,19 +23,12 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       facePressListener: ( face, button ) => {
         puzzleModel.onUserFacePress( face, button );
       },
-      faceHoverListener: ( face, isOver ) => {
-        puzzleModel.onUserFaceHover( face, isOver );
-      },
       sectorPressListener: ( sector, button ) => {
         puzzleModel.onUserSectorPress( sector, button );
-      },
-      sectorHoverListener: ( sector, isOver ) => {
-        puzzleModel.onUserSectorHover( sector, isOver );
       },
       sectorSetListener: ( sector: TSector, state: SectorState ) => {
         puzzleModel.onUserSectorSet( sector, state );
       },
-      hoverHighlightProperty: puzzleModel.hoverHighlightProperty,
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
       selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
       style: puzzleModel.style
