@@ -859,6 +859,241 @@ a <em>thin</em> style, and X's are represented simply by the absence of a line.
 
 <h2>Coloring</h2>
 
+<p>
+  Since the loop is a <a href="https://en.wikipedia.org/wiki/Jordan_curve_theorem">Jordan curve</a>, it divides the cells
+  into two regions, one inside and one outside. This can be used to deduce lines and X's, or even to solve directly.
+</p>
+
+<p>
+  Coloring is where we mark the deduction "this cell will be in the same/opposite region as this other cell".
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="solved-puzzle" class="example-div"></div>
+    <span class="caption">
+      In this solved puzzle, the outside is white, and the inside is gray.
+    </span>
+  </div>
+</div>
+
+<p>
+  A common way of solving with coloring is to mark colors just for the inside and outside of the loop.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="partial-inside-outside-puzzle" class="example-div"></div>
+    <span class="caption">
+      Inside/outside colors marked (not using general coloring, so lines are highlighted for visibility).
+    </span>
+  </div>
+</div>
+
+<p>
+  However, this is less helpful on larger puzzles, where we may be able to deduce coloring information in the middle,
+  and it is far from any inside/outside coloring.
+</p>
+
+<p>
+  When coloring, conceptually we get pairs of opposing regions (where every cell in the two different regions is of
+  opposite color, and every cell in the same region is of the same color).
+</p>
+
+<p>
+  To be able to solve with this information, it helps to use a single color hue for each region pair, but picking
+  a lighter color and darker color to indicate the "opposite" regions:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="coloring-pairs-puzzle" class="example-div"></div>
+    <span class="caption">
+      Pairs with a lighter and darker color with the same hue will be on opposite sides of the loop.
+      Note how coloring can be disconnected (the upper-right pair of 3's forces the left and right cells to have
+      opposite colors), and the only-one sector from the 1 in the bottom right also does the same.
+      Note the single-color region in the middle-to-upper-left: if it where white (outside), it would split the
+      puzzle into two disconnected regions (the upper left would be isolated), which is not valid. Thus we could mark it
+      as being the "inside" color!
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="pure-coloring-pairs-puzzle" class="example-div"></div>
+    <span class="caption">
+      We can also display and solve using <em>only</em> the coloring information.
+    </span>
+  </div>
+</div>
+
+<p>
+  This user interface tries to make colors as clear as possible (where pairs that are close to each other will have
+  different hues).
+</p>
+
+<p>
+  Additionally:
+</p>
+
+<ul>
+  <li>
+    Every line will force its adjacent cells to be of opposite colors.
+  </li>
+  <li>
+    Every X will force its adjacent cells to be of the same color.
+  </li>
+</ul>
+
+<p>
+  The opposite is also true:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="same-face-to-red-edge" class="example-div"></div>
+    <span class="caption">
+      If two adjacent cells have the same color, they must be separated by an X.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="opposite-face-to-black-edge" class="example-div"></div>
+    <span class="caption">
+      If two adjacent cells have the opposite color, they must be separated by a line.
+    </span>
+  </div>
+</div>
+
+<p>
+  We can work within the coloring system with a few fundamental patterns:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="color-no-checker" class="example-div"></div>
+    <span class="caption">
+      Checkerboard-like patterns aren't allowed (i.e. there cannot be four lines on a dot).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="color-no-checker-same" class="example-div"></div>
+    <span class="caption">
+      Another way checkerboard-like patterns aren't allowed.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="color-two-lines" class="example-div"></div>
+    <span class="caption">
+      Maximum of two lines per dot.
+    </span>
+  </div>
+</div>
+
+<p>
+  Many of the usual rules carry over, but some useful ones:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="color-one-same-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-one-same-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-one-opposite-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-one-opposite-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-two-same-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-two-same-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-two-opposite-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-two-opposite-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-three-same-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-three-same-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-three-opposite-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-three-opposite-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-three-adjacent" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="color-no-loop" class="example-div"></div>
+  </div>
+</div>
+
+<h2>Colors and Sectors</h2>
+
+<p>
+  Coloring can also directly imply sectors.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="color-opposite-to-only-one" class="example-div"></div>
+    <span class="caption">
+      Opposite colors are <em>equivalent</em> to only-one.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="color-same-to-not-one" class="example-div"></div>
+    <span class="caption">
+      Same colors are <em>equivalent</em> to not-one.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="only-one-to-color" class="example-div"></div>
+    <span class="caption">
+      Only-one is <em>equivalent</em> to opposite colors.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="not-one-to-color" class="example-div"></div>
+    <span class="caption">
+      Not-one is <em>equivalent</em> to same colors.
+    </span>
+  </div>
+</div>
+
+<p>
+  Both sectors and colors can propagate or be joined across disparate parts of a puzzle, and thus can be very powerful.
+</p>
+
 <h2>Highlander</h2>
 
 <p>
