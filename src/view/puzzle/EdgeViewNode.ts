@@ -80,13 +80,6 @@ export class EdgeViewNode extends Node {
 
           if ( edgeState !== edgeStates[ i ] ) {
             changed = true;
-
-            if ( edgeState === EdgeState.WHITE && !whitePath.visible ) {
-              edgeStates[ i ] = EdgeState.BLACK;
-            }
-            else if ( edgeState === EdgeState.RED && !redXPath.visible ) {
-              edgeStates[ i ] = EdgeState.BLACK;
-            }
             edgeStates[ i ] = edgeState;
           }
         }

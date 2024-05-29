@@ -10,7 +10,6 @@ import { FaceNode } from './FaceNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
-import { SectorNode } from './SectorNode.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { VertexStateNode } from './VertexStateNode.ts';
 import { FaceStateNode } from './FaceStateNode.ts';
@@ -27,8 +26,8 @@ import { currentPuzzleStyle } from './puzzleStyles.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { EdgeViewNode } from './EdgeViewNode.ts';
 import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
-
-export type TFaceFilter = ( face: TFace ) => boolean;
+import { SectorViewNode } from './SectorViewNode.ts';
+import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -162,26 +161,11 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       edgeContainer.addChild( new EdgeViewInteractionNode( puzzle.board, options ) );
     }
 
-    // puzzle.board.edges.forEach( edge => {
-    //   edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
-    // } );
+    sectorContainer.addChild( new SectorViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
-    // TODO: why are we getting an error when we swap in the listeners below
-    // TODO OMG DO NOT LEAK THESE, if we enable, unlink sectorVisibilityListener
-        puzzle.board.halfEdges.forEach( sector => {
-          sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
-        } );
-    // const sectorVisibilityListener = ( sectorsVisible: boolean ) => {
-    //   if ( sectorsVisible ) {
-    //     puzzle.board.halfEdges.forEach( sector => {
-    //       sectorContainer.addChild( new SectorNode( sector, puzzle.stateProperty, style, options ) );
-    //     } );
-    //   }
-    //   else {
-    //     sectorContainer.children.forEach( child => child.dispose() );
-    //   }
-    // };
-    // style.sectorsVisibleProperty.link( sectorVisibilityListener );
+    if ( !options.noninteractive ) {
+      sectorContainer.addChild( new SectorViewInteractionNode( puzzle.board, options ) );
+    }
 
     simpleRegionContainer.addChild( new SimpleRegionViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
