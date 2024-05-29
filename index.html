@@ -717,6 +717,10 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
   </li>
 </ul>
 
+<p>
+  For a concrete case of parity in action, see <a href="https://www.reddit.com/r/slitherlink/comments/18n6w82/comment/ke9rlvn/">this reddit thread</a>.
+</p>
+
 <div class="examples examples-flex">
   <div class="example">
     <div id="sector-parity-a" class="example-div"></div>
@@ -737,7 +741,121 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
 
 <h2>Alternative Representations</h2>
 
+<p>
+  The classic form of dots and X's can be harder to use in a few ways:
+</p>
+
+<ul>
+  <li>
+    The implicit "lines between dots" can be hard to visualize multiple pathways (particularly for coloring/Jordan curve
+    solving).
+  </li>
+  <li>
+    The implicit "lines between dots" doesn't work as well for non-square grids (harder to visualize the potential shapes).
+  </li>
+  <li>
+    The X's can be awkward on non-square grids (they look weird either rotated or non-rotated).
+  </li>
+  <li>
+    Sectors are not as clear with the implicit lines.
+  </li>
+</ul>
+
+<p>
+  For example, the same puzzle is represented below with two methods. The left "arm" of the puzzle (with the 3)
+  needs to connect back to the rest with two line paths. There happens to be a "cut" (marked in red) where there are
+  only two places for lines to pass through (at each endpoint of the red line). Making the possible paths explicit
+  helps identify this type of case.
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="unclear-classic" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="unclear-colors" class="example-div"></div>
+  </div>
+</div>
+
+In these other representations, "lines" are drawn with a <em>thick, bold</em> style, "possible lines" are drawn with
+a <em>thin</em> style, and X's are represented simply by the absence of a line.
+
+<div class="examples">
+  <div class="example">
+    <div id="unclear-visible-red" class="example-div"></div>
+    <span class="caption">
+      It is also possible to mark the location of X's with other styles.
+    </span>
+  </div>
+</div>
+
 <h2>Alternative Tilings</h2>
+
+<p>
+  Any <a href="https://en.wikipedia.org/wiki/Planar_graphs">planar graph</a> or tiling can be used to make a puzzle.
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="rhombille-puzzle" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="hexagonal-puzzle" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="cairo-puzzle" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="floret-puzzle" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="rhombitrihexagonal-puzzle" class="example-div"></div>
+  </div>
+</div>
+
+<p>
+  Each of which has different rules:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="hex-five-five" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="hex-five-four-five" class="example-div"></div>
+  </div>
+</div>
+
+<p>
+  However, it is possible to create/compute "general" rules that work across tilings:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="general-rule-square" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="general-rule-rhombille" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="general-rule-snub-square" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="general-rule-deltoidal-trihexagonal" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="general-rule-rhombitrihexagonal" class="example-div"></div>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="general-rule-generic" class="example-div"></div>
+    <span class="caption">
+      All of the above rules are represented by this form (will be described later in the technical details, but red circles denote "all other unspecified potential lines get X'ed").
+    </span>
+  </div>
+</div>
 
 <h2>Coloring</h2>
 
