@@ -1,9 +1,9 @@
 import '../index.css';
 
-import { Display, Node, Path } from 'phet-lib/scenery';
+import { Circle, Display, Node, Path } from 'phet-lib/scenery';
 import PuzzleNode from './view/puzzle/PuzzleNode.ts';
 import { puzzleFromCompressedString } from './model/puzzle/TPuzzle.ts';
-import { basicLinesPuzzleStyle, getBasicColoringPuzzleStyleWithTheme, getBasicLinesPuzzleStyleWithTheme, getClassicPuzzleStyleWithTheme, getClassicWithSectorsPuzzleStyleWithTheme, getPureColoringPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from './view/puzzle/puzzleStyles.ts';
+import { getBasicColoringPuzzleStyleWithTheme, getBasicLinesPuzzleStyleWithTheme, getClassicPuzzleStyleWithTheme, getClassicWithSectorsPuzzleStyleWithTheme, getPureColoringPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from './view/puzzle/puzzleStyles.ts';
 import { lightTheme } from './view/Theme.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
@@ -528,4 +528,41 @@ const addStaticPatternRule = async ( id: string, ruleBinaryIdentifier: string ) 
   await addStaticRule( 'color-same-to-not-one', sectorColorStyle, DisplayTiling.SQUARE, 'vertex-2-exit-one/AP4BAv8J/w==' );
   await addStaticRule( 'only-one-to-color', sectorColorStyle, DisplayTiling.SQUARE, 'vertex-2-exit-one/AAv//gGC/w==' );
   await addStaticRule( 'not-one-to-color', sectorColorStyle, DisplayTiling.SQUARE, 'vertex-2-exit-one/AAn//gEC/w==' );
+
+  await addStaticRule( 'highlander-two', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AQcODxARIib/ExkbIRwe/w==' );
+
+  const circlesNode = new Node( {
+    children: [
+      new Circle( 0.2, {
+        x: 1.5,
+        y: 4,
+        stroke: 'red',
+        lineWidth: 0.1,
+      } ),
+      new Circle( 0.2, {
+        x: 2,
+        y: 3.5,
+        stroke: 'red',
+        lineWidth: 0.1,
+      } ),
+      new Path( new Shape().moveTo( 2, 5 ).lineTo( 2, 4 ).lineTo( 3, 4 ), { stroke: 'blue', lineWidth: 0.1 } ),
+      new Path( new Shape().moveTo( 2, 5 ).lineTo( 3, 5 ).lineTo( 3, 4 ), { stroke: 'green', lineWidth: 0.1 } ),
+    ]
+  } );
+
+  const firstHighlanderPuzzle = 'eJy1WE1v2zgQ/S8688CZ4adv2zgFcukCzbaXRQ7eRC0MuHFgO9kWgf/7Dv0hZyimFhPtoamt9/T45osW9dw8tav1fHnfTEA1/yxnq7tm8txsfj20zaT5MFu3H3bXVOJt5rftupn8/dz8bCZaNb92f5/2X57St616gcEegxKGAgOBkdCUmNljWNK0ApP3uT1Gpfu8wOR9YY+Z0n1RYPI+OCTGFhMDAszulKlBCcrcZKBMTgZaEWUGOhFKBnrhNgODcEsSjMKtBFELtxkIwm0GonCbgSTcZqARbo0ErXCbgU64zUDZQRkoWygDo3ArQdLCrZUgCLcZiMJtBpJwm4FGuM1AK9za7Y1qvs2Ke8Jps9AKFCq6OShBgQLKKKvwSMECxSinvLJHChUoTgUVlT9STIESFM8lT188kmyBRGyXhxA6y65AQjbM8wadaV8gWbYMiXckhQLJs2meP+hiiwVSTK55EMF1eSzlmreH5JzD7CKEYsIxmecJhNDxSllPEXJhuIC645VSn4J0iucSoeOV8p/i9IpHFLu8QakEvHFwEDyt2GUFSlVIJK14NrFLMZQKkUgcBC99yl+pFonEQbBq10ZQKkcicRCRqV3TlurBWwoHwXNMXV6wVI8UqVM8tdTlGUv1SJF6xQNMp2Ep1SNFGhTPMnVNjKV6pEij4rEmzh8zm/VmtmlfPABcLH88LNpNO51tZs1+2L/OFo/77yfaR3H95aaQPiXiafJPq+x+SV4Q8BzB5ATICPacgs8JOiPAWRNw1sWxtV5nHJvlxKCccdYH9nzoXQnbu+/tdbqQ1eiSrx/Kkyj78qRPicMKq81B+PAwlaTu78Q1vz0t1ny+nDbJUp0EmDoNX9KwdRq85vtFkAoiGCtFwv8lQpV5pVI4tSLsvCBSmVgqVacgstue5mk7+tx+5wNL1t7XOSTZqd35aeXfdr66uzy0f1JMA3WxXCxXhR3tdF01t+nzfmbmbNWijyGg1sZoF40/EK4Phv/88tf11fSyyR6PTiMrflqynTw9VS0fHpbr+abtbFzxos547wxoct4B2d2z2bxwPTNz9Snz8pp+HtRR3zj0gTSQC8ZEk+t/+TS9vOAVpnm4+kw894+LRRcDAWofYgQdvIWhS0DFEh4pakvRoQXtcHAYKKrkxbcgCyqprsJcsJxYY4jIRiDKG+pVc+d65uUaRMFSIB+5UaIdngBTsQYEj+DJxWi5a1KHD1vDVqxh0HOLsrhFQrI0dI1Y04/BuxCMcxiJNA5eA2qa3nrD5XYWIqEzenjX17Q98UDxaBnL/wcdBlcEaloroENyzgdE56wb3L5Q01s2eCBEA5YIjBvcv1DTXMGTDUZ7awM4/jd4kZpp52I7zdXnmhN6Gt5dvqbwNgaEYE3643F4JKFm3p1GzZNotXFa4+Duwpo5AQQbdKRIwVjrB0eCVXPieXPkH7/oeBqjH9zC3ZP6bxdhcH7/NFvM7zqsmXybLdZteqxpbzeHlfKnmgw5co+PL+ks1/4s3fk1Q8S57/jkU7rxo7j+ylmud355Pp0N9xGr5sdss5ozt2GR+fqPe75hs3pst/lpaTyp3pnp7VI0nlTvnPZ2qd759u1Sbjyp3qH67VK9k/PbpeKILTpmu4/Y7/2XFe/QGrHj+69I3qE1Ys/DiE0PI3Z9/4XRO7RG7Pv+a6p3aI25z4/Y9zhi3/dfydVo3Wy32/8AWjnC6A==';
+  await addStaticPuzzle( 'highlander-puzzle-0', classicStyle, firstHighlanderPuzzle );
+  await addStaticPuzzle( 'highlander-puzzle-1', classicStyle, firstHighlanderPuzzle, circlesNode );
+  await addStaticPuzzle( 'highlander-puzzle-2', classicStyle, 'eJytWE1v20YQ/S8872FnZj99S2wHCFqkQNz0UuSgxkwqQLEMSXETGPrvnbVESrMaQ6TNS2LxPb5987VL8rF5aFfr+fKuuQDT/LOcrW6bi8dm8+u+bS6at7N1+/bpmim8zfxLu24u/n5sfjYX1jS/nv592P14KL+25giDHQYahgIDgZHQlJjbYahpeoHJ+8IOI+2+KDB5X9phTrsvC0zeB/vEeDUxIMDqTpkalKDMTQXK5FSgF1FWYBChVGAUbiswCbckwSzcShCtcFuBINxWIAq3FUjCbQU64dZJ0Au3FRiE2wqUHVSBsoUqMAu3EiQr3HoJgnBbgSjcViAJtxXohNsK9MKt3342zdeZuiccNgtrwKChz3slUChgnPEGOwoqFGeCicZ3FFIowSSTTewoTqEkw3PJ05c7kldIxHZ5CKG3HBQSsmGeN+hNR4Xk2TIUXkdKCimyaZ4/6GPLCikX1zyIEPo8arnm7aE45zD7CEFNOBbzPIGQep6W9RIhF4YLaHuelvoSZDA8lwg9T8t/iTMaHlHs8wZaCXjj4CB4WrHPCmhVKCRreDaxTzFohSgkDoKXPuRPq0UhcRCs2rcRaOUoJA4iM7VvWq0evKVwEDzH1OcFtXqUSIPhqaU+z6jVo0QaDQ8wHYZFq0eJNBmeZeqbGLV6lEiz4bEmzh8zm/VmtmmPHgAul9/vF+2mvZptZs1u2P+aLX7sfh9o78T1402h/FWIh8k/rPJ0khwR8BzB1QSoCP6cQqwJtiLAWRNw1kXXWs8zumY5MKhmnPWBJz7sUwnb22/tTblQ1eiar+/LUyi78pS/CocVVpu98P5hqkjd3YprcXtYrPl4fdUUS+MkwI3TiJqGH6fBa75eBK0iguFY5O3vby5/OyejeXmBTNBkRtYHSRPJI0XSFCJaOITjREirkBQZlFqt5YjGyvDCU8io6aWRQ0RaoceKcE0VkZFTRFr7KyJPZ9G8nD0f22/8dlrtZTc1JNm7vW1+W3rChUwBMzqHtjz5/jtbfL3u978xAzp8Du22PBnP1zfLxUPL2NfZYt0WgWIpWvbkwaWccyQ3xNKzHTm82PgcW21TPQC+9F87X912XkuRyoF0uVwsV8oTweG6ab6Uvw918RhzSsipcDZkF/eEm30P/PHpz5v3V9dN9XpxOPLEo1n1JFQ9MBbby/v75Xq+aXtX79lDcDEGB5ZCDEDedwWqr1fe3n/QrEGUXlD+hDNe6nx0XlzAmMgCheRcdrWXTx+uri/ZzVVtx55Z7+7HYtHHS4A2cjuCTdHD0CXOhXS8RETK1lMO6MEGHByGzKJMcZLVltRztT82lzwn1jki8hmI6l581hyNWIMoeUoUeS+K2Q9PgBuxBqSIECnk7LlrynAMW8OPWMNh5BZlcY+E5GnoGnlMP6YYUnKBd20ii4PXgDFN76PjcvM+nAmDs8O7fkzbEw8Uj5bz/H+yaXBFYExrJQxIIcSEGIIPg9sXxvSWTxEI0YEnAj6+Bi8yprm4IAkheVf+iTi8JmnMlASLlvvX8ylsLQ6uCQ7qrnJq3j3MFvPbHuuP/2bdftnsV6qfZyqk43anbHllb39qd/5VIeL1vjugtRvfievPvLKfvKY+Hj4B7CI2zffZZjVnbtOUJ4Y3d3zDZvWj3dYvxdNJnbwav1yKppM6eR1/udTJZ4yXS4XppE6+nbxc6uQDycul8oQtOmW7T9jvp9+kXqE1Yceffgl7hdaEPQ8TNj1M2PWn3wVfoTVh359+jXyF1pT7/IR9jxP2/emX1zFan7fb7f8YY0jW' );
+
+  await addStaticRule( 'highlander-a', classicStyle, DisplayTiling.SQUARE, 'square-0-0/AQQFBgcIERL/CQsND/8=' );
+  await addStaticRule( 'highlander-b', classicStyle, DisplayTiling.SQUARE, 'square-0-0/AQQFBgcIERP/CQsND/8=' );
+  await addStaticRule( 'highlander-c', classicStyle, DisplayTiling.SQUARE, 'square-1-1/AQQJCgsMDQ4PExcZ/xD/' );
+  await addStaticRule( 'highlander-d', classicStyle, DisplayTiling.SQUARE, 'square-2-0/AQQJDBUWLDD/GiD/' );
+  await addStaticRule( 'highlander-e', classicStyle, DisplayTiling.SQUARE, 'square-2-4/AQIJDg8QKy3/JCb/' );
+  await addStaticRule( 'highlander-f', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AQkODxARHSIm/x7/' );
+  await addStaticRule( 'highlander-g', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AQkODxARHyIn/xoc/w==' );
+  await addStaticRule( 'highlander-h', classicStyle, DisplayTiling.SQUARE, 'square-1-1/AQQJDQ4PER4i/xcYHP8=' );
+  await addStaticRule( 'highlander-i', classicStyle, DisplayTiling.SQUARE, 'square-2-2/AQIGDg8QES8x/y4hJ/8=' );
+
 } )();

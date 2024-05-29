@@ -1,5 +1,5 @@
 
-<h1>Slitherlink</h1>
+<h1>How Slitherlink Should be Solved</h1>
 
 Building a Slitherlink app that pushes the boundaries of puzzle solving on both phone and desktop.
 
@@ -9,6 +9,14 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
 
     <p>
       Try out Slitherlink puzzles and challenge yourself with various techniques and strategies.
+    </p>
+
+    <p>
+      <strong>This is unfinished and rough around the edges, it will be more finished and user-friendly soon.</strong>
+    </p>
+
+    <p>
+      It is highly recommended to read the guide below to understand the visual representations used in the app.
     </p>
 
     <p>
@@ -22,6 +30,8 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
     <p>
       Enhance your skills by browsing the library of patterns, including coloring and highlander rules.
     </p>
+
+    <strong>This is unfinished and rough around the edges, it will be more finished and user-friendly soon.</strong>
 
     <p>
       <a href="./rule-explorer"><img src="./images/example-pattern-classic.png" style="width: auto; height: auto; max-width: 300px;" alt="Classic Pattern"></a>
@@ -1097,12 +1107,160 @@ a <em>thin</em> style, and X's are represented simply by the absence of a line.
 <h2>Highlander</h2>
 
 <p>
-  Since valid puzzles mut have a single unique solution, <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a> rules ("there can be only one") may apply.
+  Since valid puzzles must have a single unique solution, we can actually apply additional deductions (generally based on
+  which cells are blank). These are called <a href="https://kwontomloop.com/forum.php?a=topic&topic_id=66&pg=2">highlander</a>
+  patterns ("there can be only one").
+</p>
+
+<p>
+  The core idea is that if adding a line or an X would result in a pattern that would <em>always</em> allow two solutions
+  to exist, then that line or X is <em>wrong</em> (since there is a unique solution), and the opposite must be added.
+</p>
+
+<p>
+  This can be considered to be less <em>pure</em>, since these pattern rules are <strong>incorrect if the puzzle has more than one solution</strong>,
+  since they are based on the assumption that there is a unique solution. If used on a puzzle with multiple solutions,
+  it can lead to finding <em>no</em> solution! Furthermore, puzzles are logically solvable <em>without</em> using highlander
+  deductions.
+</p>
+
+<p>
+  However, highlander deductions can be very powerful, and can be used to solve difficult puzzles quickly. Many people
+  rely on it as a key technique.
+</p>
+
+<p>
+  Patterns like this generally rely on certain cells being "blank" (i.e. not having a number), since that allows
+  for multiple solutions to exist. For highlander patterns, we will mark cells that <em>can</em> have numbers with
+  question marks.
+</p>
+
+<p>
+  The classic example of a highlander rule is the following:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="highlander-two" class="example-div"></div>
+    <span class="caption">
+      If a 2 has all four adjacent cells empty (no numbers), and has the double-X corner that forces it to be one of
+      two different configurations, then allowing the upper-left corner of the 2 to have the same double-X would
+      create two solutions.
+    </span>
+  </div>
+</div>
+
+<p>
+  For example:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="highlander-puzzle-0" class="example-div"></div>
+    <span class="caption">
+      Can you find the highlander deduction in this puzzle?
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="highlander-puzzle-1" class="example-div"></div>
+    <span class="caption">
+      If there were X's at the red circles, then the blue and green paths would be interchangeable, creating two solutions
+      regardless of the rest of the puzzle (since there is no way for the rest of the puzzle to influence the choice between
+      the blue and green path).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="highlander-puzzle-2" class="example-div"></div>
+    <span class="caption">
+      Thus this highlander deduction is valid if the puzzle has a unique solution.
+    </span>
+  </div>
+</div>
+
+<h3>Common Highlander Patterns</h3>
+
+<p>
+  Here is a sampling of common highlander patterns:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="highlander-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-c" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-d" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-e" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-f" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-g" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-h" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="highlander-i" class="example-div"></div>
+  </div>
+</div>
+
+<p>
+  Some of these are pretty hard to believe! Of note: they cannot be combined to make larger "combined" highlander rules,
+  since they need the exact pattern to match. The <a href="./rule-explorer">pattern explorer</a> can actually list out
+  all of the "excluded" solution patterns for each highlander rule (click on it), showing another solution that rules it out.
+</p>
+
+<p>
+  For example, see <a href="./rule?r=square-1-0%2FAQcODxARIib%2FExkbIRwe%2Fw%3D%3D">analysis for the first highlander case</a>,
+  or <a href="./rule?r=square-2-2%2FAQIGDg8QES8x%2Fy4hJ%2F8%3D">analysis for the last highlander case</a>.
+  Note that the "highlander duplicates" are given in groups (usually pairs), showing which solutions are excluded and why.
+</p>
+
+<p>
+  The most counter-intuitive thing about excluded solutions (that I <em>swear</em> I have verified logically) is that
+  it is possible to exclude solutions based on "duplicate" solutions that are not possible with the current state of
+  X's and lines! The highlander condition applies to the base puzzle (the numbers and grid), so just because you might
+  have deduced some lines and X's doesn't prevent ruling out things using solutions that contradict those deductions.
+</p>
+
+<p>
+  TODO: add examples of this, worked out, and better visualizations of the excluded solutions.
 </p>
 
 <h2>Solving with Loops and Regions</h2>
 
+<p>
+  TODO (sorry!)
+</p>
+
+<h2>Pattern Explorer</h2>
+
+<h2>User Interfaces</h2>
+
+<p>
+  TODO (sorry!)
+</p>
+
 <h2>Technical Details</h2>
+
+<p>
+  TODO (sorry!)
+</p>
 
 <p>
   For this part, I'll use some different terminology that is a bit more mathematically-oriented:
