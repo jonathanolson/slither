@@ -28,6 +28,7 @@ import SectorState from '../../model/data/sector-state/SectorState.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzleStyles.ts';
 import { Bounds2 } from 'phet-lib/dot';
+import { EdgeViewNode } from './EdgeViewNode.ts';
 
 export type TFaceFilter = ( face: TFace ) => boolean;
 
@@ -167,6 +168,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       }
     };
     style.vertexStateVisibleProperty.link( vertexStateVisibilityListener );
+
+    edgeContainer.addChild( new EdgeViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
     puzzle.board.edges.forEach( edge => {
       edgeContainer.addChild( new EdgeNode( edge, puzzle.stateProperty, isSolvedProperty, style, options ) );
