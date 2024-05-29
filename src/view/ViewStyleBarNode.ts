@@ -210,7 +210,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
       scale: 60
     } );
 
-    const faceStateNode = new FaceStateNode( demoPuzzle.board.faces[ 5 ], demoPuzzle.stateProperty, new TinyProperty( false ), faceStatePuzzleStyle );
+    const faceStateNode = new FaceStateNode( demoPuzzle.board.faces[ 5 ], demoPuzzle.stateProperty, faceStatePuzzleStyle );
     const faceStateIcon = new Node( {
       children: [
         faceStateNode

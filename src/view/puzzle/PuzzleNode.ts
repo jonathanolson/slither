@@ -12,7 +12,6 @@ import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { VertexStateNode } from './VertexStateNode.ts';
-import { FaceStateNode } from './FaceStateNode.ts';
 import { isEdgeEditModeProperty, isFaceEditModeProperty, isSectorEditModeProperty, isVertexEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
@@ -28,6 +27,7 @@ import { EdgeViewNode } from './EdgeViewNode.ts';
 import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
 import { SectorViewNode } from './SectorViewNode.ts';
 import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
+import { FaceStateViewNode } from './FaceStateViewNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -117,10 +117,9 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     puzzle.board.faces.forEach( face => {
       faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
-
-      // TODO: add the "optional create" for FaceStateNode?
-      faceStateContainer.addChild( new FaceStateNode( face, puzzle.stateProperty, isSolvedProperty, style ) );
     } );
+
+    faceStateContainer.addChild( new FaceStateViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
     const backgroundNode = new PuzzleBackgroundNode(
       puzzle.board.outerBoundary,
