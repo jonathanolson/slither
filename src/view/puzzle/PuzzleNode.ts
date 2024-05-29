@@ -5,7 +5,6 @@ import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
-import { VertexNode } from './VertexNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
@@ -29,6 +28,7 @@ import { FaceStateViewNode } from './FaceStateViewNode.ts';
 import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
 import { FaceViewNode } from './FaceViewNode.ts';
 import { VertexStateViewNode } from './VertexStateViewNode.ts';
+import { VertexViewNode } from './VertexViewNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -131,20 +131,8 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       options
     );
 
-    // TODO: for performance, can we reduce the number of nodes here?
-
-    const vertexVisibilityListener = ( verticesVisible: boolean ) => {
-      if ( verticesVisible ) {
-        puzzle.board.vertices.forEach( vertex => {
-          vertexContainer.addChild( new VertexNode( vertex, puzzle.stateProperty, isSolvedProperty, style ) );
-        } );
-      }
-      else {
-        vertexContainer.children.forEach( child => child.dispose() );
-      }
-    };
-    style.verticesVisibleProperty.link( vertexVisibilityListener );
-
+    vertexContainer.addChild( new VertexViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
+    //
     vertexStateContainer.addChild( new VertexStateViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
     edgeContainer.addChild( new EdgeViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
@@ -199,8 +187,6 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     this.disposeEmitter.addListener( () => options.selectedSectorEditProperty.unlink( selectedSectorEditListener ) );
 
     this.disposeEmitter.addListener( () => {
-      style.verticesVisibleProperty.unlink( vertexVisibilityListener );
-
       const containers = [
         faceColorContainer,
         faceContainer,
