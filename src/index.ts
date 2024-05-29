@@ -3,7 +3,7 @@ import '../index.css';
 import { Display, Node } from 'phet-lib/scenery';
 import PuzzleNode from './view/puzzle/PuzzleNode.ts';
 import { puzzleFromCompressedString } from './model/puzzle/TPuzzle.ts';
-import { getBasicColoringPuzzleStyleWithTheme, getBasicLinesPuzzleStyleWithTheme, getClassicPuzzleStyleWithTheme, getPureColoringPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from './view/puzzle/puzzleStyles.ts';
+import { getBasicColoringPuzzleStyleWithTheme, getBasicLinesPuzzleStyleWithTheme, getClassicPuzzleStyleWithTheme, getClassicWithSectorsPuzzleStyleWithTheme, getPureColoringPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from './view/puzzle/puzzleStyles.ts';
 import { lightTheme } from './view/Theme.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
@@ -12,6 +12,12 @@ import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
 import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
+import { standardSquareBoardGenerations, vertexNonExit4PatternBoard } from './model/pattern/pattern-board/patternBoards.ts';
+import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
+import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
+import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
+import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -26,10 +32,13 @@ if ( window.assertions && !( import.meta.env.PROD ) ) {
 // };
 
 const classicStyle = getClassicPuzzleStyleWithTheme( lightTheme );
+const classicWithSectorsStyle = getClassicWithSectorsPuzzleStyleWithTheme( lightTheme );
 const basicLineStyle = getBasicLinesPuzzleStyleWithTheme( lightTheme );
 const basicColorStyle = getBasicColoringPuzzleStyleWithTheme( lightTheme );
 const pureColorStyle = getPureColoringPuzzleStyleWithTheme( lightTheme );
 const sectorColorStyle = getSectorsWithColorsPuzzleStyleWithTheme( lightTheme );
+
+const puzzleScale = 40;
 
 const getDisplayWithIdentifier = ( rootNode: Node, id: string ): Display => {
   return new Display( rootNode, {
@@ -66,7 +75,7 @@ const addStaticPuzzle = async ( id: string, style: TPuzzleStyle, puzzleString: s
   const puzzle = puzzleFromCompressedString( puzzleString )!;
 
   const puzzleNode = new PuzzleNode( puzzle, {
-    scale: 30,
+    scale: puzzleScale,
     style: style,
     noninteractive: true,
   } );
@@ -79,7 +88,7 @@ const addStaticClippedPuzzle = async ( id: string, style: TPuzzleStyle, clipBoun
   const puzzle = puzzleFromCompressedString( puzzleString )!;
 
   const container = new Node( {
-    scale: 30,
+    scale: puzzleScale,
     clipArea: Shape.bounds( clipBounds ),
     localBounds: clipBounds,
     children: [
@@ -100,7 +109,7 @@ const addStaticRule = async ( id: string, style: TPuzzleStyle, displayTiling: Di
   const displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling )!;
 
   const node = new EmbeddedPatternRuleNode( rule, displayEmbedding, {
-    scale: 30,
+    scale: puzzleScale,
     style: style,
   } );
 
@@ -166,5 +175,233 @@ const addStaticRule = async ( id: string, style: TPuzzleStyle, displayTiling: Di
   await addStaticRule( 'one-anti-incident-a', classicStyle, DisplayTiling.SQUARE, 'square-1-1/AAYYGh7/F/8=' );
   await addStaticRule( 'one-anti-incident-b', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AAYTGiD/GCL/' );
 
+  const singleSquareBoard = standardSquareBoardGenerations[ 0 ][ 0 ];
+  const diagonalSquareBoard = standardSquareBoardGenerations[ 1 ][ 0 ];
+  const fourVertexBoard = vertexNonExit4PatternBoard;
 
+  const onlyOneAcrossTwoRule = new PatternRule(
+    singleSquareBoard,
+    FeatureSet.fromFeatures( singleSquareBoard, [
+      new FaceFeature( singleSquareBoard.faces[ 0 ], 2 ),
+      new SectorOnlyOneFeature( singleSquareBoard.sectors[ 0 ] ),
+    ] ),
+    FeatureSet.fromFeatures( singleSquareBoard, [
+      new FaceFeature( singleSquareBoard.faces[ 0 ], 2 ),
+      new SectorOnlyOneFeature( singleSquareBoard.sectors[ 0 ] ),
+      new SectorOnlyOneFeature( singleSquareBoard.sectors[ 2 ] ),
+    ] ),
+    false,
+  );
+
+  await addStaticRule( 'only-one-across-two', classicWithSectorsStyle, DisplayTiling.SQUARE, onlyOneAcrossTwoRule.getBinaryIdentifier() );
+
+  const onlyOneCrossing = new PatternRule(
+    fourVertexBoard,
+    FeatureSet.fromFeatures( fourVertexBoard, [
+      new SectorOnlyOneFeature( fourVertexBoard.sectors[ 0 ] ),
+    ] ),
+    FeatureSet.fromFeatures( fourVertexBoard, [
+      new SectorOnlyOneFeature( fourVertexBoard.sectors[ 0 ] ),
+      new SectorOnlyOneFeature( fourVertexBoard.sectors[ 2 ] ),
+    ] ),
+    false,
+  );
+
+  await addStaticRule( 'only-one-crossing', classicWithSectorsStyle, DisplayTiling.SQUARE, onlyOneCrossing.getBinaryIdentifier() );
+
+  // Creation of incidence
+  {
+    const oneIncident = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 1 ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 1 ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'one-incident-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, oneIncident.getBinaryIdentifier() );
+
+    const twoIncident = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'two-incident-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, twoIncident.getBinaryIdentifier() );
+
+    const threeIncident = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 3 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 10 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 3 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 10 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'three-incident-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, threeIncident.getBinaryIdentifier() );
+
+    const simpleIncident = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 0 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 3 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 0 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'simple-incident-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, simpleIncident.getBinaryIdentifier() );
+  }
+
+  // Use of incidence
+  {
+    const oneIncidentReverse = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 1 ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 1 ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'one-incident-reverse-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, oneIncidentReverse.getBinaryIdentifier() );
+
+    const twoIncidentReverseA = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'two-incident-reverse-sector-a', classicWithSectorsStyle, DisplayTiling.SQUARE, twoIncidentReverseA.getBinaryIdentifier() );
+
+    const twoIncidentReverseB = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 2 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'two-incident-reverse-sector-b', classicWithSectorsStyle, DisplayTiling.SQUARE, twoIncidentReverseB.getBinaryIdentifier() );
+
+    const threeIncidentReverse = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 3 ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new FaceFeature( diagonalSquareBoard.faces[ 0 ], 3 ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 1 ] ),
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 2 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 10 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'three-incident-reverse-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, threeIncidentReverse.getBinaryIdentifier() );
+
+    const simpleIncidentReverseA = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 0 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'simple-incident-reverse-sector-a', classicWithSectorsStyle, DisplayTiling.SQUARE, simpleIncidentReverseA.getBinaryIdentifier() );
+
+    const simpleIncidentReverseB = new PatternRule(
+      diagonalSquareBoard,
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 0 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      FeatureSet.fromFeatures( diagonalSquareBoard, [
+        new BlackEdgeFeature( diagonalSquareBoard.edges[ 0 ] ),
+        new RedEdgeFeature( diagonalSquareBoard.edges[ 3 ] ),
+        new SectorOnlyOneFeature( diagonalSquareBoard.sectors[ 5 ] ),
+      ] ),
+      false,
+    );
+
+    await addStaticRule( 'simple-incident-reverse-sector-b', classicWithSectorsStyle, DisplayTiling.SQUARE, simpleIncidentReverseB.getBinaryIdentifier() );
+  }
+
+  await addStaticRule( 'only-one-example-a', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AAEIFBb/GyEiJv8=' );
+  await addStaticRule( 'only-one-example-b', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AAEIGyEiJv8UFv8=' );
+  await addStaticRule( 'only-one-example-c', classicStyle, DisplayTiling.SQUARE, 'square-2-3/AAILJi0v/yczNf8=' );
 } )();

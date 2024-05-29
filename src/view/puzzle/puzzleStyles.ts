@@ -265,10 +265,43 @@ export const getPureColoringPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPu
   };
 };
 
-// TODO: refactor the rest to this pattern?
 export const getClassicPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuzzleStyle => {
   return {
     ...getPartialPuzzleStyle( false, false, false, false, basicSolverFactoryProperty ),
+    theme: theme,
+
+    edgesVisibleProperty: new TinyProperty( true ),
+    edgesHaveColorsProperty: new TinyProperty( false ),
+
+    faceColorThresholdProperty: new TinyProperty( Number.POSITIVE_INFINITY ),
+
+    sectorsNextToEdgesVisibleProperty: new TinyProperty( false ),
+    sectorsTrivialVisibleProperty: new TinyProperty( false ),
+    allVertexStateVisibleProperty: new TinyProperty( false ),
+
+
+    whiteLineVisibleProperty: new TinyProperty( false ),
+
+    redLineVisibleProperty: redLineVisibleProperty,
+
+    verticesVisibleProperty: new TinyProperty( true ),
+    smallVertexProperty: new TinyProperty( false ),
+
+    redXsVisibleProperty: new TinyProperty( true ),
+    redXsAlignedProperty: new TinyProperty( false ),
+
+    faceValueStyleProperty: faceValueStyleProperty,
+
+    redLineStyleProperty: new TinyProperty( 'middle' ),
+    vertexStyleProperty: new TinyProperty( 'square' ),
+    joinedLinesJoinProperty: new TinyProperty( 'miter' ),
+    joinedLinesCapProperty: new TinyProperty( 'square' )
+  };
+};
+
+export const getClassicWithSectorsPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuzzleStyle => {
+  return {
+    ...getPartialPuzzleStyle( false, true, false, false, basicSolverFactoryProperty ),
     theme: theme,
 
     edgesVisibleProperty: new TinyProperty( true ),

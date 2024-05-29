@@ -22,25 +22,25 @@ export class SectorViewNode extends Node {
   ) {
 
     const sectorNotZeroPath = new Path( null, {
-      lineWidth: 0.015,
+      lineWidth: 0.025,
       lineCap: 'butt',
       stroke: SectorNode.getStrokeFromStyle( SectorState.NOT_ZERO, style ),
     } );
 
     const sectorNotOnePath = new Path( null, {
-      lineWidth: 0.01,
+      lineWidth: 0.025,
       lineCap: 'butt',
       stroke: SectorNode.getStrokeFromStyle( SectorState.NOT_ONE, style ),
     } );
 
     const sectorNotTwoPath = new Path( null, {
-      lineWidth: 0.015,
+      lineWidth: 0.025,
       lineCap: 'butt',
       stroke: SectorNode.getStrokeFromStyle( SectorState.NOT_TWO, style ),
     } );
 
     const sectorOnlyOnePath = new Path( null, {
-      lineWidth: 0.01,
+      lineWidth: 0.025,
       lineCap: 'butt',
       stroke: SectorNode.getStrokeFromStyle( SectorState.ONLY_ONE, style ),
     } );

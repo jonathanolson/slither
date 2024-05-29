@@ -447,6 +447,103 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
 
 <h2>Parity and Sectors</h2>
 
+<p>
+  It is useful to mark sectors (adjacent pairs of potential lines) with a few properties. The most powerful marking
+  says that "exactly one of these will be a line, and the other will be an X". We denote this below by drawing a
+  red curve between the two potential lines.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="only-one-across-two" class="example-div"></div>
+    <span class="caption">
+      If a pair of edges of a 2 will have exactly one line, then the <em>other</em> pair will <em>also</em> have exactly one line.
+    </span>
+  </div>
+</div>
+
+<p>
+  On square grids, this property also applies across a dot to the opposite sector:
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="only-one-crossing" class="example-div"></div>
+    <span class="caption">
+      If a pair of edges of a 2 will have exactly one line, then the <em>other</em> pair will <em>also</em> have exactly one line.
+    </span>
+  </div>
+</div>
+
+<p>
+  This type of parity arises naturally in many common situations:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="one-incident-sector" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-incident-sector" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="three-incident-sector" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="simple-incident-sector" class="example-div"></div>
+  </div>
+</div>
+
+<p>
+  It is particularly powerful, not just because it can propagate across 2s, but many of the reverse cases directly
+  deduce lines or X's:
+</p>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="one-incident-reverse-sector" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-incident-reverse-sector-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-incident-reverse-sector-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="three-incident-reverse-sector" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="simple-incident-reverse-sector-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="simple-incident-reverse-sector-b" class="example-div"></div>
+  </div>
+</div>
+
+<p>
+  Whenever there is a line or an X in a sector with "only one" line, you can immediately mark the opposite!
+</p>
+
+<p>
+  The only-one sector can solve the following example patterns, but much more:
+</p>
+
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="only-one-example-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="only-one-example-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="only-one-example-c" class="example-div"></div>
+  </div>
+</div>
+
+
+
+
 <h2>Alternative Representations</h2>
 
 <h2>Alternative Tilings</h2>
