@@ -7,8 +7,6 @@ import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
-import { Shape } from 'phet-lib/kite';
-import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
 
 export type FaceNodeOptions = {
@@ -37,12 +35,6 @@ export class FaceNode extends Node {
     }, providedOptions );
 
     super( {} );
-
-    const pointerArea = Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
-    this.mouseArea = pointerArea;
-    this.touchArea = pointerArea;
-
-    !options.noninteractive && hookPuzzleListeners( face, this, options.facePressListener );
 
     const text = new RichText( '', combineOptions<RichTextOptions>( {
       subScale: 0.7

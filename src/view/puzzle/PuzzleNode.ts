@@ -6,7 +6,6 @@ import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
 import { VertexNode } from './VertexNode.ts';
-import { FaceNode } from './FaceNode.ts';
 import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
@@ -28,6 +27,8 @@ import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
 import { SectorViewNode } from './SectorViewNode.ts';
 import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
 import { FaceStateViewNode } from './FaceStateViewNode.ts';
+import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
+import { FaceViewNode } from './FaceViewNode.ts';
 
 type SelfOptions = {
   textOptions?: TextOptions;
@@ -115,9 +116,11 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
 
     faceColorContainer.addChild( new FaceColorViewNode( puzzle.board, puzzle.stateProperty, style ) );
 
-    puzzle.board.faces.forEach( face => {
-      faceContainer.addChild( new FaceNode( face, puzzle.stateProperty, style, options ) );
-    } );
+    faceContainer.addChild( new FaceViewNode( puzzle.board, puzzle.stateProperty, style, options ) );
+
+    if ( !options.noninteractive ) {
+      faceContainer.addChild( new FaceViewInteractionNode( puzzle.board, options ) );
+    }
 
     faceStateContainer.addChild( new FaceStateViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
