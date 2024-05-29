@@ -404,4 +404,32 @@ const addStaticRule = async ( id: string, style: TPuzzleStyle, displayTiling: Di
   await addStaticRule( 'only-one-example-a', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AAEIFBb/GyEiJv8=' );
   await addStaticRule( 'only-one-example-b', classicStyle, DisplayTiling.SQUARE, 'square-1-0/AAEIGyEiJv8UFv8=' );
   await addStaticRule( 'only-one-example-c', classicStyle, DisplayTiling.SQUARE, 'square-2-3/AAILJi0v/yczNf8=' );
+
+  await addStaticRule( 'two-spike-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIR/xoiGCD/' );
+  await addStaticRule( 'not-one-propagation', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-4-exit-two-opposite/AA4Q/xT/' );
+  await addStaticRule( 'two-spike-from-sector', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIW/x4cJP8=' );
+
+  await addStaticRule( 'one-not-two', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAH/FxsfI/8=' );
+  await addStaticRule( 'three-not-zero', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAP/FRkdIf8=' );
+  await addStaticRule( 'not-zero-not-two-propagation', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-4-exit-two-opposite/AA//Ff8=' );
+
+  await addStaticRule( 'second-diagonal-three', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-1-0/AAMI/xUXGyEiJCb/' );
+
+  await addStaticRule( 'line-not-two', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-3-exit-two-adjacent/AAX/Ef8=' );
+  await addStaticRule( 'adjacent-not-one', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-3-exit-two-adjacent/AAz/Ef8=' );
+  await addStaticRule( 'not-zero-three-edge', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-3-exit-two-adjacent/AAoL/w//' );
+  await addStaticRule( 'not-two-double', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-3-exit-two-adjacent/AAoNEf8G/w==' );
+  await addStaticRule( 'adjacent-propagation', classicWithSectorsStyle, DisplayTiling.SQUARE, 'vertex-4-exit-three-adjacent/AA0SEP8W/w==' );
+  await addStaticRule( 'two-partial-sector-a', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIJ/xkd/w==' );
+  await addStaticRule( 'two-partial-sector-b', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIK/xsf/w==' );
+  await addStaticRule( 'no-sector-loop', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAoM/xIf/w==' );
+  await addStaticRule( 'two-sector-prop-a', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIX/x3/' );
+  await addStaticRule( 'two-sector-prop-b', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AAIV/x//' );
+
+  await addStaticRule( 'sector-parity-a', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/ABkXH/8j/w==' );
+  await addStaticRule( 'sector-parity-b', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/ABUdG/8h/w==' );
+  await addStaticRule( 'sector-parity-c', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/ABYe/xsj/w==' );
+  await addStaticRule( 'sector-parity-d', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/ABYa/x8j/w==' );
+  await addStaticRule( 'sector-parity-e', classicWithSectorsStyle, DisplayTiling.SQUARE, 'square-0-0/AA4W/yP/' );
+
 } )();

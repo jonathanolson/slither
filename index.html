@@ -445,7 +445,9 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
 </div>
 
 
-<h2>Parity and Sectors</h2>
+<h2>Sectors and Parity</h2>
+
+<h3>Only One</h3>
 
 <p>
   It is useful to mark sectors (adjacent pairs of potential lines) with a few properties. The most powerful marking
@@ -474,6 +476,10 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
     </span>
   </div>
 </div>
+
+<p>
+  Thus the only-one sector property will propagate across a chain of diagonally-connected 2s (in a square grid)!
+</p>
 
 <p>
   This type of parity arises naturally in many common situations:
@@ -541,8 +547,193 @@ Building a Slitherlink app that pushes the boundaries of puzzle solving on both 
   </div>
 </div>
 
+<h3>Not One</h3>
 
+<p>
+  A dual to the "only one" sector is the "not one" sector. This is a sector where either both are lines or both are X's.
+  We will mark this with two blue curves between the two potential lines.
+</p>
 
+<div class="examples">
+  <div class="example">
+    <div id="two-spike-sector" class="example-div"></div>
+    <span class="caption">
+      This comes up most naturally with 2-in-a-corner pattern. Note that this also includes only-one sectors, and
+      can be incredibly constraining. In this case, the upper-left of the 2 ALSO has the not-one sector property, but
+      isn't marked visually by the system due to the triviality (only two places for lines).
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="not-one-propagation" class="example-div"></div>
+    <span class="caption">
+      Not-one sectors propagate across dots in square grids.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="two-spike-from-sector" class="example-div"></div>
+    <span class="caption">
+      Not-one sectors also create the 2-in-a-corner pattern.
+    </span>
+  </div>
+</div>
+
+<p>
+  Using the above patterns, it follows that any diagonal chain of 2s will propagate the not-one sector property across
+  the entire chain!
+</p>
+
+<h3>Not Two and Not Zero</h3>
+
+<p>
+  Similarly, we can mark sectors when we can rule out two lines or zero lines. We will mark not-two with a single dashed
+  orange curve, and not-zero with a double dashed green curve.
+</p>
+
+<div class="examples">
+  <div class="example">
+    <div id="one-not-two" class="example-div"></div>
+    <span class="caption">
+      Not-two sectors naturally form around a 1.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="three-not-zero" class="example-div"></div>
+    <span class="caption">
+      Not-zero sectors naturally form around a 3.
+    </span>
+  </div>
+</div>
+
+<div class="examples">
+  <div class="example">
+    <div id="not-zero-not-two-propagation" class="example-div"></div>
+    <span class="caption">
+      If a sector is a not-zero, then any opposite sector is a not-two.
+    </span>
+  </div>
+</div>
+
+<h3>Sector Combinations</h3>
+
+<p>
+  When rules overlap and you would mark multiple sectors on a single pair of potential lines, you can combine them into
+  more precise states:
+</p>
+
+<ul>
+  <li>
+    Not-zero (green) and not-one (blue) => both are lines!
+  </li>
+  <li>
+    Not-two (orange) and not-one (blue) => both are X's!
+  </li>
+  <li>
+    Not-zero (green) and not-two (orange) => only-one (red)
+  </li>
+</ul>
+
+<div class="examples">
+  <div class="example">
+    <div id="second-diagonal-three" class="example-div"></div>
+    <span class="caption">
+      This rule can be directly derived from the above sectors rules directly. Each 3 creates not-zero sectors,
+      and the not-two sectors propagate across the diagonal. Since each pair of potential lines has not-zero and not-two,
+      it is equivalent to only-one. Previous sectors rules show what only-one with a 3 combines into.
+    </span>
+  </div>
+</div>
+
+<h3>Common Sector Patterns</h3>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="line-not-two" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="adjacent-not-one" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="not-zero-three-edge" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="not-two-double" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="adjacent-propagation" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-partial-sector-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-partial-sector-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="no-sector-loop" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-sector-prop-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="two-sector-prop-b" class="example-div"></div>
+  </div>
+</div>
+
+<h3>Parity</h3>
+
+<p>
+  The following rules are very powerful when combined. They represent the concept of <a href="https://en.wikipedia.org/wiki/Parity_(mathematics)">parity</a>,
+  in general the concept of even/odd.
+</p>
+
+<p>
+  Most notably, if all but one sector of a square are marked with only-one or not-one, you can deduce the last sector!
+  If you look at any closed region in the puzzle (e.g. a square, but it can be arbitrary), the number of times the
+  final loop will cross it <strong>will be even</strong>. Every only-one sector is a "crossing" of our square, and
+  every not-one sector is a "non-crossing".
+</p>
+
+<p>
+  For example, in a square:
+</p>
+
+<ul>
+  <li>
+    Three only-one sectors => four only-one sectors (last corner is only-one)
+  </li>
+  <li>
+    Three not-one sectors => four not-one sectors (last corner is not-one)
+  </li>
+  <li>
+    Two not-one sectors and one only-one sector => two of each (last corner is only-one)
+  </li>
+</ul>
+
+<div class="examples examples-flex">
+  <div class="example">
+    <div id="sector-parity-a" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="sector-parity-b" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="sector-parity-c" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="sector-parity-d" class="example-div"></div>
+  </div>
+  <div class="example">
+    <div id="sector-parity-e" class="example-div"></div>
+  </div>
+</div>
 
 <h2>Alternative Representations</h2>
 
