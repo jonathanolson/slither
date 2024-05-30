@@ -1,5 +1,14 @@
 
 - 
+  - Windows long term:
+    - general color unrestricted
+    - general edge sector unrestricted
+    - general edge color unrestricted
+    - square only edge unrestricted
+    - square only edge color unrestricted
+    - square only edge
+    - general edge unrestricted
+  - 
   - Generation Failures
     - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
         - getImpliedGeneralBoardRules 2 47,48 (MEMORY FAILURES minisat) 
