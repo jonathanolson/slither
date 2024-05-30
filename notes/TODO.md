@@ -10,12 +10,21 @@
   - 
   - 
   - Priorities:
+    - Check UI options from https://www.puzzles-mobile.com/loop/random/15x15-hard
+      - 
     - DRAG LINES mode (draw multiple segments with the mouse) - test out alternatives on desktop(!)
+    - Multiple modes:
+      - draw-only (drag) - pan/zoom with two fingers
+      - hybrid (delay?)
+      - pan-only
     - Disable "eager error" indication (scary red bars)
       - Try the "exploration" of other things mode
     - Solve the "quick double tap" issue
     - 
     - Puzzle generation using pattern-based difficulty
+    - 
+    - Write up "topological simplification"
+    - 
     - Fix (quickly) the Face Value display (static/remaining/ratio), so it can be more visible up top
       - Get ComboBox working with phet-lib working nicely.
     - Index page slow to load
