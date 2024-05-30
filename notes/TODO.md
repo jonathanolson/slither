@@ -25,6 +25,8 @@
     - 
     - Write up "topological simplification"
     - 
+    - "Wrapping" (toroidal) puzzles, infinite, with DAG handling
+    - 
     - Fix (quickly) the Face Value display (static/remaining/ratio), so it can be more visible up top
       - Get ComboBox working with phet-lib working nicely.
     - Index page slow to load
