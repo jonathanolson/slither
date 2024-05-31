@@ -11,23 +11,54 @@
   - 
   - Priorities:
     - Check UI options from https://www.puzzles-mobile.com/loop/random/15x15-hard
-      - 
-    - DRAG LINES mode (draw multiple segments with the mouse) - test out alternatives on desktop(!)
+      - Has "board coordinates" like a chessboard
+      - Delayed (simple) auto-solve
+    - 
+    - Drag lines
+      - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
+      - May want to separate "hit" areas a bit, to prevent accidental bits?
+      - Compatibility with pan/zoom:
+        - Modes:
+          - Pan-only (old style)
+          - Drag lines
+          - Hybrid.... how? delays?
+            - Middle mouse to pan... but what on mobile?
+        - Minimap (draggable?)
+        - ARROW KEYS? (SC2 style)
+    - 
+    - Allow guessing better
+      - Option for whether "wrong numbers" are highlighted
+      - Option for whether "wrong moves" / invalid state are highlighted
+        - GET BETTER HIGHLIGHTING
+      - Check Solution button
+        - a: has errors
+        - b: no errors, but incomplete
+        - c: solved!
+    - 
+    - Add a "clear line" option?
+    - 
     - Multiple modes:
       - draw-only (drag) - pan/zoom with two fingers
       - hybrid (delay?)
       - pan-only
     - Disable "eager error" indication (scary red bars)
       - Try the "exploration" of other things mode
-    - Solve the "quick double tap" issue
+    - Solve the "quick double tap" issue (due to auto solve)
+      - HOW?
+    - 
     - 
     - Puzzle generation using pattern-based difficulty
     - 
-    - Write up "topological simplification"
+    - Doc/index:
+      - Write up "topological simplification"
+      - Show the "no 1 or 3 or 4 lines per dot"
     - 
     - "Wrapping" (toroidal) puzzles, infinite, with DAG handling
     - 
     - Get Alpenglow CAG working... we could use it ALL OVER THE PLACE
+    - 
+    - Tutorial:
+      - simplest example first
     - 
     - Fix (quickly) the Face Value display (static/remaining/ratio), so it can be more visible up top
       - Get ComboBox working with phet-lib working nicely.
@@ -40,7 +71,7 @@
         - (for good serialization, store the face values in the SAME visual order ())
           - top "row" first, left-to-right, then next row, etc.
           - Use epsilons for face centroid comparisons to see what rows we have? (or do an almost-imperceptible rotation, then just inspect Y?)
-    - 3 solver bits:
+    - Solver bits:
       - Region (it's the most-often used one)
       - Low-depth backtrack? (with current things + regions + patterns, we handle everything, stop making tiny solvers)
         - Examine all cases, see what uses "less difficulty" (simpler rules)
