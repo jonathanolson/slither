@@ -82,7 +82,6 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
         createNode: () => edgeIcon,
         options: {
           visibleProperty: EditMode.EDGE_STATE.isEnabledProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -91,7 +90,6 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
         createNode: () => edgeReversedIcon,
         options: {
           visibleProperty: EditMode.EDGE_STATE_REVERSED.isEnabledProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -100,7 +98,6 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
         createNode: () => faceColorMatchIcon,
         options: {
           visibleProperty: EditMode.FACE_COLOR_MATCH.isEnabledProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -109,7 +106,6 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
         createNode: () => faceColorOppositeIcon,
         options: {
           visibleProperty: EditMode.FACE_COLOR_OPPOSITE.isEnabledProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -118,10 +114,12 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
         createNode: () => sectorIcon,
         options: {
           visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty,
-          inputListeners: [ tooltipListener ],
         }
       }
     ] );
+
+    // TODO: target buttons more directly?
+    this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
     options.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );

@@ -44,7 +44,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => basicLinesIcon,
         labelContent: 'Basic Lines',
         options: {
-          inputListeners: [ tooltipListener ],
         },
       },
       {
@@ -52,7 +51,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => basicFaceColoringIcon,
         labelContent: 'Basic Face Colors',
         options: {
-          inputListeners: [ tooltipListener ],
         },
       },
       {
@@ -60,7 +58,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => pureFaceColoringIcon,
         labelContent: 'Pure Face Colors',
         options: {
-          inputListeners: [ tooltipListener ],
         },
       },
       {
@@ -68,7 +65,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => classicIcon,
         labelContent: 'Classic',
         options: {
-          inputListeners: [ tooltipListener ],
         },
       },
       {
@@ -77,7 +73,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         labelContent: 'Basic Sectors',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -86,7 +81,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         labelContent: 'Sectors With Colors',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -95,7 +89,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         labelContent: 'Sectors With Colors',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -104,7 +97,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         labelContent: 'Sectors With Colors',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
-          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -113,10 +105,12 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         labelContent: 'Custom',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
-          inputListeners: [ tooltipListener ],
         }
       }
     ] );
+
+    // TODO: target buttons more directly?
+    this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
     options.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );

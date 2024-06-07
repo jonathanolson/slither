@@ -1,6 +1,5 @@
 import { stepTimer, TimerListener, TReadOnlyProperty } from 'phet-lib/axon';
 import { Node, Pointer, SceneryEvent, Text, TInputListener } from 'phet-lib/scenery';
-import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { Panel } from 'phet-lib/sun';
 import { tooltipFont } from './Theme.ts';
@@ -54,15 +53,14 @@ export class TooltipListener implements TInputListener {
   }
 
   public enter( event: SceneryEvent<MouseEvent | TouchEvent | PointerEvent> ): void {
-    const node = event.currentTarget!;
-    assertEnabled() && assert( node );
+    const node = event.currentTarget;
+
+    const label = this.tooltipTextOverride ?? node?.labelContent ?? node?.accessibleName;
 
     const pointer = event.pointer;
 
-    if ( this.timerListener === null ) {
+    if ( node && label && this.timerListener === null ) {
       this.timerListener = stepTimer.setTimeout( () => {
-        const label = this.tooltipTextOverride ?? node?.labelContent ?? node?.accessibleName;
-        assertEnabled() && assert( label );
 
         this.showTooltip( label!, node, pointer );
       }, 200 );

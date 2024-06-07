@@ -101,7 +101,6 @@ export default class ControlBarNode extends HBox {
           },
           enabledProperty: undoEnabledProperty,
           visibleProperty: showUndoRedoAllProperty,
-          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Undo',
@@ -113,7 +112,6 @@ export default class ControlBarNode extends HBox {
           },
           enabledProperty: undoEnabledProperty,
           fireOnHold: true,
-          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo',
@@ -125,7 +123,6 @@ export default class ControlBarNode extends HBox {
           },
           enabledProperty: redoEnabledProperty,
           fireOnHold: true,
-          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo All',
@@ -137,7 +134,6 @@ export default class ControlBarNode extends HBox {
           },
           enabledProperty: redoEnabledProperty,
           visibleProperty: showUndoRedoAllProperty,
-          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Settings',
@@ -147,7 +143,6 @@ export default class ControlBarNode extends HBox {
 
             settingsNode.show();
           },
-          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Share',
@@ -162,7 +157,6 @@ export default class ControlBarNode extends HBox {
               shareNode.show();
             }
           },
-          inputListeners: [ tooltipListener ],
         } ) ),
         new TextPushButton( 'Solve', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Solve',
@@ -202,6 +196,8 @@ export default class ControlBarNode extends HBox {
         } ) ),
       ]
     } );
+
+    this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
     options.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
