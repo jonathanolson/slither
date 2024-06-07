@@ -5,9 +5,11 @@ import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
 import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
+import { TooltipListener } from './TooltipListener.ts';
 
 export type EditModeBarNodeOptions = {
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
+  glassPane: Node;
 };
 
 // TODO: support a background node with more complexity in the future?
@@ -71,45 +73,52 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
       ]
     } );
 
+    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
+
     super( editModeProperty, [
       {
         value: EditMode.EDGE_STATE,
-        labelContent: 'Edge',
+        labelContent: 'Edge Edit Mode',
         createNode: () => edgeIcon,
         options: {
-          visibleProperty: EditMode.EDGE_STATE.isEnabledProperty
+          visibleProperty: EditMode.EDGE_STATE.isEnabledProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
         value: EditMode.EDGE_STATE_REVERSED,
-        labelContent: 'Edge Reversed',
+        labelContent: 'Edge Reversed Edit Mode',
         createNode: () => edgeReversedIcon,
         options: {
-          visibleProperty: EditMode.EDGE_STATE_REVERSED.isEnabledProperty
+          visibleProperty: EditMode.EDGE_STATE_REVERSED.isEnabledProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
         value: EditMode.FACE_COLOR_MATCH,
-        labelContent: 'Face Color Match',
+        labelContent: 'Face Color Match Edit Mode',
         createNode: () => faceColorMatchIcon,
         options: {
-          visibleProperty: EditMode.FACE_COLOR_MATCH.isEnabledProperty
+          visibleProperty: EditMode.FACE_COLOR_MATCH.isEnabledProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
         value: EditMode.FACE_COLOR_OPPOSITE,
-        labelContent: 'Face Color Opposite',
+        labelContent: 'Face Color Opposite Edit Mode',
         createNode: () => faceColorOppositeIcon,
         options: {
-          visibleProperty: EditMode.FACE_COLOR_OPPOSITE.isEnabledProperty
+          visibleProperty: EditMode.FACE_COLOR_OPPOSITE.isEnabledProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
         value: EditMode.SECTOR_STATE,
-        labelContent: 'Sector',
+        labelContent: 'Sector Edit Mode',
         createNode: () => sectorIcon,
         options: {
-          visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty
+          visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty,
+          inputListeners: [ tooltipListener ],
         }
       }
     ] );

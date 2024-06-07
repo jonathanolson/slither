@@ -12,9 +12,11 @@ import { VertexStateNode } from './puzzle/VertexStateNode.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { FaceStateNode } from './puzzle/FaceStateNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
+import { TooltipListener } from './TooltipListener.ts';
 
 export type ViewStyleBarNodeOptions = {
   layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
+  glassPane: Node;
 };
 
 export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuzzleStyle> {
@@ -33,34 +35,49 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
       customIcon
     } = ViewStyleBarNode.getIcons();
 
+    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
+
     // TODO: deduplicate with the bit in Settings?
     super( puzzleStyleProperty, [
       {
         value: basicLinesPuzzleStyle,
         createNode: () => basicLinesIcon,
-        labelContent: 'Basic Lines'
+        labelContent: 'Basic Lines',
+        options: {
+          inputListeners: [ tooltipListener ],
+        },
       },
       {
         value: basicFaceColoringPuzzleStyle,
         createNode: () => basicFaceColoringIcon,
-        labelContent: 'Basic Face Colors'
+        labelContent: 'Basic Face Colors',
+        options: {
+          inputListeners: [ tooltipListener ],
+        },
       },
       {
         value: pureFaceColorPuzzleStyle,
         createNode: () => pureFaceColoringIcon,
-        labelContent: 'Pure Face Colors'
+        labelContent: 'Pure Face Colors',
+        options: {
+          inputListeners: [ tooltipListener ],
+        },
       },
       {
         value: classicPuzzleStyle,
         createNode: () => classicIcon,
-        labelContent: 'Classic'
+        labelContent: 'Classic',
+        options: {
+          inputListeners: [ tooltipListener ],
+        },
       },
       {
         value: basicSectorsPuzzleStyle,
         createNode: () => basicSectorsIcon,
         labelContent: 'Basic Sectors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty
+          visibleProperty: advancedSettingsVisibleProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -68,7 +85,8 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => sectorsWithColorsIcon,
         labelContent: 'Sectors With Colors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty
+          visibleProperty: advancedSettingsVisibleProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -76,7 +94,8 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => vertexStateIcon,
         labelContent: 'Sectors With Colors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty
+          visibleProperty: advancedSettingsVisibleProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -84,7 +103,8 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => faceStateIcon,
         labelContent: 'Sectors With Colors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty
+          visibleProperty: advancedSettingsVisibleProperty,
+          inputListeners: [ tooltipListener ],
         }
       },
       {
@@ -92,7 +112,8 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => customIcon,
         labelContent: 'Custom',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty
+          visibleProperty: advancedSettingsVisibleProperty,
+          inputListeners: [ tooltipListener ],
         }
       }
     ] );

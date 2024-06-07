@@ -19,6 +19,8 @@
     - 
     - Get a "dev" testing setup.
     - 
+    - EditModeBarNodeOptions and such should just be a ViewContext type(!)
+    - 
     - [nowayjay] Add a "clear line" option?
     - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
@@ -42,7 +44,7 @@
       - How to signal this for the browser?
       - Maybe... also just pregenerate a bunch of puzzles?
     - 
-    - [gerelth + nowayjay] Allow guessing better
+    - [gereleth + nowayjay] Allow guessing better
       - [gerelith] Auto-solve (on error) finds minimal paths to each error (or the closest one?) and shows only that
         - Can we store what patterns "relied" on, so that we can see what is "minimal"?
       - [jagomu] Auto-solve delay + animation speed (so it can animate in the consequences)
@@ -63,6 +65,8 @@
         - c: solved!
     - 
     - [nowayjay] Tooltips on hover (for controls)
+      - timer on "enter", clear it on exit
+      - if timer goes off, show pickable:false tooltip... a certain amount under the mouse if possible, but keep in view bounds
     - 
     - 
     - 

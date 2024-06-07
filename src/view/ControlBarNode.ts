@@ -13,6 +13,7 @@ import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { ShareNode } from './ShareNode.ts';
 import { GenNode } from './GenNode.ts';
+import { TooltipListener } from './TooltipListener.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
@@ -27,6 +28,8 @@ export default class ControlBarNode extends HBox {
     public readonly puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null>,
     options: ControlBarNodeOptions
   ) {
+
+    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
 
     const falseProperty = new BooleanProperty( false );
 
@@ -97,7 +100,8 @@ export default class ControlBarNode extends HBox {
             }
           },
           enabledProperty: undoEnabledProperty,
-          visibleProperty: showUndoRedoAllProperty
+          visibleProperty: showUndoRedoAllProperty,
+          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Undo',
@@ -108,7 +112,8 @@ export default class ControlBarNode extends HBox {
             }
           },
           enabledProperty: undoEnabledProperty,
-          fireOnHold: true
+          fireOnHold: true,
+          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo',
@@ -119,7 +124,8 @@ export default class ControlBarNode extends HBox {
             }
           },
           enabledProperty: redoEnabledProperty,
-          fireOnHold: true
+          fireOnHold: true,
+          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo All',
@@ -130,7 +136,8 @@ export default class ControlBarNode extends HBox {
             }
           },
           enabledProperty: redoEnabledProperty,
-          visibleProperty: showUndoRedoAllProperty
+          visibleProperty: showUndoRedoAllProperty,
+          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Settings',
@@ -139,7 +146,8 @@ export default class ControlBarNode extends HBox {
             settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
 
             settingsNode.show();
-          }
+          },
+          inputListeners: [ tooltipListener ],
         } ) ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Share',
@@ -153,7 +161,8 @@ export default class ControlBarNode extends HBox {
 
               shareNode.show();
             }
-          }
+          },
+          inputListeners: [ tooltipListener ],
         } ) ),
         new TextPushButton( 'Solve', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Solve',

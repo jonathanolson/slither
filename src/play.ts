@@ -114,11 +114,13 @@ const controlBarNode = new ControlBarNode( puzzleModelProperty, {
 } );
 
 const editModeBarNode = new EditModeBarNode( {
-  layoutBoundsProperty: layoutBoundsProperty
+  layoutBoundsProperty: layoutBoundsProperty,
+  glassPane: glassPane,
 } );
 
 const viewStyleBarNode = new ViewStyleBarNode( {
-  layoutBoundsProperty: layoutBoundsProperty
+  layoutBoundsProperty: layoutBoundsProperty,
+  glassPane: glassPane,
 } );
 
 const hintTip = new HintTipNode( displayedAnnotationProperty );

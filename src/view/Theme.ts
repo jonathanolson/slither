@@ -453,6 +453,11 @@ export const generateButtonFont = new Font( {
   size: 25
 } );
 
+export const tooltipFont = new Font( {
+  family: uiFontFamily,
+  size: 12
+} );
+
 export const customAllowEdgeEditProperty = new LocalStorageBooleanProperty( 'customAllowEdgeEditProperty', true );
 export const customAllowFaceColorEditProperty = new LocalStorageBooleanProperty( 'customAllowFaceColorEditProperty', true );
 export const customAllowSectorEditProperty = new LocalStorageBooleanProperty( 'customAllowSectorEditProperty', true );
