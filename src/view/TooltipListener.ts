@@ -52,6 +52,13 @@ export class TooltipListener implements TInputListener {
     }
   }
 
+  private clearListener(): void {
+    if ( this.timerListener ) {
+      stepTimer.clearTimeout( this.timerListener );
+      this.timerListener = null;
+    }
+  }
+
   public enter( event: SceneryEvent<MouseEvent | TouchEvent | PointerEvent> ): void {
     const node = event.currentTarget;
 
@@ -68,10 +75,12 @@ export class TooltipListener implements TInputListener {
   }
 
   public exit( event: SceneryEvent<MouseEvent | TouchEvent | PointerEvent> ): void {
-    if ( this.timerListener ) {
-      stepTimer.clearTimeout( this.timerListener );
-      this.timerListener = null;
-    }
+    this.clearListener();
+    this.hideTooltip();
+  }
+
+  public dispose(): void {
+    this.clearListener();
     this.hideTooltip();
   }
 }
