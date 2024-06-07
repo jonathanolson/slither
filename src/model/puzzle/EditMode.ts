@@ -13,20 +13,20 @@ export default class EditMode extends EnumerationValue {
   }
 
   public static readonly EDGE_STATE = new EditMode(
-    new BooleanProperty( true )
+    currentPuzzleStyle.allowEdgeEditProperty,
   );
   public static readonly EDGE_STATE_REVERSED = new EditMode(
-    new BooleanProperty( true ) // TODO: consider disabling this on desktop?
+    currentPuzzleStyle.allowEdgeEditProperty,
   );
   // TODO: more fine-grained control(!), so we can remove some that would normally be there.
   public static readonly FACE_COLOR_MATCH = new EditMode(
-    currentPuzzleStyle.faceColorsVisibleProperty
+    currentPuzzleStyle.allowFaceColorEditProperty
   );
   public static readonly FACE_COLOR_OPPOSITE = new EditMode(
-    currentPuzzleStyle.faceColorsVisibleProperty
+    currentPuzzleStyle.allowFaceColorEditProperty
   );
   public static readonly SECTOR_STATE = new EditMode(
-    currentPuzzleStyle.sectorsVisibleProperty
+    currentPuzzleStyle.allowSectorEditProperty
   );
   public static readonly VERTEX_STATE = new EditMode(
     currentPuzzleStyle.vertexStateVisibleProperty

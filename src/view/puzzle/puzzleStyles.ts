@@ -5,7 +5,7 @@ import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
 import { CompositeSolver } from '../../model/solver/CompositeSolver.ts';
 import { TAnnotatedAction } from '../../model/data/core/TAnnotatedAction.ts';
 import { SimpleFaceColorSolver } from '../../model/solver/SimpleFaceColorSolver.ts';
-import { allVertexStateVisibleProperty, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeFromProperty, TRuntimeTheme, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty } from '../Theme.ts';
+import { allVertexStateVisibleProperty, currentTheme, customAllowEdgeEditProperty, customAllowFaceColorEditProperty, customAllowSectorEditProperty, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, joinedLinesCapProperty, joinedLinesJoinProperty, redLineStyleProperty, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeFromProperty, TRuntimeTheme, vertexStateVisibleProperty, vertexStyleProperty, verticesVisibleProperty, whiteLineVisibleProperty } from '../Theme.ts';
 import { autoSolverFactoryProperty, autoSolveSimpleLoopsProperty, autoSolveToBlackProperty } from '../../model/solver/autoSolver.ts';
 import { LocalStorageBooleanProperty, LocalStorageProperty } from '../../util/localStorage.ts';
 import { StaticSectorSolver } from '../../model/solver/StaticSectorSolver.ts';
@@ -17,6 +17,11 @@ import { TPuzzleStyle } from './TPuzzleStyle.ts';
 import { getSafeSolverFactory } from '../../model/solver/getSafeSolverFactory.ts';
 
 export const customPuzzleStyle: TPuzzleStyle = {
+
+  allowEdgeEditProperty: customAllowEdgeEditProperty,
+  allowFaceColorEditProperty: customAllowFaceColorEditProperty,
+  allowSectorEditProperty: customAllowSectorEditProperty,
+
   edgesVisibleProperty: edgesVisibleProperty,
   edgesHaveColorsProperty: edgesHaveColorsProperty,
 
@@ -160,6 +165,10 @@ export const getBasicLinesPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuzz
 
     // TODO: Dynamically update what edit bar actions are available to match
 
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( false ),
+    allowSectorEditProperty: new TinyProperty( false ),
+
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( true ),
 
@@ -194,6 +203,10 @@ export const getBasicColoringPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TP
   return {
     ...getPartialPuzzleStyle( true, false, false, false, basicWithColorToEdgeSolverFactoryProperty ),
     theme: theme,
+
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( true ),
+    allowSectorEditProperty: new TinyProperty( false ),
 
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
@@ -236,6 +249,10 @@ export const getPureColoringPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPu
     } ) ),
     theme: theme,
 
+    allowEdgeEditProperty: new TinyProperty( false ),
+    allowFaceColorEditProperty: new TinyProperty( true ),
+    allowSectorEditProperty: new TinyProperty( false ),
+
     edgesVisibleProperty: new TinyProperty( false ),
     edgesHaveColorsProperty: new TinyProperty( false ),
 
@@ -270,6 +287,10 @@ export const getClassicPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuzzleS
     ...getPartialPuzzleStyle( false, false, false, false, basicSolverFactoryProperty ),
     theme: theme,
 
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( false ),
+    allowSectorEditProperty: new TinyProperty( false ),
+
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
 
@@ -303,6 +324,10 @@ export const getClassicWithSectorsPuzzleStyleWithTheme = ( theme: TRuntimeTheme 
   return {
     ...getPartialPuzzleStyle( false, true, false, false, basicSolverFactoryProperty ),
     theme: theme,
+
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( false ),
+    allowSectorEditProperty: new TinyProperty( true ),
 
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
@@ -342,6 +367,10 @@ export const getBasicSectorsPuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPu
 
     // TODO: Dynamically update what edit bar actions are available to match
 
+
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( false ),
+    allowSectorEditProperty: new TinyProperty( true ),
 
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( true ),
@@ -383,6 +412,10 @@ export const getSectorsWithColorsPuzzleStyleWithTheme = ( theme: TRuntimeTheme )
     // TODO: Dynamically update what edit bar actions are available to match
 
 
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( true ),
+    allowSectorEditProperty: new TinyProperty( true ),
+
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
 
@@ -423,6 +456,10 @@ export const getVertexStatePuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuz
     // TODO: Dynamically update what edit bar actions are available to match
 
 
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( true ),
+    allowSectorEditProperty: new TinyProperty( false ),
+
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
 
@@ -462,6 +499,10 @@ export const getFaceStatePuzzleStyleWithTheme = ( theme: TRuntimeTheme ): TPuzzl
 
     // TODO: Dynamically update what edit bar actions are available to match
 
+
+    allowEdgeEditProperty: new TinyProperty( true ),
+    allowFaceColorEditProperty: new TinyProperty( true ),
+    allowSectorEditProperty: new TinyProperty( false ),
 
     edgesVisibleProperty: new TinyProperty( true ),
     edgesHaveColorsProperty: new TinyProperty( false ),
@@ -519,6 +560,10 @@ export const defaultPuzzleStyle = classicPuzzleStyle;
 export const puzzleStyleFromProperty = ( puzzleStyleProperty: TReadOnlyProperty<TPuzzleStyle> ): TPuzzleStyle => {
   // TODO: reduce duplication...
   return {
+    allowEdgeEditProperty: new DynamicProperty( puzzleStyleProperty, { derive: 'allowEdgeEditProperty' } ),
+    allowFaceColorEditProperty: new DynamicProperty( puzzleStyleProperty, { derive: 'allowFaceColorEditProperty' } ),
+    allowSectorEditProperty: new DynamicProperty( puzzleStyleProperty, { derive: 'allowSectorEditProperty' } ),
+
     edgesVisibleProperty: new DynamicProperty( puzzleStyleProperty, { derive: 'edgesVisibleProperty' } ),
 
     edgesHaveColorsProperty: new DynamicProperty( puzzleStyleProperty, { derive: 'edgesHaveColorsProperty' } ),

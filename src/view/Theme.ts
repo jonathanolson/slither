@@ -453,6 +453,10 @@ export const generateButtonFont = new Font( {
   size: 25
 } );
 
+export const customAllowEdgeEditProperty = new LocalStorageBooleanProperty( 'customAllowEdgeEditProperty', true );
+export const customAllowFaceColorEditProperty = new LocalStorageBooleanProperty( 'customAllowFaceColorEditProperty', true );
+export const customAllowSectorEditProperty = new LocalStorageBooleanProperty( 'customAllowSectorEditProperty', true );
+
 export const edgesVisibleProperty = new LocalStorageBooleanProperty( 'edgesVisibleProperty', true );
 export const edgesHaveColorsProperty = new LocalStorageBooleanProperty( 'edgesHaveColorsProperty', true );
 export const faceColorsVisibleProperty = new LocalStorageBooleanProperty( 'faceColorsVisibleProperty', true );

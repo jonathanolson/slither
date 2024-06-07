@@ -11,6 +11,10 @@ export interface TPuzzleModelStyle {
   readonly vertexStateVisibleProperty: TReadOnlyProperty<boolean>;
   readonly faceStateVisibleProperty: TReadOnlyProperty<boolean>;
 
+  readonly allowEdgeEditProperty: TReadOnlyProperty<boolean>;
+  readonly allowFaceColorEditProperty: TReadOnlyProperty<boolean>;
+  readonly allowSectorEditProperty: TReadOnlyProperty<boolean>;
+
   readonly safeSolverFactoryProperty: TReadOnlyProperty<AnnotatedSolverFactory<TStructure, TCompleteData>>;
   readonly autoSolverFactoryProperty: TReadOnlyProperty<AnnotatedSolverFactory<TStructure, TCompleteData>>;
 }
