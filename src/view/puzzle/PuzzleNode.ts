@@ -171,9 +171,9 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
         simpleRegionContainer,
         vertexStateContainer,
         faceStateContainer,
-        annotationContainer,
         selectedFaceColorHighlightContainer,
-        selectedSectorEditContainer
+        selectedSectorEditContainer,
+        annotationContainer,
       ]
     }, options ) );
 
