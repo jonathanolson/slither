@@ -98,7 +98,6 @@
     - 
     - Search pattern database by "draw a pattern and check for matches"!!!
     - 
-    - Bug [fast]: "color highlight" should be below hint annotations(!)
     - Bug [fast]: don't show custom options when advanced settings is... off? on?
     - Bug: rule explorer layout on phone is horrible
     - Bug: generation 2x2 when it creates a single loop around a face (e.g. 4 in square)

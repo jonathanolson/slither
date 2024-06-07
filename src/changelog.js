@@ -4,5 +4,6 @@ export const changelog = [
     'Removing face color controls on basic edge/sector view modes',
     'Added tooltips',
     'Layer hint annotations in front of selected face color',
+    'Only show custom options when custom AND advanced options are selected',
   ]
 ];

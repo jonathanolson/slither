@@ -1,4 +1,4 @@
-import { BooleanProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveDoubleMinusOneFacesProperty, autoSolveEnabledProperty, autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToFaceColorsProperty, autoSolveFaceToRedProperty, autoSolveFaceToSectorsProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopsProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleSectorProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveStaticFaceSectorProperty, autoSolveToBlackProperty, autoSolveVertexColorToFaceProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToSectorsProperty } from '../model/solver/autoSolver';
@@ -316,6 +316,7 @@ export class SettingsNode extends PopupNode {
     } );
 
     const showCustomProperty = new BooleanProperty( false );
+    const customVisibleProperty = DerivedProperty.and( [ advancedSettingsVisibleProperty, showCustomProperty ] );
 
     const viewStyleIcons = ViewStyleBarNode.getIcons();
     const getViewLabel = ( icon: Node, text: string ) => new HBox( {
@@ -411,7 +412,7 @@ export class SettingsNode extends PopupNode {
         } ),
         displayNode,
       ],
-      visibleProperty: showCustomProperty
+      visibleProperty: customVisibleProperty
     } );
 
     const reloadToDefaultsButton = new UITextPushButton( 'Reload to Defaults', {
