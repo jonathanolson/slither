@@ -17,6 +17,17 @@
     - Changelog it? Since multiple people are paying attention
       - Top level CHANGELOG?
     - 
+    - Get a "dev" testing setup.
+    - 
+    - [nowayjay] Add a "clear line" option?
+    - 
+    - [nowayjay] Disable edge controls on pure colors
+    - [nowayjay] Disable color controls on basic edge/sector views
+    - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
+      - OR just... force color=>edge solving on color-only mode
+    - [nowayjay] INPUT MODES
+      - One for "left control only add line", "right click only make X"
+    - 
     - [gereleth] Drag lines
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
       - May want to separate "hit" areas a bit, to prevent accidental bits?
@@ -45,6 +56,7 @@
         - [hey] How would ... pausing or interrupting work?
         - See hexapipes custom for inspiration
       - Option for whether "wrong numbers" are highlighted
+      - Option for whether "wrong lines around a dot" (3+) are highlighted?
       - Option for whether "wrong moves" / invalid state are highlighted
         - GET BETTER HIGHLIGHTING
       - Check Solution button
@@ -54,7 +66,7 @@
     - 
     - [nowayjay] Tooltips on hover (for controls)
     - 
-    - Add a "clear line" option?
+    - 
     - 
     - Multiple modes:
       - draw-only (drag) - pan/zoom with two fingers
@@ -65,6 +77,7 @@
     - Solve the "quick double tap" issue (due to auto solve)
       - HOW?
     - 
+    - Consider unlink of autosolve behavior based on mode
     - 
     - Puzzle generation using pattern-based difficulty
     - Pattern-based auto-solve
@@ -96,15 +109,29 @@
     - Bug: pattern solvers when there is a legitimate small loop
     - Bug: hint annotations with patterns that take up a lot of the vertical puzzle are UNUSABLY small or hidden
     - Bug: Fix puzzles in localStorage, having it lose progress is not cool
+    - Bug: Highlight "outside" color when face operation on it with blank puzzle. Doesn't highlight at the start.
     - 
+    - UI: Redo keyboard shortcut: ctrl-y aand ctrl-shift-z
     - UI: Increase touch area for puzzle size buttons
+    - UI: Cancel generation button
     - UI: Add a timer [nowayjay]
     - UI: [nowayjay] colorblind-friendly color+opposite patterns
       - Reversed textures on/off or light/dark ness
         - have a foreground and background
       - HE wants letters
+    - UI: [nowayjay] style sectors
+      - Two radii, solid/dash, colors, potential "unshade colors" behind sectors
+      - SEE IMAGE FROM START OF TRIP
     - UI: when highlighting a color, also minorly highlight the opposite color
     - UI: Better "solved" view (more indicative and prettier/more satisfying)
+    - UI: Customizing ANY modes
+      - Allow ghost lines (white edges) on classic mode
+      - Allow dots on standard
+      - Basically, we could even let users store their own modes?
+    - UI: "same color" operation should be a "copy" in an error condition:
+      - Face "copy" color operation, order matters. source => target
+    - 
+    - PWA web app for it (for offline use)
     - 
     - Tutorial:
       - simplest example first
