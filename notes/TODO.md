@@ -14,7 +14,10 @@
       - Has "board coordinates" like a chessboard
       - Delayed (simple) auto-solve
     - 
-    - Drag lines
+    - Changelog it? Since multiple people are paying attention
+      - Top level CHANGELOG?
+    - 
+    - [gereleth] Drag lines
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
       - May want to separate "hit" areas a bit, to prevent accidental bits?
       - Compatibility with pan/zoom:
@@ -26,7 +29,21 @@
         - Minimap (draggable?)
         - ARROW KEYS? (SC2 style)
     - 
-    - Allow guessing better
+    - [gereleth] Tabbing out (work in background) for puzzle generation
+      - How to signal this for the browser?
+      - Maybe... also just pregenerate a bunch of puzzles?
+    - 
+    - [gerelth + nowayjay] Allow guessing better
+      - [gerelith] Auto-solve (on error) finds minimal paths to each error (or the closest one?) and shows only that
+        - Can we store what patterns "relied" on, so that we can see what is "minimal"?
+      - [jagomu] Auto-solve delay + animation speed (so it can animate in the consequences)
+        - INDICATOR of "autosolve pending on delay" (about to happen!)
+          - ACTUALLY [ACTUALLY] could allow "not a move until the delay happens"?
+        - CAN THIS FIX MY "auto solve is too fast" bit? No, I want it to be fast a lot?
+          - ACTUALLY yes
+        - This should work with the "solve" mode
+        - [hey] How would ... pausing or interrupting work?
+        - See hexapipes custom for inspiration
       - Option for whether "wrong numbers" are highlighted
       - Option for whether "wrong moves" / invalid state are highlighted
         - GET BETTER HIGHLIGHTING
@@ -34,6 +51,8 @@
         - a: has errors
         - b: no errors, but incomplete
         - c: solved!
+    - 
+    - [nowayjay] Tooltips on hover (for controls)
     - 
     - Add a "clear line" option?
     - 
@@ -48,14 +67,44 @@
     - 
     - 
     - Puzzle generation using pattern-based difficulty
+    - Pattern-based auto-solve
+    - 
+    - HELP / INFO / INSTRUCTIONS button/section
+      - Add to play AND rule explorer! 
+      - Link to the main puzzle guide (main)
+      - [shared with doc/index] Add notes for how to use the UI for everything
     - 
     - Doc/index:
+      - Fix "touch override" on index page, allow scrolling on examples.
       - Write up "topological simplification"
       - Show the "no 1 or 3 or 4 lines per dot"
+      - [nowayjay] Doc examples bigger (hard to see), resize based on screen size (perhaps dynamically)
+        - [bug] broken layout on hone
+      - [nowayjay] Multi-page and/or table of contents (better navigation basically)
+      - GIVE EXAMPELS of all solving techniques
     - 
     - "Wrapping" (toroidal) puzzles, infinite, with DAG handling
     - 
     - Get Alpenglow CAG working... we could use it ALL OVER THE PLACE
+    - 
+    - Search pattern database by "draw a pattern and check for matches"!!!
+    - 
+    - Bug [fast]: "color highlight" should be below hint annotations(!)
+    - Bug [fast]: don't show custom options when advanced settings is... off? on?
+    - Bug: rule explorer layout on phone is horrible
+    - Bug: generation 2x2 when it creates a single loop around a face (e.g. 4 in square)
+    - Bug: pattern solvers when there is a legitimate small loop
+    - Bug: hint annotations with patterns that take up a lot of the vertical puzzle are UNUSABLY small or hidden
+    - Bug: Fix puzzles in localStorage, having it lose progress is not cool
+    - 
+    - UI: Increase touch area for puzzle size buttons
+    - UI: Add a timer [nowayjay]
+    - UI: [nowayjay] colorblind-friendly color+opposite patterns
+      - Reversed textures on/off or light/dark ness
+        - have a foreground and background
+      - HE wants letters
+    - UI: when highlighting a color, also minorly highlight the opposite color
+    - UI: Better "solved" view (more indicative and prettier/more satisfying)
     - 
     - Tutorial:
       - simplest example first
