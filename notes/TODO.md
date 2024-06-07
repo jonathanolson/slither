@@ -21,9 +21,6 @@
     - 
     - [nowayjay] Add a "clear line" option?
     - 
-    - [nowayjay] Disable edge controls on pure colors
-      - HEY as part of this, use the new allow edit thing
-    - [nowayjay] Disable color controls on basic edge/sector views
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode
     - [nowayjay] INPUT MODES
