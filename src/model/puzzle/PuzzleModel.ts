@@ -524,9 +524,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       // const solver = standardSolverFactory( this.puzzle.board, state, true );
       // const solver = patternSolverFactory( this.puzzle.board, state, true );
 
-      const solveEdges = currentPuzzleStyle.edgesVisibleProperty.value;
-      const solveColors = currentPuzzleStyle.faceColorsVisibleProperty.value && isFinite( currentPuzzleStyle.faceColorThresholdProperty.value );
-      const solveSectors = currentPuzzleStyle.sectorsVisibleProperty.value;
+      const solveEdges = currentPuzzleStyle.allowEdgeEditProperty.value;
+      const solveColors = currentPuzzleStyle.allowFaceColorEditProperty.value;
+      const solveSectors = currentPuzzleStyle.allowSectorEditProperty.value;
 
       let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
       if ( solveEdges && !solveColors && !solveSectors ) {
