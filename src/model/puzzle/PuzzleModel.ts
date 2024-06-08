@@ -1,4 +1,4 @@
-import { DerivedProperty, Disposable, NumberProperty, Property, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, Disposable, TinyProperty, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
 import { AnnotatedSolverFactory, iterateSolverFactory, TSolver, withSolverFactory } from '../solver/TSolver.ts';
@@ -37,6 +37,7 @@ import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.t
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 import { generalAllPatternSolverFactory, generalColorPatternSolverFactory, generalEdgeColorPatternSolverFactory, generalEdgePatternSolverFactory, generalEdgeSectorPatternSolverFactory } from '../solver/patternSolverFactory.ts';
+import { optionize } from 'phet-lib/phet-core';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -46,16 +47,24 @@ export type PendingFaceColor = {
   color: TFaceColor;
 };
 
+export type PuzzleModelOptions = {
+  style?: TPuzzleStyle;
+  initialTimeElapsed?: number;
+};
+
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class PuzzleModel<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Disposable {
+
+  // In seconds
+  public readonly timeElapsedProperty: TProperty<number> = new TinyProperty( 0 );
 
   private readonly stack: PuzzleSnapshot<Structure, Data>[];
 
   // Tracks how many transitions are in the stack
-  private readonly stackLengthProperty = new NumberProperty( 0 );
+  private readonly stackLengthProperty: TProperty<number> = new TinyProperty( 0 );
 
   // Tracks the location in the stack TODO docs
-  private readonly stackPositionProperty = new NumberProperty( 0 );
+  private readonly stackPositionProperty: TProperty<number> = new TinyProperty( 0 );
 
   public readonly undoPossibleProperty: TReadOnlyProperty<boolean>;
   public readonly redoPossibleProperty: TReadOnlyProperty<boolean>;
@@ -64,22 +73,34 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
-  public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new Property( null );
+  public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new TinyProperty( null );
   public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
 
-  private readonly pendingActionFaceColorProperty: TProperty<PendingFaceColor | null> = new Property( null );
-  private readonly pendingActionSectorProperty: TProperty<TSector | null> = new Property( null );
+  private readonly pendingActionFaceColorProperty: TProperty<PendingFaceColor | null> = new TinyProperty( null );
+  private readonly pendingActionSectorProperty: TProperty<TSector | null> = new TinyProperty( null );
 
   public readonly selectedFaceColorHighlightProperty: TReadOnlyProperty<SelectedFaceColorHighlight | null>;
   public readonly selectedSectorEditProperty: TReadOnlyProperty<SelectedSectorEdit | null>;
 
   private readonly autoSolverFactoryProperty: TReadOnlyProperty<AnnotatedSolverFactory<TStructure, TCompleteData>>;
 
+  private readonly style: TPuzzleStyle;
+
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
-    public readonly style: TPuzzleStyle = currentPuzzleStyle // TODO: see if we can just have a model-based one?
+    providedOptions?: PuzzleModelOptions,
   ) {
+    const options = optionize<PuzzleModelOptions>()( {
+      style: currentPuzzleStyle,
+      initialTimeElapsed: 0,
+    }, providedOptions );
+
+    const style = options.style;
+
     super();
+
+    this.style = style;
+    this.timeElapsedProperty.value = options.initialTimeElapsed;
 
     this.autoSolverFactoryProperty = new DerivedProperty( [
       autoSolveEnabledProperty,
@@ -195,6 +216,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       this.autoSolverFactoryProperty.unlink( solverChangeListener );
       this.style.safeSolverFactoryProperty.unlink( solverChangeListener );
     } );
+  }
+
+  public step( dt: number ): void {
+    this.timeElapsedProperty.value += dt;
+    localStorage.setItem( 'timeElapsedProperty', JSON.stringify( this.timeElapsedProperty.value ) );
   }
 
   private updateState(): void {

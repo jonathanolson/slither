@@ -6,5 +6,6 @@ export const changelog = [
     'Layer hint annotations in front of selected face color',
     'Only show custom options when custom AND advanced options are selected',
     'Added ctrl-y redo shortcut',
+    'Added option for showing elapsed time (timer)',
   ]
 ];

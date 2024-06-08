@@ -11,10 +11,22 @@ export const getStartupPuzzleModel = (): PuzzleModel => {
   const puzzleString = SlitherQueryParameters.p || localStorage.getItem( 'puzzleString' );
   const defaultPuzzle = BasicPuzzle.loadDefaultPuzzle();
   let startingSolvablePuzzle: TSolvablePropertyPuzzle<TStructure, TCompleteData> | null = null;
+  let initialTimeElapsed = 0;
 
   // Try to detect issues loading the puzzle, so we can fall back to a default.
   try {
-    const startingPuzzle = puzzleString ? ( puzzleFromCompressedString( puzzleString ) ?? defaultPuzzle ) : defaultPuzzle;
+    let startingPuzzle: BasicPuzzle<TCompleteData> = defaultPuzzle;
+
+    if ( puzzleString ) {
+      const savedPuzzle = puzzleFromCompressedString( puzzleString );
+      if ( savedPuzzle ) {
+        startingPuzzle = savedPuzzle;
+
+        const initialTimeElapsedString = localStorage.getItem( 'timeElapsedProperty' );
+        initialTimeElapsed = initialTimeElapsedString ? JSON.parse( initialTimeElapsedString ) : 0;
+      }
+    }
+
     startingSolvablePuzzle = getSolvablePropertyPuzzle( startingPuzzle.board, startingPuzzle.stateProperty.value );
   }
   catch ( e ) {
@@ -25,5 +37,7 @@ export const getStartupPuzzleModel = (): PuzzleModel => {
   }
   assertEnabled() && assert( startingSolvablePuzzle );
 
-  return new PuzzleModel( startingSolvablePuzzle! );
+  return new PuzzleModel( startingSolvablePuzzle!, {
+    initialTimeElapsed: initialTimeElapsed
+  } );
 };

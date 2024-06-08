@@ -613,3 +613,5 @@ export const puzzleStyleProperty = new LocalStorageProperty<TPuzzleStyle>( 'puzz
 export const currentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty( puzzleStyleProperty );
 
 export const showPuzzleStyleProperty = new LocalStorageBooleanProperty( 'showPuzzleStyleProperty', true );
+
+export const showPuzzleTimerProperty = new LocalStorageBooleanProperty( 'showPuzzleTimerProperty', false );

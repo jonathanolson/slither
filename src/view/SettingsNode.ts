@@ -14,7 +14,7 @@ import { UIText } from './UIText.ts';
 import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
-import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
+import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, showPuzzleTimerProperty, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -303,6 +303,7 @@ export class SettingsNode extends PopupNode {
         } ),
         new UITextSwitch( showPuzzleStyleProperty, 'Show View Style Controls' ),
         new UITextSwitch( redLineVisibleProperty, 'Show Impossible Lines' ),
+        new UITextSwitch( showPuzzleTimerProperty, 'Show Elapsed Time' ),
         new UITextSwitch( showUndoRedoAllProperty, 'Show Undo-All / Redo-All', {
           advanced: true
         } ),

@@ -14,10 +14,13 @@
       - Has "board coordinates" like a chessboard
       - Delayed (simple) auto-solve
     - 
-    - Changelog it? Since multiple people are paying attention
-      - Top level CHANGELOG?
+    - KEEP CHANGELOG UP TO DATE
     - 
     - Get a "dev" testing setup.
+    - 
+    - VM for running computations when not around(!)
+      - See that latest commit of what I "paused"
+      - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
     - 
     - EditModeBarNodeOptions and such should just be a ViewContext type(!)
     - 
@@ -108,7 +111,6 @@
     - UI: Increase touch area for puzzle size buttons
       - Nope, just make the buttons bigger...
     - UI: Cancel generation button
-    - UI: Add a timer [nowayjay]
     - UI: [nowayjay] colorblind-friendly color+opposite patterns
       - Reversed textures on/off or light/dark ness
         - have a foreground and background

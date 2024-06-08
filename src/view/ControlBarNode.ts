@@ -1,4 +1,4 @@
-import { BooleanProperty, DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, DynamicProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { HBox, Node } from 'phet-lib/scenery';
 import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
@@ -14,6 +14,8 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { ShareNode } from './ShareNode.ts';
 import { GenNode } from './GenNode.ts';
 import { TooltipListener } from './TooltipListener.ts';
+import { TimerNode } from './TimerNode.ts';
+import { showPuzzleTimerProperty } from './puzzle/puzzleStyles.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
@@ -31,7 +33,8 @@ export default class ControlBarNode extends HBox {
 
     const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
 
-    const falseProperty = new BooleanProperty( false );
+    const falseProperty = new TinyProperty( false );
+    const zeroProperty = new TinyProperty( 0 );
 
     const undoEnabledProperty = new DynamicProperty( puzzleModelProperty, {
       derive: ( puzzleModel: PuzzleModel | null ) => {
@@ -50,6 +53,12 @@ export default class ControlBarNode extends HBox {
         return puzzleModel ? puzzleModel.isSolvedProperty : falseProperty;
       }
     } ) as TReadOnlyProperty<boolean>; // Why, TS?
+
+    const timeProperty = new DynamicProperty( puzzleModelProperty, {
+      derive: ( puzzleModel: PuzzleModel | null ) => {
+        return puzzleModel ? puzzleModel.timeElapsedProperty : zeroProperty;
+      }
+    } ) as TReadOnlyProperty<number>;
 
     const isUnsolvedProperty = new DerivedProperty( [ isSolvedProperty ], isSolved => !isSolved );
 
@@ -113,6 +122,9 @@ export default class ControlBarNode extends HBox {
           enabledProperty: undoEnabledProperty,
           fireOnHold: true,
         } ) ),
+        new TimerNode( timeProperty, {
+          visibleProperty: showPuzzleTimerProperty
+        } ),
         new RectangularPushButton( combineOptions<RectangularPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'Redo',
           content: toFontAwesomePath( fontAwesomeStepForwardShape ),

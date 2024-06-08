@@ -199,6 +199,7 @@ display.updateOnRequestAnimationFrame( dt => {
 
   puzzleContainerNode.step( dt );
   topologicalContainerNode.step( dt );
+  puzzleModelProperty.value?.step( dt );
 } );
 
 document.addEventListener( 'keydown', event => {

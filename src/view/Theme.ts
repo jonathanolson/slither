@@ -426,6 +426,7 @@ export const rectangularButtonAppearanceStrategy = useFlatButtons ? RectangularB
 
 // TODO: why such bad font metrics on Firefox?
 export const uiFontFamily = platform.firefox ? 'Arial, sans-serif' : 'Helvetica, Arial, sans-serif';
+export const monospacedFontFamily = 'Menlo, Inconsolata, Bitstream Vera Sans Mono, Consolas, DejaVu Sans Mono, Droid Sans Mono, Lucida Console, Monaco, Noto Mono, Roboto Mono, monospace';
 
 export const controlBarFont = new Font( {
   family: uiFontFamily,
@@ -456,6 +457,11 @@ export const generateButtonFont = new Font( {
 export const tooltipFont = new Font( {
   family: uiFontFamily,
   size: 12
+} );
+
+export const timerFont = new Font( {
+  family: monospacedFontFamily,
+  size: 14,
 } );
 
 export const customAllowEdgeEditProperty = new LocalStorageBooleanProperty( 'customAllowEdgeEditProperty', true );
