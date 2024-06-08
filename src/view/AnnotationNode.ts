@@ -262,13 +262,25 @@ export class AnnotationNode extends Node {
           patternDescriptionNode.right = additionalContentLayoutBounds.right - margin;
         }
 
-        const highlightBounds = displayEmbedding.tightBounds.dilated( 0.2 );
-        const cornerRadius = 0.1;
-        children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
-          stroke: currentTheme.uiButtonBaseColorProperty,
-          lineWidth: 0.04,
-          pickable: false,
-        } ) );
+        // {
+        //   const highlightBounds = displayEmbedding.tightBounds.dilated( 0.3 );
+        //   const cornerRadius = 0.1;
+        //   children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
+        //     stroke: currentTheme.uiButtonBaseColorProperty,
+        //     lineWidth: 0.3,
+        //     pickable: false,
+        //     opacity: 0.8,
+        //   } ) );
+        // }
+        {
+          const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
+          const cornerRadius = 0.1;
+          children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
+            stroke: currentTheme.blackLineColorProperty,
+            lineWidth: 0.13,
+            pickable: false,
+          } ) );
+        }
         children.push( patternDescriptionNode );
       }
 

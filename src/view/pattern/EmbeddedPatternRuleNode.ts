@@ -93,9 +93,9 @@ export class EmbeddedPatternRuleNode extends Node {
         outputContainerNode,
       ]
     } ), {
-      cornerRadius: cornerRadius * ( 1.2 ),
-      xMargin: 0.1,
-      yMargin: 0.1,
+      cornerRadius: cornerRadius * ( 1.4 ),
+      xMargin: 0.3,
+      yMargin: 0.3,
       lineWidth: 0.05,
       stroke: null,
       fill: options.style.theme.patternAnnotationBackgroundColorProperty,
