@@ -213,6 +213,9 @@ document.addEventListener( 'keydown', event => {
         puzzleModelProperty.value?.onUserUndo();
       }
     }
+    if ( event.key === 'y' ) {
+      puzzleModelProperty.value?.onUserRedo();
+    }
   }
   // TODO: check whether the given type is... enabled(!)
   else if ( event.key === '1' ) {
