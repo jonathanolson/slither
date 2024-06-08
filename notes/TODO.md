@@ -29,6 +29,12 @@
     - Memory - web-worker the scanURL bits?
     - 
     - Generate the "next" puzzle in the background (so it is ready when the user solves)
+      - Allow opt in or out, setting
+      - display in gen dialog if open
+      - only undo if parameter change
+    - Show a "next" dialog or something when the user solves the puzzle
+    - Cancel button on generation
+    - Close generation aborts generation
     - 
     - [nowayjay] Share icon better
     - 
