@@ -106,6 +106,7 @@
     - Bug: Highlight "outside" color when face operation on it with blank puzzle. Doesn't highlight at the start.
     - 
     - UI: Increase touch area for puzzle size buttons
+      - Nope, just make the buttons bigger...
     - UI: Cancel generation button
     - UI: Add a timer [nowayjay]
     - UI: [nowayjay] colorblind-friendly color+opposite patterns
