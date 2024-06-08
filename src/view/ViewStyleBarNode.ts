@@ -1,5 +1,5 @@
-import { DerivedProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2, Matrix3 } from 'phet-lib/dot';
+import { DerivedProperty, TinyProperty } from 'phet-lib/axon';
+import { Matrix3 } from 'phet-lib/dot';
 import { controlBarMargin, currentTheme } from './Theme.ts';
 import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
@@ -13,15 +13,11 @@ import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { FaceStateNode } from './puzzle/FaceStateNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { TooltipListener } from './TooltipListener.ts';
-
-export type ViewStyleBarNodeOptions = {
-  layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
-  glassPane: Node;
-};
+import { ViewContext } from './ViewContext.ts';
 
 export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuzzleStyle> {
   public constructor(
-    options: ViewStyleBarNodeOptions
+    viewContext: ViewContext,
   ) {
     const {
       basicLinesIcon,
@@ -35,7 +31,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
       customIcon
     } = ViewStyleBarNode.getIcons();
 
-    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
+    const tooltipListener = new TooltipListener( viewContext );
 
     // TODO: deduplicate with the bit in Settings?
     super( puzzleStyleProperty, [
@@ -112,7 +108,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
     // TODO: target buttons more directly?
     this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
-    options.layoutBoundsProperty.link( bounds => {
+    viewContext.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
     } );
   }

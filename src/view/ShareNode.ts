@@ -1,6 +1,5 @@
-import { BooleanProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
-import { Node, VBox } from 'phet-lib/scenery';
+import { BooleanProperty } from 'phet-lib/axon';
+import { VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { puzzleToCompressedString, TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
@@ -10,6 +9,7 @@ import { copyToClipboard } from '../util/copyToClipboard.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export class ShareNode extends PopupNode {
 
@@ -17,8 +17,7 @@ export class ShareNode extends PopupNode {
   private puzzle: TPropertyPuzzle<TStructure, TCompleteData> | null = null;
 
   public constructor(
-    public readonly glassPane: Node,
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>
+    viewContext: ViewContext,
   ) {
 
     const includeStateProperty = new BooleanProperty( false );
@@ -48,7 +47,7 @@ export class ShareNode extends PopupNode {
         } ),
         new UITextCheckbox( 'Include edge state', includeStateProperty )
       ]
-    } ), glassPane, layoutBoundsProperty );
+    } ), viewContext );
 
     this.includeStateProperty = includeStateProperty;
   }

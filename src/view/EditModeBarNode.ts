@@ -6,16 +6,12 @@ import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { TooltipListener } from './TooltipListener.ts';
-
-export type EditModeBarNodeOptions = {
-  layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
-  glassPane: Node;
-};
+import { ViewContext } from './ViewContext.ts';
 
 // TODO: support a background node with more complexity in the future?
 export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditMode> {
   public constructor(
-    options: EditModeBarNodeOptions
+    viewContext: ViewContext,
   ) {
 
     const edgeIcon = new Line( 0, 0, 15, 0, {
@@ -73,7 +69,7 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
       ]
     } );
 
-    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
+    const tooltipListener = new TooltipListener( viewContext );
 
     super( editModeProperty, [
       {
@@ -121,7 +117,7 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
     // TODO: target buttons more directly?
     this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
-    options.layoutBoundsProperty.link( bounds => {
+    viewContext.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
     } );
   }

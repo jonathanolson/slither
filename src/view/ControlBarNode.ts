@@ -1,8 +1,7 @@
 import { DerivedProperty, DynamicProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { HBox, Node } from 'phet-lib/scenery';
+import { HBox } from 'phet-lib/scenery';
 import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
 import { RectangularPushButton, RectangularPushButtonOptions, TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { Bounds2 } from 'phet-lib/dot';
 import { SettingsNode } from './SettingsNode.ts';
 import { fontAwesomeBackwardShape, fontAwesomeForwardShape, fontAwesomeGearShape, fontAwesomeShareShape, fontAwesomeStepBackwardShape, fontAwesomeStepForwardShape, toFontAwesomePath } from './FontAwesomeShape.ts';
 import { combineOptions } from 'phet-lib/phet-core';
@@ -16,22 +15,22 @@ import { GenNode } from './GenNode.ts';
 import { TooltipListener } from './TooltipListener.ts';
 import { TimerNode } from './TimerNode.ts';
 import { showPuzzleTimerProperty } from './puzzle/puzzleStyles.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
-  glassPane: Node;
-  layoutBoundsProperty: TReadOnlyProperty<Bounds2>;
 };
 
 // TODO: support a background node with more complexity in the future?
 export default class ControlBarNode extends HBox {
   public constructor(
     public readonly puzzleModelProperty: TReadOnlyProperty<PuzzleModel | null>,
+    viewContext: ViewContext,
     options: ControlBarNodeOptions
   ) {
 
-    const tooltipListener = new TooltipListener( options.layoutBoundsProperty, options.glassPane );
+    const tooltipListener = new TooltipListener( viewContext );
 
     const falseProperty = new TinyProperty( false );
     const zeroProperty = new TinyProperty( 0 );
@@ -87,7 +86,7 @@ export default class ControlBarNode extends HBox {
         new TextPushButton( 'New', combineOptions<TextPushButtonOptions>( {}, commonButtonOptions, {
           accessibleName: 'New',
           listener: () => {
-            genNode = genNode || new GenNode( options.glassPane, options.layoutBoundsProperty, {
+            genNode = genNode || new GenNode( viewContext, {
               loadPuzzle: options.loadPuzzle
             } );
 
@@ -151,7 +150,7 @@ export default class ControlBarNode extends HBox {
           accessibleName: 'Settings',
           content: toFontAwesomePath( fontAwesomeGearShape ),
           listener: () => {
-            settingsNode = settingsNode || new SettingsNode( options.glassPane, options.layoutBoundsProperty );
+            settingsNode = settingsNode || new SettingsNode( viewContext );
 
             settingsNode.show();
           },
@@ -162,7 +161,7 @@ export default class ControlBarNode extends HBox {
           listener: () => {
             const puzzleModel = puzzleModelProperty.value;
             if ( puzzleModel ) {
-              shareNode = shareNode || new ShareNode( options.glassPane, options.layoutBoundsProperty );
+              shareNode = shareNode || new ShareNode( viewContext );
 
               shareNode.setPuzzle( puzzleModel.puzzle );
 
@@ -211,7 +210,7 @@ export default class ControlBarNode extends HBox {
 
     this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
-    options.layoutBoundsProperty.link( bounds => {
+    viewContext.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
     } );
   }

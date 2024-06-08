@@ -1,9 +1,8 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
 import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
 import { Panel, PanelOptions } from 'phet-lib/sun';
 import { optionize } from 'phet-lib/phet-core';
 import { currentTheme } from './Theme.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export type PopupNodeOptions = {
   allowBarrierClickToHide?: boolean;
@@ -13,8 +12,7 @@ export type PopupNodeOptions = {
 export class PopupNode extends Node {
   public constructor(
     public readonly content: Node,
-    public readonly glassPane: Node,
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>,
+    public readonly viewContext: ViewContext,
     providedOptions?: PopupNodeOptions
   ) {
 
@@ -34,7 +32,7 @@ export class PopupNode extends Node {
 
     const barrier = new Rectangle( { fill: currentTheme.barrierColorProperty } );
     this.addChild( barrier );
-    layoutBoundsProperty.link( layoutBounds => {
+    viewContext.layoutBoundsProperty.link( layoutBounds => {
       barrier.rectBounds = layoutBounds;
     } );
 
@@ -49,28 +47,28 @@ export class PopupNode extends Node {
     const panel = new Panel( content, options.panelOptions );
 
     // TODO: actually, we can probably have a much more responsive layout, right?
-    layoutBoundsProperty.link( layoutBounds => {
+    viewContext.layoutBoundsProperty.link( layoutBounds => {
       panel.maxWidth = layoutBounds.width * 0.9;
       panel.maxHeight = layoutBounds.height * 0.9;
     } );
 
     this.addChild( new AlignBox( panel, {
-      alignBoundsProperty: layoutBoundsProperty,
+      alignBoundsProperty: viewContext.layoutBoundsProperty,
       yAlign: 'top',
       topMargin: 50
     } ) );
   }
 
   public show(): void {
-    if ( !this.glassPane.hasChild( this ) ) {
+    if ( !this.viewContext.glassPane.hasChild( this ) ) {
       this.reset();
-      this.glassPane.addChild( this );
+      this.viewContext.glassPane.addChild( this );
     }
   }
 
   public hide(): void {
-    if ( this.glassPane.hasChild( this ) ) {
-      this.glassPane.removeChild( this );
+    if ( this.viewContext.glassPane.hasChild( this ) ) {
+      this.viewContext.glassPane.removeChild( this );
     }
   }
 

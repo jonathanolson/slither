@@ -1,5 +1,3 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
 import { HBox, Image, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { currentTheme, uiFont } from './Theme.ts';
@@ -15,6 +13,7 @@ import EdgeState from '../model/data/edge-state/EdgeState.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 import { UIText } from './UIText.ts';
 import { safeSolve } from '../model/solver/safeSolve.ts';
+import { ViewContext } from './ViewContext.ts';
 
 // TODO: culori?
 const undecidedStroke = '#444';
@@ -47,8 +46,7 @@ export class ScanNode extends PopupNode {
   private contourNodeMap: Map<Contour, ContourNode> = new Map();
 
   public constructor(
-    public readonly glassPane: Node,
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>,
+    viewContext: ViewContext,
   ) {
     const loadingNode = new HBox( {
       children: [
@@ -65,7 +63,7 @@ export class ScanNode extends PopupNode {
       ]
     } );
 
-    super( scanContentNode, glassPane, layoutBoundsProperty );
+    super( scanContentNode, viewContext );
 
     this.scanContentNode = scanContentNode;
 

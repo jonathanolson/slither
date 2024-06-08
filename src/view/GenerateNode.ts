@@ -27,6 +27,7 @@ import { UIText } from './UIText.ts';
 import { UIAquaRadioButtonGroup } from './UIAquaRadioButtonGroup.ts';
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
+import { ViewContext } from './ViewContext.ts';
 
 type SelfOptions = {
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
@@ -37,7 +38,7 @@ export type GenerateNodeOptions = SelfOptions & HBoxOptions;
 // TODO: place it in such a way where we set preferred size?
 export class GenerateNode extends HBox {
   public constructor(
-    public readonly glassPane: Node,
+    viewContext: ViewContext,
     providedOptions: GenerateNodeOptions
   ) {
 

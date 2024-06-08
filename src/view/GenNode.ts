@@ -1,5 +1,4 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2, dotRandom } from 'phet-lib/dot';
+import { dotRandom } from 'phet-lib/dot';
 import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
@@ -11,6 +10,7 @@ import { GenerateNode } from './GenerateNode.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { ScanNode } from './ScanNode.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export type GenNodeOptions = {
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => void;
@@ -18,8 +18,7 @@ export type GenNodeOptions = {
 
 export class GenNode extends PopupNode {
   public constructor(
-    public readonly glassPane: Node,
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>,
+    viewContext: ViewContext,
     options: GenNodeOptions
   ) {
     super( new VBox( {
@@ -29,7 +28,7 @@ export class GenNode extends PopupNode {
       children: [
         new Node( {
           children: [
-            new GenerateNode( glassPane, {
+            new GenerateNode( viewContext, {
               loadPuzzle: puzzle => {
                 this.hide();
 
@@ -75,7 +74,7 @@ export class GenNode extends PopupNode {
 
                     // const scanURL = ( await import ( '../scan/scanURL.ts' ) ).default;
 
-                    const scanNode = new ScanNode( glassPane, layoutBoundsProperty );
+                    const scanNode = new ScanNode( viewContext );
                     scanNode.show();
 
                     const puzzle = await scanURL( url, scanNode.getScanOptions() );
@@ -174,6 +173,6 @@ export class GenNode extends PopupNode {
           ]
         } )
       ]
-    } ), glassPane, layoutBoundsProperty );
+    } ), viewContext );
   }
 }

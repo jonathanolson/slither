@@ -1,5 +1,4 @@
-import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
+import { BooleanProperty, DerivedProperty } from 'phet-lib/axon';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import { autoSolveDoubleMinusOneFacesProperty, autoSolveEnabledProperty, autoSolveFaceColorParityColorsProperty, autoSolveFaceColorParityPartialReductionProperty, autoSolveFaceColorParityToBlackProperty, autoSolveFaceColorParityToRedProperty, autoSolveFaceColorToBlackProperty, autoSolveFaceColorToRedProperty, autoSolveFaceToBlackProperty, autoSolveFaceToFaceColorsProperty, autoSolveFaceToRedProperty, autoSolveFaceToSectorsProperty, autoSolveSimpleFaceToBlackProperty, autoSolveSimpleFaceToRedProperty, autoSolveSimpleLoopsProperty, autoSolveSimpleLoopToBlackProperty, autoSolveSimpleLoopToRedProperty, autoSolveSimpleSectorProperty, autoSolveSimpleVertexAlmostEmptyToRedProperty, autoSolveSimpleVertexForcedLineToBlackProperty, autoSolveSimpleVertexJointToRedProperty, autoSolveStaticFaceSectorProperty, autoSolveToBlackProperty, autoSolveVertexColorToFaceProperty, autoSolveVertexToBlackEdgeProperty, autoSolveVertexToFaceColorProperty, autoSolveVertexToRedEdgeProperty, autoSolveVertexToSectorsProperty } from '../model/solver/autoSolver';
 import { allVertexStateVisibleProperty, availableThemes, currentTheme, edgesHaveColorsProperty, edgesVisibleProperty, faceColorsVisibleProperty, faceColorThresholdProperty, faceStateVisibleProperty, faceValueStyleProperty, faceValueStyles, joinedLinesCapProperty, joinedLinesJoinProperty, lineCaps, lineJoins, popupColorEditor, redLineStyleProperty, redLineStyles, redLineVisibleProperty, redXsAlignedProperty, redXsVisibleProperty, sectorsNextToEdgesVisibleProperty, sectorsTrivialVisibleProperty, sectorsVisibleProperty, smallVertexProperty, themeProperty, uiFont, uiHeaderFont, vertexStateVisibleProperty, vertexStyleProperty, vertexStyles, verticesVisibleProperty, whiteLineVisibleProperty } from './Theme.ts';
@@ -15,13 +14,13 @@ import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../mode
 import { UITextSwitch } from './UITextSwitch.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, showPuzzleTimerProperty, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
 export class SettingsNode extends PopupNode {
   public constructor(
-    public readonly glassPane: Node,
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>
+    viewContext: ViewContext,
   ) {
 
     const autoSolveNode = new VBox( {
@@ -445,6 +444,6 @@ export class SettingsNode extends PopupNode {
         reloadToDefaultsButton,
         new UITextSwitch( advancedSettingsVisibleProperty, 'Show Advanced Settings' )
       ]
-    } ), glassPane, layoutBoundsProperty );
+    } ), viewContext );
   }
 }

@@ -24,6 +24,7 @@ import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
+import { ViewContext } from './view/ViewContext.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -100,10 +101,9 @@ Multilink.multilink( [
   display.backgroundColor = hasError ? errorColor : color;
 } );
 
-const controlBarNode = new ControlBarNode( puzzleModelProperty, {
-  glassPane: glassPane,
-  layoutBoundsProperty: layoutBoundsProperty,
+const viewContext = new ViewContext( layoutBoundsProperty, glassPane );
 
+const controlBarNode = new ControlBarNode( puzzleModelProperty, viewContext, {
   // Require the complete data for now
   loadPuzzle: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void => {
     const solvablePropertyPuzzle = getSolvablePropertyPuzzle( puzzle.board, puzzle.stateProperty.value );
@@ -113,10 +113,7 @@ const controlBarNode = new ControlBarNode( puzzleModelProperty, {
   }
 } );
 
-const editModeBarNode = new EditModeBarNode( {
-  layoutBoundsProperty: layoutBoundsProperty,
-  glassPane: glassPane,
-} );
+const editModeBarNode = new EditModeBarNode( viewContext );
 
 const viewStyleBarNode = new ViewStyleBarNode( {
   layoutBoundsProperty: layoutBoundsProperty,

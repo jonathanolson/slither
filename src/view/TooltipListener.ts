@@ -1,8 +1,8 @@
-import { stepTimer, TimerListener, TReadOnlyProperty } from 'phet-lib/axon';
+import { stepTimer, TimerListener } from 'phet-lib/axon';
 import { Node, Pointer, SceneryEvent, Text, TInputListener } from 'phet-lib/scenery';
-import { Bounds2 } from 'phet-lib/dot';
 import { Panel } from 'phet-lib/sun';
 import { tooltipFont } from './Theme.ts';
+import { ViewContext } from './ViewContext.ts';
 
 export class TooltipListener implements TInputListener {
 
@@ -10,12 +10,9 @@ export class TooltipListener implements TInputListener {
   private tooltipNode: Node | null = null;
 
   public constructor(
-    public readonly layoutBoundsProperty: TReadOnlyProperty<Bounds2>,
-    public readonly glassPane: Node,
+    public readonly viewContext: ViewContext,
     public readonly tooltipTextOverride?: string,
-  ) {
-
-  }
+  ) {}
 
   public showTooltip( label: string, targetNode: Node, pointer: Pointer ): void {
     if ( !this.tooltipNode ) {
@@ -28,20 +25,20 @@ export class TooltipListener implements TInputListener {
         yMargin: 2,
       } );
 
-      const point = this.glassPane.globalToLocalPoint( pointer.point );
+      const point = this.viewContext.glassPane.globalToLocalPoint( pointer.point );
 
       this.tooltipNode.leftTop = point.plusXY( 0, 15 );
-      if ( this.tooltipNode.bottom > this.layoutBoundsProperty.value.bottom ) {
+      if ( this.tooltipNode.bottom > this.viewContext.layoutBoundsProperty.value.bottom ) {
         this.tooltipNode.bottom = point.y - 2;
       }
-      if ( this.tooltipNode.left < this.layoutBoundsProperty.value.left ) {
-        this.tooltipNode.left = this.layoutBoundsProperty.value.left + 2;
+      if ( this.tooltipNode.left < this.viewContext.layoutBoundsProperty.value.left ) {
+        this.tooltipNode.left = this.viewContext.layoutBoundsProperty.value.left + 2;
       }
-      if ( this.tooltipNode.right > this.layoutBoundsProperty.value.right ) {
-        this.tooltipNode.right = this.layoutBoundsProperty.value.right - 2;
+      if ( this.tooltipNode.right > this.viewContext.layoutBoundsProperty.value.right ) {
+        this.tooltipNode.right = this.viewContext.layoutBoundsProperty.value.right - 2;
       }
 
-      this.glassPane.addChild( this.tooltipNode );
+      this.viewContext.glassPane.addChild( this.tooltipNode );
     }
   }
 

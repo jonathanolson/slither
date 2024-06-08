@@ -22,8 +22,6 @@
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
     - 
-    - EditModeBarNodeOptions and such should just be a ViewContext type(!)
-    - 
     - [nowayjay] Add a "clear line" option?
     - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
