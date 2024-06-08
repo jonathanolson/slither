@@ -23,7 +23,6 @@ import { SectorStateSetAction } from '../../data/sector-state/SectorStateSetActi
 import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
 import { TPatternFace } from '../pattern-board/TPatternFace.ts';
 import { FaceColorMakeSameAction } from '../../data/face-color/FaceColorMakeSameAction.ts';
-import { getFaceColorPointer } from '../../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../../data/face-color/FaceColorMakeOppositeAction.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { FaceFeature } from '../feature/FaceFeature.ts';
@@ -32,6 +31,7 @@ import { AnnotatedAction } from '../../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../../data/core/CompositeAction.ts';
 import _ from '../../../workarounds/_.ts';
 import { Embedding } from '../embedding/Embedding.ts';
+import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 
@@ -249,5 +249,5 @@ export const getPatternRuleAction = (
     affectedEdges: affectedEdges,
     affectedSectors: affectedSectors,
     affectedFaces: affectedFaces,
-  } );
+  }, boardPatternBoard.board );
 };

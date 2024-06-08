@@ -7,7 +7,8 @@ import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
 import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 import { LayoutEdge, LayoutFace } from '../model/board/layout/layout.ts';
-import { toPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+
+import { toPropertyPuzzle } from '../model/puzzle/toPropertyPuzzle.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {

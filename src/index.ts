@@ -2,7 +2,6 @@ import '../index.css';
 
 import { Circle, Display, Node, Path } from 'phet-lib/scenery';
 import PuzzleNode from './view/puzzle/PuzzleNode.ts';
-import { puzzleFromCompressedString } from './model/puzzle/TPuzzle.ts';
 import { getBasicColoringPuzzleStyleWithTheme, getBasicLinesPuzzleStyleWithTheme, getClassicPuzzleStyleWithTheme, getClassicWithSectorsPuzzleStyleWithTheme, getPureColoringPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from './view/puzzle/puzzleStyles.ts';
 import { lightTheme } from './view/Theme.ts';
 import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
@@ -22,6 +21,7 @@ import { BooleanProperty } from 'phet-lib/axon';
 import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { Panel } from 'phet-lib/sun';
+import { puzzleFromCompressedString } from './model/puzzle/puzzleFromCompressedString.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {

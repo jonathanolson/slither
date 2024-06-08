@@ -106,7 +106,7 @@ export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<D
           face: face,
           beforeState: oldState,
           afterState: newState,
-        } );
+        }, this.board );
       }
     }
 

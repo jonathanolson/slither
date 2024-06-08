@@ -78,7 +78,7 @@ export class SafeEdgeToSectorSolver implements TSolver<Data, TAnnotatedAction<Da
           sector: sector,
           beforeState: initialSectorState,
           afterState: sectorState
-        } );
+        }, this.board );
       }
     }
 

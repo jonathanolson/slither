@@ -258,7 +258,7 @@ export class SafeEdgeToSimpleRegionSolver implements TSolver<Data, TAnnotatedAct
     if ( addedRegions.size || removedRegions.size || addedWeirdEdges.size || removedWeirdEdges.size ) {
       return new AnnotatedAction( new GeneralSimpleRegionAction( this.board, addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges ), {
         type: 'SimpleRegions'
-      } );
+      }, this.board );
     }
     else {
       return null;

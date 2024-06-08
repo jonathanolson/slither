@@ -7,13 +7,13 @@ import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { fontAwesomePencilShape, toFontAwesomePath } from './FontAwesomeShape.ts';
-import { puzzleFromCompressedString } from '../model/puzzle/TPuzzle.ts';
 import { VertexStateNode } from './puzzle/VertexStateNode.ts';
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { FaceStateNode } from './puzzle/FaceStateNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { TooltipListener } from './TooltipListener.ts';
 import { ViewContext } from './ViewContext.ts';
+import { puzzleFromCompressedString } from '../model/puzzle/puzzleFromCompressedString.ts';
 
 export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuzzleStyle> {
   public constructor(

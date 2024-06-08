@@ -22,7 +22,6 @@ import { SectorNotTwoFeature } from '../feature/SectorNotTwoFeature.ts';
 import { SectorOnlyOneFeature } from '../feature/SectorOnlyOneFeature.ts';
 import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
 import { FaceColorMakeSameAction } from '../../data/face-color/FaceColorMakeSameAction.ts';
-import { getFaceColorPointer } from '../../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../../data/face-color/FaceColorMakeOppositeAction.ts';
 import { safeSolve } from '../../solver/safeSolve.ts';
 import { computeEmbeddings } from './computeEmbeddings.ts';
@@ -30,6 +29,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
 import { createBoardDescriptor } from '../../board/core/createBoardDescriptor.ts';
 import { BaseBoard } from '../../board/core/BaseBoard.ts';
+import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.ts';
 
 export class DisplayEmbedding {
 

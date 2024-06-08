@@ -4,7 +4,10 @@ import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { FaceColorMakeSameAction } from './FaceColorMakeSameAction.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { dereferenceFaceColorPointer, TFaceColorPointer } from './FaceColorPointer.ts';
+import { TFaceColorPointer, TSerializedFaceColorPointer } from './FaceColorPointer.ts';
+import { deserializeFaceColorPointer } from './deserializeFaceColorPointer.ts';
+import { serializeFaceColorPointer } from './serializeFaceColorPointer.ts';
+import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
 
 export class FaceColorMakeOppositeAction implements TAction<TFaceColorData> {
   public constructor(
@@ -70,12 +73,17 @@ export class FaceColorMakeOppositeAction implements TAction<TFaceColorData> {
   }
 
   public serializeAction(): TSerializedAction {
-    // TODO: implement
-    throw new Error( 'serializeAction unimplemented in FaceColorMakeOppositeAction' );
+    return {
+      type: 'FaceColorMakeOppositeAction',
+      a: serializeFaceColorPointer( this.a ),
+      b: serializeFaceColorPointer( this.b ),
+    };
   }
 
   public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): FaceColorMakeOppositeAction {
-    // TODO: implement
-    throw new Error( 'deserializeAction unimplemented in FaceColorMakeOppositeAction' );
+    return new FaceColorMakeOppositeAction(
+      deserializeFaceColorPointer( board, serializedAction.a as TSerializedFaceColorPointer ),
+      deserializeFaceColorPointer( board, serializedAction.b as TSerializedFaceColorPointer ),
+    );
   }
 }

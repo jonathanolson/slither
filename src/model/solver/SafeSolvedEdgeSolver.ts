@@ -43,7 +43,7 @@ export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data
         return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
           type: 'CompletingEdgesAfterSolve',
           whiteEdges: whiteEdges
-        } );
+        }, this.board );
       }
     }
 

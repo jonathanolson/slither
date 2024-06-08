@@ -212,4 +212,55 @@ export class Embedding {
 
     return true;
   }
+
+  public serialize(): SerializedEmbedding {
+    return {
+      vertexMapping: this.sourcePatternBoard.vertices.map( vertex => {
+        assertEnabled() && assert( this.vertexMap.has( vertex ) );
+
+        return this.vertexMap.get( vertex )!.index;
+      } ),
+      edgeMapping: this.sourcePatternBoard.edges.map( edge => {
+        if ( edge.isExit ) {
+          assertEnabled() && assert( this.exitEdgeMap.has( edge ) );
+
+          return this.exitEdgeMap.get( edge )!.map( edge => edge.index );
+        }
+        else {
+          assertEnabled() && assert( this.nonExitEdgeMap.has( edge ) );
+
+          return this.nonExitEdgeMap.get( edge )!.index;
+        }
+      } ),
+      sectorMapping: this.sourcePatternBoard.sectors.map( sector => {
+        assertEnabled() && assert( this.sectorMap.has( sector ) );
+
+        return this.sectorMap.get( sector )!.index;
+      } ),
+      faceMapping: this.sourcePatternBoard.faces.map( face => {
+        assertEnabled() && assert( this.faceMap.has( face ) );
+
+        return this.faceMap.get( face )!.index;
+      } ),
+    };
+  }
+
+  public static deserialize( sourcePatternBoard: TPatternBoard, targetPatternBoard: TPatternBoard, serialized: SerializedEmbedding ): Embedding {
+    return new Embedding(
+      sourcePatternBoard,
+      targetPatternBoard,
+      new Map( sourcePatternBoard.vertices.map( vertex => [ vertex, targetPatternBoard.vertices[ serialized.vertexMapping[ vertex.index ] ] ] ) ),
+      new Map( sourcePatternBoard.edges.filter( edge => !edge.isExit ).map( edge => [ edge, targetPatternBoard.edges[ serialized.edgeMapping[ edge.index ] as number ] ] ) ),
+      new Map( sourcePatternBoard.edges.filter( edge => edge.isExit ).map( edge => [ edge, ( serialized.edgeMapping[ edge.index ] as number[] ).map( index => targetPatternBoard.edges[ index ] ) ] ) ),
+      new Map( sourcePatternBoard.sectors.map( sector => [ sector, targetPatternBoard.sectors[ serialized.sectorMapping[ sector.index ] ] ] ) ),
+      new Map( sourcePatternBoard.faces.map( face => [ face, targetPatternBoard.faces[ serialized.faceMapping[ face.index ] ] ] ) ),
+    );
+  }
 }
+
+export type SerializedEmbedding = {
+  vertexMapping: number[];
+  edgeMapping: ( number | number[] )[];
+  sectorMapping: number[];
+  faceMapping: number[];
+};

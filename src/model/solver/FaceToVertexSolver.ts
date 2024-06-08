@@ -173,7 +173,7 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
           vertices: changedVertexStates.map( vertexState => vertexState.vertex ),
           beforeStates: changedVertexStates.map( vertexState => oldVertexStates.find( oldVertexState => oldVertexState.vertex === vertexState.vertex )! ),
           afterStates: changedVertexStates,
-        } );
+        }, this.board );
       }
     }
 

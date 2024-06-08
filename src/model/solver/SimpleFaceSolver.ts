@@ -98,7 +98,7 @@ export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeStateData
               face: face,
               whiteEdges: whiteEdges,
               blackEdges: blackEdges
-            } );
+            }, this.board );
           }
           else if ( this.options.solveToBlack && redCount === face.edges.length - faceValue ) {
             const whiteEdges = edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
@@ -109,7 +109,7 @@ export class SimpleFaceSolver implements TSolver<TFaceValueData & TEdgeStateData
               face: face,
               whiteEdges: whiteEdges,
               redEdges: redEdges
-            } );
+            }, this.board );
           }
         }
       }

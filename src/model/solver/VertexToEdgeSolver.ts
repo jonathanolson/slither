@@ -91,7 +91,7 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
           vertex: vertex,
           toRedEdges: toRedEdges,
           toBlackEdges: toBlackEdges,
-        } );
+        }, this.board );
       }
     }
 

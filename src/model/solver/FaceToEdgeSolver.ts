@@ -92,7 +92,7 @@ export class FaceToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {
           face: face,
           toRedEdges: toRedEdges,
           toBlackEdges: toBlackEdges,
-        } );
+        }, this.board );
       }
     }
 

@@ -1,13 +1,13 @@
 import { DerivedProperty, Disposable, TinyProperty, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory, TSolver, withSolverFactory } from '../solver/TSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TState } from '../data/core/TState.ts';
 import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TStructure } from '../board/core/TStructure.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { puzzleToCompressedString, TSolvablePropertyPuzzle } from './TPuzzle.ts';
+import { TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { satSolve } from '../solver/SATSolver.ts';
@@ -21,7 +21,6 @@ import { TFace } from '../board/core/TFace.ts';
 import EditMode, { editModeProperty } from './EditMode.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
-import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
@@ -29,15 +28,19 @@ import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
 import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
-import { isAnnotationDisplayedForStyle } from '../../view/isAnnotationDisplayedForStyle.ts';
 import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
 import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
 import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
-import { generalAllPatternSolverFactory, generalColorPatternSolverFactory, generalEdgeColorPatternSolverFactory, generalEdgePatternSolverFactory, generalEdgeSectorPatternSolverFactory } from '../solver/patternSolverFactory.ts';
 import { optionize } from 'phet-lib/phet-core';
+import { puzzleToCompressedString } from './puzzleToCompressedString.ts';
+import { getHintWorker } from '../../workers/getHintWorker.ts';
+import { serializedSolvablePuzzle } from './serializedSolvablePuzzle.ts';
+import { TSerializedAction } from '../data/core/TAction.ts';
+import { deserializeAction } from '../data/core/deserializeAction.ts';
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -73,6 +76,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
+  private hintWorkerMessageID = 0;
+  private addedHintListener = false;
   public readonly pendingHintActionProperty: TProperty<TAnnotatedAction<TCompleteData> | null> = new TinyProperty( null );
   public readonly displayedAnnotationProperty: TReadOnlyProperty<TAnnotation | null>;
 
@@ -226,7 +231,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   private updateState(): void {
-    this.pendingHintActionProperty.value = null;
+    this.clearPendingHint();
+
     this.puzzle.stateProperty.value = this.stack[ this.stackPositionProperty.value ].state;
 
     setTimeout( () => {
@@ -530,6 +536,15 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     }
   }
 
+  private clearPendingHint(): void {
+    this.pendingHintActionProperty.value = null;
+    this.hintWorkerMessageID = 0;
+  }
+
+  private onHintReceived( action: TAnnotatedAction<TCompleteData> ): void {
+    this.pendingHintActionProperty.value = action;
+  }
+
   public onUserRequestHint(): void {
     // Clear pending actions when requesting a hint.
     this.clearPendingAction();
@@ -541,14 +556,14 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
     if ( this.pendingHintActionProperty.value ) {
       const action = this.pendingHintActionProperty.value;
-      this.pendingHintActionProperty.value = null;
+      this.clearPendingHint();
 
       this.applyUserActionToStack( new UserPuzzleHintApplyAction( action ) );
 
       this.updateState();
     }
     else {
-      const state = this.puzzle.stateProperty.value.clone();
+      // const state = this.puzzle.stateProperty.value.clone();
 
       // TODO: figure out what is best here
       // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
@@ -558,72 +573,105 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       const solveEdges = currentPuzzleStyle.allowEdgeEditProperty.value;
       const solveColors = currentPuzzleStyle.allowFaceColorEditProperty.value;
       const solveSectors = currentPuzzleStyle.allowSectorEditProperty.value;
+      const solveVertexState = currentPuzzleStyle.vertexStateVisibleProperty.value;
+      const solveFaceState = currentPuzzleStyle.faceStateVisibleProperty.value;
 
-      let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
-      if ( solveEdges && !solveColors && !solveSectors ) {
-        factory = generalEdgePatternSolverFactory;
-      }
-      else if ( solveColors && !solveEdges && !solveSectors ) {
-        factory = generalColorPatternSolverFactory;
-      }
-      else if ( solveEdges && solveColors && !solveSectors ) {
-        factory = generalEdgeColorPatternSolverFactory;
-      }
-      else if ( solveEdges && solveSectors && !solveColors ) {
-        factory = generalEdgeSectorPatternSolverFactory;
-      }
-      else {
-        factory = generalAllPatternSolverFactory;
-      }
+      this.hintWorkerMessageID = Math.random();
 
-      const solver = factory( this.puzzle.board, state, true );
+      const hintWorker = getHintWorker();
 
-      try {
-        let action = solver.nextAction();
+      if ( !this.addedHintListener ) {
+        this.addedHintListener = true;
 
-        while ( action ) {
-          const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
-          let valid = true;
-          try {
-            action.apply( validator );
-          }
-          catch ( e ) {
-            if ( e instanceof InvalidStateError ) {
-              valid = false;
-            }
-            else {
-              throw e;
+        const hintListener = ( event: MessageEvent<{ type: string; id: number; action: TSerializedAction | null }> ) => {
+          if ( event.data.type === 'hint-response' && event.data.id === this.hintWorkerMessageID ) {
+            const action = event.data.action ? deserializeAction( this.puzzle.board, event.data.action ) : null;
+
+            if ( action ) {
+              this.onHintReceived( action as TAnnotatedAction<TCompleteData> );
             }
           }
-
-          if ( !valid ) {
-            console.error( 'invalid action', action );
-          }
-          // console.log( valid ? 'valid' : 'INVALID', action );
-
-          if ( isAnnotationDisplayedForStyle( action.annotation, this.style ) ) {
-            this.pendingHintActionProperty.value = action;
-            console.log( action.annotation );
-            break;
-          }
-          else {
-            action.apply( state );
-            action = solver.nextAction();
-          }
-        }
-
-        // if ( !this.pendingHintActionProperty.value ) {
-        //   console.log( 'no recommended actions' );
-        // }
+        };
+        hintWorker.addEventListener( 'message', hintListener );
+        this.disposeEmitter.addListener( () => self.removeEventListener( 'message', hintListener ) );
       }
-      catch ( e ) {
-        if ( e instanceof InvalidStateError ) {
-          console.error( e );
-        }
-        else {
-          throw e;
-        }
-      }
+
+      hintWorker.postMessage( {
+        type: 'hint-request',
+        id: this.hintWorkerMessageID,
+        solveEdges: solveEdges,
+        solveColors: solveColors,
+        solveSectors: solveSectors,
+        solveVertexState: solveVertexState,
+        solveFaceState: solveFaceState,
+        serializedSolvablePuzzle: serializedSolvablePuzzle( this.puzzle ),
+      } );
+
+      // let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
+      // if ( solveEdges && !solveColors && !solveSectors ) {
+      //   factory = generalEdgePatternSolverFactory;
+      // }
+      // else if ( solveColors && !solveEdges && !solveSectors ) {
+      //   factory = generalColorPatternSolverFactory;
+      // }
+      // else if ( solveEdges && solveColors && !solveSectors ) {
+      //   factory = generalEdgeColorPatternSolverFactory;
+      // }
+      // else if ( solveEdges && solveSectors && !solveColors ) {
+      //   factory = generalEdgeSectorPatternSolverFactory;
+      // }
+      // else {
+      //   factory = generalAllPatternSolverFactory;
+      // }
+      //
+      // const solver = factory( this.puzzle.board, state, true );
+      //
+      // try {
+      //   let action = solver.nextAction();
+      //
+      //   while ( action ) {
+      //     const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
+      //     let valid = true;
+      //     try {
+      //       action.apply( validator );
+      //     }
+      //     catch ( e ) {
+      //       if ( e instanceof InvalidStateError ) {
+      //         valid = false;
+      //       }
+      //       else {
+      //         throw e;
+      //       }
+      //     }
+      //
+      //     if ( !valid ) {
+      //       console.error( 'invalid action', action );
+      //     }
+      //     // console.log( valid ? 'valid' : 'INVALID', action );
+      //
+      //     if ( isAnnotationDisplayedForStyle( action.annotation, this.style ) ) {
+      //       this.pendingHintActionProperty.value = action;
+      //       console.log( action.annotation );
+      //       break;
+      //     }
+      //     else {
+      //       action.apply( state );
+      //       action = solver.nextAction();
+      //     }
+      //   }
+      //
+      //   // if ( !this.pendingHintActionProperty.value ) {
+      //   //   console.log( 'no recommended actions' );
+      //   // }
+      // }
+      // catch ( e ) {
+      //   if ( e instanceof InvalidStateError ) {
+      //     console.error( e );
+      //   }
+      //   else {
+      //     throw e;
+      //   }
+      // }
     }
   }
 }

@@ -17,7 +17,8 @@ import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
-import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
+
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;
@@ -134,7 +135,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
               return new AnnotatedAction( new CompositeAction( sides.map( side => new EdgeStateSetAction( side.edge, EdgeState.RED ) ) ), {
                 type: 'FaceColorNoTrivialLoop',
                 face: face
-              } );
+              }, this.board );
             }
           }
         }
@@ -241,14 +242,14 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
                 type: 'FaceColorMatchToRed',
                 matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
                 ...getBaseAnnotation()
-              } );
+              }, this.board );
             }
             if ( isBlack && this.options.solveToBlack ) {
               return new AnnotatedAction( new CompositeAction( [ ...largestSingleCount.sides ].map( side => new EdgeStateSetAction( side.edge, EdgeState.BLACK ) ) ), {
                 type: 'FaceColorMatchToBlack',
                 matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
                 ...getBaseAnnotation()
-              } );
+              }, this.board );
             }
             if ( isBalanced && this.options.solveColors ) {
               const mainColor = largestSingleCount.color;
@@ -266,7 +267,7 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
                   matchingEdges: [ ...largestSingleCount.sides ].map( side => side.edge ),
                   oppositeEdges: [ ...oppositeSides ].map( side => side.edge ),
                   ...getBaseAnnotation()
-                } );
+                }, this.board );
               }
             }
 

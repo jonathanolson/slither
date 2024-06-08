@@ -18,6 +18,10 @@
     - 
     - Get a "dev" testing setup.
     - 
+    - ***********
+      - Get "Hint" button working asynchronously nicely!!!
+      - Can we track the "loading worker" for UI display?
+    - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?

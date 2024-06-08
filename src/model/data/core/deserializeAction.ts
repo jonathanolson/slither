@@ -12,12 +12,18 @@ import { NoOpAction } from './NoOpAction.ts';
 import { TAction, TSerializedAction } from './TAction.ts';
 import { UserLoadPuzzleAutoSolveAction } from '../../puzzle/UserLoadPuzzleAutoSolveAction.ts';
 import { UserRequestSolveAction } from '../../puzzle/UserRequestSolveAction.ts';
+import { AnnotatedAction } from './AnnotatedAction.ts';
+import { FaceColorMakeOppositeAction } from '../face-color/FaceColorMakeOppositeAction.ts';
+import { FaceColorMakeSameAction } from '../face-color/FaceColorMakeSameAction.ts';
 
 export const deserializeAction = ( board: TBoard, serializedAction: TSerializedAction ): TAction<TCompleteData> => {
   const type = serializedAction.type;
 
   if ( type === 'CompositeAction' ) {
     return CompositeAction.deserializeAction( board, serializedAction );
+  }
+  else if ( type === 'AnnotatedAction' ) {
+    return AnnotatedAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'CompleteAction' ) {
     return CompleteAction.deserializeAction( board, serializedAction );
@@ -48,6 +54,12 @@ export const deserializeAction = ( board: TBoard, serializedAction: TSerializedA
   }
   else if ( type === 'UserRequestSolveAction' ) {
     return UserRequestSolveAction.deserializeAction( board, serializedAction );
+  }
+  else if ( type === 'FaceColorMakeOppositeAction' ) {
+    return FaceColorMakeOppositeAction.deserializeAction( board, serializedAction );
+  }
+  else if ( type === 'FaceColorMakeSameAction' ) {
+    return FaceColorMakeSameAction.deserializeAction( board, serializedAction );
   }
   else {
     throw new Error( `Unknown action type: ${type}, could not deserialize` );

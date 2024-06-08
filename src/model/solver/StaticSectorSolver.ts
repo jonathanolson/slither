@@ -99,7 +99,7 @@ export class StaticSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
             type: 'StaticFaceSectors',
             face: face,
             sectors: modifiedSectors,
-          } );
+          }, this.board );
         }
       }
 

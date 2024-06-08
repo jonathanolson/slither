@@ -178,7 +178,7 @@ export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeStateData
                   b: endVertex,
                   regionEdges: region.edges,
                   pathEdges: edges
-                } );
+                }, this.board );
               }
             }
             else {
@@ -189,7 +189,7 @@ export class SimpleLoopSolver implements TSolver<TFaceValueData & TEdgeStateData
                   b: endVertex,
                   regionEdges: region.edges,
                   pathEdges: edges
-                } );
+                }, this.board );
               }
             }
           }

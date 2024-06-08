@@ -15,7 +15,8 @@ import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOpp
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
+
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 
 type Data = TEdgeStateData & TFaceColorData;
 
@@ -182,7 +183,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
       if ( encounteredError ) {
         return new AnnotatedAction( new FaceColorInvalidAction(), {
           type: 'InvalidFaceColoring'
-        } );
+        }, this.board );
       }
 
       // Match up with old colors
@@ -276,7 +277,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
       if ( hasChange ) {
         return new AnnotatedAction( new GeneralFaceColorAction( this.board, addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, false ), {
           type: 'GeneralFaceColoring'
-        } );
+        }, this.board );
       }
       else {
         return null;
@@ -297,7 +298,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
               return new AnnotatedAction( new FaceColorMakeOppositeAction( getFaceColorPointer( this.state, faceColorA ), getFaceColorPointer( this.state, faceColorB ) ), {
                 type: 'FaceColoringBlackEdge',
                 edge: edge
-              } );
+              }, this.board );
             }
           }
           else if ( state === EdgeState.RED ) {
@@ -305,7 +306,7 @@ export class SafeEdgeToFaceColorSolver implements TSolver<Data, TAnnotatedAction
               return new AnnotatedAction( new FaceColorMakeSameAction( getFaceColorPointer( this.state, faceColorA ), getFaceColorPointer( this.state, faceColorB ) ), {
                 type: 'FaceColoringRedEdge',
                 edge: edge
-              } );
+              }, this.board );
             }
           }
         }

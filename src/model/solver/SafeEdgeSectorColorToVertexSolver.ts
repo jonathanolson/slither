@@ -176,7 +176,7 @@ export class SafeEdgeSectorColorToVertexSolver implements TSolver<Data, TAnnotat
           vertex: vertex,
           beforeState: oldState,
           afterState: newState,
-        } );
+        }, this.board );
       }
     }
 

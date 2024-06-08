@@ -85,7 +85,7 @@ export class SimpleSectorSolver implements TSolver<Data, TAnnotatedAction<Data>>
           sectorState: sectorState,
           toRedEdges: redEdges,
           toBlackEdges: blackEdges,
-        } );
+        }, this.board );
       };
 
       if ( whiteCount === 0 ) {

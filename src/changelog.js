@@ -8,5 +8,6 @@ export const changelog = [
     'Added ctrl-y redo shortcut',
     'Added option for showing elapsed time (timer)',
     'Clear pending actions when requesting a hint',
+    'Moved hint CPU processing to a web worker',
   ]
 ];

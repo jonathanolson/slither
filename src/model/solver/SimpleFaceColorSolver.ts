@@ -90,14 +90,14 @@ export class SimpleFaceColorSolver implements TSolver<Data, TAnnotatedAction<Dat
           return new AnnotatedAction( new EdgeStateSetAction( edge, EdgeState.BLACK ), {
             type: 'FaceColorToBlack',
             edge: edge
-          } );
+          }, this.board );
         }
 
         if ( this.options.solveToRed && isSame ) {
           return new AnnotatedAction( new EdgeStateSetAction( edge, EdgeState.RED ), {
             type: 'FaceColorToRed',
             edge: edge
-          } );
+          }, this.board );
         }
       }
 

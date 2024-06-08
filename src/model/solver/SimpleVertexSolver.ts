@@ -88,7 +88,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeStateData, TAnnotatedAct
             vertex: vertex,
             whiteEdges: whiteEdges,
             blackEdges: blackEdges as [ TEdge, TEdge ] // we checked earlier
-          } );
+          }, this.board );
         }
         else if ( this.options.solveForcedLineToBlack && blackCount === 1 && whiteCount === 1 ) {
           const whiteEdge = edges.find( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE )!;
@@ -102,7 +102,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeStateData, TAnnotatedAct
             blackEdge: blackEdge,
             whiteEdge: whiteEdge,
             redEdges: edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.RED )
-          } );
+          }, this.board );
         }
         else if ( this.options.solveAlmostEmptyToRed && blackCount === 0 && whiteCount === 1 ) {
           const whiteEdge = edges.find( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE )!;
@@ -113,7 +113,7 @@ export class SimpleVertexSolver implements TSolver<TEdgeStateData, TAnnotatedAct
             vertex: vertex,
             whiteEdge: whiteEdge,
             redEdges: edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.RED )
-          } );
+          }, this.board );
         }
       }
     }

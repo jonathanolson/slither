@@ -105,7 +105,7 @@ export class StaticDoubleMinusOneFacesSolver implements TSolver<Data, TAnnotated
                     faces: [ mainFace, otherFace ],
                     toBlackEdges: blackEdges,
                     toRedEdges: redEdges,
-                  } );
+                  }, this.board );
                 }
               }
             }

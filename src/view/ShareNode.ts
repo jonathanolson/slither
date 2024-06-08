@@ -2,7 +2,7 @@ import { BooleanProperty } from 'phet-lib/axon';
 import { VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { puzzleToCompressedString, TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { UITextCheckbox } from './UITextCheckbox.ts';
 import { copyToClipboard } from '../util/copyToClipboard.ts';
@@ -10,6 +10,7 @@ import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { ViewContext } from './ViewContext.ts';
+import { puzzleToCompressedString } from '../model/puzzle/puzzleToCompressedString.ts';
 
 export class ShareNode extends PopupNode {
 

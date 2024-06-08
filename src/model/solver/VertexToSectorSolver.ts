@@ -110,7 +110,7 @@ export class VertexToSectorSolver implements TSolver<Data, TAnnotatedAction<Data
           sectors: changedSectors,
           beforeStates: changedOldSectorStates,
           afterStates: changedNewSectorStates,
-        } );
+        }, this.board );
       }
     }
 

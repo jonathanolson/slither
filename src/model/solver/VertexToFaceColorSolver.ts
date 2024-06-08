@@ -10,8 +10,8 @@ import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts
 import { getFaceOrderedSectorsFromVertex } from '../data/sector-state/getFaceOrderedSectorsFromVertex.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
-import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 
 type Data = TFaceColorData & TVertexStateData;
 
@@ -121,7 +121,7 @@ export class VertexToFaceColorSolver implements TSolver<Data, TAnnotatedAction<D
                 vertex: vertex,
                 facesA: vertex.faces.filter( face => this.state.getFaceColor( face ) === aColor ),
                 facesB: vertex.faces.filter( face => this.state.getFaceColor( face ) === bColor ),
-              } );
+              }, this.board );
             }
             if ( wasOpposite && !wasSame && this.state.getOppositeFaceColor( aColor ) !== bColor ) {
               return new AnnotatedAction( new FaceColorMakeOppositeAction( getFaceColorPointer( this.state, aColor ), getFaceColorPointer( this.state, bColor ) ), {
@@ -129,7 +129,7 @@ export class VertexToFaceColorSolver implements TSolver<Data, TAnnotatedAction<D
                 vertex: vertex,
                 facesA: vertex.faces.filter( face => this.state.getFaceColor( face ) === aColor ),
                 facesB: vertex.faces.filter( face => this.state.getFaceColor( face ) === bColor ),
-              } );
+              }, this.board );
 
             }
           }

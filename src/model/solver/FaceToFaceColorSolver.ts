@@ -8,11 +8,11 @@ import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
-import { getFaceColorPointer } from '../data/face-color/FaceColorPointer.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import _ from '../../workarounds/_.ts';
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 
 type Data = TFaceColorData & TFaceStateData;
 
@@ -132,7 +132,7 @@ export class FaceToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Dat
                 face: face,
                 facesA: allFaces.filter( face => this.state.getFaceColor( face ) === aColor ),
                 facesB: allFaces.filter( face => this.state.getFaceColor( face ) === bColor ),
-              } );
+              }, this.board );
             }
             if ( wasOpposite && !wasSame && this.state.getOppositeFaceColor( aColor ) !== bColor ) {
               return new AnnotatedAction( new FaceColorMakeOppositeAction( getFaceColorPointer( this.state, aColor ), getFaceColorPointer( this.state, bColor ) ), {
@@ -140,7 +140,7 @@ export class FaceToFaceColorSolver implements TSolver<Data, TAnnotatedAction<Dat
                 face: face,
                 facesA: allFaces.filter( face => this.state.getFaceColor( face ) === aColor ),
                 facesB: allFaces.filter( face => this.state.getFaceColor( face ) === bColor ),
-              } );
+              }, this.board );
 
             }
           }
