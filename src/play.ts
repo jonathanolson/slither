@@ -25,7 +25,10 @@ import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
 import { ViewContext } from './view/ViewContext.ts';
+import WorkerTest from './worker-test.ts?worker';
 
+// TODO: also see web worker cases where this is used
+// TODO: factor out
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
   // TODO: We should actually... have stripped these, something is going wrong
@@ -254,3 +257,9 @@ puzzleModelProperty.lazyLink( ( puzzleModel, oldPuzzleModel ) => {
     oldPuzzleModel.dispose();
   }
 } );
+//
+// const worker = new Worker( new URL( './worker-test.ts', import.meta.url ), {
+//   type: 'module'
+// } );
+
+const worker = new WorkerTest();
