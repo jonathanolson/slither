@@ -16,8 +16,6 @@
     - 
     - KEEP CHANGELOG UP TO DATE
     - 
-    - Get a "dev" testing setup.
-    - 
     - ***********
       - Get "Hint" button working asynchronously nicely!!!
       - Can we track the "loading worker" for UI display?
