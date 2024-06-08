@@ -25,6 +25,8 @@ import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
 import { ViewContext } from './view/ViewContext.ts';
+
+// @ts-expect-error
 import WorkerTest from './worker-test.ts?worker';
 
 // TODO: also see web worker cases where this is used
