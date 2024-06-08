@@ -1,5 +1,3 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
 import { controlBarMargin, currentTheme } from './Theme.ts';
 import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
 import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';

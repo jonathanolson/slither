@@ -1,4 +1,3 @@
-
 // @ts-expect-error
 import HintWorker from './hintWorker.ts?worker';
 
