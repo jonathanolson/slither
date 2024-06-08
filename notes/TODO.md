@@ -32,6 +32,8 @@
     - 
     - Memory - web-worker the scanURL bits?
     - 
+    - Long-press tooltips
+    - 
     - Generate the "next" puzzle in the background (so it is ready when the user solves)
       - Allow opt in or out, setting
       - display in gen dialog if open
