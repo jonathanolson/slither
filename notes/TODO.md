@@ -28,6 +28,8 @@
     - 
     - Memory - web-worker the scanURL bits?
     - 
+    - Generate the "next" puzzle in the background (so it is ready when the user solves)
+    - 
     - [nowayjay] Share icon better
     - 
     - [nowayjay] Add a "clear line" option?
@@ -132,6 +134,7 @@
       - Basically, we could even let users store their own modes?
     - UI: "same color" operation should be a "copy" in an error condition:
       - Face "copy" color operation, order matters. source => target
+    - Performance: [nowayjay] disable animation during puzzle generation
     - 
     - PWA web app for it (for offline use)
     - 
