@@ -105,7 +105,6 @@
     - Bug: Fix puzzles in localStorage, having it lose progress is not cool
     - Bug: Highlight "outside" color when face operation on it with blank puzzle. Doesn't highlight at the start.
     - 
-    - UI: Redo keyboard shortcut: ctrl-y aand ctrl-shift-z
     - UI: Increase touch area for puzzle size buttons
     - UI: Cancel generation button
     - UI: Add a timer [nowayjay]
