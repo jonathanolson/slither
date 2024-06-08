@@ -113,10 +113,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.displayedAnnotationProperty = new DerivedProperty( [ this.pendingHintActionProperty ], action => action ? action.annotation : null );
 
     // Clear pending actions (e.g. face-color selection) when certain conditions happen
-    const clearPendingActionListener = () => {
-      this.pendingActionFaceColorProperty.value = null;
-      this.pendingActionSectorProperty.value = null;
-    };
+    const clearPendingActionListener = this.clearPendingAction.bind( this );
     this.stackPositionProperty.lazyLink( clearPendingActionListener );
     editModeProperty.lazyLink( clearPendingActionListener );
     this.disposeEmitter.addListener( () => editModeProperty.unlink( clearPendingActionListener ) );
@@ -216,6 +213,11 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       this.autoSolverFactoryProperty.unlink( solverChangeListener );
       this.style.safeSolverFactoryProperty.unlink( solverChangeListener );
     } );
+  }
+
+  private clearPendingAction(): void {
+    this.pendingActionFaceColorProperty.value = null;
+    this.pendingActionSectorProperty.value = null;
   }
 
   public step( dt: number ): void {
@@ -529,6 +531,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserRequestHint(): void {
+    // Clear pending actions when requesting a hint.
+    this.clearPendingAction();
+
     // TODO: disable button?
     if ( this.isSolvedProperty.value ) {
       return;

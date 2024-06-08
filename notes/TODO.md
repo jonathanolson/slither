@@ -22,6 +22,12 @@
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
     - 
+    - [nowayjay] - FREEZE hint search --- use web workers
+    - 
+    - [nowayjay] - BLUR the outside section of the puzzle when a hint is visible. Clicking on it will dismiss the hint.
+    - 
+    - Memory - web-worker the scanURL bits?
+    - 
     - [nowayjay] Share icon better
     - 
     - [nowayjay] Add a "clear line" option?
