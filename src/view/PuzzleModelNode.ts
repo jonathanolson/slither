@@ -31,7 +31,7 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       },
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
       selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
-      style: puzzleModel.style
+      style: puzzleModel.style,
     } );
 
     super( combineOptions<NodeOptions>( {

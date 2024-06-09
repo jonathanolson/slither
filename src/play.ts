@@ -18,13 +18,13 @@ import { workaroundResolveStep } from './util/sleep.ts';
 import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
-import { TAnnotation } from './model/data/core/TAnnotation.ts';
-import { HintTipNode } from './view/HintTipNode.ts';
+import { HintStatusNode } from './view/HintStatusNode.ts';
 import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
 import { ViewContext } from './view/ViewContext.ts';
+import HintState from './model/puzzle/HintState.ts';
 
 // TODO: also see web worker cases where this is used
 // TODO: factor out
@@ -88,11 +88,11 @@ const hasErrorProperty = new DynamicProperty( puzzleModelProperty, {
     return puzzleModel ? puzzleModel.hasErrorProperty : falseProperty;
   }
 } ) as TReadOnlyProperty<boolean>; // Why, TS?
-const displayedAnnotationProperty = new DynamicProperty( puzzleModelProperty, {
-  derive: ( puzzleModel: PuzzleModel | null ): TReadOnlyProperty<TAnnotation | null> => {
-    return puzzleModel ? puzzleModel.displayedAnnotationProperty : new Property( null );
+const hintStateProperty = new DynamicProperty( puzzleModelProperty, {
+  derive: ( puzzleModel: PuzzleModel | null ): TReadOnlyProperty<HintState> => {
+    return puzzleModel ? puzzleModel.hintStateProperty : new TinyProperty( HintState.DEFAULT );
   }
-} ) as TReadOnlyProperty<TAnnotation | null>; // Why, TS?
+} ) as TReadOnlyProperty<HintState>; // Why, TS?
 
 // TODO: better place to handle this type of logic...
 Multilink.multilink( [
@@ -122,7 +122,9 @@ const viewStyleBarNode = new ViewStyleBarNode( {
   glassPane: glassPane,
 } );
 
-const hintTip = new HintTipNode( displayedAnnotationProperty );
+const hintStatusNode = new HintStatusNode( viewContext, hintStateProperty, () => {
+  puzzleModelProperty.value?.onUserApplyHint();
+} );
 
 const mainBox = new VBox( {
   stretch: true,
@@ -157,11 +159,11 @@ layoutBoundsProperty.lazyLink( bounds => {
   mainBox.y = bounds.top;
 } );
 scene.addChild( mainBox );
-scene.addChild( hintTip );
+scene.addChild( hintStatusNode );
 scene.addChild( glassPane );
 
-ManualConstraint.create( scene, [ controlBarNode, hintTip ], ( controlBarProxy, hintTipProxy ) => {
-  hintTipProxy.centerTop = controlBarProxy.centerBottom.plusXY( 0, 10 );
+ManualConstraint.create( scene, [ controlBarNode, hintStatusNode ], ( controlBarProxy, hintTipProxy ) => {
+  hintTipProxy.centerTop = controlBarProxy.centerBottom.plusXY( 0, 5 );
 } );
 
 display.initializeEvents();
@@ -199,6 +201,7 @@ display.updateOnRequestAnimationFrame( dt => {
   puzzleContainerNode.step( dt );
   topologicalContainerNode.step( dt );
   puzzleModelProperty.value?.step( dt );
+  hintStatusNode.step( dt );
 } );
 
 document.addEventListener( 'keydown', event => {

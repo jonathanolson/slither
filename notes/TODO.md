@@ -17,9 +17,12 @@
     - KEEP CHANGELOG UP TO DATE
     - 
     - ***********
+      - Terminate worker threads that we don't want anymore with terminate()?
       - Central location for hintWorker state. Notes if waiting on it (but can clear). Maybe takes callbacks. Property with state for hint button.
       - Get "Hint" button working asynchronously nicely!!!
       - Can we track the "loading worker" for UI display?
+    - 
+    - Add stepEmitter to ViewContext?
     - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?
@@ -52,6 +55,8 @@
     - Show a "next" dialog or something when the user solves the puzzle
     - Cancel button on generation
     - Close generation aborts generation
+    - 
+    - TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
     - 
     - [nowayjay] Share icon better
     - 

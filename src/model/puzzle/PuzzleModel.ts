@@ -41,6 +41,7 @@ import { serializedSolvablePuzzle } from './serializedSolvablePuzzle.ts';
 import { TSerializedAction } from '../data/core/TAction.ts';
 import { deserializeAction } from '../data/core/deserializeAction.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import HintState from './HintState.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -60,6 +61,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   // In seconds
   public readonly timeElapsedProperty: TProperty<number> = new TinyProperty( 0 );
+
+  public readonly hintStateProperty: TProperty<HintState> = new TinyProperty( HintState.DEFAULT );
 
   private readonly stack: PuzzleSnapshot<Structure, Data>[];
 
@@ -89,7 +92,7 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
 
   private readonly autoSolverFactoryProperty: TReadOnlyProperty<AnnotatedSolverFactory<TStructure, TCompleteData>>;
 
-  private readonly style: TPuzzleStyle;
+  public readonly style: TPuzzleStyle;
 
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
@@ -506,172 +509,81 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
           console.log( 'Multiple solution found?!?' );
         }
       }
-
-      // Should we remove the old backtracker approach?
-
-      // try {
-      //   // TODO: parameterize PuzzleModel by <Data> instead of <State> to fix this type issue
-      //   const solutions = getBacktrackedSolutions<State>( this.puzzle.board, state as TState<State>, {
-      //     failOnMultipleSolutions: true,
-      //     useEdgeBacktrackerSolver: true
-      //   } );
-      //
-      //   // TODO: what to do if we have NO solution???
-      //   if ( solutions.length === 1 ) {
-      //
-      //     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, new UserRequestSolveAction(), solutions[ 0 ], false ) );
-      //
-      //     this.updateState();
-      //   }
-      // }
-      // catch ( e ) {
-      //   if ( e instanceof MultipleSolutionsError ) {
-      //     // TODO: what should we do?
-      //     console.log( 'Multiple solutions found' );
-      //   }
-      //   else {
-      //     throw e;
-      //   }
-      // }
     }
   }
 
   private clearPendingHint(): void {
+    this.hintStateProperty.value = HintState.DEFAULT;
     this.pendingHintActionProperty.value = null;
     this.hintWorkerMessageID = 0;
   }
 
-  private onHintReceived( action: TAnnotatedAction<TCompleteData> ): void {
-    this.pendingHintActionProperty.value = action;
+  private onHintReceived( action: TAnnotatedAction<TCompleteData> | null ): void {
+    this.hintStateProperty.value = action ? HintState.FOUND : HintState.NOT_FOUND;
+
+    if ( action ) {
+      this.pendingHintActionProperty.value = action;
+    }
   }
 
   public onUserRequestHint(): void {
     // Clear pending actions when requesting a hint.
     this.clearPendingAction();
 
-    // TODO: disable button?
     if ( this.isSolvedProperty.value ) {
       return;
     }
 
     if ( this.pendingHintActionProperty.value ) {
-      const action = this.pendingHintActionProperty.value;
+      return;
+    }
+
+    const solveEdges = currentPuzzleStyle.allowEdgeEditProperty.value;
+    const solveColors = currentPuzzleStyle.allowFaceColorEditProperty.value;
+    const solveSectors = currentPuzzleStyle.allowSectorEditProperty.value;
+    const solveVertexState = currentPuzzleStyle.vertexStateVisibleProperty.value;
+    const solveFaceState = currentPuzzleStyle.faceStateVisibleProperty.value;
+
+    this.hintWorkerMessageID = Math.random();
+
+    const hintWorker = getHintWorker();
+
+    if ( !this.addedHintListener ) {
+      this.addedHintListener = true;
+
+      const hintListener = ( event: MessageEvent<{ type: string; id: number; action: TSerializedAction | null }> ) => {
+        if ( event.data.type === 'hint-response' && event.data.id === this.hintWorkerMessageID ) {
+          const action = event.data.action ? deserializeAction( this.puzzle.board, event.data.action ) : null;
+
+          this.onHintReceived( action as TAnnotatedAction<TCompleteData> | null );
+        }
+      };
+      hintWorker.addEventListener( 'message', hintListener );
+      this.disposeEmitter.addListener( () => self.removeEventListener( 'message', hintListener ) );
+    }
+
+    hintWorker.postMessage( {
+      type: 'hint-request',
+      id: this.hintWorkerMessageID,
+      solveEdges: solveEdges,
+      solveColors: solveColors,
+      solveSectors: solveSectors,
+      solveVertexState: solveVertexState,
+      solveFaceState: solveFaceState,
+      serializedSolvablePuzzle: serializedSolvablePuzzle( this.puzzle ),
+    } );
+
+    this.hintStateProperty.value = HintState.SEARCHING;
+  }
+
+  public onUserApplyHint(): void {
+    const action = this.pendingHintActionProperty.value;
+    if ( action ) {
       this.clearPendingHint();
 
       this.applyUserActionToStack( new UserPuzzleHintApplyAction( action ) );
 
       this.updateState();
-    }
-    else {
-      // const state = this.puzzle.stateProperty.value.clone();
-
-      // TODO: figure out what is best here
-      // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
-      // const solver = standardSolverFactory( this.puzzle.board, state, true );
-      // const solver = patternSolverFactory( this.puzzle.board, state, true );
-
-      const solveEdges = currentPuzzleStyle.allowEdgeEditProperty.value;
-      const solveColors = currentPuzzleStyle.allowFaceColorEditProperty.value;
-      const solveSectors = currentPuzzleStyle.allowSectorEditProperty.value;
-      const solveVertexState = currentPuzzleStyle.vertexStateVisibleProperty.value;
-      const solveFaceState = currentPuzzleStyle.faceStateVisibleProperty.value;
-
-      this.hintWorkerMessageID = Math.random();
-
-      const hintWorker = getHintWorker();
-
-      if ( !this.addedHintListener ) {
-        this.addedHintListener = true;
-
-        const hintListener = ( event: MessageEvent<{ type: string; id: number; action: TSerializedAction | null }> ) => {
-          if ( event.data.type === 'hint-response' && event.data.id === this.hintWorkerMessageID ) {
-            const action = event.data.action ? deserializeAction( this.puzzle.board, event.data.action ) : null;
-
-            if ( action ) {
-              this.onHintReceived( action as TAnnotatedAction<TCompleteData> );
-            }
-          }
-        };
-        hintWorker.addEventListener( 'message', hintListener );
-        this.disposeEmitter.addListener( () => self.removeEventListener( 'message', hintListener ) );
-      }
-
-      hintWorker.postMessage( {
-        type: 'hint-request',
-        id: this.hintWorkerMessageID,
-        solveEdges: solveEdges,
-        solveColors: solveColors,
-        solveSectors: solveSectors,
-        solveVertexState: solveVertexState,
-        solveFaceState: solveFaceState,
-        serializedSolvablePuzzle: serializedSolvablePuzzle( this.puzzle ),
-      } );
-
-      // let factory: ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
-      // if ( solveEdges && !solveColors && !solveSectors ) {
-      //   factory = generalEdgePatternSolverFactory;
-      // }
-      // else if ( solveColors && !solveEdges && !solveSectors ) {
-      //   factory = generalColorPatternSolverFactory;
-      // }
-      // else if ( solveEdges && solveColors && !solveSectors ) {
-      //   factory = generalEdgeColorPatternSolverFactory;
-      // }
-      // else if ( solveEdges && solveSectors && !solveColors ) {
-      //   factory = generalEdgeSectorPatternSolverFactory;
-      // }
-      // else {
-      //   factory = generalAllPatternSolverFactory;
-      // }
-      //
-      // const solver = factory( this.puzzle.board, state, true );
-      //
-      // try {
-      //   let action = solver.nextAction();
-      //
-      //   while ( action ) {
-      //     const validator = new CompleteValidator( this.puzzle.board, state, this.puzzle.solution.solvedState );
-      //     let valid = true;
-      //     try {
-      //       action.apply( validator );
-      //     }
-      //     catch ( e ) {
-      //       if ( e instanceof InvalidStateError ) {
-      //         valid = false;
-      //       }
-      //       else {
-      //         throw e;
-      //       }
-      //     }
-      //
-      //     if ( !valid ) {
-      //       console.error( 'invalid action', action );
-      //     }
-      //     // console.log( valid ? 'valid' : 'INVALID', action );
-      //
-      //     if ( isAnnotationDisplayedForStyle( action.annotation, this.style ) ) {
-      //       this.pendingHintActionProperty.value = action;
-      //       console.log( action.annotation );
-      //       break;
-      //     }
-      //     else {
-      //       action.apply( state );
-      //       action = solver.nextAction();
-      //     }
-      //   }
-      //
-      //   // if ( !this.pendingHintActionProperty.value ) {
-      //   //   console.log( 'no recommended actions' );
-      //   // }
-      // }
-      // catch ( e ) {
-      //   if ( e instanceof InvalidStateError ) {
-      //     console.error( e );
-      //   }
-      //   else {
-      //     throw e;
-      //   }
-      // }
     }
   }
 }

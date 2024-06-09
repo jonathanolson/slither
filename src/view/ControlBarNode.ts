@@ -16,6 +16,7 @@ import { TooltipListener } from './TooltipListener.ts';
 import { TimerNode } from './TimerNode.ts';
 import { showPuzzleTimerProperty } from './puzzle/puzzleStyles.ts';
 import { ViewContext } from './ViewContext.ts';
+import HintState from '../model/puzzle/HintState.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option
@@ -34,6 +35,7 @@ export default class ControlBarNode extends HBox {
 
     const falseProperty = new TinyProperty( false );
     const zeroProperty = new TinyProperty( 0 );
+    const hintStateNotFoundProperty = new TinyProperty( HintState.NOT_FOUND );
 
     const undoEnabledProperty = new DynamicProperty( puzzleModelProperty, {
       derive: ( puzzleModel: PuzzleModel | null ) => {
@@ -58,6 +60,12 @@ export default class ControlBarNode extends HBox {
         return puzzleModel ? puzzleModel.timeElapsedProperty : zeroProperty;
       }
     } ) as TReadOnlyProperty<number>;
+
+    const hintStateProperty = new DynamicProperty( puzzleModelProperty, {
+      derive: ( puzzleModel: PuzzleModel | null ) => {
+        return puzzleModel ? puzzleModel.hintStateProperty : hintStateNotFoundProperty;
+      }
+    } ) as TReadOnlyProperty<HintState>;
 
     const isUnsolvedProperty = new DerivedProperty( [ isSolvedProperty ], isSolved => !isSolved );
 
@@ -195,7 +203,11 @@ export default class ControlBarNode extends HBox {
             }
           },
 
-          enabledProperty: isUnsolvedProperty,
+          enabledProperty: new DerivedProperty( [ isUnsolvedProperty, hintStateProperty ], (
+            isUnsolved, hintState,
+          ) => {
+            return isUnsolved && hintState === HintState.DEFAULT;
+          } ),
 
           // TODO: factor these out
           textFill: currentTheme.uiButtonForegroundProperty,

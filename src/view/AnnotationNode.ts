@@ -262,16 +262,16 @@ export class AnnotationNode extends Node {
           patternDescriptionNode.right = additionalContentLayoutBounds.right - margin;
         }
 
-        // {
-        //   const highlightBounds = displayEmbedding.tightBounds.dilated( 0.3 );
-        //   const cornerRadius = 0.1;
-        //   children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
-        //     stroke: currentTheme.uiButtonBaseColorProperty,
-        //     lineWidth: 0.3,
-        //     pickable: false,
-        //     opacity: 0.8,
-        //   } ) );
-        // }
+        {
+          const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
+          const cornerRadius = 0.1;
+          children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
+            stroke: currentTheme.puzzleBackgroundColorProperty,
+            lineWidth: 0.2,
+            pickable: false,
+            opacity: 0.8,
+          } ) );
+        }
         {
           const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
           const cornerRadius = 0.1;
@@ -300,10 +300,5 @@ export class AnnotationNode extends Node {
     } );
 
     this.disposeEmitter.addListener( () => disposeActions.forEach( action => action() ) );
-  }
-
-  public static getHintNode( annotation: TAnnotation ): Node {
-    // TODO: sync colors, etc.
-    return new UIText( annotation.type );
   }
 }
