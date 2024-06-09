@@ -1,6 +1,6 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
 import { DerivedProperty, Property, TReadOnlyProperty } from 'phet-lib/axon';
-import { combineOptions, optionize } from 'phet-lib/phet-core';
+import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
 import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TStructure } from '../../model/board/core/TStructure.ts';
@@ -98,6 +98,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     const vertexStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const faceStateContainer = new Node( { pickable: false } ); // TODO: potentially in the future we could make this pickable, for clickable vertex states
     const annotationContainer = new Node( {
+      renderer: platform.chromium ? 'canvas' : null,
       pickable: null // TODO: note that we have annotations that we can click on now?
     } );
     const selectedFaceColorHighlightContainer = new Node( {

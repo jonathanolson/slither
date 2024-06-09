@@ -12,6 +12,7 @@ export const changelog = [
     'Rearranged classic view mode to first',
     'Clear hints on escape key',
     'Separate hint information section',
+    'Working around weird aliasing on Chrome',
     'Miscellaneous fixes!',
   ]
 ];
