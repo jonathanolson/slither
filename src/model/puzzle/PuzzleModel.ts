@@ -380,8 +380,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserEscape(): void {
-    this.pendingActionFaceColorProperty.value = null;
-    this.pendingActionSectorProperty.value = null;
+    this.clearPendingAction();
+    this.clearPendingHint();
   }
 
   public getNewEdgeState( oldEdgeState: EdgeState, button: 0 | 1 | 2 ): EdgeState {

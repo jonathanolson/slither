@@ -10,6 +10,7 @@ export const changelog = [
     'Clear pending actions when requesting a hint',
     'Moved hint CPU processing to a web worker',
     'Rearranged classic view mode to first',
+    'Clear hints on escape key',
     'Miscellaneous fixes!',
   ]
 ];
