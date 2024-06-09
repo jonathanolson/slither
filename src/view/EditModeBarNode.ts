@@ -160,9 +160,10 @@ export default class EditModeBarNode extends HBox {
     } as const;
 
     const eraserButton = new BooleanRectangularStickyToggleButton( eraserEnabledProperty, combineOptions<BooleanRectangularStickyToggleButtonOptions>( {}, commonButtonOptions, {
-      accessibleName: 'Eraser Mode',
+      accessibleName: 'Eraser Mode (Toggle)',
       content: eraserIcon,
     } ) );
+    eraserButton.addInputListener( tooltipListener );
 
     super( {
       // TODO: better layout
