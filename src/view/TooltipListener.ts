@@ -27,7 +27,7 @@ export class TooltipListener implements TInputListener {
 
       const point = this.viewContext.glassPane.globalToLocalPoint( pointer.point );
 
-      this.tooltipNode.leftTop = point.plusXY( 0, 15 );
+      this.tooltipNode.leftTop = point.plusXY( 0, this.viewContext.glassPane.getUniqueTransform().transformDeltaY( 20 ) );
       if ( this.tooltipNode.bottom > this.viewContext.layoutBoundsProperty.value.bottom ) {
         this.tooltipNode.bottom = point.y - 2;
       }
