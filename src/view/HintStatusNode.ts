@@ -31,11 +31,19 @@ export class HintStatusNode extends Node {
       stroke: currentTheme.uiForegroundColorProperty,
     };
 
+    const loadingNode = new Panel( new HBox( {
+      spacing: 10,
+      children: [
+        new Node( { children: [ this.spinningIndicatorNode ] } ),
+        new UIText( 'Loading Hint Solver...' ),
+      ],
+    } ), panelOptions );
+
     const searchingNode = new Panel( new HBox( {
       spacing: 10,
       children: [
-        this.spinningIndicatorNode,
-        new UIText( 'Searching for hint...' ),
+        new Node( { children: [ this.spinningIndicatorNode ] } ),
+        new UIText( 'Searching for Hint...' ),
       ],
     } ), panelOptions );
 
@@ -50,6 +58,7 @@ export class HintStatusNode extends Node {
 
     const hintStateListener = ( hintState: HintState ) => {
       this.children = [
+        ...( hintState === HintState.LOADING ? [ loadingNode ] : [] ),
         ...( hintState === HintState.SEARCHING ? [ searchingNode ] : [] ),
         ...( hintState === HintState.FOUND ? [ foundNode ] : [] ),
         ...( hintState === HintState.NOT_FOUND ? [ notFoundNode ] : [] ),

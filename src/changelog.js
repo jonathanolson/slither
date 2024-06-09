@@ -11,6 +11,7 @@ export const changelog = [
     'Moved hint CPU processing to a web worker',
     'Rearranged classic view mode to first',
     'Clear hints on escape key',
+    'Separate hint information section',
     'Miscellaneous fixes!',
   ]
 ];

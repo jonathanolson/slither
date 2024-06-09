@@ -36,7 +36,7 @@ import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 import { optionize } from 'phet-lib/phet-core';
 import { puzzleToCompressedString } from './puzzleToCompressedString.ts';
-import { getHintWorker } from '../../workers/getHintWorker.ts';
+import { getHintWorker, hintWorkerLoadedProperty } from '../../workers/getHintWorker.ts';
 import { serializedSolvablePuzzle } from './serializedSolvablePuzzle.ts';
 import { TSerializedAction } from '../data/core/TAction.ts';
 import { deserializeAction } from '../data/core/deserializeAction.ts';
@@ -573,7 +573,24 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       serializedSolvablePuzzle: serializedSolvablePuzzle( this.puzzle ),
     } );
 
-    this.hintStateProperty.value = HintState.SEARCHING;
+    if ( hintWorkerLoadedProperty.value ) {
+      this.hintStateProperty.value = HintState.SEARCHING;
+    }
+    else {
+      this.hintStateProperty.value = HintState.LOADING;
+
+      // Listen to when this switches to SEARCHING
+      const listener = ( loaded: boolean ) => {
+        if ( loaded ) {
+          if ( this.hintStateProperty.value === HintState.LOADING ) {
+            this.hintStateProperty.value = HintState.SEARCHING;
+          }
+
+          hintWorkerLoadedProperty.unlink( listener );
+        }
+      };
+      hintWorkerLoadedProperty.link( listener );
+    }
   }
 
   public onUserApplyHint(): void {

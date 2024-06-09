@@ -19,6 +19,10 @@ if ( window.assertions && !( import.meta.env.PROD ) ) {
   window.assertions.enableAssert();
 }
 
+self.postMessage( {
+  type: 'hint-worker-loaded',
+} );
+
 self.addEventListener( 'message', event => {
   const data = event.data;
 

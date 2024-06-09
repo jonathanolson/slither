@@ -264,7 +264,7 @@ export class AnnotationNode extends Node {
 
         {
           const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
-          const cornerRadius = 0.1;
+          const cornerRadius = 0.3;
           children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
             stroke: currentTheme.puzzleBackgroundColorProperty,
             lineWidth: 0.2,
@@ -274,7 +274,7 @@ export class AnnotationNode extends Node {
         }
         {
           const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
-          const cornerRadius = 0.1;
+          const cornerRadius = 0.3;
           children.push( new Path( Shape.roundRectangle( highlightBounds.x, highlightBounds.y, highlightBounds.width, highlightBounds.height, cornerRadius, cornerRadius ), {
             stroke: currentTheme.blackLineColorProperty,
             lineWidth: 0.13,
