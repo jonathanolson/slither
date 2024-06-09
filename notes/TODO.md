@@ -16,9 +16,16 @@
     - 
     - KEEP CHANGELOG UP TO DATE
     - 
+    - ****** FIX THE NOT SAVING STATE
+    - ** FIX THE CRASHING (don't leak memory with hints)
+    - 
     - ***********
+      - Central location for hintWorker state. Notes if waiting on it (but can clear). Maybe takes callbacks. Property with state for hint button.
       - Get "Hint" button working asynchronously nicely!!!
       - Can we track the "loading worker" for UI display?
+    - 
+    - Properly guard edit modes (switch them when view style switch).
+    - See if Chrome/Windows should use Canvas?
     - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
@@ -30,7 +37,9 @@
     - 
     - Memory - web-worker the scanURL bits?
     - 
-    - Long-press tooltips
+    - Tooltips:
+      - Long-press tooltips
+      - Show tooltips on disabled buttons
     - 
     - Generate the "next" puzzle in the background (so it is ready when the user solves)
       - Allow opt in or out, setting

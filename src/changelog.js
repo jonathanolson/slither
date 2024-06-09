@@ -9,5 +9,6 @@ export const changelog = [
     'Added option for showing elapsed time (timer)',
     'Clear pending actions when requesting a hint',
     'Moved hint CPU processing to a web worker',
+    'Rearranged classic view mode to first',
   ]
 ];

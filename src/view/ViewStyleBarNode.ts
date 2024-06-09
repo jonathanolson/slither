@@ -36,6 +36,13 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
     // TODO: deduplicate with the bit in Settings?
     super( puzzleStyleProperty, [
       {
+        value: classicPuzzleStyle,
+        createNode: () => classicIcon,
+        labelContent: 'Classic',
+        options: {
+        },
+      },
+      {
         value: basicLinesPuzzleStyle,
         createNode: () => basicLinesIcon,
         labelContent: 'Basic Lines',
@@ -53,13 +60,6 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         value: pureFaceColorPuzzleStyle,
         createNode: () => pureFaceColoringIcon,
         labelContent: 'Pure Face Colors',
-        options: {
-        },
-      },
-      {
-        value: classicPuzzleStyle,
-        createNode: () => classicIcon,
-        labelContent: 'Classic',
         options: {
         },
       },

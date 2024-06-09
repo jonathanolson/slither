@@ -15,6 +15,7 @@ import { UITextSwitch } from './UITextSwitch.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, showPuzzleTimerProperty, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { ViewContext } from './ViewContext.ts';
+import { TooltipListener } from './TooltipListener.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty( 'advancedSettingsVisibleProperty', false );
 
@@ -22,6 +23,8 @@ export class SettingsNode extends PopupNode {
   public constructor(
     viewContext: ViewContext,
   ) {
+
+    const tooltipListener = new TooltipListener( viewContext );
 
     const autoSolveNode = new VBox( {
       stretch: true,
@@ -332,6 +335,11 @@ export class SettingsNode extends PopupNode {
       puzzleStyleProperty,
       [
         {
+          value: classicPuzzleStyle,
+          createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
+          labelContent: 'Classic'
+        },
+        {
           value: basicLinesPuzzleStyle,
           createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
           labelContent: 'Basic Lines'
@@ -345,11 +353,6 @@ export class SettingsNode extends PopupNode {
           value: pureFaceColorPuzzleStyle,
           createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
           labelContent: 'Pure Face Colors'
-        },
-        {
-          value: classicPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.classicIcon, 'Classic' ),
-          labelContent: 'Classic'
         },
         {
           value: basicSectorsPuzzleStyle,
@@ -416,6 +419,7 @@ export class SettingsNode extends PopupNode {
     } );
 
     const reloadToDefaultsButton = new UITextPushButton( 'Reload to Defaults', {
+      accessibleName: 'Clear all settings/data, and reload the page',
       listener: () => {
         localStorage.clear();
 
@@ -423,6 +427,7 @@ export class SettingsNode extends PopupNode {
       },
       advanced: true
     } );
+    reloadToDefaultsButton.addInputListener( tooltipListener );
 
     super( new VBox( {
       spacing: 20,
