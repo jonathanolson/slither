@@ -116,9 +116,14 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
           }
         },
         facePressListener: ( face, button ) => {
-          const originalFace = ( face as LayoutFace ).originalFace;
-          if ( originalFace ) {
-            puzzleModel.onUserFacePress( originalFace, button );
+          if ( face === null ) {
+            puzzleModel.onUserFacePress( null, button );
+          }
+          else {
+            const originalFace = ( face as LayoutFace ).originalFace;
+            if ( originalFace ) {
+              puzzleModel.onUserFacePress( originalFace, button );
+            }
           }
         }
       } );
