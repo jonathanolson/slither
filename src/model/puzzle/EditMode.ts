@@ -1,5 +1,5 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
 
@@ -58,6 +58,8 @@ EditMode.enumeration.values.forEach( mode => {
     }
   } );
 } );
+
+export const eraserEnabledProperty = new LocalStorageBooleanProperty( 'eraserEnabledProperty', false );
 
 export const tryToSetEditMode = ( mode: EditMode ) => {
   if ( mode.isEnabledProperty.value ) {

@@ -16,15 +16,21 @@
     - 
     - KEEP CHANGELOG UP TO DATE
     - 
+    - Erase toggle
+      - Sticky button (based on Property)
+      - Pressing E turns it on, releasing E turns it off.
+    - 
+    - Shift-scroll for ... horizontal scroll?
+    - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?
     - ** FIX THE CRASHING (don't leak memory with hints)
     - 
+    - Auto pan to hint annotation?
+    - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
-    - 
-    - [nowayjay] - FREEZE hint search --- use web workers
     - 
     - [nowayjay] - BLUR the outside section of the puzzle when a hint is visible. Clicking on it will dismiss the hint.
     - 
@@ -48,8 +54,6 @@
     - TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
     - 
     - [nowayjay] Share icon better
-    - 
-    - [nowayjay] Add a "clear line" option?
     - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode

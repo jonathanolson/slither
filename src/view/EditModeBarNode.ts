@@ -1,13 +1,15 @@
-import { controlBarMargin, currentTheme } from './Theme.ts';
-import EditMode, { editModeProperty } from '../model/puzzle/EditMode.ts';
-import { Line, Node, Path, Rectangle } from 'phet-lib/scenery';
+import { controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
+import EditMode, { editModeProperty, eraserEnabledProperty } from '../model/puzzle/EditMode.ts';
+import { HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { TooltipListener } from './TooltipListener.ts';
 import { ViewContext } from './ViewContext.ts';
+import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
+import { combineOptions } from 'phet-lib/phet-core';
 
 // TODO: support a background node with more complexity in the future?
-export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditMode> {
+export default class EditModeBarNode extends HBox {
   public constructor(
     viewContext: ViewContext,
   ) {
@@ -67,9 +69,37 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
       ]
     } );
 
+    const eraserWidth = 17;
+    const eraserTipWidth = 6;
+    const eraserHeight = 7;
+    const eraserCornerRadius = 2;
+    const eraserDiagonal = eraserHeight / Math.sqrt( 2 );
+    const eraserIcon = new Node( {
+      children: [
+        new Node( {
+          rotation: -Math.PI / 4,
+          children: [
+            new Rectangle( 0, 0, eraserWidth, eraserHeight, {
+              stroke: currentTheme.uiButtonForegroundProperty,
+              fill: currentTheme.uiButtonInvertedForegroundProperty,
+              cornerRadius: eraserCornerRadius,
+            } ),
+            new Rectangle( eraserTipWidth, 0, eraserWidth - eraserTipWidth, eraserHeight, {
+              fill: currentTheme.uiButtonForegroundProperty,
+              cornerRadius: eraserCornerRadius,
+            } ),
+          ]
+        } ),
+        new Line( eraserDiagonal, eraserDiagonal - 0.5, eraserDiagonal + 12, eraserDiagonal - 0.5, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          lineDash: [ 5, 1, 3, 1, 2 ],
+        } )
+      ]
+    } );
+
     const tooltipListener = new TooltipListener( viewContext );
 
-    super( editModeProperty, [
+    const editModeRadioButtonGroup = new UIRectangularRadioButtonGroup<EditMode>( editModeProperty, [
       {
         value: EditMode.EDGE_STATE,
         labelContent: 'Edge Edit Mode',
@@ -110,10 +140,42 @@ export default class EditModeBarNode extends UIRectangularRadioButtonGroup<EditM
           visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty,
         }
       }
-    ] );
+    ], {
+      layoutOptions: {
+        grow: 1,
+      }
+    } );
+
+    editModeRadioButtonGroup.children.forEach( child => child.addInputListener( tooltipListener ) );
+
+    const commonButtonOptions = {
+      buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
+      baseColor: currentTheme.uiButtonBaseColorProperty,
+      disabledColor: currentTheme.uiButtonDisabledColorProperty,
+
+      mouseAreaXDilation: 5,
+      mouseAreaYDilation: 5,
+      touchAreaXDilation: 5,
+      touchAreaYDilation: 5
+    } as const;
+
+    const eraserButton = new BooleanRectangularStickyToggleButton( eraserEnabledProperty, combineOptions<BooleanRectangularStickyToggleButtonOptions>( {}, commonButtonOptions, {
+      accessibleName: 'Eraser Mode',
+      content: eraserIcon,
+    } ) );
+
+    super( {
+      // TODO: better layout
+      spacing: 10,
+      stretch: true,
+      children: [
+        editModeRadioButtonGroup,
+        new VSeparator(),
+        eraserButton,
+      ],
+    } );
 
     // TODO: target buttons more directly?
-    this.children.forEach( child => child.addInputListener( tooltipListener ) );
 
     viewContext.layoutBoundsProperty.link( bounds => {
       this.maxWidth = Math.max( 1, bounds.width - 2 * controlBarMargin );
