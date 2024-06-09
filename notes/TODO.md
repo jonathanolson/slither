@@ -16,13 +16,14 @@
     - 
     - KEEP CHANGELOG UP TO DATE
     - 
-    - ****** FIX THE NOT SAVING STATE
-    - ** FIX THE CRASHING (don't leak memory with hints)
-    - 
     - ***********
       - Central location for hintWorker state. Notes if waiting on it (but can clear). Maybe takes callbacks. Property with state for hint button.
       - Get "Hint" button working asynchronously nicely!!!
       - Can we track the "loading worker" for UI display?
+    - 
+    - ****** FIX THE NOT SAVING STATE
+      - indexeddb?
+    - ** FIX THE CRASHING (don't leak memory with hints)
     - 
     - Properly guard edit modes (switch them when view style switch).
     - See if Chrome/Windows should use Canvas?
@@ -40,6 +41,7 @@
     - Tooltips:
       - Long-press tooltips
       - Show tooltips on disabled buttons
+      - [nowayjay] tooltips usually under cursor!!!! fix this
     - 
     - Generate the "next" puzzle in the background (so it is ready when the user solves)
       - Allow opt in or out, setting
@@ -134,6 +136,7 @@
     - Bug: hint annotations with patterns that take up a lot of the vertical puzzle are UNUSABLY small or hidden
     - Bug: Fix puzzles in localStorage, having it lose progress is not cool
     - Bug: Highlight "outside" color when face operation on it with blank puzzle. Doesn't highlight at the start.
+    - Bug: Extra spacing on pattern views, e.g. https://jonathanolson.net/slitherlink-dev/rule?r=square-1-0%2FAAgT%2FxshGCIm%2FgKF%2FgYJ%2FgeI%2Fw%3D%3D
     - 
     - UI: Increase touch area for puzzle size buttons
       - Nope, just make the buttons bigger...

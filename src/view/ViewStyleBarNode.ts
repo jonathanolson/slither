@@ -45,28 +45,28 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
       {
         value: basicLinesPuzzleStyle,
         createNode: () => basicLinesIcon,
-        labelContent: 'Basic Lines',
+        labelContent: 'Lines',
         options: {
         },
       },
       {
         value: basicFaceColoringPuzzleStyle,
         createNode: () => basicFaceColoringIcon,
-        labelContent: 'Basic Face Colors',
+        labelContent: 'Lines with Colors',
         options: {
         },
       },
       {
         value: pureFaceColorPuzzleStyle,
         createNode: () => pureFaceColoringIcon,
-        labelContent: 'Pure Face Colors',
+        labelContent: 'Colors',
         options: {
         },
       },
       {
         value: basicSectorsPuzzleStyle,
         createNode: () => basicSectorsIcon,
-        labelContent: 'Basic Sectors',
+        labelContent: 'Sectors',
         options: {
           visibleProperty: advancedSettingsVisibleProperty,
         }

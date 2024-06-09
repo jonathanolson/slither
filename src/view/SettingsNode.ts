@@ -341,23 +341,23 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: basicLinesPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Basic Lines' ),
-          labelContent: 'Basic Lines'
+          createNode: () => getViewLabel( viewStyleIcons.basicLinesIcon, 'Lines' ),
+          labelContent: 'Lines'
         },
         {
           value: basicFaceColoringPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Basic Face Colors' ),
-          labelContent: 'Basic Face Colors'
+          createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Lines with Colors' ),
+          labelContent: 'Lines with Colors'
         },
         {
           value: pureFaceColorPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Pure Face Colors' ),
-          labelContent: 'Pure Face Colors'
+          createNode: () => getViewLabel( viewStyleIcons.pureFaceColoringIcon, 'Colors' ),
+          labelContent: 'Colors'
         },
         {
           value: basicSectorsPuzzleStyle,
           createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Basic Sectors' ),
-          labelContent: 'Basic Sectors',
+          labelContent: '\Sectors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
           }
