@@ -36,6 +36,8 @@
     - 
     - [nowayjay] - BLUR the outside section of the puzzle when a hint is visible. Clicking on it will dismiss the hint.
     - 
+    - [nowayjay] - Pattern Play - shows the "before", you need to guess the "after"
+    - 
     - Memory - web-worker the scanURL bits?
     - 
     - Tooltips:
