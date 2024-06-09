@@ -8,7 +8,7 @@ import { SpinningIndicatorNode } from 'phet-lib/scenery-phet';
 import { UIText } from './UIText.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 
-export class HintStatusNode extends Node {
+export class HintStateNode extends Node {
 
   public constructor(
     viewContext: ViewContext,

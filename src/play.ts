@@ -18,7 +18,7 @@ import { workaroundResolveStep } from './util/sleep.ts';
 import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
-import { HintStatusNode } from './view/HintStatusNode.ts';
+import { HintStateNode } from './view/HintStateNode.ts';
 import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
@@ -120,7 +120,7 @@ const editModeBarNode = new EditModeBarNode( viewContext );
 
 const viewStyleBarNode = new ViewStyleBarNode( viewContext );
 
-const hintStatusNode = new HintStatusNode( viewContext, hintStateProperty, () => {
+const hintStatusNode = new HintStateNode( viewContext, hintStateProperty, () => {
   puzzleModelProperty.value?.onUserApplyHint();
 } );
 
