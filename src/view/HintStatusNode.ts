@@ -1,5 +1,5 @@
 import { HBox, Node } from 'phet-lib/scenery';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Panel, PanelOptions } from 'phet-lib/sun';
 import { currentTheme } from './Theme.ts';
 import { ViewContext } from './ViewContext.ts';
@@ -10,8 +10,6 @@ import { UITextPushButton } from './UITextPushButton.ts';
 
 export class HintStatusNode extends Node {
 
-  private readonly spinningIndicatorNode: SpinningIndicatorNode;
-
   public constructor(
     viewContext: ViewContext,
     hintStateProperty: TReadOnlyProperty<HintState>,
@@ -19,7 +17,7 @@ export class HintStatusNode extends Node {
   ) {
     super( {} );
 
-    this.spinningIndicatorNode = new SpinningIndicatorNode( {
+    const spinningIndicatorNode = new SpinningIndicatorNode( {
       diameter: 20,
       // TODO: activeColor/inactiveColor, pass in theme Properties (typecast to satisfy overly-specific guards)
     } );
@@ -34,7 +32,7 @@ export class HintStatusNode extends Node {
     const loadingNode = new Panel( new HBox( {
       spacing: 10,
       children: [
-        new Node( { children: [ this.spinningIndicatorNode ] } ),
+        new Node( { children: [ spinningIndicatorNode ] } ),
         new UIText( 'Loading Hint Solver...' ),
       ],
     } ), panelOptions );
@@ -42,7 +40,7 @@ export class HintStatusNode extends Node {
     const searchingNode = new Panel( new HBox( {
       spacing: 10,
       children: [
-        new Node( { children: [ this.spinningIndicatorNode ] } ),
+        new Node( { children: [ spinningIndicatorNode ] } ),
         new UIText( 'Searching for Hint...' ),
       ],
     } ), panelOptions );
@@ -66,9 +64,11 @@ export class HintStatusNode extends Node {
     };
     hintStateProperty.link( hintStateListener );
     this.disposeEmitter.addListener( () => hintStateProperty.unlink( hintStateListener ) );
-  }
 
-  public step( dt: number ): void {
-    this.spinningIndicatorNode.step( dt );
+    const stepListener = ( dt: number ) => {
+      spinningIndicatorNode.step( dt );
+    };
+    viewContext.stepEmitter.addListener( stepListener );
+    this.disposeEmitter.addListener( () => viewContext.stepEmitter.removeListener( stepListener ) );
   }
 }

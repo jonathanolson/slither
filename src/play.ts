@@ -2,7 +2,7 @@ import './main.css';
 
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
-import { BooleanProperty, DynamicProperty, Multilink, Property, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { BooleanProperty, DynamicProperty, Multilink, Property, TinyEmitter, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { AlignBox, Display, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
@@ -103,7 +103,8 @@ Multilink.multilink( [
   display.backgroundColor = hasError ? errorColor : color;
 } );
 
-const viewContext = new ViewContext( layoutBoundsProperty, glassPane );
+const stepEmitter = new TinyEmitter<[ number ]>();
+const viewContext = new ViewContext( layoutBoundsProperty, glassPane, stepEmitter );
 
 const controlBarNode = new ControlBarNode( puzzleModelProperty, viewContext, {
   // Require the complete data for now
@@ -117,10 +118,7 @@ const controlBarNode = new ControlBarNode( puzzleModelProperty, viewContext, {
 
 const editModeBarNode = new EditModeBarNode( viewContext );
 
-const viewStyleBarNode = new ViewStyleBarNode( {
-  layoutBoundsProperty: layoutBoundsProperty,
-  glassPane: glassPane,
-} );
+const viewStyleBarNode = new ViewStyleBarNode( viewContext );
 
 const hintStatusNode = new HintStatusNode( viewContext, hintStateProperty, () => {
   puzzleModelProperty.value?.onUserApplyHint();
@@ -198,10 +196,12 @@ display.updateOnRequestAnimationFrame( dt => {
 
   mainBox.validateBounds();
 
+  // TODO: use ViewContext step? or not.
   puzzleContainerNode.step( dt );
   topologicalContainerNode.step( dt );
   puzzleModelProperty.value?.step( dt );
-  hintStatusNode.step( dt );
+
+  stepEmitter.emit( dt );
 } );
 
 document.addEventListener( 'keydown', event => {
