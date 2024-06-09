@@ -14,6 +14,7 @@ export class HintStateNode extends Node {
     viewContext: ViewContext,
     hintStateProperty: TReadOnlyProperty<HintState>,
     applyHintCallback: () => void,
+    clearHintCallback: () => void,
   ) {
     super( {} );
 
@@ -37,16 +38,32 @@ export class HintStateNode extends Node {
       ],
     } ), panelOptions );
 
-    const searchingNode = new Panel( new HBox( {
+    const searchingNode = new HBox( {
       spacing: 10,
       children: [
-        new Node( { children: [ spinningIndicatorNode ] } ),
-        new UIText( 'Searching for Hint...' ),
-      ],
-    } ), panelOptions );
+        new Panel( new HBox( {
+          spacing: 10,
+          children: [
+            new Node( { children: [ spinningIndicatorNode ] } ),
+            new UIText( 'Searching for Hint...' ),
+          ],
+        } ), panelOptions ),
+        new UITextPushButton( 'Cancel', {
+          listener: clearHintCallback,
+        } ),
+      ]
+    } );
 
-    const foundNode = new UITextPushButton( 'Apply Hint', {
-      listener: applyHintCallback,
+    const foundNode = new HBox( {
+      spacing: 10,
+      children: [
+        new UITextPushButton( 'Apply Hint', {
+          listener: applyHintCallback,
+        } ),
+        new UITextPushButton( 'Hide Hint', {
+          listener: clearHintCallback,
+        } ),
+      ]
     } );
 
     const notFoundNode = new Panel( new UIText( 'No Hint Found' ), panelOptions );

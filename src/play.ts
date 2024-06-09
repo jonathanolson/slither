@@ -122,6 +122,8 @@ const viewStyleBarNode = new ViewStyleBarNode( viewContext );
 
 const hintStatusNode = new HintStateNode( viewContext, hintStateProperty, () => {
   puzzleModelProperty.value?.onUserApplyHint();
+}, () => {
+  puzzleModelProperty.value?.onUserClearHint();
 } );
 
 const mainBox = new VBox( {

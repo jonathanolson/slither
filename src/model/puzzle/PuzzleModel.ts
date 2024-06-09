@@ -518,6 +518,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     this.hintWorkerMessageID = 0;
   }
 
+  public onUserClearHint(): void {
+    this.clearPendingHint();
+  }
+
   private onHintReceived( action: TAnnotatedAction<TCompleteData> | null ): void {
     this.hintStateProperty.value = action ? HintState.FOUND : HintState.NOT_FOUND;
 
