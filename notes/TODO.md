@@ -20,9 +20,6 @@
       - indexeddb?
     - ** FIX THE CRASHING (don't leak memory with hints)
     - 
-    - Properly guard edit modes (switch them when view style switch).
-    - See if Chrome/Windows should use Canvas?
-    - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?

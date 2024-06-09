@@ -13,6 +13,7 @@ export const changelog = [
     'Clear hints on escape key',
     'Separate hint information section',
     'Working around weird aliasing on Chrome',
+    'Improve edit mode switches on view style switches',
     'Miscellaneous fixes!',
   ]
 ];

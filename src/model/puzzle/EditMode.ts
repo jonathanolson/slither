@@ -46,18 +46,17 @@ export default class EditMode extends EnumerationValue {
 
 export const editModeProperty = new LocalStorageEnumerationProperty( 'editModeProperty', EditMode.EDGE_STATE );
 
-let listenedMode: EditMode | null = null;
-const onEditModeEnabledChange = ( enabled: boolean ) => {
-  if ( !enabled ) {
-    editModeProperty.value = EditMode.EDGE_STATE;
-  }
-};
-editModeProperty.link( mode => {
-  if ( listenedMode ) {
-    listenedMode.isEnabledProperty.unlink( onEditModeEnabledChange );
-  }
-  listenedMode = mode;
-  mode.isEnabledProperty.link( onEditModeEnabledChange );
+// Listen to all modes' enabled properties, and if the current mode is disabled, switch to the first enabled mode.
+EditMode.enumeration.values.forEach( mode => {
+  mode.isEnabledProperty.lazyLink( enabled => {
+    if ( !editModeProperty.value.isEnabledProperty.value ) {
+      const firstEnabledMode = EditMode.enumeration.values.find( mode => mode.isEnabledProperty.value ) ?? null;
+
+      if ( firstEnabledMode ) {
+        editModeProperty.value = firstEnabledMode;
+      }
+    }
+  } );
 } );
 
 export const tryToSetEditMode = ( mode: EditMode ) => {
