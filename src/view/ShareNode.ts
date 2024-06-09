@@ -11,6 +11,7 @@ import { CompleteData } from '../model/data/combined/CompleteData.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
 import { ViewContext } from './ViewContext.ts';
 import { puzzleToCompressedString } from '../model/puzzle/puzzleToCompressedString.ts';
+import { TooltipListener } from './TooltipListener.ts';
 
 export class ShareNode extends PopupNode {
 
@@ -23,30 +24,34 @@ export class ShareNode extends PopupNode {
 
     const includeStateProperty = new BooleanProperty( false );
 
+    const copyButton = new UITextPushButton( 'Copy URL', {
+      accessibleName: 'Copy Shareable URL to Clipboard',
+      listener: () => {
+        if ( this.puzzle ) {
+          const baseURL = location.protocol + '//' + location.host + location.pathname;
+
+          let puzzle = this.puzzle;
+          if ( !this.includeStateProperty.value ) {
+            puzzle = new BasicPuzzle( puzzle.board, CompleteData.fromFaceValueData( puzzle.board, puzzle.stateProperty.value ) );
+          }
+
+          const puzzleString = puzzleToCompressedString( puzzle );
+
+          copyToClipboard( baseURL + '?p=' + encodeURIComponent( puzzleString ) );
+
+          // TODO: replace button with "copied" text?
+        }
+      }
+    } );
+    copyButton.addInputListener( new TooltipListener( viewContext ) );
+
     super( new VBox( {
       spacing: 20,
       align: 'left',
       stretch: true,
       children: [
-        new UITextPushButton( 'Copy URL', {
-          listener: () => {
-            if ( this.puzzle ) {
-              const baseURL = location.protocol + '//' + location.host + location.pathname;
-
-              let puzzle = this.puzzle;
-              if ( !this.includeStateProperty.value ) {
-                puzzle = new BasicPuzzle( puzzle.board, CompleteData.fromFaceValueData( puzzle.board, puzzle.stateProperty.value ) );
-              }
-
-              const puzzleString = puzzleToCompressedString( puzzle );
-
-              copyToClipboard( baseURL + '?p=' + encodeURIComponent( puzzleString ) );
-
-              // TODO: replace button with "copied" text?
-            }
-          }
-        } ),
-        new UITextCheckbox( 'Include edge state', includeStateProperty )
+        copyButton,
+        new UITextCheckbox( 'Include Solve Progress', includeStateProperty )
       ]
     } ), viewContext );
 
