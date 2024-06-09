@@ -346,8 +346,8 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: basicFaceColoringPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Lines with Colors' ),
-          labelContent: 'Lines with Colors'
+          createNode: () => getViewLabel( viewStyleIcons.basicFaceColoringIcon, 'Lines and Colors' ),
+          labelContent: 'Lines and Colors'
         },
         {
           value: pureFaceColorPuzzleStyle,
@@ -356,16 +356,16 @@ export class SettingsNode extends PopupNode {
         },
         {
           value: basicSectorsPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Basic Sectors' ),
-          labelContent: '\Sectors',
+          createNode: () => getViewLabel( viewStyleIcons.basicSectorsIcon, 'Sectors' ),
+          labelContent: 'Sectors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
           }
         },
         {
           value: sectorsWithColorsPuzzleStyle,
-          createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Sectors With Colors' ),
-          labelContent: 'Sectors With Colors',
+          createNode: () => getViewLabel( viewStyleIcons.sectorsWithColorsIcon, 'Sectors and Colors' ),
+          labelContent: 'Sectors and Colors',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
           }
