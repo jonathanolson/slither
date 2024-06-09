@@ -16,9 +16,9 @@
     - 
     - KEEP CHANGELOG UP TO DATE
     - 
-    - Erase toggle
-      - Sticky button (based on Property)
-      - Pressing E turns it on, releasing E turns it off.
+    - Erase Mode:
+      - Edge / Color / Sector erase
+        - HOW in each mode (!!!) --- and with auto-solver compatibility
     - 
     - Shift-scroll for ... horizontal scroll?
     - 

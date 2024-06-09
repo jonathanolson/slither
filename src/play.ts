@@ -3,7 +3,7 @@ import './main.css';
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
 import { BooleanProperty, DynamicProperty, Multilink, Property, TinyEmitter, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { AlignBox, Display, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
+import { AlignBox, Display, globalKeyStateTracker, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
 import PuzzleModel from './model/puzzle/PuzzleModel.ts';
@@ -19,7 +19,7 @@ import { showLayoutTestProperty } from './model/board/layout/layout.ts';
 import { getSolvablePropertyPuzzle } from './model/solver/SATSolver.ts';
 import { getStartupPuzzleModel } from './model/puzzle/getStartupPuzzleModel.ts';
 import { HintStateNode } from './view/HintStateNode.ts';
-import EditMode, { tryToSetEditMode } from './model/puzzle/EditMode.ts';
+import EditMode, { eraserEnabledProperty, tryToSetEditMode } from './model/puzzle/EditMode.ts';
 import EditModeBarNode from './view/EditModeBarNode.ts';
 import ViewStyleBarNode from './view/ViewStyleBarNode.ts';
 import { currentPuzzleStyle, showPuzzleStyleProperty } from './view/puzzle/puzzleStyles.ts';
@@ -252,6 +252,18 @@ document.addEventListener( 'keydown', event => {
   }
   else if ( event.key === 'Escape' ) {
     puzzleModelProperty.value?.onUserEscape();
+  }
+} );
+
+globalKeyStateTracker.keydownEmitter.addListener( keyboardEvent => {
+  if ( keyboardEvent.key === 'e' ) {
+    eraserEnabledProperty.value = true;
+  }
+} );
+
+globalKeyStateTracker.keyupEmitter.addListener( keyboardEvent => {
+  if ( keyboardEvent.key === 'e' ) {
+    eraserEnabledProperty.value = false;
   }
 } );
 
