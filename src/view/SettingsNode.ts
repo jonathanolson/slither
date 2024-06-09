@@ -373,7 +373,7 @@ export class SettingsNode extends PopupNode {
         {
           value: vertexStatePuzzleStyle,
           createNode: () => getViewLabel( viewStyleIcons.vertexStateIcon, 'Vertex State' ),
-          labelContent: 'Sectors With Colors',
+          labelContent: 'Vertex State',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
           }
@@ -381,7 +381,7 @@ export class SettingsNode extends PopupNode {
         {
           value: faceStatePuzzleStyle,
           createNode: () => getViewLabel( viewStyleIcons.faceStateIcon, 'Face State' ),
-          labelContent: 'Sectors With Colors',
+          labelContent: 'Face State',
           options: {
             visibleProperty: advancedSettingsVisibleProperty
           }
