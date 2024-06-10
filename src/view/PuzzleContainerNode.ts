@@ -24,6 +24,7 @@ export type PuzzleContainerNodeOptions = SelfOptions & ParentOptions;
 export default class PuzzleContainerNode extends Sizable( Node ) {
 
   private backgroundRect: Rectangle;
+  private facePressRect: Rectangle;
   private rectangularGradientRect: Rectangle;
   private circularGradientRect: Rectangle;
   private puzzleWrapper: Node;
@@ -45,12 +46,18 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
     this.backgroundRect = new Rectangle( {
       fill: style.theme.playAreaBackgroundColorProperty,
+      pickable: true,
+    } );
+
+    // Invisible rectangle for face press events
+    this.facePressRect = new Rectangle( {
+      fill: null,
       pickableProperty: isFaceEditModeProperty,
     } );
 
     // TODO: adjust pickable based on edit mode
 
-    hookPuzzleListeners( null, this.backgroundRect, ( face, button ) => {
+    hookPuzzleListeners( null, this.facePressRect, ( face, button ) => {
       puzzleModelProperty.value?.onUserFacePress( face, button );
     } );
 
@@ -62,7 +69,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     } );
 
     this.puzzleWrapper = new Node( {
-      children: [ this.backgroundRect, this.rectangularGradientRect, this.circularGradientRect ]
+      children: [ this.backgroundRect, this.facePressRect, this.rectangularGradientRect, this.circularGradientRect ]
     } );
     this.zoomListener = new ExtendedPanZoomListener( this.puzzleWrapper, {
       maxScale: 10
@@ -108,7 +115,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
         if ( this.puzzleNode ) {
           // Update before children, so we don't mess with layout
           this.updatePuzzleNodeLayout( this.puzzleNode );
-          this.puzzleWrapper.children = [ this.backgroundRect, this.rectangularGradientRect, this.circularGradientRect, this.puzzleNode ];
+          this.puzzleWrapper.children = [ this.backgroundRect, this.facePressRect, this.rectangularGradientRect, this.circularGradientRect, this.puzzleNode ];
         }
       }
 
@@ -128,11 +135,13 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
 
     if ( width !== null ) {
       this.backgroundRect.rectWidth = width;
+      this.facePressRect.rectWidth = width;
       this.rectangularGradientRect.rectWidth = width;
       this.circularGradientRect.rectWidth = width;
     }
     if ( height !== null ) {
       this.backgroundRect.rectHeight = height;
+      this.facePressRect.rectHeight = height;
       this.rectangularGradientRect.rectHeight = height;
       this.circularGradientRect.rectHeight = height;
     }
