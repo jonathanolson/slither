@@ -14,6 +14,7 @@ export const changelog = [
     'Separate hint information section',
     'Working around weird aliasing on Chrome',
     'Improve edit mode switches on view style switches',
+    'Auto-pan to hint',
     'Miscellaneous fixes!',
   ]
 ];

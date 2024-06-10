@@ -26,8 +26,6 @@
       - indexeddb?
     - ** FIX THE CRASHING (don't leak memory with hints)
     - 
-    - Auto pan to hint annotation?
-    - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?

@@ -97,7 +97,11 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
           }
         }
         else {
-          this.puzzleNode = new PuzzleModelNode( puzzleModel );
+          this.puzzleNode = new PuzzleModelNode( puzzleModel, {
+            focusNodeCallback: ( node: Node ) => {
+              this.zoomListener.panToNode( node, true );
+            }
+          } );
         }
 
         if ( this.puzzleNode ) {
@@ -114,7 +118,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
   }
 
   public step( dt: number ): void {
-    this.zoomListener.step( dt );
+    this.zoomListener.step( 2 * dt );
   }
 
   private updateLayout(): void {
