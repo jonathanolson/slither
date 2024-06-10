@@ -10,15 +10,55 @@
   - 
   - 
   - Priorities:
-    - Check UI options from https://www.puzzles-mobile.com/loop/random/15x15-hard
-      - Has "board coordinates" like a chessboard
-      - Delayed (simple) auto-solve
     - 
-    - KEEP CHANGELOG UP TO DATE
-    - 
-    - Erase Mode:
-      - Edge / Color / Sector erase
-        - HOW in each mode (!!!) --- and with auto-solver compatibility
+    - Auto-solve / Erase
+      - Auto-solved edges (optionally) add a pickable:false with delayed pickable:null to LOCK OUT interaction
+      - make basic auto solve actions:
+        - color mode changes => line changes
+        - line changes => color mode changes
+      - Breaking changes:
+        - Erase
+        - Edge toggle when it wasn't the last (undo-able) action
+        - Always wipe vertex/face state
+        - on:
+          - edge: clear edge, then check face color connection (so we could "break apart" color duals)
+          - color: clear color + clear adjacent edges
+          - sector: clear sector
+        - Auto-solve after breaking changes???? unclear, if not, make a way to trigger auto-solve?
+      - NOT breaking changes:
+        - Edge toggle that is an edge we just toggled (we just UNDO the auto solve)
+      - Auto-solve delayed start (maybe) (optional)
+      - Auto-solve animated (optional, speed control)
+        - (option) undo goes back to either last user move OR undoes last auto solver move (AND DOES NOT AUTO SOLVE AFTER)
+        - (option?) way to play/pause the animation
+        - IF interrupted with additional actions:
+          - keep recorded "what user action and auto solve actions are not yet complete"
+          - Include those actions in the "delta" of what changed for the auto-solver dirty check
+        - Visual indicator (??) of "autosolve pending on delay, or in progress"
+        - Apply animation to the "Solve" button too (it should just auto-solve but with the wider array of patterns
+          - OR if using the SAT solver... uhhh, maybe use our patterns intelligently first and THEN use SAT solver edges?
+          - HOW TO ORDER?
+      - Auto-solve error detected:
+        - Find minimal reproduction (to one OR all independent errors)
+        - Make actions up to AND INCLUDING these errors.
+        - (it will get highlighted using the main "error visualization" settings)
+        - Can we store what patterns "relied" on, so that we can see what is "minimal"?
+      - Auto-solve patterns:
+        - Allow arbitrary rule inclusions
+        - (fix BoardPatternBoard embeddings leak!)
+      - NO auto-solve actions on view mode switches(?)
+      - Allow changing sectors to arbitrary states, perhaps toggle support like edges?
+      - Error highlighting options:
+        - Option for whether "wrong numbers" are highlighted
+        - Option for whether "wrong lines around a dot" (3+) are highlighted?
+        - Option for whether "wrong moves" / invalid state are highlighted
+        - BETTER ERROR HIGHLIGHTING - no "scary bars"
+        - (option to delay error visibility - e.g. when tapping on mobile)
+      - Auto-Solve options are PER VIEW MODE(?), with a global on/off control?
+      - "Check Solution" button?
+        - a: has errors
+        - b: no errors, but incomplete
+        - c: solved!
     - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?
@@ -74,26 +114,6 @@
       - How to signal this for the browser?
       - Maybe... also just pregenerate a bunch of puzzles?
     - 
-    - [gereleth + nowayjay] Allow guessing better
-      - [gerelith] Auto-solve (on error) finds minimal paths to each error (or the closest one?) and shows only that
-        - Can we store what patterns "relied" on, so that we can see what is "minimal"?
-      - [jagomu] Auto-solve delay + animation speed (so it can animate in the consequences)
-        - INDICATOR of "autosolve pending on delay" (about to happen!)
-          - ACTUALLY [ACTUALLY] could allow "not a move until the delay happens"?
-        - CAN THIS FIX MY "auto solve is too fast" bit? No, I want it to be fast a lot?
-          - ACTUALLY yes
-        - This should work with the "solve" mode
-        - [hey] How would ... pausing or interrupting work?
-        - See hexapipes custom for inspiration
-      - Option for whether "wrong numbers" are highlighted
-      - Option for whether "wrong lines around a dot" (3+) are highlighted?
-      - Option for whether "wrong moves" / invalid state are highlighted
-        - GET BETTER HIGHLIGHTING
-      - Check Solution button
-        - a: has errors
-        - b: no errors, but incomplete
-        - c: solved!
-    - 
     - Multiple modes:
       - draw-only (drag) - pan/zoom with two fingers
       - hybrid (delay?)
@@ -103,10 +123,7 @@
     - Solve the "quick double tap" issue (due to auto solve)
       - HOW?
     - 
-    - Consider unlink of autosolve behavior based on mode
-    - 
     - Puzzle generation using pattern-based difficulty
-    - Pattern-based auto-solve
     - 
     - HELP / INFO / INSTRUCTIONS button/section
       - Add to play AND rule explorer! 
@@ -215,6 +232,7 @@
   - Move "Face Value Style" setting top-level?
   - INTERNALLY for every case where the user "fixes" something broken, we will rewind to before they made a mistake, and then re-apply all actions except for changing that one
     - If it's still broken, it is still broken.
+  - Board face coordinate display?
   - Full correctness:
     - Buggy solver: Instead of FaceColorPointer, have colors associated with a board object (for deserialization and equality)... only if our actions return the same ones? Hmmm...
     - More error detection in solvers (to avoid infinite loop issues)
