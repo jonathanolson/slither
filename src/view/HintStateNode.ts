@@ -68,7 +68,6 @@ export class HintStateNode extends Node {
 
     const notFoundNode = new Panel( new UIText( 'No Hint Found' ), panelOptions );
 
-    searchingNode.pickable = false;
     notFoundNode.pickable = false;
 
     const hintStateListener = ( hintState: HintState ) => {
