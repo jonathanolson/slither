@@ -24,6 +24,8 @@
       - indexeddb?
     - ** FIX THE CRASHING (don't leak memory with hints)
     - 
+    - Limit number of patterns based on difficulty criteria? (faster load and search)
+    - 
     - VM for running computations when not around(!)
       - See that latest commit of what I "paused"
       - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
