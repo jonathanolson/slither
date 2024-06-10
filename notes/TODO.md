@@ -20,8 +20,6 @@
       - Edge / Color / Sector erase
         - HOW in each mode (!!!) --- and with auto-solver compatibility
     - 
-    - Shift-scroll for ... horizontal scroll?
-    - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?
     - ** FIX THE CRASHING (don't leak memory with hints)
