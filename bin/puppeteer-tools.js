@@ -14,7 +14,8 @@ export const sleep = async function( milliseconds ) {
 // see https://pptr.dev/supported-browsers for browser versions
 const executablePath = [
   '/Users/jon/puppeteer/chrome/mac_arm-124.0.6367.78/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
-  'C:\\Users\\olson\\puppeteer\\chrome\\win64-124.0.6367.78\\chrome-win64\\chrome.exe'
+  'C:\\Users\\olson\\puppeteer\\chrome\\win64-124.0.6367.78\\chrome-win64\\chrome.exe',
+  '/home/jon/chrome/linux-124.0.6367.78/chrome-linux64/chrome',
 ].find( path => fs.existsSync( path ) );
 
 export const getBrowser = async () => {
