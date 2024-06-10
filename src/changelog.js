@@ -15,6 +15,7 @@ export const changelog = [
     'Working around weird aliasing on Chrome',
     'Improve edit mode switches on view style switches',
     'Auto-pan to hint',
+    'Add shift + scroll for horizontal scrolling',
     'Miscellaneous fixes!',
   ]
 ];

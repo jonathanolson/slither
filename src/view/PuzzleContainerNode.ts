@@ -11,6 +11,7 @@ import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
 import { isFaceEditModeProperty } from '../model/puzzle/EditMode.ts';
+import { ExtendedPanZoomListener } from './ExtendedPanZoomListener.ts';
 
 type SelfOptions = {
   topological?: boolean;
@@ -63,7 +64,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     this.puzzleWrapper = new Node( {
       children: [ this.backgroundRect, this.rectangularGradientRect, this.circularGradientRect ]
     } );
-    this.zoomListener = new AnimatedPanZoomListener( this.puzzleWrapper, {
+    this.zoomListener = new ExtendedPanZoomListener( this.puzzleWrapper, {
       maxScale: 10
     } );
     // display.addInputListener( this.zoomListener );
