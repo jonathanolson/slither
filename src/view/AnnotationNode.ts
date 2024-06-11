@@ -2,7 +2,6 @@ import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
 import { LineStyles, Shape } from 'phet-lib/kite';
-import { UIText } from './UIText.ts';
 import _ from '../workarounds/_.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { Bounds2 } from 'phet-lib/dot';
@@ -10,6 +9,7 @@ import { TBoard } from '../model/board/core/TBoard.ts';
 import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
 import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
 import { currentTheme } from './Theme.ts';
+import { Orientation } from 'phet-lib/phet-core';
 
 export class AnnotationNode extends Node {
   public constructor(
@@ -225,15 +225,7 @@ export class AnnotationNode extends Node {
           annotation.embedding,
         );
 
-        const margin = 0.5 + 0.05;
-
-        const yMargin = 0.15;
-        const spaceAbove = ( displayEmbedding.expandedBounds.top + yMargin ) - ( additionalContentLayoutBounds.top + margin );
-        const spaceBelow = ( additionalContentLayoutBounds.bottom - margin ) - ( displayEmbedding.expandedBounds.bottom - yMargin );
-
         const patternDescriptionNode = new EmbeddedPatternRuleNode( annotation.rule, displayEmbedding, {
-          maxWidth: additionalContentLayoutBounds.width - 2 * margin,
-          maxHeight: Math.max( spaceAbove, spaceBelow ),
           inputListeners: [
             new FireListener( {
               fire: () => {
@@ -248,19 +240,67 @@ export class AnnotationNode extends Node {
           cursor: 'pointer',
         }, );
 
-        if ( spaceAbove > spaceBelow ) {
-          patternDescriptionNode.centerBottom = displayEmbedding.expandedBounds.centerTop.plusXY( 0, -yMargin );
-        }
-        else {
-          patternDescriptionNode.centerTop = displayEmbedding.expandedBounds.centerBottom.plusXY( 0, yMargin );
+        const margin = 0.5 + 0.05;
+        const offsetMargin = 0.15;
+        const emergencyMargin = 0.1;
+
+        const getMinSpace = ( orientation: Orientation ) => {
+          return ( displayEmbedding.expandedBounds[ orientation.minCoordinate ] + offsetMargin ) - ( additionalContentLayoutBounds[ orientation.minCoordinate ] + margin );
+        };
+        const getMaxSpace = ( orientation: Orientation ) => {
+          return ( additionalContentLayoutBounds[ orientation.maxCoordinate ] - margin ) - ( displayEmbedding.expandedBounds[ orientation.maxCoordinate ] - offsetMargin );
+        };
+        const getDesiredScale = ( orientation: Orientation ) => {
+          return Math.min(
+            ( additionalContentLayoutBounds[ orientation.opposite.size ] - 2 * margin ) / patternDescriptionNode[ orientation.opposite.size ],
+            Math.max( getMinSpace( orientation ), getMaxSpace( orientation ) ) / patternDescriptionNode[ orientation.size ],
+            1,
+          );
+        };
+        const adjustPosition = ( orientation: Orientation ) => {
+          patternDescriptionNode[ orientation.opposite.centerCoordinate ] = displayEmbedding.expandedBounds[ orientation.opposite.centerCoordinate ];
+
+          if ( getMinSpace( orientation ) > getMaxSpace( orientation ) ) {
+            patternDescriptionNode[ orientation.maxSide ] = displayEmbedding.expandedBounds[ orientation.minCoordinate ] - offsetMargin;
+
+            // Don't let it go off screen
+            if ( patternDescriptionNode[ orientation.minSide ] < additionalContentLayoutBounds[ orientation.minCoordinate ] + emergencyMargin ) {
+              patternDescriptionNode[ orientation.minSide ] = additionalContentLayoutBounds[ orientation.minCoordinate ] + emergencyMargin;
+            }
+          }
+          else {
+            patternDescriptionNode[ orientation.minSide ] = displayEmbedding.expandedBounds[ orientation.maxCoordinate ] + offsetMargin;
+
+            // Don't let it go off screen
+            if ( patternDescriptionNode[ orientation.maxSide ] > additionalContentLayoutBounds[ orientation.maxCoordinate ] - emergencyMargin ) {
+              patternDescriptionNode[ orientation.maxSide ] = additionalContentLayoutBounds[ orientation.maxCoordinate ] - emergencyMargin;
+            }
+          }
+
+          // Enforce opposite side constraints
+          if ( patternDescriptionNode[ orientation.opposite.minSide ] < additionalContentLayoutBounds[ orientation.opposite.minCoordinate ] + emergencyMargin ) {
+            patternDescriptionNode[ orientation.opposite.minSide ] = additionalContentLayoutBounds[ orientation.opposite.minCoordinate ] + emergencyMargin;
+          }
+          if ( patternDescriptionNode[ orientation.opposite.maxSide ] > additionalContentLayoutBounds[ orientation.opposite.maxCoordinate ] - emergencyMargin ) {
+            patternDescriptionNode[ orientation.opposite.maxSide ] = additionalContentLayoutBounds[ orientation.opposite.maxCoordinate ] - emergencyMargin;
+          }
+        };
+
+        let orientation = Orientation.VERTICAL;
+        let scale = getDesiredScale( orientation );
+
+        if ( scale < 1 ) {
+          const otherScale = getDesiredScale( orientation.opposite );
+          if ( otherScale > scale ) {
+            orientation = orientation.opposite;
+            scale = otherScale;
+          }
         }
 
-        if ( patternDescriptionNode.left < additionalContentLayoutBounds.left + margin ) {
-          patternDescriptionNode.left = additionalContentLayoutBounds.left + margin;
-        }
-        if ( patternDescriptionNode.right > additionalContentLayoutBounds.right - margin ) {
-          patternDescriptionNode.right = additionalContentLayoutBounds.right - margin;
-        }
+        // Don't let it get too small, let it overlap if it helps
+        patternDescriptionNode.scale( Math.max( scale, 0.3 ) );
+
+        adjustPosition( orientation );
 
         {
           const highlightBounds = displayEmbedding.tightBounds.dilated( 0.21 );
