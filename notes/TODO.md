@@ -12,6 +12,7 @@
   - Priorities:
     - 
     - Set up MSI laptop with generation?
+    - Allow generation of "unblocked" pattern boards
     - 
     - Auto-solve / Erase
       - make basic auto solve actions:
