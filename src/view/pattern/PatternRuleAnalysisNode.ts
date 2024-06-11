@@ -18,12 +18,12 @@ import _ from '../../workarounds/_.ts';
 import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
 import { getClassicPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from '../puzzle/puzzleStyles.ts';
 import { DisplayTiling } from './DisplayTiling.ts';
-import { getBestDisplayEmbedding } from './getBestDisplayEmbedding.ts';
 import { EmbeddedPatternRuleNode } from './EmbeddedPatternRuleNode.ts';
 import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
 import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
 import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
 import { darkTheme, lightTheme } from '../Theme.ts';
+import { getBestDisplayEmbeddingForRule } from './getBestDisplayEmbeddingForRule.ts';
 
 type SelfOptions = {
   layoutWidth?: number;
@@ -298,7 +298,7 @@ export class PatternRuleAnalysisNode extends Node {
       // TODO: dark edge-color-sector for "normal"
 
       const embeddingNodes = DisplayTiling.enumeration.values.map( displayTiling => {
-        const displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
+        const displayEmbedding = getBestDisplayEmbeddingForRule( rule, displayTiling );
 
         if ( displayEmbedding ) {
           return getEmbeddingNode( displayTiling.displayName, displayEmbedding, darkAllPuzzleStyle );
@@ -310,7 +310,7 @@ export class PatternRuleAnalysisNode extends Node {
 
       // Classic case
       {
-        const squareDisplayEmbedding = getBestDisplayEmbedding( rule.patternBoard, DisplayTiling.SQUARE );
+        const squareDisplayEmbedding = getBestDisplayEmbeddingForRule( rule, DisplayTiling.SQUARE );
         if ( squareDisplayEmbedding ) {
           const allFeaturesEdgeLike = rule.inputFeatureSet.getFeaturesArray().every( feature => {
             return feature instanceof FaceFeature || feature instanceof BlackEdgeFeature || feature instanceof RedEdgeFeature;

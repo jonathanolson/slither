@@ -23,8 +23,8 @@ import { generalColorMixedGroup } from './model/pattern/collection/generalColorM
 import { generalEdgeSectorMixedGroup } from './model/pattern/collection/generalEdgeSectorMixedGroup.ts';
 import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixedGroup.ts';
 import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
-import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
 import { computeEmbeddings } from './model/pattern/embedding/computeEmbeddings.ts';
+import { getBestDisplayEmbeddingForRule } from './view/pattern/getBestDisplayEmbeddingForRule.ts';
 
 // Load with `http://localhost:5173/rule-explorer?debugger`
 
@@ -523,7 +523,7 @@ class ViewStyleMode extends EnumerationValue {
 
         let displayEmbedding: DisplayEmbedding | null = null;
         if ( viewStyleMode !== ViewStyleMode.GENERIC && displayTiling ) {
-          displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling );
+          displayEmbedding = getBestDisplayEmbeddingForRule( rule, displayTiling );
         }
 
         if ( displayEmbedding ) {

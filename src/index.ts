@@ -8,7 +8,6 @@ import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
 import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
 import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
 import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
-import { getBestDisplayEmbedding } from './view/pattern/getBestDisplayEmbedding.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { standardSquareBoardGenerations, vertexNonExit4PatternBoard } from './model/pattern/pattern-board/patternBoards.ts';
@@ -22,6 +21,7 @@ import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
 import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { Panel } from 'phet-lib/sun';
 import { puzzleFromCompressedString } from './model/puzzle/puzzleFromCompressedString.ts';
+import { getBestDisplayEmbeddingForRule } from './view/pattern/getBestDisplayEmbeddingForRule.ts';
 
 // @ts-expect-error
 if ( window.assertions && !( import.meta.env.PROD ) ) {
@@ -129,7 +129,7 @@ const addStaticRule = async ( id: string, style: TPuzzleStyle, displayTiling: Di
 
   const rule = PatternRule.fromBinaryIdentifier( ruleBinaryIdentifier );
 
-  const displayEmbedding = getBestDisplayEmbedding( rule.patternBoard, displayTiling )!;
+  const displayEmbedding = getBestDisplayEmbeddingForRule( rule, displayTiling )!;
 
   const node = new EmbeddedPatternRuleNode( rule, displayEmbedding, {
     scale: puzzleScale,

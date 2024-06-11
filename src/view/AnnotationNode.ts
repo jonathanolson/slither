@@ -218,10 +218,9 @@ export class AnnotationNode extends Node {
       ];
 
       if ( additionalContentLayoutBounds ) {
-        const displayEmbedding = DisplayEmbedding.getDisplayEmbedding(
-          annotation.rule.patternBoard,
+        const displayEmbedding = DisplayEmbedding.getDisplayEmbeddingFromRule(
+          annotation.rule,
           annotation.boardPatternBoard,
-          annotation.boardPatternBoard.board,
           annotation.embedding,
         );
 

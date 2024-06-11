@@ -30,6 +30,7 @@ import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
 import { createBoardDescriptor } from '../../board/core/createBoardDescriptor.ts';
 import { BaseBoard } from '../../board/core/BaseBoard.ts';
 import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 
 export class DisplayEmbedding {
 
@@ -165,7 +166,8 @@ export class DisplayEmbedding {
   public static getEmbeddingBounds(
     sourcePatternBoard: TPatternBoard,
     boardPatternBoard: BoardPatternBoard,
-    embedding: Embedding
+    embedding: Embedding,
+    options?: DisplayEmbeddingCreationOptions,
   ): Bounds2 {
     const embeddingBounds = Bounds2.NOTHING.copy();
 
@@ -175,6 +177,10 @@ export class DisplayEmbedding {
     sourcePatternBoard.vertices.forEach( addPatternVertex );
 
     const addPatternFace = ( face: TPatternFace ) => {
+      if ( options?.sourceFaceFilter && !options.sourceFaceFilter( face ) ) {
+        return;
+      }
+
       const mappedFace = boardPatternBoard.getFace( embedding.mapFace( face ) );
       if ( mappedFace ) {
         mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
@@ -241,9 +247,10 @@ export class DisplayEmbedding {
     boardPatternBoard: BoardPatternBoard,
     largeBoard: TBoard,
     embedding: Embedding,
+    options?: DisplayEmbeddingCreationOptions,
   ): DisplayEmbedding {
 
-    const tightBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding );
+    const tightBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding, options );
 
     // TODO: do this improved TBoard handling for AnnotationNode(!), then get rid of the face filtering stuff
 
@@ -319,4 +326,25 @@ export class DisplayEmbedding {
       expandedBoardBounds,
     );
   }
+
+  public static getDisplayEmbeddingFromRule(
+    rule: PatternRule,
+    boardPatternBoard: BoardPatternBoard,
+    embedding: Embedding,
+  ): DisplayEmbedding {
+    return DisplayEmbedding.getDisplayEmbedding(
+      rule.patternBoard,
+      boardPatternBoard,
+      boardPatternBoard.board,
+      embedding,
+      { sourceFaceFilter: face => {
+        return rule.inputFeatureSet.getAffectedFaces().has( face ) || rule.outputFeatureSet.getAffectedFaces().has( face );
+      } }
+    );
+  }
 }
+
+export type DisplayEmbeddingCreationOptions = {
+  // for https://github.com/jonathanolson/slither/issues/4
+  sourceFaceFilter?: ( face: TPatternFace ) => boolean;
+};
