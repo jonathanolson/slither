@@ -72,6 +72,7 @@ export const themeColorPropertyNames = [
   'generateAddedFaceColorProperty',
   'generateMinimizedFaceColorProperty',
   'patternAnnotationBackgroundColorProperty',
+  'timerColorProperty',
 
 
   // TODO: can we actually use rainbow colors (culori-based) for the UI button colors?!? ZOMG
@@ -217,7 +218,8 @@ export const lightTheme = addThemeLUT( {
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' ),
-  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(184,184,184)' )
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(184,184,184)' ),
+  timerColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
 } );
 
 export const darkTheme = addThemeLUT( {
@@ -272,7 +274,8 @@ export const darkTheme = addThemeLUT( {
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' ),
-  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' )
+  patternAnnotationBackgroundColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  timerColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
 } );
 
 export const fadeLightTheme = addThemeLUT( {
@@ -287,6 +290,7 @@ export const fadeLightTheme = addThemeLUT( {
   playAreaRadialInsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0)' ),
   playAreaRadialOutsideColorProperty: new PaintColorProperty( 'rgba(255,255,255,0.79000000000000003553)' ),
   puzzleBackgroundStrokeColorProperty: new PaintColorProperty( 'rgb(148,148,148)' ),
+  timerColorProperty: new PaintColorProperty( 'rgb(204,204,204)' ),
 } );
 
 export const fadeDarkTheme = addThemeLUT( {

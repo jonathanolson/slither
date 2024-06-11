@@ -11,7 +11,7 @@ export class TimerNode extends Text {
 
     const options = optionize<TextOptions, EmptySelfOptions, TextOptions>()( {
       font: timerFont,
-      fill: currentTheme.uiForegroundColorProperty,
+      fill: currentTheme.timerColorProperty,
     }, providedOptions );
 
     const secondsInAMinute = 60;
