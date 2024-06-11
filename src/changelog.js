@@ -16,6 +16,7 @@ export const changelog = [
     'Improve edit mode switches on view style switches',
     'Auto-pan to hint',
     'Add shift + scroll for horizontal scrolling',
+    'Slightly increased size/spacing of edit mode buttons',
     'Miscellaneous fixes!',
   ]
 ];

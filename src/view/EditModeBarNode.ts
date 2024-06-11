@@ -101,11 +101,18 @@ export default class EditModeBarNode extends HBox {
 
     const tooltipListener = new TooltipListener( viewContext );
 
+    const wrapIcon = ( icon: Node ) => {
+      return new Node( {
+        scale: 1.3,
+        children: [ icon ],
+      } );
+    };
+
     const editModeRadioButtonGroup = new UIRectangularRadioButtonGroup<EditMode>( editModeProperty, [
       {
         value: EditMode.EDGE_STATE,
         labelContent: 'Edge Edit Mode',
-        createNode: () => edgeIcon,
+        createNode: () => wrapIcon( edgeIcon ),
         options: {
           visibleProperty: EditMode.EDGE_STATE.isEnabledProperty,
         }
@@ -113,7 +120,7 @@ export default class EditModeBarNode extends HBox {
       {
         value: EditMode.EDGE_STATE_REVERSED,
         labelContent: 'Edge Reversed Edit Mode',
-        createNode: () => edgeReversedIcon,
+        createNode: () => wrapIcon( edgeReversedIcon ),
         options: {
           visibleProperty: EditMode.EDGE_STATE_REVERSED.isEnabledProperty,
         }
@@ -121,7 +128,7 @@ export default class EditModeBarNode extends HBox {
       {
         value: EditMode.FACE_COLOR_MATCH,
         labelContent: 'Face Color Match Edit Mode',
-        createNode: () => faceColorMatchIcon,
+        createNode: () => wrapIcon( faceColorMatchIcon ),
         options: {
           visibleProperty: EditMode.FACE_COLOR_MATCH.isEnabledProperty,
         }
@@ -129,7 +136,7 @@ export default class EditModeBarNode extends HBox {
       {
         value: EditMode.FACE_COLOR_OPPOSITE,
         labelContent: 'Face Color Opposite Edit Mode',
-        createNode: () => faceColorOppositeIcon,
+        createNode: () => wrapIcon( faceColorOppositeIcon ),
         options: {
           visibleProperty: EditMode.FACE_COLOR_OPPOSITE.isEnabledProperty,
         }
@@ -137,12 +144,13 @@ export default class EditModeBarNode extends HBox {
       {
         value: EditMode.SECTOR_STATE,
         labelContent: 'Sector Edit Mode',
-        createNode: () => sectorIcon,
+        createNode: () => wrapIcon( sectorIcon ),
         options: {
           visibleProperty: EditMode.SECTOR_STATE.isEnabledProperty,
         }
       }
     ], {
+      spacing: 15,
       layoutOptions: {
         grow: 1,
       }
@@ -163,13 +171,12 @@ export default class EditModeBarNode extends HBox {
 
     const eraserButton = new BooleanRectangularStickyToggleButton( eraserEnabledProperty, combineOptions<BooleanRectangularStickyToggleButtonOptions>( {}, commonButtonOptions, {
       accessibleName: 'Eraser Mode (Toggle)',
-      content: eraserIcon,
+      content: wrapIcon( eraserIcon ),
     } ) );
     eraserButton.addInputListener( tooltipListener );
 
     super( {
-      // TODO: better layout
-      spacing: 10,
+      spacing: 13,
       stretch: true,
       children: [
         editModeRadioButtonGroup,
