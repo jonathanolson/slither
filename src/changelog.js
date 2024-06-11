@@ -18,6 +18,7 @@ export const changelog = [
     'Add shift + scroll for horizontal scrolling',
     'Slightly increased size/spacing of edit mode buttons',
     'Added options to control error highlighting / number dimming',
+    'Added slight delay lockout on autosolved edges (for usability)',
     'Miscellaneous fixes!',
   ]
 ];

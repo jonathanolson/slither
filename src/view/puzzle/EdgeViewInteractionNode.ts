@@ -4,6 +4,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
+import { TEmitter } from 'phet-lib/axon';
 
 // TODO: better options pattern!
 export type EdgeViewInteractionNodeOptions = {
@@ -15,6 +16,7 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
 
   public constructor(
     board: TBoard,
+    delayEdgeInteractionEmitter: TEmitter<[ TEdge ]>,
     options: EdgeViewInteractionNodeOptions
   ) {
     super(
@@ -84,6 +86,9 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
         return pointerAreaShape;
       },
       options.edgePressListener,
+      {
+        delayInteractionEmitter: delayEdgeInteractionEmitter,
+      }
     );
   }
 }

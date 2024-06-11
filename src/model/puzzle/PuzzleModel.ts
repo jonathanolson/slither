@@ -1,4 +1,4 @@
-import { DerivedProperty, Disposable, TinyProperty, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, Disposable, TEmitter, TinyEmitter, TinyProperty, TProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
 import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
@@ -68,6 +68,8 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   public readonly timeElapsedProperty: TProperty<number> = new TinyProperty( 0 );
 
   public readonly hintStateProperty: TProperty<HintState> = new TinyProperty( HintState.DEFAULT );
+
+  public readonly edgeAutoSolvedEmitter: TEmitter<[ TEdge ]> = new TinyEmitter();
 
   private readonly stack: PuzzleSnapshot<Structure, Data>[];
 
@@ -267,6 +269,9 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     options?: {
       checkAutoSolve?: ( state: TState<Data> ) => boolean;
       forceDirty?: boolean;
+
+      // Edges changed in the user action directly, that should not be treated as autosolved if changed.
+      excludedEdges?: Set<TEdge>;
     }
   ): void {
     // TODO: have a way of creating a "solid" state from a delta?
@@ -288,11 +293,21 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       errorDetected = true;
     }
 
+    let changedEdges = new Set<TEdge>();
+    const edgeChangeListener = ( edge: TEdge ) => {
+      changedEdges.add( edge );
+    };
+
     let delta = state.createDelta();
     try {
+
+      delta.edgeStateChangedEmitter.addListener( edgeChangeListener );
+
       withSolverFactory( this.autoSolverFactoryProperty.value, this.puzzle.board, delta, () => {
         userAction.apply( delta );
       }, dirty );
+
+      delta.edgeStateChangedEmitter.removeListener( edgeChangeListener );
 
       // Hah, if we try to white out something, don't immediately solve it back!
       // TODO: why the cast here?
@@ -302,12 +317,19 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     }
     catch ( e ) {
       errorDetected = true;
+      changedEdges = new Set();
+
       if ( e instanceof InvalidStateError ) {
         console.log( 'error' );
         delta = state.createDelta();
+
+        delta.edgeStateChangedEmitter.addListener( edgeChangeListener );
+
         withSolverFactory( this.style.safeSolverFactoryProperty.value, this.puzzle.board, delta, () => {
           userAction.apply( delta );
         }, dirty );
+
+        delta.edgeStateChangedEmitter.removeListener( edgeChangeListener );
       }
       else {
         throw e;
@@ -318,6 +340,14 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
     delta.apply( newState );
 
     this.pushTransitionAtCurrentPosition( new PuzzleSnapshot( this.puzzle.board, userAction, newState, errorDetected ) );
+
+    for ( const changedEdge of changedEdges ) {
+      if ( !options?.excludedEdges || !options.excludedEdges.has( changedEdge ) ) {
+        console.log( 'autosolved an edge' );
+
+        this.edgeAutoSolvedEmitter.emit( changedEdge );
+      }
+    }
   }
 
   private addAutoSolveDelta(): void {
@@ -412,8 +442,10 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
       }
 
       const userAction = new EdgeStateSetAction( edge, newEdgeState );
+
       this.applyUserActionToStack( userAction, {
-        checkAutoSolve: state => state.getEdgeState( edge ) === newEdgeState
+        checkAutoSolve: state => state.getEdgeState( edge ) === newEdgeState,
+        excludedEdges: new Set( [ edge ] )
       } );
 
       this.updateState();

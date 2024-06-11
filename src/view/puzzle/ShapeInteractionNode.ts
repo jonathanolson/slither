@@ -1,5 +1,10 @@
 import { FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
 import { Shape } from 'phet-lib/kite';
+import { TEmitter } from 'phet-lib/axon';
+
+export type ShapeInteractionNodeOptions<T> = {
+  delayInteractionEmitter?: TEmitter<[ T ]>;
+};
 
 export class ShapeInteractionNode<T> extends Node {
 
@@ -7,8 +12,26 @@ export class ShapeInteractionNode<T> extends Node {
     items: T[],
     getShape: ( item: T ) => Shape,
     listener: ( item: T, button: 0 | 1 | 2 ) => void,
+    options?: ShapeInteractionNodeOptions<T>,
   ) {
+
     super();
+
+    const delayedInteractionItems = new Set<T>();
+
+    // Add a temporary delay to prevent clicks toggling an item after it has been auto-solved (generally)
+    if ( options?.delayInteractionEmitter ) {
+      const emitter = options?.delayInteractionEmitter;
+
+      const delayListener = ( item: T ) => {
+        delayedInteractionItems.add( item );
+        setTimeout( () => {
+          delayedInteractionItems.delete( item );
+        }, 700 );
+      };
+      emitter.addListener( delayListener );
+      this.disposeEmitter.addListener( () => emitter.removeListener( delayListener ) );
+    }
 
     // TODO: CAG this, or get the "background" shape from the outside boundary of the board and expand it (for cheap)
     const mainShape = new Shape();
@@ -33,7 +56,11 @@ export class ShapeInteractionNode<T> extends Node {
         const shape = itemShapes[ i ];
 
         if ( shape.bounds.containsPoint( point ) && shape.containsPoint( point ) ) {
-          return items[ i ];
+          const item = items[ i ];
+
+          if ( !delayedInteractionItems.has( item ) ) {
+            return item;
+          }
         }
       }
 

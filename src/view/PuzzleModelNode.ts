@@ -42,6 +42,7 @@ export default class PuzzleModelNode<Structure extends TStructure = TStructure, 
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
       selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
       style: puzzleModel.style,
+      delayEdgeInteractionEmitter: puzzleModel.edgeAutoSolvedEmitter,
     } );
 
     super( combineOptions<NodeOptions>( {

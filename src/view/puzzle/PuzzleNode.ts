@@ -1,5 +1,5 @@
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty, Property, TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, Property, TEmitter, TReadOnlyProperty, TinyEmitter } from 'phet-lib/axon';
 import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
 import { puzzleFont } from '../Theme.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
@@ -41,6 +41,7 @@ type SelfOptions = {
   selectedSectorEditProperty?: TReadOnlyProperty<SelectedSectorEdit | null>;
   style?: TPuzzleStyle;
   noninteractive?: boolean;
+  delayEdgeInteractionEmitter?: TEmitter<[ TEdge ]>;
 };
 
 type ParentOptions = NodeOptions & PuzzleBackgroundNodeOptions;
@@ -75,6 +76,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
       selectedSectorEditProperty: new Property( null ),
       style: currentPuzzleStyle,
       noninteractive: false,
+      delayEdgeInteractionEmitter: new TinyEmitter(),
     }, providedOptions );
 
     const style = options.style;
@@ -150,7 +152,7 @@ export default class PuzzleNode<Structure extends TStructure = TStructure, Data 
     edgeContainer.addChild( new EdgeViewNode( puzzle.board, puzzle.stateProperty, isSolvedProperty, style ) );
 
     if ( !options.noninteractive ) {
-      edgeContainer.addChild( new EdgeViewInteractionNode( puzzle.board, options ) );
+      edgeContainer.addChild( new EdgeViewInteractionNode( puzzle.board, options.delayEdgeInteractionEmitter, options ) );
     }
 
     sectorContainer.addChild( new SectorViewNode( puzzle.board, puzzle.stateProperty, style ) );

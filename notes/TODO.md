@@ -12,7 +12,6 @@
   - Priorities:
     - 
     - Auto-solve / Erase
-      - Auto-solved edges (optionally) add a pickable:false with delayed pickable:null to LOCK OUT interaction
       - NO global "auto-solve off"?
       - make basic auto solve actions:
         - color mode changes => line changes
@@ -26,6 +25,9 @@
           - color: clear color + clear adjacent edges
           - sector: clear sector
         - Auto-solve after breaking changes???? unclear, if not, make a way to trigger auto-solve?
+        - [old note] If the user changes a non-white edge (ignoring the quick-undo for double tap), we should reset all state except edges (and face values)
+          - Create "reset" handlers for each data type
+          - Create a global "reset" method to reset all existing state (add to TState?)
       - NOT breaking changes:
         - Edge toggle that is an edge we just toggled (we just UNDO the auto solve)
       - Auto-solve delayed start (maybe) (optional)
@@ -124,8 +126,6 @@
       - pan-only
     - Disable "eager error" indication (scary red bars)
       - Try the "exploration" of other things mode
-    - Solve the "quick double tap" issue (due to auto solve)
-      - HOW?
     - 
     - Puzzle generation using pattern-based difficulty
     - 
@@ -251,9 +251,6 @@
     - If they don't... the face color IDs might change.
   - Autosolver should always go "until error detected" (whether our input is valid or not)
     - Just use the validator when we "should" have no errors?
-  - If the user changes a non-white edge (ignoring the quick-undo for double tap), we should reset all state except edges (and face values)
-    - Create "reset" handlers for each data type
-    - Create a global "reset" method to reset all existing state (add to TState?)
   - Serialization of actions.... is a mess. Clean up, so we can serialize them and the stack (undo possible after reload)
   - Switch to ABSwitches (toggle switches) for configurations
     - https://blog.uxtweak.com/checkbox-vs-toggle-switch/ notes they are for "immediate effect" - which they are, checkboxes are delayed effect
