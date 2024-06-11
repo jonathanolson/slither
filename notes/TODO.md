@@ -13,6 +13,7 @@
     - 
     - Auto-solve / Erase
       - Auto-solved edges (optionally) add a pickable:false with delayed pickable:null to LOCK OUT interaction
+      - NO global "auto-solve off"?
       - make basic auto solve actions:
         - color mode changes => line changes
         - line changes => color mode changes
