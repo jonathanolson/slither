@@ -11,6 +11,8 @@
   - 
   - Priorities:
     - 
+    - Set up MSI laptop with generation?
+    - 
     - Auto-solve / Erase
       - make basic auto solve actions:
         - color mode changes => line changes
