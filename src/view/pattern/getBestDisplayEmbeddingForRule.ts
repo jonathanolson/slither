@@ -10,10 +10,6 @@ export const getBestDisplayEmbeddingForRule = (
   return getBestDisplayEmbedding(
     rule.patternBoard,
     displayTiling,
-    {
-      sourceFaceFilter: face => {
-        return rule.inputFeatureSet.getAffectedFaces().has( face ) || rule.outputFeatureSet.getAffectedFaces().has( face );
-      }
-    }
+    DisplayEmbedding.getOptionsForRule( rule ),
   );
 };

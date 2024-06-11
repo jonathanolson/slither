@@ -191,6 +191,10 @@ export class DisplayEmbedding {
     sourcePatternBoard.edges.forEach( edge => {
       let edges: TEdge[];
       if ( edge.isExit ) {
+        if ( options?.sourceExitEdgeFilter && !options.sourceExitEdgeFilter( edge ) ) {
+          return;
+        }
+
         edges = embedding.mapExitEdges( edge ).map( exitEdge => boardPatternBoard.getEdge( exitEdge ) );
       }
       else {
@@ -327,6 +331,20 @@ export class DisplayEmbedding {
     );
   }
 
+  public static getOptionsForRule( rule: PatternRule ): DisplayEmbeddingCreationOptions {
+    const faces = rule.outputFeatureSet.getAffectedFaces();
+    const edges = rule.outputFeatureSet.getAffectedEdges();
+
+    return {
+      sourceFaceFilter: face => {
+        return faces.has( face );
+      },
+      sourceExitEdgeFilter: edge => {
+        return edges.has( edge );
+      },
+    };
+  }
+
   public static getDisplayEmbeddingFromRule(
     rule: PatternRule,
     boardPatternBoard: BoardPatternBoard,
@@ -337,14 +355,14 @@ export class DisplayEmbedding {
       boardPatternBoard,
       boardPatternBoard.board,
       embedding,
-      { sourceFaceFilter: face => {
-        return rule.inputFeatureSet.getAffectedFaces().has( face ) || rule.outputFeatureSet.getAffectedFaces().has( face );
-      } }
+      DisplayEmbedding.getOptionsForRule( rule ),
     );
   }
 }
 
 export type DisplayEmbeddingCreationOptions = {
-  // for https://github.com/jonathanolson/slither/issues/4
+  // for https://github.com/jonathanolson/slither/issues/4, where we need to omit certain exit faces/edges from the
+  // embedding so we don't show a bunch of extra whitespace.
   sourceFaceFilter?: ( face: TPatternFace ) => boolean;
+  sourceExitEdgeFilter?: ( face: TPatternEdge ) => boolean;
 };

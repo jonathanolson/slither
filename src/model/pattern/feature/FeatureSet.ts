@@ -839,9 +839,15 @@ export class FeatureSet {
   }
 
   public getAffectedFaces(): Set<TPatternFace> {
-    return new Set( [
-      ...this.faceValueMap.keys()
-    ] );
+    const affectedFaces = new Set<TPatternFace>( this.faceValueMap.keys() );
+
+    for ( const feature of this.faceColorDualFeatures ) {
+      for ( const face of feature.allFaces ) {
+        affectedFaces.add( face );
+      }
+    }
+
+    return affectedFaces;
   }
 
   public isIsomorphicTo( other: FeatureSet ): boolean {
