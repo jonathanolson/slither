@@ -1,5 +1,5 @@
 import { HBox, Node } from 'phet-lib/scenery';
-import { TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { Panel, PanelOptions } from 'phet-lib/sun';
 import { currentTheme } from './Theme.ts';
 import { ViewContext } from './ViewContext.ts';
@@ -7,6 +7,9 @@ import HintState from '../model/puzzle/HintState.ts';
 import { SpinningIndicatorNode } from 'phet-lib/scenery-phet';
 import { UIText } from './UIText.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+
+const activeColor = currentTheme.uiForegroundColorProperty;
+const inactiveColor = new DerivedProperty( [ currentTheme.uiForegroundColorProperty ], color => color.withAlpha( 0.15 ) );
 
 export class HintStateNode extends Node {
 
@@ -20,8 +23,10 @@ export class HintStateNode extends Node {
 
     const spinningIndicatorNode = new SpinningIndicatorNode( {
       diameter: 20,
-      // TODO: activeColor/inactiveColor, pass in theme Properties (typecast to satisfy overly-specific guards)
+      activeColor: activeColor as any,
+      inactiveColor: inactiveColor as any,
     } );
+    this.disposeEmitter.addListener( () => spinningIndicatorNode.dispose() );
 
     const panelOptions: PanelOptions = {
       xMargin: 5,
