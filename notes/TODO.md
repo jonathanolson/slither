@@ -65,6 +65,7 @@
       - DO NOT hide it when they do an "ok" move after a wrong one
     - Tabs for Settings (semi like PhET preferences, but evenly space, and make bottom larger, AND change color of highlighted section text to match bottom color)
       - Add descriptions for settings underneath (indented), so it is more explained
+      - Show previews for all themes(!)
     - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?
