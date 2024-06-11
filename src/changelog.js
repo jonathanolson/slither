@@ -1,5 +1,6 @@
 export const changelog = [
   [
+    '2024-06-10',
     'Removing edge controls on pure coloring view mode',
     'Removing face color controls on basic edge/sector view modes',
     'Added tooltips',
