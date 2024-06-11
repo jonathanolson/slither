@@ -34,7 +34,8 @@ export class SelectedFaceColorHighlightNode extends Node {
 
           const differenceShape = offsetBackgroundShape.shapeDifference( outerBoundaryShape );
 
-          shape = shape.shapeUnion( differenceShape );
+          // Conditional so that we ensure it works if shape has no content yet, see https://github.com/jonathanolson/slither/issues/3
+          shape = shape.bounds.isValid() ? shape.shapeUnion( differenceShape ) : differenceShape;
         }
         catch ( e ) {
           console.error( e );
