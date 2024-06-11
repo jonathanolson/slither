@@ -1,8 +1,8 @@
-import { Line, Node, Path, TPaint } from 'phet-lib/scenery';
+import { Color, Line, Node, Path, TPaint } from 'phet-lib/scenery';
 import { TSimpleRegion, TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { Shape } from 'phet-lib/kite';
 import { TEdge } from '../../model/board/core/TEdge.ts';
-import { TReadOnlyProperty } from 'phet-lib/axon';
+import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
 import { TState } from '../../model/data/core/TState.ts';
 import { arrayDifference } from 'phet-lib/phet-core';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
@@ -11,6 +11,7 @@ import { dotRandom, Vector2 } from 'phet-lib/dot';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { highlightIntersectionsProperty } from '../../model/puzzle/PuzzleModel.ts';
 
 export class SimpleRegionViewNode extends Node {
 
@@ -23,6 +24,8 @@ export class SimpleRegionViewNode extends Node {
 
   private readonly adjacentFacesMap = new Map<TFace, TFace[]>;
 
+  private readonly weirdEdgeColorProperty: TReadOnlyProperty<Color>;
+
   public constructor(
     public readonly board: TBoard,
     stateProperty: TReadOnlyProperty<TState<TSimpleRegionData>>,
@@ -34,6 +37,17 @@ export class SimpleRegionViewNode extends Node {
       // TODO: also kill computation if we are not visible?
       visibleProperty: style.edgesVisibleProperty
     } );
+
+    this.weirdEdgeColorProperty = new DerivedProperty( [
+      this.style.theme.edgeWeirdColorProperty,
+      this.style.theme.blackLineColorProperty,
+      highlightIntersectionsProperty,
+    ], (
+      edgeWeirdColor: Color,
+      blackLineColor: Color,
+      highlightIntersections: boolean
+    ) => highlightIntersections ? edgeWeirdColor : blackLineColor );
+    this.disposeEmitter.addListener( () => this.weirdEdgeColorProperty.dispose() );
 
     board.faces.forEach( face => {
       this.adjacentFacesMap.set( face, face.edges.map( edge => edge.getOtherFace( face ) ).filter( face => face !== null ) as TFace[] );
@@ -142,16 +156,25 @@ export class SimpleRegionViewNode extends Node {
     const endPoint = edge.end.viewCoordinates;
     const line = new Line( startPoint.x, startPoint.y, endPoint.x, endPoint.y, {
       lineWidth: 0.1,
-      stroke: this.style.theme.edgeWeirdColorProperty,
-      lineCap: 'square'
+      stroke: this.weirdEdgeColorProperty,
     } );
+
+    // line cap
+    {
+      const capListener = ( cap: TLineCap ) => {
+        line.lineCap = cap;
+      };
+      this.style.joinedLinesCapProperty.link( capListener );
+      line.disposeEmitter.addListener( () => this.style.joinedLinesCapProperty.unlink( capListener ) );
+    }
+
     this.weirdEdgeNodeMap.set( edge, line );
     this.weirdEdgeContainer.addChild( line );
   }
 
   private removeWeirdEdge( edge: TEdge ): void {
-    const node = this.weirdEdgeNodeMap.get( edge );
-    this.weirdEdgeContainer.removeChild( node! );
+    const node = this.weirdEdgeNodeMap.get( edge )!;
+    node.dispose();
     this.weirdEdgeNodeMap.delete( edge );
   }
 

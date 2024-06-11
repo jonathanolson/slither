@@ -48,17 +48,20 @@
         - (fix BoardPatternBoard embeddings leak!)
       - NO auto-solve actions on view mode switches(?)
       - Allow changing sectors to arbitrary states, perhaps toggle support like edges?
-      - Error highlighting options:
-        - Option for whether "wrong numbers" are highlighted
-        - Option for whether "wrong lines around a dot" (3+) are highlighted?
-        - Option for whether "wrong moves" / invalid state are highlighted
-        - BETTER ERROR HIGHLIGHTING - no "scary bars"
-        - (option to delay error visibility - e.g. when tapping on mobile)
       - Auto-Solve options are PER VIEW MODE(?), with a global on/off control?
+      - Do not "fail load" if the puzzle has an error(!)
       - "Check Solution" button?
         - a: has errors
         - b: no errors, but incomplete
         - c: solved!
+    - 
+    - Show changelog in settings/info somewhere
+    - Improve "incorrect move" highlight (don't "scary bars" them))
+      - Add "delay" option, to delay visibility of them (e.g. on mobile, double tap toggle shouldn't immediately show)
+      - TRACK which edges/colors/sectors are wrong, and highlight them
+      - DO NOT hide it when they do an "ok" move after a wrong one
+    - Tabs for Settings (semi like PhET preferences, but evenly space, and make bottom larger, AND change color of highlighted section text to match bottom color)
+      - Add descriptions for settings underneath (indented), so it is more explained
     - 
     - ****** FIX THE NOT SAVING STATE
       - indexeddb?

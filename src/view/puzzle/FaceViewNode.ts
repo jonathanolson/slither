@@ -8,6 +8,7 @@ import FaceValue from '../../model/data/face-value/FaceValue.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
 import { combineOptions } from 'phet-lib/phet-core';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
+import { dimCompletedNumbersProperty, highlightIncorrectNumbersProperty } from '../../model/puzzle/PuzzleModel.ts';
 
 export type FaceViewNodeOptions = {
   textOptions?: RichTextOptions;
@@ -38,6 +39,8 @@ export class FaceViewNode extends Node {
       const errorColor = style.theme.faceValueErrorColorProperty.value;
       const ratioColor = style.theme.faceValueRatioColorProperty.value;
       const faceStateVisible = style.faceStateVisibleProperty.value;
+      const dimCompletedNumbers = dimCompletedNumbersProperty.value;
+      const highlightIncorrectNumbers = highlightIncorrectNumbersProperty.value;
 
       this.visible = !faceStateVisible;
 
@@ -101,14 +104,14 @@ export class FaceViewNode extends Node {
                 throw new Error( `unhandled faceValueStyle: ${faceValueStyle}` );
               }
 
-              if ( blackCount < faceValue ) {
-                fill = usingRemaining ? color : color; // TODO figure out a better color... for this? Try a color difference?
+              if ( blackCount > faceValue && highlightIncorrectNumbers ) {
+                fill = errorColor;
               }
-              else if ( blackCount === faceValue ) {
+              else if ( blackCount === faceValue && dimCompletedNumbers ) {
                 fill = completedColor;
               }
               else {
-                fill = errorColor;
+                fill = usingRemaining ? color : color; // TODO figure out a better color... for this? Try a color difference?
               }
             }
 
@@ -158,7 +161,9 @@ export class FaceViewNode extends Node {
       style.theme.faceValueCompletedColorProperty,
       style.theme.faceValueErrorColorProperty,
       style.theme.faceValueRatioColorProperty,
-      style.faceStateVisibleProperty
+      style.faceStateVisibleProperty,
+      dimCompletedNumbersProperty,
+      highlightIncorrectNumbersProperty,
     ], updateFaces );
 
     this.disposeEmitter.addListener( () => {

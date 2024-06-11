@@ -17,6 +17,7 @@ export const changelog = [
     'Auto-pan to hint',
     'Add shift + scroll for horizontal scrolling',
     'Slightly increased size/spacing of edit mode buttons',
+    'Added options to control error highlighting / number dimming',
     'Miscellaneous fixes!',
   ]
 ];

@@ -46,6 +46,11 @@ import HintState from './HintState.ts';
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
 
+export const dimCompletedNumbersProperty = new LocalStorageBooleanProperty( 'dimCompletedNumbersProperty', true );
+export const highlightIncorrectNumbersProperty = new LocalStorageBooleanProperty( 'highlightIncorrectNumbersProperty', true );
+export const highlightIncorrectMovesProperty = new LocalStorageBooleanProperty( 'highlightIncorrectMovesProperty', true );
+export const highlightIntersectionsProperty = new LocalStorageBooleanProperty( 'highlightIntersectionsProperty', true );
+
 export type PendingFaceColor = {
   face: TFace | null;
   color: TFaceColor;
@@ -609,7 +614,14 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 }
 
-export type PuzzleModelUserAction = EdgeStateSetAction | FaceColorMakeSameAction | FaceColorMakeOppositeAction | SectorStateSetAction | UserLoadPuzzleAutoSolveAction | UserRequestSolveAction | UserPuzzleHintApplyAction;
+export type PuzzleModelUserAction =
+  EdgeStateSetAction |
+  FaceColorMakeSameAction |
+  FaceColorMakeOppositeAction |
+  SectorStateSetAction |
+  UserLoadPuzzleAutoSolveAction |
+  UserRequestSolveAction |
+  UserPuzzleHintApplyAction;
 
 export class PuzzleSnapshot<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> {
   public constructor(

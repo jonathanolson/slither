@@ -6,7 +6,7 @@ import { BooleanProperty, DynamicProperty, Multilink, Property, TinyEmitter, Tin
 import { AlignBox, Display, globalKeyStateTracker, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
 import SlitherQueryParameters from './SlitherQueryParameters.ts';
 import PuzzleContainerNode from './view/PuzzleContainerNode.ts';
-import PuzzleModel from './model/puzzle/PuzzleModel.ts';
+import PuzzleModel, { highlightIncorrectMovesProperty } from './model/puzzle/PuzzleModel.ts';
 import ControlBarNode from './view/ControlBarNode.ts';
 import { controlBarMargin, currentTheme } from './view/Theme.ts';
 import { TStructure } from './model/board/core/TStructure.ts';
@@ -97,10 +97,11 @@ const hintStateProperty = new DynamicProperty( puzzleModelProperty, {
 // TODO: better place to handle this type of logic...
 Multilink.multilink( [
   hasErrorProperty,
+  highlightIncorrectMovesProperty,
   currentTheme.navbarBackgroundColorProperty,
   currentTheme.navbarErrorBackgroundColorProperty
-], ( hasError, color, errorColor ) => {
-  display.backgroundColor = hasError ? errorColor : color;
+], ( hasError, highlightIncorrectMoves, color, errorColor ) => {
+  display.backgroundColor = ( hasError && highlightIncorrectMoves ) ? errorColor : color;
 } );
 
 const stepEmitter = new TinyEmitter<[ number ]>();

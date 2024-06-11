@@ -10,7 +10,7 @@ import { UITextPushButton } from './UITextPushButton.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 import { UIText } from './UIText.ts';
-import { showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
+import { dimCompletedNumbersProperty, highlightIncorrectMovesProperty, highlightIncorrectNumbersProperty, highlightIntersectionsProperty, showUndoRedoAllProperty, uiHintUsesBuiltInSolveProperty } from '../model/puzzle/PuzzleModel.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
 import { basicFaceColoringPuzzleStyle, basicLinesPuzzleStyle, basicSectorsPuzzleStyle, classicPuzzleStyle, customPuzzleStyle, faceStatePuzzleStyle, pureFaceColorPuzzleStyle, puzzleStyleProperty, sectorsWithColorsPuzzleStyle, showPuzzleStyleProperty, showPuzzleTimerProperty, vertexStatePuzzleStyle } from './puzzle/puzzleStyles.ts';
@@ -303,6 +303,29 @@ export class SettingsNode extends PopupNode {
           },
           enabledProperty: autoSolveEnabledProperty
         } ),
+
+        new UIText( 'Highlights' ),
+        new UITextSwitch( dimCompletedNumbersProperty, 'Dim Completed Numbers', {
+          layoutOptions: {
+            leftMargin: 20
+          },
+        } ),
+        new UITextSwitch( highlightIncorrectNumbersProperty, 'Highlight Incorrect Numbers', {
+          layoutOptions: {
+            leftMargin: 20
+          },
+        } ),
+        new UITextSwitch( highlightIncorrectMovesProperty, 'Highlight Incorrect Moves', {
+          layoutOptions: {
+            leftMargin: 20
+          },
+        } ),
+        new UITextSwitch( highlightIntersectionsProperty, 'Highlight Intersecting Lines', {
+          layoutOptions: {
+            leftMargin: 20
+          },
+        } ),
+
         new UITextSwitch( showPuzzleStyleProperty, 'Show View Style Controls' ),
         new UITextSwitch( redLineVisibleProperty, 'Show Impossible Lines' ),
         new UITextSwitch( showPuzzleTimerProperty, 'Show Elapsed Time' ),
