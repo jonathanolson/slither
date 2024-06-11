@@ -12,7 +12,6 @@
   - Priorities:
     - 
     - Auto-solve / Erase
-      - NO global "auto-solve off"?
       - make basic auto solve actions:
         - color mode changes => line changes
         - line changes => color mode changes
