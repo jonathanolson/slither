@@ -10,33 +10,34 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "phet-lib": "0.0.11",
     "@techstark/opencv-js": "4.9.0-release.2",
-    "tesseract.js": "~5.0.4",
     "culori": "~4.0.1",
     "pako": "~2.1.0",
-    "tactile-js": "~1.0.0"
+    "phet-lib": "0.0.11",
+    "tactile-js": "~1.0.0",
+    "tesseract.js": "~5.0.4"
   },
   "devDependencies": {
-    "vite": "^5.2.9",
-    "qunit": "~2.20.1",
-    "eslint": "~8.56.0",
-    "typescript": "~5.3.3",
-    "typescript-eslint": "~7.0.1",
-    "@typescript-eslint/eslint-plugin": "~7.0.1",
-    "@typescript-eslint/parser": "~7.0.2",
-    "rollup-plugin-unassert": "~0.6.0",
-    "rollup-plugin-modify": "~3.0.0",
-    "puppeteer": "~22.7.1",
-    "svgo": "~3.2.0",
-    "proper-lockfile": "~4.1.2",
-
     "@types/culori": "~2.1.0",
-    "@types/pako": "~2.0.3",
     "@types/jquery": "~3.5.13",
     "@types/lodash": "~4.14.172",
+    "@types/pako": "~2.0.3",
     "@types/qunit": "~2.19.6",
     "@types/three": "~0.137.0",
-    "@webgpu/types": "~0.1.40"
+    "@typescript-eslint/eslint-plugin": "~7.0.1",
+    "@typescript-eslint/parser": "~7.0.2",
+    "@webgpu/types": "~0.1.40",
+    "eslint": "~8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "3.3.2",
+    "proper-lockfile": "~4.1.2",
+    "puppeteer": "~22.7.1",
+    "qunit": "~2.20.1",
+    "rollup-plugin-modify": "~3.0.0",
+    "rollup-plugin-unassert": "~0.6.0",
+    "svgo": "~3.2.0",
+    "typescript": "~5.3.3",
+    "typescript-eslint": "~7.0.1",
+    "vite": "^5.2.9"
   }
 }
