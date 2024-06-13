@@ -1,11 +1,25 @@
 import { Display, Node } from 'phet-lib/scenery';
-import { standardSquareBoardGenerations } from './model/pattern/pattern-board/patternBoards.ts';
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './model/pattern/collection/BinaryRuleCollection.ts';
-import { BinaryRuleSequence, SequenceSpecifier, SerializedBinaryRuleSequence } from './model/pattern/collection/BinaryRuleSequence.ts';
+import {
+  getSerializedPatternBoardLibrary,
+  standardSquareBoardGenerations,
+} from './model/pattern/pattern-board/patternBoards.ts';
+import {
+  BinaryRuleCollection,
+  SerializedBinaryRuleCollection,
+} from './model/pattern/collection/BinaryRuleCollection.ts';
+import {
+  BinaryRuleSequence,
+  SequenceSpecifier,
+  SerializedBinaryRuleSequence,
+} from './model/pattern/collection/BinaryRuleSequence.ts';
 import { serializePatternBoard } from './model/pattern/pattern-board/serializePatternBoard.ts';
 import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from './model/pattern/pattern-board/deserializePatternBoard.ts';
-import { BinaryMixedRuleGroup, SerializedBinaryMixedRuleGroup } from './model/pattern/collection/BinaryMixedRuleGroup.ts';
+import {
+  BinaryMixedRuleGroup,
+  SerializedBinaryMixedRuleGroup,
+} from './model/pattern/collection/BinaryMixedRuleGroup.ts';
+import { compressString } from './util/compression.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
@@ -33,6 +47,9 @@ declare global {
   interface Window {
     standardSquareBoardGenerations: TPatternBoard[][];
 
+    // For being able to store the PatternBoards without the expensive construction
+    getSerializedPatternBoardLibraryJS: () => string;
+
     getSequenceName: ( sequenceSpecifier: SequenceSpecifier ) => string;
     getEmptySequence: ( sequenceSpecifier: SequenceSpecifier ) => SerializedBinaryRuleSequence;
     getSequenceStatus: ( serializedSequence: SerializedBinaryRuleSequence ) => string;
@@ -55,6 +72,12 @@ declare global {
 }
 
 window.standardSquareBoardGenerations = standardSquareBoardGenerations;
+
+window.getSerializedPatternBoardLibraryJS = () => {
+  const serializedPatternBoardLibrary = getSerializedPatternBoardLibrary();
+
+  return JSON.stringify( compressString( JSON.stringify( serializedPatternBoardLibrary ) ) );
+};
 
 // console.log( JSON.stringify( BinaryRuleCollection.empty().serialize() ) );
 
