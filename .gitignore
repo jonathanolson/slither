@@ -11,6 +11,9 @@ lerna-debug.log*
 node_modules
 package-lock.json
 
+# Build
+dist
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
