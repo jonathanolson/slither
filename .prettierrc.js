@@ -7,7 +7,7 @@ const config = {
   bracketSpacing: true,
   endOfLine: 'lf',
   experimentalTernaries: true,
-  printWidth: 80,
+  printWidth: 120,
   quoteProps: 'as-needed',
   semi: true,
   singleQuote: true,
