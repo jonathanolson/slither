@@ -13,6 +13,7 @@
     - 
     - Set up MSI laptop with generation?
     - 
+    - STORE pattern boards, so we do not do the "search" on start-up
     - Allow generation of "unblocked" pattern boards
       - Allow future generations if all embeddings are complete.
       - Sort (with edge count) on next-board
