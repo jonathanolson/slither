@@ -12,16 +12,29 @@
   - Priorities:
     - 
     - Set up MSI laptop with generation?
+    - 
     - Allow generation of "unblocked" pattern boards
+      - Allow future generations if all embeddings are complete.
+      - Sort (with edge count) on next-board
+    - 
+    - Edit modes for "make face inside" / "make face outside"
     - 
     - Auto-solve / Erase
-      - make basic auto solve actions:
+      - Auto-solve INTO history (in the future), animate out
+        - Store index to "auto solve satisfied"
+      - 
+      - make basic auto solve actions (auto-do):
+        - ____ How to handle, do we only do "face" auto-solve on "edge" changes?
+          - E.g. lines + colors, would this be... applying both?
         - color mode changes => line changes
         - line changes => color mode changes
+        - ... how to auto solve sectors?
+          - Clear all sectors when erased
       - Breaking changes:
+        - Breaking change is "ERASE" then "ACTION"
         - Erase
         - Edge toggle when it wasn't the last (undo-able) action
-        - Always wipe vertex/face state
+        - Always wipe vertex/face state (... that is directly related?)
         - on:
           - edge: clear edge, then check face color connection (so we could "break apart" color duals)
           - color: clear color + clear adjacent edges
@@ -32,7 +45,7 @@
           - Create a global "reset" method to reset all existing state (add to TState?)
       - NOT breaking changes:
         - Edge toggle that is an edge we just toggled (we just UNDO the auto solve)
-      - Auto-solve delayed start (maybe) (optional)
+      
       - Auto-solve animated (optional, speed control)
         - (option) undo goes back to either last user move OR undoes last auto solver move (AND DOES NOT AUTO SOLVE AFTER)
         - (option?) way to play/pause the animation
@@ -51,15 +64,20 @@
       - Auto-solve patterns:
         - Allow arbitrary rule inclusions
         - (fix BoardPatternBoard embeddings leak!)
+      - Pattern Solver handles "dirty" fully (do not give actions that aren't based on what changed)
+        - Enumerate pattern+embedding IN ORDER if there are no changes, so we can list out pattern matches
       - NO auto-solve actions on view mode switches(?)
       - Allow changing sectors to arbitrary states, perhaps toggle support like edges?
       - Auto-Solve options are PER VIEW MODE(?), with a global on/off control?
       - Do not "fail load" if the puzzle has an error(!)
-      - "Check Solution" button?
+      - [feature] "Check Solution" button?
         - a: has errors
         - b: no errors, but incomplete
         - c: solved!
+      - [feature] Auto-solve delayed start (maybe) (optional)
     - 
+    - Auto-load hint solver (in the background), since it isn't killing memory
+    - Embedding improvements soon.
     - Show changelog in settings/info somewhere
     - Improve "incorrect move" highlight (don't "scary bars" them))
       - Add "delay" option, to delay visibility of them (e.g. on mobile, double tap toggle shouldn't immediately show)
