@@ -8,6 +8,8 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { planarPatternMaps } from '../pattern-board/planar-map/planarPatternMaps.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
 import { getSolutionImpliedRules } from '../generation/getSolutionImpliedRules.ts';
+import { computeEmbeddings } from '../embedding/computeEmbeddings.ts';
+import _ from '../../../workarounds/_.ts';
 
 export type SequenceBoardType = 'general' | 'square' | 'hexagonal';
 
@@ -76,61 +78,61 @@ export class BinaryRuleSequence implements SequenceSpecifier {
     return generations;
   }
 
-  public getCurrentGeneration(): TPatternBoard[] | null {
-    const generations = this.getGenerations();
+  public getAvailableBoards(): TPatternBoard[] {
+    const boards: TPatternBoard[] = [];
+    const unprocessedBoards: TPatternBoard[] = [];
 
-    return generations.find( generation => generation.some( board => !this.processedBoards.includes( board ) ) ) ?? null;
+    const hasMapping = ( source: TPatternBoard, target: TPatternBoard ) => {
+      return computeEmbeddings( source, target, true ).length > 0;
+    };
+
+    for ( const generation of this.getGenerations() ) {
+
+      let hasProcessed = false;
+
+      for ( const board of generation ) {
+        if ( this.processedBoards.includes( board ) ) {
+          hasProcessed = true;
+
+          continue;
+        }
+
+        if ( !unprocessedBoards.some( unprocessedBoard => hasMapping( unprocessedBoard, board ) ) ) {
+          boards.push( board );
+        }
+
+        unprocessedBoards.push( board );
+      }
+
+      if ( !hasProcessed ) {
+        break;
+      }
+    }
+
+    return _.sortBy( boards, board => board.edges.length );
   }
 
   public getNextBoard(): TPatternBoard | null {
-    const currentGeneration = this.getCurrentGeneration();
-    if ( currentGeneration ) {
-      const remainingBoards = currentGeneration.filter( board => {
-        return !this.processedBoards.includes( board ) && !this.currentBoards.includes( board );
-      } );
-
-      if ( remainingBoards.length ) {
-        return remainingBoards[ 0 ];
-      }
-      else {
-        // We are waiting on things to complete before we can move to the next generation
-        return null;
-      }
-    }
-    else {
-      // We are complete!!!!
-      return null;
-    }
+    return this.getAvailableBoards()[ 0 ] ?? null;
   }
 
   public getStatusString(): string {
     const name = this.getName();
-    const currentGeneration = this.getCurrentGeneration();
+    const availableBoards = this.getAvailableBoards();
 
-    if ( currentGeneration ) {
+    if ( availableBoards ) {
       let status = `${name}\n`;
 
-      const processedBoards = currentGeneration.filter( board => this.processedBoards.includes( board ) );
-      const currentBoards = currentGeneration.filter( board => this.currentBoards.includes( board ) );
+      const processedBoards = this.processedBoards;
+      const currentBoards = availableBoards.filter( board => this.currentBoards.includes( board ) );
       assertEnabled() && assert( currentBoards.length === this.currentBoards.length );
 
-      const remainingBoards = currentGeneration.filter( board => {
+      const remainingBoards = availableBoards.filter( board => {
         return !this.processedBoards.includes( board ) && !this.currentBoards.includes( board );
       } );
 
-      const lengthString = ( length: number ) => {
-        let percentageString = `${Math.floor( 100 * length / currentGeneration.length )}`;
-        if ( percentageString.length === 1 ) {
-          percentageString = ' ' + percentageString;
-        }
-        let lengthString = `${length}`;
-        while ( lengthString.length < `${currentGeneration.length}`.length ) {
-          lengthString = ' ' + lengthString;
-        }
-        return `${percentageString}% ${lengthString}/${currentGeneration.length}`;
-      };
       const boardsString = ( boards: TPatternBoard[], name: string ) => {
-        return `  ${lengthString( boards.length )} ${name} ${boards.map( board => board.name ).join( ', ' )}\n`;
+        return `  ${name} ${boards.map( board => board.name ).join( ', ' )}\n`;
       };
 
       status += boardsString( processedBoards, 'processed | ' );

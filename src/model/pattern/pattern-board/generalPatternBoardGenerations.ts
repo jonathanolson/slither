@@ -19,8 +19,8 @@ const generationsOrder = [
   standardElongatedTriangularBoardGenerations,
 ];
 
-const maxGenerations = Math.min( ...generationsOrder.map( generations => generations.length ) );
+const maxGenerations = Math.max( ...generationsOrder.map( generations => generations.length ) );
 
 export const generalPatternBoardGenerations: TPatternBoard[][] = _.range( 0, maxGenerations ).map( generationIndex => {
-  return _.uniq( generationsOrder.flatMap( generations => generations[ generationIndex ] ) );
+  return _.uniq( generationsOrder.flatMap( generations => generations[ generationIndex ] ?? [] ) );
 } );
