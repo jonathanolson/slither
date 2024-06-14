@@ -18,6 +18,12 @@ export default class EditMode extends EnumerationValue {
   public static readonly EDGE_STATE_REVERSED = new EditMode(
     currentPuzzleStyle.allowEdgeEditProperty,
   );
+  public static readonly FACE_COLOR_OUTSIDE = new EditMode(
+    currentPuzzleStyle.allowAbsoluteFaceColorEditProperty
+  );
+  public static readonly FACE_COLOR_INSIDE = new EditMode(
+    currentPuzzleStyle.allowAbsoluteFaceColorEditProperty
+  );
   // TODO: more fine-grained control(!), so we can remove some that would normally be there.
   public static readonly FACE_COLOR_MATCH = new EditMode(
     currentPuzzleStyle.allowFaceColorEditProperty
@@ -70,8 +76,12 @@ export const tryToSetEditMode = ( mode: EditMode ) => {
 export const isEdgeEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
   return editMode === EditMode.EDGE_STATE || editMode === EditMode.EDGE_STATE_REVERSED;
 } );
-export const isFaceColorEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
+export const isFaceColorPairEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
   return editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE;
+} );
+export const isFaceColorOutsideAvailableEditModeProperty = isFaceColorPairEditModeProperty;
+export const isFaceColorAbsoluteEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
+  return editMode === EditMode.FACE_COLOR_OUTSIDE || editMode === EditMode.FACE_COLOR_INSIDE;
 } );
 export const isSectorEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
   return editMode === EditMode.SECTOR_STATE;
@@ -79,6 +89,10 @@ export const isSectorEditModeProperty = new DerivedProperty( [ editModeProperty 
 export const isVertexEditModeProperty = new DerivedProperty( [ editModeProperty ], ( editMode ) => {
   return editMode === EditMode.VERTEX_STATE;
 } );
-export const isFaceEditModeProperty = new DerivedProperty( [ editModeProperty, isFaceColorEditModeProperty ], ( editMode, isFaceColor ) => {
-  return isFaceColor || editMode === EditMode.FACE_STATE || editMode === EditMode.FACE_VALUE || editMode === EditMode.DELETE_FACE;
+export const isFaceEditModeProperty = new DerivedProperty( [
+  editModeProperty,
+  isFaceColorPairEditModeProperty,
+  isFaceColorAbsoluteEditModeProperty
+], ( editMode, isFaceColorPair, isFaceColorAbsolute ) => {
+  return isFaceColorPair || isFaceColorAbsolute || editMode === EditMode.FACE_STATE || editMode === EditMode.FACE_VALUE || editMode === EditMode.DELETE_FACE;
 } );

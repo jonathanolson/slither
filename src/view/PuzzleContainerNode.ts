@@ -10,7 +10,7 @@ import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
 import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
-import { isFaceEditModeProperty } from '../model/puzzle/EditMode.ts';
+import { isFaceColorOutsideAvailableEditModeProperty } from '../model/puzzle/EditMode.ts';
 
 type SelfOptions = {
   topological?: boolean;
@@ -51,7 +51,7 @@ export default class PuzzleContainerNode extends Sizable( Node ) {
     // Invisible rectangle for face press events
     this.facePressRect = new Rectangle( {
       fill: null,
-      pickableProperty: isFaceEditModeProperty,
+      pickableProperty: isFaceColorOutsideAvailableEditModeProperty,
     } );
 
     // TODO: adjust pickable based on edit mode

@@ -42,6 +42,7 @@ import { TSerializedAction } from '../data/core/TAction.ts';
 import { deserializeAction } from '../data/core/deserializeAction.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 import HintState from './HintState.ts';
+import { FaceColorSetAbsoluteAction } from '../data/face-color/FaceColorSetAbsoluteAction.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty( 'uiHintUsesBuiltInSolve', false );
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty( 'showUndoRedoAllProperty', false );
@@ -453,47 +454,71 @@ export default class PuzzleModel<Structure extends TStructure = TStructure, Data
   }
 
   public onUserFacePress( face: TFace | null, button: 0 | 1 | 2 ): void {
-    let isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
-    if ( button === 2 ) {
-      isSame = !isSame;
-    }
+    const editMode = editModeProperty.value;
 
-    const color = face ? this.puzzle.stateProperty.value.getFaceColor( face ) : this.puzzle.stateProperty.value.getOutsideColor();
-
-    // TODO: handle resetting this on mode changes
-
-    const pendingAction = this.pendingActionFaceColorProperty.value;
-    if ( pendingAction ) {
-      // no-op for same face
-      if ( face !== pendingAction.face ) {
-        const otherColor = pendingAction.color;
-
-        // no-op for same color
-        if ( otherColor !== color ) {
-          if ( isSame ) {
-            this.applyUserActionToStack( new FaceColorMakeSameAction(
-              getFaceColorPointer( this.puzzle.stateProperty.value, color ),
-              getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
-            ) );
-          }
-          else {
-            this.applyUserActionToStack( new FaceColorMakeOppositeAction(
-              getFaceColorPointer( this.puzzle.stateProperty.value, color ),
-              getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
-            ) );
-          }
-        }
+    if ( editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE ) {
+      let isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
+      if ( button === 2 ) {
+        isSame = !isSame;
       }
 
-      this.pendingActionFaceColorProperty.value = null;
+      const color = face ? this.puzzle.stateProperty.value.getFaceColor( face ) : this.puzzle.stateProperty.value.getOutsideColor();
 
-      this.updateState();
+      // TODO: handle resetting this on mode changes
+
+      const pendingAction = this.pendingActionFaceColorProperty.value;
+      if ( pendingAction ) {
+        // no-op for same face
+        if ( face !== pendingAction.face ) {
+          const otherColor = pendingAction.color;
+
+          // no-op for same color
+          if ( otherColor !== color ) {
+            if ( isSame ) {
+              this.applyUserActionToStack( new FaceColorMakeSameAction(
+                getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+                getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+              ) );
+            }
+            else {
+              this.applyUserActionToStack( new FaceColorMakeOppositeAction(
+                getFaceColorPointer( this.puzzle.stateProperty.value, color ),
+                getFaceColorPointer( this.puzzle.stateProperty.value, otherColor )
+              ) );
+            }
+          }
+        }
+
+        this.pendingActionFaceColorProperty.value = null;
+
+        this.updateState();
+      }
+      else {
+        this.pendingActionFaceColorProperty.value = {
+          face: face,
+          color: color
+        };
+      }
     }
-    else {
-      this.pendingActionFaceColorProperty.value = {
-        face: face,
-        color: color
-      };
+    else if ( editMode === EditMode.FACE_COLOR_OUTSIDE || editMode === EditMode.FACE_COLOR_INSIDE ) {
+      if ( face ) {
+        const color = this.puzzle.stateProperty.value.getFaceColor( face );
+        const newColor = editMode === EditMode.FACE_COLOR_OUTSIDE ? this.puzzle.stateProperty.value.getOutsideColor() : this.puzzle.stateProperty.value.getInsideColor();
+        const newColorOpposite = editMode === EditMode.FACE_COLOR_OUTSIDE ? this.puzzle.stateProperty.value.getInsideColor() : this.puzzle.stateProperty.value.getOutsideColor();
+
+        if ( color === newColorOpposite ) {
+          // TODO: breaking change, we will need to clear/erase before doing this
+        }
+
+        if ( color !== newColor ) {
+          this.applyUserActionToStack( new FaceColorSetAbsoluteAction(
+            face,
+            editMode === EditMode.FACE_COLOR_INSIDE,
+          ) );
+
+          this.updateState();
+        }
+      }
     }
   }
 
@@ -650,6 +675,7 @@ export type PuzzleModelUserAction =
   EdgeStateSetAction |
   FaceColorMakeSameAction |
   FaceColorMakeOppositeAction |
+  FaceColorSetAbsoluteAction |
   SectorStateSetAction |
   UserLoadPuzzleAutoSolveAction |
   UserRequestSolveAction |

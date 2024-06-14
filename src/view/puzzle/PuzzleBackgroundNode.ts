@@ -4,7 +4,7 @@ import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
 import _ from '../../workarounds/_.ts';
 import { optionize } from 'phet-lib/phet-core';
-import { isFaceColorEditModeProperty } from '../../model/puzzle/EditMode.ts';
+import { isFaceColorPairEditModeProperty } from '../../model/puzzle/EditMode.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
 import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
@@ -32,7 +32,7 @@ export class PuzzleBackgroundNode extends Node {
     }, providedOptions );
 
     super( {
-      pickableProperty: isFaceColorEditModeProperty
+      pickableProperty: isFaceColorPairEditModeProperty
     } );
 
     !options.noninteractive && hookPuzzleListeners( null, this, options.facePressListener );

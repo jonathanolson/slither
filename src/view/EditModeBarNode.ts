@@ -34,6 +34,24 @@ export default class EditModeBarNode extends HBox {
       lineWidth: 2
     } );
 
+    const faceColorOutsideIcon = new Node( {
+      children: [
+        new Rectangle( 0, 0, 14, 14, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiButtonFaceOutsideColorProperty
+        } ),
+      ]
+    } );
+
+    const faceColorInsideIcon = new Node( {
+      children: [
+        new Rectangle( 0, 0, 14, 14, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiButtonFaceInsideColorProperty
+        } ),
+      ]
+    } );
+
     const faceColorMatchIcon = new Node( {
       children: [
         new Rectangle( 0, 0, 7, 7, {
@@ -123,6 +141,22 @@ export default class EditModeBarNode extends HBox {
         createNode: () => wrapIcon( edgeReversedIcon ),
         options: {
           visibleProperty: EditMode.EDGE_STATE_REVERSED.isEnabledProperty,
+        }
+      },
+      {
+        value: EditMode.FACE_COLOR_OUTSIDE,
+        labelContent: 'Face Color Outside Edit Mode',
+        createNode: () => wrapIcon( faceColorOutsideIcon ),
+        options: {
+          visibleProperty: EditMode.FACE_COLOR_OUTSIDE.isEnabledProperty,
+        }
+      },
+      {
+        value: EditMode.FACE_COLOR_INSIDE,
+        labelContent: 'Face Color Inside Edit Mode',
+        createNode: () => wrapIcon( faceColorInsideIcon ),
+        options: {
+          visibleProperty: EditMode.FACE_COLOR_INSIDE.isEnabledProperty,
         }
       },
       {

@@ -68,6 +68,8 @@ export const themeColorPropertyNames = [
   'uiButtonDisabledColorProperty',
   'uiButtonSelectedStrokeColorProperty',
   'uiButtonDeselectedStrokeColorProperty',
+  'uiButtonFaceOutsideColorProperty',
+  'uiButtonFaceInsideColorProperty',
   'barrierColorProperty',
   'generateAddedFaceColorProperty',
   'generateMinimizedFaceColorProperty',
@@ -215,6 +217,8 @@ export const lightTheme = addThemeLUT( {
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(220,220,220)' ),
   uiButtonSelectedStrokeColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
   uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(50,50,50)' ),
+  uiButtonFaceOutsideColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
+  uiButtonFaceInsideColorProperty: new PaintColorProperty( 'rgb(50,50,50)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(127,127,127,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(216,184,241)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(173,200,244)' ),
@@ -271,6 +275,8 @@ export const darkTheme = addThemeLUT( {
   uiButtonDisabledColorProperty: new PaintColorProperty( 'rgb(128,128,128)' ),
   uiButtonSelectedStrokeColorProperty: new PaintColorProperty( 'rgb(255,255,255)' ),
   uiButtonDeselectedStrokeColorProperty: new PaintColorProperty( 'rgb(200,200,200)' ),
+  uiButtonFaceOutsideColorProperty: new PaintColorProperty( 'rgb(0,0,0)' ),
+  uiButtonFaceInsideColorProperty: new PaintColorProperty( 'rgb(200,200,200)' ),
   barrierColorProperty: new PaintColorProperty( 'rgba(60,60,60,0.69999999999999995559)' ),
   generateAddedFaceColorProperty: new PaintColorProperty( 'rgb(92,42,123)' ),
   generateMinimizedFaceColorProperty: new PaintColorProperty( 'rgb(33,68,126)' ),
@@ -472,6 +478,7 @@ export const timerFont = new Font( {
 } );
 
 export const customAllowEdgeEditProperty = new LocalStorageBooleanProperty( 'customAllowEdgeEditProperty', true );
+export const customAllowAbsoluteFaceColorEditProperty = new LocalStorageBooleanProperty( 'customAllowAbsoluteFaceColorEditProperty', true );
 export const customAllowFaceColorEditProperty = new LocalStorageBooleanProperty( 'customAllowFaceColorEditProperty', true );
 export const customAllowSectorEditProperty = new LocalStorageBooleanProperty( 'customAllowSectorEditProperty', true );
 

@@ -16,6 +16,7 @@ import { AnnotatedAction } from './AnnotatedAction.ts';
 import { FaceColorMakeOppositeAction } from '../face-color/FaceColorMakeOppositeAction.ts';
 import { FaceColorMakeSameAction } from '../face-color/FaceColorMakeSameAction.ts';
 import { SectorStateSetAction } from '../sector-state/SectorStateSetAction.ts';
+import { FaceColorSetAbsoluteAction } from '../face-color/FaceColorSetAbsoluteAction.ts';
 
 export const deserializeAction = ( board: TBoard, serializedAction: TSerializedAction ): TAction<TCompleteData> => {
   const type = serializedAction.type;
@@ -61,6 +62,9 @@ export const deserializeAction = ( board: TBoard, serializedAction: TSerializedA
   }
   else if ( type === 'FaceColorMakeSameAction' ) {
     return FaceColorMakeSameAction.deserializeAction( board, serializedAction );
+  }
+  else if ( type === 'FaceColorSetAbsoluteAction' ) {
+    return FaceColorSetAbsoluteAction.deserializeAction( board, serializedAction );
   }
   else if ( type === 'SectorStateSetAction' ) {
     return SectorStateSetAction.deserializeAction( board, serializedAction );

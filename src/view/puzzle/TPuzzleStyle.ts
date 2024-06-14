@@ -12,6 +12,7 @@ export interface TPuzzleModelStyle {
   readonly faceStateVisibleProperty: TReadOnlyProperty<boolean>;
 
   readonly allowEdgeEditProperty: TReadOnlyProperty<boolean>;
+  readonly allowAbsoluteFaceColorEditProperty: TReadOnlyProperty<boolean>;
   readonly allowFaceColorEditProperty: TReadOnlyProperty<boolean>;
   readonly allowSectorEditProperty: TReadOnlyProperty<boolean>;
 

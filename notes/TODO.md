@@ -13,8 +13,6 @@
     - 
     - Set up MSI laptop with generation?
     - 
-    - Edit modes for "make face inside" / "make face outside"
-    - 
     - Auto-solve / Erase
       - Auto-solve INTO history (in the future), animate out
         - Store index to "auto solve satisfied"
@@ -34,6 +32,7 @@
         - on:
           - edge: clear edge, then check face color connection (so we could "break apart" color duals)
           - color: clear color + clear adjacent edges
+            - On a COLOR SET, note sometimes might be a breaking change
           - sector: clear sector
         - Auto-solve after breaking changes???? unclear, if not, make a way to trigger auto-solve?
         - [old note] If the user changes a non-white edge (ignoring the quick-undo for double tap), we should reset all state except edges (and face values)

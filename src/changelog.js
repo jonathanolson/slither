@@ -1,6 +1,7 @@
 export const changelog = [
   [
     'Number keys updated to select that specific enabled edit mode',
+    'Adding direct face color edit modes for outside/inside',
   ],
   [
     '2024-06-10',

@@ -1,5 +1,4 @@
 import './main.css';
-
 import { platform } from 'phet-lib/phet-core';
 import { Bounds2 } from 'phet-lib/dot';
 import { BooleanProperty, DynamicProperty, Multilink, Property, TinyEmitter, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
