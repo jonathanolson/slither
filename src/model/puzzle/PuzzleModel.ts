@@ -51,6 +51,8 @@ import { deserializeAction } from '../data/core/deserializeAction.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
 import HintState from './HintState.ts';
 import { FaceColorSetAbsoluteAction } from '../data/face-color/FaceColorSetAbsoluteAction.ts';
+import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteAction.ts';
+import { AutoSolverInvalidatedUserActionError } from '../solver/errors/AutoSolverInvalidatedUserActionError.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty('uiHintUsesBuiltInSolve', false);
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty('showUndoRedoAllProperty', false);
@@ -280,6 +282,8 @@ export default class PuzzleModel<
   private applyUserActionToStack(
     userAction: PuzzleModelUserAction,
     options?: {
+      erase?: (state: TState<Data>) => void;
+
       checkAutoSolve?: (state: TState<Data>) => boolean;
       forceDirty?: boolean;
 
@@ -293,12 +297,17 @@ export default class PuzzleModel<
     const dirty = options?.forceDirty || userAction instanceof UserLoadPuzzleAutoSolveAction;
 
     const lastTransition = this.stack[this.stackPositionProperty.value];
-    const state = lastTransition.state;
 
     let errorDetected = false;
 
+    let cleanState = lastTransition.state;
+    if (options?.erase) {
+      cleanState = cleanState.clone();
+      options.erase(cleanState);
+    }
+
     // Validate against the solution!
-    const validator = new CompleteValidator(this.puzzle.board, state, this.puzzle.solution.solvedState);
+    const validator = new CompleteValidator(this.puzzle.board, cleanState, this.puzzle.solution.solvedState);
     try {
       userAction.apply(validator);
     } catch (e) {
@@ -310,7 +319,7 @@ export default class PuzzleModel<
       changedEdges.add(edge);
     };
 
-    let delta = state.createDelta();
+    let delta = cleanState.createDelta();
     try {
       delta.edgeStateChangedEmitter.addListener(edgeChangeListener);
 
@@ -329,15 +338,19 @@ export default class PuzzleModel<
       // Hah, if we try to white out something, don't immediately solve it back!
       // TODO: why the cast here?
       if (options?.checkAutoSolve && !options?.checkAutoSolve(delta as unknown as TState<Data>)) {
-        throw new InvalidStateError('Auto-solver did not respect user action');
+        throw new AutoSolverInvalidatedUserActionError('Auto-solver did not respect user action');
       }
     } catch (e) {
-      errorDetected = true;
+      errorDetected = !(e instanceof AutoSolverInvalidatedUserActionError);
       changedEdges = new Set();
 
-      if (e instanceof InvalidStateError) {
-        console.log('error');
-        delta = state.createDelta();
+      if (e instanceof InvalidStateError || e instanceof AutoSolverInvalidatedUserActionError) {
+        if (e instanceof InvalidStateError) {
+          console.log('error');
+        } else if (e instanceof AutoSolverInvalidatedUserActionError) {
+          console.log('skipping autosolve due to undo');
+        }
+        delta = cleanState.createDelta();
 
         delta.edgeStateChangedEmitter.addListener(edgeChangeListener);
 
@@ -357,7 +370,7 @@ export default class PuzzleModel<
       }
     }
 
-    const newState = state.clone();
+    const newState = cleanState.clone();
     delta.apply(newState);
 
     this.pushTransitionAtCurrentPosition(new PuzzleSnapshot(this.puzzle.board, userAction, newState, errorDetected));
@@ -454,6 +467,8 @@ export default class PuzzleModel<
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
     const newEdgeState = this.getNewEdgeState(oldEdgeState, button);
 
+    let erase: ((state: TState<Data>) => void) | undefined = undefined;
+
     if (oldEdgeState !== newEdgeState) {
       const lastTransition = this.stack[this.stackPositionProperty.value];
 
@@ -464,11 +479,16 @@ export default class PuzzleModel<
         lastTransition.action.edge === edge
       ) {
         this.stackPositionProperty.value--;
+      } else if (oldEdgeState !== EdgeState.WHITE) {
+        erase = (state) => {
+          new EraseEdgeCompleteAction(edge).apply(state);
+        };
       }
 
       const userAction = new EdgeStateSetAction(edge, newEdgeState);
 
       this.applyUserActionToStack(userAction, {
+        erase: erase,
         checkAutoSolve: (state) => state.getEdgeState(edge) === newEdgeState,
         excludedEdges: new Set([edge]),
       });
