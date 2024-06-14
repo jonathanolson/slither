@@ -7,6 +7,7 @@ import { TooltipListener } from './TooltipListener.ts';
 import { ViewContext } from './ViewContext.ts';
 import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
 import { combineOptions } from 'phet-lib/phet-core';
+import { UIStickyToggleButtonAppearanceStrategy } from './UIStickyToggleButtonAppearanceStrategy.ts';
 
 const HIDE_ERASE = false;
 
@@ -209,6 +210,7 @@ export default class EditModeBarNode extends HBox {
       combineOptions<BooleanRectangularStickyToggleButtonOptions>({}, commonButtonOptions, {
         accessibleName: 'Eraser Mode (Toggle)',
         content: wrapIcon(eraserIcon),
+        buttonAppearanceStrategy: UIStickyToggleButtonAppearanceStrategy,
       }),
     );
     eraserButton.addInputListener(tooltipListener);
