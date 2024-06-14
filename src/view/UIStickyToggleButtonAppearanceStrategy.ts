@@ -42,32 +42,41 @@ export class UIStickyToggleButtonAppearanceStrategy {
     buttonBackground.stroke = options.stroke || baseDarkerMore;
     buttonBackground.lineWidth = lineWidth;
 
-    this.maxLineWidth = buttonBackground.hasStroke() ? lineWidth : 0;
+    this.maxLineWidth = 1.5;
 
     // Cache colors
     buttonBackground.cachedPaints = [baseColorProperty, overFillProperty, idleFillProperty];
 
     // Change colors to match interactionState
     function interactionStateListener(interactionState: ButtonInteractionState): void {
+      let opacity = 1;
+      let lineWidth = 1;
+
       switch (interactionState) {
         case ButtonInteractionState.IDLE:
-          buttonBackground.fill = idleFillProperty;
-          buttonBackground.stroke = null;
+          buttonBackground.fill = baseColorProperty;
+          buttonBackground.stroke = baseDarkerABit;
+          opacity = 0.3;
           break;
 
         case ButtonInteractionState.OVER:
           buttonBackground.fill = overFillProperty;
-          buttonBackground.stroke = null;
+          buttonBackground.stroke = baseDarkerABit;
+          opacity = 0.7;
           break;
 
         case ButtonInteractionState.PRESSED:
           buttonBackground.fill = baseColorProperty;
           buttonBackground.stroke = currentTheme.uiButtonSelectedStrokeColorProperty;
+          lineWidth = 1.5;
           break;
 
         default:
           throw new Error(`unsupported interactionState: ${interactionState}`);
       }
+
+      buttonBackground.opacity = opacity;
+      buttonBackground.lineWidth = lineWidth;
     }
 
     // Do the initial update explicitly, then lazy link to the properties.  This keeps the number of initial updates to
