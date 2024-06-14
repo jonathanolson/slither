@@ -1,13 +1,23 @@
 
 - 
-  - Windows long term:
+  - 
+  - Mac:
+    - general all
     - general color unrestricted
-    - general edge sector unrestricted
     - general edge color unrestricted
-    - square only edge unrestricted
-    - square only edge color unrestricted
-    - square only edge
+    - general edge color
     - general edge unrestricted
+    - general edge
+    - general edge sector unrestricted
+    - general edge sector
+  - 
+  - Windows:
+    - square only edge unrestricted
+    - square only edge
+    - square only edge unrestricted
+    - square only edge
+    - square only edge unrestricted
+    - square only edge
   - 
   - Generation Failures
     - general-edge-unrestricted trihexagonal-2-10 MINISAT memory error(!)(!) trihexagonal 2-9 also
