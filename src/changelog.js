@@ -1,5 +1,8 @@
 export const changelog = [
   [
+    'Number keys updated to select that specific enabled edit mode',
+  ],
+  [
     '2024-06-10',
     'Removing edge controls on pure coloring view mode',
     'Removing face color controls on basic edge/sector view modes',

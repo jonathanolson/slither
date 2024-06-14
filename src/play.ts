@@ -223,33 +223,14 @@ document.addEventListener( 'keydown', event => {
       puzzleModelProperty.value?.onUserRedo();
     }
   }
-  // TODO: check whether the given type is... enabled(!)
-  else if ( event.key === '1' ) {
-    tryToSetEditMode( EditMode.EDGE_STATE );
-  }
-  else if ( event.key === '2' ) {
-    tryToSetEditMode( EditMode.EDGE_STATE_REVERSED );
-  }
-  else if ( event.key === '3' ) {
-    tryToSetEditMode( EditMode.FACE_COLOR_MATCH );
-  }
-  else if ( event.key === '4' ) {
-    tryToSetEditMode( EditMode.FACE_COLOR_OPPOSITE );
-  }
-  else if ( event.key === '5' ) {
-    tryToSetEditMode( EditMode.SECTOR_STATE );
-  }
-  else if ( event.key === '6' ) {
-    tryToSetEditMode( EditMode.VERTEX_STATE );
-  }
-  else if ( event.key === '7' ) {
-    tryToSetEditMode( EditMode.FACE_STATE );
-  }
-  else if ( event.key === '8' ) {
-    tryToSetEditMode( EditMode.FACE_VALUE );
-  }
-  else if ( event.key === '9' ) {
-    tryToSetEditMode( EditMode.DELETE_FACE );
+  else if ( [ '1', '2', '3', '4', '5', '6', '7', '8', '9' ].includes( event.key ) ) {
+    const index = Number.parseInt( event.key, 10 ) - 1;
+
+    const enabledEditModes = EditMode.enumeration.values.filter( mode => mode.isEnabledProperty.value );
+
+    if ( index < enabledEditModes.length ) {
+      tryToSetEditMode( enabledEditModes[ index ] );
+    }
   }
   else if ( event.key === 'Escape' ) {
     puzzleModelProperty.value?.onUserEscape();
