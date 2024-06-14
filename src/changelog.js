@@ -1,6 +1,6 @@
 export const changelog = [
   [
-    'Erase feature',
+    'Erase feature / edge toggle can use erase',
     'Number keys updated to select that specific enabled edit mode',
     'Adding direct face color edit modes for outside/inside',
   ],
