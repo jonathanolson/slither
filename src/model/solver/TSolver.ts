@@ -18,7 +18,7 @@ export interface TSolver<Data, Action extends TAction<Data>> {
   nextAction(): Action | null;
 
   // Create a copy of this solver, but referring to an equivalent state object (allows branching).
-  clone( equivalentState: TState<Data> ): TSolver<Data, Action>;
+  clone(equivalentState: TState<Data>): TSolver<Data, Action>;
 
   dispose(): void;
 }
@@ -28,42 +28,41 @@ export type CompleteAnnotatedSolver = TSolver<TCompleteData, TAnnotatedAction<TC
 export type SolverFactory<Structure extends TStructure, Data> = (
   board: TBoard<Structure>,
   state: TState<Data>,
-  dirty?: boolean
+  dirty?: boolean,
 ) => TSolver<Data, TAction<Data>>;
 
 export type AnnotatedSolverFactory<Structure extends TStructure, Data> = (
   board: TBoard<Structure>,
   state: TState<Data>,
-  dirty?: boolean
+  dirty?: boolean,
 ) => TSolver<Data, TAnnotatedAction<Data>>;
 
 export type CompleteAnnotatedSolverFactory = AnnotatedSolverFactory<TStructure, TCompleteData>;
 
 export const iterateSolver = <Data, Action extends TAction<Data>>(
   solver: TSolver<Data, Action>,
-  state: TState<Data>
+  state: TState<Data>,
 ): void => {
   let count = 0;
 
-  while ( solver.dirty ) {
-    if ( count++ > 100000 ) {
-      throw new Error( 'Solver iteration limit exceeded? Looped?' );
+  while (solver.dirty) {
+    if (count++ > 100000) {
+      throw new Error('Solver iteration limit exceeded? Looped?');
     }
     const action = solver.nextAction();
-    if ( action ) {
-      action.apply( state );
+    if (action) {
+      action.apply(state);
     }
   }
 };
 
 export const iterateSolverAndDispose = <Data, Action extends TAction<Data>>(
   solver: TSolver<Data, Action>,
-  state: TState<Data>
+  state: TState<Data>,
 ): void => {
   try {
-    iterateSolver( solver, state );
-  }
-  finally {
+    iterateSolver(solver, state);
+  } finally {
     solver.dispose();
   }
 };
@@ -73,18 +72,18 @@ export const withSolverFactory = <Structure extends TStructure, Data>(
   board: TBoard<Structure>,
   state: TState<Data>,
   callback: () => void,
-  dirty?: boolean
+  dirty?: boolean,
 ): void => {
-  const solver = solverFactory( board, state, dirty );
+  const solver = solverFactory(board, state, dirty);
   callback();
-  iterateSolverAndDispose( solver, state );
+  iterateSolverAndDispose(solver, state);
 };
 
 export const iterateSolverFactory = <Structure extends TStructure, Data>(
   solverFactory: SolverFactory<TStructure, Data>,
   board: TBoard<Structure>,
   state: TState<Data>,
-  dirty?: boolean
+  dirty?: boolean,
 ): void => {
-  withSolverFactory( solverFactory, board, state, () => {}, dirty );
+  withSolverFactory(solverFactory, board, state, () => {}, dirty);
 };

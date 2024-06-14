@@ -11,10 +11,9 @@ export interface TVertex {
   edges: TEdge[];
   faces: TFace[];
 
-  getHalfEdgeTo( otherVertex: TVertex ): THalfEdge;
+  getHalfEdgeTo(otherVertex: TVertex): THalfEdge;
 
-  getHalfEdgeFrom( otherVertex: TVertex ): THalfEdge;
+  getHalfEdgeFrom(otherVertex: TVertex): THalfEdge;
 
-  getEdgeTo( otherVertex: TVertex ): TEdge;
+  getEdgeTo(otherVertex: TVertex): TEdge;
 }
-

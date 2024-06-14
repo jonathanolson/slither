@@ -11,12 +11,12 @@ import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertex
 
 // TODO: have some way of the autoSolver ALWAYS having these solvers?
 // TODO: deprecate this?!?
-export const safeSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new SafeEdgeToSimpleRegionSolver( board, state ),
-    new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToFaceColorSolver( board, state ),
-    new SafeEdgeToSectorSolver( board, state ),
-    new SafeEdgeSectorColorToVertexSolver( board, state )
-  ] );
+export const safeSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+    new SafeEdgeToSimpleRegionSolver(board, state),
+    new SafeSolvedEdgeSolver(board, state),
+    new SafeEdgeToFaceColorSolver(board, state),
+    new SafeEdgeToSectorSolver(board, state),
+    new SafeEdgeSectorColorToVertexSolver(board, state),
+  ]);
 };

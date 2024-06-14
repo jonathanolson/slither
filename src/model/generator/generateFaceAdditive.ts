@@ -23,68 +23,63 @@ import { MaximumSolverIterationsError } from '../solver/errors/MaximumSolverIter
 export const generateFaceAdditive = async (
   board: TBoard,
   interruptedProperty?: TReadOnlyProperty<boolean>,
-  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceValue ]>
+  faceProcessedEmitter?: TEmitter<[index: number, state: FaceValue]>,
 ): Promise<TSolvedPuzzle<TStructure, TCompleteData>> => {
-
   let iterations = 0;
-  while ( iterations++ < 100 ) {
-    const state = CompleteData.fromFaces( board, () => null );
+  while (iterations++ < 100) {
+    const state = CompleteData.fromFaces(board, () => null);
 
-    const faceOrder: TFace[] = dotRandom.shuffle( board.faces );
+    const faceOrder: TFace[] = dotRandom.shuffle(board.faces);
 
     let solutionCount: number = -1; // will get filled in later, TS is annoyed
     let solutions: TEdge[][] = [];
 
     // A simplified 0,1,2 count (2 means multiple)
-    const getSolutionCount = ( state: TState<TCompleteData> ) => {
+    const getSolutionCount = (state: TState<TCompleteData>) => {
       try {
         // TODO: try to invoke our normal solver first? (could increase or decrease performance)
-        solutions = satSolve( board, state, {
+        solutions = satSolve(board, state, {
           maxIterations: 10000,
-          failOnMultipleSolutions: true
-        } );
+          failOnMultipleSolutions: true,
+        });
         return solutions.length;
-      }
-      catch ( e ) {
-        if ( e instanceof MultipleSolutionsError ) {
+      } catch (e) {
+        if (e instanceof MultipleSolutionsError) {
           return 2;
-        }
-        else if ( e instanceof MaximumSolverIterationsError ) {
+        } else if (e instanceof MaximumSolverIterationsError) {
           // TODO: is this overly safe? If we max out on iterations, don't add it. Hmm.
           return 0;
-        }
-        else {
+        } else {
           throw e;
         }
       }
     };
 
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
-    for ( const face of faceOrder ) {
-
-      SlitherQueryParameters.debugSleep && console.log( 'going to sleep' );
-      interruptedProperty && await interruptableSleep( 0, interruptedProperty );
-      SlitherQueryParameters.debugSleep && console.log( 'finished sleep, generating next!' );
+    for (const face of faceOrder) {
+      SlitherQueryParameters.debugSleep && console.log('going to sleep');
+      interruptedProperty && (await interruptableSleep(0, interruptedProperty));
+      SlitherQueryParameters.debugSleep && console.log('finished sleep, generating next!');
 
       // Don't allow the "fully full" state, e.g. 4 in square.
-      let possibleStates = dotRandom.shuffle( _.range( 0, face.edges.length ) );
+      let possibleStates = dotRandom.shuffle(_.range(0, face.edges.length));
 
       // TODO: get rid of this probability shift! Should hopefully fill things in more?
-      if ( possibleStates[ 0 ] === 0 ) {
-        possibleStates = dotRandom.shuffle( possibleStates );
+      if (possibleStates[0] === 0) {
+        possibleStates = dotRandom.shuffle(possibleStates);
       }
 
-      for ( const possibleState of possibleStates ) {
+      for (const possibleState of possibleStates) {
         const delta = state.createDelta();
 
-        delta.setFaceValue( face, possibleState );
+        delta.setFaceValue(face, possibleState);
 
-        solutionCount = getSolutionCount( delta );
+        solutionCount = getSolutionCount(delta);
 
-        if ( solutionCount >= 1 ) {
-          delta.apply( state );
+        if (solutionCount >= 1) {
+          delta.apply(state);
 
-          faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), possibleState );
+          faceProcessedEmitter && faceProcessedEmitter.emit(board.faces.indexOf(face), possibleState);
 
           break;
         }
@@ -93,15 +88,15 @@ export const generateFaceAdditive = async (
       // NOTE: this is not guaranteed to be true...
       // assertEnabled() && assert( appliedEdge, 'We should be guaranteed this!?!' );
 
-      if ( solutionCount === 1 ) {
+      if (solutionCount === 1) {
         break;
       }
     }
 
-    if ( solutionCount === 1 ) {
-      return getSolvedPuzzle( board, state, solutions[ 0 ] );
+    if (solutionCount === 1) {
+      return getSolvedPuzzle(board, state, solutions[0]);
     }
   }
 
-  throw new Error( 'Failed to generate a puzzle, board might not be solvable' );
+  throw new Error('Failed to generate a puzzle, board might not be solvable');
 };

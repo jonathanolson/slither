@@ -16,62 +16,58 @@ import { TBoard } from '../board/core/TBoard.ts';
 // TODO: or, given a number of minimizes, we get an "order" of faces, from "usually can remove" to "usually can't remove"
 export const greedyFaceMinimize = async <Structure extends TStructure, Data extends TCompleteData>(
   solvedPuzzle: TSolvedPuzzle<Structure, Data>,
-  isEasyEnough: ( board: TBoard, state: TState<Data> ) => boolean = () => true,
+  isEasyEnough: (board: TBoard, state: TState<Data>) => boolean = () => true,
   interruptedProperty?: TReadOnlyProperty<boolean>,
-  faceProcessedEmitter?: TEmitter<[ index: number, state: FaceValue ]>
+  faceProcessedEmitter?: TEmitter<[index: number, state: FaceValue]>,
 ): Promise<TSolvedPuzzle<Structure, Data>> => {
-
   const board = solvedPuzzle.board;
   const state = solvedPuzzle.cleanState.clone();
 
-  const faceOrder: TFace[] = dotRandom.shuffle( board.faces );
+  const faceOrder: TFace[] = dotRandom.shuffle(board.faces);
 
-  const hasMultipleSolutions = ( state: TState<Data> ): boolean => {
+  const hasMultipleSolutions = (state: TState<Data>): boolean => {
     try {
       // TODO: try to invoke our normal solver first?
-      satSolve( board, state, {
+      satSolve(board, state, {
         maxIterations: 10000,
-        failOnMultipleSolutions: true
-      } );
+        failOnMultipleSolutions: true,
+      });
       return false;
-    }
-    catch ( e ) {
-      if ( e instanceof MultipleSolutionsError ) {
+    } catch (e) {
+      if (e instanceof MultipleSolutionsError) {
         return true;
-      }
-      else {
+      } else {
         throw e;
       }
     }
   };
 
-  assertEnabled() && assert( !hasMultipleSolutions( state ), 'Initial state has multiple solutions' );
+  assertEnabled() && assert(!hasMultipleSolutions(state), 'Initial state has multiple solutions');
   // TODO: consider getting rid of the defensive copy
-  assertEnabled() && assert( isEasyEnough( board, state.clone() ), 'Initial state is not easy enough' );
+  assertEnabled() && assert(isEasyEnough(board, state.clone()), 'Initial state is not easy enough');
 
-  for ( const face of faceOrder ) {
-    interruptedProperty && await interruptableSleep( 0, interruptedProperty );
+  for (const face of faceOrder) {
+    interruptedProperty && (await interruptableSleep(0, interruptedProperty));
 
-    const previousValue = state.getFaceValue( face );
+    const previousValue = state.getFaceValue(face);
 
-    if ( previousValue === null ) {
-      faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), null );
+    if (previousValue === null) {
+      faceProcessedEmitter && faceProcessedEmitter.emit(board.faces.indexOf(face), null);
       continue;
     }
 
     const delta = state.createDelta();
 
-    delta.setFaceValue( face, null );
+    delta.setFaceValue(face, null);
 
     // TODO: consider getting rid of the defensive copy
-    if ( !hasMultipleSolutions( delta ) && isEasyEnough( board, delta.clone() ) ) {
-      delta.apply( state );
-      faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), null );
-    }
-    else {
-      faceProcessedEmitter && faceProcessedEmitter.emit( board.faces.indexOf( face ), previousValue );
+    if (!hasMultipleSolutions(delta) && isEasyEnough(board, delta.clone())) {
+      delta.apply(state);
+      faceProcessedEmitter && faceProcessedEmitter.emit(board.faces.indexOf(face), null);
+    } else {
+      faceProcessedEmitter && faceProcessedEmitter.emit(board.faces.indexOf(face), previousValue);
     }
   }
 
-  return getSolvedPuzzle( solvedPuzzle.board, state, solvedPuzzle.blackEdges );
+  return getSolvedPuzzle(solvedPuzzle.board, state, solvedPuzzle.blackEdges);
 };

@@ -12,25 +12,25 @@ export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceV
   board: TBoard<Structure>;
   cleanState: TState<Data>;
   solvedState: TState<Data>;
-  blackEdges: Set<Structure[ 'Edge' ]>;
+  blackEdges: Set<Structure['Edge']>;
 }
 
 export const getSolvedPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
   board: TBoard<Structure>,
   cleanState: TState<Data>,
-  blackEdges: MultiIterable<TEdge>
+  blackEdges: MultiIterable<TEdge>,
 ): TSolvedPuzzle<Structure, Data> => {
   const solvedState = cleanState.clone();
 
-  for ( const edge of blackEdges ) {
-    solvedState.setEdgeState( edge, EdgeState.BLACK );
+  for (const edge of blackEdges) {
+    solvedState.setEdgeState(edge, EdgeState.BLACK);
   }
-  finalStateSolve( board, solvedState );
+  finalStateSolve(board, solvedState);
 
   return {
     board: board,
     cleanState: cleanState,
     solvedState: solvedState,
-    blackEdges: new Set( blackEdges )
+    blackEdges: new Set(blackEdges),
   };
 };

@@ -18,39 +18,41 @@ export class CompleteAction implements TAction<TCompleteData> {
     public readonly faceColorAction: TAction<TFaceColorData>,
     public readonly sectorStateAction: TAction<TSectorStateData>,
     public readonly vertexStateAction: TAction<TVertexStateData>,
-    public readonly faceStateAction: TAction<TFaceStateData>
+    public readonly faceStateAction: TAction<TFaceStateData>,
   ) {}
 
-  public apply( state: TCompleteData ): void {
-    this.faceValueAction.apply( state );
-    this.edgeStateAction.apply( state );
-    this.simpleRegionAction.apply( state );
-    this.faceColorAction.apply( state );
-    this.sectorStateAction.apply( state );
-    this.vertexStateAction.apply( state );
-    this.faceStateAction.apply( state );
+  public apply(state: TCompleteData): void {
+    this.faceValueAction.apply(state);
+    this.edgeStateAction.apply(state);
+    this.simpleRegionAction.apply(state);
+    this.faceColorAction.apply(state);
+    this.sectorStateAction.apply(state);
+    this.vertexStateAction.apply(state);
+    this.faceStateAction.apply(state);
   }
 
-  public getUndo( state: TCompleteData ): TAction<TCompleteData> {
+  public getUndo(state: TCompleteData): TAction<TCompleteData> {
     return new CompleteAction(
-      this.faceValueAction.getUndo( state ),
-      this.edgeStateAction.getUndo( state ),
-      this.simpleRegionAction.getUndo( state ),
-      this.faceColorAction.getUndo( state ),
-      this.sectorStateAction.getUndo( state ),
-      this.vertexStateAction.getUndo( state ),
-      this.faceStateAction.getUndo( state )
+      this.faceValueAction.getUndo(state),
+      this.edgeStateAction.getUndo(state),
+      this.simpleRegionAction.getUndo(state),
+      this.faceColorAction.getUndo(state),
+      this.sectorStateAction.getUndo(state),
+      this.vertexStateAction.getUndo(state),
+      this.faceStateAction.getUndo(state),
     );
   }
 
   public isEmpty(): boolean {
-    return this.faceValueAction.isEmpty() &&
-           this.edgeStateAction.isEmpty() &&
-           this.simpleRegionAction.isEmpty() &&
-           this.faceColorAction.isEmpty() &&
-           this.sectorStateAction.isEmpty() &&
-           this.vertexStateAction.isEmpty() &&
-           this.faceStateAction.isEmpty();
+    return (
+      this.faceValueAction.isEmpty() &&
+      this.edgeStateAction.isEmpty() &&
+      this.simpleRegionAction.isEmpty() &&
+      this.faceColorAction.isEmpty() &&
+      this.sectorStateAction.isEmpty() &&
+      this.vertexStateAction.isEmpty() &&
+      this.faceStateAction.isEmpty()
+    );
   }
 
   public serializeAction(): TSerializedAction {
@@ -62,19 +64,19 @@ export class CompleteAction implements TAction<TCompleteData> {
       faceColorAction: this.faceColorAction.serializeAction(),
       sectorStateAction: this.sectorStateAction.serializeAction(),
       vertexStateAction: this.vertexStateAction.serializeAction(),
-      faceStateAction: this.faceStateAction.serializeAction()
+      faceStateAction: this.faceStateAction.serializeAction(),
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): CompleteAction {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): CompleteAction {
     return new CompleteAction(
-      deserializeAction( board, serializedAction.faceStateAction ),
-      deserializeAction( board, serializedAction.edgeStateAction ),
-      deserializeAction( board, serializedAction.simpleRegionAction ),
-      deserializeAction( board, serializedAction.faceColorAction ),
-      deserializeAction( board, serializedAction.sectorStateAction ),
-      deserializeAction( board, serializedAction.vertexStateAction ),
-      deserializeAction( board, serializedAction.faceStateAction )
+      deserializeAction(board, serializedAction.faceStateAction),
+      deserializeAction(board, serializedAction.edgeStateAction),
+      deserializeAction(board, serializedAction.simpleRegionAction),
+      deserializeAction(board, serializedAction.faceColorAction),
+      deserializeAction(board, serializedAction.sectorStateAction),
+      deserializeAction(board, serializedAction.vertexStateAction),
+      deserializeAction(board, serializedAction.faceStateAction),
     );
   }
 }

@@ -4,78 +4,79 @@ import { Shape } from 'phet-lib/kite';
 import _ from '../workarounds/_';
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 
-export const cvReady = new Promise( resolve => {
+export const cvReady = new Promise((resolve) => {
   // @ts-expect-error
   cv.onRuntimeInitialized = resolve;
-} );
+});
 
-export const withMat = ( f: ( mat: cv.Mat ) => void ): cv.Mat => {
+export const withMat = (f: (mat: cv.Mat) => void): cv.Mat => {
   const mat = new cv.Mat();
-  f( mat );
+  f(mat);
   return mat;
 };
 
-export const matToGrayscale = ( mat: cv.Mat ) => {
-  return withMat( gray => cv.cvtColor( mat, gray, cv.COLOR_BGR2GRAY ) );
+export const matToGrayscale = (mat: cv.Mat) => {
+  return withMat((gray) => cv.cvtColor(mat, gray, cv.COLOR_BGR2GRAY));
 };
 
-export const matWithZeros = ( mat: cv.Mat ): cv.Mat => {
-  return cv.Mat.zeros( mat.rows, mat.cols, cv.CV_8UC3 );
+export const matWithZeros = (mat: cv.Mat): cv.Mat => {
+  return cv.Mat.zeros(mat.rows, mat.cols, cv.CV_8UC3);
 };
 
-export const arrayToMatVector = ( array: cv.Mat[] ): cv.MatVector => {
+export const arrayToMatVector = (array: cv.Mat[]): cv.MatVector => {
   const vec = new cv.MatVector();
-  array.forEach( mat => vec.push_back( mat ) );
+  array.forEach((mat) => vec.push_back(mat));
   return vec;
 };
 
-export const drawContour = ( mat: cv.Mat, contours: cv.MatVector, index: number, color?: cv.Scalar | null ): void => {
-  color = color || new cv.Scalar(
-    Math.round( Math.random() * 128 + 64 ),
-    Math.round( Math.random() * 128 + 64 ),
-    Math.round( Math.random() * 128 + 64 )
-  );
-  cv.drawContours( mat, contours, index, color, 1, cv.LINE_8 );
+export const drawContour = (mat: cv.Mat, contours: cv.MatVector, index: number, color?: cv.Scalar | null): void => {
+  color =
+    color ||
+    new cv.Scalar(
+      Math.round(Math.random() * 128 + 64),
+      Math.round(Math.random() * 128 + 64),
+      Math.round(Math.random() * 128 + 64),
+    );
+  cv.drawContours(mat, contours, index, color, 1, cv.LINE_8);
 };
 
-export const simplifyContour = ( contour: cv.Mat, epsilon: number, closed: boolean ): cv.Mat => {
-  return withMat( simplified => cv.approxPolyDP( contour, simplified, epsilon, closed ) );
+export const simplifyContour = (contour: cv.Mat, epsilon: number, closed: boolean): cv.Mat => {
+  return withMat((simplified) => cv.approxPolyDP(contour, simplified, epsilon, closed));
 };
 
-export const matToCanvas = ( mat: cv.Mat ): HTMLCanvasElement => {
-  const canvas = document.createElement( 'canvas' );
+export const matToCanvas = (mat: cv.Mat): HTMLCanvasElement => {
+  const canvas = document.createElement('canvas');
   canvas.width = mat.cols;
   canvas.height = mat.rows;
   canvas.style.width = `${mat.cols / window.devicePixelRatio}px`;
   canvas.style.height = `${mat.rows / window.devicePixelRatio}px`;
   canvas.style.zIndex = '1000000';
-  cv.imshow( canvas, mat );
+  cv.imshow(canvas, mat);
   return canvas;
 };
 
-export const matToURL = ( mat: cv.Mat ): string => {
-  return matToCanvas( mat ).toDataURL();
+export const matToURL = (mat: cv.Mat): string => {
+  return matToCanvas(mat).toDataURL();
 };
 
-export const contourToPoints = ( contour: cv.Mat ): Vector2[] => {
-  return _.range( 0, contour.rows ).map( i => {
-    return new Vector2( contour.data32S[ 2 * i ], contour.data32S[ 2 * i + 1 ] );
-  } );
+export const contourToPoints = (contour: cv.Mat): Vector2[] => {
+  return _.range(0, contour.rows).map((i) => {
+    return new Vector2(contour.data32S[2 * i], contour.data32S[2 * i + 1]);
+  });
 };
 
-export const contourToShape = ( contour: cv.Mat ): Shape => {
-  return Shape.polygon( contourToPoints( contour ) );
+export const contourToShape = (contour: cv.Mat): Shape => {
+  return Shape.polygon(contourToPoints(contour));
 };
 
 // from https://docs.opencv.org/3.4/dd/d02/tutorial_js_fourier_transform.html
-export const matFFT = ( src: cv.Mat ): cv.Mat => {
+export const matFFT = (src: cv.Mat): cv.Mat => {
   // get optimal size of DFT
   let optimalRows = cv.getOptimalDFTSize(src.rows);
   let optimalCols = cv.getOptimalDFTSize(src.cols);
   let s0 = cv.Scalar.all(0);
   let padded = new cv.Mat();
-  cv.copyMakeBorder(src, padded, 0, optimalRows - src.rows, 0,
-                    optimalCols - src.cols, cv.BORDER_CONSTANT, s0);
+  cv.copyMakeBorder(src, padded, 0, optimalRows - src.rows, 0, optimalCols - src.cols, cv.BORDER_CONSTANT, s0);
 
   // use cv.MatVector to distribute space for real part and imaginary part
   let plane0 = new cv.Mat();
@@ -89,7 +90,6 @@ export const matFFT = ( src: cv.Mat ): cv.Mat => {
 
   // in-place dft transform
   cv.dft(complexI, complexI);
-
 
   // compute log(1 + sqrt(Re(DFT(img))**2 + Im(DFT(img))**2))
   cv.split(complexI, planes);
@@ -133,14 +133,18 @@ export const matFFT = ( src: cv.Mat ): cv.Mat => {
   cv.normalize(mag, mag, 0, 1, cv.NORM_MINMAX);
 
   // cv.imshow('canvasOutput', mag);
-  padded.delete(); planes.delete(); complexI.delete(); m1.delete(); tmp.delete();
+  padded.delete();
+  planes.delete();
+  complexI.delete();
+  m1.delete();
+  tmp.delete();
 
   return mag;
 };
 
-export const imshow = ( mat: cv.Mat ) => {
-  if ( SlitherQueryParameters.debugScan ) {
-    document.body.appendChild( matToCanvas( mat ) );
+export const imshow = (mat: cv.Mat) => {
+  if (SlitherQueryParameters.debugScan) {
+    document.body.appendChild(matToCanvas(mat));
   }
 };
 

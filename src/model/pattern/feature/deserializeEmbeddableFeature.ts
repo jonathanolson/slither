@@ -13,31 +13,34 @@ import { VertexNotEmptyFeature } from './VertexNotEmptyFeature.ts';
 import { VertexNotPairFeature } from './VertexNotPairFeature.ts';
 import { FaceNotStateFeature } from './FaceNotStateFeature.ts';
 
-export const deserializeEmbeddableFeature = ( serialized: TSerializedEmbeddableFeature, patternBoard: TPatternBoard ): TEmbeddableFeature => {
-  switch ( serialized.type ) {
+export const deserializeEmbeddableFeature = (
+  serialized: TSerializedEmbeddableFeature,
+  patternBoard: TPatternBoard,
+): TEmbeddableFeature => {
+  switch (serialized.type) {
     case 'face':
-      return FaceFeature.deserialize( serialized, patternBoard );
+      return FaceFeature.deserialize(serialized, patternBoard);
     case 'black-edge':
-      return BlackEdgeFeature.deserialize( serialized, patternBoard );
+      return BlackEdgeFeature.deserialize(serialized, patternBoard);
     case 'red-edge':
-      return RedEdgeFeature.deserialize( serialized, patternBoard );
+      return RedEdgeFeature.deserialize(serialized, patternBoard);
     case 'face-color-dual':
-      return FaceColorDualFeature.deserialize( serialized, patternBoard );
+      return FaceColorDualFeature.deserialize(serialized, patternBoard);
     case 'sector-only-one':
-      return SectorOnlyOneFeature.deserialize( serialized, patternBoard );
+      return SectorOnlyOneFeature.deserialize(serialized, patternBoard);
     case 'sector-not-one':
-      return SectorNotOneFeature.deserialize( serialized, patternBoard );
+      return SectorNotOneFeature.deserialize(serialized, patternBoard);
     case 'sector-not-zero':
-      return SectorNotZeroFeature.deserialize( serialized, patternBoard );
+      return SectorNotZeroFeature.deserialize(serialized, patternBoard);
     case 'sector-not-two':
-      return SectorNotTwoFeature.deserialize( serialized, patternBoard );
+      return SectorNotTwoFeature.deserialize(serialized, patternBoard);
     case 'vertex-not-empty':
-      return VertexNotEmptyFeature.deserialize( serialized, patternBoard );
+      return VertexNotEmptyFeature.deserialize(serialized, patternBoard);
     case 'vertex-not-pair':
-      return VertexNotPairFeature.deserialize( serialized, patternBoard );
+      return VertexNotPairFeature.deserialize(serialized, patternBoard);
     case 'face-not-state':
-      return FaceNotStateFeature.deserialize( serialized, patternBoard );
+      return FaceNotStateFeature.deserialize(serialized, patternBoard);
     default:
-      throw new Error( `Unknown serialized feature: ${serialized}` );
+      throw new Error(`Unknown serialized feature: ${serialized}`);
   }
 };

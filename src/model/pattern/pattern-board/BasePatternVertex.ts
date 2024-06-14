@@ -4,7 +4,6 @@ import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
 
 export class BasePatternVertex implements TPatternVertex {
-
   public exitEdge: TPatternEdge | null = null;
   public edges: TPatternEdge[] = [];
   public sectors: TPatternSector[] = [];
@@ -12,6 +11,6 @@ export class BasePatternVertex implements TPatternVertex {
 
   public constructor(
     public readonly index: number,
-    public readonly isExit: boolean
+    public readonly isExit: boolean,
   ) {}
 }

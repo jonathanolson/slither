@@ -4,7 +4,7 @@ import FaceValue from '../../data/face-value/FaceValue.ts';
 export interface TBoardFeatureData {
   faceValues: FaceValue[];
   faceColors: unknown[];
-  oppositeFaceColors: ( unknown | null )[];
+  oppositeFaceColors: (unknown | null)[];
   redEdgeValues: boolean[];
   blackEdgeValues: boolean[];
   sectorNotZeroValues: boolean[];

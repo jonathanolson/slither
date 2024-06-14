@@ -1,11 +1,10 @@
 import 'phet-lib';
 
 // @ts-expect-error
-export default QueryStringMachine.getAll( {
-
+export default QueryStringMachine.getAll({
   p: {
     type: 'string',
-    defaultValue: ''
+    defaultValue: '',
   },
 
   debugScan: { type: 'flag' },
@@ -15,5 +14,5 @@ export default QueryStringMachine.getAll( {
   debugColors: { type: 'flag' },
 
   // like PhET sims
-  showPointerAreas: { type: 'flag' }
-} );
+  showPointerAreas: { type: 'flag' },
+});

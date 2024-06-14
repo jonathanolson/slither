@@ -27,74 +27,74 @@ window.assertions.enableAssert();
 
 const scene = new Node();
 
-const rootNode = new Node( {
+const rootNode = new Node({
   renderer: 'svg',
-  children: [ scene ]
-} );
+  children: [scene],
+});
 
-const display = new Display( rootNode, {
+const display = new Display(rootNode, {
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
-  allowSceneOverflow: false
-} );
-document.body.appendChild( display.domElement );
+  allowSceneOverflow: false,
+});
+document.body.appendChild(display.domElement);
 
-display.setWidthHeight( window.innerWidth, window.innerHeight );
+display.setWidthHeight(window.innerWidth, window.innerHeight);
 
-console.log( 'test' );
+console.log('test');
 
-const getPolygonalBoard = ( generator: PolygonGenerator ) => {
-  const polygons = generator.generate( generator.defaultParameterValues );
+const getPolygonalBoard = (generator: PolygonGenerator) => {
+  const polygons = generator.generate(generator.defaultParameterValues);
 
-  return new PolygonalBoard( polygons, generator.scale ?? 1 );
+  return new PolygonalBoard(polygons, generator.scale ?? 1);
 };
 
 const boards = [
-  new SquareBoard( 10, 10 ),
+  new SquareBoard(10, 10),
   // new SquareBoard( 15, 15 ),
-  new HexagonalBoard( 4, 1, true ),
+  new HexagonalBoard(4, 1, true),
 
-  ...polygonGenerators.map( getPolygonalBoard )
+  ...polygonGenerators.map(getPolygonalBoard),
 ];
 
-( async () => {
+(async () => {
   let puzzleNode: PuzzleNode | null = null;
 
-  const interrutedProperty = new BooleanProperty( false );
+  const interrutedProperty = new BooleanProperty(false);
 
-  while ( true ) {
-    console.log( 'board loaded' );
-    const board = boards[ Math.floor( Math.random() * boards.length ) ];
+  while (true) {
+    console.log('board loaded');
+    const board = boards[Math.floor(Math.random() * boards.length)];
 
     // TODO: omg, cleanup here, it is a wreck with naming
 
-    const definedPuzzle = await generateFaceAdditive( board, interrutedProperty );
-    const minimizedPuzzle = await greedyFaceMinimize( definedPuzzle, () => true, interrutedProperty );
+    const definedPuzzle = await generateFaceAdditive(board, interrutedProperty);
+    const minimizedPuzzle = await greedyFaceMinimize(definedPuzzle, () => true, interrutedProperty);
 
     const solvedPuzzle = minimizedPuzzle;
 
     const solvedState = solvedPuzzle.cleanState.clone();
-    solvedPuzzle.blackEdges.forEach( edge => solvedState.setEdgeState( edge, EdgeState.BLACK ) );
-    finalStateSolve( board, solvedState );
+    solvedPuzzle.blackEdges.forEach((edge) => solvedState.setEdgeState(edge, EdgeState.BLACK));
+    finalStateSolve(board, solvedState);
 
-    const unsolvedPuzzle = BasicPuzzle.fromSolvedPuzzle( solvedPuzzle );
+    const unsolvedPuzzle = BasicPuzzle.fromSolvedPuzzle(solvedPuzzle);
 
-    if ( puzzleNode ) {
+    if (puzzleNode) {
       puzzleNode.dispose();
     }
 
-    puzzleNode = new PuzzleNode( unsolvedPuzzle, {
+    puzzleNode = new PuzzleNode(unsolvedPuzzle, {
       scale: 30,
       left: 20,
-      top: 20
-    } );
-    scene.addChild( puzzleNode );
+      top: 20,
+    });
+    scene.addChild(puzzleNode);
     display.updateDisplay();
 
-    await sleep( 50 );
+    await sleep(50);
 
     const state = unsolvedPuzzle.stateProperty.value.clone();
-    const solver = standardSolverFactory( board, state, true );
+    const solver = standardSolverFactory(board, state, true);
 
     const updateView = () => {
       unsolvedPuzzle.stateProperty.value = state.clone();
@@ -102,65 +102,64 @@ const boards = [
     };
 
     let count = 0;
-    while ( !simpleRegionIsSolved( state ) ) {
+    while (!simpleRegionIsSolved(state)) {
       puzzleNode.clearAnnotationNodes();
 
-      if ( count++ > 100000 ) {
-        throw new Error( 'Solver iteration limit exceeded? Looped?' );
+      if (count++ > 100000) {
+        throw new Error('Solver iteration limit exceeded? Looped?');
       }
 
       const stateCopy = state.clone();
-      const solverCopy = solver.clone( stateCopy );
+      const solverCopy = solver.clone(stateCopy);
 
       const action = solver.nextAction();
-      if ( action ) {
-        console.log( action );
-        const validator = new CompleteValidator( board, state, solvedState );
-        puzzleNode.addAnnotationNode( new AnnotationNode( board, action.annotation, currentPuzzleStyle ) );
+      if (action) {
+        console.log(action);
+        const validator = new CompleteValidator(board, state, solvedState);
+        puzzleNode.addAnnotationNode(new AnnotationNode(board, action.annotation, currentPuzzleStyle));
         updateView();
-        await sleep( 0 );
+        await sleep(0);
         try {
-          action.apply( validator );
-        }
-        catch ( e ) {
-          console.error( e );
+          action.apply(validator);
+        } catch (e) {
+          console.error(e);
           debugger;
           const actionCopy = solverCopy.nextAction();
-          if ( actionCopy ) {
-            actionCopy.apply( validator );
+          if (actionCopy) {
+            actionCopy.apply(validator);
           }
         }
-        action.apply( state );
+        action.apply(state);
       }
       // If it doesn't pick up on anything, give it a hint so we can test more things
-      else if ( !simpleRegionIsSolved( state ) ) {
+      else if (!simpleRegionIsSolved(state)) {
         // Ensure a fresh solver doesn't give us anything new, otherwise we have a bug in "dirty" detection code.
-        const freshSolver = standardSolverFactory( board, state, true );
+        const freshSolver = standardSolverFactory(board, state, true);
         const freshSolverAction = freshSolver.nextAction();
-        if ( freshSolverAction ) {
-          puzzleNode.addAnnotationNode( new AnnotationNode( board, freshSolverAction.annotation, currentPuzzleStyle ) );
+        if (freshSolverAction) {
+          puzzleNode.addAnnotationNode(new AnnotationNode(board, freshSolverAction.annotation, currentPuzzleStyle));
           updateView();
-          await sleep( 0 );
-          throw new Error( 'Fresh solver should not have any actions' );
+          await sleep(0);
+          throw new Error('Fresh solver should not have any actions');
         }
         freshSolver.dispose();
 
-        const edge = _.find( _.shuffle( board.edges ), edge => state.getEdgeState( edge ) === EdgeState.WHITE )!;
-        assertEnabled() && assert( edge );
-        state.setEdgeState( edge, solvedState.getEdgeState( edge ) );
+        const edge = _.find(_.shuffle(board.edges), (edge) => state.getEdgeState(edge) === EdgeState.WHITE)!;
+        assertEnabled() && assert(edge);
+        state.setEdgeState(edge, solvedState.getEdgeState(edge));
 
-        console.log( 'setting white edge to red/black', edge );
+        console.log('setting white edge to red/black', edge);
 
-        if ( !solver.dirty ) {
-          throw new Error( 'Solver should be dirty after setting edge state' );
+        if (!solver.dirty) {
+          throw new Error('Solver should be dirty after setting edge state');
         }
       }
       updateView();
-      await sleep( 0 );
+      await sleep(0);
     }
 
-    if ( !simpleRegionIsSolved( state ) ) {
-      throw new Error( 'Solver did not solve the puzzle' );
+    if (!simpleRegionIsSolved(state)) {
+      throw new Error('Solver did not solve the puzzle');
     }
   }
-} )();
+})();

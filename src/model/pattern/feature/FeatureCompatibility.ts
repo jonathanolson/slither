@@ -1,7 +1,6 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export default class FeatureCompatibility extends EnumerationValue {
-
   // The input feature set is impossible to satisfy, given the target feature set or derivations (a rule with this as the input will never be applied)
   public static readonly INCOMPATIBLE = new FeatureCompatibility();
 
@@ -14,5 +13,5 @@ export default class FeatureCompatibility extends EnumerationValue {
   // Matches!
   public static readonly MATCH = new FeatureCompatibility();
 
-  public static readonly enumeration = new Enumeration( FeatureCompatibility );
+  public static readonly enumeration = new Enumeration(FeatureCompatibility);
 }

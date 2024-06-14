@@ -19,85 +19,97 @@ export type scanFaceValuesOptions = {
 
 const defaults = {
   whitelistChars: '0123',
-  segmentation: 'sparse-text'
+  segmentation: 'sparse-text',
 } as const;
 
-const scanFaceValues = async ( url: string, providedOptions?: scanFaceValuesOptions ): Promise<ScannedFaceValue[]> => {
-  const options = optionize3<scanFaceValuesOptions>()( {}, defaults, providedOptions );
+const scanFaceValues = async (url: string, providedOptions?: scanFaceValuesOptions): Promise<ScannedFaceValue[]> => {
+  const options = optionize3<scanFaceValuesOptions>()({}, defaults, providedOptions);
 
-  if ( !worker ) {
-    worker = await createWorker( 'eng' );
+  if (!worker) {
+    worker = await createWorker('eng');
   }
 
-  worker.setParameters( {
+  worker.setParameters({
     tessedit_char_whitelist: options.whitelistChars,
     tessedit_pageseg_mode: {
       'sparse-text': tesseract.PSM.SPARSE_TEXT,
-      'single-char': tesseract.PSM.SINGLE_CHAR
-    }[ options.segmentation ] // see https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163
-  } );
+      'single-char': tesseract.PSM.SINGLE_CHAR,
+    }[options.segmentation], // see https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163
+  });
 
-  const result = await worker.recognize( url );
+  const result = await worker.recognize(url);
 
   // TODO: we... terminate sometime?
   // await worker.terminate();
 
   // NOTE: don't have a typed version of this metadata from Tesseract.js at the moment
-  return result.data.symbols/*.filter( ( symbol: any ) => [ '0', '1', '2', '3' ].includes( symbol.text ) )*/.map( ( symbol: any ) => {
-    return new ScannedFaceValue(
-      symbol.text,
-      new Bounds2( symbol.bbox.x0, symbol.bbox.y0, symbol.bbox.x1, symbol.bbox.y1 ),
-      symbol.confidence
-    );
-  } );
+  return result.data.symbols /*.filter( ( symbol: any ) => [ '0', '1', '2', '3' ].includes( symbol.text ) )*/
+    .map((symbol: any) => {
+      return new ScannedFaceValue(
+        symbol.text,
+        new Bounds2(symbol.bbox.x0, symbol.bbox.y0, symbol.bbox.x1, symbol.bbox.y1),
+        symbol.confidence,
+      );
+    });
 };
 export default scanFaceValues;
 
 let scratchCanvas: HTMLCanvasElement | null = null;
 let scratchContext: CanvasRenderingContext2D | null = null;
-export const scanShapeFaceValue = async ( shape: Shape, options?: scanFaceValuesOptions ): Promise<ScannedFaceValue | null> => {
+export const scanShapeFaceValue = async (
+  shape: Shape,
+  options?: scanFaceValuesOptions,
+): Promise<ScannedFaceValue | null> => {
   const padding = 7;
 
-  if ( !shape.bounds.isValid() ) {
+  if (!shape.bounds.isValid()) {
     return null;
   }
 
-  if ( !scratchCanvas ) {
-    scratchCanvas = document.createElement( 'canvas' );
+  if (!scratchCanvas) {
+    scratchCanvas = document.createElement('canvas');
   }
 
-  if ( !scratchContext ) {
-    scratchContext = scratchCanvas.getContext( '2d' )!;
+  if (!scratchContext) {
+    scratchContext = scratchCanvas.getContext('2d')!;
   }
 
   scratchCanvas.width = shape.bounds.width + padding * 2;
   scratchCanvas.height = shape.bounds.height + padding * 2;
 
-  scratchContext.setTransform(
-    1, 0, 0, 1, -shape.bounds.minX + padding, -shape.bounds.minY + padding
-  );
+  scratchContext.setTransform(1, 0, 0, 1, -shape.bounds.minX + padding, -shape.bounds.minY + padding);
 
   scratchContext.fillStyle = 'white';
-  scratchContext.fillRect( 0, 0, scratchCanvas.width, scratchCanvas.height );
+  scratchContext.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
 
   scratchContext.beginPath();
-  shape.writeToContext( scratchContext );
+  shape.writeToContext(scratchContext);
 
   scratchContext.fillStyle = 'black';
   scratchContext.fill();
   scratchContext.strokeStyle = 'black';
   scratchContext.stroke();
 
-  return ( await scanFaceValues( scratchCanvas.toDataURL(), combineOptions<scanFaceValuesOptions>( {
-    segmentation: 'single-char',
-    whitelistChars: '0123x'
-  }, options ) ) )[ 0 ] || null;
+  return (
+    (
+      await scanFaceValues(
+        scratchCanvas.toDataURL(),
+        combineOptions<scanFaceValuesOptions>(
+          {
+            segmentation: 'single-char',
+            whitelistChars: '0123x',
+          },
+          options,
+        ),
+      )
+    )[0] || null
+  );
 };
 
 export class ScannedFaceValue {
   public constructor(
     public readonly value: string,
     public readonly bounds: Bounds2,
-    public readonly confidence: number
+    public readonly confidence: number,
   ) {}
 }

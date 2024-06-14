@@ -9,7 +9,7 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { puzzleFromCompressedString } from './puzzleFromCompressedString.ts';
 
 export const getStartupPuzzleModel = (): PuzzleModel => {
-  const puzzleString = SlitherQueryParameters.p || localStorage.getItem( 'puzzleString' );
+  const puzzleString = SlitherQueryParameters.p || localStorage.getItem('puzzleString');
   const defaultPuzzle = BasicPuzzle.loadDefaultPuzzle();
   let startingSolvablePuzzle: TSolvablePropertyPuzzle<TStructure, TCompleteData> | null = null;
   let initialTimeElapsed = 0;
@@ -18,27 +18,26 @@ export const getStartupPuzzleModel = (): PuzzleModel => {
   try {
     let startingPuzzle: BasicPuzzle<TCompleteData> = defaultPuzzle;
 
-    if ( puzzleString ) {
-      const savedPuzzle = puzzleFromCompressedString( puzzleString );
-      if ( savedPuzzle ) {
+    if (puzzleString) {
+      const savedPuzzle = puzzleFromCompressedString(puzzleString);
+      if (savedPuzzle) {
         startingPuzzle = savedPuzzle;
 
-        const initialTimeElapsedString = localStorage.getItem( 'timeElapsedProperty' );
-        initialTimeElapsed = initialTimeElapsedString ? JSON.parse( initialTimeElapsedString ) : 0;
+        const initialTimeElapsedString = localStorage.getItem('timeElapsedProperty');
+        initialTimeElapsed = initialTimeElapsedString ? JSON.parse(initialTimeElapsedString) : 0;
       }
     }
 
-    startingSolvablePuzzle = getSolvablePropertyPuzzle( startingPuzzle.board, startingPuzzle.stateProperty.value );
+    startingSolvablePuzzle = getSolvablePropertyPuzzle(startingPuzzle.board, startingPuzzle.stateProperty.value);
+  } catch (e) {
+    console.error(e);
   }
-  catch ( e ) {
-    console.error( e );
+  if (!startingSolvablePuzzle) {
+    startingSolvablePuzzle = getSolvablePropertyPuzzle(defaultPuzzle.board, defaultPuzzle.stateProperty.value)!;
   }
-  if ( !startingSolvablePuzzle ) {
-    startingSolvablePuzzle = getSolvablePropertyPuzzle( defaultPuzzle.board, defaultPuzzle.stateProperty.value )!;
-  }
-  assertEnabled() && assert( startingSolvablePuzzle );
+  assertEnabled() && assert(startingSolvablePuzzle);
 
-  return new PuzzleModel( startingSolvablePuzzle!, {
-    initialTimeElapsed: initialTimeElapsed
-  } );
+  return new PuzzleModel(startingSolvablePuzzle!, {
+    initialTimeElapsed: initialTimeElapsed,
+  });
 };

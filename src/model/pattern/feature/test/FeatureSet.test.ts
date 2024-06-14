@@ -4,10 +4,10 @@ import { standardSquareBoardGenerations } from '../../pattern-board/patternBoard
 
 // TODO
 
-QUnit.module( 'zero', () => {
-  QUnit.test('two numbers', assert => {
-    assert.equal( Vector2.ZERO.x, 0 );
-  } );
-} );
+QUnit.module('zero', () => {
+  QUnit.test('two numbers', (assert) => {
+    assert.equal(Vector2.ZERO.x, 0);
+  });
+});
 
-console.log( standardSquareBoardGenerations[ 0 ][ 0 ] );
+console.log(standardSquareBoardGenerations[0][0]);

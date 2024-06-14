@@ -9,23 +9,22 @@ import FaceValue from './FaceValue.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export class FaceValueValidator implements TState<TFaceValueData> {
-
-  public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
+  public readonly faceValueChangedEmitter = new TinyEmitter<[TFace, FaceValue]>();
 
   public constructor(
     // @ts-expect-error
     private readonly board: TBoard,
     private readonly currentState: TState<TFaceValueData>,
-    private readonly solvedState: TState<TFaceValueData>
+    private readonly solvedState: TState<TFaceValueData>,
   ) {}
 
-  public getFaceValue( face: TFace ): FaceValue {
-    return this.currentState.getFaceValue( face );
+  public getFaceValue(face: TFace): FaceValue {
+    return this.currentState.getFaceValue(face);
   }
 
-  public setFaceValue( face: TFace, state: FaceValue ): void {
-    if ( this.solvedState.getFaceValue( face ) !== state ) {
-      throw new InvalidStateError( 'invalid face state' );
+  public setFaceValue(face: TFace, state: FaceValue): void {
+    if (this.solvedState.getFaceValue(face) !== state) {
+      throw new InvalidStateError('invalid face state');
     }
   }
 
@@ -37,7 +36,7 @@ export class FaceValueValidator implements TState<TFaceValueData> {
     return this as unknown as TDelta<TFaceValueData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedState {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedState {
+    throw new Error('unimplemented');
   }
 }

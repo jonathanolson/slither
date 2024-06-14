@@ -11,7 +11,7 @@ export default class FaceColorState extends EnumerationValue {
   public static readonly INSIDE = new FaceColorState();
   public static readonly UNDECIDED = new FaceColorState();
 
-  public static readonly enumeration = new Enumeration( FaceColorState );
+  public static readonly enumeration = new Enumeration(FaceColorState);
 }
 
 export interface TFaceColor {
@@ -30,26 +30,34 @@ export interface TSerializedFaceColor {
   oppositeFaceColorId: number | null;
 }
 
-export const serializeFaceColor = ( faceColor: TFaceColor, faces: TFace[], oppositeFaceColorId: number | null ): TSerializedFaceColor => {
+export const serializeFaceColor = (
+  faceColor: TFaceColor,
+  faces: TFace[],
+  oppositeFaceColorId: number | null,
+): TSerializedFaceColor => {
   return {
     id: faceColor.id,
     colorState: faceColor.colorState.toString() as 'OUTSIDE' | 'INSIDE' | 'UNDECIDED',
-    faces: faces.map( serializeFace ),
-    oppositeFaceColorId: oppositeFaceColorId
+    faces: faces.map(serializeFace),
+    oppositeFaceColorId: oppositeFaceColorId,
   };
 };
 
 export interface TFaceColorData {
-
   // Initially, we'll have a face color for each face, plus the outside and inside.
   getFaceColors(): TFaceColor[];
+
   getInsideColor(): TFaceColor;
+
   getOutsideColor(): TFaceColor;
 
-  getFaceColor( face: TFace ): TFaceColor;
-  getFacesWithColor( faceColor: TFaceColor ): TFace[];
+  getFaceColor(face: TFace): TFaceColor;
+
+  getFacesWithColor(faceColor: TFaceColor): TFace[];
+
   getFaceColorMap(): Map<TFace, TFaceColor>;
-  getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null;
+
+  getOppositeFaceColor(faceColor: TFaceColor): TFaceColor | null;
 
   hasInvalidFaceColors(): boolean;
 
@@ -58,15 +66,17 @@ export interface TFaceColorData {
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
-    invalidFaceColor: boolean
+    invalidFaceColor: boolean,
   ): void;
 
-  faceColorsChangedEmitter: TEmitter<[
-    addedFaceColors: MultiIterable<TFaceColor>,
-    removedFaceColors: MultiIterable<TFaceColor>,
-    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
-    changedFaces: MultiIterable<TFace>,
-  ]>;
+  faceColorsChangedEmitter: TEmitter<
+    [
+      addedFaceColors: MultiIterable<TFaceColor>,
+      removedFaceColors: MultiIterable<TFaceColor>,
+      oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+      changedFaces: MultiIterable<TFace>,
+    ]
+  >;
 }
 
 export type TFaceColorListener = (
@@ -82,12 +92,16 @@ export interface TSerializedFaceColorData extends TSerializedState {
   invalidFaceColor: boolean;
 }
 
-export const serializeFaceColorData = ( faceData: TFaceColorData ): TSerializedFaceColorData => ( {
+export const serializeFaceColorData = (faceData: TFaceColorData): TSerializedFaceColorData => ({
   type: 'FaceColorData',
-  colors: faceData.getFaceColors().map( faceColor => serializeFaceColor(
-    faceColor,
-    faceData.getFacesWithColor( faceColor ),
-    faceData.getOppositeFaceColor( faceColor )?.id ?? null
-  ) ),
-  invalidFaceColor: faceData.hasInvalidFaceColors()
-} );
+  colors: faceData
+    .getFaceColors()
+    .map((faceColor) =>
+      serializeFaceColor(
+        faceColor,
+        faceData.getFacesWithColor(faceColor),
+        faceData.getOppositeFaceColor(faceColor)?.id ?? null,
+      ),
+    ),
+  invalidFaceColor: faceData.hasInvalidFaceColors(),
+});

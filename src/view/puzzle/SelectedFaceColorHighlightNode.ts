@@ -16,41 +16,44 @@ export class SelectedFaceColorHighlightNode extends Node {
     public readonly selectedFaceColorHighlight: SelectedFaceColorHighlight,
     board: TBoard,
     style: TPuzzleStyle,
-    options: SelectedFaceColorHighlightNodeOptions
+    options: SelectedFaceColorHighlightNodeOptions,
   ) {
-
     let children: Node[] = [];
 
     try {
       let shape = new Shape();
-      for ( const face of selectedFaceColorHighlight.faces ) {
-        shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) );
+      for (const face of selectedFaceColorHighlight.faces) {
+        shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates));
       }
 
-      if ( selectedFaceColorHighlight.faceColor.colorState === FaceColorState.OUTSIDE ) {
+      if (selectedFaceColorHighlight.faceColor.colorState === FaceColorState.OUTSIDE) {
         try {
-          const outerBoundaryShape = Shape.polygon( board.outerBoundary.map( halfEdge => halfEdge.start.viewCoordinates ) );
-          const offsetBackgroundShape = PuzzleBackgroundNode.getOffsetBackgroundShape( board.outerBoundary, options.useBackgroundOffsetStroke, options.backgroundOffsetDistance );
+          const outerBoundaryShape = Shape.polygon(
+            board.outerBoundary.map((halfEdge) => halfEdge.start.viewCoordinates),
+          );
+          const offsetBackgroundShape = PuzzleBackgroundNode.getOffsetBackgroundShape(
+            board.outerBoundary,
+            options.useBackgroundOffsetStroke,
+            options.backgroundOffsetDistance,
+          );
 
-          const differenceShape = offsetBackgroundShape.shapeDifference( outerBoundaryShape );
+          const differenceShape = offsetBackgroundShape.shapeDifference(outerBoundaryShape);
 
           // Conditional so that we ensure it works if shape has no content yet, see https://github.com/jonathanolson/slither/issues/3
-          shape = shape.bounds.isValid() ? shape.shapeUnion( differenceShape ) : differenceShape;
-        }
-        catch ( e ) {
-          console.error( e );
+          shape = shape.bounds.isValid() ? shape.shapeUnion(differenceShape) : differenceShape;
+        } catch (e) {
+          console.error(e);
         }
       }
 
-      const colorHighlightNode = new Path( shape.getOffsetShape( -0.07 ).getSimplifiedAreaShape(), {
+      const colorHighlightNode = new Path(shape.getOffsetShape(-0.07).getSimplifiedAreaShape(), {
         stroke: style.theme.selectedFaceColorHighlightColorProperty,
-        lineWidth: 0.03
-      } );
+        lineWidth: 0.03,
+      });
 
-      children.push( colorHighlightNode );
-    }
-    catch ( e ) {
-      console.error( e );
+      children.push(colorHighlightNode);
+    } catch (e) {
+      console.error(e);
     }
 
     // if ( selectedFaceColorHighlight.face ) {
@@ -65,8 +68,8 @@ export class SelectedFaceColorHighlightNode extends Node {
     //   children.push( faceHighlightNode );
     // }
 
-    super( {
-      children: children
-    } );
+    super({
+      children: children,
+    });
   }
 }

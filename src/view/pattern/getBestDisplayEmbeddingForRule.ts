@@ -5,11 +5,7 @@ import { getBestDisplayEmbedding } from './getBestDisplayEmbedding.js';
 
 export const getBestDisplayEmbeddingForRule = (
   rule: PatternRule,
-  displayTiling: DisplayTiling
+  displayTiling: DisplayTiling,
 ): DisplayEmbedding | null => {
-  return getBestDisplayEmbedding(
-    rule.patternBoard,
-    displayTiling,
-    DisplayEmbedding.getOptionsForRule( rule ),
-  );
+  return getBestDisplayEmbedding(rule.patternBoard, displayTiling, DisplayEmbedding.getOptionsForRule(rule));
 };

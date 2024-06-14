@@ -20,7 +20,6 @@ export type VertexToEdgeSolverOptions = {
 type Data = TEdgeStateData & TVertexStateData;
 
 export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private readonly dirtyVertices: TVertex[] = [];
 
   private readonly vertexListener: TVertexStateListener;
@@ -29,19 +28,18 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
     private readonly board: TBoard,
     private readonly state: TState<Data>,
     private readonly options: VertexToEdgeSolverOptions,
-    dirtyVertices?: TVertex[]
+    dirtyVertices?: TVertex[],
   ) {
-    if ( dirtyVertices ) {
-      this.dirtyVertices.push( ...dirtyVertices );
-    }
-    else {
-      this.dirtyVertices.push( ...board.vertices );
+    if (dirtyVertices) {
+      this.dirtyVertices.push(...dirtyVertices);
+    } else {
+      this.dirtyVertices.push(...board.vertices);
     }
 
-    this.vertexListener = ( vertex: TVertex ) => {
-      this.dirtyVertices.push( vertex );
+    this.vertexListener = (vertex: TVertex) => {
+      this.dirtyVertices.push(vertex);
     };
-    this.state.vertexStateChangedEmitter.addListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.addListener(this.vertexListener);
   }
 
   public get dirty(): boolean {
@@ -49,60 +47,66 @@ export class VertexToEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>>
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    while ( this.dirtyVertices.length ) {
+    while (this.dirtyVertices.length) {
       const vertex = this.dirtyVertices.pop()!;
 
-      const vertexState = this.state.getVertexState( vertex );
+      const vertexState = this.state.getVertexState(vertex);
 
-      if ( vertexState.possibilityCount === 0 ) {
-        throw new InvalidStateError( 'Vertex has no possibilities' );
+      if (vertexState.possibilityCount === 0) {
+        throw new InvalidStateError('Vertex has no possibilities');
       }
 
       const toRedEdges: TEdge[] = [];
       const toBlackEdges: TEdge[] = [];
 
-      for ( const edge of vertex.edges ) {
-        const edgeState = this.state.getEdgeState( edge );
+      for (const edge of vertex.edges) {
+        const edgeState = this.state.getEdgeState(edge);
 
-        if ( edgeState === EdgeState.WHITE ) {
-          const finalStates = vertexState.getFinalStatesOfEdge( edge );
+        if (edgeState === EdgeState.WHITE) {
+          const finalStates = vertexState.getFinalStatesOfEdge(edge);
 
-          if ( finalStates.size === 1 ) {
-            const finalState = [ ...finalStates ][ 0 ];
-            if ( finalState === EdgeState.RED && this.options.solveToRed ) {
-              toRedEdges.push( edge );
+          if (finalStates.size === 1) {
+            const finalState = [...finalStates][0];
+            if (finalState === EdgeState.RED && this.options.solveToRed) {
+              toRedEdges.push(edge);
             }
 
-            if ( finalState === EdgeState.BLACK && this.options.solveToBlack ) {
-              toBlackEdges.push( edge );
+            if (finalState === EdgeState.BLACK && this.options.solveToBlack) {
+              toBlackEdges.push(edge);
             }
           }
         }
       }
 
-      if ( toRedEdges.length || toBlackEdges.length ) {
-        return new AnnotatedAction( new CompositeAction( [
-          ...toRedEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ),
-          ...toBlackEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.BLACK ) )
-        ] ), {
-          type: 'VertexStateToEdge',
-          vertex: vertex,
-          toRedEdges: toRedEdges,
-          toBlackEdges: toBlackEdges,
-        }, this.board );
+      if (toRedEdges.length || toBlackEdges.length) {
+        return new AnnotatedAction(
+          new CompositeAction([
+            ...toRedEdges.map((edge) => new EdgeStateSetAction(edge, EdgeState.RED)),
+            ...toBlackEdges.map((edge) => new EdgeStateSetAction(edge, EdgeState.BLACK)),
+          ]),
+          {
+            type: 'VertexStateToEdge',
+            vertex: vertex,
+            toRedEdges: toRedEdges,
+            toBlackEdges: toBlackEdges,
+          },
+          this.board,
+        );
       }
     }
 
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): VertexToEdgeSolver {
-    return new VertexToEdgeSolver( this.board, equivalentState, this.options, this.dirtyVertices );
+  public clone(equivalentState: TState<Data>): VertexToEdgeSolver {
+    return new VertexToEdgeSolver(this.board, equivalentState, this.options, this.dirtyVertices);
   }
 
   public dispose(): void {
-    this.state.vertexStateChangedEmitter.removeListener( this.vertexListener );
+    this.state.vertexStateChangedEmitter.removeListener(this.vertexListener);
   }
 }

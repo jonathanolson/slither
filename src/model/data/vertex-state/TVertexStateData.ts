@@ -7,14 +7,14 @@ import { serializeVertex } from '../../board/core/serializeVertex.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TVertexStateData {
-  getVertexState( vertex: TVertex ): VertexState;
+  getVertexState(vertex: TVertex): VertexState;
 
-  setVertexState( vertex: TVertex, state: VertexState ): void;
+  setVertexState(vertex: TVertex, state: VertexState): void;
 
-  vertexStateChangedEmitter: TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>;
+  vertexStateChangedEmitter: TEmitter<[vertex: TVertex, state: VertexState, oldState: VertexState]>;
 }
 
-export type TVertexStateListener = ( vertex: TVertex, state: VertexState, oldState: VertexState ) => void;
+export type TVertexStateListener = (vertex: TVertex, state: VertexState, oldState: VertexState) => void;
 
 export interface TSerializedVertexStateData extends TSerializedState {
   type: 'VertexStateData';
@@ -24,10 +24,12 @@ export interface TSerializedVertexStateData extends TSerializedState {
   }[];
 }
 
-export const serializeVertexStateData = ( board: TBoard, vertexData: TVertexStateData ): TSerializedVertexStateData => ( {
+export const serializeVertexStateData = (board: TBoard, vertexData: TVertexStateData): TSerializedVertexStateData => ({
   type: 'VertexStateData',
-  vertices: board.vertices.filter( vertex => !vertexData.getVertexState( vertex ).isAny() ).map( vertex => ( {
-    vertex: serializeVertex( vertex ),
-    state: vertexData.getVertexState( vertex ).serialize()
-  } ) )
-} );
+  vertices: board.vertices
+    .filter((vertex) => !vertexData.getVertexState(vertex).isAny())
+    .map((vertex) => ({
+      vertex: serializeVertex(vertex),
+      state: vertexData.getVertexState(vertex).serialize(),
+    })),
+});

@@ -4,48 +4,48 @@ export class Lit {
   private static readonly cache: Lit[] = [];
   private x: number;
 
-  private constructor( x: number ) {
+  private constructor(x: number) {
     this.x = x;
   }
 
-  public compareTo( o: Lit ): number {
+  public compareTo(o: Lit): number {
     return this.x - o.x;
   }
 
-  public equals( obj: Lit ): boolean {
-    return this.compareTo( obj ) === 0;
+  public equals(obj: Lit): boolean {
+    return this.compareTo(obj) === 0;
   }
 
-  public static valueOf( x: number ): Lit {
-    switch ( x ) {
+  public static valueOf(x: number): Lit {
+    switch (x) {
       case Lit.UNDEF_VALUE:
         return Lit.UNDEF;
       case Lit.ERROR_VALUE:
         return Lit.ERROR;
     }
-    for ( let i = Lit.cache.length; i <= x; ++i ) {
-      Lit.cache.push( new Lit( i ) );
+    for (let i = Lit.cache.length; i <= x; ++i) {
+      Lit.cache.push(new Lit(i));
     }
-    return Lit.cache[ x ];
+    return Lit.cache[x];
   }
 
-  public static valueOfVar( variable: number, sign: boolean ): Lit {
-    if ( variable < 0 ) {
-      throw new Error( 'variable' );
+  public static valueOfVar(variable: number, sign: boolean): Lit {
+    if (variable < 0) {
+      throw new Error('variable');
     }
-    return Lit.valueOf( variable + variable + ( sign ? 1 : 0 ) );
+    return Lit.valueOf(variable + variable + (sign ? 1 : 0));
   }
 
   public not(): Lit {
-    return Lit.valueOf( this.x ^ 1 );
+    return Lit.valueOf(this.x ^ 1);
   }
 
-  public xor( b: boolean ): Lit {
-    return Lit.valueOf( this.x ^ ( b ? 1 : 0 ) );
+  public xor(b: boolean): Lit {
+    return Lit.valueOf(this.x ^ (b ? 1 : 0));
   }
 
   public sign(): boolean {
-    return ( this.x & 1 ) === 1;
+    return (this.x & 1) === 1;
   }
 
   public var(): number {
@@ -57,11 +57,11 @@ export class Lit {
     return this.x;
   }
 
-  public static readonly UNDEF = new Lit( Lit.UNDEF_VALUE );
-  public static readonly ERROR = new Lit( Lit.ERROR_VALUE );
+  public static readonly UNDEF = new Lit(Lit.UNDEF_VALUE);
+  public static readonly ERROR = new Lit(Lit.ERROR_VALUE);
 
   public toString(): string {
-    switch ( this.x ) {
+    switch (this.x) {
       case Lit.UNDEF_VALUE:
         return 'UNDEF';
       case Lit.ERROR_VALUE:

@@ -30,7 +30,6 @@ import { FaceState } from '../face-state/FaceState.ts';
 import { FaceStateValidator } from '../face-state/FaceStateValidator.ts';
 
 export class CompleteValidator implements TState<TCompleteData> {
-
   public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();
 
   private readonly edgeStateValidator: TState<TEdgeStateData>;
@@ -41,44 +40,40 @@ export class CompleteValidator implements TState<TCompleteData> {
   private readonly vertexStateValidator: TState<TVertexStateData>;
   private readonly faceStateValidator: TState<TFaceStateData>;
 
-  public constructor(
-    board: TBoard,
-    currentState: TState<TCompleteData>,
-    solvedState: TState<TCompleteData>
-  ) {
-    assertEnabled() && assert( board );
-    assertEnabled() && assert( solvedState );
+  public constructor(board: TBoard, currentState: TState<TCompleteData>, solvedState: TState<TCompleteData>) {
+    assertEnabled() && assert(board);
+    assertEnabled() && assert(solvedState);
 
-    this.edgeStateValidator = new EdgeStateValidator( board, currentState, solvedState );
-    this.faceValueValidator = new FaceValueValidator( board, currentState, solvedState );
-    this.simpleRegionDataValidator = new SimpleRegionValidator( board, currentState, solvedState );
-    this.faceColorValidator = new FaceColorValidator( board, currentState, solvedState ); // TODO: naming discrepancies
-    this.sectorStateValidator = new SectorStateValidator( board, currentState, solvedState );
-    this.vertexStateValidator = new VertexStateValidator( board, currentState, solvedState );
-    this.faceStateValidator = new FaceStateValidator( board, currentState, solvedState );
+    this.edgeStateValidator = new EdgeStateValidator(board, currentState, solvedState);
+    this.faceValueValidator = new FaceValueValidator(board, currentState, solvedState);
+    this.simpleRegionDataValidator = new SimpleRegionValidator(board, currentState, solvedState);
+    this.faceColorValidator = new FaceColorValidator(board, currentState, solvedState); // TODO: naming discrepancies
+    this.sectorStateValidator = new SectorStateValidator(board, currentState, solvedState);
+    this.vertexStateValidator = new VertexStateValidator(board, currentState, solvedState);
+    this.faceStateValidator = new FaceStateValidator(board, currentState, solvedState);
   }
 
-  public getFaceValue( face: TFace ): FaceValue {
-    return this.faceValueValidator.getFaceValue( face );
+  public getFaceValue(face: TFace): FaceValue {
+    return this.faceValueValidator.getFaceValue(face);
   }
 
-  public setFaceValue( face: TFace, state: FaceValue ): void {
-    this.faceValueValidator.setFaceValue( face, state );
+  public setFaceValue(face: TFace, state: FaceValue): void {
+    this.faceValueValidator.setFaceValue(face, state);
   }
 
-  public get faceValueChangedEmitter(): TEmitter<[ TFace, FaceValue ]> {
+  public get faceValueChangedEmitter(): TEmitter<[TFace, FaceValue]> {
     return this.faceValueValidator.faceValueChangedEmitter;
   }
 
-  public getEdgeState( edge: TEdge ): EdgeState {
-    return this.edgeStateValidator.getEdgeState( edge );
+  public getEdgeState(edge: TEdge): EdgeState {
+    return this.edgeStateValidator.getEdgeState(edge);
   }
 
-  public setEdgeState( edge: TEdge, state: EdgeState ): void {
-    this.edgeStateValidator.setEdgeState( edge, state );
+  public setEdgeState(edge: TEdge, state: EdgeState): void {
+    this.edgeStateValidator.setEdgeState(edge, state);
   }
 
-  public get edgeStateChangedEmitter(): TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]> {
+  public get edgeStateChangedEmitter(): TEmitter<[edge: TEdge, state: EdgeState, oldState: EdgeState]> {
     return this.edgeStateValidator.edgeStateChangedEmitter;
   }
 
@@ -86,16 +81,16 @@ export class CompleteValidator implements TState<TCompleteData> {
     return this.simpleRegionDataValidator.getSimpleRegions();
   }
 
-  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
-    return this.simpleRegionDataValidator.getSimpleRegionWithVertex( vertex );
+  public getSimpleRegionWithVertex(vertex: TVertex): TSimpleRegion | null {
+    return this.simpleRegionDataValidator.getSimpleRegionWithVertex(vertex);
   }
 
-  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
-    return this.simpleRegionDataValidator.getSimpleRegionWithEdge( edge );
+  public getSimpleRegionWithEdge(edge: TEdge): TSimpleRegion | null {
+    return this.simpleRegionDataValidator.getSimpleRegionWithEdge(edge);
   }
 
-  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
-    return this.simpleRegionDataValidator.getSimpleRegionWithId( id );
+  public getSimpleRegionWithId(id: number): TSimpleRegion | null {
+    return this.simpleRegionDataValidator.getSimpleRegionWithId(id);
   }
 
   public getWeirdEdges(): TEdge[] {
@@ -106,17 +101,19 @@ export class CompleteValidator implements TState<TCompleteData> {
     addedRegions: MultiIterable<TSimpleRegion>,
     removedRegions: MultiIterable<TSimpleRegion>,
     addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
+    removedWeirdEdges: MultiIterable<TEdge>,
   ): void {
-    this.simpleRegionDataValidator.modifyRegions( addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges );
+    this.simpleRegionDataValidator.modifyRegions(addedRegions, removedRegions, addedWeirdEdges, removedWeirdEdges);
   }
 
-  public get simpleRegionsChangedEmitter(): TEmitter<[
-    addedRegions: MultiIterable<TSimpleRegion>,
-    removedRegions: MultiIterable<TSimpleRegion>,
-    addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
-  ]> {
+  public get simpleRegionsChangedEmitter(): TEmitter<
+    [
+      addedRegions: MultiIterable<TSimpleRegion>,
+      removedRegions: MultiIterable<TSimpleRegion>,
+      addedWeirdEdges: MultiIterable<TEdge>,
+      removedWeirdEdges: MultiIterable<TEdge>,
+    ]
+  > {
     return this.simpleRegionDataValidator.simpleRegionsChangedEmitter;
   }
 
@@ -132,20 +129,20 @@ export class CompleteValidator implements TState<TCompleteData> {
     return this.faceColorValidator.getOutsideColor();
   }
 
-  public getFaceColor( face: TFace ): TFaceColor {
-    return this.faceColorValidator.getFaceColor( face );
+  public getFaceColor(face: TFace): TFaceColor {
+    return this.faceColorValidator.getFaceColor(face);
   }
 
-  public getFacesWithColor( faceColor: TFaceColor ): TFace[] {
-    return this.faceColorValidator.getFacesWithColor( faceColor );
+  public getFacesWithColor(faceColor: TFaceColor): TFace[] {
+    return this.faceColorValidator.getFacesWithColor(faceColor);
   }
 
   public getFaceColorMap(): Map<TFace, TFaceColor> {
     return this.faceColorValidator.getFaceColorMap();
   }
 
-  public getOppositeFaceColor( faceColor: TFaceColor ): TFaceColor | null {
-    return this.faceColorValidator.getOppositeFaceColor( faceColor );
+  public getOppositeFaceColor(faceColor: TFaceColor): TFaceColor | null {
+    return this.faceColorValidator.getOppositeFaceColor(faceColor);
   }
 
   public hasInvalidFaceColors(): boolean {
@@ -157,53 +154,61 @@ export class CompleteValidator implements TState<TCompleteData> {
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
     oppositeChangeMap: Map<TFaceColor, TFaceColor>,
-    invalidFaceColor: boolean
+    invalidFaceColor: boolean,
   ): void {
-    this.faceColorValidator.modifyFaceColors( addedFaceColors, removedFaceColors, faceChangeMap, oppositeChangeMap, invalidFaceColor );
+    this.faceColorValidator.modifyFaceColors(
+      addedFaceColors,
+      removedFaceColors,
+      faceChangeMap,
+      oppositeChangeMap,
+      invalidFaceColor,
+    );
   }
 
-  public get faceColorsChangedEmitter(): TEmitter<[
-    addedFaceColors: MultiIterable<TFaceColor>,
-    removedFaceColors: MultiIterable<TFaceColor>,
-    oppositeChangedFaceColors: MultiIterable<TFaceColor>,
-    changedFaces: MultiIterable<TFace>,
-  ]> {
+  public get faceColorsChangedEmitter(): TEmitter<
+    [
+      addedFaceColors: MultiIterable<TFaceColor>,
+      removedFaceColors: MultiIterable<TFaceColor>,
+      oppositeChangedFaceColors: MultiIterable<TFaceColor>,
+      changedFaces: MultiIterable<TFace>,
+    ]
+  > {
     return this.faceColorValidator.faceColorsChangedEmitter;
   }
 
-  public getSectorState( sector: TSector ): SectorState {
-    return this.sectorStateValidator.getSectorState( sector );
+  public getSectorState(sector: TSector): SectorState {
+    return this.sectorStateValidator.getSectorState(sector);
   }
 
-  public setSectorState( sector: TSector, state: SectorState ): void {
-    this.sectorStateValidator.setSectorState( sector, state );
+  public setSectorState(sector: TSector, state: SectorState): void {
+    this.sectorStateValidator.setSectorState(sector, state);
   }
 
-  public get sectorStateChangedEmitter(): TEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]> {
+  public get sectorStateChangedEmitter(): TEmitter<[edge: TSector, state: SectorState, oldState: SectorState]> {
     return this.sectorStateValidator.sectorStateChangedEmitter;
   }
 
-  public getVertexState( vertex: TVertex ): VertexState {
-    return this.vertexStateValidator.getVertexState( vertex );
+  public getVertexState(vertex: TVertex): VertexState {
+    return this.vertexStateValidator.getVertexState(vertex);
   }
 
-  public setVertexState( vertex: TVertex, state: VertexState ): void {
-    this.vertexStateValidator.setVertexState( vertex, state );
+  public setVertexState(vertex: TVertex, state: VertexState): void {
+    this.vertexStateValidator.setVertexState(vertex, state);
   }
 
-  public get vertexStateChangedEmitter(): TEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]> {
+  public get vertexStateChangedEmitter(): TEmitter<[vertex: TVertex, state: VertexState, oldState: VertexState]> {
     return this.vertexStateValidator.vertexStateChangedEmitter;
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.faceStateValidator.getFaceState( face );
+  public getFaceState(face: TFace): FaceState {
+    return this.faceStateValidator.getFaceState(face);
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    this.faceStateValidator.setFaceState( face, state );
+  public setFaceState(face: TFace, state: FaceState): void {
+    this.faceStateValidator.setFaceState(face, state);
   }
 
-  public get faceStateChangedEmitter(): TEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]> {
+  public get faceStateChangedEmitter(): TEmitter<[face: TFace, state: FaceState, oldState: FaceState]> {
     return this.faceStateValidator.faceStateChangedEmitter;
   }
 
@@ -215,7 +220,7 @@ export class CompleteValidator implements TState<TCompleteData> {
     return this as unknown as TDelta<TCompleteData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedCompleteData {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedCompleteData {
+    throw new Error('unimplemented');
   }
 }

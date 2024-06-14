@@ -8,26 +8,25 @@ import { logicNot, logicOr } from '../../logic/operations.ts';
 
 export class PatternBoardSolver {
   private readonly solver: FormulaSolver<TPatternEdge> = new FormulaSolver();
-  private readonly getFormula: ( edge: TPatternEdge ) => Term<TPatternEdge>;
+  private readonly getFormula: (edge: TPatternEdge) => Term<TPatternEdge>;
 
-  public constructor( patternBoard: TPatternBoard ) {
-    this.getFormula = ( edge: TPatternEdge ) => new Term<TPatternEdge>( edge, `e${edge.index}` );
+  public constructor(patternBoard: TPatternBoard) {
+    this.getFormula = (edge: TPatternEdge) => new Term<TPatternEdge>(edge, `e${edge.index}`);
 
-    for ( const feature of getStructuralFeatures( patternBoard ) ) {
-      this.addFeature( feature );
+    for (const feature of getStructuralFeatures(patternBoard)) {
+      this.addFeature(feature);
     }
 
     // We need to inform it of our one edge
-    if ( patternBoard.vertices.length === 0 ) {
-      this.solver.addFormula( logicOr( [
-        this.getFormula( patternBoard.edges[ 0 ] ),
-        logicNot( this.getFormula( patternBoard.edges[ 0 ] ) )
-      ] ) );
+    if (patternBoard.vertices.length === 0) {
+      this.solver.addFormula(
+        logicOr([this.getFormula(patternBoard.edges[0]), logicNot(this.getFormula(patternBoard.edges[0]))]),
+      );
     }
   }
 
-  public addFeature( feature: TFeature ): void {
-    this.solver.addFormula( feature.getPossibleFormula( this.getFormula ) );
+  public addFeature(feature: TFeature): void {
+    this.solver.addFormula(feature.getPossibleFormula(this.getFormula));
   }
 
   public getNextSolution(): TPatternEdge[] | null {
@@ -37,13 +36,12 @@ export class PatternBoardSolver {
   public getRemainingSolutions(): TPatternEdge[][] {
     const result: TPatternEdge[][] = [];
 
-    while ( true ) {
+    while (true) {
       const solution = this.getNextSolution();
 
-      if ( solution ) {
-        result.push( solution );
-      }
-      else {
+      if (solution) {
+        result.push(solution);
+      } else {
         break;
       }
     }
@@ -54,54 +52,53 @@ export class PatternBoardSolver {
   public static forEachSolution(
     patternBoard: TPatternBoard,
     features: TFeature[],
-    callback: ( solution: TPatternEdge[] ) => void
+    callback: (solution: TPatternEdge[]) => void,
   ): void {
-    const solver = new PatternBoardSolver( patternBoard );
+    const solver = new PatternBoardSolver(patternBoard);
 
-    for ( const feature of features ) {
-      solver.addFeature( feature );
+    for (const feature of features) {
+      solver.addFeature(feature);
     }
 
-    while ( true ) {
+    while (true) {
       // TODO: figure out if we should expose this for debugging (helps)
       // console.log( solver.solver.solver._clauseStrings() );
 
       const solution = solver.getNextSolution();
 
-      if ( solution ) {
-        callback( solution );
-      }
-      else {
+      if (solution) {
+        callback(solution);
+      } else {
         break;
       }
     }
   }
 
-  public static countSolutions( patternBoard: TPatternBoard, features: TFeature[] ): number {
+  public static countSolutions(patternBoard: TPatternBoard, features: TFeature[]): number {
     let count = 0;
 
-    PatternBoardSolver.forEachSolution( patternBoard, features, () => {
+    PatternBoardSolver.forEachSolution(patternBoard, features, () => {
       count++;
-    } );
+    });
 
     return count;
   }
 
-  public static getSolutions( patternBoard: TPatternBoard, features: TFeature[] ): TPatternEdge[][] {
-    const solver = new PatternBoardSolver( patternBoard );
+  public static getSolutions(patternBoard: TPatternBoard, features: TFeature[]): TPatternEdge[][] {
+    const solver = new PatternBoardSolver(patternBoard);
 
-    for ( const feature of features ) {
-      solver.addFeature( feature );
+    for (const feature of features) {
+      solver.addFeature(feature);
     }
 
     return solver.getRemainingSolutions();
   }
 
-  public static hasSolution( patternBoard: TPatternBoard, features: TFeature[] ): boolean {
-    const solver = new PatternBoardSolver( patternBoard );
+  public static hasSolution(patternBoard: TPatternBoard, features: TFeature[]): boolean {
+    const solver = new PatternBoardSolver(patternBoard);
 
-    for ( const feature of features ) {
-      solver.addFeature( feature );
+    for (const feature of features) {
+      solver.addFeature(feature);
     }
 
     return solver.getNextSolution() !== null;

@@ -22,7 +22,7 @@ MiniSat = function () {
   //
   // See the README in the meteor/minisat repo for more notes about
   // our build of MiniSat.
-  var C = this._C = C_MINISAT();
+  var C = (this._C = C_MINISAT());
 
   this._native = {
     getStackPointer: function () {
@@ -44,7 +44,7 @@ MiniSat = function () {
       } finally {
         this.setStackPointer(SP);
       }
-    }
+    },
   };
 
   C._createTheSolver();
@@ -52,7 +52,6 @@ MiniSat = function () {
   // useful log for debugging and testing
   this._clauses = [];
 };
-
 
 // Make sure MiniSat has allocated space in its model for v,
 // even if v is unused.  If we have variables A,B,C,D which
@@ -70,11 +69,11 @@ MiniSat.prototype.ensureVar = function (v) {
 MiniSat.prototype.addClause = function (terms) {
   this._clauses.push(terms);
   return this._native.savingStack(function (native, C) {
-    var termsPtr = C.allocate((terms.length+1)*4, 'i32', C.ALLOC_STACK);
+    var termsPtr = C.allocate((terms.length + 1) * 4, 'i32', C.ALLOC_STACK);
     _.each(terms, function (t, i) {
-      C.setValue(termsPtr + i*4, t, 'i32');
+      C.setValue(termsPtr + i * 4, t, 'i32');
     });
-    C.setValue(termsPtr + terms.length*4, 0, 'i32'); // 0-terminate
+    C.setValue(termsPtr + terms.length * 4, 0, 'i32'); // 0-terminate
     return C._addClause(termsPtr) ? true : false;
   });
 };
@@ -98,7 +97,7 @@ MiniSat.prototype.getSolution = function () {
     // true, false, and undetermined.  It doesn't distinguish
     // between "false" and "undetermined" in solutions though
     // (I think it sets undetermined variables to false).
-    solution[i+1] = (C.getValue(solPtr+i, 'i8') === 0);
+    solution[i + 1] = C.getValue(solPtr + i, 'i8') === 0;
   }
   return solution;
 };
@@ -118,9 +117,9 @@ MiniSat.prototype.getConflictClause = function () {
   var clausePtr = C._getConflictClause();
   var terms = [];
   for (var i = 0; i < numTerms; i++) {
-    var t = C.getValue(clausePtr + i*4, 'i32');
-    var v = (t >>> 1);
-    var s = (t & 1) ? -1 : 1;
+    var t = C.getValue(clausePtr + i * 4, 'i32');
+    var v = t >>> 1;
+    var s = t & 1 ? -1 : 1;
     terms[i] = v * s;
   }
   return terms;

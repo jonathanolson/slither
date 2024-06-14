@@ -23,40 +23,43 @@ export const getFeatureSetClosure = (
 
   const patternBoard = featureSet.patternBoard;
 
-  const binaryFeatureMap = new BinaryFeatureMap( patternBoard, solutionOptions );
+  const binaryFeatureMap = new BinaryFeatureMap(patternBoard, solutionOptions);
   const numAttributes = binaryFeatureMap.numAttributes;
-  const patternBits = binaryFeatureMap.getFeatureSetBits( featureSet );
+  const patternBits = binaryFeatureMap.getFeatureSetBits(featureSet);
 
   let inputSolveFeatures = highlander ? featureSet.getHighlanderFeaturesArray() : featureSet.getFeaturesArray();
 
-  const solutions = PatternBoardSolver.getSolutions( patternBoard, inputSolveFeatures );
-  let richSolutions = solutions.map( solution => new RichSolution( patternBoard, binaryFeatureMap, solution, solutionOptions.highlander ) );
+  const solutions = PatternBoardSolver.getSolutions(patternBoard, inputSolveFeatures);
+  let richSolutions = solutions.map(
+    (solution) => new RichSolution(patternBoard, binaryFeatureMap, solution, solutionOptions.highlander),
+  );
 
-  if ( highlander ) {
-    richSolutions = HighlanderPruner.filterWithFeatureSet( richSolutions, featureSet );
+  if (highlander) {
+    richSolutions = HighlanderPruner.filterWithFeatureSet(richSolutions, featureSet);
   }
-  const closureBits = SolutionAttributeSet.solutionClosure( numAttributes, richSolutions.map( richSolution => richSolution.solutionAttributeSet ), patternBits );
+  const closureBits = SolutionAttributeSet.solutionClosure(
+    numAttributes,
+    richSolutions.map((richSolution) => richSolution.solutionAttributeSet),
+    patternBits,
+  );
 
-  const outputFeatureSetChanges = binaryFeatureMap.getBitsFeatureSet( closureBits );
+  const outputFeatureSetChanges = binaryFeatureMap.getBitsFeatureSet(closureBits);
 
-  if ( outputFeatureSetChanges ) {
+  if (outputFeatureSetChanges) {
     const outputFeatureSet = featureSet.clone();
 
     try {
-      outputFeatureSet.applyFeaturesFrom( outputFeatureSetChanges );
-    }
-    catch ( e ) {
-      if ( e instanceof IncompatibleFeatureError ) {
+      outputFeatureSet.applyFeaturesFrom(outputFeatureSetChanges);
+    } catch (e) {
+      if (e instanceof IncompatibleFeatureError) {
         return null;
-      }
-      else {
+      } else {
         throw e;
       }
     }
 
     return outputFeatureSet;
-  }
-  else {
+  } else {
     return null;
   }
 };

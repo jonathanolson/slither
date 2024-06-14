@@ -2,7 +2,7 @@ import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { isAnnotationDisplayed } from './isAnnotationDisplayed.ts';
 
-export const isAnnotationDisplayedForStyle = ( annotation: TAnnotation, style: TPuzzleStyle ): boolean => {
+export const isAnnotationDisplayedForStyle = (annotation: TAnnotation, style: TPuzzleStyle): boolean => {
   return isAnnotationDisplayed(
     annotation,
     style.allowEdgeEditProperty.value,
@@ -12,4 +12,3 @@ export const isAnnotationDisplayedForStyle = ( annotation: TAnnotation, style: T
     style.faceStateVisibleProperty.value,
   );
 };
-

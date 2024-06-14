@@ -17,7 +17,6 @@ import { VertexStateSetAction } from '../data/vertex-state/VertexStateSetAction.
 type Data = TVertexStateData & TFaceStateData;
 
 export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private readonly dirtyFaces: TFace[] = [];
 
   private readonly faceListener: TFaceStateListener;
@@ -25,19 +24,18 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    dirtyFaces?: TFace[]
+    dirtyFaces?: TFace[],
   ) {
-    if ( dirtyFaces ) {
-      this.dirtyFaces.push( ...dirtyFaces );
-    }
-    else {
-      this.dirtyFaces.push( ...board.faces );
+    if (dirtyFaces) {
+      this.dirtyFaces.push(...dirtyFaces);
+    } else {
+      this.dirtyFaces.push(...board.faces);
     }
 
-    this.faceListener = ( face: TFace ) => {
-      this.dirtyFaces.push( face );
+    this.faceListener = (face: TFace) => {
+      this.dirtyFaces.push(face);
     };
-    this.state.faceStateChangedEmitter.addListener( this.faceListener );
+    this.state.faceStateChangedEmitter.addListener(this.faceListener);
   }
 
   public get dirty(): boolean {
@@ -45,32 +43,34 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    while ( this.dirtyFaces.length ) {
+    while (this.dirtyFaces.length) {
       const face = this.dirtyFaces.pop()!;
 
-      const faceState = this.state.getFaceState( face );
+      const faceState = this.state.getFaceState(face);
 
-      if ( faceState.possibilityCount === 0 ) {
-        throw new InvalidStateError( 'Face has no possibilities' );
+      if (faceState.possibilityCount === 0) {
+        throw new InvalidStateError('Face has no possibilities');
       }
 
-      const oldVertexStates = face.vertices.map( vertex => this.state.getVertexState( vertex ) );
-      const oldBinaryCombinations: TaggedBinaryCombinations[] = oldVertexStates.map( vertexState => {
-        const edges = vertexState.vertex.edges.filter( edge => edge.faces.includes( face ) );
-        assertEnabled() && assert( edges.length === 2 );
+      const oldVertexStates = face.vertices.map((vertex) => this.state.getVertexState(vertex));
+      const oldBinaryCombinations: TaggedBinaryCombinations[] = oldVertexStates.map((vertexState) => {
+        const edges = vertexState.vertex.edges.filter((edge) => edge.faces.includes(face));
+        assertEnabled() && assert(edges.length === 2);
 
         return {
           vertex: vertexState.vertex,
           vertexState: vertexState,
-          edgeA: edges[ 0 ],
-          edgeB: edges[ 1 ],
-          ...vertexState.getBinaryCombinationsAllowed( edges[ 0 ], edges[ 1 ] )
+          edgeA: edges[0],
+          edgeB: edges[1],
+          ...vertexState.getBinaryCombinationsAllowed(edges[0], edges[1]),
         };
-      } );
+      });
 
-      const newBinaryCombinations: TaggedBinaryCombinations[] = oldBinaryCombinations.map( oldBinaryCombination => {
+      const newBinaryCombinations: TaggedBinaryCombinations[] = oldBinaryCombinations.map((oldBinaryCombination) => {
         return {
           vertex: oldBinaryCombination.vertex,
           vertexState: oldBinaryCombination.vertexState,
@@ -83,32 +83,32 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
           allowsAOnly: false,
           allowsBOnly: false,
         };
-      } );
+      });
 
-      for ( const blackEdges of faceState.getAllowedCombinations() ) {
-        for ( const binaryCombination of newBinaryCombinations ) {
-          const hasA = blackEdges.includes( binaryCombination.edgeA );
-          const hasB = blackEdges.includes( binaryCombination.edgeB );
+      for (const blackEdges of faceState.getAllowedCombinations()) {
+        for (const binaryCombination of newBinaryCombinations) {
+          const hasA = blackEdges.includes(binaryCombination.edgeA);
+          const hasB = blackEdges.includes(binaryCombination.edgeB);
 
-          if ( hasA && hasB ) {
+          if (hasA && hasB) {
             binaryCombination.allowsBoth = true;
           }
-          if ( hasA && !hasB ) {
+          if (hasA && !hasB) {
             binaryCombination.allowsAOnly = true;
           }
-          if ( !hasA && hasB ) {
+          if (!hasA && hasB) {
             binaryCombination.allowsBOnly = true;
           }
-          if ( !hasA && !hasB ) {
+          if (!hasA && !hasB) {
             binaryCombination.allowsNone = true;
           }
         }
       }
 
       const changedVertexStates: VertexState[] = [];
-      for ( let i = 0; i < newBinaryCombinations.length; i++ ) {
-        const oldBinaryCombination = oldBinaryCombinations[ i ];
-        const newBinaryCombination = newBinaryCombinations[ i ];
+      for (let i = 0; i < newBinaryCombinations.length; i++) {
+        const oldBinaryCombination = oldBinaryCombinations[i];
+        const newBinaryCombination = newBinaryCombinations[i];
 
         // Include prior data
         newBinaryCombination.allowsBoth &&= oldBinaryCombination.allowsBoth;
@@ -126,66 +126,70 @@ export class FaceToVertexSolver implements TSolver<Data, TAnnotatedAction<Data>>
 
           const newVertexState = VertexState.fromLookup(
             oldBinaryCombination.vertex,
-            ( a, b ) => {
-              const oldResult = oldVertexState.allowsPair( a, b );
+            (a, b) => {
+              const oldResult = oldVertexState.allowsPair(a, b);
 
               // If we were excluded before, we are still excluded
-              if ( !oldResult ) {
+              if (!oldResult) {
                 return false;
               }
 
               const hasA = a === newBinaryCombination.edgeA || b === newBinaryCombination.edgeA;
               const hasB = a === newBinaryCombination.edgeB || b === newBinaryCombination.edgeB;
 
-              if ( hasA && hasB ) {
+              if (hasA && hasB) {
                 return newBinaryCombination.allowsBoth;
-              }
-              else if ( hasA && !hasB ) {
+              } else if (hasA && !hasB) {
                 return newBinaryCombination.allowsAOnly;
-              }
-              else if ( !hasA && hasB ) {
+              } else if (!hasA && hasB) {
                 return newBinaryCombination.allowsBOnly;
-              }
-              else if ( !hasA && !hasB ) {
+              } else if (!hasA && !hasB) {
                 return newBinaryCombination.allowsNone;
-              }
-              else {
-                throw new Error( 'Unreachable' );
+              } else {
+                throw new Error('Unreachable');
               }
             },
-            oldVertexState.allowsEmpty() && newBinaryCombination.allowsNone
+            oldVertexState.allowsEmpty() && newBinaryCombination.allowsNone,
           );
 
-          assertEnabled() && assert( newVertexState.isSubsetOf( oldVertexState ) );
+          assertEnabled() && assert(newVertexState.isSubsetOf(oldVertexState));
 
-          if ( !oldVertexState.equals( newVertexState ) ) {
-            changedVertexStates.push( newVertexState );
+          if (!oldVertexState.equals(newVertexState)) {
+            changedVertexStates.push(newVertexState);
           }
         }
       }
 
-      if ( changedVertexStates.length ) {
-        return new AnnotatedAction( new CompositeAction( changedVertexStates.map( vertexState => {
-          return new VertexStateSetAction( vertexState.vertex, vertexState );
-        } ) ), {
-          type: 'FaceStateToVertexState',
-          face: face,
-          vertices: changedVertexStates.map( vertexState => vertexState.vertex ),
-          beforeStates: changedVertexStates.map( vertexState => oldVertexStates.find( oldVertexState => oldVertexState.vertex === vertexState.vertex )! ),
-          afterStates: changedVertexStates,
-        }, this.board );
+      if (changedVertexStates.length) {
+        return new AnnotatedAction(
+          new CompositeAction(
+            changedVertexStates.map((vertexState) => {
+              return new VertexStateSetAction(vertexState.vertex, vertexState);
+            }),
+          ),
+          {
+            type: 'FaceStateToVertexState',
+            face: face,
+            vertices: changedVertexStates.map((vertexState) => vertexState.vertex),
+            beforeStates: changedVertexStates.map(
+              (vertexState) => oldVertexStates.find((oldVertexState) => oldVertexState.vertex === vertexState.vertex)!,
+            ),
+            afterStates: changedVertexStates,
+          },
+          this.board,
+        );
       }
     }
 
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): FaceToVertexSolver {
-    return new FaceToVertexSolver( this.board, equivalentState, this.dirtyFaces );
+  public clone(equivalentState: TState<Data>): FaceToVertexSolver {
+    return new FaceToVertexSolver(this.board, equivalentState, this.dirtyFaces);
   }
 
   public dispose(): void {
-    this.state.faceStateChangedEmitter.removeListener( this.faceListener );
+    this.state.faceStateChangedEmitter.removeListener(this.faceListener);
   }
 }
 

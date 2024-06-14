@@ -8,7 +8,6 @@ import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 
 // TODO: we have some duplication, ideally factor out the PerElementData/PerElementAction/PerElementDelta
 export class GeneralSimpleRegion implements TSimpleRegion {
-
   public readonly edges: TEdge[];
   public readonly a: TVertex;
   public readonly b: TVertex;
@@ -16,25 +15,25 @@ export class GeneralSimpleRegion implements TSimpleRegion {
   public constructor(
     public readonly id: number,
     public readonly halfEdges: THalfEdge[],
-    public readonly isSolved: boolean = false
+    public readonly isSolved: boolean = false,
   ) {
-    this.a = halfEdges[ 0 ].start;
-    this.b = halfEdges[ halfEdges.length - 1 ].end;
-    this.edges = halfEdges.map( halfEdge => halfEdge.edge );
+    this.a = halfEdges[0].start;
+    this.b = halfEdges[halfEdges.length - 1].end;
+    this.edges = halfEdges.map((halfEdge) => halfEdge.edge);
 
-    if ( assertEnabled() ) {
-      assert( halfEdges.length > 0 );
-      for ( let i = 0; i < halfEdges.length - 1; i++ ) {
-        assert( halfEdges[ i ].end === halfEdges[ i + 1 ].start );
+    if (assertEnabled()) {
+      assert(halfEdges.length > 0);
+      for (let i = 0; i < halfEdges.length - 1; i++) {
+        assert(halfEdges[i].end === halfEdges[i + 1].start);
       }
     }
   }
 
-  public static deserializeSimpleRegion( board: TBoard, serializedSimpleRegion: TSerializedSimpleRegion ): TSimpleRegion {
+  public static deserializeSimpleRegion(board: TBoard, serializedSimpleRegion: TSerializedSimpleRegion): TSimpleRegion {
     return new GeneralSimpleRegion(
       serializedSimpleRegion.id,
-      serializedSimpleRegion.halfEdges.map( halfEdge => deserializeHalfEdge( board, halfEdge ) ),
-      serializedSimpleRegion.isSolved
+      serializedSimpleRegion.halfEdges.map((halfEdge) => deserializeHalfEdge(board, halfEdge)),
+      serializedSimpleRegion.isSolved,
     );
   }
 }

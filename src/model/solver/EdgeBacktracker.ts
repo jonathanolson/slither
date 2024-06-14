@@ -20,7 +20,7 @@ import { standardSolverFactory } from './standardSolverFactory.ts';
 export type EdgeBacktrackData = TEdgeStateData & TSimpleRegionData;
 
 export type BacktrackOptions<Data extends EdgeBacktrackData> = {
-  solutionCallback( state: TState<Data> ): void;
+  solutionCallback(state: TState<Data>): void;
   depth: number | null;
 };
 
@@ -30,36 +30,32 @@ export const edgeBacktrack = <Data extends EdgeBacktrackData>(
   state: TState<Data>,
   solver: TSolver<Data, TAction<Data>>,
   options: BacktrackOptions<Data>,
-  depth: number = 0
+  depth: number = 0,
 ) => {
   try {
-    iterateSolver( solver, state );
-  }
-  catch ( e ) {
-    if ( e instanceof InvalidStateError ) {
+    iterateSolver(solver, state);
+  } catch (e) {
+    if (e instanceof InvalidStateError) {
       // TODO: make sure our solvers aren't needing disposal? (we ditch the state/delta AND the solver, so no other refs?)
       return;
-    }
-    else {
+    } else {
       throw e;
     }
   }
 
-  if ( simpleRegionIsSolved( state ) ) {
-    options.solutionCallback( state );
-  }
-  else if ( options.depth === null || depth < options.depth ) {
-
-    const whiteEdge = board.edges.find( edge => state.getEdgeState( edge ) === EdgeState.WHITE );
-    if ( whiteEdge ) {
-      for ( const edgeState of [ EdgeState.BLACK, EdgeState.RED ] ) {
+  if (simpleRegionIsSolved(state)) {
+    options.solutionCallback(state);
+  } else if (options.depth === null || depth < options.depth) {
+    const whiteEdge = board.edges.find((edge) => state.getEdgeState(edge) === EdgeState.WHITE);
+    if (whiteEdge) {
+      for (const edgeState of [EdgeState.BLACK, EdgeState.RED]) {
         const delta = state.createDelta();
-        const subSolver = solver.clone( delta );
+        const subSolver = solver.clone(delta);
 
         // NOTE: set state AFTER cloning subSolver
-        delta.setEdgeState( whiteEdge, edgeState );
+        delta.setEdgeState(whiteEdge, edgeState);
 
-        edgeBacktrack( board, delta, subSolver, options, depth + 1 );
+        edgeBacktrack(board, delta, subSolver, options, depth + 1);
       }
     }
   }
@@ -73,39 +69,32 @@ export type GetBacktrackedSolutionsOptions = {
 export const getBacktrackedSolutions = <Data extends TCompleteData>(
   board: TBoard,
   state: TState<Data>,
-  options: GetBacktrackedSolutionsOptions
+  options: GetBacktrackedSolutionsOptions,
 ): TState<Data>[] => {
   const initialState = state.clone();
 
   const solverFactory = options.useEdgeBacktrackerSolver ? backtrackerSolverFactory : standardSolverFactory;
-  const initialSolver = solverFactory( board, state, true );
+  const initialSolver = solverFactory(board, state, true);
 
   const solutions: TState<Data>[] = [];
   const multipleSolutions: TEdge[][] = [];
 
   try {
-    edgeBacktrack<Data>(
-      board,
-      initialState,
-      initialSolver,
-      {
-        solutionCallback: solutionState => {
-          solutions.push( solutionState );
-          multipleSolutions.push( solutionState.getSimpleRegions()[ 0 ].edges );
+    edgeBacktrack<Data>(board, initialState, initialSolver, {
+      solutionCallback: (solutionState) => {
+        solutions.push(solutionState);
+        multipleSolutions.push(solutionState.getSimpleRegions()[0].edges);
 
-          if ( solutions.length === 1 && options.failOnMultipleSolutions ) {
-            throw new MultipleSolutionsError( multipleSolutions );
-          }
-        },
-        depth: null
-      }
-    );
-  }
-  catch ( e ) {
-    if ( e instanceof MultipleSolutionsError ) {
-      throw new InvalidStateError( 'Multiple solutions found' );
-    }
-    else {
+        if (solutions.length === 1 && options.failOnMultipleSolutions) {
+          throw new MultipleSolutionsError(multipleSolutions);
+        }
+      },
+      depth: null,
+    });
+  } catch (e) {
+    if (e instanceof MultipleSolutionsError) {
+      throw new InvalidStateError('Multiple solutions found');
+    } else {
       throw e;
     }
   }
@@ -121,7 +110,6 @@ export type EdgeBacktrackSolverOptions<Data extends EdgeBacktrackSolverData> = {
 };
 
 export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> implements TSolver<Data, TAction<Data>> {
-
   private isDirty: boolean = true;
   private readonly solver: TSolver<Data, TAction<Data>>;
 
@@ -130,25 +118,24 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    private readonly options: EdgeBacktrackSolverOptions<Data>
+    private readonly options: EdgeBacktrackSolverOptions<Data>,
   ) {
     // to support more depth, we can recursively create EdgeBacktrackerSolvers.
     // TODO: for performance, this probably isn't great (since we're copying solvers more freely?)
-    if ( options.depth === 1 ) {
-      this.solver = options.solverFactory( board, state, true );
-    }
-    else {
-      this.solver = new EdgeBacktrackerSolver( board, state, {
+    if (options.depth === 1) {
+      this.solver = options.solverFactory(board, state, true);
+    } else {
+      this.solver = new EdgeBacktrackerSolver(board, state, {
         solverFactory: options.solverFactory,
-        depth: options.depth - 1
-      } );
+        depth: options.depth - 1,
+      });
     }
 
     this.anyChangeListener = () => {
       this.isDirty = true;
     };
 
-    this.state.anyStateChangedEmitter.addListener( this.anyChangeListener );
+    this.state.anyStateChangedEmitter.addListener(this.anyChangeListener);
   }
 
   public get dirty(): boolean {
@@ -156,15 +143,17 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
   }
 
   public nextAction(): TAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
     // actions we take might make us dirty again.
     this.isDirty = false;
 
     // First, we'll just run our main solver
-    if ( this.solver.dirty ) {
+    if (this.solver.dirty) {
       const action = this.solver.nextAction();
-      if ( action ) {
+      if (action) {
         return action;
       }
     }
@@ -172,67 +161,66 @@ export class EdgeBacktrackerSolver<Data extends EdgeBacktrackSolverData> impleme
     // If that is clean...
     // TODO: potentially more coherency!!! (check where the last edges were set?)
     // TODO: or at least spatial coherency
-    const whiteEdges = this.board.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+    const whiteEdges = this.board.edges.filter((edge) => this.state.getEdgeState(edge) === EdgeState.WHITE);
 
     // TODO: generalize the "find shared state" ability!!!!
 
-    for ( const whiteEdge of whiteEdges ) {
+    for (const whiteEdge of whiteEdges) {
       const states: TDelta<Data>[] = [];
 
-      for ( const edgeState of [ EdgeState.BLACK, EdgeState.RED ] ) {
+      for (const edgeState of [EdgeState.BLACK, EdgeState.RED]) {
         // console.log( whiteEdges.indexOf( whiteEdge ), edgeState );
 
         const delta = this.state.createDelta();
-        const subSolver = this.solver.clone( delta );
+        const subSolver = this.solver.clone(delta);
 
         // NOTE: set state AFTER cloning subSolver
-        delta.setEdgeState( whiteEdge, edgeState );
+        delta.setEdgeState(whiteEdge, edgeState);
 
         // TODO: if we run across a solution... IMMEDIATELY apply it!!!!
 
         try {
-          iterateSolver( subSolver, delta );
-        }
-        catch ( e ) {
-          if ( e instanceof InvalidStateError ) {
+          iterateSolver(subSolver, delta);
+        } catch (e) {
+          if (e instanceof InvalidStateError) {
             // We ran into an error in one path, so we NEED to take the other path!
-            return new EdgeStateSetAction( whiteEdge, edgeState === EdgeState.BLACK ? EdgeState.RED : EdgeState.BLACK );
-          }
-          else {
+            return new EdgeStateSetAction(whiteEdge, edgeState === EdgeState.BLACK ? EdgeState.RED : EdgeState.BLACK);
+          } else {
             throw e;
           }
         }
 
-        states.push( delta );
+        states.push(delta);
       }
 
       // inspect for commonalities
       const commonActions: TAction<Data>[] = [];
-      for ( const otherWhiteEdge of whiteEdges ) {
-        if ( otherWhiteEdge === whiteEdge ) {
+      for (const otherWhiteEdge of whiteEdges) {
+        if (otherWhiteEdge === whiteEdge) {
           continue;
         }
 
-        const edgeState0 = states[ 0 ].getEdgeState( otherWhiteEdge );
-        const edgeState1 = states[ 1 ].getEdgeState( otherWhiteEdge );
+        const edgeState0 = states[0].getEdgeState(otherWhiteEdge);
+        const edgeState1 = states[1].getEdgeState(otherWhiteEdge);
 
-        if ( edgeState0 === edgeState1 && edgeState0 !== EdgeState.WHITE ) {
-          commonActions.push( new EdgeStateSetAction( otherWhiteEdge, edgeState0 ) );
+        if (edgeState0 === edgeState1 && edgeState0 !== EdgeState.WHITE) {
+          commonActions.push(new EdgeStateSetAction(otherWhiteEdge, edgeState0));
         }
       }
-      if ( commonActions.length ) {
-        return new CompositeAction( commonActions );
+      if (commonActions.length) {
+        return new CompositeAction(commonActions);
       }
     }
 
     return null;
   }
-  public clone( equivalentState: TState<Data> ): EdgeBacktrackerSolver<Data> {
-    return new EdgeBacktrackerSolver( this.board, equivalentState, this.options );
+
+  public clone(equivalentState: TState<Data>): EdgeBacktrackerSolver<Data> {
+    return new EdgeBacktrackerSolver(this.board, equivalentState, this.options);
   }
 
   public dispose(): void {
     this.solver.dispose();
-    this.state.anyStateChangedEmitter.removeListener( this.anyChangeListener );
+    this.state.anyStateChangedEmitter.removeListener(this.anyChangeListener);
   }
 }

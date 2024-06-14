@@ -19,14 +19,13 @@ export class FaceViewNode extends Node {
     public readonly board: TBoard,
     stateProperty: TReadOnlyProperty<TState<TFaceValueData & TEdgeStateData>>,
     style: TPuzzleStyle,
-    options?: FaceViewNodeOptions
+    options?: FaceViewNodeOptions,
   ) {
-
-    super( {
+    super({
       pickable: false,
-    } );
+    });
 
-    const faceValues: FaceValue[] = board.faces.map( face => null ); // won't display anyway, good starting configuration
+    const faceValues: FaceValue[] = board.faces.map((face) => null); // won't display anyway, good starting configuration
 
     // TODO: can we actually re-use FaceNode?
 
@@ -44,73 +43,70 @@ export class FaceViewNode extends Node {
 
       this.visible = !faceStateVisible;
 
-      for ( let i = 0; i < board.faces.length; i++ ) {
-        const faceValue = faceValues[ i ];
+      for (let i = 0; i < board.faces.length; i++) {
+        const faceValue = faceValues[i];
 
-        if ( faceValue !== null ) {
-          const face = board.faces[ i ];
+        if (faceValue !== null) {
+          const face = board.faces[i];
 
-          const text = new RichText( '', combineOptions<RichTextOptions>( {
-            subScale: 0.7
-          }, options?.textOptions ) );
+          const text = new RichText(
+            '',
+            combineOptions<RichTextOptions>(
+              {
+                subScale: 0.7,
+              },
+              options?.textOptions,
+            ),
+          );
 
           // NOTE: We are going to set up a link so we can CHECK our coloring state (so we don't toss text instances)
-          const multilink = Multilink.multilink( [ stateProperty ], state => {
+          const multilink = Multilink.multilink([stateProperty], (state) => {
             let string: string;
             let fill: TColor;
 
             let usingRemaining = false;
             let usingRatio = false;
 
-            if ( faceValue === null ) {
+            if (faceValue === null) {
               string = '';
               fill = null;
-            }
-            else {
+            } else {
               let blackCount = 0;
               let whiteCount = 0;
-              for ( const edge of face.edges ) {
-                const edgeState = state.getEdgeState( edge );
-                if ( edgeState === EdgeState.BLACK ) {
+              for (const edge of face.edges) {
+                const edgeState = state.getEdgeState(edge);
+                if (edgeState === EdgeState.BLACK) {
                   blackCount++;
-                }
-                else if ( edgeState === EdgeState.WHITE ) {
+                } else if (edgeState === EdgeState.WHITE) {
                   whiteCount++;
                 }
               }
 
-
-              if ( faceValueStyle === 'static' || faceValue === 0 ) {
+              if (faceValueStyle === 'static' || faceValue === 0) {
                 string = `${faceValue}`;
-              }
-              else if ( faceValueStyle === 'remaining' ) {
+              } else if (faceValueStyle === 'remaining') {
                 string = `${faceValue - blackCount}`;
                 usingRemaining = blackCount > 0;
-              }
-              else if ( faceValueStyle === 'ratio' ) {
+              } else if (faceValueStyle === 'ratio') {
                 // TODO: optimize?
                 const numerator = faceValue - blackCount;
-                if ( numerator === 0 ) {
+                if (numerator === 0) {
                   string = '0';
-                }
-                else {
+                } else {
                   // TODO: rich text broken, testing this instead
                   string = `${faceValue - blackCount}<sub style="color: ${ratioColor.toCSS()};">/<sub>${whiteCount}</sub></sub>`;
                   usingRatio = true;
                 }
                 usingRemaining = blackCount > 0;
-              }
-              else {
-                throw new Error( `unhandled faceValueStyle: ${faceValueStyle}` );
+              } else {
+                throw new Error(`unhandled faceValueStyle: ${faceValueStyle}`);
               }
 
-              if ( blackCount > faceValue && highlightIncorrectNumbers ) {
+              if (blackCount > faceValue && highlightIncorrectNumbers) {
                 fill = errorColor;
-              }
-              else if ( blackCount === faceValue && dimCompletedNumbers ) {
+              } else if (blackCount === faceValue && dimCompletedNumbers) {
                 fill = completedColor;
-              }
-              else {
+              } else {
                 fill = usingRemaining ? color : color; // TODO figure out a better color... for this? Try a color difference?
               }
             }
@@ -122,54 +118,53 @@ export class FaceViewNode extends Node {
             text.maxWidth = usingRatio ? 0.8 : 0.9;
             text.maxHeight = usingRatio ? 0.8 : 0.9;
             text.center = face.viewCoordinates;
-          } );
-          text.disposeEmitter.addListener( () => multilink.dispose() );
+          });
+          text.disposeEmitter.addListener(() => multilink.dispose());
 
-          children.push( text );
+          children.push(text);
         }
       }
 
-      this.children.forEach( child => child.dispose() );
+      this.children.forEach((child) => child.dispose());
 
       this.children = children;
     };
 
-    const multilink = Multilink.multilink( [
-      stateProperty,
-    ], (
-      state,
-    ) => {
+    const multilink = Multilink.multilink([stateProperty], (state) => {
       let changed = false;
 
-      for ( let i = 0; i < board.faces.length; i++ ) {
-        const faceValue = state.getFaceValue( board.faces[ i ] );
+      for (let i = 0; i < board.faces.length; i++) {
+        const faceValue = state.getFaceValue(board.faces[i]);
 
-        if ( faceValue !== faceValues[ i ] ) {
+        if (faceValue !== faceValues[i]) {
           changed = true;
-          faceValues[ i ] = faceValue;
+          faceValues[i] = faceValue;
         }
       }
 
-      if ( changed ) {
+      if (changed) {
         updateFaces();
       }
-    } );
+    });
 
-    const multilink2 = Multilink.multilinkAny( [
-      style.faceValueStyleProperty,
-      style.theme.faceValueColorProperty,
-      style.theme.faceValueCompletedColorProperty,
-      style.theme.faceValueErrorColorProperty,
-      style.theme.faceValueRatioColorProperty,
-      style.faceStateVisibleProperty,
-      dimCompletedNumbersProperty,
-      highlightIncorrectNumbersProperty,
-    ], updateFaces );
+    const multilink2 = Multilink.multilinkAny(
+      [
+        style.faceValueStyleProperty,
+        style.theme.faceValueColorProperty,
+        style.theme.faceValueCompletedColorProperty,
+        style.theme.faceValueErrorColorProperty,
+        style.theme.faceValueRatioColorProperty,
+        style.faceStateVisibleProperty,
+        dimCompletedNumbersProperty,
+        highlightIncorrectNumbersProperty,
+      ],
+      updateFaces,
+    );
 
-    this.disposeEmitter.addListener( () => {
+    this.disposeEmitter.addListener(() => {
       multilink.dispose();
       multilink2.dispose();
-      this.children.forEach( child => child.dispose() );
-    } );
+      this.children.forEach((child) => child.dispose());
+    });
   }
 }

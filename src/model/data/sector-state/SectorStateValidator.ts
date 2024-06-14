@@ -9,25 +9,26 @@ import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import { TSector } from './TSector.ts';
 
 export class SectorStateValidator implements TState<TSectorStateData> {
-
-  public readonly sectorStateChangedEmitter = new TinyEmitter<[ edge: TSector, state: SectorState, oldState: SectorState ]>();
+  public readonly sectorStateChangedEmitter = new TinyEmitter<
+    [edge: TSector, state: SectorState, oldState: SectorState]
+  >();
 
   public constructor(
     private readonly board: TBoard,
     private readonly currentState: TState<TSectorStateData>,
-    private readonly solvedState: TState<TSectorStateData>
+    private readonly solvedState: TState<TSectorStateData>,
   ) {}
 
-  public getSectorState( edge: TSector ): SectorState {
-    return this.currentState.getSectorState( edge );
+  public getSectorState(edge: TSector): SectorState {
+    return this.currentState.getSectorState(edge);
   }
 
-  public setSectorState( sector: TSector, state: SectorState ): void {
-    assertEnabled() && assert( this.board.halfEdges.includes( sector ) );
+  public setSectorState(sector: TSector, state: SectorState): void {
+    assertEnabled() && assert(this.board.halfEdges.includes(sector));
 
-    const solvedState = this.solvedState.getSectorState( sector );
-    if ( !solvedState.isSubsetOf( state ) ) {
-      throw new InvalidStateError( `Attempt to make sector ${state} when it should be ${solvedState}` );
+    const solvedState = this.solvedState.getSectorState(sector);
+    if (!solvedState.isSubsetOf(state)) {
+      throw new InvalidStateError(`Attempt to make sector ${state} when it should be ${solvedState}`);
     }
   }
 
@@ -39,7 +40,7 @@ export class SectorStateValidator implements TState<TSectorStateData> {
     return this as unknown as TDelta<TSectorStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedSectorStateData {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedSectorStateData {
+    throw new Error('unimplemented');
   }
 }

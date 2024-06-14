@@ -7,5 +7,5 @@ export default class EdgeState extends EnumerationValue {
 
   // TODO: did we want to figure out something else? (implicit red vs explicit?) -- probably not
 
-  public static readonly enumeration = new Enumeration( EdgeState );
+  public static readonly enumeration = new Enumeration(EdgeState);
 }

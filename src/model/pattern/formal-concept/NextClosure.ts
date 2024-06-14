@@ -3,12 +3,12 @@ import { Implication } from './Implication.ts';
 export class NextClosure {
   public static forEachImplication(
     numAttributes: number,
-    getClosure: ( attributeSet: bigint ) => bigint,
-    callback: ( implication: Implication ) => void,
-    options?: { 
+    getClosure: (attributeSet: bigint) => bigint,
+    callback: (implication: Implication) => void,
+    options?: {
       logModulo?: number;
-      logModuloCallback?: ( count: number, set: bigint, implications: Implication[], seconds: number ) => void;
-    }
+      logModuloCallback?: (count: number, set: bigint, implications: Implication[], seconds: number) => void;
+    },
   ): void {
     const logModulo = options?.logModulo ?? 1000000;
     const logModuloCallback = options?.logModuloCallback;
@@ -64,44 +64,44 @@ export class NextClosure {
     // TODO: ----- if we get into an "pair-incompatible" state (two bits that are never together in a solution):
     // TODO:         - CAN WE FAST FORWARD TO WHERE THE LOWER BIT IS ZERO'ED OUT?
     // TODO:      IF WE DO NOT RECORD SOME "implications" THAT GO TO FULL SET, does NextClosure become invalid?
-    const impliedGreaterMasks = new Array<bigint>( numAttributes ).fill( 0n );
+    const impliedGreaterMasks = new Array<bigint>(numAttributes).fill(0n);
 
     let count = 0;
     const initialTime = Date.now();
 
-    while ( set !== null ) {
+    while (set !== null) {
       count++;
-      if ( count % logModulo === 0 ) {
-        logModuloCallback && logModuloCallback( count, set, implications, Math.round( ( Date.now() - initialTime ) / 1000 ) );
+      if (count % logModulo === 0) {
+        logModuloCallback && logModuloCallback(count, set, implications, Math.round((Date.now() - initialTime) / 1000));
       }
 
-      const closedSet = getClosure( set );
+      const closedSet = getClosure(set);
 
-      if ( set !== closedSet ) {
+      if (set !== closedSet) {
         // Is a pseudo-intent
-        const implication = new Implication( set, closedSet );
-        callback( implication );
-        implications.push( implication );
+        const implication = new Implication(set, closedSet);
+        callback(implication);
+        implications.push(implication);
 
         // Check if a single bit is set (we can mark that in impliedGreaterMasks, and hopefully get some acceleration)
         let data = set;
         // See if clearing the lowest bit results in 0
-        if ( data !== 0n && ( data & data - 1n ) === 0n ) {
+        if (data !== 0n && (data & (data - 1n)) === 0n) {
           // Get i
           let i = 0;
-          while ( data > 1n ) {
+          while (data > 1n) {
             data >>= 1n;
             i++;
           }
 
-          const greaterThanIMask = ~( ( 1n << BigInt( i + 1 ) ) - 1n );
-          impliedGreaterMasks[ i ] |= greaterThanIMask & closedSet;
+          const greaterThanIMask = ~((1n << BigInt(i + 1)) - 1n);
+          impliedGreaterMasks[i] |= greaterThanIMask & closedSet;
           // console.log( `${i} implies ${impliedGreaterMasks[ i ].toString( 2 )}` );
         }
       }
 
       let nextSet: bigint | null = null;
-      for ( let i = 0; i < numAttributes; i++ ) {
+      for (let i = 0; i < numAttributes; i++) {
         // NOTE: below is a performance-optimized version of this, where we can bail early
         // const withLowestBit = set.withLowestBitSet( i );
         //
@@ -113,7 +113,7 @@ export class NextClosure {
         // }
 
         // Check if we imply a higher bit that we don't yet have in our set. If so, skip immediately
-        if ( ( set & impliedGreaterMasks[ i ] ) !== impliedGreaterMasks[ i ] ) {
+        if ((set & impliedGreaterMasks[i]) !== impliedGreaterMasks[i]) {
           continue;
 
           // TODO: can we have slow assertions that check that potentialNextSet would be null here? Did assert in the code below
@@ -127,8 +127,7 @@ export class NextClosure {
           // }
         }
 
-        const potentialNextSet = Implication.implicationSetClosureLessThanI( implications, set, i );
-
+        const potentialNextSet = Implication.implicationSetClosureLessThanI(implications, set, i);
 
         // if ( ( set.data & inputMasks[ i ] ) !== outputMasks[ i ] ) {
         //   if ( potentialNextSet ) {
@@ -136,16 +135,15 @@ export class NextClosure {
         //   }
         // }
 
-        if ( potentialNextSet !== null ) {
+        if (potentialNextSet !== null) {
           nextSet = potentialNextSet;
           break;
         }
       }
 
-      if ( nextSet !== null ) {
+      if (nextSet !== null) {
         set = nextSet;
-      }
-      else {
+      } else {
         // done!
         break;
       }

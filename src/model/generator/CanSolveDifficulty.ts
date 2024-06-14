@@ -8,25 +8,25 @@ import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts
 import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 
 export default class CanSolveDifficulty extends EnumerationValue {
-
-  public constructor(
-    public readonly canSolve: ( board: TBoard, state: TState<TCompleteData> ) => boolean
-  ) {
+  public constructor(public readonly canSolve: (board: TBoard, state: TState<TCompleteData>) => boolean) {
     super();
   }
 
-  public static readonly STANDARD = new CanSolveDifficulty( ( board, state ) => {
+  public static readonly STANDARD = new CanSolveDifficulty((board, state) => {
     // be paranoid
     state = state.clone();
 
-    iterateSolverFactory( standardSolverFactory, board, state, true );
+    iterateSolverFactory(standardSolverFactory, board, state, true);
 
-    return simpleRegionIsSolved( state );
-  } );
+    return simpleRegionIsSolved(state);
+  });
 
-  public static readonly NO_LIMIT = new CanSolveDifficulty( () => true );
+  public static readonly NO_LIMIT = new CanSolveDifficulty(() => true);
 
-  public static readonly enumeration = new Enumeration( CanSolveDifficulty );
+  public static readonly enumeration = new Enumeration(CanSolveDifficulty);
 }
 
-export const canSolveDifficultyProperty = new LocalStorageEnumerationProperty( 'canSolveDifficulty', CanSolveDifficulty.STANDARD );
+export const canSolveDifficultyProperty = new LocalStorageEnumerationProperty(
+  'canSolveDifficulty',
+  CanSolveDifficulty.STANDARD,
+);

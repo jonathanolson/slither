@@ -12,4 +12,3 @@ export interface THalfEdge {
   previous: THalfEdge;
   face: TFace | null;
 }
-

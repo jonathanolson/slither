@@ -10,36 +10,37 @@ import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export class SimpleRegionValidator implements TState<TSimpleRegionData> {
-
-  public readonly simpleRegionsChangedEmitter = new TinyEmitter<[
-    addedRegions: MultiIterable<TSimpleRegion>,
-    removedRegions: MultiIterable<TSimpleRegion>,
-    addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
-  ]>();
+  public readonly simpleRegionsChangedEmitter = new TinyEmitter<
+    [
+      addedRegions: MultiIterable<TSimpleRegion>,
+      removedRegions: MultiIterable<TSimpleRegion>,
+      addedWeirdEdges: MultiIterable<TEdge>,
+      removedWeirdEdges: MultiIterable<TEdge>,
+    ]
+  >();
 
   public constructor(
     // @ts-expect-error
     private readonly board: TBoard,
     private readonly currentState: TState<TSimpleRegionData>,
     // @ts-expect-error
-    private readonly solvedState: TState<TSimpleRegionData>
+    private readonly solvedState: TState<TSimpleRegionData>,
   ) {}
 
   public getSimpleRegions(): TSimpleRegion[] {
     return this.currentState.getSimpleRegions();
   }
 
-  public getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null {
-    return this.currentState.getSimpleRegionWithVertex( vertex );
+  public getSimpleRegionWithVertex(vertex: TVertex): TSimpleRegion | null {
+    return this.currentState.getSimpleRegionWithVertex(vertex);
   }
 
-  public getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null {
-    return this.currentState.getSimpleRegionWithEdge( edge );
+  public getSimpleRegionWithEdge(edge: TEdge): TSimpleRegion | null {
+    return this.currentState.getSimpleRegionWithEdge(edge);
   }
 
-  public getSimpleRegionWithId( id: number ): TSimpleRegion | null {
-    return this.currentState.getSimpleRegionWithId( id );
+  public getSimpleRegionWithId(id: number): TSimpleRegion | null {
+    return this.currentState.getSimpleRegionWithId(id);
   }
 
   public getWeirdEdges(): TEdge[] {
@@ -50,10 +51,10 @@ export class SimpleRegionValidator implements TState<TSimpleRegionData> {
     addedRegions: MultiIterable<TSimpleRegion>,
     removedRegions: MultiIterable<TSimpleRegion>,
     addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
+    removedWeirdEdges: MultiIterable<TEdge>,
   ): void {
-    if ( [ ...addedWeirdEdges ].length ) {
-      throw new InvalidStateError( 'weird edges added' );
+    if ([...addedWeirdEdges].length) {
+      throw new InvalidStateError('weird edges added');
     }
 
     // NOTE: we rely on the edge validator
@@ -67,7 +68,7 @@ export class SimpleRegionValidator implements TState<TSimpleRegionData> {
     return this as unknown as TDelta<TSimpleRegionData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedState {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedState {
+    throw new Error('unimplemented');
   }
 }

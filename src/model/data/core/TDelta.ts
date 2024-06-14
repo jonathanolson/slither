@@ -6,4 +6,5 @@ export type TDelta<Data> = {
   clone(): TDelta<Data>;
 
   // TODO: we need a way of creating state here
-} & TState<Data> & TAction<Data>;
+} & TState<Data> &
+  TAction<Data>;

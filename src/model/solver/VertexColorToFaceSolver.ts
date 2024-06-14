@@ -17,7 +17,6 @@ import { FaceStateSetAction } from '../data/face-state/FaceStateSetAction.ts';
 type Data = TFaceValueData & TVertexStateData & TFaceColorData & TFaceStateData;
 
 export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private readonly dirtyFaces: Set<TFace>;
 
   private readonly faceValueListener: TFaceValueListener;
@@ -27,26 +26,25 @@ export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<D
   public constructor(
     private readonly board: TBoard,
     private readonly state: TState<Data>,
-    dirtyFaces?: TFace[]
+    dirtyFaces?: TFace[],
   ) {
-    if ( dirtyFaces ) {
-      this.dirtyFaces = new Set( dirtyFaces );
-    }
-    else {
-      this.dirtyFaces = new Set( board.faces.filter( face => state.getFaceValue( face ) !== null ) );
+    if (dirtyFaces) {
+      this.dirtyFaces = new Set(dirtyFaces);
+    } else {
+      this.dirtyFaces = new Set(board.faces.filter((face) => state.getFaceValue(face) !== null));
     }
 
-    this.faceValueListener = ( face: TFace, state: FaceValue ) => {
-      this.dirtyFaces.add( face );
+    this.faceValueListener = (face: TFace, state: FaceValue) => {
+      this.dirtyFaces.add(face);
     };
-    this.state.faceValueChangedEmitter.addListener( this.faceValueListener );
+    this.state.faceValueChangedEmitter.addListener(this.faceValueListener);
 
-    this.vertexStateListener = ( vertex: TVertex ) => {
-      for ( const face of vertex.faces ) {
-        this.dirtyFaces.add( face );
+    this.vertexStateListener = (vertex: TVertex) => {
+      for (const face of vertex.faces) {
+        this.dirtyFaces.add(face);
       }
     };
-    this.state.vertexStateChangedEmitter.addListener( this.vertexStateListener );
+    this.state.vertexStateChangedEmitter.addListener(this.vertexStateListener);
 
     this.faceColorListener = (
       addedFaceColors: MultiIterable<TFaceColor>,
@@ -58,29 +56,29 @@ export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<D
 
       // TODO: duplicated from FaceColorParitySolver
 
-      const checkAddAdjacentFaces = ( face: TFace ) => {
-        this.dirtyFaces.add( face );
-        for ( const edge of face.edges ) {
+      const checkAddAdjacentFaces = (face: TFace) => {
+        this.dirtyFaces.add(face);
+        for (const edge of face.edges) {
           // Actually, black edges (maybe red too) can provide info for our algorithm
-          const otherFace = edge.getOtherFace( face );
-          if ( otherFace ) {
-            this.dirtyFaces.add( otherFace );
+          const otherFace = edge.getOtherFace(face);
+          if (otherFace) {
+            this.dirtyFaces.add(otherFace);
           }
         }
       };
 
-      for ( const face of changedFaces ) {
-        checkAddAdjacentFaces( face );
+      for (const face of changedFaces) {
+        checkAddAdjacentFaces(face);
       }
 
-      for ( const faceColor of [ ...addedFaceColors, ...oppositeChangedFaceColors ] ) {
-        const faces = this.state.getFacesWithColor( faceColor );
-        for ( const face of faces ) {
-          checkAddAdjacentFaces( face );
+      for (const faceColor of [...addedFaceColors, ...oppositeChangedFaceColors]) {
+        const faces = this.state.getFacesWithColor(faceColor);
+        for (const face of faces) {
+          checkAddAdjacentFaces(face);
         }
       }
     };
-    this.state.faceColorsChangedEmitter.addListener( this.faceColorListener );
+    this.state.faceColorsChangedEmitter.addListener(this.faceColorListener);
   }
 
   public get dirty(): boolean {
@@ -88,38 +86,44 @@ export class VertexColorToFaceSolver implements TSolver<Data, TAnnotatedAction<D
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    while ( this.dirtyFaces.size ) {
+    while (this.dirtyFaces.size) {
       const face: TFace = this.dirtyFaces.values().next().value;
-      this.dirtyFaces.delete( face );
+      this.dirtyFaces.delete(face);
 
-      const oldState = this.state.getFaceState( face );
+      const oldState = this.state.getFaceState(face);
 
       // TODO: consider moving that code in here?
       // NOTE: the AND here is because if we have MORE advanced deductions in, we want to keep them
-      const newState = FaceState.fromVertexAndColorData( face, this.board, this.state ).and( oldState );
+      const newState = FaceState.fromVertexAndColorData(face, this.board, this.state).and(oldState);
 
-      if ( !oldState.equals( newState ) ) {
-        return new AnnotatedAction( new FaceStateSetAction( face, newState ), {
-          type: 'FaceState',
-          face: face,
-          beforeState: oldState,
-          afterState: newState,
-        }, this.board );
+      if (!oldState.equals(newState)) {
+        return new AnnotatedAction(
+          new FaceStateSetAction(face, newState),
+          {
+            type: 'FaceState',
+            face: face,
+            beforeState: oldState,
+            afterState: newState,
+          },
+          this.board,
+        );
       }
     }
 
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): VertexColorToFaceSolver {
-    return new VertexColorToFaceSolver( this.board, equivalentState );
+  public clone(equivalentState: TState<Data>): VertexColorToFaceSolver {
+    return new VertexColorToFaceSolver(this.board, equivalentState);
   }
 
   public dispose(): void {
-    this.state.faceValueChangedEmitter.removeListener( this.faceValueListener );
-    this.state.vertexStateChangedEmitter.removeListener( this.vertexStateListener );
-    this.state.faceColorsChangedEmitter.removeListener( this.faceColorListener );
+    this.state.faceValueChangedEmitter.removeListener(this.faceValueListener);
+    this.state.vertexStateChangedEmitter.removeListener(this.vertexStateListener);
+    this.state.faceColorsChangedEmitter.removeListener(this.faceColorListener);
   }
 }

@@ -8,45 +8,43 @@ import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralFaceValueDelta extends GeneralFaceValueAction implements TDelta<TFaceValueData> {
-
-  public readonly faceValueChangedEmitter = new TinyEmitter<[ TFace, FaceValue ]>();
+  public readonly faceValueChangedEmitter = new TinyEmitter<[TFace, FaceValue]>();
 
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TFaceValueData>,
-    faceValueMap: Map<TFace, FaceValue> = new Map()
+    faceValueMap: Map<TFace, FaceValue> = new Map(),
   ) {
-    super( board, faceValueMap );
+    super(board, faceValueMap);
   }
 
-  public getFaceValue( face: TFace ): FaceValue {
-    if ( this.faceValueMap.has( face ) ) {
-      return this.faceValueMap.get( face )!;
-    }
-    else {
-      return this.parentState.getFaceValue( face );
+  public getFaceValue(face: TFace): FaceValue {
+    if (this.faceValueMap.has(face)) {
+      return this.faceValueMap.get(face)!;
+    } else {
+      return this.parentState.getFaceValue(face);
     }
   }
 
-  public setFaceValue( face: TFace, state: FaceValue ): void {
-    const oldValue = this.getFaceValue( face );
+  public setFaceValue(face: TFace, state: FaceValue): void {
+    const oldValue = this.getFaceValue(face);
 
-    if ( oldValue !== state ) {
-      this.faceValueMap.set( face, state );
+    if (oldValue !== state) {
+      this.faceValueMap.set(face, state);
 
-      this.faceValueChangedEmitter.emit( face, state );
+      this.faceValueChangedEmitter.emit(face, state);
     }
   }
 
   public clone(): GeneralFaceValueDelta {
-    return new GeneralFaceValueDelta( this.board, this.parentState, new Map( this.faceValueMap ) );
+    return new GeneralFaceValueDelta(this.board, this.parentState, new Map(this.faceValueMap));
   }
 
   public createDelta(): TDelta<TFaceValueData> {
-    return new GeneralFaceValueDelta( this.board, this, new Map() );
+    return new GeneralFaceValueDelta(this.board, this, new Map());
   }
 
-  public serializeState( board: TBoard ): TSerializedFaceValueData {
-    return serializeFaceValueData( board, this );
+  public serializeState(board: TBoard): TSerializedFaceValueData {
+    return serializeFaceValueData(board, this);
   }
 }

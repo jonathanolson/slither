@@ -9,31 +9,30 @@ import { TFace } from '../../board/core/TFace.ts';
 import { FaceState } from './FaceState.ts';
 
 export class FaceStateValidator implements TState<TFaceStateData> {
-
-  public readonly faceStateChangedEmitter = new TinyEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]>();
+  public readonly faceStateChangedEmitter = new TinyEmitter<[face: TFace, state: FaceState, oldState: FaceState]>();
 
   public constructor(
     private readonly board: TBoard,
     private readonly currentState: TState<TFaceStateData>,
-    private readonly solvedState: TState<TFaceStateData>
+    private readonly solvedState: TState<TFaceStateData>,
   ) {}
 
-  public getFaceState( face: TFace ): FaceState {
-    return this.currentState.getFaceState( face );
+  public getFaceState(face: TFace): FaceState {
+    return this.currentState.getFaceState(face);
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    assertEnabled() && assert( this.board.faces.includes( face ) );
+  public setFaceState(face: TFace, state: FaceState): void {
+    assertEnabled() && assert(this.board.faces.includes(face));
 
-    const solvedState = this.solvedState.getFaceState( face );
-    if ( !solvedState.isSubsetOf( state ) ) {
+    const solvedState = this.solvedState.getFaceState(face);
+    if (!solvedState.isSubsetOf(state)) {
       // TODO: how can we stringify this? toString() on FaceState
-      throw new InvalidStateError( `Attempt to make face ${state} when it should be ${solvedState}` );
+      throw new InvalidStateError(`Attempt to make face ${state} when it should be ${solvedState}`);
     }
 
-    const oldState = this.currentState.getFaceState( face );
-    if ( !state.isSubsetOf( oldState ) ) {
-      throw new InvalidStateError( 'Do not generalize face state' );
+    const oldState = this.currentState.getFaceState(face);
+    if (!state.isSubsetOf(oldState)) {
+      throw new InvalidStateError('Do not generalize face state');
     }
   }
 
@@ -45,7 +44,7 @@ export class FaceStateValidator implements TState<TFaceStateData> {
     return this as unknown as TDelta<TFaceStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedFaceStateData {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedFaceStateData {
+    throw new Error('unimplemented');
   }
 }

@@ -30,22 +30,22 @@ export interface TSerializedSimpleRegion {
   isSolved: boolean;
 }
 
-export const serializedSimpleRegion = ( simpleRegion: TSimpleRegion ): TSerializedSimpleRegion => {
+export const serializedSimpleRegion = (simpleRegion: TSimpleRegion): TSerializedSimpleRegion => {
   return {
     id: simpleRegion.id,
-    halfEdges: simpleRegion.halfEdges.map( serializeHalfEdge ),
-    isSolved: simpleRegion.isSolved
+    halfEdges: simpleRegion.halfEdges.map(serializeHalfEdge),
+    isSolved: simpleRegion.isSolved,
   };
 };
 
 export interface TSimpleRegionData {
   getSimpleRegions(): TSimpleRegion[];
 
-  getSimpleRegionWithVertex( vertex: TVertex ): TSimpleRegion | null;
+  getSimpleRegionWithVertex(vertex: TVertex): TSimpleRegion | null;
 
-  getSimpleRegionWithEdge( edge: TEdge ): TSimpleRegion | null;
+  getSimpleRegionWithEdge(edge: TEdge): TSimpleRegion | null;
 
-  getSimpleRegionWithId( id: number ): TSimpleRegion | null;
+  getSimpleRegionWithId(id: number): TSimpleRegion | null;
 
   getWeirdEdges(): TEdge[];
 
@@ -53,28 +53,30 @@ export interface TSimpleRegionData {
     addedRegions: MultiIterable<TSimpleRegion>,
     removedRegions: MultiIterable<TSimpleRegion>,
     addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
+    removedWeirdEdges: MultiIterable<TEdge>,
   ): void;
 
-  simpleRegionsChangedEmitter: TEmitter<[
-    addedRegions: MultiIterable<TSimpleRegion>,
-    removedRegions: MultiIterable<TSimpleRegion>,
-    addedWeirdEdges: MultiIterable<TEdge>,
-    removedWeirdEdges: MultiIterable<TEdge>
-  ]>;
+  simpleRegionsChangedEmitter: TEmitter<
+    [
+      addedRegions: MultiIterable<TSimpleRegion>,
+      removedRegions: MultiIterable<TSimpleRegion>,
+      addedWeirdEdges: MultiIterable<TEdge>,
+      removedWeirdEdges: MultiIterable<TEdge>,
+    ]
+  >;
 }
 
 export type TSimpleRegionListener = (
   addedRegions: MultiIterable<TSimpleRegion>,
   removedRegions: MultiIterable<TSimpleRegion>,
   addedWeirdEdges: MultiIterable<TEdge>,
-  removedWeirdEdges: MultiIterable<TEdge>
+  removedWeirdEdges: MultiIterable<TEdge>,
 ) => void;
 
-export const simpleRegionIsSolved = ( data: TSimpleRegionData ): boolean => {
+export const simpleRegionIsSolved = (data: TSimpleRegionData): boolean => {
   const regions = data.getSimpleRegions();
 
-  return regions.length === 1 && regions[ 0 ].isSolved && data.getWeirdEdges().length === 0;
+  return regions.length === 1 && regions[0].isSolved && data.getWeirdEdges().length === 0;
 };
 
 export interface TSerializedSimpleRegionData extends TSerializedState {
@@ -83,8 +85,8 @@ export interface TSerializedSimpleRegionData extends TSerializedState {
   weirdEdges: TSerializedEdge[];
 }
 
-export const serializeSimpleRegionData = ( faceData: TSimpleRegionData ): TSerializedSimpleRegionData => ( {
+export const serializeSimpleRegionData = (faceData: TSimpleRegionData): TSerializedSimpleRegionData => ({
   type: 'SimpleRegionData',
-  simpleRegions: faceData.getSimpleRegions().map( serializedSimpleRegion ),
-  weirdEdges: faceData.getWeirdEdges().map( serializeEdge )
-} );
+  simpleRegions: faceData.getSimpleRegions().map(serializedSimpleRegion),
+  weirdEdges: faceData.getWeirdEdges().map(serializeEdge),
+});

@@ -7,15 +7,15 @@ import { serializeFace } from '../../board/core/serializeFace.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TFaceValueData {
-  getFaceValue( face: TFace ): FaceValue;
+  getFaceValue(face: TFace): FaceValue;
 
-  setFaceValue( face: TFace, state: FaceValue ): void;
+  setFaceValue(face: TFace, state: FaceValue): void;
 
   // TODO: consider passing in the old value?
-  faceValueChangedEmitter: TEmitter<[ TFace, FaceValue ]>;
+  faceValueChangedEmitter: TEmitter<[TFace, FaceValue]>;
 }
 
-export type TFaceValueListener = ( face: TFace, state: FaceValue ) => void;
+export type TFaceValueListener = (face: TFace, state: FaceValue) => void;
 
 export interface TSerializedFaceValueData extends TSerializedState {
   type: 'FaceValueData';
@@ -25,10 +25,12 @@ export interface TSerializedFaceValueData extends TSerializedState {
   }[];
 }
 
-export const serializeFaceValueData = ( board: TBoard, faceData: TFaceValueData ): TSerializedFaceValueData => ( {
+export const serializeFaceValueData = (board: TBoard, faceData: TFaceValueData): TSerializedFaceValueData => ({
   type: 'FaceValueData',
-  faces: board.faces.filter( face => faceData.getFaceValue( face ) !== null ).map( face => ( {
-    face: serializeFace( face ),
-    state: faceData.getFaceValue( face )
-  } ) )
-} );
+  faces: board.faces
+    .filter((face) => faceData.getFaceValue(face) !== null)
+    .map((face) => ({
+      face: serializeFace(face),
+      state: faceData.getFaceValue(face),
+    })),
+});

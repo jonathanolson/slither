@@ -10,75 +10,88 @@ import { TSector } from '../model/data/sector-state/TSector.ts';
 import SectorState from '../model/data/sector-state/SectorState.ts';
 
 type SelfOptions = {
-  focusNodeCallback?: ( node: Node ) => void;
+  focusNodeCallback?: (node: Node) => void;
 };
 
 export type PuzzleModelNodeOptions = SelfOptions & NodeOptions;
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class PuzzleModelNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {
-
+export default class PuzzleModelNode<
+  Structure extends TStructure = TStructure,
+  Data extends TCompleteData = TCompleteData,
+> extends Node {
   public constructor(
     public readonly puzzleModel: PuzzleModel<Structure, Data>,
-    providedOptions?: PuzzleModelNodeOptions
+    providedOptions?: PuzzleModelNodeOptions,
   ) {
-    const options = optionize<PuzzleModelNodeOptions, SelfOptions, NodeOptions>()( {
-      focusNodeCallback: () => {}
-    }, providedOptions );
+    const options = optionize<PuzzleModelNodeOptions, SelfOptions, NodeOptions>()(
+      {
+        focusNodeCallback: () => {},
+      },
+      providedOptions,
+    );
 
-    const puzzleNode = new PuzzleNode( puzzleModel.puzzle, {
-      edgePressListener: ( edge, button ) => {
-        puzzleModel.onUserEdgePress( edge, button );
+    const puzzleNode = new PuzzleNode(puzzleModel.puzzle, {
+      edgePressListener: (edge, button) => {
+        puzzleModel.onUserEdgePress(edge, button);
       },
-      facePressListener: ( face, button ) => {
-        puzzleModel.onUserFacePress( face, button );
+      facePressListener: (face, button) => {
+        puzzleModel.onUserFacePress(face, button);
       },
-      sectorPressListener: ( sector, button ) => {
-        puzzleModel.onUserSectorPress( sector, button );
+      sectorPressListener: (sector, button) => {
+        puzzleModel.onUserSectorPress(sector, button);
       },
-      sectorSetListener: ( sector: TSector, state: SectorState ) => {
-        puzzleModel.onUserSectorSet( sector, state );
+      sectorSetListener: (sector: TSector, state: SectorState) => {
+        puzzleModel.onUserSectorSet(sector, state);
       },
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
       selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
       style: puzzleModel.style,
       delayEdgeInteractionEmitter: puzzleModel.edgeAutoSolvedEmitter,
-    } );
+    });
 
-    super( combineOptions<NodeOptions>( {
-      children: [
-        puzzleNode
-      ]
-    }, options ) );
+    super(
+      combineOptions<NodeOptions>(
+        {
+          children: [puzzleNode],
+        },
+        options,
+      ),
+    );
 
-    this.disposeEmitter.addListener( () => puzzleNode.dispose() );
+    this.disposeEmitter.addListener(() => puzzleNode.dispose());
 
     let lastAnnotationNode: AnnotationNode | null = null;
 
-    const annotationListener = ( annotation: TAnnotation | null ) => {
+    const annotationListener = (annotation: TAnnotation | null) => {
       puzzleNode.clearAnnotationNodes();
 
-      if ( lastAnnotationNode ) {
+      if (lastAnnotationNode) {
         lastAnnotationNode.dispose();
         lastAnnotationNode = null;
       }
 
-      if ( annotation ) {
-        const annotationNode = new AnnotationNode( puzzleModel.puzzle.board, annotation, puzzleModel.style, puzzleNode.getBackgroundBounds() );
-        puzzleNode.addAnnotationNode( annotationNode );
+      if (annotation) {
+        const annotationNode = new AnnotationNode(
+          puzzleModel.puzzle.board,
+          annotation,
+          puzzleModel.style,
+          puzzleNode.getBackgroundBounds(),
+        );
+        puzzleNode.addAnnotationNode(annotationNode);
         lastAnnotationNode = annotationNode;
 
-        options.focusNodeCallback( annotationNode );
+        options.focusNodeCallback(annotationNode);
       }
     };
-    this.disposeEmitter.addListener( () => {
-      if ( lastAnnotationNode ) {
+    this.disposeEmitter.addListener(() => {
+      if (lastAnnotationNode) {
         lastAnnotationNode.dispose();
         lastAnnotationNode = null;
       }
-    } );
+    });
 
-    puzzleModel.displayedAnnotationProperty.link( annotationListener );
-    this.disposeEmitter.addListener( () => puzzleModel.displayedAnnotationProperty.unlink( annotationListener ) );
+    puzzleModel.displayedAnnotationProperty.link(annotationListener);
+    this.disposeEmitter.addListener(() => puzzleModel.displayedAnnotationProperty.unlink(annotationListener));
   }
 }

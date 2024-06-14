@@ -13,15 +13,17 @@ export class UITextSwitch extends UISwitch {
   public constructor(
     property: Property<boolean>,
     name: string | TReadOnlyProperty<string>,
-    providedOptions?: UITextSwitchOptions
+    providedOptions?: UITextSwitchOptions,
   ) {
+    const options = optionize<UITextSwitchOptions, SelfOptions, UISwitchOptions>()(
+      {
+        textOptions: {},
+      },
+      providedOptions,
+    );
 
-    const options = optionize<UITextSwitchOptions, SelfOptions, UISwitchOptions>()( {
-      textOptions: {},
-    }, providedOptions );
+    const text = new UIText(name, options.textOptions);
 
-    const text = new UIText( name, options.textOptions );
-
-    super( property, name, text, options );
+    super(property, name, text, options);
   }
 }

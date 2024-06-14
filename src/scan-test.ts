@@ -8,9 +8,9 @@ import { TextPushButton } from 'phet-lib/sun';
 import scanURL from './scan/scanURL';
 // import scanFaceValues from './scan/scanFaceValues';
 
-const opencvURL = localStorage.getItem( 'opencv-url' );
-if ( opencvURL ) {
-  scanURL( opencvURL );
+const opencvURL = localStorage.getItem('opencv-url');
+if (opencvURL) {
+  scanURL(opencvURL);
 
   // ( async () => {
   //   const text = await scanFaceValues( opencvURL );
@@ -23,19 +23,19 @@ window.assertions.enableAssert();
 
 const scene = new Node();
 
-const rootNode = new Node( {
+const rootNode = new Node({
   renderer: 'svg',
-  children: [ scene ]
-} );
+  children: [scene],
+});
 
-const buttonPressPatternString = new StringProperty( 'Button presses: {{count}}' );
+const buttonPressPatternString = new StringProperty('Button presses: {{count}}');
 
-const font = new Font( {
+const font = new Font({
   family: 'sans-serif',
-  size: 25
-} );
+  size: 25,
+});
 
-const display = new Display( rootNode, {
+const display = new Display(rootNode, {
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
   allowSceneOverflow: false,
@@ -46,36 +46,40 @@ const display = new Display( rootNode, {
   // listenToOnlyElement: false
 
   assumeFullWindow: false,
-  listenToOnlyElement: true
-} );
+  listenToOnlyElement: true,
+});
 // document.body.appendChild( display.domElement );
 
-const zoomListener = new AnimatedPanZoomListener( scene );
-display.addInputListener( zoomListener );
+const zoomListener = new AnimatedPanZoomListener(scene);
+display.addInputListener(zoomListener);
 
-const layoutBoundsProperty = new Property( new Bounds2( 0, 0, window.innerWidth, window.innerHeight ) );
+const layoutBoundsProperty = new Property(new Bounds2(0, 0, window.innerWidth, window.innerHeight));
 
-const countProperty = new NumberProperty( 0 );
+const countProperty = new NumberProperty(0);
 
-const mainBox = new VBox( {
+const mainBox = new VBox({
   spacing: 10,
   children: [
-    new TextPushButton( 'Test', {
+    new TextPushButton('Test', {
       font: font,
-      listener: () => { countProperty.value++; }
-    } ),
-    new Text( new PatternStringProperty( buttonPressPatternString, { count: countProperty } ), {
-      font: font
-    } )
-  ]
-} );
+      listener: () => {
+        countProperty.value++;
+      },
+    }),
+    new Text(new PatternStringProperty(buttonPressPatternString, { count: countProperty }), {
+      font: font,
+    }),
+  ],
+});
 
-scene.addChild( new AlignBox( mainBox, {
-  alignBoundsProperty: layoutBoundsProperty,
-  xAlign: 'center',
-  yAlign: 'top',
-  margin: 20
-} ) );
+scene.addChild(
+  new AlignBox(mainBox, {
+    alignBoundsProperty: layoutBoundsProperty,
+    xAlign: 'center',
+    yAlign: 'top',
+    margin: 20,
+  }),
+);
 
 display.initializeEvents();
 
@@ -83,30 +87,32 @@ let resizePending = true;
 const resize = () => {
   resizePending = false;
 
-  const layoutBounds = new Bounds2( 0, 0, window.innerWidth, window.innerHeight );
-  display.setWidthHeight( layoutBounds.width, layoutBounds.height );
+  const layoutBounds = new Bounds2(0, 0, window.innerWidth, window.innerHeight);
+  display.setWidthHeight(layoutBounds.width, layoutBounds.height);
   layoutBoundsProperty.value = layoutBounds;
 
-  if ( platform.mobileSafari ) {
-    window.scrollTo( 0, 0 );
+  if (platform.mobileSafari) {
+    window.scrollTo(0, 0);
   }
 
   // zoomListener.setTargetScale( scale );
-  zoomListener.setTargetBounds( layoutBounds );
-  zoomListener.setPanBounds( layoutBounds );
+  zoomListener.setTargetBounds(layoutBounds);
+  zoomListener.setPanBounds(layoutBounds);
 };
 
-const resizeListener = () => { resizePending = true; };
-$( window ).resize( resizeListener );
-window.addEventListener( 'resize', resizeListener );
-window.addEventListener( 'orientationchange', resizeListener );
-window.visualViewport && window.visualViewport.addEventListener( 'resize', resizeListener );
+const resizeListener = () => {
+  resizePending = true;
+};
+$(window).resize(resizeListener);
+window.addEventListener('resize', resizeListener);
+window.addEventListener('orientationchange', resizeListener);
+window.visualViewport && window.visualViewport.addEventListener('resize', resizeListener);
 resize();
 
-display.updateOnRequestAnimationFrame( dt => {
-  if ( resizePending ) {
+display.updateOnRequestAnimationFrame((dt) => {
+  if (resizePending) {
     resize();
   }
 
-  zoomListener.step( dt );
-} );
+  zoomListener.step(dt);
+});

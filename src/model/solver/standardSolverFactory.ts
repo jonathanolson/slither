@@ -25,66 +25,66 @@ import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
 import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
 
-export const standardSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>( [
-    new SafeEdgeToSimpleRegionSolver( board, state ),
-    new SafeSolvedEdgeSolver( board, state ),
-    new SafeEdgeToFaceColorSolver( board, state ),
+export const standardSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+    new SafeEdgeToSimpleRegionSolver(board, state),
+    new SafeSolvedEdgeSolver(board, state),
+    new SafeEdgeToFaceColorSolver(board, state),
 
-    new SimpleVertexSolver( board, state, {
+    new SimpleVertexSolver(board, state, {
       solveJointToRed: true,
       solveForcedLineToBlack: true,
-      solveAlmostEmptyToRed: true
-    } ),
-    new SimpleFaceSolver( board, state, {
-      solveToRed: true,
-      solveToBlack: true
-    } ),
-
-    // We rely on the Simple Regions being accurate here, so they are lower down
-    new SimpleLoopSolver( board, state, {
+      solveAlmostEmptyToRed: true,
+    }),
+    new SimpleFaceSolver(board, state, {
       solveToRed: true,
       solveToBlack: true,
-      resolveAllRegions: false // NOTE: this will be faster
-    } ),
+    }),
+
+    // We rely on the Simple Regions being accurate here, so they are lower down
+    new SimpleLoopSolver(board, state, {
+      solveToRed: true,
+      solveToBlack: true,
+      resolveAllRegions: false, // NOTE: this will be faster
+    }),
 
     // e.g. double-3s adjacent in square form
-    new StaticDoubleMinusOneFacesSolver( board, state ),
+    new StaticDoubleMinusOneFacesSolver(board, state),
 
-    new SafeEdgeToSectorSolver( board, state ),
-    new StaticSectorSolver( board, state ),
-    new SimpleSectorSolver( board, state ),
+    new SafeEdgeToSectorSolver(board, state),
+    new StaticSectorSolver(board, state),
+    new SimpleSectorSolver(board, state),
 
-    new SafeEdgeSectorColorToVertexSolver( board, state ),
+    new SafeEdgeSectorColorToVertexSolver(board, state),
 
-    new VertexToEdgeSolver( board, state, {
+    new VertexToEdgeSolver(board, state, {
       solveToRed: true,
-      solveToBlack: true
-    } ),
-    new VertexToSectorSolver( board, state ),
+      solveToBlack: true,
+    }),
+    new VertexToSectorSolver(board, state),
 
     // We rely on the Face colors being accurate here
-    new SimpleFaceColorSolver( board, state, {
+    new SimpleFaceColorSolver(board, state, {
       solveToRed: true,
-      solveToBlack: true
-    } ),
+      solveToBlack: true,
+    }),
 
-    new FaceColorParitySolver( board, state, {
+    new FaceColorParitySolver(board, state, {
       solveToRed: true,
       solveToBlack: true,
       solveColors: true,
-      allowPartialReduction: true
-    } ),
+      allowPartialReduction: true,
+    }),
 
-    new VertexToFaceColorSolver( board, state ),
+    new VertexToFaceColorSolver(board, state),
 
-    new VertexColorToFaceSolver( board, state ),
-    new FaceToEdgeSolver( board, state, {
+    new VertexColorToFaceSolver(board, state),
+    new FaceToEdgeSolver(board, state, {
       solveToRed: true,
-      solveToBlack: true
-    } ),
-    new FaceToSectorSolver( board, state ),
-    new FaceToFaceColorSolver( board, state ),
-    new FaceToVertexSolver( board, state )
-  ] );
+      solveToBlack: true,
+    }),
+    new FaceToSectorSolver(board, state),
+    new FaceToFaceColorSolver(board, state),
+    new FaceToVertexSolver(board, state),
+  ]);
 };

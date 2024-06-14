@@ -5,17 +5,17 @@ export class Watcher {
   public cref: Clause;
   public blocker: Lit;
 
-  public constructor( cr: Clause, p: Lit ) {
+  public constructor(cr: Clause, p: Lit) {
     this.cref = cr;
     this.blocker = p;
   }
 
-  public equals( obj: Watcher ): boolean {
-    if ( !( obj instanceof Watcher ) ) {
+  public equals(obj: Watcher): boolean {
+    if (!(obj instanceof Watcher)) {
       return false;
     }
     const o = obj as Watcher;
-    return this.cref.equals( o.cref );
+    return this.cref.equals(o.cref);
   }
 
   public toString(): string {

@@ -12,35 +12,35 @@ export class FaceStateViewNode extends Node {
     board: TBoard,
     stateProperty: TReadOnlyProperty<TState<TFaceStateData & TEdgeStateData>>,
     isSolvedProperty: TReadOnlyProperty<boolean>,
-    style: TPuzzleStyle
+    style: TPuzzleStyle,
   ) {
-    super( {
+    super({
       pickable: false,
-    } );
+    });
 
-    const multilink = Multilink.multilink( [
-      stateProperty,
-      style.faceStateVisibleProperty
-    ], ( state, isFaceStateVisible ) => {
-      this.children.forEach( child => child.dispose() );
-      this.children = [];
+    const multilink = Multilink.multilink(
+      [stateProperty, style.faceStateVisibleProperty],
+      (state, isFaceStateVisible) => {
+        this.children.forEach((child) => child.dispose());
+        this.children = [];
 
-      if ( isFaceStateVisible ) {
-        board.faces.forEach( face => {
-          this.addChild( new FaceStateNode( face, stateProperty, style ) );
-        } );
-      }
-    } );
-    this.disposeEmitter.addListener( () => multilink.dispose() );
+        if (isFaceStateVisible) {
+          board.faces.forEach((face) => {
+            this.addChild(new FaceStateNode(face, stateProperty, style));
+          });
+        }
+      },
+    );
+    this.disposeEmitter.addListener(() => multilink.dispose());
 
     // Apply effects when solved
-    const isSolvedListener = ( isSolved: boolean ) => {
+    const isSolvedListener = (isSolved: boolean) => {
       this.visible = !isSolved;
     };
-    isSolvedProperty.link( isSolvedListener );
-    this.disposeEmitter.addListener( () => {
-      isSolvedProperty.unlink( isSolvedListener );
-      this.children.forEach( child => child.dispose() );
-    } );
+    isSolvedProperty.link(isSolvedListener);
+    this.disposeEmitter.addListener(() => {
+      isSolvedProperty.unlink(isSolvedListener);
+      this.children.forEach((child) => child.dispose());
+    });
   }
 }

@@ -29,7 +29,6 @@ const threeStroke = '#0af';
 const unknownStroke = '#f0f';
 
 export class ScanNode extends PopupNode {
-
   private readonly scanContentNode: Node;
   private readonly imageContainer: Node;
   private readonly solutionContainer: Node;
@@ -45,191 +44,167 @@ export class ScanNode extends PopupNode {
   private contours: Contour[] = [];
   private contourNodeMap: Map<Contour, ContourNode> = new Map();
 
-  public constructor(
-    viewContext: ViewContext,
-  ) {
-    const loadingNode = new HBox( {
+  public constructor(viewContext: ViewContext) {
+    const loadingNode = new HBox({
       children: [
-        new Text( 'Loading image...', {
+        new Text('Loading image...', {
           font: uiFont,
-          fill: currentTheme.uiForegroundColorProperty
-        } )
-      ]
-    } );
+          fill: currentTheme.uiForegroundColorProperty,
+        }),
+      ],
+    });
 
-    const scanContentNode = new Node( {
-      children: [
-        loadingNode
-      ]
-    } );
+    const scanContentNode = new Node({
+      children: [loadingNode],
+    });
 
-    super( scanContentNode, viewContext );
+    super(scanContentNode, viewContext);
 
     this.scanContentNode = scanContentNode;
 
     this.blackImageLayer = new Node();
-    this.originalImageLayer = new Node( {
+    this.originalImageLayer = new Node({
       // TODO: make this configurable
-      visible: false
-    } );
-    this.thresholdImageLayer = new Node( {
+      visible: false,
+    });
+    this.thresholdImageLayer = new Node({
       // TODO: make this configurable
-      visible: false
-    } );
+      visible: false,
+    });
     this.contourLayer = new Node();
 
-    this.imageContainer = new Node( {
-      children: [
-        this.blackImageLayer,
-        this.originalImageLayer,
-        this.thresholdImageLayer,
-        this.contourLayer
-      ]
-    } );
+    this.imageContainer = new Node({
+      children: [this.blackImageLayer, this.originalImageLayer, this.thresholdImageLayer, this.contourLayer],
+    });
     this.solutionContainer = new Node();
   }
 
   public getScanOptions(): ScanOptions {
     return {
-      originalImageCallback: originalImage => this.onOriginalImage( originalImage ),
-      thresholdedImageCallback: thresholdedImage => this.onThresholdedImage( thresholdedImage ),
+      originalImageCallback: (originalImage) => this.onOriginalImage(originalImage),
+      thresholdedImageCallback: (thresholdedImage) => this.onThresholdedImage(thresholdedImage),
 
-      rootContourCallback: ( rootContour: Contour ) => this.onRootContour( rootContour ),
-      widestSubtreeCallback: ( widestSubtree: Contour ) => this.contourNodeMap.get( widestSubtree )?.makeWidestContour(),
+      rootContourCallback: (rootContour: Contour) => this.onRootContour(rootContour),
+      widestSubtreeCallback: (widestSubtree: Contour) => this.contourNodeMap.get(widestSubtree)?.makeWidestContour(),
 
-      dotContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeDotContour(),
-      lineContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeLineContour(),
-      zeroOuterContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeZeroOuterContour(),
-      zeroInnerContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeZeroInnerContour(),
-      oneContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeOneContour(),
-      twoContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeTwoContour(),
-      threeContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeThreeContour(),
-      xContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeXContour(),
-      unknownContourCallback: ( contour: Contour ) => this.contourNodeMap.get( contour )?.makeUnknownContour(),
+      dotContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeDotContour(),
+      lineContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeLineContour(),
+      zeroOuterContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeZeroOuterContour(),
+      zeroInnerContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeZeroInnerContour(),
+      oneContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeOneContour(),
+      twoContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeTwoContour(),
+      threeContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeThreeContour(),
+      xContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeXContour(),
+      unknownContourCallback: (contour: Contour) => this.contourNodeMap.get(contour)?.makeUnknownContour(),
 
-      debugImageCallback: debugImage => {},
+      debugImageCallback: (debugImage) => {},
 
-      puzzleCallback: ( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ) => this.onPuzzle( puzzle ),
-      solutionsCallback: ( solutions: TEdge[][] ) => this.onSolutions( solutions ),
+      puzzleCallback: (puzzle: TPropertyPuzzle<TStructure, TCompleteData>) => this.onPuzzle(puzzle),
+      solutionsCallback: (solutions: TEdge[][]) => this.onSolutions(solutions),
     };
   }
 
-  public onOriginalImage( originalImage: HTMLCanvasElement ): void {
-    this.originalImageLayer.addChild( new Image( originalImage ) );
-    this.blackImageLayer.addChild( Rectangle.bounds( this.originalImageLayer.bounds, {
-      fill: 'black'
-    } ) );
+  public onOriginalImage(originalImage: HTMLCanvasElement): void {
+    this.originalImageLayer.addChild(new Image(originalImage));
+    this.blackImageLayer.addChild(
+      Rectangle.bounds(this.originalImageLayer.bounds, {
+        fill: 'black',
+      }),
+    );
     this.scanContentNode.children = [
-      new VBox( {
+      new VBox({
         spacing: 10,
-        children: [
-          this.imageContainer,
-          this.solutionContainer
-        ]
-      } )
+        children: [this.imageContainer, this.solutionContainer],
+      }),
     ];
   }
 
-  public onThresholdedImage( thresholdedImage: HTMLCanvasElement ): void {
-    this.thresholdImageLayer.addChild( new Image( thresholdedImage ) );
+  public onThresholdedImage(thresholdedImage: HTMLCanvasElement): void {
+    this.thresholdImageLayer.addChild(new Image(thresholdedImage));
   }
 
-  public onRootContour( rootContour: Contour ): void {
+  public onRootContour(rootContour: Contour): void {
     this.rootContour = rootContour;
     this.contours = rootContour.getDescendantContours();
 
-    for ( const contour of this.contours ) {
-      const contourNode = new ContourNode( contour );
-      this.contourNodeMap.set( contour, contourNode );
-      this.contourLayer.addChild( contourNode );
+    for (const contour of this.contours) {
+      const contourNode = new ContourNode(contour);
+      this.contourNodeMap.set(contour, contourNode);
+      this.contourLayer.addChild(contourNode);
     }
   }
 
-  public onPuzzle( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void {
+  public onPuzzle(puzzle: TPropertyPuzzle<TStructure, TCompleteData>): void {
     this.puzzle = puzzle;
   }
 
-  public onSolutions( solutions: TEdge[][] ): void {
-    if ( solutions.length === 1 ) {
+  public onSolutions(solutions: TEdge[][]): void {
+    if (solutions.length === 1) {
       this.hide();
-    }
-    else {
+    } else {
       const puzzle = this.puzzle!;
-      assertEnabled() && assert( puzzle );
+      assertEnabled() && assert(puzzle);
 
       const board = puzzle.board;
 
-      if ( solutions.length === 0 ) {
-        safeSolve( board, puzzle.stateProperty.value );
+      if (solutions.length === 0) {
+        safeSolve(board, puzzle.stateProperty.value);
 
-        const puzzleNode = new PuzzleNode( puzzle, {
-          scale: 20
-        } );
+        const puzzleNode = new PuzzleNode(puzzle, {
+          scale: 20,
+        });
 
         this.solutionContainer.children = [
-          new VBox( {
+          new VBox({
             spacing: 10,
-            children: [
-              new UIText( 'No Solutions Found' ),
-              puzzleNode
-            ]
-          } )
+            children: [new UIText('No Solutions Found'), puzzleNode],
+          }),
         ];
-      }
-      else {
-        const puzzleA = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
-        const puzzleB = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
-        const puzzleC = new BasicPuzzle( board, puzzle.stateProperty.value.clone() );
+      } else {
+        const puzzleA = new BasicPuzzle(board, puzzle.stateProperty.value.clone());
+        const puzzleB = new BasicPuzzle(board, puzzle.stateProperty.value.clone());
+        const puzzleC = new BasicPuzzle(board, puzzle.stateProperty.value.clone());
 
-        solutions[ 0 ].forEach( edge => puzzleA.stateProperty.value.setEdgeState( edge, EdgeState.BLACK ) );
-        solutions[ 1 ].forEach( edge => puzzleB.stateProperty.value.setEdgeState( edge, EdgeState.BLACK ) );
-        board.edges.forEach( edge => {
-          if ( puzzleA.stateProperty.value.getEdgeState( edge ) !== puzzleB.stateProperty.value.getEdgeState( edge ) ) {
-            puzzleC.stateProperty.value.setEdgeState( edge, EdgeState.BLACK );
+        solutions[0].forEach((edge) => puzzleA.stateProperty.value.setEdgeState(edge, EdgeState.BLACK));
+        solutions[1].forEach((edge) => puzzleB.stateProperty.value.setEdgeState(edge, EdgeState.BLACK));
+        board.edges.forEach((edge) => {
+          if (puzzleA.stateProperty.value.getEdgeState(edge) !== puzzleB.stateProperty.value.getEdgeState(edge)) {
+            puzzleC.stateProperty.value.setEdgeState(edge, EdgeState.BLACK);
           }
-        } );
+        });
 
-        safeSolve( board, puzzleA.stateProperty.value );
-        safeSolve( board, puzzleB.stateProperty.value );
-        safeSolve( board, puzzleC.stateProperty.value );
+        safeSolve(board, puzzleA.stateProperty.value);
+        safeSolve(board, puzzleB.stateProperty.value);
+        safeSolve(board, puzzleC.stateProperty.value);
 
-        const puzzleANode = new PuzzleNode( puzzleA, { scale: 10 } );
-        const puzzleBNode = new PuzzleNode( puzzleB, { scale: 10 } );
-        const puzzleCNode = new PuzzleNode( puzzleC, { scale: 10 } );
+        const puzzleANode = new PuzzleNode(puzzleA, { scale: 10 });
+        const puzzleBNode = new PuzzleNode(puzzleB, { scale: 10 });
+        const puzzleCNode = new PuzzleNode(puzzleC, { scale: 10 });
 
         this.solutionContainer.children = [
-          new VBox( {
+          new VBox({
             spacing: 10,
             children: [
-              new UIText( 'Multiple Solutions Found' ),
-              new HBox( {
+              new UIText('Multiple Solutions Found'),
+              new HBox({
                 spacing: 10,
                 children: [
-                  new VBox( {
+                  new VBox({
                     spacing: 10,
-                    children: [
-                      puzzleANode,
-                      new UIText( 'Solution A' )
-                    ]
-                  } ),
-                  new VBox( {
+                    children: [puzzleANode, new UIText('Solution A')],
+                  }),
+                  new VBox({
                     spacing: 10,
-                    children: [
-                      puzzleBNode,
-                      new UIText( 'Solution B' )
-                    ]
-                  } ),
-                  new VBox( {
+                    children: [puzzleBNode, new UIText('Solution B')],
+                  }),
+                  new VBox({
                     spacing: 10,
-                    children: [
-                      puzzleCNode,
-                      new UIText( 'Difference' )
-                    ]
-                  } )
-                ]
-              } )
-            ]
-          } )
+                    children: [puzzleCNode, new UIText('Difference')],
+                  }),
+                ],
+              }),
+            ],
+          }),
         ];
       }
     }
@@ -237,20 +212,17 @@ export class ScanNode extends PopupNode {
 }
 
 class ContourNode extends Node {
-
   public readonly path: Path;
 
-  public constructor(
-    public readonly contour: Contour
-  ) {
+  public constructor(public readonly contour: Contour) {
     // TODO: improve the color
-    const path = new Path( contour.shape, {
-      stroke: undecidedStroke
-    } );
+    const path = new Path(contour.shape, {
+      stroke: undecidedStroke,
+    });
 
-    super( {
-      children: [ path ]
-    } );
+    super({
+      children: [path],
+    });
 
     this.path = path;
   }

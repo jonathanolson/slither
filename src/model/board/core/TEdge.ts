@@ -13,8 +13,7 @@ export interface TEdge {
   vertices: TVertex[];
   faces: TFace[];
 
-  getOtherVertex( vertex: TVertex ): TVertex;
+  getOtherVertex(vertex: TVertex): TVertex;
 
-  getOtherFace( face: TFace | null ): TFace | null;
+  getOtherFace(face: TFace | null): TFace | null;
 }
-

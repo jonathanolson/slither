@@ -2,34 +2,36 @@
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
-export const getCollapsedRules = ( rules: PatternRule[] ): PatternRule[] => {
-  if ( rules.length === 0 ) {
+export const getCollapsedRules = (rules: PatternRule[]): PatternRule[] => {
+  if (rules.length === 0) {
     return rules;
   }
 
-  const patternBoard = rules[ 0 ].patternBoard;
-  assertEnabled() && assert( rules.every( rule => rule.patternBoard === patternBoard ), 'pattern board check' );
+  const patternBoard = rules[0].patternBoard;
+  assertEnabled() &&
+    assert(
+      rules.every((rule) => rule.patternBoard === patternBoard),
+      'pattern board check',
+    );
 
   const map = new Map<string, PatternRule>();
 
-  for ( const rule of rules ) {
+  for (const rule of rules) {
     const key = `${rule.inputFeatureSet.toCanonicalString()}-${rule.highlander ? '1' : '0'}`;
 
-    const existingRule = map.get( key );
-    if ( existingRule ) {
-      if ( existingRule.outputFeatureSet.isSubsetOf( rule.outputFeatureSet ) ) {
-        map.set( key, rule );
+    const existingRule = map.get(key);
+    if (existingRule) {
+      if (existingRule.outputFeatureSet.isSubsetOf(rule.outputFeatureSet)) {
+        map.set(key, rule);
+      } else if (!rule.outputFeatureSet.isSubsetOf(existingRule.outputFeatureSet)) {
+        const union = rule.outputFeatureSet.union(existingRule.outputFeatureSet)!;
+        assertEnabled() && assert(union);
+        map.set(key, new PatternRule(patternBoard, rule.inputFeatureSet, union, rule.highlander));
       }
-      else if ( !rule.outputFeatureSet.isSubsetOf( existingRule.outputFeatureSet ) ) {
-        const union = rule.outputFeatureSet.union( existingRule.outputFeatureSet )!;
-        assertEnabled() && assert( union );
-        map.set( key, new PatternRule( patternBoard, rule.inputFeatureSet, union, rule.highlander ) );
-      }
-    }
-    else {
-      map.set( key, rule );
+    } else {
+      map.set(key, rule);
     }
   }
 
-  return [ ...map.values() ];
+  return [...map.values()];
 };

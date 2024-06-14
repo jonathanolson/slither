@@ -8,45 +8,43 @@ import { TFace } from '../../board/core/TFace.ts';
 import { FaceState } from './FaceState.ts';
 
 export class GeneralFaceStateDelta extends GeneralFaceStateAction implements TDelta<TFaceStateData> {
-
-  public readonly faceStateChangedEmitter = new TinyEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]>();
+  public readonly faceStateChangedEmitter = new TinyEmitter<[face: TFace, state: FaceState, oldState: FaceState]>();
 
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TFaceStateData>,
-    faceStateMap: Map<TFace, FaceState> = new Map()
+    faceStateMap: Map<TFace, FaceState> = new Map(),
   ) {
-    super( board, faceStateMap );
+    super(board, faceStateMap);
   }
 
-  public getFaceState( face: TFace ): FaceState {
-    if ( this.faceStateMap.has( face ) ) {
-      return this.faceStateMap.get( face )!;
-    }
-    else {
-      return this.parentState.getFaceState( face );
+  public getFaceState(face: TFace): FaceState {
+    if (this.faceStateMap.has(face)) {
+      return this.faceStateMap.get(face)!;
+    } else {
+      return this.parentState.getFaceState(face);
     }
   }
 
-  public setFaceState( face: TFace, state: FaceState ): void {
-    const oldState = this.getFaceState( face );
+  public setFaceState(face: TFace, state: FaceState): void {
+    const oldState = this.getFaceState(face);
 
-    if ( !oldState.equals( state ) ) {
-      this.faceStateMap.set( face, state );
+    if (!oldState.equals(state)) {
+      this.faceStateMap.set(face, state);
 
-      this.faceStateChangedEmitter.emit( face, state, oldState );
+      this.faceStateChangedEmitter.emit(face, state, oldState);
     }
   }
 
   public clone(): GeneralFaceStateDelta {
-    return new GeneralFaceStateDelta( this.board, this.parentState, new Map( this.faceStateMap ) );
+    return new GeneralFaceStateDelta(this.board, this.parentState, new Map(this.faceStateMap));
   }
 
   public createDelta(): TDelta<TFaceStateData> {
-    return new GeneralFaceStateDelta( this.board, this, new Map() );
+    return new GeneralFaceStateDelta(this.board, this, new Map());
   }
 
-  public serializeState( board: TBoard ): TSerializedFaceStateData {
-    return serializeFaceStateData( board, this );
+  public serializeState(board: TBoard): TSerializedFaceStateData {
+    return serializeFaceStateData(board, this);
   }
 }

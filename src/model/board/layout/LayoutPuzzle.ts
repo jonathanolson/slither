@@ -18,7 +18,15 @@ import { LayoutDerivative } from './LayoutDerivative.ts';
 import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
 import { currentTheme } from '../../../view/Theme.ts';
 import { Shape } from 'phet-lib/kite';
-import { LayoutEdge, LayoutExternalZone, LayoutFace, LayoutHalfEdge, LayoutInternalZone, LayoutStructure, LayoutVertex } from './layout.ts';
+import {
+  LayoutEdge,
+  LayoutExternalZone,
+  LayoutFace,
+  LayoutHalfEdge,
+  LayoutInternalZone,
+  LayoutStructure,
+  LayoutVertex,
+} from './layout.ts';
 import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
 import { TCompleteData } from '../../data/combined/TCompleteData.ts';
 import { CompleteData } from '../../data/combined/CompleteData.ts';
@@ -27,13 +35,12 @@ import { okhslToRGBString } from '../../../util/color.ts';
 import { safeSolve } from '../../solver/safeSolve.ts';
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
-
   public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();
   public faceValueMap: Map<LayoutFace, FaceValue> = new Map();
 
   public constructor(
     public readonly originalBoard: TBoard,
-    public readonly originalState: TState<TFaceValueData & TEdgeStateData>
+    public readonly originalState: TState<TFaceValueData & TEdgeStateData>,
   ) {
     const vertexMap = new Map<TVertex, LayoutVertex>();
     const faceMap = new Map<TFace, LayoutFace>();
@@ -45,376 +52,384 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     const edgeReverseMap = new Map<LayoutEdge, TEdge>();
     const halfEdgeReverseMap = new Map<LayoutHalfEdge, THalfEdge>();
 
-    const getLayoutVertex = ( vertex: TVertex ) => {
-      const layoutVertex = vertexMap.get( vertex );
-      assertEnabled() && assert( layoutVertex );
+    const getLayoutVertex = (vertex: TVertex) => {
+      const layoutVertex = vertexMap.get(vertex);
+      assertEnabled() && assert(layoutVertex);
       return layoutVertex!;
     };
-    const getLayoutFace = ( face: TFace ) => {
-      const layoutFace = faceMap.get( face );
-      assertEnabled() && assert( layoutFace );
+    const getLayoutFace = (face: TFace) => {
+      const layoutFace = faceMap.get(face);
+      assertEnabled() && assert(layoutFace);
       return layoutFace!;
     };
-    const getLayoutEdge = ( edge: TEdge ) => {
-      const layoutEdge = edgeMap.get( edge );
-      assertEnabled() && assert( layoutEdge );
+    const getLayoutEdge = (edge: TEdge) => {
+      const layoutEdge = edgeMap.get(edge);
+      assertEnabled() && assert(layoutEdge);
       return layoutEdge!;
     };
-    const getLayoutHalfEdge = ( halfEdge: THalfEdge ) => {
-      const layoutHalfEdge = halfEdgeMap.get( halfEdge );
-      assertEnabled() && assert( layoutHalfEdge );
+    const getLayoutHalfEdge = (halfEdge: THalfEdge) => {
+      const layoutHalfEdge = halfEdgeMap.get(halfEdge);
+      assertEnabled() && assert(layoutHalfEdge);
       return layoutHalfEdge!;
     };
 
-    const getOriginalVertex = ( layoutVertex: LayoutVertex ) => {
-      const vertex = vertexReverseMap.get( layoutVertex );
-      assertEnabled() && assert( vertex );
+    const getOriginalVertex = (layoutVertex: LayoutVertex) => {
+      const vertex = vertexReverseMap.get(layoutVertex);
+      assertEnabled() && assert(vertex);
       return vertex!;
     };
-    const getOriginalFace = ( layoutFace: LayoutFace ) => {
-      const face = faceReverseMap.get( layoutFace );
-      assertEnabled() && assert( face );
+    const getOriginalFace = (layoutFace: LayoutFace) => {
+      const face = faceReverseMap.get(layoutFace);
+      assertEnabled() && assert(face);
       return face!;
     };
-    const getOriginalEdge = ( layoutEdge: LayoutEdge ) => {
-      const edge = edgeReverseMap.get( layoutEdge );
-      assertEnabled() && assert( edge );
+    const getOriginalEdge = (layoutEdge: LayoutEdge) => {
+      const edge = edgeReverseMap.get(layoutEdge);
+      assertEnabled() && assert(edge);
       return edge!;
     };
-    const getOriginalHalfEdge = ( layoutHalfEdge: LayoutHalfEdge ) => {
-      const halfEdge = halfEdgeReverseMap.get( layoutHalfEdge );
-      assertEnabled() && assert( halfEdge );
+    const getOriginalHalfEdge = (layoutHalfEdge: LayoutHalfEdge) => {
+      const halfEdge = halfEdgeReverseMap.get(layoutHalfEdge);
+      assertEnabled() && assert(halfEdge);
       return halfEdge!;
     };
 
-    const vertices = originalBoard.vertices.map( vertex => {
-      const layoutVertex = new LayoutVertex( vertex.logicalCoordinates, vertex.viewCoordinates );
-      vertexMap.set( vertex, layoutVertex );
-      vertexReverseMap.set( layoutVertex, vertex );
+    const vertices = originalBoard.vertices.map((vertex) => {
+      const layoutVertex = new LayoutVertex(vertex.logicalCoordinates, vertex.viewCoordinates);
+      vertexMap.set(vertex, layoutVertex);
+      vertexReverseMap.set(layoutVertex, vertex);
       return layoutVertex;
-    } );
-    const faces = originalBoard.faces.map( face => {
-      const layoutFace = new LayoutFace( face.logicalCoordinates, face.viewCoordinates );
-      faceMap.set( face, layoutFace );
-      faceReverseMap.set( layoutFace, face );
+    });
+    const faces = originalBoard.faces.map((face) => {
+      const layoutFace = new LayoutFace(face.logicalCoordinates, face.viewCoordinates);
+      faceMap.set(face, layoutFace);
+      faceReverseMap.set(layoutFace, face);
       layoutFace.originalFace = face;
       return layoutFace;
-    } );
+    });
     const halfEdges: LayoutHalfEdge[] = [];
-    const edges = originalBoard.edges.map( edge => {
-      const start = vertexMap.get( edge.start )!;
-      const end = vertexMap.get( edge.end )!;
-      assertEnabled() && assert( start );
-      assertEnabled() && assert( end );
+    const edges = originalBoard.edges.map((edge) => {
+      const start = vertexMap.get(edge.start)!;
+      const end = vertexMap.get(edge.end)!;
+      assertEnabled() && assert(start);
+      assertEnabled() && assert(end);
 
-      const layoutEdge = new LayoutEdge( start, end );
-      layoutEdge.originalEdges.add( edge );
-      edgeMap.set( edge, layoutEdge );
-      edgeReverseMap.set( layoutEdge, edge );
+      const layoutEdge = new LayoutEdge(start, end);
+      layoutEdge.originalEdges.add(edge);
+      edgeMap.set(edge, layoutEdge);
+      edgeReverseMap.set(layoutEdge, edge);
 
-      const forwardHalf = new LayoutHalfEdge( start, end, false );
-      halfEdgeMap.set( edge.forwardHalf, forwardHalf );
-      halfEdgeReverseMap.set( forwardHalf, edge.forwardHalf );
-      halfEdges.push( forwardHalf );
+      const forwardHalf = new LayoutHalfEdge(start, end, false);
+      halfEdgeMap.set(edge.forwardHalf, forwardHalf);
+      halfEdgeReverseMap.set(forwardHalf, edge.forwardHalf);
+      halfEdges.push(forwardHalf);
 
-      const reversedHalf = new LayoutHalfEdge( end, start, true );
-      halfEdgeMap.set( edge.reversedHalf, reversedHalf );
-      halfEdgeReverseMap.set( reversedHalf, edge.reversedHalf );
-      halfEdges.push( reversedHalf );
+      const reversedHalf = new LayoutHalfEdge(end, start, true);
+      halfEdgeMap.set(edge.reversedHalf, reversedHalf);
+      halfEdgeReverseMap.set(reversedHalf, edge.reversedHalf);
+      halfEdges.push(reversedHalf);
 
       return layoutEdge;
-    } );
+    });
 
-    vertices.forEach( layoutVertex => {
-      const vertex = getOriginalVertex( layoutVertex );
-      layoutVertex.incomingHalfEdges = vertex.incomingHalfEdges.map( getLayoutHalfEdge );
-      layoutVertex.outgoingHalfEdges = vertex.outgoingHalfEdges.map( getLayoutHalfEdge );
-      layoutVertex.edges = vertex.edges.map( getLayoutEdge );
-      layoutVertex.faces = vertex.faces.map( getLayoutFace );
-    } );
+    vertices.forEach((layoutVertex) => {
+      const vertex = getOriginalVertex(layoutVertex);
+      layoutVertex.incomingHalfEdges = vertex.incomingHalfEdges.map(getLayoutHalfEdge);
+      layoutVertex.outgoingHalfEdges = vertex.outgoingHalfEdges.map(getLayoutHalfEdge);
+      layoutVertex.edges = vertex.edges.map(getLayoutEdge);
+      layoutVertex.faces = vertex.faces.map(getLayoutFace);
+    });
 
-    faces.forEach( layoutFace => {
-      const face = getOriginalFace( layoutFace );
-      layoutFace.halfEdges = face.halfEdges.map( getLayoutHalfEdge );
-      layoutFace.edges = face.edges.map( getLayoutEdge );
-      layoutFace.vertices = face.vertices.map( getLayoutVertex );
-    } );
+    faces.forEach((layoutFace) => {
+      const face = getOriginalFace(layoutFace);
+      layoutFace.halfEdges = face.halfEdges.map(getLayoutHalfEdge);
+      layoutFace.edges = face.edges.map(getLayoutEdge);
+      layoutFace.vertices = face.vertices.map(getLayoutVertex);
+    });
 
-    edges.forEach( layoutEdge => {
-      const edge = getOriginalEdge( layoutEdge );
-      layoutEdge.forwardHalf = getLayoutHalfEdge( edge.forwardHalf );
-      layoutEdge.reversedHalf = getLayoutHalfEdge( edge.reversedHalf );
-      layoutEdge.forwardFace = edge.forwardFace ? getLayoutFace( edge.forwardFace ) : null;
-      layoutEdge.reversedFace = edge.reversedFace ? getLayoutFace( edge.reversedFace ) : null;
-      layoutEdge.vertices = edge.vertices.map( getLayoutVertex );
-      layoutEdge.faces = edge.faces.map( getLayoutFace );
-    } );
+    edges.forEach((layoutEdge) => {
+      const edge = getOriginalEdge(layoutEdge);
+      layoutEdge.forwardHalf = getLayoutHalfEdge(edge.forwardHalf);
+      layoutEdge.reversedHalf = getLayoutHalfEdge(edge.reversedHalf);
+      layoutEdge.forwardFace = edge.forwardFace ? getLayoutFace(edge.forwardFace) : null;
+      layoutEdge.reversedFace = edge.reversedFace ? getLayoutFace(edge.reversedFace) : null;
+      layoutEdge.vertices = edge.vertices.map(getLayoutVertex);
+      layoutEdge.faces = edge.faces.map(getLayoutFace);
+    });
 
-    halfEdges.forEach( layoutHalfEdge => {
-      const halfEdge = getOriginalHalfEdge( layoutHalfEdge );
-      layoutHalfEdge.edge = getLayoutEdge( halfEdge.edge );
-      layoutHalfEdge.reversed = getLayoutHalfEdge( halfEdge.reversed );
-      layoutHalfEdge.next = getLayoutHalfEdge( halfEdge.next );
-      layoutHalfEdge.previous = getLayoutHalfEdge( halfEdge.previous );
-      layoutHalfEdge.face = halfEdge.face ? getLayoutFace( halfEdge.face ) : null;
-    } );
+    halfEdges.forEach((layoutHalfEdge) => {
+      const halfEdge = getOriginalHalfEdge(layoutHalfEdge);
+      layoutHalfEdge.edge = getLayoutEdge(halfEdge.edge);
+      layoutHalfEdge.reversed = getLayoutHalfEdge(halfEdge.reversed);
+      layoutHalfEdge.next = getLayoutHalfEdge(halfEdge.next);
+      layoutHalfEdge.previous = getLayoutHalfEdge(halfEdge.previous);
+      layoutHalfEdge.face = halfEdge.face ? getLayoutFace(halfEdge.face) : null;
+    });
 
-    super( {
+    super({
       edges: edges,
       vertices: vertices,
       faces: faces,
       halfEdges: halfEdges,
 
       // TODO: how to handle? We can just recompute after everything?
-      outerBoundary: originalBoard.outerBoundary.map( getLayoutHalfEdge ),
-      innerBoundaries: originalBoard.innerBoundaries.map( innerBoundary => innerBoundary.map( getLayoutHalfEdge ) )
-    } );
+      outerBoundary: originalBoard.outerBoundary.map(getLayoutHalfEdge),
+      innerBoundaries: originalBoard.innerBoundaries.map((innerBoundary) => innerBoundary.map(getLayoutHalfEdge)),
+    });
 
-    edges.forEach( layoutEdge => {
-      this.edgeStateMap.set( layoutEdge, originalState.getEdgeState( getOriginalEdge( layoutEdge ) ) );
-    } );
+    edges.forEach((layoutEdge) => {
+      this.edgeStateMap.set(layoutEdge, originalState.getEdgeState(getOriginalEdge(layoutEdge)));
+    });
 
-    faces.forEach( layoutFace => {
-      this.faceValueMap.set( layoutFace, originalState.getFaceValue( getOriginalFace( layoutFace ) ) );
-    } );
+    faces.forEach((layoutFace) => {
+      this.faceValueMap.set(layoutFace, originalState.getFaceValue(getOriginalFace(layoutFace)));
+    });
 
-    assertEnabled() && validateBoard( this );
+    assertEnabled() && validateBoard(this);
   }
 
-  public getFaceValue( face: LayoutFace ): FaceValue {
-    const state = this.faceValueMap.get( face );
-    assertEnabled() && assert( state !== undefined );
+  public getFaceValue(face: LayoutFace): FaceValue {
+    const state = this.faceValueMap.get(face);
+    assertEnabled() && assert(state !== undefined);
     return state!;
   }
 
-  public getEdgeState( edge: LayoutEdge ): EdgeState {
-    const state = this.edgeStateMap.get( edge );
-    assertEnabled() && assert( state !== undefined );
+  public getEdgeState(edge: LayoutEdge): EdgeState {
+    const state = this.edgeStateMap.get(edge);
+    assertEnabled() && assert(state !== undefined);
     return state!;
   }
 
   private clearSatisfiedFaces(): void {
-    this.faces.forEach( face => {
-
-      const faceValue = this.getFaceValue( face );
-      if ( faceValue === null ) {
+    this.faces.forEach((face) => {
+      const faceValue = this.getFaceValue(face);
+      if (faceValue === null) {
         return;
       }
 
       let whiteCount = 0;
       let blackCount = 0;
 
-      face.edges.forEach( edge => {
-        const edgeState = this.getEdgeState( edge );
-        if ( edgeState === EdgeState.WHITE ) {
+      face.edges.forEach((edge) => {
+        const edgeState = this.getEdgeState(edge);
+        if (edgeState === EdgeState.WHITE) {
           whiteCount++;
-        }
-        else if ( edgeState === EdgeState.BLACK ) {
+        } else if (edgeState === EdgeState.BLACK) {
           blackCount++;
         }
-      } );
+      });
 
-      if ( whiteCount === 0 && blackCount === faceValue ) {
-        this.faceValueMap.set( face, null );
+      if (whiteCount === 0 && blackCount === faceValue) {
+        this.faceValueMap.set(face, null);
       }
-    } );
+    });
   }
 
   private removeDeadRedEdges(): void {
-    const deadEdges = new Set( this.edges.filter( edge => {
-      return this.getEdgeState( edge ) === EdgeState.RED && edge.faces.every( face => {
-        return face === null || this.getFaceValue( face ) === null;
-      } );
-    } ) );
-    const deadVertices = new Set( this.vertices.filter( vertex => {
-      return vertex.edges.every( edge => deadEdges.has( edge ) );
-    } ) );
-    const deadFaces = new Set( this.faces.filter( face => {
-      return face.edges.some( edge => deadEdges.has( edge ) );
-    } ) );
+    const deadEdges = new Set(
+      this.edges.filter((edge) => {
+        return (
+          this.getEdgeState(edge) === EdgeState.RED &&
+          edge.faces.every((face) => {
+            return face === null || this.getFaceValue(face) === null;
+          })
+        );
+      }),
+    );
+    const deadVertices = new Set(
+      this.vertices.filter((vertex) => {
+        return vertex.edges.every((edge) => deadEdges.has(edge));
+      }),
+    );
+    const deadFaces = new Set(
+      this.faces.filter((face) => {
+        return face.edges.some((edge) => deadEdges.has(edge));
+      }),
+    );
 
-    const deadZones: ( LayoutInternalZone | LayoutExternalZone )[] = [];
+    const deadZones: (LayoutInternalZone | LayoutExternalZone)[] = [];
 
     // Handle adjacently-grouped faces in groups
-    const deadFacesRemaining = new Set( deadFaces );
-    while ( deadFacesRemaining.size ) {
+    const deadFacesRemaining = new Set(deadFaces);
+    while (deadFacesRemaining.size) {
       const initialFace: LayoutFace = deadFacesRemaining.values().next().value;
-      deadFacesRemaining.delete( initialFace );
+      deadFacesRemaining.delete(initialFace);
 
-      const faces = [ initialFace ];
+      const faces = [initialFace];
       let isExterior = false;
-      for ( let i = 0; i < faces.length; i++ ) {
-        const face = faces[ i ];
-        face.edges.forEach( edge => {
-          if ( deadEdges.has( edge ) ) {
-            [ edge.forwardFace, edge.reversedFace ].forEach( adjacentFace => {
-              if ( adjacentFace === face ) {
+      for (let i = 0; i < faces.length; i++) {
+        const face = faces[i];
+        face.edges.forEach((edge) => {
+          if (deadEdges.has(edge)) {
+            [edge.forwardFace, edge.reversedFace].forEach((adjacentFace) => {
+              if (adjacentFace === face) {
                 return;
               }
-              if ( adjacentFace === null ) {
+              if (adjacentFace === null) {
                 isExterior = true;
                 return;
               }
-              if ( deadFacesRemaining.has( adjacentFace ) ) {
-                deadFacesRemaining.delete( adjacentFace );
-                faces.push( adjacentFace );
+              if (deadFacesRemaining.has(adjacentFace)) {
+                deadFacesRemaining.delete(adjacentFace);
+                faces.push(adjacentFace);
               }
-            } );
+            });
           }
-        } );
+        });
       }
 
-      const allHalfEdges = new Set( faces.flatMap( face => face.halfEdges ) );
-      const allReversedHalfEdges = new Set( faces.flatMap( face => face.halfEdges.map( halfEdge => halfEdge.reversed ) ) );
-      const boundaryHalfEdgesSet = new Set( [ ...allHalfEdges ].filter( halfEdge => !allReversedHalfEdges.has( halfEdge ) ) );
+      const allHalfEdges = new Set(faces.flatMap((face) => face.halfEdges));
+      const allReversedHalfEdges = new Set(
+        faces.flatMap((face) => face.halfEdges.map((halfEdge) => halfEdge.reversed)),
+      );
+      const boundaryHalfEdgesSet = new Set([...allHalfEdges].filter((halfEdge) => !allReversedHalfEdges.has(halfEdge)));
 
-      const getNextHalfEdge = ( halfEdge: LayoutHalfEdge ) => {
+      const getNextHalfEdge = (halfEdge: LayoutHalfEdge) => {
         let nextHalfEdge = halfEdge.next;
-        while ( nextHalfEdge !== halfEdge && !boundaryHalfEdgesSet.has( nextHalfEdge ) ) {
+        while (nextHalfEdge !== halfEdge && !boundaryHalfEdgesSet.has(nextHalfEdge)) {
           nextHalfEdge = nextHalfEdge.reversed.next;
         }
-        assertEnabled() && assert( nextHalfEdge !== halfEdge );
+        assertEnabled() && assert(nextHalfEdge !== halfEdge);
         return nextHalfEdge;
       };
 
       const initialHalfEdge: LayoutHalfEdge = boundaryHalfEdgesSet.values().next().value;
-      const boundaryHalfEdges: LayoutHalfEdge[] = [ initialHalfEdge ];
-      let currentHalfEdge = getNextHalfEdge( initialHalfEdge );
-      while ( currentHalfEdge !== initialHalfEdge ) {
-        boundaryHalfEdges.push( currentHalfEdge );
-        currentHalfEdge = getNextHalfEdge( currentHalfEdge );
+      const boundaryHalfEdges: LayoutHalfEdge[] = [initialHalfEdge];
+      let currentHalfEdge = getNextHalfEdge(initialHalfEdge);
+      while (currentHalfEdge !== initialHalfEdge) {
+        boundaryHalfEdges.push(currentHalfEdge);
+        currentHalfEdge = getNextHalfEdge(currentHalfEdge);
       }
-      assertEnabled() && assert( boundaryHalfEdges.length === boundaryHalfEdgesSet.size );
+      assertEnabled() && assert(boundaryHalfEdges.length === boundaryHalfEdgesSet.size);
 
       // TODO: do we actually FIX up the boundaries? maybe recompute them later
 
       // console.log( 'group', `faces: ${faces.length}`, isExterior ? 'exterior' : 'interior', `boundary length: ${boundaryHalfEdges.length}` );
 
-      if ( isExterior ) {
+      if (isExterior) {
         // Find half edges that "start" the boundary (previous edge is removed)
         const boundarySegments: LayoutHalfEdge[][] = [];
-        for ( let i = 0; i < boundaryHalfEdges.length; i++ ) {
-          const halfEdge = boundaryHalfEdges[ i ];
-          const previousHalfEdge = boundaryHalfEdges[ ( i + boundaryHalfEdges.length - 1 ) % boundaryHalfEdges.length ];
+        for (let i = 0; i < boundaryHalfEdges.length; i++) {
+          const halfEdge = boundaryHalfEdges[i];
+          const previousHalfEdge = boundaryHalfEdges[(i + boundaryHalfEdges.length - 1) % boundaryHalfEdges.length];
 
-          assertEnabled() && assert( previousHalfEdge.end === halfEdge.start );
+          assertEnabled() && assert(previousHalfEdge.end === halfEdge.start);
 
-          if ( !deadEdges.has( halfEdge.edge ) && deadEdges.has( previousHalfEdge.edge ) ) {
+          if (!deadEdges.has(halfEdge.edge) && deadEdges.has(previousHalfEdge.edge)) {
+            const boundarySegment = [halfEdge];
+            for (let j = i + 1; ; j++) {
+              const nextHalfEdge = boundaryHalfEdges[j % boundaryHalfEdges.length];
 
-            const boundarySegment = [ halfEdge ];
-            for ( let j = i + 1; ; j++ ) {
-              const nextHalfEdge = boundaryHalfEdges[ j % boundaryHalfEdges.length ];
-
-              if ( deadEdges.has( nextHalfEdge.edge ) ) {
+              if (deadEdges.has(nextHalfEdge.edge)) {
                 break;
-              }
-              else {
-                boundarySegment.push( nextHalfEdge );
+              } else {
+                boundarySegment.push(nextHalfEdge);
               }
             }
-            boundarySegments.push( boundarySegment );
+            boundarySegments.push(boundarySegment);
 
             // console.log( 'segment', boundarySegment.length );
           }
         }
-        deadZones.push( new LayoutExternalZone( faces, boundaryHalfEdges, boundarySegments ) );
-      }
-      else {
-        deadZones.push( new LayoutInternalZone( faces, boundaryHalfEdges ) );
+        deadZones.push(new LayoutExternalZone(faces, boundaryHalfEdges, boundarySegments));
+      } else {
+        deadZones.push(new LayoutInternalZone(faces, boundaryHalfEdges));
       }
     }
 
-    deadZones.forEach( zone => {
-      if ( zone instanceof LayoutInternalZone ) {
-        const vertices = zone.boundaryHalfEdges.map( halfEdge => halfEdge.start );
-        const edges = zone.boundaryHalfEdges.map( halfEdge => halfEdge.edge );
+    deadZones.forEach((zone) => {
+      if (zone instanceof LayoutInternalZone) {
+        const vertices = zone.boundaryHalfEdges.map((halfEdge) => halfEdge.start);
+        const edges = zone.boundaryHalfEdges.map((halfEdge) => halfEdge.edge);
 
         // TODO: can we do a better job with logical coordinates here? incremental?
-        const newFace = new LayoutFace( getCentroid( vertices.map( vertex => vertex.viewCoordinates ) ), getCentroid( vertices.map( vertex => vertex.logicalCoordinates ) ) );
-        this.faces.push( newFace );
-        this.faceValueMap.set( newFace, null );
+        const newFace = new LayoutFace(
+          getCentroid(vertices.map((vertex) => vertex.viewCoordinates)),
+          getCentroid(vertices.map((vertex) => vertex.logicalCoordinates)),
+        );
+        this.faces.push(newFace);
+        this.faceValueMap.set(newFace, null);
 
         newFace.halfEdges = zone.boundaryHalfEdges;
         newFace.edges = edges;
         newFace.vertices = vertices;
 
         // Rewrite the boundary half-edges
-        for ( let i = 0; i < zone.boundaryHalfEdges.length; i++ ) {
-          const halfEdge = zone.boundaryHalfEdges[ i ];
+        for (let i = 0; i < zone.boundaryHalfEdges.length; i++) {
+          const halfEdge = zone.boundaryHalfEdges[i];
           const oldFace = halfEdge.face;
 
           halfEdge.face = newFace;
 
           const edge = halfEdge.edge;
-          if ( halfEdge.isReversed ) {
+          if (halfEdge.isReversed) {
             edge.reversedFace = newFace;
-          }
-          else {
+          } else {
             edge.forwardFace = newFace;
           }
 
-          assertEnabled() && assert( oldFace );
-          if ( oldFace ) {
-            arrayRemove( edge.faces, oldFace );
+          assertEnabled() && assert(oldFace);
+          if (oldFace) {
+            arrayRemove(edge.faces, oldFace);
           }
-          edge.faces.push( newFace );
+          edge.faces.push(newFace);
         }
-      }
-      else {
-        zone.boundarySegments.forEach( boundarySegment => {
-          boundarySegment.forEach( halfEdge => {
+      } else {
+        zone.boundarySegments.forEach((boundarySegment) => {
+          boundarySegment.forEach((halfEdge) => {
             const edge = halfEdge.edge;
             const oldFace = halfEdge.face;
-            if ( oldFace ) {
+            if (oldFace) {
               halfEdge.face = null;
-              arrayRemove( edge.faces, oldFace );
+              arrayRemove(edge.faces, oldFace);
             }
-            if ( halfEdge.isReversed ) {
+            if (halfEdge.isReversed) {
               edge.reversedFace = null;
-            }
-            else {
+            } else {
               edge.forwardFace = null;
             }
-          } );
-        } );
+          });
+        });
       }
-    } );
+    });
 
-    deadEdges.forEach( deadEdge => {
+    deadEdges.forEach((deadEdge) => {
       // TODO: have a better way of doing this?
-      arrayRemove( this.edges, deadEdge );
-      arrayRemove( this.halfEdges, deadEdge.forwardHalf );
-      arrayRemove( this.halfEdges, deadEdge.reversedHalf );
-    } );
+      arrayRemove(this.edges, deadEdge);
+      arrayRemove(this.halfEdges, deadEdge.forwardHalf);
+      arrayRemove(this.halfEdges, deadEdge.reversedHalf);
+    });
 
-    deadVertices.forEach( deadVertex => {
-      arrayRemove( this.vertices, deadVertex );
-    } );
+    deadVertices.forEach((deadVertex) => {
+      arrayRemove(this.vertices, deadVertex);
+    });
 
-    deadFaces.forEach( deadFace => {
-      arrayRemove( this.faces, deadFace );
-    } );
+    deadFaces.forEach((deadFace) => {
+      arrayRemove(this.faces, deadFace);
+    });
 
-    this.vertices.forEach( vertex => {
-      vertex.edges = vertex.edges.filter( edge => !deadEdges.has( edge ) );
-      vertex.incomingHalfEdges = vertex.incomingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
-      vertex.outgoingHalfEdges = vertex.outgoingHalfEdges.filter( halfEdge => !deadEdges.has( halfEdge.edge ) );
-      vertex.faces = vertex.incomingHalfEdges.map( halfEdge => halfEdge.face ).filter( face => face !== null ) as LayoutFace[];
+    this.vertices.forEach((vertex) => {
+      vertex.edges = vertex.edges.filter((edge) => !deadEdges.has(edge));
+      vertex.incomingHalfEdges = vertex.incomingHalfEdges.filter((halfEdge) => !deadEdges.has(halfEdge.edge));
+      vertex.outgoingHalfEdges = vertex.outgoingHalfEdges.filter((halfEdge) => !deadEdges.has(halfEdge.edge));
+      vertex.faces = vertex.incomingHalfEdges
+        .map((halfEdge) => halfEdge.face)
+        .filter((face) => face !== null) as LayoutFace[];
 
       // fix up next/previous (easier to wait for here)
-      for ( let i = 0; i < vertex.incomingHalfEdges.length; i++ ) {
+      for (let i = 0; i < vertex.incomingHalfEdges.length; i++) {
         // const firstIncomingHalfEdge = vertex.incomingHalfEdges[ i ];
-        const firstOutgoingHalfEdge = vertex.outgoingHalfEdges[ i ];
+        const firstOutgoingHalfEdge = vertex.outgoingHalfEdges[i];
 
-        const secondIncomingHalfEdge = vertex.incomingHalfEdges[ ( i + 1 ) % vertex.incomingHalfEdges.length ];
+        const secondIncomingHalfEdge = vertex.incomingHalfEdges[(i + 1) % vertex.incomingHalfEdges.length];
         // const secondOutgoingHalfEdge = vertex.outgoingHalfEdges[ ( i + 1 ) % vertex.incomingHalfEdges.length ];
 
         secondIncomingHalfEdge.next = firstOutgoingHalfEdge;
         firstOutgoingHalfEdge.previous = secondIncomingHalfEdge;
       }
-    } );
+    });
 
-    assertEnabled() && validateBoard( this );
+    assertEnabled() && validateBoard(this);
 
     // TODO: validate, but give it an option to ignore the boundary bits
     // TODO: validate existence in our arrays too
@@ -422,59 +437,61 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public removeSimpleForced(): void {
     // changing during iteration
-    this.vertices.slice().forEach( vertex => {
+    this.vertices.slice().forEach((vertex) => {
       // Only 2 edges
-      if ( vertex.edges.length !== 2 ) {
+      if (vertex.edges.length !== 2) {
         return;
       }
 
       // Only null-ish faces
-      const faces = _.uniq( vertex.edges.flatMap( edge => edge.faces ) );
-      if ( faces.some( face => this.getFaceValue( face ) !== null ) ) {
+      const faces = _.uniq(vertex.edges.flatMap((edge) => edge.faces));
+      if (faces.some((face) => this.getFaceValue(face) !== null)) {
         return;
       }
 
-      const firstEdge = vertex.edges[ 0 ];
-      const secondEdge = vertex.edges[ 1 ];
+      const firstEdge = vertex.edges[0];
+      const secondEdge = vertex.edges[1];
 
-      const edgeStateA = this.getEdgeState( firstEdge );
-      const edgeStateB = this.getEdgeState( secondEdge );
+      const edgeStateA = this.getEdgeState(firstEdge);
+      const edgeStateB = this.getEdgeState(secondEdge);
 
       // Same edge state
-      if ( edgeStateA !== edgeStateB ) {
+      if (edgeStateA !== edgeStateB) {
         return;
       }
 
-      const startVertex = firstEdge.getOtherVertex( vertex );
-      const endVertex = secondEdge.getOtherVertex( vertex );
+      const startVertex = firstEdge.getOtherVertex(vertex);
+      const endVertex = secondEdge.getOtherVertex(vertex);
 
       // Different vertices (not a triangle)
-      if ( startVertex === endVertex ) {
+      if (startVertex === endVertex) {
         return;
       }
 
       // "forward" and "reversed" in our new ordering (from startVertex to vertex to endVertex)
       const firstForwardHalf = firstEdge.forwardHalf.end === vertex ? firstEdge.forwardHalf : firstEdge.reversedHalf;
       const firstReversedHalf = firstEdge.forwardHalf.end === vertex ? firstEdge.reversedHalf : firstEdge.forwardHalf;
-      const secondForwardHalf = secondEdge.forwardHalf.start === vertex ? secondEdge.forwardHalf : secondEdge.reversedHalf;
-      const secondReversedHalf = secondEdge.forwardHalf.start === vertex ? secondEdge.reversedHalf : secondEdge.forwardHalf;
+      const secondForwardHalf =
+        secondEdge.forwardHalf.start === vertex ? secondEdge.forwardHalf : secondEdge.reversedHalf;
+      const secondReversedHalf =
+        secondEdge.forwardHalf.start === vertex ? secondEdge.reversedHalf : secondEdge.forwardHalf;
 
       const forwardFace = firstForwardHalf.face;
       const reversedFace = firstReversedHalf.face;
 
       // TODO: preserve originalEdges(!)
 
-      const newEdge = new LayoutEdge( startVertex, endVertex );
-      firstEdge.originalEdges.forEach( edge => newEdge.originalEdges.add( edge ) );
-      secondEdge.originalEdges.forEach( edge => newEdge.originalEdges.add( edge ) );
-      this.edgeStateMap.set( newEdge, edgeStateA );
-      this.edges.push( newEdge );
+      const newEdge = new LayoutEdge(startVertex, endVertex);
+      firstEdge.originalEdges.forEach((edge) => newEdge.originalEdges.add(edge));
+      secondEdge.originalEdges.forEach((edge) => newEdge.originalEdges.add(edge));
+      this.edgeStateMap.set(newEdge, edgeStateA);
+      this.edges.push(newEdge);
 
-      const newForwardHalfEdge = new LayoutHalfEdge( startVertex, endVertex, false );
-      this.halfEdges.push( newForwardHalfEdge );
+      const newForwardHalfEdge = new LayoutHalfEdge(startVertex, endVertex, false);
+      this.halfEdges.push(newForwardHalfEdge);
 
-      const newReversedHalfEdge = new LayoutHalfEdge( endVertex, startVertex, true );
-      this.halfEdges.push( newReversedHalfEdge );
+      const newReversedHalfEdge = new LayoutHalfEdge(endVertex, startVertex, true);
+      this.halfEdges.push(newReversedHalfEdge);
 
       // TODO: factor out the code to replace this two-edge vertex with a single edge (we'll use it elsewhere)
       // TODO: e.g. when we replace simple cases with faces(!)
@@ -483,8 +500,8 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       newEdge.reversedHalf = newReversedHalfEdge;
       newEdge.forwardFace = forwardFace;
       newEdge.reversedFace = reversedFace;
-      newEdge.vertices = [ startVertex, endVertex ];
-      newEdge.faces = [ forwardFace, reversedFace ].filter( face => face !== null ) as LayoutFace[];
+      newEdge.vertices = [startVertex, endVertex];
+      newEdge.faces = [forwardFace, reversedFace].filter((face) => face !== null) as LayoutFace[];
 
       newForwardHalfEdge.edge = newEdge;
       newForwardHalfEdge.reversed = newReversedHalfEdge;
@@ -498,66 +515,66 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       newReversedHalfEdge.previous = secondReversedHalf.previous;
       newReversedHalfEdge.face = reversedFace;
 
-      if ( forwardFace ) {
-        const halfIndex = forwardFace.halfEdges.indexOf( firstForwardHalf );
-        const index = forwardFace.edges.indexOf( firstEdge );
+      if (forwardFace) {
+        const halfIndex = forwardFace.halfEdges.indexOf(firstForwardHalf);
+        const index = forwardFace.edges.indexOf(firstEdge);
 
-        assertEnabled() && assert( halfIndex !== -1 );
-        assertEnabled() && assert( index !== -1 );
+        assertEnabled() && assert(halfIndex !== -1);
+        assertEnabled() && assert(index !== -1);
 
-        forwardFace.halfEdges[ halfIndex ] = newForwardHalfEdge;
-        arrayRemove( forwardFace.halfEdges, secondForwardHalf );
+        forwardFace.halfEdges[halfIndex] = newForwardHalfEdge;
+        arrayRemove(forwardFace.halfEdges, secondForwardHalf);
 
-        forwardFace.edges[ index ] = newEdge;
-        arrayRemove( forwardFace.edges, secondEdge );
+        forwardFace.edges[index] = newEdge;
+        arrayRemove(forwardFace.edges, secondEdge);
 
-        arrayRemove( forwardFace.vertices, vertex );
+        arrayRemove(forwardFace.vertices, vertex);
       }
 
-      if ( reversedFace ) {
-        const halfIndex = reversedFace.halfEdges.indexOf( secondReversedHalf );
-        const index = reversedFace.edges.indexOf( secondEdge );
+      if (reversedFace) {
+        const halfIndex = reversedFace.halfEdges.indexOf(secondReversedHalf);
+        const index = reversedFace.edges.indexOf(secondEdge);
 
-        assertEnabled() && assert( halfIndex !== -1 );
-        assertEnabled() && assert( index !== -1 );
+        assertEnabled() && assert(halfIndex !== -1);
+        assertEnabled() && assert(index !== -1);
 
-        reversedFace.halfEdges[ halfIndex ] = newReversedHalfEdge;
-        arrayRemove( reversedFace.halfEdges, firstReversedHalf );
+        reversedFace.halfEdges[halfIndex] = newReversedHalfEdge;
+        arrayRemove(reversedFace.halfEdges, firstReversedHalf);
 
-        reversedFace.edges[ index ] = newEdge;
-        arrayRemove( reversedFace.edges, firstEdge );
+        reversedFace.edges[index] = newEdge;
+        arrayRemove(reversedFace.edges, firstEdge);
 
-        arrayRemove( reversedFace.vertices, vertex );
+        arrayRemove(reversedFace.vertices, vertex);
       }
 
       // startVertex
       {
-        const incomingIndex = startVertex.incomingHalfEdges.indexOf( firstReversedHalf );
-        const outgoingIndex = startVertex.outgoingHalfEdges.indexOf( firstForwardHalf );
-        const edgeIndex = startVertex.edges.indexOf( firstEdge );
+        const incomingIndex = startVertex.incomingHalfEdges.indexOf(firstReversedHalf);
+        const outgoingIndex = startVertex.outgoingHalfEdges.indexOf(firstForwardHalf);
+        const edgeIndex = startVertex.edges.indexOf(firstEdge);
 
-        assertEnabled() && assert( incomingIndex !== -1 );
-        assertEnabled() && assert( outgoingIndex !== -1 );
-        assertEnabled() && assert( edgeIndex !== -1 );
+        assertEnabled() && assert(incomingIndex !== -1);
+        assertEnabled() && assert(outgoingIndex !== -1);
+        assertEnabled() && assert(edgeIndex !== -1);
 
-        startVertex.incomingHalfEdges[ incomingIndex ] = newReversedHalfEdge;
-        startVertex.outgoingHalfEdges[ outgoingIndex ] = newForwardHalfEdge;
-        startVertex.edges[ edgeIndex ] = newEdge;
+        startVertex.incomingHalfEdges[incomingIndex] = newReversedHalfEdge;
+        startVertex.outgoingHalfEdges[outgoingIndex] = newForwardHalfEdge;
+        startVertex.edges[edgeIndex] = newEdge;
       }
 
       // endVertex
       {
-        const incomingIndex = endVertex.incomingHalfEdges.indexOf( secondForwardHalf );
-        const outgoingIndex = endVertex.outgoingHalfEdges.indexOf( secondReversedHalf );
-        const edgeIndex = endVertex.edges.indexOf( secondEdge );
+        const incomingIndex = endVertex.incomingHalfEdges.indexOf(secondForwardHalf);
+        const outgoingIndex = endVertex.outgoingHalfEdges.indexOf(secondReversedHalf);
+        const edgeIndex = endVertex.edges.indexOf(secondEdge);
 
-        assertEnabled() && assert( incomingIndex !== -1 );
-        assertEnabled() && assert( outgoingIndex !== -1 );
-        assertEnabled() && assert( edgeIndex !== -1 );
+        assertEnabled() && assert(incomingIndex !== -1);
+        assertEnabled() && assert(outgoingIndex !== -1);
+        assertEnabled() && assert(edgeIndex !== -1);
 
-        endVertex.incomingHalfEdges[ incomingIndex ] = newForwardHalfEdge;
-        endVertex.outgoingHalfEdges[ outgoingIndex ] = newReversedHalfEdge;
-        endVertex.edges[ edgeIndex ] = newEdge;
+        endVertex.incomingHalfEdges[incomingIndex] = newForwardHalfEdge;
+        endVertex.outgoingHalfEdges[outgoingIndex] = newReversedHalfEdge;
+        endVertex.edges[edgeIndex] = newEdge;
       }
 
       newForwardHalfEdge.previous.next = newForwardHalfEdge;
@@ -565,16 +582,16 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
       newReversedHalfEdge.previous.next = newReversedHalfEdge;
       newReversedHalfEdge.next.previous = newReversedHalfEdge;
 
-      arrayRemove( this.edges, firstEdge );
-      arrayRemove( this.edges, secondEdge );
-      arrayRemove( this.halfEdges, firstEdge.forwardHalf );
-      arrayRemove( this.halfEdges, firstEdge.reversedHalf );
-      arrayRemove( this.halfEdges, secondEdge.forwardHalf );
-      arrayRemove( this.halfEdges, secondEdge.reversedHalf );
-      arrayRemove( this.vertices, vertex );
-    } );
+      arrayRemove(this.edges, firstEdge);
+      arrayRemove(this.edges, secondEdge);
+      arrayRemove(this.halfEdges, firstEdge.forwardHalf);
+      arrayRemove(this.halfEdges, firstEdge.reversedHalf);
+      arrayRemove(this.halfEdges, secondEdge.forwardHalf);
+      arrayRemove(this.halfEdges, secondEdge.reversedHalf);
+      arrayRemove(this.vertices, vertex);
+    });
 
-    assertEnabled() && validateBoard( this );
+    assertEnabled() && validateBoard(this);
   }
 
   public simplify(): void {
@@ -586,38 +603,37 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
   }
 
   public fixOuterBoundary(): void {
-    const boundaryHalfEdges = new Set( this.halfEdges.filter( halfEdge => halfEdge.face === null ) );
+    const boundaryHalfEdges = new Set(this.halfEdges.filter((halfEdge) => halfEdge.face === null));
     const outerBoundaries: LayoutHalfEdge[][] = [];
     const innerBoundaries: LayoutHalfEdge[][] = [];
 
-    while ( boundaryHalfEdges.size ) {
+    while (boundaryHalfEdges.size) {
       const firstHalfEdge = boundaryHalfEdges.values().next().value;
-      boundaryHalfEdges.delete( firstHalfEdge );
+      boundaryHalfEdges.delete(firstHalfEdge);
 
-      const boundary: LayoutHalfEdge[] = [ firstHalfEdge ];
+      const boundary: LayoutHalfEdge[] = [firstHalfEdge];
       let next = firstHalfEdge.next;
 
-      while ( next !== firstHalfEdge ) {
-        boundary.push( next );
-        boundaryHalfEdges.delete( next );
+      while (next !== firstHalfEdge) {
+        boundary.push(next);
+        boundaryHalfEdges.delete(next);
         next = next.next;
       }
 
-      if ( getSignedArea( boundary.map( halfEdge => halfEdge.start.viewCoordinates ) ) < 0 ) {
-        outerBoundaries.push( boundary );
-      }
-      else {
-        innerBoundaries.push( boundary );
+      if (getSignedArea(boundary.map((halfEdge) => halfEdge.start.viewCoordinates)) < 0) {
+        outerBoundaries.push(boundary);
+      } else {
+        innerBoundaries.push(boundary);
       }
     }
 
-    assertEnabled() && assert( outerBoundaries.length === 1 );
+    assertEnabled() && assert(outerBoundaries.length === 1);
 
     this.outerBoundary.length = 0;
-    this.outerBoundary.push( ...outerBoundaries[ 0 ] );
+    this.outerBoundary.push(...outerBoundaries[0]);
 
     this.innerBoundaries.length = 0;
-    this.innerBoundaries.push( ...innerBoundaries );
+    this.innerBoundaries.push(...innerBoundaries);
   }
 
   public getCompleteState(): TState<TCompleteData> {
@@ -625,12 +641,12 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
     const state = CompleteData.fromFacesEdges(
       this,
-      face => this.getFaceValue( face as LayoutFace ),
-      edge => this.getEdgeState( edge as LayoutEdge )
+      (face) => this.getFaceValue(face as LayoutFace),
+      (edge) => this.getEdgeState(edge as LayoutEdge),
     );
 
     // Clean up state for viewing
-    safeSolve( this, state );
+    safeSolve(this, state);
 
     return state;
   }
@@ -638,7 +654,7 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
   public getCompletePuzzle(): TPuzzle<LayoutStructure, TCompleteData> {
     return {
       board: this,
-      state: this.getCompleteState()
+      state: this.getCompleteState(),
     };
   }
 
@@ -646,9 +662,9 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
 
   public getSignedArea(): number {
     let area = 0;
-    this.faces.forEach( face => {
-      area += getSignedArea( face.vertices.map( vertex => vertex.viewCoordinates ) );
-    } );
+    this.faces.forEach((face) => {
+      area += getSignedArea(face.vertices.map((vertex) => vertex.viewCoordinates));
+    });
     return area;
   }
 
@@ -659,46 +675,46 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     let centroidX = 0;
     let centroidY = 0;
 
-    this.halfEdges.forEach( halfEdge => {
-      if ( halfEdge.face === null ) {
+    this.halfEdges.forEach((halfEdge) => {
+      if (halfEdge.face === null) {
         // Reversal for correct sign
         const p0 = halfEdge.end.viewCoordinates;
         const p1 = halfEdge.start.viewCoordinates;
 
         // Shoelace formula for the area
-        area += ( p1.x + p0.x ) * ( p1.y - p0.y );
+        area += (p1.x + p0.x) * (p1.y - p0.y);
 
         // Partial centroid evaluation. NOTE: using the compound version here, for performance/stability tradeoffs
-        const base = ( p0.x * ( 2 * p0.y + p1.y ) + p1.x * ( p0.y + 2 * p1.y ) );
-        centroidX += ( p0.x - p1.x ) * base;
-        centroidY += ( p1.y - p0.y ) * base;
+        const base = p0.x * (2 * p0.y + p1.y) + p1.x * (p0.y + 2 * p1.y);
+        centroidX += (p0.x - p1.x) * base;
+        centroidY += (p1.y - p0.y) * base;
       }
-    } );
+    });
 
     area *= 0.5;
 
-    return new Vector2( centroidX, centroidY ).timesScalar( 1 / ( 6 * area ) );
+    return new Vector2(centroidX, centroidY).timesScalar(1 / (6 * area));
   }
 
-  public applyDerivative( derivative: LayoutDerivative ): void {
-    this.vertices.forEach( vertex => {
-      const delta = derivative.derivatives.get( vertex )!;
+  public applyDerivative(derivative: LayoutDerivative): void {
+    this.vertices.forEach((vertex) => {
+      const delta = derivative.derivatives.get(vertex)!;
 
       // TODO: consider "partials" in the future?
-      assertEnabled() && assert( delta );
+      assertEnabled() && assert(delta);
 
-      assertEnabled() && assert( delta.isFinite() );
+      assertEnabled() && assert(delta.isFinite());
 
-      vertex.viewCoordinates.add( delta );
-    } );
+      vertex.viewCoordinates.add(delta);
+    });
 
     this.fixFaceCoordinates();
   }
 
   public fixFaceCoordinates(): void {
-    this.faces.forEach( face => {
-      face.viewCoordinates.set( getCentroid( face.halfEdges.map( halfEdge => halfEdge.start.viewCoordinates ) ) );
-    } );
+    this.faces.forEach((face) => {
+      face.viewCoordinates.set(getCentroid(face.halfEdges.map((halfEdge) => halfEdge.start.viewCoordinates)));
+    });
   }
 
   public getDebugNode(): Node {
@@ -709,65 +725,71 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     const showRedEdges = false; // TODO: useful for debugging
     const showVertices = false; // TODO: useful for debugging
 
-    this.edges.forEach( edge => {
+    this.edges.forEach((edge) => {
       const start = edge.start.viewCoordinates;
       const end = edge.end.viewCoordinates;
 
       let stroke: TColor;
       let lineWidth: number;
-      const edgeState = this.edgeStateMap.get( edge );
-      if ( edgeState === EdgeState.WHITE ) {
+      const edgeState = this.edgeStateMap.get(edge);
+      if (edgeState === EdgeState.WHITE) {
         stroke = currentTheme.blackLineColorProperty;
         lineWidth = 0.02;
-      }
-      else if ( edgeState === EdgeState.BLACK ) {
-        stroke = okhslToRGBString( Math.random() * 360, 0.7, 0.55 );
+      } else if (edgeState === EdgeState.BLACK) {
+        stroke = okhslToRGBString(Math.random() * 360, 0.7, 0.55);
         lineWidth = 0.1;
-      }
-      else {
+      } else {
         stroke = showRedEdges ? 'red' : null;
         lineWidth = 0.02;
       }
 
-      debugNode.addChild( new Line( start, end, {
-        stroke: stroke,
-        lineWidth: lineWidth,
-        lineCap: 'round'
-      } ) );
-    } );
+      debugNode.addChild(
+        new Line(start, end, {
+          stroke: stroke,
+          lineWidth: lineWidth,
+          lineCap: 'round',
+        }),
+      );
+    });
 
-    if ( showBackgrounds ) {
-      this.faces.forEach( face => {
-        const backgroundColor = new Color( okhslToRGBString( Math.random() * 360, 0.7, 0.6 ) ).withAlpha( 0.5 );
-        debugNode.addChild( new Path( Shape.polygon( face.vertices.map( vertex => vertex.viewCoordinates ) ), {
-          fill: backgroundColor
-        } ) );
-      } );
+    if (showBackgrounds) {
+      this.faces.forEach((face) => {
+        const backgroundColor = new Color(okhslToRGBString(Math.random() * 360, 0.7, 0.6)).withAlpha(0.5);
+        debugNode.addChild(
+          new Path(Shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates)), {
+            fill: backgroundColor,
+          }),
+        );
+      });
     }
 
-    if ( showVertices ) {
-      this.vertices.forEach( vertex => {
-        debugNode.addChild( new Circle( 0.1, {
-          x: vertex.viewCoordinates.x,
-          y: vertex.viewCoordinates.y,
-          fill: currentTheme.blackLineColorProperty
-        } ) );
-      } );
+    if (showVertices) {
+      this.vertices.forEach((vertex) => {
+        debugNode.addChild(
+          new Circle(0.1, {
+            x: vertex.viewCoordinates.x,
+            y: vertex.viewCoordinates.y,
+            fill: currentTheme.blackLineColorProperty,
+          }),
+        );
+      });
     }
 
-    this.faces.forEach( face => {
-      const faceValue = this.faceValueMap.get( face ) ?? null;
+    this.faces.forEach((face) => {
+      const faceValue = this.faceValueMap.get(face) ?? null;
 
-      if ( faceValue !== null ) {
-        debugNode.addChild( new Text( faceValue, {
-          maxWidth: 0.9,
-          maxHeight: 0.9,
-          center: face.viewCoordinates,
-          fill: currentTheme.faceValueColorProperty
-        } ) );
+      if (faceValue !== null) {
+        debugNode.addChild(
+          new Text(faceValue, {
+            maxWidth: 0.9,
+            maxHeight: 0.9,
+            center: face.viewCoordinates,
+            fill: currentTheme.faceValueColorProperty,
+          }),
+        );
       }
-    } );
+    });
 
     return debugNode;
-  };
+  }
 }

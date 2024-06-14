@@ -9,17 +9,20 @@ export class UIAquaRadioButtonGroup<T> extends AquaRadioButtonGroup<T> {
   public constructor(
     property: Property<T>,
     items: AquaRadioButtonGroupItem<T>[],
-    providedOptions?: AquaRadioButtonGroupOptions
+    providedOptions?: AquaRadioButtonGroupOptions,
   ) {
-    const options = optionize<AquaRadioButtonGroupOptions, EmptySelfOptions>()( {
-      spacing: 8,
-      radioButtonOptions: {
-        selectedColor: currentTheme.uiButtonBaseColorProperty,
-        deselectedColor: currentTheme.uiBackgroundColorProperty,
-        stroke: currentTheme.uiForegroundColorProperty
-      }
-    }, providedOptions );
+    const options = optionize<AquaRadioButtonGroupOptions, EmptySelfOptions>()(
+      {
+        spacing: 8,
+        radioButtonOptions: {
+          selectedColor: currentTheme.uiButtonBaseColorProperty,
+          deselectedColor: currentTheme.uiBackgroundColorProperty,
+          stroke: currentTheme.uiForegroundColorProperty,
+        },
+      },
+      providedOptions,
+    );
 
-    super( property, items, options );
+    super(property, items, options);
   }
 }

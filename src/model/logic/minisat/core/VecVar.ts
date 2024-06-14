@@ -2,42 +2,38 @@ import { VecIntObject } from '../mtl/VecIntObject';
 import { Var } from './Var';
 
 export class VecVar extends VecIntObject<Var> {
-
   public constructor();
-  public constructor( size: number );
-  public constructor( size: number, pad: Var );
-  public constructor( size?: number, pad?: Var ) {
-    if ( typeof size === 'number' ) {
-      if ( pad !== undefined ) {
-        super( size, pad );
+  public constructor(size: number);
+  public constructor(size: number, pad: Var);
+  public constructor(size?: number, pad?: Var) {
+    if (typeof size === 'number') {
+      if (pad !== undefined) {
+        super(size, pad);
+      } else {
+        super(size);
       }
-      else {
-        super( size );
-      }
-    }
-    else {
+    } else {
       super();
     }
   }
 
-  public create( value?: number ): Var {
-    if ( value === undefined ) {
+  public create(value?: number): Var {
+    if (value === undefined) {
       return Var.UNDEF;
-    }
-    else {
-      return Var.valueOf( value );
+    } else {
+      return Var.valueOf(value);
     }
   }
 
-  public value( variable: Var ): number {
+  public value(variable: Var): number {
     return variable.value();
   }
 
-  public compare( a: number, b: number ): number {
+  public compare(a: number, b: number): number {
     return a - b;
   }
 
-  public toStringValue( value: number ): string {
+  public toStringValue(value: number): string {
     return `Var${value}`;
   }
 }

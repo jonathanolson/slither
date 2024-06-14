@@ -10,4 +10,3 @@ export interface TFace {
   edges: TEdge[];
   vertices: TVertex[];
 }
-

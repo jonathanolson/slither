@@ -11,11 +11,13 @@ import { LayoutEdge, LayoutFace } from '../model/board/layout/layout.ts';
 import { toPropertyPuzzle } from '../model/puzzle/toPropertyPuzzle.ts';
 
 // TODO: instead of State, do Data (and we'll TState it)???
-export default class TopologicalPuzzleNode<Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData> extends Node {
-
+export default class TopologicalPuzzleNode<
+  Structure extends TStructure = TStructure,
+  Data extends TCompleteData = TCompleteData,
+> extends Node {
   public constructor(
     public readonly puzzleModel: PuzzleModel<Structure, Data>,
-    options?: NodeOptions
+    options?: NodeOptions,
   ) {
     const layoutTestNode = new Node();
 
@@ -26,11 +28,11 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
       const state = puzzleModel.puzzle.stateProperty.value;
 
       // Don't show once solved?
-      if ( state.getSimpleRegions().some( sr => sr.isSolved ) ) {
+      if (state.getSimpleRegions().some((sr) => sr.isSolved)) {
         return;
       }
 
-      const layoutPuzzle = new LayoutPuzzle( board, state );
+      const layoutPuzzle = new LayoutPuzzle(board, state);
 
       // ----- buggy-looking things but seems to lay out planar
       // MOST NOTICEABLE:
@@ -60,22 +62,20 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
       //   layoutPuzzle.applyDerivative( LayoutDerivative.getBarycentricDeltas( layoutPuzzle ).getAreaCorrectedDerivative().timesScalar( 0.1 ) );
       // }
 
-
-
       const getDerivative = () => {
         // return LayoutDerivative.getAngularDeltas( layoutPuzzle, 1 )
         //   .plus( LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.25 ) )
         //   .plus( LayoutDerivative.getRegularPolygonDeltas( layoutPuzzle, 1, true, 0.5 ) );
         //   // .getAreaCorrectedDerivative();
-        return LayoutDerivative.getAngularDeltas( layoutPuzzle, 0.2 )
-          .plus( LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.1 ) )
-          .plus( LayoutDerivative.getRegularPolygonDeltas( layoutPuzzle, 1, true, 0.2 ) );
-          // .getAreaCorrectedDerivative();
+        return LayoutDerivative.getAngularDeltas(layoutPuzzle, 0.2)
+          .plus(LayoutDerivative.getHookesAttraction(layoutPuzzle, 1, 0.1))
+          .plus(LayoutDerivative.getRegularPolygonDeltas(layoutPuzzle, 1, true, 0.2));
+        // .getAreaCorrectedDerivative();
       };
 
       let amount = 0.3;
-      for ( let i = 0; i < 40; i++ ) {
-        if ( i % 10 === 0 ) {
+      for (let i = 0; i < 40; i++) {
+        if (i % 10 === 0) {
           amount *= 0.95;
         }
 
@@ -84,17 +84,17 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
           let maxMagnitude = derivative.getMaxMagnitude();
 
           let currentAmount = amount;
-          if ( amount * maxMagnitude > 1.5 ) {
+          if (amount * maxMagnitude > 1.5) {
             currentAmount = 1.5 / maxMagnitude;
           }
 
-          derivative = derivative.timesScalar( currentAmount );
+          derivative = derivative.timesScalar(currentAmount);
         }
 
         // console.log( i, amount, derivative.getMaxMagnitude() );
-        layoutPuzzle.applyDerivative( derivative );
+        layoutPuzzle.applyDerivative(derivative);
 
-        if ( derivative.getMaxMagnitude() < 0.015 ) {
+        if (derivative.getMaxMagnitude() < 0.015) {
           break;
         }
 
@@ -103,55 +103,52 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
 
       const puzzle = layoutPuzzle.getCompletePuzzle();
 
-      if ( lastPuzzleNode ) {
+      if (lastPuzzleNode) {
         lastPuzzleNode.dispose();
       }
 
-      const puzzleNode = new PuzzleNode( toPropertyPuzzle( puzzle ), {
-        edgePressListener: ( edge, button ) => {
-          const originalEdges = ( edge as LayoutEdge ).originalEdges;
-          if ( originalEdges ) {
+      const puzzleNode = new PuzzleNode(toPropertyPuzzle(puzzle), {
+        edgePressListener: (edge, button) => {
+          const originalEdges = (edge as LayoutEdge).originalEdges;
+          if (originalEdges) {
             // TODO: for now, just do one? (auto-solver hopefully handles others?) TODO
-            puzzleModel.onUserEdgePress( originalEdges.values().next().value, button );
+            puzzleModel.onUserEdgePress(originalEdges.values().next().value, button);
           }
         },
-        facePressListener: ( face, button ) => {
-          if ( face === null ) {
-            puzzleModel.onUserFacePress( null, button );
-          }
-          else {
-            const originalFace = ( face as LayoutFace ).originalFace;
-            if ( originalFace ) {
-              puzzleModel.onUserFacePress( originalFace, button );
+        facePressListener: (face, button) => {
+          if (face === null) {
+            puzzleModel.onUserFacePress(null, button);
+          } else {
+            const originalFace = (face as LayoutFace).originalFace;
+            if (originalFace) {
+              puzzleModel.onUserFacePress(originalFace, button);
             }
           }
-        }
-      } );
+        },
+      });
       lastPuzzleNode = puzzleNode;
 
       // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();
       // const hookesDerivative = LayoutDerivative.getHookesAttraction( layoutPuzzle, 1, 0.2 ).getAreaCorrectedDerivative();
 
-      const debugNode = new Node( {
+      const debugNode = new Node({
         children: [
           puzzleNode,
           // layoutPuzzle.getDebugNode(),
           // getDerivative().getDebugNode(),
           // angularDerivative.getDebugNode(),
           // barycentricDerivative.getDebugNode(),
-        ]
-      } );
+        ],
+      });
 
       const size = 600;
 
-      debugNode.scale( Math.min( size / debugNode.width, size / debugNode.height ) );
+      debugNode.scale(Math.min(size / debugNode.width, size / debugNode.height));
 
       debugNode.left = 20;
       debugNode.top = 130;
 
-      layoutTestNode.children = [
-        debugNode
-      ];
+      layoutTestNode.children = [debugNode];
     };
 
     const puzzleStateListener = () => {
@@ -159,16 +156,19 @@ export default class TopologicalPuzzleNode<Structure extends TStructure = TStruc
 
       showPuzzleLayout();
     };
-    puzzleModel.puzzle.stateProperty.link( puzzleStateListener );
+    puzzleModel.puzzle.stateProperty.link(puzzleStateListener);
 
-    super( combineOptions<NodeOptions>( {
-      children: [
-        layoutTestNode
-      ]
-    }, options ) );
+    super(
+      combineOptions<NodeOptions>(
+        {
+          children: [layoutTestNode],
+        },
+        options,
+      ),
+    );
 
-    this.disposeEmitter.addListener( () => puzzleModel.puzzle.stateProperty.unlink( puzzleStateListener ) );
-    this.disposeEmitter.addListener( () => layoutTestNode.dispose() );
-    this.disposeEmitter.addListener( () => lastPuzzleNode && lastPuzzleNode.dispose() );
+    this.disposeEmitter.addListener(() => puzzleModel.puzzle.stateProperty.unlink(puzzleStateListener));
+    this.disposeEmitter.addListener(() => layoutTestNode.dispose());
+    this.disposeEmitter.addListener(() => lastPuzzleNode && lastPuzzleNode.dispose());
   }
 }

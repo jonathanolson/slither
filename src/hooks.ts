@@ -28,19 +28,19 @@ import { compressString } from './util/compression.ts';
 
 const scene = new Node();
 
-const rootNode = new Node( {
+const rootNode = new Node({
   renderer: 'svg',
-  children: [ scene ]
-} );
+  children: [scene],
+});
 
-const display = new Display( rootNode, {
+const display = new Display(rootNode, {
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
-  allowSceneOverflow: false
-} );
-document.body.appendChild( display.domElement );
+  allowSceneOverflow: false,
+});
+document.body.appendChild(display.domElement);
 
-display.setWidthHeight( window.innerWidth, window.innerHeight );
+display.setWidthHeight(window.innerWidth, window.innerHeight);
 
 // TODO: use this more to get rid of the other globals
 declare global {
@@ -50,19 +50,47 @@ declare global {
     // For being able to store the PatternBoards without the expensive construction
     getSerializedPatternBoardLibraryJS: () => string;
 
-    getSequenceName: ( sequenceSpecifier: SequenceSpecifier ) => string;
-    getEmptySequence: ( sequenceSpecifier: SequenceSpecifier ) => SerializedBinaryRuleSequence;
-    getSequenceStatus: ( serializedSequence: SerializedBinaryRuleSequence ) => string;
-    getNextBoardInSequence: ( serializedSequence: SerializedBinaryRuleSequence ) => string | null;
-    getSequenceWithProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
-    getSequenceWithoutProcessingBoard: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ) => SerializedBinaryRuleSequence;
-    getSequenceWithCollection: ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ) => SerializedBinaryRuleSequence;
-    getCollectionForSequence: ( serializedSequence: SerializedBinaryRuleSequence, board: string ) => SerializedBinaryRuleCollection;
-    withCollection: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    withCollectionNonequal: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    withCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    withoutCollectionNonequal: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
-    withoutCollectionNonredundant: ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ) => SerializedBinaryRuleCollection;
+    getSequenceName: (sequenceSpecifier: SequenceSpecifier) => string;
+    getEmptySequence: (sequenceSpecifier: SequenceSpecifier) => SerializedBinaryRuleSequence;
+    getSequenceStatus: (serializedSequence: SerializedBinaryRuleSequence) => string;
+    getNextBoardInSequence: (serializedSequence: SerializedBinaryRuleSequence) => string | null;
+    getSequenceWithProcessingBoard: (
+      serializedSequence: SerializedBinaryRuleSequence,
+      serializedBoard: string,
+    ) => SerializedBinaryRuleSequence;
+    getSequenceWithoutProcessingBoard: (
+      serializedSequence: SerializedBinaryRuleSequence,
+      serializedBoard: string,
+    ) => SerializedBinaryRuleSequence;
+    getSequenceWithCollection: (
+      serializedSequence: SerializedBinaryRuleSequence,
+      serializedBoard: string,
+      serializedCollection: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleSequence;
+    getCollectionForSequence: (
+      serializedSequence: SerializedBinaryRuleSequence,
+      board: string,
+    ) => SerializedBinaryRuleCollection;
+    withCollection: (
+      a: SerializedBinaryRuleCollection,
+      b: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleCollection;
+    withCollectionNonequal: (
+      a: SerializedBinaryRuleCollection,
+      b: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleCollection;
+    withCollectionNonredundant: (
+      a: SerializedBinaryRuleCollection,
+      b: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleCollection;
+    withoutCollectionNonequal: (
+      a: SerializedBinaryRuleCollection,
+      b: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleCollection;
+    withoutCollectionNonredundant: (
+      a: SerializedBinaryRuleCollection,
+      b: SerializedBinaryRuleCollection,
+    ) => SerializedBinaryRuleCollection;
 
     collectionsToSortedMixedGroup: (
       mainCollection: SerializedBinaryRuleCollection | null,
@@ -76,99 +104,127 @@ window.standardSquareBoardGenerations = standardSquareBoardGenerations;
 window.getSerializedPatternBoardLibraryJS = () => {
   const serializedPatternBoardLibrary = getSerializedPatternBoardLibrary();
 
-  return JSON.stringify( compressString( JSON.stringify( serializedPatternBoardLibrary ) ) );
+  return JSON.stringify(compressString(JSON.stringify(serializedPatternBoardLibrary)));
 };
 
 // console.log( JSON.stringify( BinaryRuleCollection.empty().serialize() ) );
 
-window.getSequenceName = ( sequenceSpecifier: SequenceSpecifier ): string => {
-  return BinaryRuleSequence.getName( sequenceSpecifier );
+window.getSequenceName = (sequenceSpecifier: SequenceSpecifier): string => {
+  return BinaryRuleSequence.getName(sequenceSpecifier);
 };
 
-window.getEmptySequence = ( sequenceSpecifier: SequenceSpecifier ): SerializedBinaryRuleSequence => {
-  return BinaryRuleSequence.empty( sequenceSpecifier ).serialize();
+window.getEmptySequence = (sequenceSpecifier: SequenceSpecifier): SerializedBinaryRuleSequence => {
+  return BinaryRuleSequence.empty(sequenceSpecifier).serialize();
 };
 
-window.getSequenceStatus = ( serializedSequence: SerializedBinaryRuleSequence ): string => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+window.getSequenceStatus = (serializedSequence: SerializedBinaryRuleSequence): string => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
 
   return sequence.getStatusString();
 };
 
-window.getNextBoardInSequence = ( serializedSequence: SerializedBinaryRuleSequence ): string | null => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
+window.getNextBoardInSequence = (serializedSequence: SerializedBinaryRuleSequence): string | null => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
   const nextBoard = sequence.getNextBoard();
-  return nextBoard ? serializePatternBoard( nextBoard ) : null;
+  return nextBoard ? serializePatternBoard(nextBoard) : null;
 };
 
-window.getSequenceWithProcessingBoard = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleSequence => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
-  const board = deserializePatternBoard( serializedBoard );
+window.getSequenceWithProcessingBoard = (
+  serializedSequence: SerializedBinaryRuleSequence,
+  serializedBoard: string,
+): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
+  const board = deserializePatternBoard(serializedBoard);
 
-  sequence.addProcessingBoard( board );
+  sequence.addProcessingBoard(board);
 
   return sequence.serialize();
 };
 
-window.getSequenceWithoutProcessingBoard = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleSequence => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
-  const board = deserializePatternBoard( serializedBoard );
+window.getSequenceWithoutProcessingBoard = (
+  serializedSequence: SerializedBinaryRuleSequence,
+  serializedBoard: string,
+): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
+  const board = deserializePatternBoard(serializedBoard);
 
-  sequence.removeProcessingBoard( board );
-
-  return sequence.serialize();
-};
-
-window.getSequenceWithCollection = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string, serializedCollection: SerializedBinaryRuleCollection ): SerializedBinaryRuleSequence => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
-  const board = deserializePatternBoard( serializedBoard );
-  const collection = BinaryRuleCollection.deserialize( serializedCollection );
-
-  sequence.addProcessedBoardCollection( board, collection );
+  sequence.removeProcessingBoard(board);
 
   return sequence.serialize();
 };
 
-window.getCollectionForSequence = ( serializedSequence: SerializedBinaryRuleSequence, serializedBoard: string ): SerializedBinaryRuleCollection => {
-  const sequence = BinaryRuleSequence.deserialize( serializedSequence );
-  const board = deserializePatternBoard( serializedBoard );
+window.getSequenceWithCollection = (
+  serializedSequence: SerializedBinaryRuleSequence,
+  serializedBoard: string,
+  serializedCollection: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleSequence => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
+  const board = deserializePatternBoard(serializedBoard);
+  const collection = BinaryRuleCollection.deserialize(serializedCollection);
 
-  const collection = sequence.getCollectionForBoard( board );
+  sequence.addProcessedBoardCollection(board, collection);
+
+  return sequence.serialize();
+};
+
+window.getCollectionForSequence = (
+  serializedSequence: SerializedBinaryRuleSequence,
+  serializedBoard: string,
+): SerializedBinaryRuleCollection => {
+  const sequence = BinaryRuleSequence.deserialize(serializedSequence);
+  const board = deserializePatternBoard(serializedBoard);
+
+  const collection = sequence.getCollectionForBoard(board);
   return collection.serialize();
 };
 
-window.withCollection = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
-  const aCollection = BinaryRuleCollection.deserialize( a );
-  const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withCollection( bCollection );
+window.withCollection = (
+  a: SerializedBinaryRuleCollection,
+  b: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize(a);
+  const bCollection = BinaryRuleCollection.deserialize(b);
+  const resultCollection = aCollection.withCollection(bCollection);
   return resultCollection.serialize();
 };
 
-window.withCollectionNonequal = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
-  const aCollection = BinaryRuleCollection.deserialize( a );
-  const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withCollectionNonequal( bCollection );
+window.withCollectionNonequal = (
+  a: SerializedBinaryRuleCollection,
+  b: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize(a);
+  const bCollection = BinaryRuleCollection.deserialize(b);
+  const resultCollection = aCollection.withCollectionNonequal(bCollection);
   return resultCollection.serialize();
 };
 
-window.withCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
-  const aCollection = BinaryRuleCollection.deserialize( a );
-  const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withCollectionNonredundant( bCollection );
+window.withCollectionNonredundant = (
+  a: SerializedBinaryRuleCollection,
+  b: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize(a);
+  const bCollection = BinaryRuleCollection.deserialize(b);
+  const resultCollection = aCollection.withCollectionNonredundant(bCollection);
   return resultCollection.serialize();
 };
 
-window.withoutCollectionNonequal = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
-  const aCollection = BinaryRuleCollection.deserialize( a );
-  const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withoutCollectionNonequal( bCollection );
+window.withoutCollectionNonequal = (
+  a: SerializedBinaryRuleCollection,
+  b: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize(a);
+  const bCollection = BinaryRuleCollection.deserialize(b);
+  const resultCollection = aCollection.withoutCollectionNonequal(bCollection);
   return resultCollection.serialize();
 };
 
-window.withoutCollectionNonredundant = ( a: SerializedBinaryRuleCollection, b: SerializedBinaryRuleCollection ): SerializedBinaryRuleCollection => {
-  const aCollection = BinaryRuleCollection.deserialize( a );
-  const bCollection = BinaryRuleCollection.deserialize( b );
-  const resultCollection = aCollection.withoutCollectionNonredundant( bCollection );
+window.withoutCollectionNonredundant = (
+  a: SerializedBinaryRuleCollection,
+  b: SerializedBinaryRuleCollection,
+): SerializedBinaryRuleCollection => {
+  const aCollection = BinaryRuleCollection.deserialize(a);
+  const bCollection = BinaryRuleCollection.deserialize(b);
+  const resultCollection = aCollection.withoutCollectionNonredundant(bCollection);
   return resultCollection.serialize();
 };
 
@@ -176,15 +232,15 @@ window.collectionsToSortedMixedGroup = (
   mainCollection: SerializedBinaryRuleCollection | null,
   highlanderCollection: SerializedBinaryRuleCollection | null,
 ): SerializedBinaryMixedRuleGroup => {
-  const main = mainCollection ? BinaryRuleCollection.deserialize( mainCollection ) : null;
-  const highlander = highlanderCollection ? BinaryRuleCollection.deserialize( highlanderCollection ) : null;
+  const main = mainCollection ? BinaryRuleCollection.deserialize(mainCollection) : null;
+  const highlander = highlanderCollection ? BinaryRuleCollection.deserialize(highlanderCollection) : null;
 
-  console.log( 'main count', main ? main.size : 0 );
-  console.log( 'highlander count', highlander ? highlander.size : 0 );
+  console.log('main count', main ? main.size : 0);
+  console.log('highlander count', highlander ? highlander.size : 0);
 
-  const mixedGroup = BinaryMixedRuleGroup.fromCollections( main, highlander );
+  const mixedGroup = BinaryMixedRuleGroup.fromCollections(main, highlander);
 
-  console.log( 'rule count', mixedGroup.size );
+  console.log('rule count', mixedGroup.size);
 
   return mixedGroup.sortedDefault().serialize();
 };

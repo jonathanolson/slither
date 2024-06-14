@@ -1,67 +1,89 @@
 import { PolygonGenerator } from '../PolygonGenerator.ts';
 import { squarePolygonGenerator } from './squarePolygonGenerator.ts';
 import { getPeriodicTilingGenerator } from '../getPeriodicTilingGenerator.ts';
-import { bisectedHexagonalTiling, cairoPentagonalTiling, deltoidalTrihexagonalTiling, elongatedTriangularTiling, floretPentagonalTiling, greatRhombitrihexagonalTiling, hexagonalTiling, portugalTiling, prismaticPentagonalTiling, rhombilleTiling, smallRhombitrihexagonalTiling, snubHexagonalTiling, snubSquareTiling, squareTiling, tetrakisSquareTiling, triakisTriangularTiling, triangularTiling, trihexagonalTiling, trihexAndHexTiling, truncatedHexagonalTiling, truncatedSquareTiling } from '../core/TiledBoard.ts';
+import {
+  bisectedHexagonalTiling,
+  cairoPentagonalTiling,
+  deltoidalTrihexagonalTiling,
+  elongatedTriangularTiling,
+  floretPentagonalTiling,
+  greatRhombitrihexagonalTiling,
+  hexagonalTiling,
+  portugalTiling,
+  prismaticPentagonalTiling,
+  rhombilleTiling,
+  smallRhombitrihexagonalTiling,
+  snubHexagonalTiling,
+  snubSquareTiling,
+  squareTiling,
+  tetrakisSquareTiling,
+  triakisTriangularTiling,
+  triangularTiling,
+  trihexagonalTiling,
+  trihexAndHexTiling,
+  truncatedHexagonalTiling,
+  truncatedSquareTiling,
+} from '../core/TiledBoard.ts';
 import { hexagonalPolygonGenerator } from './hexagonalPolygonGenerator.ts';
 import { penroseTilingGenerator } from './penroseTilingGenerator.ts';
 
 export const polygonGenerators: PolygonGenerator[] = [
   squarePolygonGenerator,
-  getPeriodicTilingGenerator( rhombilleTiling, {
+  getPeriodicTilingGenerator(rhombilleTiling, {
     width: 8,
-    height: 8
-  } ),
+    height: 8,
+  }),
   hexagonalPolygonGenerator,
-  getPeriodicTilingGenerator( cairoPentagonalTiling, {
+  getPeriodicTilingGenerator(cairoPentagonalTiling, {
     // TODO: get more aesthetic options!
     width: 8,
     height: 8,
-    squareRegion: true
-  } ),
-  getPeriodicTilingGenerator( snubSquareTiling, {
+    squareRegion: true,
+  }),
+  getPeriodicTilingGenerator(snubSquareTiling, {
     width: 5,
     height: 6,
-    squareRegion: true
-  } ),
-  getPeriodicTilingGenerator( triangularTiling, {
+    squareRegion: true,
+  }),
+  getPeriodicTilingGenerator(triangularTiling, {
     width: 6,
-    height: 5
-  } ),
-  getPeriodicTilingGenerator( trihexagonalTiling, {
+    height: 5,
+  }),
+  getPeriodicTilingGenerator(trihexagonalTiling, {
     width: 9,
-    height: 9
-  } ),
+    height: 9,
+  }),
 
-  getPeriodicTilingGenerator( snubHexagonalTiling, {
+  getPeriodicTilingGenerator(snubHexagonalTiling, {
     width: 9,
-    height: 9
-  } ),
+    height: 9,
+  }),
 
-  getPeriodicTilingGenerator( floretPentagonalTiling, {
+  getPeriodicTilingGenerator(floretPentagonalTiling, {
     // TODO: more aesthetic!
     width: 7,
-    height: 8
-  } ),
+    height: 8,
+  }),
 
   // Quadish things
-  getPeriodicTilingGenerator( deltoidalTrihexagonalTiling ),
+  getPeriodicTilingGenerator(deltoidalTrihexagonalTiling),
 
   // Triangular things
-  getPeriodicTilingGenerator( triakisTriangularTiling ),
-  getPeriodicTilingGenerator( bisectedHexagonalTiling ),
-  getPeriodicTilingGenerator( tetrakisSquareTiling, {
-    squareRegion: true
-  } ),
+  getPeriodicTilingGenerator(triakisTriangularTiling),
+  getPeriodicTilingGenerator(bisectedHexagonalTiling),
+  getPeriodicTilingGenerator(tetrakisSquareTiling, {
+    squareRegion: true,
+  }),
 
   // Irregular things
-  getPeriodicTilingGenerator( portugalTiling ),
-  getPeriodicTilingGenerator( truncatedSquareTiling ),
+  getPeriodicTilingGenerator(portugalTiling),
+  getPeriodicTilingGenerator(truncatedSquareTiling),
 
   // Irregular with larger N faces
-  getPeriodicTilingGenerator( trihexAndHexTiling, {
+  getPeriodicTilingGenerator(trihexAndHexTiling, {
     width: 9,
-    height: 9
-  } ),
+    height: 9,
+  }),
   // NOTE: Disabled because this is basically just hex...
   // getPeriodicTilingGenerator( falseCubicTiling, {
   //   width: 9,
@@ -69,22 +91,22 @@ export const polygonGenerators: PolygonGenerator[] = [
   // } ),
 
   // Large N faces
-  getPeriodicTilingGenerator( truncatedHexagonalTiling ),
-  getPeriodicTilingGenerator( smallRhombitrihexagonalTiling, {
+  getPeriodicTilingGenerator(truncatedHexagonalTiling),
+  getPeriodicTilingGenerator(smallRhombitrihexagonalTiling, {
     width: 9,
-    height: 9
-  } ),
-  getPeriodicTilingGenerator( greatRhombitrihexagonalTiling ),
+    height: 9,
+  }),
+  getPeriodicTilingGenerator(greatRhombitrihexagonalTiling),
 
   // Gridlike things
-  getPeriodicTilingGenerator( prismaticPentagonalTiling ),
-  getPeriodicTilingGenerator( elongatedTriangularTiling, {
+  getPeriodicTilingGenerator(prismaticPentagonalTiling),
+  getPeriodicTilingGenerator(elongatedTriangularTiling, {
     width: 6,
     height: 8,
-    squareRegion: true
-  } ),
+    squareRegion: true,
+  }),
 
-  getPeriodicTilingGenerator( squareTiling ),
-  getPeriodicTilingGenerator( hexagonalTiling ),
-  penroseTilingGenerator
+  getPeriodicTilingGenerator(squareTiling),
+  getPeriodicTilingGenerator(hexagonalTiling),
+  penroseTilingGenerator,
 ];

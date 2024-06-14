@@ -4,7 +4,6 @@ import { PatternRule } from './PatternRule.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class PatternRuleApplicator {
-
   // @ts-expect-error
   private readonly queue: PatternRule[] = [];
 
@@ -13,9 +12,13 @@ export class PatternRuleApplicator {
     private readonly patternBoard: TPatternBoard,
     // @ts-expect-error
     private readonly stateFeatureSet: FeatureSet,
-    embeddedRules: PatternRule[]
+    embeddedRules: PatternRule[],
   ) {
-    assertEnabled() && assert( embeddedRules.every( otherRule => otherRule.patternBoard === patternBoard ), 'embedding check' );
+    assertEnabled() &&
+      assert(
+        embeddedRules.every((otherRule) => otherRule.patternBoard === patternBoard),
+        'embedding check',
+      );
   }
 
   // NOTE: basically assumes the rule is actually applied, we won't track it anymore

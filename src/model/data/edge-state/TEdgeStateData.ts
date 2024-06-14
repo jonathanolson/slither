@@ -7,14 +7,14 @@ import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TEdgeStateData {
-  getEdgeState( edge: TEdge ): EdgeState;
+  getEdgeState(edge: TEdge): EdgeState;
 
-  setEdgeState( edge: TEdge, state: EdgeState ): void;
+  setEdgeState(edge: TEdge, state: EdgeState): void;
 
-  edgeStateChangedEmitter: TEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>;
+  edgeStateChangedEmitter: TEmitter<[edge: TEdge, state: EdgeState, oldState: EdgeState]>;
 }
 
-export type TEdgeStateListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => void;
+export type TEdgeStateListener = (edge: TEdge, state: EdgeState, oldState: EdgeState) => void;
 
 export interface TSerializedEdgeStateData extends TSerializedState {
   type: 'EdgeData';
@@ -24,10 +24,12 @@ export interface TSerializedEdgeStateData extends TSerializedState {
   }[];
 }
 
-export const serializeEdgeStateData = ( board: TBoard, edgeData: TEdgeStateData ): TSerializedEdgeStateData => ( {
+export const serializeEdgeStateData = (board: TBoard, edgeData: TEdgeStateData): TSerializedEdgeStateData => ({
   type: 'EdgeData',
-  edges: board.edges.filter( edge => edgeData.getEdgeState( edge ) !== EdgeState.WHITE ).map( edge => ( {
-    edge: serializeEdge( edge ),
-    state: edgeData.getEdgeState( edge ).name
-  } ) )
-} );
+  edges: board.edges
+    .filter((edge) => edgeData.getEdgeState(edge) !== EdgeState.WHITE)
+    .map((edge) => ({
+      edge: serializeEdge(edge),
+      state: edgeData.getEdgeState(edge).name,
+    })),
+});

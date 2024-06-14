@@ -16,99 +16,112 @@ export class FaceStateNode extends Node {
   public constructor(
     public readonly face: TFace,
     stateProperty: TReadOnlyProperty<TState<TFaceStateData & TEdgeStateData>>,
-    style: TPuzzleStyle
+    style: TPuzzleStyle,
   ) {
-    super( {
-      translation: face.viewCoordinates
-    } );
+    super({
+      translation: face.viewCoordinates,
+    });
 
     const state = stateProperty.value;
 
-    const faceState = state.getFaceState( face );
+    const faceState = state.getFaceState(face);
 
     const onlyShowCount = faceState.possibilityCount === 0 || faceState.possibilityCount > 9;
 
     let content: Node;
 
-    const color = faceState.possibilityCount === 1 ? style.theme.faceValueCompletedColorProperty : style.theme.faceValueColorProperty;
+    const color =
+      faceState.possibilityCount === 1 ?
+        style.theme.faceValueCompletedColorProperty
+      : style.theme.faceValueColorProperty;
 
-    if ( onlyShowCount ) {
-      content = new UIText( faceState.possibilityCount, {
+    if (onlyShowCount) {
+      content = new UIText(faceState.possibilityCount, {
         font: puzzleFont,
         maxWidth: 0.4,
-        maxHeight: 0.4
-      } );
-    }
-    else {
-      const vertices = new Set( face.vertices );
+        maxHeight: 0.4,
+      });
+    } else {
+      const vertices = new Set(face.vertices);
 
-      content = new GridBox( {
+      content = new GridBox({
         spacing: 1.5,
-        autoColumns: Math.ceil( Math.sqrt( faceState.possibilityCount ) ),
-        children: faceState.getAllowedCombinations().map( blackEdges => {
+        autoColumns: Math.ceil(Math.sqrt(faceState.possibilityCount)),
+        children: faceState.getAllowedCombinations().map((blackEdges) => {
           const node = new Node();
 
-          const startVertices = new Set( blackEdges.map( edge => edge.start ) );
-          const endVertices = new Set( blackEdges.map( edge => edge.end ) );
+          const startVertices = new Set(blackEdges.map((edge) => edge.start));
+          const endVertices = new Set(blackEdges.map((edge) => edge.end));
 
-          const mvt = ( v: Vector2 ) => v.minus( face.viewCoordinates );
+          const mvt = (v: Vector2) => v.minus(face.viewCoordinates);
 
-          node.addChild( new Path( Shape.polygon( face.vertices.map( vertex => mvt( vertex.viewCoordinates ) ) ), {
-            stroke: color,
-            lineWidth: 0.03,
-            opacity: 0.2
-          } ) );
+          node.addChild(
+            new Path(Shape.polygon(face.vertices.map((vertex) => mvt(vertex.viewCoordinates))), {
+              stroke: color,
+              lineWidth: 0.03,
+              opacity: 0.2,
+            }),
+          );
 
-          if ( startVertices.size ) {
+          if (startVertices.size) {
             const shape = new Shape();
-            if ( blackEdges.length === face.edges.length ) {
-              shape.polygon( face.vertices.map( vertex => mvt( vertex.viewCoordinates ) ) );
-            }
-            else {
+            if (blackEdges.length === face.edges.length) {
+              shape.polygon(face.vertices.map((vertex) => mvt(vertex.viewCoordinates)));
+            } else {
+              const remainingEdges = new Set(blackEdges);
 
-              const remainingEdges = new Set( blackEdges );
-
-              while ( remainingEdges.size ) {
-                const firstVertex = [ ...vertices ].find( vertex => [ ...remainingEdges ].filter( edge => edge.start === vertex || edge.end === vertex ).length === 1 )!;
-                assertEnabled() && assert( firstVertex );
+              while (remainingEdges.size) {
+                const firstVertex = [...vertices].find(
+                  (vertex) =>
+                    [...remainingEdges].filter((edge) => edge.start === vertex || edge.end === vertex).length === 1,
+                )!;
+                assertEnabled() && assert(firstVertex);
 
                 let currentVertex = firstVertex;
-                let nextEdge: TEdge | null = [ ...remainingEdges ].find( edge => edge.start === currentVertex || edge.end === currentVertex ) ?? null;
-                shape.moveToPoint( mvt( currentVertex.viewCoordinates ) );
-                while ( nextEdge ) {
-                  remainingEdges.delete( nextEdge );
-                  currentVertex = nextEdge.getOtherVertex( currentVertex );
-                  shape.lineToPoint( mvt( currentVertex.viewCoordinates ) );
-                  nextEdge = [ ...remainingEdges ].find( edge => edge.start === currentVertex || edge.end === currentVertex ) ?? null;
+                let nextEdge: TEdge | null =
+                  [...remainingEdges].find((edge) => edge.start === currentVertex || edge.end === currentVertex) ??
+                  null;
+                shape.moveToPoint(mvt(currentVertex.viewCoordinates));
+                while (nextEdge) {
+                  remainingEdges.delete(nextEdge);
+                  currentVertex = nextEdge.getOtherVertex(currentVertex);
+                  shape.lineToPoint(mvt(currentVertex.viewCoordinates));
+                  nextEdge =
+                    [...remainingEdges].find((edge) => edge.start === currentVertex || edge.end === currentVertex) ??
+                    null;
                 }
               }
             }
 
-            node.addChild( new Path( shape, {
-              stroke: color,
-              lineWidth: 0.15,
-              lineCap: 'round',
-              lineJoin: 'round'
-            } ) );
+            node.addChild(
+              new Path(shape, {
+                stroke: color,
+                lineWidth: 0.15,
+                lineCap: 'round',
+                lineJoin: 'round',
+              }),
+            );
           }
 
-          for ( const vertex of face.vertices ) {
-            if ( !startVertices.has( vertex ) && !endVertices.has( vertex ) ) {
-              node.addChild( new Circle( 0.1, {
-                fill: color,
-                translation: mvt( vertex.viewCoordinates )
-              } ) );
+          for (const vertex of face.vertices) {
+            if (!startVertices.has(vertex) && !endVertices.has(vertex)) {
+              node.addChild(
+                new Circle(0.1, {
+                  fill: color,
+                  translation: mvt(vertex.viewCoordinates),
+                }),
+              );
             }
           }
 
           return node;
-        } ),
+        }),
         maxWidth: 0.6,
         maxHeight: 0.6,
-      } );
+      });
     }
 
     content.center = Vector2.ZERO;
-    this.addChild( content );
+    this.addChild(content);
   }
 }

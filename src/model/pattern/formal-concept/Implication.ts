@@ -1,7 +1,7 @@
 export class Implication {
   public constructor(
     public readonly antecedent: bigint,
-    public readonly consequent: bigint
+    public readonly consequent: bigint,
   ) {}
 
   public toString(): string {
@@ -9,16 +9,13 @@ export class Implication {
   }
 
   // Only applies non-full rules
-  public static implicationSetClosure(
-    implications: Implication[],
-    attributeSet: bigint
-  ): bigint {
+  public static implicationSetClosure(implications: Implication[], attributeSet: bigint): bigint {
     // We will mutate
     let impliedAttributeSet = attributeSet;
 
     // TODO: improve complexity
     let changed = true;
-    while ( changed ) {
+    while (changed) {
       changed = false;
 
       // for ( const implication of implications ) {
@@ -33,9 +30,9 @@ export class Implication {
 
       // optimized inlined version of above
       const numImplications = implications.length;
-      for ( let i = 0; i < numImplications; i++ ) {
+      for (let i = 0; i < numImplications; i++) {
         // for ( const implication of implications ) {
-        const implication = implications[ i ];
+        const implication = implications[i];
 
         const antecedent = implication.antecedent;
         const consequent = implication.consequent;
@@ -48,11 +45,10 @@ export class Implication {
 
         if (
           // implication.antecedent.isProperSubsetOf( impliedAttributeSet )
-          ( antecedent & setData ) === antecedent &&
+          (antecedent & setData) === antecedent &&
           antecedent !== setData &&
-
           // !implication.consequent.isSubsetOf( impliedAttributeSet )
-          ( consequent & setData ) !== consequent
+          (consequent & setData) !== consequent
         ) {
           // impliedAttributeSet.or( implication.consequent );
           impliedAttributeSet |= consequent;
@@ -110,19 +106,19 @@ export class Implication {
   ): bigint | null {
     // Must not be set. If it is set, we would fail the isLessThanI check
     // (see if it has the attribute set)
-    if ( ( attributeSet & ( 1n << BigInt( i ) ) ) !== 0n ) {
+    if ((attributeSet & (1n << BigInt(i))) !== 0n) {
       return null;
     }
 
     // withLowestBitSet( i )
-    let bits = ( attributeSet & ~( ( 1n << BigInt( i ) ) - 1n ) ) | ( 1n << BigInt( i ) );
+    let bits = (attributeSet & ~((1n << BigInt(i)) - 1n)) | (1n << BigInt(i));
 
-    let abortRegion = ~( ( 1n << BigInt( i + 1 ) ) - 1n ); // all bits above i
+    let abortRegion = ~((1n << BigInt(i + 1)) - 1n); // all bits above i
     let abortMask = abortRegion & ~bits;
 
     // TODO: improve complexity --- console.log HOW MANY iterations and counts we are doing, to see if we can optimize
     let changed = true;
-    while ( changed ) {
+    while (changed) {
       changed = false;
 
       // NOTE: This is the main logic
@@ -138,9 +134,9 @@ export class Implication {
 
       // optimized inlined version of above
       const numImplications = implications.length;
-      for ( let i = 0; i < numImplications; i++ ) {
+      for (let i = 0; i < numImplications; i++) {
         // for ( const implication of implications ) {
-        const implication = implications[ i ];
+        const implication = implications[i];
 
         const antecedent = implication.antecedent;
         const consequent = implication.consequent;
@@ -152,14 +148,13 @@ export class Implication {
 
         if (
           // implication.antecedent.isProperSubsetOf( impliedAttributeSet )
-          ( antecedent & bits ) === antecedent &&
+          (antecedent & bits) === antecedent &&
           antecedent !== bits &&
-
           // !implication.consequent.isSubsetOf( impliedAttributeSet )
-          ( consequent & bits ) !== consequent
+          (consequent & bits) !== consequent
         ) {
           // If it sets a bit above i, abort!
-          if ( consequent & abortMask ) {
+          if (consequent & abortMask) {
             return null;
           }
 

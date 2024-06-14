@@ -4,7 +4,7 @@ import { PatternRule } from '../pattern-rule/PatternRule.ts';
 
 export type GetRulesSelfOptions = {
   featureLimit?: number; // counts 1 for edge or face, n-1 for each face color duals (e.g. how many linked faces)
-  hitFeatureLimitCallback?: ( () => void ) | null;
+  hitFeatureLimitCallback?: (() => void) | null;
   includeFaceValueZero?: boolean;
   prefilterRules?: PatternRule[] | null;
   logModulo?: number;
@@ -20,4 +20,3 @@ export const GET_RULES_DEFAULTS = {
   logModulo: 1000000,
   vertexOrderLimit: null,
 } as const;
-

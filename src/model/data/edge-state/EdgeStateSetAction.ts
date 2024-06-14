@@ -7,19 +7,18 @@ import { serializeEdge } from '../../board/core/serializeEdge.ts';
 import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
 
 export class EdgeStateSetAction implements TAction<TEdgeStateData> {
-
   public constructor(
     public readonly edge: TEdge,
-    public readonly state: EdgeState
+    public readonly state: EdgeState,
   ) {}
 
-  public apply( state: TEdgeStateData ): void {
-    state.setEdgeState( this.edge, this.state );
+  public apply(state: TEdgeStateData): void {
+    state.setEdgeState(this.edge, this.state);
   }
 
-  public getUndo( state: TEdgeStateData ): TAction<TEdgeStateData> {
-    const previousState = state.getEdgeState( this.edge );
-    return new EdgeStateSetAction( this.edge, previousState );
+  public getUndo(state: TEdgeStateData): TAction<TEdgeStateData> {
+    const previousState = state.getEdgeState(this.edge);
+    return new EdgeStateSetAction(this.edge, previousState);
   }
 
   public isEmpty(): boolean {
@@ -29,15 +28,15 @@ export class EdgeStateSetAction implements TAction<TEdgeStateData> {
   public serializeAction(): TSerializedAction {
     return {
       type: 'EdgeStateSetAction',
-      edge: serializeEdge( this.edge ),
-      state: this.state.name
+      edge: serializeEdge(this.edge),
+      state: this.state.name,
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): EdgeStateSetAction {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): EdgeStateSetAction {
     return new EdgeStateSetAction(
-      deserializeEdge( board, serializedAction.edge ),
-      EdgeState.enumeration.getValue( serializedAction.state )
+      deserializeEdge(board, serializedAction.edge),
+      EdgeState.enumeration.getValue(serializedAction.state),
     );
   }
 }

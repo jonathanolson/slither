@@ -507,7 +507,6 @@ export const curatedRules: PatternRule[] = [
   `{"patternBoard":"vertex-6","input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0],"secondaryFaces":[1],"sameColorPaths":[],"oppositeColorPaths":[[0,5,4,3,2]]},{"type":"face-color-dual","primaryFaces":[2],"secondaryFaces":[3],"sameColorPaths":[],"oppositeColorPaths":[[2,1,0,5,4]]}]},"output":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[4,5,3,0],"secondaryFaces":[2,1],"sameColorPaths":[[4],[5],[0],[2]],"oppositeColorPaths":[[3]]}]}}`,
   `{"patternBoard":"vertex-6","input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,3],"secondaryFaces":[],"sameColorPaths":[[0,5,4]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[1],"secondaryFaces":[4],"sameColorPaths":[],"oppositeColorPaths":[[1,0,5]]},{"type":"face-color-dual","primaryFaces":[2],"secondaryFaces":[5],"sameColorPaths":[],"oppositeColorPaths":[[2,1,0]]}]},"output":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,3],"secondaryFaces":[],"sameColorPaths":[[0,5,4]],"oppositeColorPaths":[]},{"type":"face-color-dual","primaryFaces":[4,5],"secondaryFaces":[2,1],"sameColorPaths":[[5],[2]],"oppositeColorPaths":[[4,3]]}]}}`,
 
-
   // 3 with same colors inside A
   `{"patternBoard":"vertex-3-exit-two-adjacent","input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[0,3],"secondaryFaces":[2],"sameColorPaths":[[1,2]],"oppositeColorPaths":[[0]]}]},"output":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[2],"secondaryFaces":[3,1,0],"sameColorPaths":[[1],[2]],"oppositeColorPaths":[[0]]}]}}`,
   // 3 with same colors inside B
@@ -617,7 +616,6 @@ export const curatedRules: PatternRule[] = [
   // no-checker main
   `{"patternBoard":"square-0-0","input":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[3,4,2,1],"secondaryFaces":[],"sameColorPaths":[[2,0],[2,1],[2,3]],"oppositeColorPaths":[]}]},"output":{"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[3,4,2,1,0],"secondaryFaces":[],"sameColorPaths":[[2],[0],[1],[3]],"oppositeColorPaths":[]}]}}`,
 
-
   // FACE COLOR - EDGE basics
 
   // same face to red edge
@@ -719,7 +717,6 @@ export const curatedRules: PatternRule[] = [
   // HIGHLANDER TRIANGLE
   `{"patternBoard":"triangular-0-0","input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"redEdges":[3]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null}],"redEdges":[0,1,2,3]},"highlander":true}`,
 
-
   // HIGHLANDER SQUARE
   // adjacent red exits
   `{"patternBoard":"square-0-0","input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[4,5]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null}],"redEdges":[0,1,2,3,4,5]},"highlander":true}`,
@@ -739,7 +736,6 @@ export const curatedRules: PatternRule[] = [
   `{"patternBoard":"hexagonal-0-0","input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null}],"redEdges":[6,7,9,10]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null}],"redEdges":[0,1,2,3,4,5,6,7,9,10]},"highlander":true}`,
   // 1-3- split red exit
   `{"patternBoard":"hexagonal-0-0","input":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null}],"redEdges":[6,7,8,10]},"output":{"faceValues":[{"face":0,"value":null},{"face":1,"value":null},{"face":2,"value":null},{"face":3,"value":null},{"face":4,"value":null},{"face":5,"value":null},{"face":6,"value":null}],"redEdges":[0,1,2,3,4,5,6,7,8,10]},"highlander":true}`,
-
 
   // ALL rules SQUARE
   // double black
@@ -777,7 +773,6 @@ export const curatedRules: PatternRule[] = [
   `{"patternBoard":"square-0-0","input":{"redEdges":[0],"sectorsNotTwo":[1,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1,3],"secondaryFaces":[],"sameColorPaths":[[0,2]],"oppositeColorPaths":[]}]},"output":{"redEdges":[0,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1,3],"secondaryFaces":[],"sameColorPaths":[[0,2]],"oppositeColorPaths":[]}]}}`,
   `{"patternBoard":"square-0-0","input":{"blackEdges":[0],"sectorsNotZero":[1,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1,3],"secondaryFaces":[],"sameColorPaths":[[0,2]],"oppositeColorPaths":[]}]},"output":{"blackEdges":[0,2],"faceColorDualFeatures":[{"type":"face-color-dual","primaryFaces":[1,3],"secondaryFaces":[],"sameColorPaths":[[0,2]],"oppositeColorPaths":[]}]}}`,
 
-
   // MISCELLANEOUS
   // triangle no-loop sector
   `{"patternBoard":"triangular-0-0","input":{"blackEdges":[0]},"output":{"blackEdges":[0],"sectorsNotTwo":[1]},"highlander":true}`,
@@ -791,6 +786,4 @@ export const curatedRules: PatternRule[] = [
   `{"patternBoard":"square-1-1","input":{"faceValues":[{"face":0,"value":2},{"face":1,"value":3}],"redEdges":[2]},"output":{"faceValues":[{"face":0,"value":2},{"face":1,"value":3}],"blackEdges":[4],"redEdges":[2,7,8]}}`,
   // two-two with red outsides
   `{"patternBoard":"square-1-1","input":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2}],"redEdges":[2,4]},"output":{"faceValues":[{"face":0,"value":2},{"face":1,"value":2}],"redEdges":[2,4,7,8]}}`,
-
-
-].map( string => PatternRule.deserialize( JSON.parse( string ) ) );
+].map((string) => PatternRule.deserialize(JSON.parse(string)));

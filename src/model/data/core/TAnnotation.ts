@@ -29,7 +29,7 @@ export type JointToRedAnnotation = {
   type: 'JointToRed';
   vertex: TVertex;
   whiteEdges: TEdge[];
-  blackEdges: [ TEdge, TEdge ];
+  blackEdges: [TEdge, TEdge];
 };
 
 export type FaceSatisfiedAnnotation = {
@@ -111,7 +111,7 @@ export type FaceColorAnnotationPartial = {
   face: TFace;
   remainingValue: number;
   availableSideCount: number;
-  balancedPairs: [ TEdge[], TEdge[] ][];
+  balancedPairs: [TEdge[], TEdge[]][];
 };
 
 export type FaceColorMatchToRedAnnotation = {
@@ -132,7 +132,7 @@ export type FaceColorBalanceAnnotation = {
 
 export type DoubleMinusOneFacesAnnotation = {
   type: 'DoubleMinusOneFaces';
-  faces: [ TFace, TFace ];
+  faces: [TFace, TFace];
   toBlackEdges: TEdge[];
   toRedEdges: TEdge[];
 };
@@ -251,8 +251,8 @@ export type AnnotatedFaceValue = {
 };
 
 export type AnnotatedFaceColorDual = {
-  primaryFaces: ( TFace | null )[];
-  secondaryFaces: ( TFace | null )[];
+  primaryFaces: (TFace | null)[];
+  secondaryFaces: (TFace | null)[];
 };
 
 export type AnnotatedPattern = {
@@ -278,8 +278,9 @@ export type PatternAnnotation = {
   affectedFaces: Set<TFace>;
 };
 
-export const annotationSetsEdgeState = ( annotation: TAnnotation ): boolean => {
-  return annotation.type === 'ForcedLine' ||
+export const annotationSetsEdgeState = (annotation: TAnnotation): boolean => {
+  return (
+    annotation.type === 'ForcedLine' ||
     annotation.type === 'AlmostEmptyToRed' ||
     annotation.type === 'JointToRed' ||
     annotation.type === 'FaceSatisfied' ||
@@ -296,15 +297,17 @@ export const annotationSetsEdgeState = ( annotation: TAnnotation ): boolean => {
     annotation.type === 'ForcedSector' ||
     annotation.type === 'VertexStateToEdge' ||
     annotation.type === 'FaceStateToEdge' ||
-    ( annotation.type === 'Pattern' && annotation.affectedEdges.size > 0 );
+    (annotation.type === 'Pattern' && annotation.affectedEdges.size > 0)
+  );
 };
 
-export const annotationSetsSimpleRegion = ( annotation: TAnnotation ): boolean => {
+export const annotationSetsSimpleRegion = (annotation: TAnnotation): boolean => {
   return annotation.type === 'SimpleRegions';
 };
 
-export const annotationSetsFaceColor = ( annotation: TAnnotation ): boolean => {
-  return annotation.type === 'InvalidFaceColoring' ||
+export const annotationSetsFaceColor = (annotation: TAnnotation): boolean => {
+  return (
+    annotation.type === 'InvalidFaceColoring' ||
     annotation.type === 'GeneralFaceColoring' ||
     annotation.type === 'FaceColoringBlackEdge' ||
     annotation.type === 'FaceColoringRedEdge' ||
@@ -313,29 +316,31 @@ export const annotationSetsFaceColor = ( annotation: TAnnotation ): boolean => {
     annotation.type === 'VertexStateToOppositeFaceColor' ||
     annotation.type === 'FaceStateToSameFaceColor' ||
     annotation.type === 'FaceStateToOppositeFaceColor' ||
-    ( annotation.type === 'Pattern' && annotation.affectedFaces.size > 0 );
+    (annotation.type === 'Pattern' && annotation.affectedFaces.size > 0)
+  );
 };
 
-export const annotationSetsSectorState = ( annotation: TAnnotation ): boolean => {
-  return annotation.type === 'SingleEdgeToSector' ||
+export const annotationSetsSectorState = (annotation: TAnnotation): boolean => {
+  return (
+    annotation.type === 'SingleEdgeToSector' ||
     annotation.type === 'DoubleEdgeToSector' ||
     annotation.type === 'StaticFaceSectors' ||
     annotation.type === 'VertexStateToSector' ||
     annotation.type === 'FaceStateToSector' ||
-    ( annotation.type === 'Pattern' && annotation.affectedSectors.size > 0 );
+    (annotation.type === 'Pattern' && annotation.affectedSectors.size > 0)
+  );
 };
 
-export const annotationSetsVertexState = ( annotation: TAnnotation ): boolean => {
-  return annotation.type === 'VertexState' ||
-    annotation.type === 'FaceStateToVertexState';
+export const annotationSetsVertexState = (annotation: TAnnotation): boolean => {
+  return annotation.type === 'VertexState' || annotation.type === 'FaceStateToVertexState';
 };
 
-export const annotationSetsFaceState = ( annotation: TAnnotation ): boolean => {
+export const annotationSetsFaceState = (annotation: TAnnotation): boolean => {
   return annotation.type === 'FaceState';
 };
 
 export type TAnnotation =
-  ForcedLineAnnotation
+  | ForcedLineAnnotation
   | AlmostEmptyToRedAnnotation
   | JointToRedAnnotation
   | FaceSatisfiedAnnotation

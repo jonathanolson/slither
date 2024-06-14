@@ -49,4 +49,3 @@ export interface TPuzzleStyle extends TPuzzleModelStyle {
 
   readonly theme: TRuntimeTheme;
 }
-

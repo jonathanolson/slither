@@ -8,20 +8,20 @@ export interface TPlanarMappedPatternBoard {
   planarPatternMap: TPlanarPatternMap;
 }
 
-export const serializePlanarMappedPatternBoard = ( planarMappedPatternBoard: TPlanarMappedPatternBoard ): string => {
-  return JSON.stringify( {
-    patternBoard: serializePatternBoardDescriptor( planarMappedPatternBoard.patternBoard.descriptor ),
-    planarPatternMap: serializePlanarPatternMap( planarMappedPatternBoard.planarPatternMap )
-  } );
+export const serializePlanarMappedPatternBoard = (planarMappedPatternBoard: TPlanarMappedPatternBoard): string => {
+  return JSON.stringify({
+    patternBoard: serializePatternBoardDescriptor(planarMappedPatternBoard.patternBoard.descriptor),
+    planarPatternMap: serializePlanarPatternMap(planarMappedPatternBoard.planarPatternMap),
+  });
 };
 
-export const deserializePlanarMappedPatternBoard = ( string: string ): TPlanarMappedPatternBoard => {
-  const data = JSON.parse( string );
+export const deserializePlanarMappedPatternBoard = (string: string): TPlanarMappedPatternBoard => {
+  const data = JSON.parse(string);
 
-  const patternBoard = new BasePatternBoard( deserializePatternBoardDescriptor( data.patternBoard ) );
+  const patternBoard = new BasePatternBoard(deserializePatternBoardDescriptor(data.patternBoard));
 
   return {
     patternBoard: patternBoard,
-    planarPatternMap: deserializePlanarPatternMap( data.planarPatternMap, patternBoard )
+    planarPatternMap: deserializePlanarPatternMap(data.planarPatternMap, patternBoard),
   };
 };

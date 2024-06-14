@@ -9,31 +9,32 @@ import { TVertex } from '../../board/core/TVertex.ts';
 import { VertexState } from './VertexState.ts';
 
 export class VertexStateValidator implements TState<TVertexStateData> {
-
-  public readonly vertexStateChangedEmitter = new TinyEmitter<[ vertex: TVertex, state: VertexState, oldState: VertexState ]>();
+  public readonly vertexStateChangedEmitter = new TinyEmitter<
+    [vertex: TVertex, state: VertexState, oldState: VertexState]
+  >();
 
   public constructor(
     private readonly board: TBoard,
     private readonly currentState: TState<TVertexStateData>,
-    private readonly solvedState: TState<TVertexStateData>
+    private readonly solvedState: TState<TVertexStateData>,
   ) {}
 
-  public getVertexState( vertex: TVertex ): VertexState {
-    return this.currentState.getVertexState( vertex );
+  public getVertexState(vertex: TVertex): VertexState {
+    return this.currentState.getVertexState(vertex);
   }
 
-  public setVertexState( vertex: TVertex, state: VertexState ): void {
-    assertEnabled() && assert( this.board.vertices.includes( vertex ) );
+  public setVertexState(vertex: TVertex, state: VertexState): void {
+    assertEnabled() && assert(this.board.vertices.includes(vertex));
 
-    const solvedState = this.solvedState.getVertexState( vertex );
-    if ( !solvedState.isSubsetOf( state ) ) {
+    const solvedState = this.solvedState.getVertexState(vertex);
+    if (!solvedState.isSubsetOf(state)) {
       // TODO: how can we stringify this? toString() on VertexState
-      throw new InvalidStateError( `Attempt to make vertex ${state} when it should be ${solvedState}` );
+      throw new InvalidStateError(`Attempt to make vertex ${state} when it should be ${solvedState}`);
     }
 
-    const oldState = this.currentState.getVertexState( vertex );
-    if ( !state.isSubsetOf( oldState ) ) {
-      throw new InvalidStateError( 'Do not generalize vertex state' );
+    const oldState = this.currentState.getVertexState(vertex);
+    if (!state.isSubsetOf(oldState)) {
+      throw new InvalidStateError('Do not generalize vertex state');
     }
   }
 
@@ -45,7 +46,7 @@ export class VertexStateValidator implements TState<TVertexStateData> {
     return this as unknown as TDelta<TVertexStateData>;
   }
 
-  public serializeState( board: TBoard ): TSerializedVertexStateData {
-    throw new Error( 'unimplemented' );
+  public serializeState(board: TBoard): TSerializedVertexStateData {
+    throw new Error('unimplemented');
   }
 }

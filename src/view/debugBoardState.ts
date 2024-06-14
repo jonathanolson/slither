@@ -6,10 +6,13 @@ import { glassPane } from './glassPane.ts';
 import { NodeOptions } from 'phet-lib/scenery';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 
-export const debugBoardState = ( board: TBoard, state: TState<TCompleteData>, options?: NodeOptions ) => {
-  const puzzleNode = new PuzzleNode( {
-    board: board,
-    stateProperty: new TinyProperty( state )
-  }, options );
-  glassPane.addChild( puzzleNode );
+export const debugBoardState = (board: TBoard, state: TState<TCompleteData>, options?: NodeOptions) => {
+  const puzzleNode = new PuzzleNode(
+    {
+      board: board,
+      stateProperty: new TinyProperty(state),
+    },
+    options,
+  );
+  glassPane.addChild(puzzleNode);
 };

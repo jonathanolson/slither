@@ -9,6 +9,6 @@ export class BasePatternFace implements TPatternFace {
     public readonly isExit: boolean,
     public readonly vertices: TPatternVertex[],
     public readonly edges: TPatternEdge[],
-    public readonly sectors: TPatternSector[]
+    public readonly sectors: TPatternSector[],
   ) {}
 }

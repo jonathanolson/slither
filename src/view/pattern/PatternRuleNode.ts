@@ -15,24 +15,22 @@ export class PatternRuleNode extends Node {
   public constructor(
     public readonly rule: PatternRule,
     public readonly planarPatternMap: TPlanarPatternMap,
-    providedOptions?: PatternRuleNodeOptions
+    providedOptions?: PatternRuleNodeOptions,
   ) {
-    const options = optionize<PatternRuleNodeOptions, SelfOptions, NodeOptions>()( {
-      patternNodeOptions: {}
-    }, providedOptions );
+    const options = optionize<PatternRuleNodeOptions, SelfOptions, NodeOptions>()(
+      {
+        patternNodeOptions: {},
+      },
+      providedOptions,
+    );
 
     options.children = [
-      new HBox( {
+      new HBox({
         spacing: 10,
         align: 'origin',
         children: [
-          new PatternNode(
-            rule.patternBoard,
-            rule.inputFeatureSet,
-            planarPatternMap,
-            options.patternNodeOptions
-          ),
-          new ArrowNode( 0, 0, 20, 0, {
+          new PatternNode(rule.patternBoard, rule.inputFeatureSet, planarPatternMap, options.patternNodeOptions),
+          new ArrowNode(0, 0, 20, 0, {
             // TODO: theme
             fill: '#ccc',
             stroke: '#ccc',
@@ -40,19 +38,14 @@ export class PatternRuleNode extends Node {
             headWidth: 7,
             tailWidth: 1,
             layoutOptions: {
-              align: 'center'
-            }
-          } ),
-          new PatternNode(
-            rule.patternBoard,
-            rule.outputFeatureSet,
-            planarPatternMap,
-            options.patternNodeOptions
-          )
-        ]
-      } )
+              align: 'center',
+            },
+          }),
+          new PatternNode(rule.patternBoard, rule.outputFeatureSet, planarPatternMap, options.patternNodeOptions),
+        ],
+      }),
     ];
 
-    super( options );
+    super(options);
   }
 }

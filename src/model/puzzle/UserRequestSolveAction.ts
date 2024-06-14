@@ -8,11 +8,11 @@ export class UserRequestSolveAction extends NoOpAction<TCompleteData> {
 
   public override serializeAction(): TSerializedAction {
     return {
-      type: 'UserRequestSolveAction'
+      type: 'UserRequestSolveAction',
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserRequestSolveAction {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): UserRequestSolveAction {
     return new UserRequestSolveAction();
   }
 }

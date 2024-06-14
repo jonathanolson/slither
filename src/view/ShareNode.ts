@@ -14,51 +14,50 @@ import { puzzleToCompressedString } from '../model/puzzle/puzzleToCompressedStri
 import { TooltipListener } from './TooltipListener.ts';
 
 export class ShareNode extends PopupNode {
-
   private readonly includeStateProperty;
   private puzzle: TPropertyPuzzle<TStructure, TCompleteData> | null = null;
 
-  public constructor(
-    viewContext: ViewContext,
-  ) {
+  public constructor(viewContext: ViewContext) {
+    const includeStateProperty = new BooleanProperty(false);
 
-    const includeStateProperty = new BooleanProperty( false );
-
-    const copyButton = new UITextPushButton( 'Copy URL', {
+    const copyButton = new UITextPushButton('Copy URL', {
       accessibleName: 'Copy Shareable URL to Clipboard',
       listener: () => {
-        if ( this.puzzle ) {
+        if (this.puzzle) {
           const baseURL = location.protocol + '//' + location.host + location.pathname;
 
           let puzzle = this.puzzle;
-          if ( !this.includeStateProperty.value ) {
-            puzzle = new BasicPuzzle( puzzle.board, CompleteData.fromFaceValueData( puzzle.board, puzzle.stateProperty.value ) );
+          if (!this.includeStateProperty.value) {
+            puzzle = new BasicPuzzle(
+              puzzle.board,
+              CompleteData.fromFaceValueData(puzzle.board, puzzle.stateProperty.value),
+            );
           }
 
-          const puzzleString = puzzleToCompressedString( puzzle );
+          const puzzleString = puzzleToCompressedString(puzzle);
 
-          copyToClipboard( baseURL + '?p=' + encodeURIComponent( puzzleString ) );
+          copyToClipboard(baseURL + '?p=' + encodeURIComponent(puzzleString));
 
           // TODO: replace button with "copied" text?
         }
-      }
-    } );
-    copyButton.addInputListener( new TooltipListener( viewContext ) );
+      },
+    });
+    copyButton.addInputListener(new TooltipListener(viewContext));
 
-    super( new VBox( {
-      spacing: 20,
-      align: 'left',
-      stretch: true,
-      children: [
-        copyButton,
-        new UITextCheckbox( 'Include Solve Progress', includeStateProperty )
-      ]
-    } ), viewContext );
+    super(
+      new VBox({
+        spacing: 20,
+        align: 'left',
+        stretch: true,
+        children: [copyButton, new UITextCheckbox('Include Solve Progress', includeStateProperty)],
+      }),
+      viewContext,
+    );
 
     this.includeStateProperty = includeStateProperty;
   }
 
-  public setPuzzle( puzzle: TPropertyPuzzle<TStructure, TCompleteData> ): void {
+  public setPuzzle(puzzle: TPropertyPuzzle<TStructure, TCompleteData>): void {
     this.puzzle = puzzle;
   }
 

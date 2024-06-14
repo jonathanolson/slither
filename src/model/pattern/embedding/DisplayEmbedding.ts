@@ -33,7 +33,6 @@ import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.t
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 
 export class DisplayEmbedding {
-
   public constructor(
     public readonly sourcePatternBoard: TPatternBoard,
     public readonly boardPatternBoard: BoardPatternBoard,
@@ -47,118 +46,113 @@ export class DisplayEmbedding {
     public readonly expandedBounds: Bounds2,
   ) {}
 
-  public mapFace( face: TPatternFace ): TFace | null {
-    const embeddedFace = this.embedding.mapFace( face );
-    const largeFace = this.boardPatternBoard.getFace( embeddedFace );
-    if ( largeFace ) {
-      const smallFace = this.toSmallFaceMap.get( largeFace )!;
-      assertEnabled() && assert( smallFace );
+  public mapFace(face: TPatternFace): TFace | null {
+    const embeddedFace = this.embedding.mapFace(face);
+    const largeFace = this.boardPatternBoard.getFace(embeddedFace);
+    if (largeFace) {
+      const smallFace = this.toSmallFaceMap.get(largeFace)!;
+      assertEnabled() && assert(smallFace);
 
       return smallFace;
-    }
-    else {
+    } else {
       return null;
     }
   }
 
-  public mapEdge( edge: TPatternEdge ): TEdge[] {
-    const embeddedEdges = edge.isExit ? this.embedding.mapExitEdges( edge ) : [ this.embedding.mapNonExitEdge( edge ) ];
-    const largeEdges = embeddedEdges.map( embeddedEdge => this.boardPatternBoard.getEdge( embeddedEdge ) );
-    return largeEdges.map( largeEdge => {
-      const smallEdge = this.toSmallEdgeMap.get( largeEdge )!;
-      assertEnabled() && assert( smallEdge );
+  public mapEdge(edge: TPatternEdge): TEdge[] {
+    const embeddedEdges = edge.isExit ? this.embedding.mapExitEdges(edge) : [this.embedding.mapNonExitEdge(edge)];
+    const largeEdges = embeddedEdges.map((embeddedEdge) => this.boardPatternBoard.getEdge(embeddedEdge));
+    return largeEdges.map((largeEdge) => {
+      const smallEdge = this.toSmallEdgeMap.get(largeEdge)!;
+      assertEnabled() && assert(smallEdge);
 
       return smallEdge;
-    } );
+    });
   }
 
-  public mapSector( sector: TPatternSector ): TSector {
-    const embeddedSector = this.embedding.mapSector( sector );
-    const largeSector = this.boardPatternBoard.getSector( embeddedSector );
-    const smallSector = this.toSmallSectorMap.get( largeSector )!;
-    assertEnabled() && assert( smallSector );
+  public mapSector(sector: TPatternSector): TSector {
+    const embeddedSector = this.embedding.mapSector(sector);
+    const largeSector = this.boardPatternBoard.getSector(embeddedSector);
+    const smallSector = this.toSmallSectorMap.get(largeSector)!;
+    assertEnabled() && assert(smallSector);
 
     return smallSector;
   }
 
-  public getEmbeddedQuestionFaces( featureSet: FeatureSet ): TFace[] {
+  public getEmbeddedQuestionFaces(featureSet: FeatureSet): TFace[] {
     const definedSmallFaces = new Set<TFace>();
 
-    for ( const patternFace of featureSet.patternBoard.faces ) {
-      if ( featureSet.getFaceValue( patternFace ) !== undefined ) {
-        const face = this.mapFace( patternFace );
-        if ( face ) {
-          definedSmallFaces.add( face );
+    for (const patternFace of featureSet.patternBoard.faces) {
+      if (featureSet.getFaceValue(patternFace) !== undefined) {
+        const face = this.mapFace(patternFace);
+        if (face) {
+          definedSmallFaces.add(face);
         }
       }
     }
 
-    return this.smallBoard.faces.filter( face => !definedSmallFaces.has( face ) );
+    return this.smallBoard.faces.filter((face) => !definedSmallFaces.has(face));
   }
 
   // TODO: how to better handle "question" mark features
-  public getEmbeddedCompleteData( featureSet: FeatureSet ): CompleteData {
-    const state = CompleteData.empty( this.smallBoard );
+  public getEmbeddedCompleteData(featureSet: FeatureSet): CompleteData {
+    const state = CompleteData.empty(this.smallBoard);
 
-    for ( const feature of featureSet.getFeaturesArray() ) {
-      if ( feature instanceof FaceFeature ) {
-        if ( feature.value !== null ) {
-          state.setFaceValue( this.mapFace( feature.face )!, feature.value );
+    for (const feature of featureSet.getFeaturesArray()) {
+      if (feature instanceof FaceFeature) {
+        if (feature.value !== null) {
+          state.setFaceValue(this.mapFace(feature.face)!, feature.value);
         }
-      }
-      else if ( feature instanceof BlackEdgeFeature ) {
-        this.mapEdge( feature.edge ).forEach( edge => state.setEdgeState( edge, EdgeState.BLACK ) );
-      }
-      else if ( feature instanceof RedEdgeFeature ) {
-        this.mapEdge( feature.edge ).forEach( edge => state.setEdgeState( edge, EdgeState.RED ) );
-      }
-      else if ( feature instanceof SectorNotZeroFeature ) {
-        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_ZERO );
-      }
-      else if ( feature instanceof SectorNotOneFeature ) {
-        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_ONE );
-      }
-      else if ( feature instanceof SectorNotTwoFeature ) {
-        state.setSectorState( this.mapSector( feature.sector ), SectorState.NOT_TWO );
-      }
-      else if ( feature instanceof SectorOnlyOneFeature ) {
-        state.setSectorState( this.mapSector( feature.sector ), SectorState.ONLY_ONE );
-      }
-      else if ( feature instanceof FaceColorDualFeature ) {
-        const makeSame = ( a: TPatternFace, b: TPatternFace ) => {
-          const mappedA = this.mapFace( a );
-          const mappedB = this.mapFace( b );
+      } else if (feature instanceof BlackEdgeFeature) {
+        this.mapEdge(feature.edge).forEach((edge) => state.setEdgeState(edge, EdgeState.BLACK));
+      } else if (feature instanceof RedEdgeFeature) {
+        this.mapEdge(feature.edge).forEach((edge) => state.setEdgeState(edge, EdgeState.RED));
+      } else if (feature instanceof SectorNotZeroFeature) {
+        state.setSectorState(this.mapSector(feature.sector), SectorState.NOT_ZERO);
+      } else if (feature instanceof SectorNotOneFeature) {
+        state.setSectorState(this.mapSector(feature.sector), SectorState.NOT_ONE);
+      } else if (feature instanceof SectorNotTwoFeature) {
+        state.setSectorState(this.mapSector(feature.sector), SectorState.NOT_TWO);
+      } else if (feature instanceof SectorOnlyOneFeature) {
+        state.setSectorState(this.mapSector(feature.sector), SectorState.ONLY_ONE);
+      } else if (feature instanceof FaceColorDualFeature) {
+        const makeSame = (a: TPatternFace, b: TPatternFace) => {
+          const mappedA = this.mapFace(a);
+          const mappedB = this.mapFace(b);
 
-          const aColor = mappedA ? state.getFaceColor( mappedA ) : state.getOutsideColor();
-          const bColor = mappedB ? state.getFaceColor( mappedB ) : state.getOutsideColor();
+          const aColor = mappedA ? state.getFaceColor(mappedA) : state.getOutsideColor();
+          const bColor = mappedB ? state.getFaceColor(mappedB) : state.getOutsideColor();
 
-          new FaceColorMakeSameAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
+          new FaceColorMakeSameAction(getFaceColorPointer(state, aColor), getFaceColorPointer(state, bColor)).apply(
+            state,
+          );
         };
-        const makeOpposite = ( a: TPatternFace, b: TPatternFace ) => {
-          const mappedA = this.mapFace( a );
-          const mappedB = this.mapFace( b );
+        const makeOpposite = (a: TPatternFace, b: TPatternFace) => {
+          const mappedA = this.mapFace(a);
+          const mappedB = this.mapFace(b);
 
-          const aColor = mappedA ? state.getFaceColor( mappedA ) : state.getOutsideColor();
-          const bColor = mappedB ? state.getFaceColor( mappedB ) : state.getOutsideColor();
+          const aColor = mappedA ? state.getFaceColor(mappedA) : state.getOutsideColor();
+          const bColor = mappedB ? state.getFaceColor(mappedB) : state.getOutsideColor();
 
-          new FaceColorMakeOppositeAction( getFaceColorPointer( state, aColor ), getFaceColorPointer( state, bColor ) ).apply( state );
+          new FaceColorMakeOppositeAction(getFaceColorPointer(state, aColor), getFaceColorPointer(state, bColor)).apply(
+            state,
+          );
         };
-        for ( let i = 1; i < feature.primaryFaces.length; i++ ) {
-          makeSame( feature.primaryFaces[ i - 1 ], feature.primaryFaces[ i ] );
+        for (let i = 1; i < feature.primaryFaces.length; i++) {
+          makeSame(feature.primaryFaces[i - 1], feature.primaryFaces[i]);
         }
-        for ( let j = 1; j < feature.secondaryFaces.length; j++ ) {
-          makeSame( feature.secondaryFaces[ j - 1 ], feature.secondaryFaces[ j ] );
+        for (let j = 1; j < feature.secondaryFaces.length; j++) {
+          makeSame(feature.secondaryFaces[j - 1], feature.secondaryFaces[j]);
         }
-        if ( feature.secondaryFaces.length ) {
-          makeOpposite( feature.primaryFaces[ 0 ], feature.secondaryFaces[ 0 ] );
+        if (feature.secondaryFaces.length) {
+          makeOpposite(feature.primaryFaces[0], feature.secondaryFaces[0]);
         }
-      }
-      else {
-        throw new Error( `unhandled feature: ${feature}` );
+      } else {
+        throw new Error(`unhandled feature: ${feature}`);
       }
     }
 
-    safeSolve( this.smallBoard, state );
+    safeSolve(this.smallBoard, state);
 
     return state;
   }
@@ -171,40 +165,39 @@ export class DisplayEmbedding {
   ): Bounds2 {
     const embeddingBounds = Bounds2.NOTHING.copy();
 
-    const addPatternVertex = ( vertex: TPatternVertex ) => {
-      embeddingBounds.addPoint( boardPatternBoard.getVertex( embedding.mapVertex( vertex ) ).viewCoordinates );
+    const addPatternVertex = (vertex: TPatternVertex) => {
+      embeddingBounds.addPoint(boardPatternBoard.getVertex(embedding.mapVertex(vertex)).viewCoordinates);
     };
-    sourcePatternBoard.vertices.forEach( addPatternVertex );
+    sourcePatternBoard.vertices.forEach(addPatternVertex);
 
-    const addPatternFace = ( face: TPatternFace ) => {
-      if ( options?.sourceFaceFilter && !options.sourceFaceFilter( face ) ) {
+    const addPatternFace = (face: TPatternFace) => {
+      if (options?.sourceFaceFilter && !options.sourceFaceFilter(face)) {
         return;
       }
 
-      const mappedFace = boardPatternBoard.getFace( embedding.mapFace( face ) );
-      if ( mappedFace ) {
-        mappedFace.vertices.forEach( vertex => embeddingBounds.addPoint( vertex.viewCoordinates ) );
+      const mappedFace = boardPatternBoard.getFace(embedding.mapFace(face));
+      if (mappedFace) {
+        mappedFace.vertices.forEach((vertex) => embeddingBounds.addPoint(vertex.viewCoordinates));
       }
     };
-    sourcePatternBoard.faces.forEach( addPatternFace );
+    sourcePatternBoard.faces.forEach(addPatternFace);
 
-    sourcePatternBoard.edges.forEach( edge => {
+    sourcePatternBoard.edges.forEach((edge) => {
       let edges: TEdge[];
-      if ( edge.isExit ) {
-        if ( options?.sourceExitEdgeFilter && !options.sourceExitEdgeFilter( edge ) ) {
+      if (edge.isExit) {
+        if (options?.sourceExitEdgeFilter && !options.sourceExitEdgeFilter(edge)) {
           return;
         }
 
-        edges = embedding.mapExitEdges( edge ).map( exitEdge => boardPatternBoard.getEdge( exitEdge ) );
+        edges = embedding.mapExitEdges(edge).map((exitEdge) => boardPatternBoard.getEdge(exitEdge));
+      } else {
+        edges = [boardPatternBoard.getEdge(embedding.mapNonExitEdge(edge))];
       }
-      else {
-        edges = [ boardPatternBoard.getEdge( embedding.mapNonExitEdge( edge ) ) ];
-      }
-      edges.forEach( mappedEdge => {
-        embeddingBounds.addPoint( mappedEdge.start.viewCoordinates );
-        embeddingBounds.addPoint( mappedEdge.end.viewCoordinates );
-      } );
-    } );
+      edges.forEach((mappedEdge) => {
+        embeddingBounds.addPoint(mappedEdge.start.viewCoordinates);
+        embeddingBounds.addPoint(mappedEdge.end.viewCoordinates);
+      });
+    });
 
     return embeddingBounds;
   }
@@ -214,30 +207,30 @@ export class DisplayEmbedding {
     boardPatternBoard: BoardPatternBoard,
     largeBoard: TBoard,
   ): Embedding | null {
-    const embeddings = computeEmbeddings( sourcePatternBoard, boardPatternBoard );
+    const embeddings = computeEmbeddings(sourcePatternBoard, boardPatternBoard);
 
-    if ( embeddings.length === 0 ) {
+    if (embeddings.length === 0) {
       return null;
     }
 
     const displayTilingBounds = Bounds2.NOTHING.copy();
-    largeBoard.vertices.forEach( vertex => displayTilingBounds.addPoint( vertex.viewCoordinates ) );
+    largeBoard.vertices.forEach((vertex) => displayTilingBounds.addPoint(vertex.viewCoordinates));
 
     const displayTilingCenter = displayTilingBounds.center;
 
     let bestEmbedding: Embedding | null = null;
     let bestDistance = Number.POSITIVE_INFINITY;
 
-    for ( let i = 0; i < embeddings.length; i++ ) {
-      const embedding = embeddings[ i ];
+    for (let i = 0; i < embeddings.length; i++) {
+      const embedding = embeddings[i];
 
-      const embeddingBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding );
+      const embeddingBounds = DisplayEmbedding.getEmbeddingBounds(sourcePatternBoard, boardPatternBoard, embedding);
 
       const embeddingCenter = embeddingBounds.center;
 
-      const distance = displayTilingCenter.distance( embeddingCenter );
+      const distance = displayTilingCenter.distance(embeddingCenter);
 
-      if ( distance < bestDistance ) {
+      if (distance < bestDistance) {
         bestDistance = distance;
         bestEmbedding = embedding;
       }
@@ -253,69 +246,89 @@ export class DisplayEmbedding {
     embedding: Embedding,
     options?: DisplayEmbeddingCreationOptions,
   ): DisplayEmbedding {
-
-    const tightBounds = DisplayEmbedding.getEmbeddingBounds( sourcePatternBoard, boardPatternBoard, embedding, options );
+    const tightBounds = DisplayEmbedding.getEmbeddingBounds(sourcePatternBoard, boardPatternBoard, embedding, options);
 
     // TODO: do this improved TBoard handling for AnnotationNode(!), then get rid of the face filtering stuff
 
-    const expandedBoardBounds = tightBounds.dilated( 0.5 ); // TODO: we might want to update this to be larger
+    const expandedBoardBounds = tightBounds.dilated(0.5); // TODO: we might want to update this to be larger
 
-    const includedBoardFaces = largeBoard.faces.filter( face => {
+    const includedBoardFaces = largeBoard.faces.filter((face) => {
       const faceBounds = Bounds2.NOTHING.copy();
-      face.vertices.forEach( vertex => faceBounds.addPoint( vertex.viewCoordinates ) );
-      return expandedBoardBounds.intersectsBounds( faceBounds );
-    } );
-    const includedBoardVertices = largeBoard.vertices.filter( vertex => vertex.faces.some( face => includedBoardFaces.includes( face ) ) );
+      face.vertices.forEach((vertex) => faceBounds.addPoint(vertex.viewCoordinates));
+      return expandedBoardBounds.intersectsBounds(faceBounds);
+    });
+    const includedBoardVertices = largeBoard.vertices.filter((vertex) =>
+      vertex.faces.some((face) => includedBoardFaces.includes(face)),
+    );
 
-    const boardDescriptor = createBoardDescriptor( {
-      vertices: includedBoardVertices.map( vertex => {
+    const boardDescriptor = createBoardDescriptor({
+      vertices: includedBoardVertices.map((vertex) => {
         return {
           logicalCoordinates: vertex.logicalCoordinates,
-          viewCoordinates: vertex.viewCoordinates
+          viewCoordinates: vertex.viewCoordinates,
         };
-      } ),
-      faces: includedBoardFaces.map( face => {
+      }),
+      faces: includedBoardFaces.map((face) => {
         return {
           logicalCoordinates: face.logicalCoordinates,
-          vertices: face.vertices.map( vertex => {
+          vertices: face.vertices.map((vertex) => {
             return {
               logicalCoordinates: vertex.logicalCoordinates,
-              viewCoordinates: vertex.viewCoordinates
+              viewCoordinates: vertex.viewCoordinates,
             };
-          } )
+          }),
         };
-      } )
-    } );
+      }),
+    });
 
-    const smallBoard = new BaseBoard( boardDescriptor );
+    const smallBoard = new BaseBoard(boardDescriptor);
 
     const epsilon = 1e-6;
 
-    const toSmallFaceMap = new Map<TFace, TFace>( includedBoardFaces.map( ( face, index ) => {
-      const smallFace = smallBoard.faces.find( f => f.viewCoordinates.equalsEpsilon( face.viewCoordinates, epsilon ) )!;
-      assertEnabled() && assert( smallFace );
+    const toSmallFaceMap = new Map<TFace, TFace>(
+      includedBoardFaces.map((face, index) => {
+        const smallFace = smallBoard.faces.find((f) => f.viewCoordinates.equalsEpsilon(face.viewCoordinates, epsilon))!;
+        assertEnabled() && assert(smallFace);
 
-      return [ face, smallFace ];
-    } ) );
+        return [face, smallFace];
+      }),
+    );
 
-    const toSmallEdgeMap = new Map<TEdge, TEdge>( largeBoard.edges.map( edge => {
-      const smallEdge = smallBoard.edges.find( e => {
-        return ( e.start.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) ) ||
-               ( e.start.viewCoordinates.equalsEpsilon( edge.end.viewCoordinates, epsilon ) && e.end.viewCoordinates.equalsEpsilon( edge.start.viewCoordinates, epsilon ) );
-      } ) ?? null;
+    const toSmallEdgeMap = new Map<TEdge, TEdge>(
+      largeBoard.edges
+        .map((edge) => {
+          const smallEdge =
+            smallBoard.edges.find((e) => {
+              return (
+                (e.start.viewCoordinates.equalsEpsilon(edge.start.viewCoordinates, epsilon) &&
+                  e.end.viewCoordinates.equalsEpsilon(edge.end.viewCoordinates, epsilon)) ||
+                (e.start.viewCoordinates.equalsEpsilon(edge.end.viewCoordinates, epsilon) &&
+                  e.end.viewCoordinates.equalsEpsilon(edge.start.viewCoordinates, epsilon))
+              );
+            }) ?? null;
 
-      return smallEdge ? [ edge, smallEdge ] : null;
-    } ).filter( e => e !== null ) as [ TEdge, TEdge ][] );
+          return smallEdge ? [edge, smallEdge] : null;
+        })
+        .filter((e) => e !== null) as [TEdge, TEdge][],
+    );
 
-    const toSmallSectorMap = new Map<TSector, TSector>( largeBoard.halfEdges.map( sector => {
-      const smallSector = smallBoard.halfEdges.find( s => {
-        return s.start.viewCoordinates.equalsEpsilon( sector.start.viewCoordinates, epsilon ) && s.end.viewCoordinates.equalsEpsilon( sector.end.viewCoordinates, epsilon );
-      } ) ?? null;
+    const toSmallSectorMap = new Map<TSector, TSector>(
+      largeBoard.halfEdges
+        .map((sector) => {
+          const smallSector =
+            smallBoard.halfEdges.find((s) => {
+              return (
+                s.start.viewCoordinates.equalsEpsilon(sector.start.viewCoordinates, epsilon) &&
+                s.end.viewCoordinates.equalsEpsilon(sector.end.viewCoordinates, epsilon)
+              );
+            }) ?? null;
 
-      return smallSector ? [ sector, smallSector ] : null;
-    } ).filter( e => e !== null ) as [ TSector, TSector ][] );
+          return smallSector ? [sector, smallSector] : null;
+        })
+        .filter((e) => e !== null) as [TSector, TSector][],
+    );
 
-    assertEnabled() && assert( embedding );
+    assertEnabled() && assert(embedding);
 
     return new DisplayEmbedding(
       sourcePatternBoard,
@@ -331,16 +344,16 @@ export class DisplayEmbedding {
     );
   }
 
-  public static getOptionsForRule( rule: PatternRule ): DisplayEmbeddingCreationOptions {
+  public static getOptionsForRule(rule: PatternRule): DisplayEmbeddingCreationOptions {
     const faces = rule.outputFeatureSet.getAffectedFaces();
     const edges = rule.outputFeatureSet.getAffectedEdges();
 
     return {
-      sourceFaceFilter: face => {
-        return faces.has( face );
+      sourceFaceFilter: (face) => {
+        return faces.has(face);
       },
-      sourceExitEdgeFilter: edge => {
-        return edges.has( edge );
+      sourceExitEdgeFilter: (edge) => {
+        return edges.has(edge);
       },
     };
   }
@@ -355,7 +368,7 @@ export class DisplayEmbedding {
       boardPatternBoard,
       boardPatternBoard.board,
       embedding,
-      DisplayEmbedding.getOptionsForRule( rule ),
+      DisplayEmbedding.getOptionsForRule(rule),
     );
   }
 }
@@ -363,6 +376,6 @@ export class DisplayEmbedding {
 export type DisplayEmbeddingCreationOptions = {
   // for https://github.com/jonathanolson/slither/issues/4, where we need to omit certain exit faces/edges from the
   // embedding so we don't show a bunch of extra whitespace.
-  sourceFaceFilter?: ( face: TPatternFace ) => boolean;
-  sourceExitEdgeFilter?: ( face: TPatternEdge ) => boolean;
+  sourceFaceFilter?: (face: TPatternFace) => boolean;
+  sourceExitEdgeFilter?: (face: TPatternEdge) => boolean;
 };

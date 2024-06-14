@@ -8,20 +8,19 @@ import { TEmitter } from 'phet-lib/axon';
 
 // TODO: better options pattern!
 export type EdgeViewInteractionNodeOptions = {
-  edgePressListener: ( edge: TEdge, button: 0 | 1 | 2 ) => void;
+  edgePressListener: (edge: TEdge, button: 0 | 1 | 2) => void;
   backgroundOffsetDistance: number;
 };
 
 export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
-
   public constructor(
     board: TBoard,
-    delayEdgeInteractionEmitter: TEmitter<[ TEdge ]>,
-    options: EdgeViewInteractionNodeOptions
+    delayEdgeInteractionEmitter: TEmitter<[TEdge]>,
+    options: EdgeViewInteractionNodeOptions,
   ) {
     super(
       board.edges,
-      edge => {
+      (edge) => {
         const startPoint = edge.start.viewCoordinates;
         const endPoint = edge.end.viewCoordinates;
 
@@ -29,58 +28,51 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
         const pointerAreaShape = new Shape();
 
         let vertices: Vector2[];
-        if ( edge.faces.length === 2 ) {
-          vertices = [
-            startPoint,
-            edge.faces[ 0 ].viewCoordinates,
-            endPoint,
-            edge.faces[ 1 ].viewCoordinates
-          ];
-        }
-        else {
-          assertEnabled() && assert( edge.faces.length === 1, 'EdgeNode only supports edges with 1 or 2 faces' );
+        if (edge.faces.length === 2) {
+          vertices = [startPoint, edge.faces[0].viewCoordinates, endPoint, edge.faces[1].viewCoordinates];
+        } else {
+          assertEnabled() && assert(edge.faces.length === 1, 'EdgeNode only supports edges with 1 or 2 faces');
 
           const outsideHalf = edge.forwardHalf.face === null ? edge.forwardHalf : edge.reversedHalf;
-          assertEnabled() && assert( outsideHalf.previous.face === null );
-          assertEnabled() && assert( outsideHalf.next.face === null );
+          assertEnabled() && assert(outsideHalf.previous.face === null);
+          assertEnabled() && assert(outsideHalf.next.face === null);
           const halfStartPoint = outsideHalf.start.viewCoordinates;
           const halfEndPoint = outsideHalf.end.viewCoordinates;
           const beforeStartPoint = outsideHalf.previous.start.viewCoordinates;
           const afterEndPoint = outsideHalf.next.end.viewCoordinates;
 
-          const getThreePointDirection = ( a: Vector2, b: Vector2, c: Vector2 ): Vector2 => {
-            const ab = b.minus( a ).normalized();
-            const bc = c.minus( b ).normalized();
+          const getThreePointDirection = (a: Vector2, b: Vector2, c: Vector2): Vector2 => {
+            const ab = b.minus(a).normalized();
+            const bc = c.minus(b).normalized();
 
-            let diff = ab.minus( bc );
+            let diff = ab.minus(bc);
 
-            if ( diff.getMagnitude() < 1e-6 ) {
+            if (diff.getMagnitude() < 1e-6) {
               diff = ab.getPerpendicular();
-            }
-            else {
+            } else {
               diff = diff.normalized();
             }
 
-            if ( DotUtils.triangleAreaSigned( a, b, b.plus( diff ) ) < 0 ) {
+            if (DotUtils.triangleAreaSigned(a, b, b.plus(diff)) < 0) {
               diff = diff.negated();
             }
 
             return diff;
           };
 
-          const startDirection = getThreePointDirection( beforeStartPoint, halfStartPoint, halfEndPoint );
-          const endDirection = getThreePointDirection( halfStartPoint, halfEndPoint, afterEndPoint );
+          const startDirection = getThreePointDirection(beforeStartPoint, halfStartPoint, halfEndPoint);
+          const endDirection = getThreePointDirection(halfStartPoint, halfEndPoint, afterEndPoint);
 
           vertices = [
             halfStartPoint,
-            edge.faces[ 0 ].viewCoordinates,
+            edge.faces[0].viewCoordinates,
             halfEndPoint,
-            halfEndPoint.plus( endDirection.times( options.backgroundOffsetDistance ) ),
-            halfStartPoint.plus( startDirection.times( options.backgroundOffsetDistance ) )
+            halfEndPoint.plus(endDirection.times(options.backgroundOffsetDistance)),
+            halfStartPoint.plus(startDirection.times(options.backgroundOffsetDistance)),
           ];
         }
 
-        pointerAreaShape.polygon( vertices );
+        pointerAreaShape.polygon(vertices);
         pointerAreaShape.makeImmutable();
 
         return pointerAreaShape;
@@ -88,7 +80,7 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
       options.edgePressListener,
       {
         delayInteractionEmitter: delayEdgeInteractionEmitter,
-      }
+      },
     );
   }
 }

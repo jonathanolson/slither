@@ -5,9 +5,9 @@ import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
 
 import { standardSolverFactory } from './standardSolverFactory.ts';
 
-export const backtrackerSolverFactory = ( board: TBoard, state: TState<TCompleteData>, dirty?: boolean ) => {
-  return new EdgeBacktrackerSolver( board, state, {
+export const backtrackerSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+  return new EdgeBacktrackerSolver(board, state, {
     solverFactory: standardSolverFactory,
-    depth: 1
-  } );
+    depth: 1,
+  });
 };

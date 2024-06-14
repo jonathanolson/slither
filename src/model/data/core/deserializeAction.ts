@@ -18,58 +18,42 @@ import { FaceColorMakeSameAction } from '../face-color/FaceColorMakeSameAction.t
 import { SectorStateSetAction } from '../sector-state/SectorStateSetAction.ts';
 import { FaceColorSetAbsoluteAction } from '../face-color/FaceColorSetAbsoluteAction.ts';
 
-export const deserializeAction = ( board: TBoard, serializedAction: TSerializedAction ): TAction<TCompleteData> => {
+export const deserializeAction = (board: TBoard, serializedAction: TSerializedAction): TAction<TCompleteData> => {
   const type = serializedAction.type;
 
-  if ( type === 'CompositeAction' ) {
-    return CompositeAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'AnnotatedAction' ) {
-    return AnnotatedAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'CompleteAction' ) {
-    return CompleteAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'EdgeStateCycleAction' ) {
-    return EdgeStateCycleAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'EdgeStateSetAction' ) {
-    return EdgeStateSetAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'GeneralEdgeAction' ) {
-    return GeneralEdgeStateAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'FaceValueSetAction' ) {
-    return FaceValueSetAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'GeneralFaceAction' ) {
-    return GeneralFaceValueAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'GeneralSimpleRegionAction' ) {
-    return GeneralSimpleRegionAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'NoOpAction' ) {
-    return NoOpAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'UserLoadPuzzleAutoSolveAction' ) {
-    return UserLoadPuzzleAutoSolveAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'UserRequestSolveAction' ) {
-    return UserRequestSolveAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'FaceColorMakeOppositeAction' ) {
-    return FaceColorMakeOppositeAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'FaceColorMakeSameAction' ) {
-    return FaceColorMakeSameAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'FaceColorSetAbsoluteAction' ) {
-    return FaceColorSetAbsoluteAction.deserializeAction( board, serializedAction );
-  }
-  else if ( type === 'SectorStateSetAction' ) {
-    return SectorStateSetAction.deserializeAction( board, serializedAction );
-  }
-  else {
-    throw new Error( `Unknown action type: ${type}, could not deserialize` );
+  if (type === 'CompositeAction') {
+    return CompositeAction.deserializeAction(board, serializedAction);
+  } else if (type === 'AnnotatedAction') {
+    return AnnotatedAction.deserializeAction(board, serializedAction);
+  } else if (type === 'CompleteAction') {
+    return CompleteAction.deserializeAction(board, serializedAction);
+  } else if (type === 'EdgeStateCycleAction') {
+    return EdgeStateCycleAction.deserializeAction(board, serializedAction);
+  } else if (type === 'EdgeStateSetAction') {
+    return EdgeStateSetAction.deserializeAction(board, serializedAction);
+  } else if (type === 'GeneralEdgeAction') {
+    return GeneralEdgeStateAction.deserializeAction(board, serializedAction);
+  } else if (type === 'FaceValueSetAction') {
+    return FaceValueSetAction.deserializeAction(board, serializedAction);
+  } else if (type === 'GeneralFaceAction') {
+    return GeneralFaceValueAction.deserializeAction(board, serializedAction);
+  } else if (type === 'GeneralSimpleRegionAction') {
+    return GeneralSimpleRegionAction.deserializeAction(board, serializedAction);
+  } else if (type === 'NoOpAction') {
+    return NoOpAction.deserializeAction(board, serializedAction);
+  } else if (type === 'UserLoadPuzzleAutoSolveAction') {
+    return UserLoadPuzzleAutoSolveAction.deserializeAction(board, serializedAction);
+  } else if (type === 'UserRequestSolveAction') {
+    return UserRequestSolveAction.deserializeAction(board, serializedAction);
+  } else if (type === 'FaceColorMakeOppositeAction') {
+    return FaceColorMakeOppositeAction.deserializeAction(board, serializedAction);
+  } else if (type === 'FaceColorMakeSameAction') {
+    return FaceColorMakeSameAction.deserializeAction(board, serializedAction);
+  } else if (type === 'FaceColorSetAbsoluteAction') {
+    return FaceColorSetAbsoluteAction.deserializeAction(board, serializedAction);
+  } else if (type === 'SectorStateSetAction') {
+    return SectorStateSetAction.deserializeAction(board, serializedAction);
+  } else {
+    throw new Error(`Unknown action type: ${type}, could not deserialize`);
   }
 };

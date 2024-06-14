@@ -8,11 +8,11 @@ export class UserLoadPuzzleAutoSolveAction extends NoOpAction<TCompleteData> {
 
   public override serializeAction(): TSerializedAction {
     return {
-      type: 'UserLoadPuzzleAutoSolveAction'
+      type: 'UserLoadPuzzleAutoSolveAction',
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): UserLoadPuzzleAutoSolveAction {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): UserLoadPuzzleAutoSolveAction {
     return new UserLoadPuzzleAutoSolveAction();
   }
 }

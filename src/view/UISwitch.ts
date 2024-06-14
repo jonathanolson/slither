@@ -20,32 +20,34 @@ export class UISwitch extends HBox {
     property: Property<boolean>,
     name: string | TReadOnlyProperty<string>,
     content: Node,
-    providedOptions?: UISwitchOptions
+    providedOptions?: UISwitchOptions,
   ) {
+    const options = optionize<UISwitchOptions, SelfOptions, HBoxOptions>()(
+      {
+        advanced: false,
+        // checkboxColor: uiForegroundColorProperty,
+        // checkboxColorBackground: uiBackgroundColorProperty,
+        onOffSwitchOptions: {
+          size: new Dimension2(40, 20),
+          trackFillLeft: currentTheme.uiButtonDisabledColorProperty,
+          trackFillRight: currentTheme.uiButtonBaseColorProperty,
+          accessibleName: name,
+        },
 
-    const options = optionize<UISwitchOptions, SelfOptions, HBoxOptions>()( {
-      advanced: false,
-      // checkboxColor: uiForegroundColorProperty,
-      // checkboxColorBackground: uiBackgroundColorProperty,
-      onOffSwitchOptions: {
-        size: new Dimension2( 40, 20 ),
-        trackFillLeft: currentTheme.uiButtonDisabledColorProperty,
-        trackFillRight: currentTheme.uiButtonBaseColorProperty,
-        accessibleName: name,
+        spacing: 10,
       },
+      providedOptions,
+    );
 
-      spacing: 10,
-    }, providedOptions );
+    const onOffSwitch = new OnOffSwitch(property, options.onOffSwitchOptions);
 
-    const onOffSwitch = new OnOffSwitch( property, options.onOffSwitchOptions );
-
-    options.children = [ content, onOffSwitch ];
+    options.children = [content, onOffSwitch];
 
     // TODO: we'll need to dispose of this...
-    if ( options.advanced ) {
+    if (options.advanced) {
       options.visibleProperty = advancedSettingsVisibleProperty;
     }
 
-    super( options );
+    super(options);
   }
 }

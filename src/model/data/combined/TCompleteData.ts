@@ -1,15 +1,35 @@
 import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from '../face-value/TFaceValueData.ts';
 import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from '../edge-state/TEdgeStateData.ts';
-import { serializeSimpleRegionData, TSerializedSimpleRegionData, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
+import {
+  serializeSimpleRegionData,
+  TSerializedSimpleRegionData,
+  TSimpleRegionData,
+} from '../simple-region/TSimpleRegionData.ts';
 import { TAnyData } from './TAnyData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { serializeFaceColorData, TFaceColorData, TSerializedFaceColorData } from '../face-color/TFaceColorData.ts';
-import { serializeSectorStateData, TSectorStateData, TSerializedSectorStateData } from '../sector-state/TSectorStateData.ts';
-import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import {
+  serializeSectorStateData,
+  TSectorStateData,
+  TSerializedSectorStateData,
+} from '../sector-state/TSectorStateData.ts';
+import {
+  serializeVertexStateData,
+  TSerializedVertexStateData,
+  TVertexStateData,
+} from '../vertex-state/TVertexStateData.ts';
 import { serializeFaceStateData, TFaceStateData, TSerializedFaceStateData } from '../face-state/TFaceStateData.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
-export interface TCompleteData extends TFaceValueData, TEdgeStateData, TSimpleRegionData, TFaceColorData, TSectorStateData, TVertexStateData, TFaceStateData, TAnyData {}
+export interface TCompleteData
+  extends TFaceValueData,
+    TEdgeStateData,
+    TSimpleRegionData,
+    TFaceColorData,
+    TSectorStateData,
+    TVertexStateData,
+    TFaceStateData,
+    TAnyData {}
 
 export interface TSerializedCompleteData extends TSerializedState {
   type: 'CompleteData';
@@ -22,13 +42,13 @@ export interface TSerializedCompleteData extends TSerializedState {
   faceStateData: TSerializedFaceStateData;
 }
 
-export const serializeCompleteData = ( board: TBoard, data: TCompleteData ): TSerializedCompleteData => ( {
+export const serializeCompleteData = (board: TBoard, data: TCompleteData): TSerializedCompleteData => ({
   type: 'CompleteData',
-  faceValueData: serializeFaceValueData( board, data ),
-  edgeStateData: serializeEdgeStateData( board, data ),
-  simpleRegionData: serializeSimpleRegionData( data ),
-  faceColorData: serializeFaceColorData( data ),
-  sectorStateData: serializeSectorStateData( board, data ),
-  vertexStateData: serializeVertexStateData( board, data ),
-  faceStateData: serializeFaceStateData( board, data )
-} );
+  faceValueData: serializeFaceValueData(board, data),
+  edgeStateData: serializeEdgeStateData(board, data),
+  simpleRegionData: serializeSimpleRegionData(data),
+  faceColorData: serializeFaceColorData(data),
+  sectorStateData: serializeSectorStateData(board, data),
+  vertexStateData: serializeVertexStateData(board, data),
+  faceStateData: serializeFaceStateData(board, data),
+});

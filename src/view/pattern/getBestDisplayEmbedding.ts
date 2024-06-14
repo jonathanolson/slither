@@ -13,25 +13,29 @@ export const getBestDisplayEmbedding = (
   displayTiling: DisplayTiling,
   options?: DisplayEmbeddingCreationOptions,
 ): DisplayEmbedding | null => {
-  let patternMap = embeddingMap.get( patternBoard );
+  let patternMap = embeddingMap.get(patternBoard);
 
-  if ( !patternMap ) {
+  if (!patternMap) {
     patternMap = new Map();
-    embeddingMap.set( patternBoard, patternMap );
+    embeddingMap.set(patternBoard, patternMap);
   }
 
-  let embedding = patternMap.get( displayTiling );
+  let embedding = patternMap.get(displayTiling);
 
-  if ( embedding === undefined ) {
-    embedding = DisplayEmbedding.findBestEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board );
-    patternMap.set( displayTiling, embedding );
+  if (embedding === undefined) {
+    embedding = DisplayEmbedding.findBestEmbedding(patternBoard, displayTiling.boardPatternBoard, displayTiling.board);
+    patternMap.set(displayTiling, embedding);
   }
 
-  if ( embedding ) {
-    return DisplayEmbedding.getDisplayEmbedding( patternBoard, displayTiling.boardPatternBoard, displayTiling.board, embedding, options );
-  }
-  else {
+  if (embedding) {
+    return DisplayEmbedding.getDisplayEmbedding(
+      patternBoard,
+      displayTiling.boardPatternBoard,
+      displayTiling.board,
+      embedding,
+      options,
+    );
+  } else {
     return null;
   }
 };
-

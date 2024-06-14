@@ -17,7 +17,10 @@ export type TPropertyPuzzle<Structure extends TStructure = TStructure, Data exte
   stateProperty: TProperty<TState<Data>>;
 };
 
-export type TSolvablePropertyPuzzle<Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData> = {
+export type TSolvablePropertyPuzzle<
+  Structure extends TStructure = TStructure,
+  Data extends TFaceValueData = TFaceValueData,
+> = {
   solution: TSolvedPuzzle<Structure, Data>;
 } & TPropertyPuzzle<Structure, Data>;
 
@@ -33,4 +36,3 @@ export type TSerializedSolvablePuzzle = {
   solvedState: TSerializedState;
   blackEdges: number[];
 };
-

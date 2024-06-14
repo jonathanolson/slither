@@ -7,5 +7,5 @@ export class RichEdgeState extends EnumerationValue {
   public static readonly EXIT_BLACK = new RichEdgeState();
   public static readonly EXIT_SOFT_RED_DOUBLE_BLACK = new RichEdgeState();
 
-  public static readonly enumeration = new Enumeration( RichEdgeState );
+  public static readonly enumeration = new Enumeration(RichEdgeState);
 }

@@ -4,11 +4,13 @@ import { deserializeState } from '../data/core/deserializeState.ts';
 import { TSerializedSolvablePuzzle, TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { deserializePuzzle } from './deserializePuzzle.ts';
 
-export const deserializeSolvablePuzzle = ( serializedSolvablePuzzle: TSerializedSolvablePuzzle ): TSolvablePropertyPuzzle<TStructure, TCompleteData> => {
-  const puzzle = deserializePuzzle( serializedSolvablePuzzle.puzzle );
-  const cleanState = deserializeState( puzzle.board, serializedSolvablePuzzle.cleanState );
-  const solvedState = deserializeState( puzzle.board, serializedSolvablePuzzle.solvedState );
-  const blackEdges = new Set( serializedSolvablePuzzle.blackEdges.map( index => puzzle.board.edges[ index ] ) );
+export const deserializeSolvablePuzzle = (
+  serializedSolvablePuzzle: TSerializedSolvablePuzzle,
+): TSolvablePropertyPuzzle<TStructure, TCompleteData> => {
+  const puzzle = deserializePuzzle(serializedSolvablePuzzle.puzzle);
+  const cleanState = deserializeState(puzzle.board, serializedSolvablePuzzle.cleanState);
+  const solvedState = deserializeState(puzzle.board, serializedSolvablePuzzle.solvedState);
+  const blackEdges = new Set(serializedSolvablePuzzle.blackEdges.map((index) => puzzle.board.edges[index]));
 
   return {
     board: puzzle.board,
@@ -17,7 +19,7 @@ export const deserializeSolvablePuzzle = ( serializedSolvablePuzzle: TSerialized
       board: puzzle.board,
       cleanState: cleanState,
       solvedState: solvedState,
-      blackEdges: blackEdges
-    }
+      blackEdges: blackEdges,
+    },
   };
 };

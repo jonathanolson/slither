@@ -15,25 +15,24 @@ type Data = TEdgeStateData & TSectorStateData;
 
 // sector + edges => sector
 export class SafeEdgeToSectorSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private readonly dirtySectors = new Set<TSector>();
 
   private readonly edgeListener: TEdgeStateListener;
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<Data>
+    private readonly state: TState<Data>,
   ) {
-    board.halfEdges.forEach( sector => this.dirtySectors.add( sector ) );
+    board.halfEdges.forEach((sector) => this.dirtySectors.add(sector));
 
-    this.edgeListener = ( edge: TEdge, state: EdgeState, oldState: EdgeState ) => {
-      this.dirtySectors.add( edge.forwardHalf );
-      this.dirtySectors.add( edge.forwardHalf.previous );
-      this.dirtySectors.add( edge.reversedHalf );
-      this.dirtySectors.add( edge.reversedHalf.previous );
+    this.edgeListener = (edge: TEdge, state: EdgeState, oldState: EdgeState) => {
+      this.dirtySectors.add(edge.forwardHalf);
+      this.dirtySectors.add(edge.forwardHalf.previous);
+      this.dirtySectors.add(edge.reversedHalf);
+      this.dirtySectors.add(edge.reversedHalf.previous);
     };
 
-    this.state.edgeStateChangedEmitter.addListener( this.edgeListener );
+    this.state.edgeStateChangedEmitter.addListener(this.edgeListener);
   }
 
   public get dirty(): boolean {
@@ -41,55 +40,60 @@ export class SafeEdgeToSectorSolver implements TSolver<Data, TAnnotatedAction<Da
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    while ( this.dirtySectors.size ) {
+    while (this.dirtySectors.size) {
       const sector: TSector = this.dirtySectors.values().next().value;
-      this.dirtySectors.delete( sector );
+      this.dirtySectors.delete(sector);
 
       const edgeA = sector.edge;
       const edgeB = sector.next.edge;
 
-      const edgeStateA = this.state.getEdgeState( edgeA );
-      const edgeStateB = this.state.getEdgeState( edgeB );
+      const edgeStateA = this.state.getEdgeState(edgeA);
+      const edgeStateB = this.state.getEdgeState(edgeB);
 
-      const initialSectorState = this.state.getSectorState( sector );
+      const initialSectorState = this.state.getSectorState(sector);
       let sectorState = initialSectorState;
 
-      const whiteCount = ( edgeStateA === EdgeState.WHITE ? 1 : 0 ) + ( edgeStateB === EdgeState.WHITE ? 1 : 0 );
-      const blackCount = ( edgeStateA === EdgeState.BLACK ? 1 : 0 ) + ( edgeStateB === EdgeState.BLACK ? 1 : 0 );
-      const redCount = ( edgeStateA === EdgeState.RED ? 1 : 0 ) + ( edgeStateB === EdgeState.RED ? 1 : 0 );
+      const whiteCount = (edgeStateA === EdgeState.WHITE ? 1 : 0) + (edgeStateB === EdgeState.WHITE ? 1 : 0);
+      const blackCount = (edgeStateA === EdgeState.BLACK ? 1 : 0) + (edgeStateB === EdgeState.BLACK ? 1 : 0);
+      const redCount = (edgeStateA === EdgeState.RED ? 1 : 0) + (edgeStateB === EdgeState.RED ? 1 : 0);
 
-      if ( whiteCount === 0 ) {
-        sectorState = SectorState.getOnly( blackCount );
-      }
-      else if ( whiteCount === 1 ) {
-        if ( blackCount && sectorState.zero ) {
+      if (whiteCount === 0) {
+        sectorState = SectorState.getOnly(blackCount);
+      } else if (whiteCount === 1) {
+        if (blackCount && sectorState.zero) {
           sectorState = sectorState.withDisallowZero();
         }
-        if ( redCount && sectorState.two ) {
+        if (redCount && sectorState.two) {
           sectorState = sectorState.withDisallowTwo();
         }
       }
 
-      if ( sectorState !== initialSectorState ) {
-        return new AnnotatedAction( new SectorStateSetAction( sector, sectorState ), {
-          type: whiteCount === 1 ? 'SingleEdgeToSector' : 'DoubleEdgeToSector',
-          sector: sector,
-          beforeState: initialSectorState,
-          afterState: sectorState
-        }, this.board );
+      if (sectorState !== initialSectorState) {
+        return new AnnotatedAction(
+          new SectorStateSetAction(sector, sectorState),
+          {
+            type: whiteCount === 1 ? 'SingleEdgeToSector' : 'DoubleEdgeToSector',
+            sector: sector,
+            beforeState: initialSectorState,
+            afterState: sectorState,
+          },
+          this.board,
+        );
       }
     }
 
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): SafeEdgeToSectorSolver {
-    return new SafeEdgeToSectorSolver( this.board, equivalentState );
+  public clone(equivalentState: TState<Data>): SafeEdgeToSectorSolver {
+    return new SafeEdgeToSectorSolver(this.board, equivalentState);
   }
 
   public dispose(): void {
-    this.state.edgeStateChangedEmitter.removeListener( this.edgeListener );
+    this.state.edgeStateChangedEmitter.removeListener(this.edgeListener);
   }
 }

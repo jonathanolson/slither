@@ -18,134 +18,132 @@ import { PolygonalBoard } from '../../board/core/TiledBoard.ts';
 import { PolygonGenerator } from '../../board/PolygonGenerator.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
-
   // TODO: can we remove this self-reference?
   public readonly patternBoard: this;
   public readonly planarPatternMap: TPlanarPatternMap;
 
   public constructor(
     public readonly originalBoard: TBoard,
-    public readonly originalBoardFaces: TFace[]
+    public readonly originalBoardFaces: TFace[],
   ) {
     const boardVertices = new Set<TVertex>();
     const boardEdges = new Set<TEdge>();
-    originalBoardFaces.forEach( face => {
-      face.vertices.forEach( vertex => {
-        boardVertices.add( vertex );
-      } );
-      face.edges.forEach( edge => {
-        boardEdges.add( edge );
-      } );
-    } );
-    const boardEdgeList = Array.from( boardEdges );
+    originalBoardFaces.forEach((face) => {
+      face.vertices.forEach((vertex) => {
+        boardVertices.add(vertex);
+      });
+      face.edges.forEach((edge) => {
+        boardEdges.add(edge);
+      });
+    });
+    const boardEdgeList = Array.from(boardEdges);
 
     const exitBoardVertices: TVertex[] = [];
     const nonExitBoardVertices: TVertex[] = [];
-    for ( const vertex of boardVertices ) {
-      if ( vertex.faces.every( face => originalBoardFaces.includes( face ) ) ) {
-        nonExitBoardVertices.push( vertex );
-      }
-      else {
-        exitBoardVertices.push( vertex );
+    for (const vertex of boardVertices) {
+      if (vertex.faces.every((face) => originalBoardFaces.includes(face))) {
+        nonExitBoardVertices.push(vertex);
+      } else {
+        exitBoardVertices.push(vertex);
       }
     }
 
-    const orderedVertices = [
-      ...nonExitBoardVertices,
-      ...exitBoardVertices
-    ];
+    const orderedVertices = [...nonExitBoardVertices, ...exitBoardVertices];
 
-    super( {
+    super({
       numNonExitVertices: nonExitBoardVertices.length,
       numExitVertices: exitBoardVertices.length,
       type: 'faces',
-      vertexLists: originalBoardFaces.map( face => {
-        return face.vertices.map( vertex => orderedVertices.indexOf( vertex ) );
-      } )
-    } );
+      vertexLists: originalBoardFaces.map((face) => {
+        return face.vertices.map((vertex) => orderedVertices.indexOf(vertex));
+      }),
+    });
 
-    const vertexMap: Map<TPatternVertex, Vector2> = new Map( orderedVertices.map( ( vertex, index ) => [ this.vertices[ index ], vertex.viewCoordinates ] ) );
+    const vertexMap: Map<TPatternVertex, Vector2> = new Map(
+      orderedVertices.map((vertex, index) => [this.vertices[index], vertex.viewCoordinates]),
+    );
 
-    const edgeMap = new Map<TPatternEdge, [ Vector2, Vector2 ]>();
-    this.edges.forEach( edge => {
-      if ( !edge.isExit ) {
-        const vertexA = orderedVertices[ edge.vertices[ 0 ].index ];
-        const vertexB = orderedVertices[ edge.vertices[ 1 ].index ];
+    const edgeMap = new Map<TPatternEdge, [Vector2, Vector2]>();
+    this.edges.forEach((edge) => {
+      if (!edge.isExit) {
+        const vertexA = orderedVertices[edge.vertices[0].index];
+        const vertexB = orderedVertices[edge.vertices[1].index];
 
-        edgeMap.set( edge, [ vertexA.viewCoordinates, vertexB.viewCoordinates ] );
+        edgeMap.set(edge, [vertexA.viewCoordinates, vertexB.viewCoordinates]);
       }
-    } );
+    });
 
-    const sectorMap = new Map<TPatternSector, [ Vector2, Vector2, Vector2 ]>();
-    this.sectors.forEach( sector => {
-      assertEnabled() && assert( sector.edges.length === 2 );
+    const sectorMap = new Map<TPatternSector, [Vector2, Vector2, Vector2]>();
+    this.sectors.forEach((sector) => {
+      assertEnabled() && assert(sector.edges.length === 2);
 
-      const vertexA0 = orderedVertices[ sector.edges[ 0 ].vertices[ 0 ].index ];
-      const vertexA1 = orderedVertices[ sector.edges[ 0 ].vertices[ 1 ].index ];
-      const vertexB0 = orderedVertices[ sector.edges[ 1 ].vertices[ 0 ].index ];
-      const vertexB1 = orderedVertices[ sector.edges[ 1 ].vertices[ 1 ].index ];
+      const vertexA0 = orderedVertices[sector.edges[0].vertices[0].index];
+      const vertexA1 = orderedVertices[sector.edges[0].vertices[1].index];
+      const vertexB0 = orderedVertices[sector.edges[1].vertices[0].index];
+      const vertexB1 = orderedVertices[sector.edges[1].vertices[1].index];
 
-      const edgeA = boardEdgeList.find( edge => {
-        return edge.vertices.includes( vertexA0 ) && edge.vertices.includes( vertexA1 );
-      } )!;
-      const edgeB = boardEdgeList.find( edge => {
-        return edge.vertices.includes( vertexB0 ) && edge.vertices.includes( vertexB1 );
-      } )!;
-      assertEnabled() && assert( edgeA && edgeB );
+      const edgeA = boardEdgeList.find((edge) => {
+        return edge.vertices.includes(vertexA0) && edge.vertices.includes(vertexA1);
+      })!;
+      const edgeB = boardEdgeList.find((edge) => {
+        return edge.vertices.includes(vertexB0) && edge.vertices.includes(vertexB1);
+      })!;
+      assertEnabled() && assert(edgeA && edgeB);
 
-      const boardSector = getSectorFromEdgePair( edgeA, edgeB );
-      assertEnabled() && assert( boardSector );
+      const boardSector = getSectorFromEdgePair(edgeA, edgeB);
+      assertEnabled() && assert(boardSector);
 
       const startPoint = boardSector.start.viewCoordinates;
       const vertexPoint = boardSector.end.viewCoordinates;
       const endPoint = boardSector.next.end.viewCoordinates;
 
-      sectorMap.set( sector, [ startPoint, vertexPoint, endPoint ] );
-    } );
+      sectorMap.set(sector, [startPoint, vertexPoint, endPoint]);
+    });
 
     const faceMap = new Map<TPatternFace, Vector2[]>();
 
     // Non-exit faces
-    this.faces.forEach( face => {
-      if ( !face.isExit ) {
-        const boardVertices = face.vertices.map( vertex => orderedVertices[ vertex.index ] );
-        const boardFace = originalBoardFaces.find( originalBoardFace => {
-          return originalBoardFace.vertices.every( vertex => boardVertices.includes( vertex ) );
-        } )!;
-        assertEnabled() && assert( boardFace );
+    this.faces.forEach((face) => {
+      if (!face.isExit) {
+        const boardVertices = face.vertices.map((vertex) => orderedVertices[vertex.index]);
+        const boardFace = originalBoardFaces.find((originalBoardFace) => {
+          return originalBoardFace.vertices.every((vertex) => boardVertices.includes(vertex));
+        })!;
+        assertEnabled() && assert(boardFace);
 
-        const points = boardFace.vertices.map( vertex => vertex.viewCoordinates );
-        faceMap.set( face, points );
+        const points = boardFace.vertices.map((vertex) => vertex.viewCoordinates);
+        faceMap.set(face, points);
       }
-    } );
+    });
 
     // Exit faces
-    this.faces.forEach( face => {
-      if ( face.isExit ) {
-        assertEnabled() && assert( face.edges.length === 1 );
-        const edge = face.edges[ 0 ];
+    this.faces.forEach((face) => {
+      if (face.isExit) {
+        assertEnabled() && assert(face.edges.length === 1);
+        const edge = face.edges[0];
 
-        const vertexA = orderedVertices[ edge.vertices[ 0 ].index ];
-        const vertexB = orderedVertices[ edge.vertices[ 1 ].index ];
-        assertEnabled() && assert( vertexA && vertexB );
+        const vertexA = orderedVertices[edge.vertices[0].index];
+        const vertexB = orderedVertices[edge.vertices[1].index];
+        assertEnabled() && assert(vertexA && vertexB);
 
-        const boardEdge = boardEdgeList.find( edge => {
-          return edge.vertices.includes( vertexA ) && edge.vertices.includes( vertexB );
-        } )!;
-        assertEnabled() && assert( boardEdge );
+        const boardEdge = boardEdgeList.find((edge) => {
+          return edge.vertices.includes(vertexA) && edge.vertices.includes(vertexB);
+        })!;
+        assertEnabled() && assert(boardEdge);
 
-        const boardFace = originalBoardFaces.includes( boardEdge.faces[ 0 ] ) ? boardEdge.faces[ 1 ] : boardEdge.faces[ 0 ];
-        assertEnabled() && assert( boardFace, 'Did we hit null as in --- edge of board? can we expand the search pattern?' );
+        const boardFace = originalBoardFaces.includes(boardEdge.faces[0]) ? boardEdge.faces[1] : boardEdge.faces[0];
+        assertEnabled() &&
+          assert(boardFace, 'Did we hit null as in --- edge of board? can we expand the search pattern?');
 
         const points = [
           vertexA.viewCoordinates,
           vertexB.viewCoordinates,
-          vertexA.viewCoordinates.average( vertexB.viewCoordinates ).average( boardFace.viewCoordinates )
+          vertexA.viewCoordinates.average(vertexB.viewCoordinates).average(boardFace.viewCoordinates),
         ];
 
-        faceMap.set( face, points );
+        faceMap.set(face, points);
       }
-    } );
+    });
 
     // Satisfy the TPlanarMappedPatternBoard interface
     this.patternBoard = this;
@@ -153,78 +151,84 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
       vertexMap: vertexMap,
       edgeMap: edgeMap,
       sectorMap: sectorMap,
-      faceMap: faceMap
+      faceMap: faceMap,
     };
   }
 
-  public static getSemiAdjacentFaces( board: TBoard, face: TFace ): Set<TFace> {
+  public static getSemiAdjacentFaces(board: TBoard, face: TFace): Set<TFace> {
     const set = new Set<TFace>();
-    face.vertices.forEach( vertex => {
-      vertex.faces.forEach( f => {
-        if ( f !== face ) {
-          set.add( f );
+    face.vertices.forEach((vertex) => {
+      vertex.faces.forEach((f) => {
+        if (f !== face) {
+          set.add(f);
         }
-      } );
-    } );
+      });
+    });
     return set;
-  };
+  }
 
-  public static getFirstGeneration( board: TBoard ): FacesPatternBoard[] {
-    const orders = _.uniq( board.faces.map( face => face.vertices.length ) );
+  public static getFirstGeneration(board: TBoard): FacesPatternBoard[] {
+    const orders = _.uniq(board.faces.map((face) => face.vertices.length));
 
-    const averageVertex = board.vertices.map( v => v.viewCoordinates ).reduce( ( a, b ) => a.plus( b ) ).timesScalar( 1 / board.vertices.length );
+    const averageVertex = board.vertices
+      .map((v) => v.viewCoordinates)
+      .reduce((a, b) => a.plus(b))
+      .timesScalar(1 / board.vertices.length);
 
-    return orders.map( order => {
-      const centermostFace = _.minBy( board.faces.filter( face => face.vertices.length === order ), face => face.viewCoordinates.distanceSquared( averageVertex ) )!;
-      assertEnabled() && assert( centermostFace );
+    return orders.map((order) => {
+      const centermostFace = _.minBy(
+        board.faces.filter((face) => face.vertices.length === order),
+        (face) => face.viewCoordinates.distanceSquared(averageVertex),
+      )!;
+      assertEnabled() && assert(centermostFace);
 
-      return new FacesPatternBoard( board, [ centermostFace ] );
-    } );
-  };
+      return new FacesPatternBoard(board, [centermostFace]);
+    });
+  }
 
-  public static getNextGeneration( patternBoards: FacesPatternBoard[] ): FacesPatternBoard[] {
+  public static getNextGeneration(patternBoards: FacesPatternBoard[]): FacesPatternBoard[] {
     const nextGeneration: FacesPatternBoard[] = [];
-    patternBoards.forEach( patternBoard => {
+    patternBoards.forEach((patternBoard) => {
       const potentialFaces = new Set<TFace>();
-      patternBoard.originalBoardFaces.forEach( face => {
-        FacesPatternBoard.getSemiAdjacentFaces( patternBoard.originalBoard, face ).forEach( f => {
-          if ( !patternBoard.originalBoardFaces.includes( f ) ) {
-            potentialFaces.add( f );
+      patternBoard.originalBoardFaces.forEach((face) => {
+        FacesPatternBoard.getSemiAdjacentFaces(patternBoard.originalBoard, face).forEach((f) => {
+          if (!patternBoard.originalBoardFaces.includes(f)) {
+            potentialFaces.add(f);
           }
-        } );
-      } );
+        });
+      });
 
-      potentialFaces.forEach( face => {
-        const newFaces = [ ...patternBoard.originalBoardFaces, face ];
-        const newPatternBoard = new FacesPatternBoard( patternBoard.originalBoard, newFaces );
-        if ( !nextGeneration.some( p => arePatternBoardsIsomorphic( p, newPatternBoard ) ) ) {
-          nextGeneration.push( newPatternBoard );
+      potentialFaces.forEach((face) => {
+        const newFaces = [...patternBoard.originalBoardFaces, face];
+        const newPatternBoard = new FacesPatternBoard(patternBoard.originalBoard, newFaces);
+        if (!nextGeneration.some((p) => arePatternBoardsIsomorphic(p, newPatternBoard))) {
+          nextGeneration.push(newPatternBoard);
         }
-      } );
-    } );
+      });
+    });
     return nextGeneration;
-  };
+  }
 
-  public static getFirstNGenerations( board: TBoard, n: number ): FacesPatternBoard[][] {
-    const firstGeneration = FacesPatternBoard.getFirstGeneration( board );
+  public static getFirstNGenerations(board: TBoard, n: number): FacesPatternBoard[][] {
+    const firstGeneration = FacesPatternBoard.getFirstGeneration(board);
 
-    const generations: FacesPatternBoard[][] = [ firstGeneration ];
-    for ( let i = 0; i < n - 1; i++ ) {
-      generations.push( FacesPatternBoard.getNextGeneration( generations[ generations.length - 1 ] ) );
+    const generations: FacesPatternBoard[][] = [firstGeneration];
+    for (let i = 0; i < n - 1; i++) {
+      generations.push(FacesPatternBoard.getNextGeneration(generations[generations.length - 1]));
     }
     return generations;
-  };
+  }
 
-  public static getUniformTilingGenerations( generator: PolygonGenerator, n: number ): FacesPatternBoard[][] {
+  public static getUniformTilingGenerations(generator: PolygonGenerator, n: number): FacesPatternBoard[][] {
     // TODO: simplify this board generation
-    const polygons = generator.generate( {
+    const polygons = generator.generate({
       // TODO: make this variable
       width: 15,
-      height: 15
-    } );
+      height: 15,
+    });
 
-    const board = new PolygonalBoard( polygons, generator.scale ?? 1 );
+    const board = new PolygonalBoard(polygons, generator.scale ?? 1);
 
-    return FacesPatternBoard.getFirstNGenerations( board, n );
-  };
+    return FacesPatternBoard.getFirstNGenerations(board, n);
+  }
 }

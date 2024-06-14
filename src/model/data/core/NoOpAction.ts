@@ -2,11 +2,11 @@ import { TAction, TSerializedAction } from './TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 
 export class NoOpAction<Data> implements TAction<Data> {
-  public apply( state: Data ): void {
+  public apply(state: Data): void {
     // DO NOTHING
   }
 
-  public getUndo( state: Data ): TAction<Data> {
+  public getUndo(state: Data): TAction<Data> {
     return this;
   }
 
@@ -16,11 +16,11 @@ export class NoOpAction<Data> implements TAction<Data> {
 
   public serializeAction(): TSerializedAction {
     return {
-      type: 'NoOpAction'
+      type: 'NoOpAction',
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): NoOpAction<any> {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): NoOpAction<any> {
     return new NoOpAction();
   }
 }

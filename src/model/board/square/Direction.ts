@@ -2,7 +2,6 @@ import { Vector2 } from 'phet-lib/dot';
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export class CardinalDirection extends EnumerationValue {
-
   public ccw!: CardinalDirection;
   public cw!: CardinalDirection;
   public opposite!: CardinalDirection;
@@ -21,11 +20,10 @@ export class CardinalDirection extends EnumerationValue {
   public static readonly SOUTH = new CardinalDirection();
   public static readonly WEST = new CardinalDirection();
 
-  public static readonly enumeration = new Enumeration( CardinalDirection );
+  public static readonly enumeration = new Enumeration(CardinalDirection);
 }
 
 export class OrdinalDirection extends EnumerationValue {
-
   public ccw!: OrdinalDirection;
   public cw!: OrdinalDirection;
   public opposite!: OrdinalDirection;
@@ -42,7 +40,7 @@ export class OrdinalDirection extends EnumerationValue {
   public static readonly SOUTHWEST = new OrdinalDirection();
   public static readonly NORTHWEST = new OrdinalDirection();
 
-  public static readonly enumeration = new Enumeration( OrdinalDirection );
+  public static readonly enumeration = new Enumeration(OrdinalDirection);
 }
 
 type Direction = CardinalDirection | OrdinalDirection;
@@ -76,10 +74,10 @@ CardinalDirection.WEST.halfLeft = OrdinalDirection.SOUTHWEST;
 CardinalDirection.WEST.halfRight = OrdinalDirection.NORTHWEST;
 
 // visual-style directions
-CardinalDirection.WEST.delta = new Vector2( -1, 0 );
-CardinalDirection.EAST.delta = new Vector2( 1, 0 );
-CardinalDirection.NORTH.delta = new Vector2( 0, -1 );
-CardinalDirection.SOUTH.delta = new Vector2( 0, 1 );
+CardinalDirection.WEST.delta = new Vector2(-1, 0);
+CardinalDirection.EAST.delta = new Vector2(1, 0);
+CardinalDirection.NORTH.delta = new Vector2(0, -1);
+CardinalDirection.SOUTH.delta = new Vector2(0, 1);
 
 OrdinalDirection.NORTHEAST.ccw = OrdinalDirection.NORTHEAST.left = OrdinalDirection.NORTHWEST;
 OrdinalDirection.NORTHEAST.cw = OrdinalDirection.NORTHEAST.right = OrdinalDirection.SOUTHEAST;

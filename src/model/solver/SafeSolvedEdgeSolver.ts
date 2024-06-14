@@ -13,20 +13,19 @@ type Data = TSimpleRegionData & TEdgeStateData;
 
 // If solved, we turn white edges to red (useful so that we trigger proper face coloring for the end)
 export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private hasDirtySimpleRegions = true;
 
   private readonly simpleRegionListener: () => void;
 
   public constructor(
     private readonly board: TBoard,
-    private readonly state: TState<Data>
+    private readonly state: TState<Data>,
   ) {
     this.simpleRegionListener = () => {
       this.hasDirtySimpleRegions = true;
     };
 
-    this.state.simpleRegionsChangedEmitter.addListener( this.simpleRegionListener );
+    this.state.simpleRegionsChangedEmitter.addListener(this.simpleRegionListener);
   }
 
   public get dirty(): boolean {
@@ -34,16 +33,22 @@ export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    if ( simpleRegionIsSolved( this.state ) ) {
-      const whiteEdges = this.board.edges.filter( edge => this.state.getEdgeState( edge ) === EdgeState.WHITE );
+    if (simpleRegionIsSolved(this.state)) {
+      const whiteEdges = this.board.edges.filter((edge) => this.state.getEdgeState(edge) === EdgeState.WHITE);
 
-      if ( whiteEdges.length ) {
-        return new AnnotatedAction( new CompositeAction( whiteEdges.map( edge => new EdgeStateSetAction( edge, EdgeState.RED ) ) ), {
-          type: 'CompletingEdgesAfterSolve',
-          whiteEdges: whiteEdges
-        }, this.board );
+      if (whiteEdges.length) {
+        return new AnnotatedAction(
+          new CompositeAction(whiteEdges.map((edge) => new EdgeStateSetAction(edge, EdgeState.RED))),
+          {
+            type: 'CompletingEdgesAfterSolve',
+            whiteEdges: whiteEdges,
+          },
+          this.board,
+        );
       }
     }
 
@@ -51,11 +56,11 @@ export class SafeSolvedEdgeSolver implements TSolver<Data, TAnnotatedAction<Data
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): SafeSolvedEdgeSolver {
-    return new SafeSolvedEdgeSolver( this.board, equivalentState );
+  public clone(equivalentState: TState<Data>): SafeSolvedEdgeSolver {
+    return new SafeSolvedEdgeSolver(this.board, equivalentState);
   }
 
   public dispose(): void {
-    this.state.simpleRegionsChangedEmitter.removeListener( this.simpleRegionListener );
+    this.state.simpleRegionsChangedEmitter.removeListener(this.simpleRegionListener);
   }
 }

@@ -26,7 +26,6 @@ export type BinaryPatternSolverData = {
 };
 
 export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private nextIndex: number;
 
   private readonly dirtyListener: () => void;
@@ -36,7 +35,7 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
     private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
     private readonly binaryRuleCollection: BinaryPatternSolverData,
-    initialIndex = 0
+    initialIndex = 0,
   ) {
     this.nextIndex = initialIndex;
 
@@ -44,10 +43,10 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
       this.nextIndex = 0;
     };
 
-    this.state.faceValueChangedEmitter.addListener( this.dirtyListener );
-    this.state.edgeStateChangedEmitter.addListener( this.dirtyListener );
-    this.state.sectorStateChangedEmitter.addListener( this.dirtyListener );
-    this.state.faceColorsChangedEmitter.addListener( this.dirtyListener );
+    this.state.faceValueChangedEmitter.addListener(this.dirtyListener);
+    this.state.edgeStateChangedEmitter.addListener(this.dirtyListener);
+    this.state.sectorStateChangedEmitter.addListener(this.dirtyListener);
+    this.state.faceColorsChangedEmitter.addListener(this.dirtyListener);
   }
 
   public get dirty(): boolean {
@@ -55,36 +54,41 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    const boardFeatureData = new BoardFeatureData( this.boardPatternBoard, this.state );
+    const boardFeatureData = new BoardFeatureData(this.boardPatternBoard, this.state);
 
-    const match = this.binaryRuleCollection.findNextActionableEmbeddedRuleFromData( boardFeatureData.boardPatternBoard, boardFeatureData, this.nextIndex );
-    if ( match ) {
+    const match = this.binaryRuleCollection.findNextActionableEmbeddedRuleFromData(
+      boardFeatureData.boardPatternBoard,
+      boardFeatureData,
+      this.nextIndex,
+    );
+    if (match) {
       this.nextIndex = match.ruleIndex + 1; // If called again immediately, we will only start searching from here
 
-      return getPatternRuleAction(
-        this.boardPatternBoard,
-        this.state,
-        match.embeddedRule,
-        match.rule,
-        match.embedding
-      );
-    }
-    else {
+      return getPatternRuleAction(this.boardPatternBoard, this.state, match.embeddedRule, match.rule, match.embedding);
+    } else {
       this.nextIndex = this.binaryRuleCollection.size;
       return null;
     }
   }
 
-  public clone( equivalentState: TState<Data> ): BinaryPatternSolver {
-    return new BinaryPatternSolver( this.board, this.boardPatternBoard, equivalentState, this.binaryRuleCollection, this.nextIndex );
+  public clone(equivalentState: TState<Data>): BinaryPatternSolver {
+    return new BinaryPatternSolver(
+      this.board,
+      this.boardPatternBoard,
+      equivalentState,
+      this.binaryRuleCollection,
+      this.nextIndex,
+    );
   }
 
   public dispose(): void {
-    this.state.faceValueChangedEmitter.removeListener( this.dirtyListener );
-    this.state.edgeStateChangedEmitter.removeListener( this.dirtyListener );
-    this.state.sectorStateChangedEmitter.removeListener( this.dirtyListener );
-    this.state.faceColorsChangedEmitter.removeListener( this.dirtyListener );
+    this.state.faceValueChangedEmitter.removeListener(this.dirtyListener);
+    this.state.edgeStateChangedEmitter.removeListener(this.dirtyListener);
+    this.state.sectorStateChangedEmitter.removeListener(this.dirtyListener);
+    this.state.faceColorsChangedEmitter.removeListener(this.dirtyListener);
   }
 }

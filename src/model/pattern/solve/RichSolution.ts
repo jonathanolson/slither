@@ -6,7 +6,6 @@ import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts'
 import { GenericRichSolution } from './GenericRichSolution.ts';
 
 export class RichSolution extends GenericRichSolution {
-
   public readonly solutionAttributeSet: SolutionAttributeSet;
 
   public constructor(
@@ -15,14 +14,14 @@ export class RichSolution extends GenericRichSolution {
     public readonly solution: TPatternEdge[],
     includeVertexConnections: boolean,
   ) {
-    assertEnabled() && assert( patternBoard === binaryFeatureMap.patternBoard );
+    assertEnabled() && assert(patternBoard === binaryFeatureMap.patternBoard);
 
-    super( patternBoard, solution, includeVertexConnections );
+    super(patternBoard, solution, includeVertexConnections);
 
-    this.solutionAttributeSet = binaryFeatureMap.getSolutionAttributeSet( this.solutionSet );
+    this.solutionAttributeSet = binaryFeatureMap.getSolutionAttributeSet(this.solutionSet);
   }
 
   public override toDebugString(): string {
-    return `[${this.binaryFeatureMap.getBinaryString( this.solutionAttributeSet.data )}] (${this.binaryFeatureMap.getFeaturesString( this.solutionAttributeSet.data )}) opt:(${this.binaryFeatureMap.getFeaturesString( this.solutionAttributeSet.optionalData )}) ${this.vertexConnectionKey ?? ''}`;
+    return `[${this.binaryFeatureMap.getBinaryString(this.solutionAttributeSet.data)}] (${this.binaryFeatureMap.getFeaturesString(this.solutionAttributeSet.data)}) opt:(${this.binaryFeatureMap.getFeaturesString(this.solutionAttributeSet.optionalData)}) ${this.vertexConnectionKey ?? ''}`;
   }
 }

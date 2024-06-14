@@ -6,6 +6,5 @@ export type TState<Data> = {
   clone(): TState<Data>;
   createDelta(): TDelta<Data>;
 
-  serializeState( board: TBoard ): TSerializedState;
+  serializeState(board: TBoard): TSerializedState;
 } & Data;
-

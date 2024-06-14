@@ -8,29 +8,26 @@ export const squarePolygonGenerator: PolygonGenerator = {
     width: {
       label: 'Width',
       type: 'integer',
-      range: new Range( 2, 50 )
+      range: new Range(2, 50),
     },
     height: {
       label: 'Height',
       type: 'integer',
-      range: new Range( 2, 50 )
-    }
+      range: new Range(2, 50),
+    },
   },
   defaultParameterValues: {
     width: 6,
-    height: 10
+    height: 10,
   },
-  generate: ( parameters ) => {
+  generate: (parameters) => {
     const width = parameters.width as number;
     const height = parameters.height as number;
 
-    return _.range( 0, height ).flatMap( y => _.range( 0, width ).map( x => {
-      return [
-        new Vector2( x, y ),
-        new Vector2( x + 1, y ),
-        new Vector2( x + 1, y + 1 ),
-        new Vector2( x, y + 1 )
-      ];
-    } ) );
-  }
+    return _.range(0, height).flatMap((y) =>
+      _.range(0, width).map((x) => {
+        return [new Vector2(x, y), new Vector2(x + 1, y), new Vector2(x + 1, y + 1), new Vector2(x, y + 1)];
+      }),
+    );
+  },
 };

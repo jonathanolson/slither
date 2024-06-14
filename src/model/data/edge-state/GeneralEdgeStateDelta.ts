@@ -8,45 +8,43 @@ import { TState } from '../core/TState.ts';
 import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TDelta<TEdgeStateData> {
-
-  public readonly edgeStateChangedEmitter = new TinyEmitter<[ edge: TEdge, state: EdgeState, oldState: EdgeState ]>();
+  public readonly edgeStateChangedEmitter = new TinyEmitter<[edge: TEdge, state: EdgeState, oldState: EdgeState]>();
 
   public constructor(
     board: TBoard,
     public readonly parentState: TState<TEdgeStateData>,
-    edgeStateMap: Map<TEdge, EdgeState> = new Map()
+    edgeStateMap: Map<TEdge, EdgeState> = new Map(),
   ) {
-    super( board, edgeStateMap );
+    super(board, edgeStateMap);
   }
 
-  public getEdgeState( edge: TEdge ): EdgeState {
-    if ( this.edgeStateMap.has( edge ) ) {
-      return this.edgeStateMap.get( edge )!;
-    }
-    else {
-      return this.parentState.getEdgeState( edge );
+  public getEdgeState(edge: TEdge): EdgeState {
+    if (this.edgeStateMap.has(edge)) {
+      return this.edgeStateMap.get(edge)!;
+    } else {
+      return this.parentState.getEdgeState(edge);
     }
   }
 
-  public setEdgeState( edge: TEdge, state: EdgeState ): void {
-    const oldState = this.getEdgeState( edge );
+  public setEdgeState(edge: TEdge, state: EdgeState): void {
+    const oldState = this.getEdgeState(edge);
 
-    if ( oldState !== state ) {
-      this.edgeStateMap.set( edge, state );
+    if (oldState !== state) {
+      this.edgeStateMap.set(edge, state);
 
-      this.edgeStateChangedEmitter.emit( edge, state, oldState );
+      this.edgeStateChangedEmitter.emit(edge, state, oldState);
     }
   }
 
   public clone(): GeneralEdgeStateDelta {
-    return new GeneralEdgeStateDelta( this.board, this.parentState, new Map( this.edgeStateMap ) );
+    return new GeneralEdgeStateDelta(this.board, this.parentState, new Map(this.edgeStateMap));
   }
 
   public createDelta(): TDelta<TEdgeStateData> {
-    return new GeneralEdgeStateDelta( this.board, this, new Map() );
+    return new GeneralEdgeStateDelta(this.board, this, new Map());
   }
 
-  public serializeState( board: TBoard ): TSerializedEdgeStateData {
-    return serializeEdgeStateData( board, this );
+  public serializeState(board: TBoard): TSerializedEdgeStateData {
+    return serializeEdgeStateData(board, this);
   }
 }

@@ -5,9 +5,9 @@ export class Log {
     return Log.LOG_LEVEL === 'info';
   }
 
-  public static info( format: string, ...args: any[] ): void {
-    if ( Log.isInfoLoggable() ) {
-      console.log( `[INFO] ${Log.formatString( format, ...args )}` );
+  public static info(format: string, ...args: any[]): void {
+    if (Log.isInfoLoggable()) {
+      console.log(`[INFO] ${Log.formatString(format, ...args)}`);
     }
   }
 
@@ -15,9 +15,9 @@ export class Log {
     return Log.LOG_LEVEL === 'fine';
   }
 
-  public static fine( format: string, ...args: any[] ): void {
-    if ( Log.isFineLoggable() ) {
-      console.log( `[FINE] ${Log.formatString( format, ...args )}` );
+  public static fine(format: string, ...args: any[]): void {
+    if (Log.isFineLoggable()) {
+      console.log(`[FINE] ${Log.formatString(format, ...args)}`);
     }
   }
 
@@ -25,9 +25,9 @@ export class Log {
     return Log.LOG_LEVEL === 'warn';
   }
 
-  public static warn( format: string, ...args: any[] ): void {
-    if ( Log.isWarnLoggable() ) {
-      console.log( `[WARN] ${Log.formatString( format, ...args )}` );
+  public static warn(format: string, ...args: any[]): void {
+    if (Log.isWarnLoggable()) {
+      console.log(`[WARN] ${Log.formatString(format, ...args)}`);
     }
   }
 
@@ -35,15 +35,13 @@ export class Log {
     return Log.LOG_LEVEL === 'error';
   }
 
-  public static error( format: string, ...args: any[] ): void {
-    if ( Log.isErrorLoggable() ) {
-      console.log( `[ERROR] ${Log.formatString( format, ...args )}` );
+  public static error(format: string, ...args: any[]): void {
+    if (Log.isErrorLoggable()) {
+      console.log(`[ERROR] ${Log.formatString(format, ...args)}`);
     }
   }
 
-  private static formatString( format: string, ...args: any[] ): string {
-    return format.replace( /{(\d+)}/g, ( match, number ) =>
-      typeof args[ number ] != 'undefined' ? args[ number ] : match
-    );
+  private static formatString(format: string, ...args: any[]): string {
+    return format.replace(/{(\d+)}/g, (match, number) => (typeof args[number] != 'undefined' ? args[number] : match));
   }
 }

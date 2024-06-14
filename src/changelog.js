@@ -25,5 +25,5 @@ export const changelog = [
     'Added options to control error highlighting / number dimming',
     'Added slight delay lockout on autosolved edges (for usability)',
     'Miscellaneous fixes!',
-  ]
+  ],
 ];

@@ -6,20 +6,18 @@ import { TBoard } from '../board/core/TBoard.ts';
 import { NoOpAction } from '../data/core/NoOpAction.ts';
 
 export class UserPuzzleHintApplyAction implements TAnnotatedAction<TCompleteData> {
-  public constructor(
-    public readonly hintAction: TAnnotatedAction<TCompleteData>
-  ) {}
+  public constructor(public readonly hintAction: TAnnotatedAction<TCompleteData>) {}
 
   public get annotation(): TAnnotation {
     return this.hintAction.annotation;
   }
 
-  public apply( state: TCompleteData ): void {
-    this.hintAction.apply( state );
+  public apply(state: TCompleteData): void {
+    this.hintAction.apply(state);
   }
 
-  public getUndo( state: TCompleteData ): TAction<TCompleteData> {
-    throw new Error( 'unimplemented' );
+  public getUndo(state: TCompleteData): TAction<TCompleteData> {
+    throw new Error('unimplemented');
   }
 
   public isEmpty(): boolean {
@@ -27,10 +25,10 @@ export class UserPuzzleHintApplyAction implements TAnnotatedAction<TCompleteData
   }
 
   public serializeAction(): TSerializedAction {
-    throw new Error( 'unimplemented' );
+    throw new Error('unimplemented');
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): NoOpAction<any> {
-    throw new Error( 'unimplemented' );
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): NoOpAction<any> {
+    throw new Error('unimplemented');
   }
 }

@@ -18,7 +18,6 @@ import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 
 export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-
   private nextIndex: number;
 
   private readonly dirtyListener: () => void;
@@ -28,8 +27,8 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
     private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
     private readonly numRules: number,
-    private readonly getRule: ( index: number ) => PatternRule,
-    initialIndex = 0
+    private readonly getRule: (index: number) => PatternRule,
+    initialIndex = 0,
   ) {
     this.nextIndex = initialIndex;
 
@@ -37,10 +36,10 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
       this.nextIndex = 0;
     };
 
-    this.state.faceValueChangedEmitter.addListener( this.dirtyListener );
-    this.state.edgeStateChangedEmitter.addListener( this.dirtyListener );
-    this.state.sectorStateChangedEmitter.addListener( this.dirtyListener );
-    this.state.faceColorsChangedEmitter.addListener( this.dirtyListener );
+    this.state.faceValueChangedEmitter.addListener(this.dirtyListener);
+    this.state.edgeStateChangedEmitter.addListener(this.dirtyListener);
+    this.state.sectorStateChangedEmitter.addListener(this.dirtyListener);
+    this.state.faceColorsChangedEmitter.addListener(this.dirtyListener);
   }
 
   public get dirty(): boolean {
@@ -48,39 +47,35 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
-    if ( !this.dirty ) { return null; }
+    if (!this.dirty) {
+      return null;
+    }
 
-    const boardFeatureData = new BoardFeatureData( this.boardPatternBoard, this.state );
+    const boardFeatureData = new BoardFeatureData(this.boardPatternBoard, this.state);
 
     let lastEmbeddings: Embedding[] = [];
     let lastPatternBoard: TPatternBoard | null = null;
 
-    while ( this.nextIndex < this.numRules ) {
-      const rule = this.getRule( this.nextIndex );
+    while (this.nextIndex < this.numRules) {
+      const rule = this.getRule(this.nextIndex);
       this.nextIndex++; // increment here, so if we return early, we'll be pointed to the next one.
 
-      if ( rule.patternBoard !== lastPatternBoard ) {
+      if (rule.patternBoard !== lastPatternBoard) {
         lastPatternBoard = rule.patternBoard;
         // TODO: this is a memory leak, don't use it
-        lastEmbeddings = getEmbeddings( rule.patternBoard, this.boardPatternBoard );
+        lastEmbeddings = getEmbeddings(rule.patternBoard, this.boardPatternBoard);
       }
 
-      for ( const embedding of lastEmbeddings ) {
+      for (const embedding of lastEmbeddings) {
         // Does our input match
-        if ( rule.inputFeatureSet.getBoardMatchState( boardFeatureData, embedding, true ) === FeatureSetMatchState.MATCH ) {
-
+        if (rule.inputFeatureSet.getBoardMatchState(boardFeatureData, embedding, true) === FeatureSetMatchState.MATCH) {
           // Is our output not fully satisfied!
-          if ( rule.outputFeatureSet.getBoardMatchState( boardFeatureData, embedding, true ) !== FeatureSetMatchState.MATCH ) {
+          if (
+            rule.outputFeatureSet.getBoardMatchState(boardFeatureData, embedding, true) !== FeatureSetMatchState.MATCH
+          ) {
+            const embeddedRule = rule.embedded(this.boardPatternBoard, embedding)!;
 
-            const embeddedRule = rule.embedded( this.boardPatternBoard, embedding )!;
-
-            return getPatternRuleAction(
-              this.boardPatternBoard,
-              this.state,
-              embeddedRule,
-              rule,
-              embedding
-            );
+            return getPatternRuleAction(this.boardPatternBoard, this.state, embeddedRule, rule, embedding);
           }
         }
       }
@@ -89,14 +84,21 @@ export class ScanPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> 
     return null;
   }
 
-  public clone( equivalentState: TState<Data> ): ScanPatternSolver {
-    return new ScanPatternSolver( this.board, this.boardPatternBoard, equivalentState, this.numRules, this.getRule, this.nextIndex );
+  public clone(equivalentState: TState<Data>): ScanPatternSolver {
+    return new ScanPatternSolver(
+      this.board,
+      this.boardPatternBoard,
+      equivalentState,
+      this.numRules,
+      this.getRule,
+      this.nextIndex,
+    );
   }
 
   public dispose(): void {
-    this.state.faceValueChangedEmitter.removeListener( this.dirtyListener );
-    this.state.edgeStateChangedEmitter.removeListener( this.dirtyListener );
-    this.state.sectorStateChangedEmitter.removeListener( this.dirtyListener );
-    this.state.faceColorsChangedEmitter.removeListener( this.dirtyListener );
+    this.state.faceValueChangedEmitter.removeListener(this.dirtyListener);
+    this.state.edgeStateChangedEmitter.removeListener(this.dirtyListener);
+    this.state.sectorStateChangedEmitter.removeListener(this.dirtyListener);
+    this.state.faceColorsChangedEmitter.removeListener(this.dirtyListener);
   }
 }

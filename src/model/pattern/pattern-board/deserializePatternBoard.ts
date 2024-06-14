@@ -3,20 +3,19 @@ import { getStandardDescribedPatternBoard, getStandardNamedPatternBoard } from '
 import { deserializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import { BasePatternBoard } from './BasePatternBoard.ts';
 
-export const deserializePatternBoard = ( serialized: string ): TPatternBoard => {
-  let board = getStandardNamedPatternBoard( serialized );
+export const deserializePatternBoard = (serialized: string): TPatternBoard => {
+  let board = getStandardNamedPatternBoard(serialized);
 
-  if ( board ) {
+  if (board) {
     return board;
   }
 
-  const descriptor = deserializePatternBoardDescriptor( serialized );
-  board = getStandardDescribedPatternBoard( descriptor );
+  const descriptor = deserializePatternBoardDescriptor(serialized);
+  board = getStandardDescribedPatternBoard(descriptor);
 
-  if ( board ) {
+  if (board) {
     return board;
-  }
-  else {
-    return new BasePatternBoard( descriptor );
+  } else {
+    return new BasePatternBoard(descriptor);
   }
 };

@@ -13,52 +13,56 @@ export const penroseTilingGenerator: PolygonGenerator = {
       choices: [
         {
           value: '6',
-          label: '6'
+          label: '6',
         },
         {
           value: '10',
-          label: '10'
+          label: '10',
         },
         {
           value: '11',
-          label: '11'
+          label: '11',
         },
         {
           value: '13',
-          label: '13'
+          label: '13',
         },
         {
           value: '14',
-          label: '14'
+          label: '14',
         },
         {
           value: '20',
-          label: '20'
-        }
-      ]
-    }
+          label: '20',
+        },
+      ],
+    },
   },
   defaultParameterValues: {
-    radius: '6'
+    radius: '6',
   },
-  generate: ( ( parameters: { radius: string } ): Vector2[][] => {
+  generate: ((parameters: { radius: string }): Vector2[][] => {
     const penroseTiling = {
       '6': penrose6,
       '10': penrose10,
       '11': penrose11,
       '13': penrose13,
       '14': penrose14,
-      '20': penrose20
-    }[ parameters.radius ]!;
+      '20': penrose20,
+    }[parameters.radius]!;
 
-    assertEnabled() && assert( penroseTiling );
+    assertEnabled() && assert(penroseTiling);
 
     const prescale = 0.01;
 
     // They are closed, we ignore the last point
-    const thinPolygons = penroseTiling.thinShape.subpaths.filter( subpath => subpath.segments.length ).map( subpath => subpath.points.slice( 0, -1 ).map( v => v.timesScalar( prescale ) ) );
-    const thickPolygons = penroseTiling.thickShape.subpaths.filter( subpath => subpath.segments.length ).map( subpath => subpath.points.slice( 0, -1 ).map( v => v.timesScalar( prescale ) ) );
+    const thinPolygons = penroseTiling.thinShape.subpaths
+      .filter((subpath) => subpath.segments.length)
+      .map((subpath) => subpath.points.slice(0, -1).map((v) => v.timesScalar(prescale)));
+    const thickPolygons = penroseTiling.thickShape.subpaths
+      .filter((subpath) => subpath.segments.length)
+      .map((subpath) => subpath.points.slice(0, -1).map((v) => v.timesScalar(prescale)));
 
-    return [ ...thickPolygons, ...thinPolygons ];
-  } ) as ( parameters: Record<string, any> ) => Vector2[][]
+    return [...thickPolygons, ...thinPolygons];
+  }) as (parameters: Record<string, any>) => Vector2[][],
 };

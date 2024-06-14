@@ -11,38 +11,38 @@ import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
 export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   public constructor(
     public readonly a: TFaceColorPointer,
-    public readonly b: TFaceColorPointer
+    public readonly b: TFaceColorPointer,
   ) {
-    assertEnabled() && assert( a );
-    assertEnabled() && assert( b );
+    assertEnabled() && assert(a);
+    assertEnabled() && assert(b);
   }
 
-  public apply( state: TFaceColorData ): void {
-    const a = dereferenceFaceColorPointer( state, this.a );
-    const b = dereferenceFaceColorPointer( state, this.b );
+  public apply(state: TFaceColorData): void {
+    const a = dereferenceFaceColorPointer(state, this.a);
+    const b = dereferenceFaceColorPointer(state, this.b);
 
-    if ( a === b ) {
+    if (a === b) {
       return;
     }
 
-    const aOpposite = state.getOppositeFaceColor( a );
-    const bOpposite = state.getOppositeFaceColor( b );
+    const aOpposite = state.getOppositeFaceColor(a);
+    const bOpposite = state.getOppositeFaceColor(b);
 
-    if ( assertEnabled() ) {
-      const colors = new Set( state.getFaceColors() );
-      assert( colors.has( a ) );
-      assert( colors.has( b ) );
-      if ( aOpposite ) {
-        assert( colors.has( aOpposite ) );
+    if (assertEnabled()) {
+      const colors = new Set(state.getFaceColors());
+      assert(colors.has(a));
+      assert(colors.has(b));
+      if (aOpposite) {
+        assert(colors.has(aOpposite));
       }
-      if ( bOpposite ) {
-        assert( colors.has( bOpposite ) );
+      if (bOpposite) {
+        assert(colors.has(bOpposite));
       }
     }
 
     // TODO: based on opposite structure, we probably don't need both of these checks?
-    if ( aOpposite && aOpposite === b || bOpposite && bOpposite === a ) {
-      state.modifyFaceColors( [], [], new Map(), new Map(), true );
+    if ((aOpposite && aOpposite === b) || (bOpposite && bOpposite === a)) {
+      state.modifyFaceColors([], [], new Map(), new Map(), true);
       return;
     }
 
@@ -50,22 +50,25 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
     const faceChangeMap = new Map<TFace, TFaceColor>();
     const oppositeChangeMap = new Map<TFaceColor, TFaceColor | null>();
 
-    const result = FaceColorMakeSameAction.combineFaces( a, b, state, removedFaceColors, faceChangeMap );
-    const opposite = ( aOpposite && bOpposite ) ? FaceColorMakeSameAction.combineFaces( aOpposite, bOpposite, state, removedFaceColors, faceChangeMap ) : ( aOpposite || bOpposite );
+    const result = FaceColorMakeSameAction.combineFaces(a, b, state, removedFaceColors, faceChangeMap);
+    const opposite =
+      aOpposite && bOpposite ?
+        FaceColorMakeSameAction.combineFaces(aOpposite, bOpposite, state, removedFaceColors, faceChangeMap)
+      : aOpposite || bOpposite;
 
-    const hadOpposite = ( result === a && opposite === aOpposite ) || ( result === b && opposite === bOpposite );
-    if ( !hadOpposite ) {
-      oppositeChangeMap.set( result, opposite );
-      if ( opposite ) {
-        oppositeChangeMap.set( opposite, result );
+    const hadOpposite = (result === a && opposite === aOpposite) || (result === b && opposite === bOpposite);
+    if (!hadOpposite) {
+      oppositeChangeMap.set(result, opposite);
+      if (opposite) {
+        oppositeChangeMap.set(opposite, result);
       }
     }
 
-    state.modifyFaceColors( [], removedFaceColors, faceChangeMap, oppositeChangeMap, false );
+    state.modifyFaceColors([], removedFaceColors, faceChangeMap, oppositeChangeMap, false);
   }
 
-  public getUndo( state: TFaceColorData ): TAction<TFaceColorData> {
-    throw new Error( 'getUndo unimplemented in FaceColorMakeSameAction' );
+  public getUndo(state: TFaceColorData): TAction<TFaceColorData> {
+    throw new Error('getUndo unimplemented in FaceColorMakeSameAction');
   }
 
   public isEmpty(): boolean {
@@ -75,15 +78,15 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   public serializeAction(): TSerializedAction {
     return {
       type: 'FaceColorMakeSameAction',
-      a: serializeFaceColorPointer( this.a ),
-      b: serializeFaceColorPointer( this.b ),
+      a: serializeFaceColorPointer(this.a),
+      b: serializeFaceColorPointer(this.b),
     };
   }
 
-  public static deserializeAction( board: TBoard, serializedAction: TSerializedAction ): FaceColorMakeSameAction {
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): FaceColorMakeSameAction {
     return new FaceColorMakeSameAction(
-      deserializeFaceColorPointer( board, serializedAction.a as TSerializedFaceColorPointer ),
-      deserializeFaceColorPointer( board, serializedAction.b as TSerializedFaceColorPointer ),
+      deserializeFaceColorPointer(board, serializedAction.a as TSerializedFaceColorPointer),
+      deserializeFaceColorPointer(board, serializedAction.b as TSerializedFaceColorPointer),
     );
   }
 
@@ -92,27 +95,25 @@ export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
     b: TFaceColor,
     state: TFaceColorData,
     removedFaceColors: TFaceColor[],
-    faceChangeMap: Map<TFace, TFaceColor>
+    faceChangeMap: Map<TFace, TFaceColor>,
   ): TFaceColor {
     let removedFaceColor: TFaceColor | null = null;
-    if ( a.colorState !== FaceColorState.UNDECIDED ) {
+    if (a.colorState !== FaceColorState.UNDECIDED) {
       removedFaceColor = b;
-    }
-    else if ( b.colorState !== FaceColorState.UNDECIDED ) {
+    } else if (b.colorState !== FaceColorState.UNDECIDED) {
       removedFaceColor = a;
-    }
-    else {
-      const aFaces = state.getFacesWithColor( a );
-      const bFaces = state.getFacesWithColor( b );
+    } else {
+      const aFaces = state.getFacesWithColor(a);
+      const bFaces = state.getFacesWithColor(b);
 
       removedFaceColor = aFaces.length > bFaces.length ? b : a;
     }
 
     const keptFaceColor = removedFaceColor === a ? b : a;
 
-    removedFaceColors.push( removedFaceColor );
-    for ( const face of state.getFacesWithColor( removedFaceColor ) ) {
-      faceChangeMap.set( face, keptFaceColor );
+    removedFaceColors.push(removedFaceColor);
+    for (const face of state.getFacesWithColor(removedFaceColor)) {
+      faceChangeMap.set(face, keptFaceColor);
     }
 
     return keptFaceColor;

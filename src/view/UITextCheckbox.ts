@@ -13,31 +13,29 @@ type SelfOptions = {
 export type UITextCheckboxOptions = SelfOptions & CheckboxOptions;
 
 export class UITextCheckbox extends Checkbox {
-  public constructor(
-    label: string,
-    property: Property<boolean>,
-    providedOptions?: UITextCheckboxOptions
-  ) {
+  public constructor(label: string, property: Property<boolean>, providedOptions?: UITextCheckboxOptions) {
+    const options = optionize<UITextCheckboxOptions, SelfOptions, CheckboxOptions>()(
+      {
+        advanced: false,
+        accessibleName: label,
+        checkboxColor: currentTheme.uiForegroundColorProperty,
+        checkboxColorBackground: currentTheme.uiBackgroundColorProperty,
+      },
+      providedOptions,
+    );
 
-    const options = optionize<UITextCheckboxOptions, SelfOptions, CheckboxOptions>()( {
-      advanced: false,
-      accessibleName: label,
-      checkboxColor: currentTheme.uiForegroundColorProperty,
-      checkboxColorBackground: currentTheme.uiBackgroundColorProperty
-    }, providedOptions );
-
-    const labelNode = new Text( label, {
+    const labelNode = new Text(label, {
       font: uiFont,
-      fill: currentTheme.uiForegroundColorProperty
-    } );
+      fill: currentTheme.uiForegroundColorProperty,
+    });
 
     // TODO: we'll need to dispose of this...
-    if ( options.advanced ) {
+    if (options.advanced) {
       options.visibleProperty = advancedSettingsVisibleProperty;
     }
 
     options.boxWidth = labelNode.height;
 
-    super( property, labelNode, options );
+    super(property, labelNode, options);
   }
 }

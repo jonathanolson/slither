@@ -16,29 +16,32 @@ export class UILabeledVerticalAquaRadioButtonGroup<T> extends VBox {
     label: string,
     property: Property<T>,
     items: AquaRadioButtonGroupItem<T>[],
-    providedOptions?: UILabeledVerticalAquaRadioButtonGroupOptions
+    providedOptions?: UILabeledVerticalAquaRadioButtonGroupOptions,
   ) {
-    const options = optionize<VBoxOptions, SelfOptions>()( {
-      // @ts-expect-error
-      stretch: true,
-      align: 'left',
-      spacing: 10,
-      radioButtonGroupOptions: {
-        orientation: 'vertical',
-        align: 'left'
+    const options = optionize<VBoxOptions, SelfOptions>()(
+      {
+        // @ts-expect-error
+        stretch: true,
+        align: 'left',
+        spacing: 10,
+        radioButtonGroupOptions: {
+          orientation: 'vertical',
+          align: 'left',
+        },
       },
-    }, providedOptions );
+      providedOptions,
+    );
 
-    const radioButtonGroup = new UIAquaRadioButtonGroup( property, items, options.radioButtonGroupOptions );
+    const radioButtonGroup = new UIAquaRadioButtonGroup(property, items, options.radioButtonGroupOptions);
 
     options.children = [
-      new Text( label, {
+      new Text(label, {
         font: uiHeaderFont,
-        fill: currentTheme.uiForegroundColorProperty
-      } ),
-      radioButtonGroup
+        fill: currentTheme.uiForegroundColorProperty,
+      }),
+      radioButtonGroup,
     ];
 
-    super( options );
+    super(options);
   }
 }

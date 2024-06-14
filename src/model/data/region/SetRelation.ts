@@ -16,5 +16,5 @@ export default class SetRelation extends EnumerationValue {
   // A and B have some elements in common, but neither is a subset of the other
   public static readonly OVERLAPS = new SetRelation();
 
-  public static readonly enumeration = new Enumeration( SetRelation );
+  public static readonly enumeration = new Enumeration(SetRelation);
 }

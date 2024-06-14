@@ -14,38 +14,37 @@ window.assertions.enableAssert();
 
 const scene = new Node();
 
-const rootNode = new Node( {
+const rootNode = new Node({
   renderer: 'svg',
-  children: [ scene ]
-} );
+  children: [scene],
+});
 
-const display = new Display( rootNode, {
+const display = new Display(rootNode, {
   allowWebGL: true,
   allowBackingScaleAntialiasing: true,
-  allowSceneOverflow: false
-} );
-document.body.appendChild( display.domElement );
+  allowSceneOverflow: false,
+});
+document.body.appendChild(display.domElement);
 
-display.setWidthHeight( window.innerWidth, window.innerHeight );
+display.setWidthHeight(window.innerWidth, window.innerHeight);
 
-console.log( 'test' );
+console.log('test');
 
-( async () => {
+(async () => {
+  const background = new Rectangle({
+    fill: '#333',
+  });
+  scene.addChild(background);
 
-  const background = new Rectangle( {
-    fill: '#333'
-  } );
-  scene.addChild( background );
-
-  const container = new VBox( {
+  const container = new VBox({
     x: 10,
     y: 10,
-    align: 'left'
-  } );
-  scene.addChild( container );
+    align: 'left',
+  });
+  scene.addChild(container);
 
-  const addPaddedNode = ( node: Node ) => {
-    container.addChild( new AlignBox( node, { margin: 5 } ) );
+  const addPaddedNode = (node: Node) => {
+    container.addChild(new AlignBox(node, { margin: 5 }));
   };
 
   let rules: PatternRule[] = [];
@@ -53,46 +52,49 @@ console.log( 'test' );
   // rules.push( ...ruleSet.rules );
   // TODO: add back in rules
 
-  const embeddedRuleMap = new Map<TPatternBoard, PatternRule[]>;
+  const embeddedRuleMap = new Map<TPatternBoard, PatternRule[]>();
 
-  const getEmbeddedRules = ( patternBoard: TPatternBoard ) => {
-    if ( !embeddedRuleMap.has( patternBoard ) ) {
-      embeddedRuleMap.set( patternBoard, curatedRules.flatMap( curatedRule => curatedRule.getEmbeddedRules( getEmbeddings( curatedRule.patternBoard, patternBoard ) ) ) );
+  const getEmbeddedRules = (patternBoard: TPatternBoard) => {
+    if (!embeddedRuleMap.has(patternBoard)) {
+      embeddedRuleMap.set(
+        patternBoard,
+        curatedRules.flatMap((curatedRule) =>
+          curatedRule.getEmbeddedRules(getEmbeddings(curatedRule.patternBoard, patternBoard)),
+        ),
+      );
     }
-    return embeddedRuleMap.get( patternBoard )!;
+    return embeddedRuleMap.get(patternBoard)!;
   };
 
-  if ( DO_FILTER ) {
-    rules = rules.filter( rule => !rule.isRedundant( getEmbeddedRules( rule.patternBoard ) ) );
+  if (DO_FILTER) {
+    rules = rules.filter((rule) => !rule.isRedundant(getEmbeddedRules(rule.patternBoard)));
   }
 
-  addPaddedNode( new VBox( {
-    spacing: 20,
-    children: rules.map( rule => {
-      const node = new PatternRuleNode( rule, planarPatternMaps.get( rule.patternBoard )! );
+  addPaddedNode(
+    new VBox({
+      spacing: 20,
+      children: rules.map((rule) => {
+        const node = new PatternRuleNode(rule, planarPatternMaps.get(rule.patternBoard)!);
 
-      node.cursor = 'pointer';
+        node.cursor = 'pointer';
 
-      node.addInputListener( new FireListener( {
-        fire: () => {
-          copyToClipboard( JSON.stringify( rule.serialize() ) );
-          console.log( JSON.stringify( rule.serialize() ) );
-        }
-      } ) );
+        node.addInputListener(
+          new FireListener({
+            fire: () => {
+              copyToClipboard(JSON.stringify(rule.serialize()));
+              console.log(JSON.stringify(rule.serialize()));
+            },
+          }),
+        );
 
-      return node;
-    } )
-  } ) );
-
-  display.setWidthHeight(
-    Math.ceil( scene.right + 10 ),
-    Math.ceil( scene.bottom + 10 )
+        return node;
+      }),
+    }),
   );
+
+  display.setWidthHeight(Math.ceil(scene.right + 10), Math.ceil(scene.bottom + 10));
 
   display.initializeEvents();
 
-  display.updateOnRequestAnimationFrame( dt => {
-
-  } );
-
-} )();
+  display.updateOnRequestAnimationFrame((dt) => {});
+})();

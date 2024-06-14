@@ -11,25 +11,24 @@ type SelfOptions = {
 export type UITextPushButtonOptions = SelfOptions & TextPushButtonOptions;
 
 export class UITextPushButton extends TextPushButton {
-  public constructor(
-    text: string,
-    providedOptions?: UITextPushButtonOptions
-  ) {
+  public constructor(text: string, providedOptions?: UITextPushButtonOptions) {
+    const options = optionize<UITextPushButtonOptions, SelfOptions, TextPushButtonOptions>()(
+      {
+        advanced: false,
+        textFill: currentTheme.uiButtonForegroundProperty,
+        baseColor: currentTheme.uiButtonBaseColorProperty,
+        xMargin: 5,
+        yMargin: 5,
+        font: uiFont,
+        buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
+      },
+      providedOptions,
+    );
 
-    const options = optionize<UITextPushButtonOptions, SelfOptions, TextPushButtonOptions>()( {
-      advanced: false,
-      textFill: currentTheme.uiButtonForegroundProperty,
-      baseColor: currentTheme.uiButtonBaseColorProperty,
-      xMargin: 5,
-      yMargin: 5,
-      font: uiFont,
-      buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
-    }, providedOptions );
-
-    if ( options.advanced ) {
+    if (options.advanced) {
       options.visibleProperty = advancedSettingsVisibleProperty;
     }
 
-    super( text, options );
+    super(text, options);
   }
 }

@@ -11,59 +11,64 @@ import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
 import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 
 export class GeneralSectorStateData implements TState<TSectorStateData> {
-
-  public readonly sectorStateChangedEmitter = new TinyEmitter<[ sector: TSector, state: SectorState, oldState: SectorState ]>();
+  public readonly sectorStateChangedEmitter = new TinyEmitter<
+    [sector: TSector, state: SectorState, oldState: SectorState]
+  >();
 
   public readonly sectorStateMap: Map<TSector, SectorState> = new Map();
 
   public constructor(
     public readonly board: TBoard,
-    getInitialSectorState: ( sector: TSector ) => SectorState = () => SectorState.ANY
+    getInitialSectorState: (sector: TSector) => SectorState = () => SectorState.ANY,
   ) {
-    board.halfEdges.forEach( sector => {
-      this.sectorStateMap.set( sector, getInitialSectorState( sector ) );
-    } );
+    board.halfEdges.forEach((sector) => {
+      this.sectorStateMap.set(sector, getInitialSectorState(sector));
+    });
   }
 
-  public getSectorState( sector: TSector ): SectorState {
-    assertEnabled() && assert( this.sectorStateMap.has( sector ) );
+  public getSectorState(sector: TSector): SectorState {
+    assertEnabled() && assert(this.sectorStateMap.has(sector));
 
-    return this.sectorStateMap.get( sector )!;
+    return this.sectorStateMap.get(sector)!;
   }
 
-  public setSectorState( sector: TSector, state: SectorState ): void {
-    assertEnabled() && assert( this.sectorStateMap.has( sector ) );
+  public setSectorState(sector: TSector, state: SectorState): void {
+    assertEnabled() && assert(this.sectorStateMap.has(sector));
 
-    const oldState = this.sectorStateMap.get( sector )!;
+    const oldState = this.sectorStateMap.get(sector)!;
 
-    if ( oldState !== state ) {
-      this.sectorStateMap.set( sector, state );
+    if (oldState !== state) {
+      this.sectorStateMap.set(sector, state);
 
-      this.sectorStateChangedEmitter.emit( sector, state, oldState );
+      this.sectorStateChangedEmitter.emit(sector, state, oldState);
     }
   }
 
   public clone(): GeneralSectorStateData {
-    return new GeneralSectorStateData( this.board, sector => this.getSectorState( sector ) );
+    return new GeneralSectorStateData(this.board, (sector) => this.getSectorState(sector));
   }
 
   public createDelta(): TDelta<TSectorStateData> {
-    return new GeneralSectorStateDelta( this.board, this );
+    return new GeneralSectorStateDelta(this.board, this);
   }
 
-  public serializeState( board: TBoard ): TSerializedSectorStateData {
-    return serializeSectorStateData( board, this );
+  public serializeState(board: TBoard): TSerializedSectorStateData {
+    return serializeSectorStateData(board, this);
   }
 
-  public static deserializeState( board: TBoard, serializedSectorData: TSerializedSectorStateData ): GeneralSectorStateData {
-    const map: Map<TSector, SectorState> = new Map( serializedSectorData.sectors.map( ( serializedSectorState: { sector: TSerializedHalfEdge; state: TSerializedSectorState } ) => [
-      deserializeHalfEdge( board, serializedSectorState.sector ),
-      SectorState.deserialize( serializedSectorState.state )
-    ] ) );
-
-    return new GeneralSectorStateData(
-      board,
-      sector => map.get( sector ) ?? SectorState.ANY
+  public static deserializeState(
+    board: TBoard,
+    serializedSectorData: TSerializedSectorStateData,
+  ): GeneralSectorStateData {
+    const map: Map<TSector, SectorState> = new Map(
+      serializedSectorData.sectors.map(
+        (serializedSectorState: { sector: TSerializedHalfEdge; state: TSerializedSectorState }) => [
+          deserializeHalfEdge(board, serializedSectorState.sector),
+          SectorState.deserialize(serializedSectorState.state),
+        ],
+      ),
     );
+
+    return new GeneralSectorStateData(board, (sector) => map.get(sector) ?? SectorState.ANY);
   }
 }

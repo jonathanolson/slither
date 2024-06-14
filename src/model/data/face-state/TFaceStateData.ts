@@ -7,14 +7,14 @@ import { serializeFace } from '../../board/core/serializeFace.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
 
 export interface TFaceStateData {
-  getFaceState( face: TFace ): FaceState;
+  getFaceState(face: TFace): FaceState;
 
-  setFaceState( face: TFace, state: FaceState ): void;
+  setFaceState(face: TFace, state: FaceState): void;
 
-  faceStateChangedEmitter: TEmitter<[ face: TFace, state: FaceState, oldState: FaceState ]>;
+  faceStateChangedEmitter: TEmitter<[face: TFace, state: FaceState, oldState: FaceState]>;
 }
 
-export type TFaceStateListener = ( face: TFace, state: FaceState, oldState: FaceState ) => void;
+export type TFaceStateListener = (face: TFace, state: FaceState, oldState: FaceState) => void;
 
 export interface TSerializedFaceStateData extends TSerializedState {
   type: 'FaceStateData';
@@ -24,10 +24,10 @@ export interface TSerializedFaceStateData extends TSerializedState {
   }[];
 }
 
-export const serializeFaceStateData = ( board: TBoard, faceData: TFaceStateData ): TSerializedFaceStateData => ( {
+export const serializeFaceStateData = (board: TBoard, faceData: TFaceStateData): TSerializedFaceStateData => ({
   type: 'FaceStateData',
-  faces: board.faces.map( face => ( {
-    face: serializeFace( face ),
-    state: faceData.getFaceState( face ).serialize()
-  } ) )
-} );
+  faces: board.faces.map((face) => ({
+    face: serializeFace(face),
+    state: faceData.getFaceState(face).serialize(),
+  })),
+});

@@ -21,93 +21,111 @@ export class EmbeddedPatternRuleNode extends Node {
   public constructor(
     public readonly rule: PatternRule,
     public readonly displayEmbedding: DisplayEmbedding,
-    providedOptions?: EmbeddedPatternRuleNodeOptions
+    providedOptions?: EmbeddedPatternRuleNodeOptions,
   ) {
+    const options = optionize<EmbeddedPatternRuleNodeOptions, SelfOptions, NodeOptions>()(
+      {
+        style: currentPuzzleStyle,
+      },
+      providedOptions,
+    );
 
-    const options = optionize<EmbeddedPatternRuleNodeOptions, SelfOptions, NodeOptions>()( {
-      style: currentPuzzleStyle,
-    }, providedOptions );
+    const inputState = displayEmbedding.getEmbeddedCompleteData(rule.inputFeatureSet);
+    const outputState = displayEmbedding.getEmbeddedCompleteData(rule.outputFeatureSet);
 
-    const inputState = displayEmbedding.getEmbeddedCompleteData( rule.inputFeatureSet );
-    const outputState = displayEmbedding.getEmbeddedCompleteData( rule.outputFeatureSet );
-
-    const inputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, inputState ), {
+    const inputNode = new PuzzleNode(new BasicPuzzle(displayEmbedding.smallBoard, inputState), {
       noninteractive: true,
       style: options.style,
-    } );
-    const outputNode = new PuzzleNode( new BasicPuzzle( displayEmbedding.smallBoard, outputState ), {
+    });
+    const outputNode = new PuzzleNode(new BasicPuzzle(displayEmbedding.smallBoard, outputState), {
       noninteractive: true,
       style: options.style,
-    } );
+    });
 
-    const questionFacesNode = rule.highlander ? new Node( {
-      children: displayEmbedding.getEmbeddedQuestionFaces( rule.inputFeatureSet ).map( face => {
-        return new Text( '?', {
-          font: puzzleFont,
-          maxWidth: 0.9,
-          maxHeight: 0.9,
-          // TODO: Make a theme entry for this?
-          opacity: 0.5,
-          // TODO: we are only showing now when... highlander?
-          fill: rule.highlander ? options.style.theme.faceValueColorProperty : options.style.theme.faceValueCompletedColorProperty,
-          center: face.viewCoordinates
-        } );
-      } )
-    } ) : new Node();
+    const questionFacesNode =
+      rule.highlander ?
+        new Node({
+          children: displayEmbedding.getEmbeddedQuestionFaces(rule.inputFeatureSet).map((face) => {
+            return new Text('?', {
+              font: puzzleFont,
+              maxWidth: 0.9,
+              maxHeight: 0.9,
+              // TODO: Make a theme entry for this?
+              opacity: 0.5,
+              // TODO: we are only showing now when... highlander?
+              fill:
+                rule.highlander ?
+                  options.style.theme.faceValueColorProperty
+                : options.style.theme.faceValueCompletedColorProperty,
+              center: face.viewCoordinates,
+            });
+          }),
+        })
+      : new Node();
 
     const dilation = 0.5;
-    const dilatedPatternBounds = displayEmbedding.tightBounds.dilated( dilation );
+    const dilatedPatternBounds = displayEmbedding.tightBounds.dilated(dilation);
 
     const cornerRadius = 0.5;
 
-    const patternOutlineShape = Shape.roundRectangle( dilatedPatternBounds.x, dilatedPatternBounds.y, dilatedPatternBounds.width, dilatedPatternBounds.height, cornerRadius, cornerRadius );
+    const patternOutlineShape = Shape.roundRectangle(
+      dilatedPatternBounds.x,
+      dilatedPatternBounds.y,
+      dilatedPatternBounds.width,
+      dilatedPatternBounds.height,
+      cornerRadius,
+      cornerRadius,
+    );
 
-    const inputContainerNode = new Node( {
-      children: [ inputNode, questionFacesNode ],
+    const inputContainerNode = new Node({
+      children: [inputNode, questionFacesNode],
       clipArea: patternOutlineShape,
       localBounds: dilatedPatternBounds,
-    } );
-    const outputContainerNode = new Node( {
-      children: [ outputNode, questionFacesNode ],
+    });
+    const outputContainerNode = new Node({
+      children: [outputNode, questionFacesNode],
       clipArea: patternOutlineShape,
       localBounds: dilatedPatternBounds,
-    } );
+    });
 
-    const patternDescriptionNode = new Panel( new HBox( {
-      spacing: 0.2,
-      children: [
-        inputContainerNode,
-        new ArrowNode( 0, 0, 20, 0, {
-          // TODO: theme
-          fill: options.style.theme.uiForegroundColorProperty,
-          stroke: options.style.theme.uiForegroundColorProperty,
-          headHeight: 7,
-          headWidth: 7,
-          tailWidth: 1,
-          layoutOptions: {
-            align: 'center'
-          },
-          opacity: 0.6,
-          scale: 1 / 30,
-        } ),
-        outputContainerNode,
-      ]
-    } ), {
-      cornerRadius: cornerRadius * ( 1.4 ),
-      xMargin: 0.3,
-      yMargin: 0.3,
-      lineWidth: 0.05,
-      stroke: null,
-      fill: options.style.theme.patternAnnotationBackgroundColorProperty,
-    } );
+    const patternDescriptionNode = new Panel(
+      new HBox({
+        spacing: 0.2,
+        children: [
+          inputContainerNode,
+          new ArrowNode(0, 0, 20, 0, {
+            // TODO: theme
+            fill: options.style.theme.uiForegroundColorProperty,
+            stroke: options.style.theme.uiForegroundColorProperty,
+            headHeight: 7,
+            headWidth: 7,
+            tailWidth: 1,
+            layoutOptions: {
+              align: 'center',
+            },
+            opacity: 0.6,
+            scale: 1 / 30,
+          }),
+          outputContainerNode,
+        ],
+      }),
+      {
+        cornerRadius: cornerRadius * 1.4,
+        xMargin: 0.3,
+        yMargin: 0.3,
+        lineWidth: 0.05,
+        stroke: null,
+        fill: options.style.theme.patternAnnotationBackgroundColorProperty,
+      },
+    );
 
-    options.children = [ patternDescriptionNode ];
+    options.children = [patternDescriptionNode];
 
-    super( options );
+    super(options);
 
-    this.disposeEmitter.addListener( () => {
+    this.disposeEmitter.addListener(() => {
       inputNode.dispose();
       outputNode.dispose();
-    } );
+    });
   }
 }

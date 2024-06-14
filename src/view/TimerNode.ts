@@ -8,26 +8,28 @@ export class TimerNode extends Text {
     public readonly timerProperty: TReadOnlyProperty<number>,
     providedOptions?: TextOptions,
   ) {
-
-    const options = optionize<TextOptions, EmptySelfOptions, TextOptions>()( {
-      font: timerFont,
-      fill: currentTheme.timerColorProperty,
-    }, providedOptions );
+    const options = optionize<TextOptions, EmptySelfOptions, TextOptions>()(
+      {
+        font: timerFont,
+        fill: currentTheme.timerColorProperty,
+      },
+      providedOptions,
+    );
 
     const secondsInAMinute = 60;
     const secondsInAnHour = 60 * secondsInAMinute;
     const secondsInADay = 24 * secondsInAnHour;
 
-    const stringProperty = new DerivedProperty( [ timerProperty ], ( time: number ) => {
-      time = Math.ceil( time );
+    const stringProperty = new DerivedProperty([timerProperty], (time: number) => {
+      time = Math.ceil(time);
 
-      const days = Math.floor( time / secondsInADay );
+      const days = Math.floor(time / secondsInADay);
       time -= days * secondsInADay;
 
-      const hours = Math.floor( time / secondsInAnHour );
+      const hours = Math.floor(time / secondsInAnHour);
       time -= hours * secondsInAnHour;
 
-      const minutes = Math.floor( time / secondsInAMinute );
+      const minutes = Math.floor(time / secondsInAMinute);
       time -= minutes * secondsInAMinute;
 
       const seconds = time;
@@ -36,22 +38,20 @@ export class TimerNode extends Text {
       const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
       const secondsString = seconds < 10 ? `0${seconds}` : `${seconds}`;
 
-      if ( days ) {
+      if (days) {
         return `${days}d ${hoursString}:${minutesString}:${secondsString}`;
-      }
-      else if ( hours ) {
+      } else if (hours) {
         return `${hoursString}:${minutesString}:${secondsString}`;
-      }
-      else {
+      } else {
         return `${minutesString}:${secondsString}`;
       }
-    } );
+    });
 
-    super( stringProperty, options );
+    super(stringProperty, options);
 
-    this.disposeEmitter.addListener( () => {
+    this.disposeEmitter.addListener(() => {
       stringProperty.dispose();
-    } );
+    });
 
     //
     // const sampleText = new Text( '', {

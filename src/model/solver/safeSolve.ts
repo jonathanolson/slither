@@ -4,7 +4,7 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { iterateSolverFactory } from './TSolver.ts';
 import { safeSolverFactory } from './safeSolverFactory.ts';
 
-export const safeSolve = ( board: TBoard, state: TState<TCompleteData> ) => {
+export const safeSolve = (board: TBoard, state: TState<TCompleteData>) => {
   // TODO: rename "safe" to "view-specific"?
-  iterateSolverFactory( safeSolverFactory, board, state, true );
+  iterateSolverFactory(safeSolverFactory, board, state, true);
 };

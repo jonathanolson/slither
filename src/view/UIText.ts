@@ -7,16 +7,15 @@ export type UITextOptions = TextOptions;
 
 // TODO: use UIText elsewhere
 export class UIText extends Text {
-  public constructor(
-    string: string | number | TReadOnlyProperty<string>,
-    providedOptions?: UITextOptions
-  ) {
+  public constructor(string: string | number | TReadOnlyProperty<string>, providedOptions?: UITextOptions) {
+    const options = optionize<UITextOptions, EmptySelfOptions, TextOptions>()(
+      {
+        font: uiFont,
+        fill: currentTheme.uiForegroundColorProperty,
+      },
+      providedOptions,
+    );
 
-    const options = optionize<UITextOptions, EmptySelfOptions, TextOptions>()( {
-      font: uiFont,
-      fill: currentTheme.uiForegroundColorProperty
-    }, providedOptions );
-
-    super( string, options );
+    super(string, options);
   }
 }
