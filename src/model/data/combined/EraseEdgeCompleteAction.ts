@@ -17,12 +17,12 @@ import { GeneralFaceColor } from '../face-color/GeneralFaceColor.ts';
 import { getFaceColorGlobalId } from '../face-color/GeneralFaceColorData.ts';
 import _ from '../../../workarounds/_.ts';
 
-export class EraseEdgeCompleteAction<Data extends TCompleteData> implements TAction<Data> {
+export class EraseEdgeCompleteAction implements TAction<TCompleteData> {
   public constructor(public readonly edge: TEdge) {
     assertEnabled() && assert(edge);
   }
 
-  public apply(state: Data): void {
+  public apply(state: TCompleteData): void {
     const oldEdgeState = state.getEdgeState(this.edge);
 
     if (oldEdgeState !== EdgeState.WHITE) {
@@ -206,7 +206,7 @@ export class EraseEdgeCompleteAction<Data extends TCompleteData> implements TAct
     }
   }
 
-  public getUndo(state: Data): TAction<Data> {
+  public getUndo(state: TCompleteData): TAction<TCompleteData> {
     throw new Error('getUndo unimplemented in EraseEdgeCompleteAction');
   }
 
@@ -221,11 +221,8 @@ export class EraseEdgeCompleteAction<Data extends TCompleteData> implements TAct
     };
   }
 
-  public static deserializeAction(
-    board: TBoard,
-    serializedAction: TSerializedAction,
-  ): EraseEdgeCompleteAction<TCompleteData> {
-    const edge = deserializeEdge(board, serializedAction.face as TSerializedEdge);
+  public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): EraseEdgeCompleteAction {
+    const edge = deserializeEdge(board, serializedAction.edge as TSerializedEdge);
 
     return new EraseEdgeCompleteAction(edge);
   }

@@ -8,7 +8,7 @@ import { ViewContext } from './ViewContext.ts';
 import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
 import { combineOptions } from 'phet-lib/phet-core';
 
-const HIDE_ERASE = true;
+const HIDE_ERASE = false;
 
 // TODO: support a background node with more complexity in the future?
 export default class EditModeBarNode extends HBox {

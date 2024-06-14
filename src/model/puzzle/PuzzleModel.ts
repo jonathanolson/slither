@@ -26,7 +26,7 @@ import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
 import { getPressStyle } from './EdgePressStyle.ts';
 import { TFace } from '../board/core/TFace.ts';
-import EditMode, { editModeProperty } from './EditMode.ts';
+import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
@@ -53,6 +53,8 @@ import HintState from './HintState.ts';
 import { FaceColorSetAbsoluteAction } from '../data/face-color/FaceColorSetAbsoluteAction.ts';
 import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteAction.ts';
 import { AutoSolverInvalidatedUserActionError } from '../solver/errors/AutoSolverInvalidatedUserActionError.ts';
+import { EraseFaceCompleteAction } from '../data/combined/EraseFaceCompleteAction.ts';
+import { EraseSectorCompleteAction } from '../data/combined/EraseSectorCompleteAction.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty('uiHintUsesBuiltInSolve', false);
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty('showUndoRedoAllProperty', false);
@@ -464,8 +466,10 @@ export default class PuzzleModel<
   }
 
   public onUserEdgePress(edge: TEdge, button: 0 | 1 | 2): void {
+    const isErase = eraserEnabledProperty.value;
+
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
-    const newEdgeState = this.getNewEdgeState(oldEdgeState, button);
+    const newEdgeState = isErase ? EdgeState.WHITE : this.getNewEdgeState(oldEdgeState, button);
 
     let erase: ((state: TState<Data>) => void) | undefined = undefined;
 
@@ -498,9 +502,21 @@ export default class PuzzleModel<
   }
 
   public onUserFacePress(face: TFace | null, button: 0 | 1 | 2): void {
+    const isErase = eraserEnabledProperty.value;
     const editMode = editModeProperty.value;
 
-    if (editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE) {
+    if (isErase) {
+      if (face) {
+        const action = new EraseFaceCompleteAction(face);
+
+        // Include the erase "early" so we don't auto-solve based on it
+        this.applyUserActionToStack(action, {
+          erase: (state) => action.apply(state),
+        });
+
+        this.updateState();
+      }
+    } else if (editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE) {
       let isSame = editModeProperty.value === EditMode.FACE_COLOR_MATCH;
       if (button === 2) {
         isSame = !isSame;
@@ -572,7 +588,20 @@ export default class PuzzleModel<
   }
 
   public onUserSectorPress(sector: TSector, button: 0 | 1 | 2): void {
-    this.pendingActionSectorProperty.value = sector;
+    const isErase = eraserEnabledProperty.value;
+
+    if (isErase) {
+      const action = new EraseSectorCompleteAction(sector);
+
+      // Include the erase "early" so we don't auto-solve based on it
+      this.applyUserActionToStack(action, {
+        erase: (state) => action.apply(state),
+      });
+
+      this.updateState();
+    } else {
+      this.pendingActionSectorProperty.value = sector;
+    }
   }
 
   public onUserSectorSet(sector: TSector, state: SectorState): void {
@@ -725,6 +754,9 @@ export type PuzzleModelUserAction =
   | FaceColorMakeOppositeAction
   | FaceColorSetAbsoluteAction
   | SectorStateSetAction
+  | EraseEdgeCompleteAction
+  | EraseFaceCompleteAction
+  | EraseSectorCompleteAction
   | UserLoadPuzzleAutoSolveAction
   | UserRequestSolveAction
   | UserPuzzleHintApplyAction;
