@@ -13,10 +13,12 @@
     - 
     - Set up MSI laptop with generation?
     - 
+    - Difficulties based on patterns(!!!!!)
+    - "Hint" button should swap to "apply"?
+    - 
     - Auto-solve / Erase
       - Auto-solve INTO history (in the future), animate out
         - Store index to "auto solve satisfied"
-      - 
       - make basic auto solve actions (auto-do):
         - ____ How to handle, do we only do "face" auto-solve on "edge" changes?
           - E.g. lines + colors, would this be... applying both?
@@ -24,14 +26,6 @@
         - line changes => color mode changes
         - ... how to auto solve sectors?
           - Clear all sectors when erased
-      - Breaking changes:
-        - Auto-solve after breaking changes???? unclear, if not, make a way to trigger auto-solve?
-        - [old note] If the user changes a non-white edge (ignoring the quick-undo for double tap), we should reset all state except edges (and face values)
-          - Create "reset" handlers for each data type
-          - Create a global "reset" method to reset all existing state (add to TState?)
-      - NOT breaking changes:
-        - Edge toggle that is an edge we just toggled (we just UNDO the auto solve)
-      
       - Auto-solve animated (optional, speed control)
         - (option) undo goes back to either last user move OR undoes last auto solver move (AND DOES NOT AUTO SOLVE AFTER)
         - (option?) way to play/pause the animation
@@ -112,6 +106,7 @@
       - One for "left control only add line", "right click only make X"
     - 
     - [gereleth] Drag lines
+      - (line drawing + left click on a line = erase lines/x's)
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
       - May want to separate "hit" areas a bit, to prevent accidental bits?
       - Compatibility with pan/zoom:

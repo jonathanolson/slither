@@ -12,8 +12,8 @@ export default class EditMode extends EnumerationValue {
 
   public static readonly EDGE_STATE = new EditMode(currentPuzzleStyle.allowEdgeEditProperty);
   public static readonly EDGE_STATE_REVERSED = new EditMode(currentPuzzleStyle.allowEdgeEditProperty);
-  public static readonly FACE_COLOR_OUTSIDE = new EditMode(currentPuzzleStyle.allowAbsoluteFaceColorEditProperty);
   public static readonly FACE_COLOR_INSIDE = new EditMode(currentPuzzleStyle.allowAbsoluteFaceColorEditProperty);
+  public static readonly FACE_COLOR_OUTSIDE = new EditMode(currentPuzzleStyle.allowAbsoluteFaceColorEditProperty);
   // TODO: more fine-grained control(!), so we can remove some that would normally be there.
   public static readonly FACE_COLOR_MATCH = new EditMode(currentPuzzleStyle.allowFaceColorEditProperty);
   public static readonly FACE_COLOR_OPPOSITE = new EditMode(currentPuzzleStyle.allowFaceColorEditProperty);

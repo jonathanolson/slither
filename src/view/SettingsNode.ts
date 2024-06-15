@@ -1,4 +1,4 @@
-import { BooleanProperty, DerivedProperty } from 'phet-lib/axon';
+import { BooleanProperty, DerivedProperty, MappedProperty, Property } from 'phet-lib/axon';
 import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
 import {
   autoSolveDoubleMinusOneFacesProperty,
@@ -98,6 +98,7 @@ import {
 } from './puzzle/puzzleStyles.ts';
 import { ViewContext } from './ViewContext.ts';
 import { TooltipListener } from './TooltipListener.ts';
+import StateTransitionMode, { stateTransitionModeProperty } from '../model/puzzle/StateTransitionMode.ts';
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty(
   'advancedSettingsVisibleProperty',
@@ -425,6 +426,14 @@ export class SettingsNode extends PopupNode {
           },
         }),
 
+        new UITextSwitch(
+          new MappedProperty(stateTransitionModeProperty, {
+            bidirectional: true,
+            map: (mode) => mode === StateTransitionMode.CYCLIC,
+            inverseMap: (value) => (value ? StateTransitionMode.CYCLIC : StateTransitionMode.TOGGLE),
+          }) as unknown as Property<boolean>,
+          'Cycle Between States',
+        ),
         new UITextSwitch(showPuzzleStyleProperty, 'Show View Style Controls'),
         new UITextSwitch(redLineVisibleProperty, 'Show Impossible Lines'),
         new UITextSwitch(showPuzzleTimerProperty, 'Show Elapsed Time'),

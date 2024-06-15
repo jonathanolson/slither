@@ -24,12 +24,11 @@ import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
 import { TAnnotation } from '../data/core/TAnnotation.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
-import { getPressStyle } from './EdgePressStyle.ts';
 import { TFace } from '../board/core/TFace.ts';
 import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
-import { TFaceColor } from '../data/face-color/TFaceColorData.ts';
+import FaceColorState, { TFaceColor } from '../data/face-color/TFaceColorData.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
@@ -55,6 +54,7 @@ import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteActio
 import { AutoSolverInvalidatedUserActionError } from '../solver/errors/AutoSolverInvalidatedUserActionError.ts';
 import { EraseFaceCompleteAction } from '../data/combined/EraseFaceCompleteAction.ts';
 import { EraseSectorCompleteAction } from '../data/combined/EraseSectorCompleteAction.ts';
+import { stateTransitionModeProperty } from './StateTransitionMode.ts';
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty('uiHintUsesBuiltInSolve', false);
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty('showUndoRedoAllProperty', false);
@@ -458,20 +458,41 @@ export default class PuzzleModel<
     this.clearPendingHint();
   }
 
-  public getNewEdgeState(oldEdgeState: EdgeState, button: 0 | 1 | 2): EdgeState {
-    const isReversed = editModeProperty.value === EditMode.EDGE_STATE_REVERSED;
+  public getNewEdgeState(oldEdgeState: EdgeState, button: 0 | 1 | 2, isReversed: boolean): EdgeState {
+    if (isReversed) {
+      button = 2 - button;
+    }
 
-    const style = getPressStyle(isReversed ? ((2 - button) as 0 | 1 | 2) : button);
+    const style = stateTransitionModeProperty.value.edgePressStyles[button];
+    console.log(stateTransitionModeProperty.value, style, button, oldEdgeState);
+
     return style.apply(oldEdgeState);
+  }
+
+  // false === outside, true === inside, null === undecided
+  public getNewFaceColorState(
+    oldFaceColorState: FaceColorState,
+    button: 0 | 1 | 2,
+    isReversed: boolean,
+  ): FaceColorState {
+    if (isReversed) {
+      button = 2 - button;
+    }
+
+    const style = stateTransitionModeProperty.value.faceColorPressStyles[button];
+    console.log(stateTransitionModeProperty.value, style, button, oldFaceColorState);
+
+    return style.apply(oldFaceColorState);
   }
 
   public onUserEdgePress(edge: TEdge, button: 0 | 1 | 2): void {
     const isErase = eraserEnabledProperty.value;
 
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
-    const newEdgeState = isErase ? EdgeState.WHITE : this.getNewEdgeState(oldEdgeState, button);
-
-    let erase: ((state: TState<Data>) => void) | undefined = undefined;
+    const newEdgeState =
+      isErase ?
+        EdgeState.WHITE
+      : this.getNewEdgeState(oldEdgeState, button, editModeProperty.value === EditMode.EDGE_STATE_REVERSED);
 
     if (oldEdgeState !== newEdgeState) {
       const lastTransition = this.stack[this.stackPositionProperty.value];
@@ -483,7 +504,11 @@ export default class PuzzleModel<
         lastTransition.action.edge === edge
       ) {
         this.stackPositionProperty.value--;
-      } else if (oldEdgeState !== EdgeState.WHITE) {
+      }
+
+      let erase: ((state: TState<Data>) => void) | undefined = undefined;
+
+      if (oldEdgeState !== EdgeState.WHITE) {
         erase = (state) => {
           new EraseEdgeCompleteAction(edge).apply(state);
         };
@@ -564,22 +589,54 @@ export default class PuzzleModel<
       }
     } else if (editMode === EditMode.FACE_COLOR_OUTSIDE || editMode === EditMode.FACE_COLOR_INSIDE) {
       if (face) {
-        const color = this.puzzle.stateProperty.value.getFaceColor(face);
-        const newColor =
-          editMode === EditMode.FACE_COLOR_OUTSIDE ?
-            this.puzzle.stateProperty.value.getOutsideColor()
-          : this.puzzle.stateProperty.value.getInsideColor();
-        const newColorOpposite =
-          editMode === EditMode.FACE_COLOR_OUTSIDE ?
-            this.puzzle.stateProperty.value.getInsideColor()
-          : this.puzzle.stateProperty.value.getOutsideColor();
+        const outsideColor = this.puzzle.stateProperty.value.getOutsideColor();
+        const insideColor = this.puzzle.stateProperty.value.getInsideColor();
 
-        if (color === newColorOpposite) {
-          // TODO: breaking change, we will need to clear/erase before doing this
-        }
+        const oldColor = this.puzzle.stateProperty.value.getFaceColor(face);
 
-        if (color !== newColor) {
-          this.applyUserActionToStack(new FaceColorSetAbsoluteAction(face, editMode === EditMode.FACE_COLOR_INSIDE));
+        const oldFaceColorState =
+          oldColor === outsideColor ? FaceColorState.OUTSIDE
+          : oldColor === insideColor ? FaceColorState.INSIDE
+          : FaceColorState.UNDECIDED;
+        const newFaceColorState = this.getNewFaceColorState(
+          oldFaceColorState,
+          button,
+          editMode === EditMode.FACE_COLOR_OUTSIDE,
+        );
+
+        if (oldFaceColorState !== newFaceColorState) {
+          const lastTransition = this.stack[this.stackPositionProperty.value];
+
+          // If we just modified the same edge again, we'll want to undo any solving/etc. we did.
+          if (
+            lastTransition.action &&
+            lastTransition.action instanceof FaceColorSetAbsoluteAction &&
+            lastTransition.action.face === face
+          ) {
+            this.stackPositionProperty.value--;
+          }
+
+          let erase: ((state: TState<Data>) => void) | undefined = undefined;
+          const eraseAction = new EraseFaceCompleteAction(face);
+
+          if (oldFaceColorState !== FaceColorState.UNDECIDED) {
+            erase = (state) => {
+              eraseAction.apply(state);
+            };
+          }
+
+          if (newFaceColorState === FaceColorState.UNDECIDED) {
+            this.applyUserActionToStack(eraseAction, {
+              erase: erase,
+            });
+          } else {
+            this.applyUserActionToStack(
+              new FaceColorSetAbsoluteAction(face, newFaceColorState === FaceColorState.INSIDE),
+              {
+                erase: erase,
+              },
+            );
+          }
 
           this.updateState();
         }

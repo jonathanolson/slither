@@ -145,19 +145,19 @@ export default class EditModeBarNode extends HBox {
           },
         },
         {
-          value: EditMode.FACE_COLOR_OUTSIDE,
-          labelContent: 'Face Color Outside Edit Mode',
-          createNode: () => wrapIcon(faceColorOutsideIcon),
-          options: {
-            visibleProperty: EditMode.FACE_COLOR_OUTSIDE.isEnabledProperty,
-          },
-        },
-        {
           value: EditMode.FACE_COLOR_INSIDE,
           labelContent: 'Face Color Inside Edit Mode',
           createNode: () => wrapIcon(faceColorInsideIcon),
           options: {
             visibleProperty: EditMode.FACE_COLOR_INSIDE.isEnabledProperty,
+          },
+        },
+        {
+          value: EditMode.FACE_COLOR_OUTSIDE,
+          labelContent: 'Face Color Outside Edit Mode',
+          createNode: () => wrapIcon(faceColorOutsideIcon),
+          options: {
+            visibleProperty: EditMode.FACE_COLOR_OUTSIDE.isEnabledProperty,
           },
         },
         {
