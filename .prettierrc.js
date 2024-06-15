@@ -3,6 +3,7 @@
  * @type {import("prettier").Config}
  */
 const config = {
+  plugins: ['@trivago/prettier-plugin-sort-imports'],
   arrowParens: 'always',
   bracketSpacing: true,
   endOfLine: 'lf',
@@ -14,6 +15,21 @@ const config = {
   tabWidth: 2,
   trailingComma: 'all',
   useTabs: false,
+  importOrder: [
+    '\.css',
+    '<THIRD_PARTY_MODULES>',
+    '^\./SlitherQueryParameters\.ts$',
+    'phet-lib',
+    '^\./model',
+    '^\./scan',
+    '^\./test',
+    '^\./util',
+    '^\./view',
+    '^\./workarounds',
+    '^\./workers',
+  ],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
 };
 
 export default config;
