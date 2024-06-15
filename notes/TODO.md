@@ -102,8 +102,6 @@
     - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode
-    - [nowayjay] INPUT MODES
-      - One for "left control only add line", "right click only make X"
     - 
     - [gereleth] Drag lines
       - (line drawing + left click on a line = erase lines/x's)
