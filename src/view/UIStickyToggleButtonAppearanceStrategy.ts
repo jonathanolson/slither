@@ -9,12 +9,6 @@ export class UIStickyToggleButtonAppearanceStrategy {
 
   private readonly disposeFlatAppearanceStrategy: () => void;
 
-  /**
-   * @param buttonBackground - the Node for the button's background, sans content
-   * @param interactionStateProperty - interaction state, used to trigger updates
-   * @param baseColorProperty - base color from which other colors are derived
-   * @param [providedOptions]
-   */
   public constructor(
     buttonBackground: PaintableNode,
     interactionStateProperty: TReadOnlyProperty<ButtonInteractionState>,
@@ -60,9 +54,9 @@ export class UIStickyToggleButtonAppearanceStrategy {
           break;
 
         case ButtonInteractionState.OVER:
-          buttonBackground.fill = overFillProperty;
+          buttonBackground.fill = baseColorProperty;
           buttonBackground.stroke = baseDarkerABit;
-          opacity = 0.7;
+          opacity = 0.5;
           break;
 
         case ButtonInteractionState.PRESSED:
