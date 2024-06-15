@@ -106,7 +106,10 @@ export class BinaryRuleSequence implements SequenceSpecifier {
           continue;
         }
 
-        if (!unprocessedBoards.some((unprocessedBoard) => hasMapping(unprocessedBoard, board))) {
+        if (
+          !unprocessedBoards.some((unprocessedBoard) => hasMapping(unprocessedBoard, board)) &&
+          !this.currentBoards.includes(board)
+        ) {
           boards.push(board);
         }
 
