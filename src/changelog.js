@@ -1,5 +1,7 @@
 export const changelog = [
+  ['Allow loading puzzles when in an error state'],
   [
+    '2024-06-15',
     'Erase feature / edge toggle can use erase',
     'Control for whether to use cyclic or toggle for state changes',
     'Number keys updated to select that specific enabled edit mode',

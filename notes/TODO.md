@@ -54,7 +54,8 @@
       - NO auto-solve actions on view mode switches(?)
       - Allow changing sectors to arbitrary states, perhaps toggle support like edges?
       - Auto-Solve options are PER VIEW MODE(?), with a global on/off control?
-      - Do not "fail load" if the puzzle has an error(!)
+      - Improve "error" condition views
+        - NOTICE on startup if in a global error condition
       - [feature] "Check Solution" button?
         - a: has errors
         - b: no errors, but incomplete

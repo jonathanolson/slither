@@ -46,7 +46,15 @@ export const getSolvablePropertyPuzzle = <
       };
     }
 
-    const solutions = satSolve(board, currentState, {
+    // We actually don't want to take into account the edge state of the board for this initial solve, so we ditch
+    // the edge state.
+    const cleanedState = currentState.clone();
+    for (const edge of board.edges) {
+      cleanedState.setEdgeState(edge, EdgeState.WHITE);
+    }
+    // TODO: do we need to clear other state? THIS IS UNCLEAN, we are not handling face color, sector, etc.
+
+    const solutions = satSolve(board, cleanedState, {
       maxIterations: 10000,
       failOnMultipleSolutions: true,
     });
@@ -57,7 +65,7 @@ export const getSolvablePropertyPuzzle = <
 
     const solutionEdges = solutions[0];
 
-    const solvedState = currentState.clone();
+    const solvedState = cleanedState.clone();
     for (const edge of solutionEdges) {
       solvedState.setEdgeState(edge, EdgeState.BLACK);
     }
