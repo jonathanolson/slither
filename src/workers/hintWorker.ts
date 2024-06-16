@@ -133,6 +133,7 @@ self.addEventListener('message', (event) => {
     console.log('no action');
     self.postMessage({
       type: 'hint-response',
+      id: id,
       action: null,
     });
   }
