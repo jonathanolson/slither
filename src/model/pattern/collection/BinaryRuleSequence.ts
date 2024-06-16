@@ -136,8 +136,7 @@ export class BinaryRuleSequence implements SequenceSpecifier {
       let status = `${name}\n`;
 
       const processedBoards = this.processedBoards;
-      const currentBoards = availableBoards.filter((board) => this.currentBoards.includes(board));
-      assertEnabled() && assert(currentBoards.length === this.currentBoards.length);
+      const currentBoards = this.currentBoards;
 
       const remainingBoards = availableBoards.filter((board) => {
         return !this.processedBoards.includes(board) && !this.currentBoards.includes(board);
