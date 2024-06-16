@@ -45,4 +45,20 @@ export class EdgeStateValidator implements TState<TEdgeStateData> {
   public serializeState(board: TBoard): TSerializedEdgeStateData {
     throw new Error('unimplemented');
   }
+
+  public static isStateCorrect(
+    board: TBoard,
+    state: TState<TEdgeStateData>,
+    solvedState: TState<TEdgeStateData>,
+  ): boolean {
+    for (const edge of board.edges) {
+      const edgeState = state.getEdgeState(edge);
+
+      if (edgeState !== EdgeState.WHITE && edgeState !== solvedState.getEdgeState(edge)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }

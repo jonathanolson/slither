@@ -149,4 +149,67 @@ export class FaceColorValidator implements TState<TFaceColorData> {
   public serializeState(board: TBoard): TSerializedState {
     throw new Error('unimplemented');
   }
+
+  public static isStateCorrect(
+    board: TBoard,
+    state: TState<TFaceColorData>,
+    solvedState: TState<TFaceColorData>,
+  ): boolean {
+    const checkedColors: Set<TFaceColor> = new Set();
+
+    const outsideColor = state.getOutsideColor();
+    const insideColor = state.getInsideColor();
+    const solvedOutsideColor = solvedState.getOutsideColor();
+    const solvedInsideColor = solvedState.getInsideColor();
+
+    for (const color of state.getFaceColors()) {
+      if (checkedColors.has(color)) {
+        continue;
+      }
+
+      const oppositeColor = state.getOppositeFaceColor(color);
+
+      checkedColors.add(color);
+      oppositeColor && checkedColors.add(oppositeColor);
+
+      const faces = state.getFacesWithColor(color);
+      const oppositeFaces = oppositeColor ? state.getFacesWithColor(oppositeColor) : [];
+
+      if (color === outsideColor) {
+        if (
+          faces.some((face) => solvedState.getFaceColor(face) !== solvedOutsideColor) ||
+          oppositeFaces.some((face) => solvedState.getFaceColor(face) !== solvedInsideColor)
+        ) {
+          return false;
+        }
+      } else if (color === insideColor) {
+        if (
+          faces.some((face) => solvedState.getFaceColor(face) !== solvedInsideColor) ||
+          oppositeFaces.some((face) => solvedState.getFaceColor(face) !== solvedOutsideColor)
+        ) {
+          return false;
+        }
+      } else {
+        if (faces.length) {
+          const solvedColor = solvedState.getFaceColor(faces[0]);
+          const solvedOppositeColor = solvedState.getOppositeFaceColor(solvedColor);
+          assertEnabled() && assert(solvedOppositeColor);
+
+          for (const face of faces) {
+            if (solvedState.getFaceColor(face) !== solvedColor) {
+              return false;
+            }
+          }
+
+          for (const oppositeFace of oppositeFaces) {
+            if (solvedState.getFaceColor(oppositeFace) !== solvedOppositeColor) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    return true;
+  }
 }

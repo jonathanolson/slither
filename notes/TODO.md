@@ -21,7 +21,7 @@
         - !! Removing a face value MIGHT make it easier, due to highlander rules?
     - "Hint" button should swap to "apply"?
     - 
-    - Auto-solve / Erase
+    - Auto-solve
       - Auto-solve INTO history (in the future), animate out
         - Store index to "auto solve satisfied"
       - make basic auto solve actions (auto-do):

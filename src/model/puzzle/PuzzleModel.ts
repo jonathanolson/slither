@@ -60,7 +60,6 @@ import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
 
 import { getHintWorker, hintWorkerLoadedProperty } from '../../workers/getHintWorker.ts';
 
-
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty('uiHintUsesBuiltInSolve', false);
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty('showUndoRedoAllProperty', false);
 
@@ -313,14 +312,6 @@ export default class PuzzleModel<
       options.erase(cleanState);
     }
 
-    // Validate against the solution!
-    const validator = new CompleteValidator(this.puzzle.board, cleanState, this.puzzle.solution.solvedState);
-    try {
-      userAction.apply(validator);
-    } catch (e) {
-      errorDetected = true;
-    }
-
     let changedEdges = new Set<TEdge>();
     const edgeChangeListener = (edge: TEdge) => {
       changedEdges.add(edge);
@@ -379,6 +370,19 @@ export default class PuzzleModel<
 
     const newState = cleanState.clone();
     delta.apply(newState);
+
+    // TODO: see if we actually NEED to compare against the full solution state (if it was valid before, we only need to check the validator(!)
+    errorDetected =
+      errorDetected || !CompleteValidator.isStateCorrect(this.puzzle.board, newState, this.puzzle.solution.solvedState);
+    // TODO: our validator doesn't seem to catch buggy inside/outside states
+    // TODO: Should we just... deprecate the validator? fix it?
+    // // Validate against the solution!
+    // const validator = new CompleteValidator(this.puzzle.board, cleanState, this.puzzle.solution.solvedState);
+    // try {
+    //   userAction.apply(validator);
+    // } catch (e) {
+    //   errorDetected = true;
+    // }
 
     this.pushTransitionAtCurrentPosition(new PuzzleSnapshot(this.puzzle.board, userAction, newState, errorDetected));
 
@@ -612,7 +616,7 @@ export default class PuzzleModel<
         if (oldFaceColorState !== newFaceColorState) {
           const lastTransition = this.stack[this.stackPositionProperty.value];
 
-          // If we just modified the same edge again, we'll want to undo any solving/etc. we did.
+          // If we just modified the same face again, we'll want to undo any solving/etc. we did.
           if (
             lastTransition.action &&
             lastTransition.action instanceof FaceColorSetAbsoluteAction &&

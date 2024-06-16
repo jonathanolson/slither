@@ -225,4 +225,18 @@ export class CompleteValidator implements TState<TCompleteData> {
   public serializeState(board: TBoard): TSerializedCompleteData {
     throw new Error('unimplemented');
   }
+
+  public static isStateCorrect(
+    board: TBoard,
+    state: TState<TCompleteData>,
+    solvedState: TState<TEdgeStateData & TFaceColorData>,
+  ): boolean {
+    // TODO: consider more checks, for vertex/face state?
+
+    return (
+      EdgeStateValidator.isStateCorrect(board, state, solvedState) &&
+      FaceColorValidator.isStateCorrect(board, state, solvedState) &&
+      SectorStateValidator.isStateCorrect(board, state, solvedState)
+    );
+  }
 }
