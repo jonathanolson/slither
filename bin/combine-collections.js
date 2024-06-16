@@ -4,6 +4,8 @@ import os from 'os';
 
 const name = process.argv[2];
 
+const WRITE_FALLBACK = false;
+
 os.setPriority(os.constants.priority.PRIORITY_LOW);
 
 (async () => {
@@ -74,7 +76,7 @@ os.setPriority(os.constants.priority.PRIORITY_LOW);
     writeToFile(`${name}`, unrestrictedFullCollection);
 
     let unrestrictedCollection;
-    if (unrestrictedFallbackNames.length) {
+    if (WRITE_FALLBACK && unrestrictedFallbackNames.length) {
       // non-redundant combine all "unrestricted" (so we will filter out ANYTHING that can be derived IN ORDER)
       // NOTE: doing this combination so PARTS of the fallbacks get considered for redundancy when computing next things
       unrestrictedCollection = await arrayCombine(`${name} unrestricted fallback combine`, withCollectionNonredundant, [
@@ -109,7 +111,7 @@ os.setPriority(os.constants.priority.PRIORITY_LOW);
       );
       writeToFile(`${name}-highlander`, highlanderFullCollection);
 
-      if (highlanderFallbackNames.length) {
+      if (WRITE_FALLBACK && highlanderFallbackNames.length) {
         // non-equal combine all "highlander fallback"
         const combinedHighlanderFallbackCollection = await arrayCombine(
           `${name} highlander fallback initial`,
