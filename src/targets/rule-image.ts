@@ -1,7 +1,10 @@
 import { AlignBox, Display, GridBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
-import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+
 import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
+
 import assert, { assertEnabled } from '../workarounds/assert.ts';
 
 // @ts-expect-error

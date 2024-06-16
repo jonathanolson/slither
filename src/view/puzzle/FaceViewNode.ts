@@ -1,13 +1,15 @@
-import { Node, RichText, RichTextOptions, TColor } from 'phet-lib/scenery';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
+import { combineOptions } from 'phet-lib/phet-core';
+import { Node, RichText, RichTextOptions, TColor } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import FaceValue from '../../model/data/face-value/FaceValue.ts';
 import { TFaceValueData } from '../../model/data/face-value/TFaceValueData.ts';
-import { combineOptions } from 'phet-lib/phet-core';
-import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { dimCompletedNumbersProperty, highlightIncorrectNumbersProperty } from '../../model/puzzle/PuzzleModel.ts';
 
 export type FaceViewNodeOptions = {

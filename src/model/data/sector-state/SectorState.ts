@@ -1,4 +1,5 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export default class SectorState extends EnumerationValue {

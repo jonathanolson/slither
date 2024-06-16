@@ -1,16 +1,17 @@
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
-import { TSolver } from './TSolver.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TVertex } from '../board/core/TVertex.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export type SimpleVertexSolverOptions = {
   solveJointToRed: boolean;

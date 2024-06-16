@@ -1,8 +1,9 @@
-import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
-import { Panel, PanelOptions } from 'phet-lib/sun';
-import { optionize } from 'phet-lib/phet-core';
 import { currentTheme } from './Theme.ts';
 import { ViewContext } from './ViewContext.ts';
+
+import { optionize } from 'phet-lib/phet-core';
+import { AlignBox, Node, Rectangle } from 'phet-lib/scenery';
+import { Panel, PanelOptions } from 'phet-lib/sun';
 
 export type PopupNodeOptions = {
   allowBarrierClickToHide?: boolean;

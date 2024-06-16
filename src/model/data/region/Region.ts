@@ -1,5 +1,6 @@
-import { Net } from './Net.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
+import { Net } from './Net.ts';
+
 
 // Like a net, but:
 // "The final opposite part of the loop goes through none of the edge set"

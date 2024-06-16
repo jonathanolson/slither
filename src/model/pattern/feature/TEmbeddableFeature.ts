@@ -1,6 +1,5 @@
-import { TFeature } from './TFeature.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-
+import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 
 export interface TEmbeddableFeature extends TFeature {

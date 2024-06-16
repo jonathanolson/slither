@@ -1,10 +1,10 @@
-import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
-import { RichSolution } from '../solve/RichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
 import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { getIndeterminateEdges } from '../highlander/getIndeterminateEdges.ts';
 import { Highlander } from '../highlander/Highlander.ts';
+import { getIndeterminateEdges } from '../highlander/getIndeterminateEdges.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { RichSolution } from '../solve/RichSolution.ts';
+import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
 
 export class HighlanderPruner {
   private readonly exitEdgeIndices: number[];

@@ -1,6 +1,7 @@
-import QUnit from 'qunit';
-import { Vector2 } from 'phet-lib/dot';
 import { standardSquareBoardGenerations } from '../../pattern-board/patternBoards.ts';
+import QUnit from 'qunit';
+
+import { Vector2 } from 'phet-lib/dot';
 
 // TODO
 

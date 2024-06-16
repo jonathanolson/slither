@@ -1,33 +1,37 @@
-import { Dimension2 } from 'phet-lib/dot';
-import { HBox, HBoxOptions, HSeparator, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
-import { TStructure } from '../model/board/core/TStructure.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { BooleanProperty, Multilink, NumberProperty, Property, TinyEmitter, TinyProperty } from 'phet-lib/axon';
-import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { currentTheme, generateButtonFont, uiFont } from './Theme.ts';
-import { optionize } from 'phet-lib/phet-core';
-import { Shape } from 'phet-lib/kite';
-import { UITextCheckbox } from './UITextCheckbox.ts';
-import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
-import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import { currentTheme, generateButtonFont, uiFont } from './Theme.ts';
+import { UIAquaRadioButtonGroup } from './UIAquaRadioButtonGroup.ts';
+import { UIText } from './UIText.ts';
+import { UITextCheckbox } from './UITextCheckbox.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { ViewContext } from './ViewContext.ts';
+import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
+
+import { BooleanProperty, Multilink, NumberProperty, Property, TinyEmitter, TinyProperty } from 'phet-lib/axon';
+import { Dimension2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { optionize } from 'phet-lib/phet-core';
+import { HBox, HBoxOptions, HSeparator, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
+import { NumberControl } from 'phet-lib/scenery-phet';
+
+import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
+import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
+import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import FaceValue from '../model/data/face-value/FaceValue.ts';
+import CanSolveDifficulty, { canSolveDifficultyProperty } from '../model/generator/CanSolveDifficulty.ts';
 import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
-import FaceValue from '../model/data/face-value/FaceValue.ts';
+import { withAllFacesFilled } from '../model/generator/withAllFacesFilled.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
+
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
-import { NumberControl } from 'phet-lib/scenery-phet';
-import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
-import CanSolveDifficulty, { canSolveDifficultyProperty } from '../model/generator/CanSolveDifficulty.ts';
-import { withAllFacesFilled } from '../model/generator/withAllFacesFilled.ts';
-import { UIText } from './UIText.ts';
-import { UIAquaRadioButtonGroup } from './UIAquaRadioButtonGroup.ts';
-import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
-import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
-import { ViewContext } from './ViewContext.ts';
+
 
 type SelfOptions = {
   loadPuzzle: (puzzle: TPropertyPuzzle<TStructure, TCompleteData>) => void;

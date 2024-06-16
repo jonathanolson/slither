@@ -1,6 +1,7 @@
-import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
-import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { isAnnotationDisplayed } from './isAnnotationDisplayed.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+
+import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 
 export const isAnnotationDisplayedForStyle = (annotation: TAnnotation, style: TPuzzleStyle): boolean => {
   return isAnnotationDisplayed(

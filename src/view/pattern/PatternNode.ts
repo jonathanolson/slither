@@ -1,20 +1,24 @@
-import { Circle, Node, NodeOptions, Path, Text } from 'phet-lib/scenery';
+import { darkTheme, puzzleFont } from '../Theme.ts';
+
 import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
+import { Circle, Node, NodeOptions, Path, Text } from 'phet-lib/scenery';
+
 import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
-import { darkTheme, puzzleFont } from '../Theme.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
 import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
-import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
 import { FaceColorDualFeature } from '../../model/pattern/feature/FaceColorDualFeature.ts';
+import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
+import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
+import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
 import { SectorNotOneFeature } from '../../model/pattern/feature/SectorNotOneFeature.ts';
 import { SectorNotTwoFeature } from '../../model/pattern/feature/SectorNotTwoFeature.ts';
 import { SectorNotZeroFeature } from '../../model/pattern/feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../../model/pattern/feature/SectorOnlyOneFeature.ts';
-import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
-import { TPlanarPatternMap } from '../../model/pattern/pattern-board/planar-map/TPlanarPatternMap.ts';
 import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
+import { TPlanarPatternMap } from '../../model/pattern/pattern-board/planar-map/TPlanarPatternMap.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+
 
 type SelfOptions = {
   showQuestionMarks?: boolean;

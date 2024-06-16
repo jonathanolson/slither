@@ -1,14 +1,15 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TCompleteData } from './TCompleteData.ts';
-import { TSector } from '../sector-state/TSector.ts';
-import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
+import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
 import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
-import SectorState from '../sector-state/SectorState.ts';
-import { VertexState } from '../vertex-state/VertexState.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { FaceState } from '../face-state/FaceState.ts';
+import SectorState from '../sector-state/SectorState.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import { VertexState } from '../vertex-state/VertexState.ts';
+import { TCompleteData } from './TCompleteData.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class EraseSectorCompleteAction implements TAction<TCompleteData> {
   public constructor(public readonly sector: TSector) {

@@ -1,7 +1,8 @@
 import { TBoard } from './TBoard.ts';
 import { TSerializedVertex } from './TSerializedVertex.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TVertex } from './TVertex.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const deserializeVertex = (board: TBoard, serializedVertex: TSerializedVertex): TVertex => {
   // TODO: more efficient lookup

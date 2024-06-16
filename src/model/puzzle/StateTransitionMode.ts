@@ -1,6 +1,8 @@
-import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import EdgePressStyle from './EdgePressStyle.ts';
 import FaceColorPressStyle from './FaceColorPressStyle.ts';
+
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
+
 import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 
 export default class StateTransitionMode extends EnumerationValue {

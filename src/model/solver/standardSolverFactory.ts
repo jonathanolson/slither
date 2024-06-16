@@ -1,29 +1,29 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import { CompositeSolver } from './CompositeSolver.ts';
+import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
+import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
+import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
+import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
+import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
+import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
+import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
+import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
 import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
-import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
-import { SimpleVertexSolver } from './SimpleVertexSolver.ts';
+import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
 import { SimpleFaceSolver } from './SimpleFaceSolver.ts';
 import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
-import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
-import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
-import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
-import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
-import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
-import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
-import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
-import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
-import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
+import { SimpleVertexSolver } from './SimpleVertexSolver.ts';
+import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
+import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
-import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
-import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
-import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
-import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
+import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
+import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
+import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 
 export const standardSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
   return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([

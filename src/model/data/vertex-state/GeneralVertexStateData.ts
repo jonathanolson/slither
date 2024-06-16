@@ -1,14 +1,16 @@
-import { TState } from '../core/TState.ts';
-import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { TVertex } from '../../board/core/TVertex.ts';
-import { TSerializedVertexState, VertexState } from './VertexState.ts';
-import { GeneralVertexStateDelta } from './GeneralVertexStateDelta.ts';
 import { TSerializedVertex } from '../../board/core/TSerializedVertex.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
 import { deserializeVertex } from '../../board/core/deserializeVertex.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import { GeneralVertexStateDelta } from './GeneralVertexStateDelta.ts';
+import { TSerializedVertexStateData, TVertexStateData, serializeVertexStateData } from './TVertexStateData.ts';
+import { TSerializedVertexState, VertexState } from './VertexState.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralVertexStateData implements TState<TVertexStateData> {
   public readonly vertexStateChangedEmitter = new TinyEmitter<

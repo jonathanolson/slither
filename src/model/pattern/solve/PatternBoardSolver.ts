@@ -1,10 +1,10 @@
 import { FormulaSolver } from '../../logic/FormulaSolver.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { TFeature } from '../feature/TFeature.ts';
 import { Term } from '../../logic/Term.ts';
-import { getStructuralFeatures } from '../feature/getStructuralFeatures.ts';
 import { logicNot, logicOr } from '../../logic/operations.ts';
+import { TFeature } from '../feature/TFeature.ts';
+import { getStructuralFeatures } from '../feature/getStructuralFeatures.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 
 export class PatternBoardSolver {
   private readonly solver: FormulaSolver<TPatternEdge> = new FormulaSolver();

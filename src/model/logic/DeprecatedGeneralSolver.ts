@@ -1,6 +1,7 @@
+import { arrayRemove } from 'phet-lib/phet-core';
+
 import _ from '../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { arrayRemove } from 'phet-lib/phet-core';
 
 type Variable = number;
 type ClauseIndex = number;

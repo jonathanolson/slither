@@ -1,8 +1,10 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
 import { TFaceValueStyle, TLineCap, TLineJoin, TRedLineStyle, TRuntimeTheme, TVertexStyle } from '../Theme.ts';
-import { AnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
+
+import { TReadOnlyProperty } from 'phet-lib/axon';
+
 import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
+import { AnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
 
 export interface TPuzzleModelStyle {
   readonly edgesVisibleProperty: TReadOnlyProperty<boolean>;

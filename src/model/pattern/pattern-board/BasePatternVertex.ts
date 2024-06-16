@@ -1,7 +1,7 @@
-import { TPatternVertex } from './TPatternVertex.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
+import { TPatternSector } from './TPatternSector.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
 
 export class BasePatternVertex implements TPatternVertex {
   public exitEdge: TPatternEdge | null = null;

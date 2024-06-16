@@ -1,16 +1,17 @@
 // Adapter from TBoard to TPatternBoard
-import { BasePatternBoard } from './BasePatternBoard.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
-import { TPatternVertex } from './TPatternVertex.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
-import { TSector } from '../../data/sector-state/TSector.ts';
-import { TPatternSector } from './TPatternSector.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { TPatternFace } from './TPatternFace.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { TSector } from '../../data/sector-state/TSector.ts';
 import { getSectorFromEdgePair } from '../../data/sector-state/getSectorFromEdgePair.ts';
+import { BasePatternBoard } from './BasePatternBoard.ts';
+import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import { TPatternSector } from './TPatternSector.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BoardPatternBoard extends BasePatternBoard {
   private readonly vertexToIndexMap: Map<TVertex, number>;

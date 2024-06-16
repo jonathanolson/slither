@@ -1,15 +1,16 @@
-import { TSolver } from './TSolver.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
+import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
+import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export type SimpleFaceColorSolverOptions = {

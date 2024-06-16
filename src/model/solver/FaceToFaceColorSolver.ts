@@ -1,18 +1,19 @@
-import { TSolver } from './TSolver.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
-import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { TState } from '../data/core/TState.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
-import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import _ from '../../workarounds/_.ts';
+import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
+import _ from '../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type Data = TFaceColorData & TFaceStateData;
 

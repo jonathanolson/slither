@@ -1,17 +1,17 @@
-import { TSolver } from './TSolver.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import { TState } from '../data/core/TState.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TVertex } from '../board/core/TVertex.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
-import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
-import { getSectorsFromVertex } from '../data/sector-state/getSectorsFromVertex.ts';
+import { TState } from '../data/core/TState.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { getSectorsFromVertex } from '../data/sector-state/getSectorsFromVertex.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 
 type Data = TSectorStateData & TVertexStateData;
 

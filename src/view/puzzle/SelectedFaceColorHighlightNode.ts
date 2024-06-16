@@ -1,10 +1,12 @@
-import { Node, Path } from 'phet-lib/scenery';
-import { Shape } from 'phet-lib/kite';
-import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import FaceColorState from '../../model/data/face-color/TFaceColorData.ts';
 import { PuzzleBackgroundNode } from './PuzzleBackgroundNode.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { Shape } from 'phet-lib/kite';
+import { Node, Path } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import FaceColorState from '../../model/data/face-color/TFaceColorData.ts';
+import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
 
 export type SelectedFaceColorHighlightNodeOptions = {
   useBackgroundOffsetStroke: boolean;

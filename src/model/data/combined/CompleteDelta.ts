@@ -1,25 +1,27 @@
-import { CompleteAction } from './CompleteAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeCompleteData, TCompleteData, TSerializedCompleteData } from './TCompleteData.ts';
-import { TFaceValueData } from '../face-value/TFaceValueData.ts';
-import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
-import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
-import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from '../face-value/FaceValue.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from '../edge-state/EdgeState.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
-import { TEmitter, TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { TDelta } from '../core/TDelta.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
-import { TSector } from '../sector-state/TSector.ts';
+import { FaceState } from '../face-state/FaceState.ts';
+import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import FaceValue from '../face-value/FaceValue.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
 import SectorState from '../sector-state/SectorState.ts';
-import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
 import { VertexState } from '../vertex-state/VertexState.ts';
-import { TFaceStateData } from '../face-state/TFaceStateData.ts';
-import { FaceState } from '../face-state/FaceState.ts';
+import { CompleteAction } from './CompleteAction.ts';
+import { TCompleteData, TSerializedCompleteData, serializeCompleteData } from './TCompleteData.ts';
+
+import { TEmitter, TinyEmitter } from 'phet-lib/axon';
+
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class CompleteDelta extends CompleteAction implements TDelta<TCompleteData> {
   public readonly anyStateChangedEmitter: TEmitter = new TinyEmitter();

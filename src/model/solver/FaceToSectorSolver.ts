@@ -1,16 +1,16 @@
-import { TSolver } from './TSolver.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { TState } from '../data/core/TState.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TFace } from '../board/core/TFace.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { TState } from '../data/core/TState.ts';
+import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { TSector } from '../data/sector-state/TSector.ts';
-import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 
 type Data = TSectorStateData & TFaceStateData;
 

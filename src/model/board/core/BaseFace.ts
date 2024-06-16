@@ -1,6 +1,8 @@
-import { TStructure } from './TStructure.ts';
 import { TFace } from './TFace.ts';
+import { TStructure } from './TStructure.ts';
+
 import { Vector2 } from 'phet-lib/dot';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BaseFace<Structure extends TStructure> implements TFace {

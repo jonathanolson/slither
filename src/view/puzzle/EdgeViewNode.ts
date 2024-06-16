@@ -1,13 +1,15 @@
-import { Node, Path } from 'phet-lib/scenery';
+import { TRedLineStyle } from '../Theme.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
-import { TState } from '../../model/data/core/TState.ts';
+import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
+import { Node, Path } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TState } from '../../model/data/core/TState.ts';
 import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { Vector2 } from 'phet-lib/dot';
-import { TRedLineStyle } from '../Theme.ts';
 
 export class EdgeViewNode extends Node {
   public constructor(

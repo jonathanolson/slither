@@ -1,24 +1,24 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { CompositeSolver } from './CompositeSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
-import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
-import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
-import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
-import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
-import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
+import { TState } from '../data/core/TState.ts';
 import { BinaryMixedRuleGroup } from '../pattern/collection/BinaryMixedRuleGroup.ts';
-import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
-import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
-import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
-import { Embedding } from '../pattern/embedding/Embedding.ts';
-import { generalEdgeMixedGroup } from '../pattern/collection/generalEdgeMixedGroup.ts';
+import { generalAllMixedGroup } from '../pattern/collection/generalAllMixedGroup.ts';
 import { generalColorMixedGroup } from '../pattern/collection/generalColorMixedGroup.ts';
 import { generalEdgeColorMixedGroup } from '../pattern/collection/generalEdgeColorMixedGroup.ts';
+import { generalEdgeMixedGroup } from '../pattern/collection/generalEdgeMixedGroup.ts';
 import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSectorMixedGroup.ts';
-import { generalAllMixedGroup } from '../pattern/collection/generalAllMixedGroup.ts';
+import { Embedding } from '../pattern/embedding/Embedding.ts';
+import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
+import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
+import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
+import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
+import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
+import { CompositeSolver } from './CompositeSolver.ts';
+import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
+import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
+import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
+import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 
 const getFactory = (groups: BinaryMixedRuleGroup[]) => {
   return (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {

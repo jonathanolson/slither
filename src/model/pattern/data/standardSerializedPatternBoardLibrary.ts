@@ -1,6 +1,6 @@
-import { decompressString } from '../../../util/compression.ts';
-
 import { SerializedPatternBoardLibrary } from '../pattern-board/SerializedPatternBoardLibrary.ts';
+
+import { decompressString } from '../../../util/compression.ts';
 
 // Run hooks.html
 // copy( `export const standardSerializedPatternBoardLibrary: SerializedPatternBoardLibrary = JSON.parse( decompressString( ${getSerializedPatternBoardLibraryJS()} )! );` );

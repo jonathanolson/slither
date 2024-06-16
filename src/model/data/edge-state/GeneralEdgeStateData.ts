@@ -1,14 +1,16 @@
-import { TState } from '../core/TState.ts';
-import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from './TEdgeStateData.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { GeneralEdgeStateDelta } from './GeneralEdgeStateDelta.ts';
-import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import EdgeState from './EdgeState.ts';
+import { GeneralEdgeStateDelta } from './GeneralEdgeStateDelta.ts';
+import { TEdgeStateData, TSerializedEdgeStateData, serializeEdgeStateData } from './TEdgeStateData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 // TODO: lots of types like this have duplication, figure out an improvement
 export class GeneralEdgeStateData implements TState<TEdgeStateData> {

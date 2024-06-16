@@ -1,37 +1,42 @@
 import '../main.css';
-import { platform } from 'phet-lib/phet-core';
-import { Bounds2 } from 'phet-lib/dot';
+
 import {
   BooleanProperty,
   DynamicProperty,
   Multilink,
   Property,
+  TReadOnlyProperty,
   TinyEmitter,
   TinyProperty,
-  TReadOnlyProperty,
 } from 'phet-lib/axon';
-import { AlignBox, Display, globalKeyStateTracker, HBox, ManualConstraint, Node, VBox } from 'phet-lib/scenery';
+import { Bounds2 } from 'phet-lib/dot';
+import { platform } from 'phet-lib/phet-core';
+import { AlignBox, Display, HBox, ManualConstraint, Node, VBox, globalKeyStateTracker } from 'phet-lib/scenery';
+
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
-import PuzzleContainerNode from '../view/PuzzleContainerNode.ts';
-import PuzzleModel, { highlightIncorrectMovesProperty } from '../model/puzzle/PuzzleModel.ts';
-import ControlBarNode from '../view/ControlBarNode.ts';
-import { controlBarMargin, currentTheme } from '../view/Theme.ts';
+
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { scene } from '../view/scene.ts';
-import { glassPane } from '../view/glassPane.ts';
-import { workaroundResolveStep } from '../util/sleep.ts';
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
-import { getSolvablePropertyPuzzle } from '../model/solver/SATSolver.ts';
-import { getStartupPuzzleModel } from '../model/puzzle/getStartupPuzzleModel.ts';
-import { HintStateNode } from '../view/HintStateNode.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import EditMode, { eraserEnabledProperty, tryToSetEditMode } from '../model/puzzle/EditMode.ts';
-import EditModeBarNode from '../view/EditModeBarNode.ts';
-import ViewStyleBarNode from '../view/ViewStyleBarNode.ts';
-import { currentPuzzleStyle, showPuzzleStyleProperty } from '../view/puzzle/puzzleStyles.ts';
-import { ViewContext } from '../view/ViewContext.ts';
 import HintState from '../model/puzzle/HintState.ts';
+import PuzzleModel, { highlightIncorrectMovesProperty } from '../model/puzzle/PuzzleModel.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { getStartupPuzzleModel } from '../model/puzzle/getStartupPuzzleModel.ts';
+import { getSolvablePropertyPuzzle } from '../model/solver/SATSolver.ts';
+
+import { workaroundResolveStep } from '../util/sleep.ts';
+
+import ControlBarNode from '../view/ControlBarNode.ts';
+import EditModeBarNode from '../view/EditModeBarNode.ts';
+import { HintStateNode } from '../view/HintStateNode.ts';
+import PuzzleContainerNode from '../view/PuzzleContainerNode.ts';
+import { controlBarMargin, currentTheme } from '../view/Theme.ts';
+import { ViewContext } from '../view/ViewContext.ts';
+import ViewStyleBarNode from '../view/ViewStyleBarNode.ts';
+import { glassPane } from '../view/glassPane.ts';
+import { currentPuzzleStyle, showPuzzleStyleProperty } from '../view/puzzle/puzzleStyles.ts';
+import { scene } from '../view/scene.ts';
 
 // TODO: also see web worker cases where this is used
 // TODO: factor out

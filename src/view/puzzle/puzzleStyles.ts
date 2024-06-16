@@ -1,18 +1,5 @@
 import {
-  BooleanProperty,
-  DerivedProperty,
-  DynamicProperty,
-  Property,
-  TinyProperty,
-  TReadOnlyProperty,
-} from 'phet-lib/axon';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { TState } from '../../model/data/core/TState.ts';
-import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
-import { CompositeSolver } from '../../model/solver/CompositeSolver.ts';
-import { TAnnotatedAction } from '../../model/data/core/TAnnotatedAction.ts';
-import { SimpleFaceColorSolver } from '../../model/solver/SimpleFaceColorSolver.ts';
-import {
+  TRuntimeTheme,
   allVertexStateVisibleProperty,
   currentTheme,
   customAllowAbsoluteFaceColorEditProperty,
@@ -21,8 +8,8 @@ import {
   customAllowSectorEditProperty,
   edgesHaveColorsProperty,
   edgesVisibleProperty,
-  faceColorsVisibleProperty,
   faceColorThresholdProperty,
+  faceColorsVisibleProperty,
   faceStateVisibleProperty,
   faceValueStyleProperty,
   joinedLinesCapProperty,
@@ -36,25 +23,42 @@ import {
   sectorsVisibleProperty,
   smallVertexProperty,
   themeFromProperty,
-  TRuntimeTheme,
   vertexStateVisibleProperty,
   vertexStyleProperty,
   verticesVisibleProperty,
   whiteLineVisibleProperty,
 } from '../Theme.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
 import {
-  autoSolverFactoryProperty,
-  autoSolveSimpleLoopsProperty,
-  autoSolveToBlackProperty,
-} from '../../model/solver/autoSolver.ts';
-import { LocalStorageBooleanProperty, LocalStorageProperty } from '../../util/localStorage.ts';
-import { StaticSectorSolver } from '../../model/solver/StaticSectorSolver.ts';
-import { CompleteAnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
-import { SimpleVertexSolver } from '../../model/solver/SimpleVertexSolver.ts';
+  BooleanProperty,
+  DerivedProperty,
+  DynamicProperty,
+  Property,
+  TReadOnlyProperty,
+  TinyProperty,
+} from 'phet-lib/axon';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
+import { TAnnotatedAction } from '../../model/data/core/TAnnotatedAction.ts';
+import { TState } from '../../model/data/core/TState.ts';
+import { CompositeSolver } from '../../model/solver/CompositeSolver.ts';
+import { SimpleFaceColorSolver } from '../../model/solver/SimpleFaceColorSolver.ts';
 import { SimpleFaceSolver } from '../../model/solver/SimpleFaceSolver.ts';
 import { SimpleLoopSolver } from '../../model/solver/SimpleLoopSolver.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { SimpleVertexSolver } from '../../model/solver/SimpleVertexSolver.ts';
+import { StaticSectorSolver } from '../../model/solver/StaticSectorSolver.ts';
+import { CompleteAnnotatedSolverFactory } from '../../model/solver/TSolver.ts';
+import {
+  autoSolveSimpleLoopsProperty,
+  autoSolveToBlackProperty,
+  autoSolverFactoryProperty,
+} from '../../model/solver/autoSolver.ts';
 import { getSafeSolverFactory } from '../../model/solver/getSafeSolverFactory.ts';
+
+import { LocalStorageBooleanProperty, LocalStorageProperty } from '../../util/localStorage.ts';
+
 
 export const customPuzzleStyle: TPuzzleStyle = {
   allowEdgeEditProperty: customAllowEdgeEditProperty,

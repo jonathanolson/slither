@@ -1,3 +1,13 @@
+import PuzzleModelNode from './PuzzleModelNode.ts';
+import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
+import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
+
+import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
+import { Bounds2, Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { optionize } from 'phet-lib/phet-core';
 import {
   AnimatedPanZoomListener,
   LinearGradient,
@@ -8,18 +18,11 @@ import {
   Sizable,
   SizableOptions,
 } from 'phet-lib/scenery';
-import PuzzleModelNode from './PuzzleModelNode.ts';
-import { Bounds2, Vector2 } from 'phet-lib/dot';
-import { Shape } from 'phet-lib/kite';
-import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
-import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
-import { optionize } from 'phet-lib/phet-core';
+
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
-import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
-import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
-import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
-import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
 import { isFaceColorOutsideAvailableEditModeProperty } from '../model/puzzle/EditMode.ts';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
+
 
 type SelfOptions = {
   topological?: boolean;

@@ -1,12 +1,14 @@
-import { HBox, Node, Path, Rectangle } from 'phet-lib/scenery';
-import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
-import { SectorNode } from './SectorNode.ts';
-import SectorState from '../../model/data/sector-state/SectorState.ts';
-import { Panel, RectangularPushButton } from 'phet-lib/sun';
-import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { rectangularButtonAppearanceStrategy } from '../Theme.ts';
 import { PuzzleBackgroundNode } from './PuzzleBackgroundNode.ts';
+import { SectorNode } from './SectorNode.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { HBox, Node, Path, Rectangle } from 'phet-lib/scenery';
+import { Panel, RectangularPushButton } from 'phet-lib/sun';
+
+import SectorState from '../../model/data/sector-state/SectorState.ts';
+import { TSector } from '../../model/data/sector-state/TSector.ts';
+import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
 
 export type SelectedSectorEditNodeOptions = {
   sectorSetListener?: (sector: TSector, state: SectorState) => void;

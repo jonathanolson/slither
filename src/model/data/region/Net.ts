@@ -1,12 +1,16 @@
 // "There will be one (and only one) strongly-connecting chain between the vertices through edges in the edge set"
 // (it will not contain the entire loop)
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import EdgeState from '../edge-state/EdgeState.ts';
-import SetRelation from './SetRelation.ts';
-import _ from '../../../workarounds/_.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
+import SetRelation from './SetRelation.ts';
+
+
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 
 export class Net {
   public constructor(

@@ -1,6 +1,7 @@
-import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TFaceColorPointer } from './FaceColorPointer.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const getFaceColorPointer = (data: TFaceColorData, faceColor: TFaceColor): TFaceColorPointer => {
   if (faceColor.colorState === FaceColorState.OUTSIDE) {

@@ -1,21 +1,22 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TCompleteData } from './TCompleteData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from '../edge-state/EdgeState.ts';
-import { serializeEdge } from '../../board/core/serializeEdge.ts';
-import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
-import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
-import { getSectorsFromEdge } from '../sector-state/getSectorsFromEdge.ts';
-import SectorState from '../sector-state/SectorState.ts';
-import { VertexState } from '../vertex-state/VertexState.ts';
-import { FaceState } from '../face-state/FaceState.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import FaceColorState, { TFaceColor } from '../face-color/TFaceColorData.ts';
+import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
 import { GeneralFaceColor } from '../face-color/GeneralFaceColor.ts';
 import { getFaceColorGlobalId } from '../face-color/GeneralFaceColorData.ts';
+import FaceColorState, { TFaceColor } from '../face-color/TFaceColorData.ts';
+import { FaceState } from '../face-state/FaceState.ts';
+import SectorState from '../sector-state/SectorState.ts';
+import { getSectorsFromEdge } from '../sector-state/getSectorsFromEdge.ts';
+import { VertexState } from '../vertex-state/VertexState.ts';
+import { TCompleteData } from './TCompleteData.ts';
+
 import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class EraseEdgeCompleteAction implements TAction<TCompleteData> {
   public constructor(public readonly edge: TEdge) {

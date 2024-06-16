@@ -1,13 +1,3 @@
-import { DerivedProperty, DynamicProperty, TinyProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { HBox } from 'phet-lib/scenery';
-import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
-import {
-  RectangularPushButton,
-  RectangularPushButtonOptions,
-  TextPushButton,
-  TextPushButtonOptions,
-} from 'phet-lib/sun';
-import { SettingsNode } from './SettingsNode.ts';
 import {
   fontAwesomeBackwardShape,
   fontAwesomeForwardShape,
@@ -17,19 +7,30 @@ import {
   fontAwesomeStepForwardShape,
   toFontAwesomePath,
 } from './FontAwesomeShape.ts';
-import { combineOptions } from 'phet-lib/phet-core';
-import { controlBarFont, controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
-import { TStructure } from '../model/board/core/TStructure.ts';
-
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { ShareNode } from './ShareNode.ts';
 import { GenNode } from './GenNode.ts';
-import { TooltipListener } from './TooltipListener.ts';
+import { SettingsNode } from './SettingsNode.ts';
+import { ShareNode } from './ShareNode.ts';
+import { controlBarFont, controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
 import { TimerNode } from './TimerNode.ts';
-import { showPuzzleTimerProperty } from './puzzle/puzzleStyles.ts';
+import { TooltipListener } from './TooltipListener.ts';
 import { ViewContext } from './ViewContext.ts';
+import { showPuzzleTimerProperty } from './puzzle/puzzleStyles.ts';
+
+import { DerivedProperty, DynamicProperty, TReadOnlyProperty, TinyProperty } from 'phet-lib/axon';
+import { combineOptions } from 'phet-lib/phet-core';
+import { HBox } from 'phet-lib/scenery';
+import {
+  RectangularPushButton,
+  RectangularPushButtonOptions,
+  TextPushButton,
+  TextPushButtonOptions,
+} from 'phet-lib/sun';
+
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import HintState from '../model/puzzle/HintState.ts';
+import PuzzleModel, { showUndoRedoAllProperty } from '../model/puzzle/PuzzleModel.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 export type ControlBarNodeOptions = {
   // TODO: better forwarding of this option

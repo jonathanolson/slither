@@ -1,6 +1,6 @@
 import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
 import { TPatternFace } from './TPatternFace.ts';
+import { TPatternSector } from './TPatternSector.ts';
 
 export interface TPatternVertex {
   index: number;

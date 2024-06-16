@@ -1,14 +1,16 @@
-import { Node, NodeOptions } from 'phet-lib/scenery';
-import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
-import { TStructure } from '../model/board/core/TStructure.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { combineOptions } from 'phet-lib/phet-core';
-import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
-import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
-import { LayoutEdge, LayoutFace } from '../model/board/layout/layout.ts';
 
+import { combineOptions } from 'phet-lib/phet-core';
+import { Node, NodeOptions } from 'phet-lib/scenery';
+
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { LayoutDerivative } from '../model/board/layout/LayoutDerivative.ts';
+import { LayoutPuzzle } from '../model/board/layout/LayoutPuzzle.ts';
+import { LayoutEdge, LayoutFace } from '../model/board/layout/layout.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { toPropertyPuzzle } from '../model/puzzle/toPropertyPuzzle.ts';
+
 
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class TopologicalPuzzleNode<

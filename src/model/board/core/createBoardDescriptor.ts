@@ -1,11 +1,13 @@
-import { Vector2 } from 'phet-lib/dot';
+import { BaseEdge } from './BaseEdge.ts';
+import { BaseFace } from './BaseFace.ts';
+import { BaseHalfEdge } from './BaseHalfEdge.ts';
 import { BaseVertex } from './BaseVertex.ts';
 import { TStructure } from './TStructure.ts';
-import { BaseFace } from './BaseFace.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { BaseEdge } from './BaseEdge.ts';
-import { BaseHalfEdge } from './BaseHalfEdge.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+
 import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export type VertexLocation = Vector2;
 export type FaceLocation = Vector2;

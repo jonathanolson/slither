@@ -1,10 +1,10 @@
 import {
+  TAnnotation,
   annotationSetsEdgeState,
   annotationSetsFaceColor,
   annotationSetsFaceState,
   annotationSetsSectorState,
   annotationSetsVertexState,
-  TAnnotation,
 } from '../model/data/core/TAnnotation.ts';
 
 export const isAnnotationDisplayed = (

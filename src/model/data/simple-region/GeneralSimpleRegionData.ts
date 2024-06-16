@@ -1,19 +1,21 @@
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
+import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
+import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
 import {
-  serializeSimpleRegionData,
   TSerializedSimpleRegionData,
   TSimpleRegion,
   TSimpleRegionData,
+  serializeSimpleRegionData,
 } from './TSimpleRegionData.ts';
+
 import { TinyEmitter } from 'phet-lib/axon';
-import { TEdge } from '../../board/core/TEdge.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { GeneralSimpleRegionDelta } from './GeneralSimpleRegionDelta.ts';
-import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
+
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
-import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
 
 export class GeneralSimpleRegionData implements TState<TSimpleRegionData> {
   public readonly simpleRegionsChangedEmitter = new TinyEmitter<

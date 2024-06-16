@@ -1,13 +1,14 @@
-import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
-import { optionize3 } from 'phet-lib/phet-core';
+import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 import { NextClosure } from '../formal-concept/NextClosure.ts';
+import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { TablePruner } from '../formal-concept/TablePruner.ts';
-import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
 import { RichSolution } from '../solve/RichSolution.ts';
-import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
+import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
+
+import { optionize3 } from 'phet-lib/phet-core';
 
 export type GetFeatureImpliedRulesOptions = {
   logModulo?: number;

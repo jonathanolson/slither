@@ -1,11 +1,13 @@
-import { Vector2 } from 'phet-lib/dot';
-import { TEdge } from '../core/TEdge.ts';
-import { LocalStorageBooleanProperty } from '../../../util/localStorage.ts';
-import { BaseHalfEdge } from '../core/BaseHalfEdge.ts';
 import { BaseEdge } from '../core/BaseEdge.ts';
 import { BaseFace } from '../core/BaseFace.ts';
+import { BaseHalfEdge } from '../core/BaseHalfEdge.ts';
 import { BaseVertex } from '../core/BaseVertex.ts';
+import { TEdge } from '../core/TEdge.ts';
 import { TFace } from '../core/TFace.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+
+import { LocalStorageBooleanProperty } from '../../../util/localStorage.ts';
 
 export const showLayoutTestProperty = new LocalStorageBooleanProperty('showLayoutTestProperty', false);
 

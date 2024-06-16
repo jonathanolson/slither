@@ -1,8 +1,12 @@
 import cv from '@techstark/opencv-js';
+
 import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
-import _ from '../workarounds/_';
+
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+
+import _ from '../workarounds/_';
+
 
 export const cvReady = new Promise((resolve) => {
   // @ts-expect-error

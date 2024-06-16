@@ -1,10 +1,12 @@
-import { Node } from 'phet-lib/scenery';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { VertexStateNode } from './VertexStateNode.ts';
+
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
+import { Node } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { VertexStateNode } from './VertexStateNode.ts';
 import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
 
 export class VertexStateViewNode extends Node {

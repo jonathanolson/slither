@@ -1,5 +1,5 @@
-import { TPatternBoard } from './TPatternBoard.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
 
 export const arePatternBoardsIsomorphic = (a: TPatternBoard, b: TPatternBoard): boolean => {
   if (

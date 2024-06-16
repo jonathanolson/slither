@@ -1,8 +1,7 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TState } from '../data/core/TState.ts';
 import { EdgeBacktrackerSolver } from './EdgeBacktracker.ts';
-
 import { standardSolverFactory } from './standardSolverFactory.ts';
 
 export const backtrackerSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {

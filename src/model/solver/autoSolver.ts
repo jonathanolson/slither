@@ -1,29 +1,32 @@
-import { DerivedProperty } from 'phet-lib/axon';
-import { CompositeSolver } from './CompositeSolver';
-import { SimpleVertexSolver } from './SimpleVertexSolver';
-import { SimpleFaceSolver } from './SimpleFaceSolver';
-import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
-import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
-import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
-import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
-import { StaticSectorSolver } from './StaticSectorSolver.ts';
 import { TStructure } from '../board/core/TStructure.ts';
-import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
-import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
-import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
-import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import { CompositeSolver } from './CompositeSolver';
+import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
-import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
+import { FaceToSectorSolver } from './FaceToSectorSolver.ts';
 import { FaceToVertexSolver } from './FaceToVertexSolver.ts';
+import { SimpleFaceColorSolver } from './SimpleFaceColorSolver.ts';
+import { SimpleFaceSolver } from './SimpleFaceSolver';
+import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
+import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
+import { SimpleVertexSolver } from './SimpleVertexSolver';
+import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
+import { StaticSectorSolver } from './StaticSectorSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
+import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
+import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
+import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
+import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 import { safeSolverFactory } from './safeSolverFactory.ts';
+
+import { DerivedProperty } from 'phet-lib/axon';
+
+import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
+
 
 // Top-level setting that controls whether auto-solve is enabled at all
 export const autoSolveEnabledProperty = new LocalStorageBooleanProperty('autoSolveEnabledProperty', true);

@@ -1,5 +1,6 @@
-import { TStructure } from './TStructure.ts';
 import { TEdge } from './TEdge.ts';
+import { TStructure } from './TStructure.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BaseEdge<Structure extends TStructure> implements TEdge {

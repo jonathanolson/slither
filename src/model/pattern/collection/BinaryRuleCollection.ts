@@ -1,18 +1,20 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
-import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
-import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { PatternRule } from '../pattern-rule/PatternRule.ts';
-import _ from '../../../workarounds/_.ts';
-import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import { getBinaryFeatureMapping } from '../generation/BinaryFeatureMapping.ts';
-import FeatureSetMatchState from '../feature/FeatureSetMatchState.ts';
+import { getEmbeddings } from '../embedding/getEmbeddings.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
+import FeatureSetMatchState from '../feature/FeatureSetMatchState.ts';
+import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
+import { getBinaryFeatureMapping } from '../generation/BinaryFeatureMapping.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
+import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import PatternRuleMatchState from '../pattern-rule/PatternRuleMatchState.ts';
 import { isPatternRuleValid } from '../pattern-rule/isPatternRuleValid.ts';
+
+import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BinaryRuleCollection {
   // TODO: note that BinaryMixedRuleCollection... extends this(!)

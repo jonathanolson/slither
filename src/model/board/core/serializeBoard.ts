@@ -1,7 +1,8 @@
-import { SquareBoard } from '../square/SquareBoard.ts';
 import { HexagonalBoard } from '../hex/HexagonalBoard.ts';
+import { SquareBoard } from '../square/SquareBoard.ts';
 import { TBoard } from './TBoard.ts';
 import { TSerializedBoard } from './TSerializedBoard.ts';
+
 
 // TODO: how better to encode better board serializations for hex/square?
 export const serializeBoard = (board: TBoard): TSerializedBoard => {

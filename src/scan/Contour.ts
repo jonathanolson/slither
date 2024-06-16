@@ -1,9 +1,13 @@
-import cv from '@techstark/opencv-js';
-import { Shape } from 'phet-lib/kite';
 import { contourToPoints, contourToShape, simplifyContour } from './opencvUtils';
-import assert from '../workarounds/assert';
+import cv from '@techstark/opencv-js';
+
 import { Bounds2, ConvexHull2, Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+
 import { getCoordinateClusteredMap } from '../util/getCoordinateClusteredMap.ts';
+
+import assert from '../workarounds/assert';
+
 
 export class Contour {
   public next: Contour | null = null;

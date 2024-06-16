@@ -1,13 +1,17 @@
-import { Node, Path } from 'phet-lib/scenery';
-import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
-import { Graph, LineStyles, Shape } from 'phet-lib/kite';
-import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
-import _ from '../../workarounds/_.ts';
-import { optionize } from 'phet-lib/phet-core';
-import { isFaceColorPairEditModeProperty } from '../../model/puzzle/EditMode.ts';
-import { TFace } from '../../model/board/core/TFace.ts';
-import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+
+import { Graph, LineStyles, Shape } from 'phet-lib/kite';
+import { optionize } from 'phet-lib/phet-core';
+import { Node, Path } from 'phet-lib/scenery';
+
+import { TFace } from '../../model/board/core/TFace.ts';
+import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
+import { getSignedArea } from '../../model/board/core/createBoardDescriptor.ts';
+import { isFaceColorPairEditModeProperty } from '../../model/puzzle/EditMode.ts';
+
+import _ from '../../workarounds/_.ts';
+
 
 export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;

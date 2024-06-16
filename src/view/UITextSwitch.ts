@@ -1,7 +1,8 @@
+import { UISwitch, UISwitchOptions } from './UISwitch.ts';
+import { UIText, UITextOptions } from './UIText.ts';
+
 import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { optionize } from 'phet-lib/phet-core';
-import { UIText, UITextOptions } from './UIText.ts';
-import { UISwitch, UISwitchOptions } from './UISwitch.ts';
 
 type SelfOptions = {
   textOptions?: UITextOptions;

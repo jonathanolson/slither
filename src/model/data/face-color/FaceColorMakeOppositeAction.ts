@@ -1,13 +1,14 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { FaceColorMakeSameAction } from './FaceColorMakeSameAction.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TFaceColorPointer, TSerializedFaceColorPointer } from './FaceColorPointer.ts';
+import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
 import { deserializeFaceColorPointer } from './deserializeFaceColorPointer.ts';
 import { serializeFaceColorPointer } from './serializeFaceColorPointer.ts';
-import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorMakeOppositeAction implements TAction<TFaceColorData> {
   public constructor(

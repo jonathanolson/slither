@@ -1,17 +1,21 @@
-import { Color, Line, Node, Path, TPaint } from 'phet-lib/scenery';
-import { TSimpleRegion, TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
-import { Shape } from 'phet-lib/kite';
-import { TEdge } from '../../model/board/core/TEdge.ts';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { TState } from '../../model/data/core/TState.ts';
-import { arrayDifference } from 'phet-lib/phet-core';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
 import { TLineCap, TLineJoin } from '../Theme.ts';
-import { dotRandom, Vector2 } from 'phet-lib/dot';
-import { TFace } from '../../model/board/core/TFace.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { Vector2, dotRandom } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { arrayDifference } from 'phet-lib/phet-core';
+import { Color, Line, Node, Path, TPaint } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TEdge } from '../../model/board/core/TEdge.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
+import { TState } from '../../model/data/core/TState.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../../model/data/simple-region/TSimpleRegionData.ts';
 import { highlightIntersectionsProperty } from '../../model/puzzle/PuzzleModel.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+
 
 export class SimpleRegionViewNode extends Node {
   private readonly simpleRegionNodeMap: Map<TSimpleRegion, SimpleRegionNode> = new Map();

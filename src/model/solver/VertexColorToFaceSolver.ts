@@ -1,18 +1,19 @@
-import { TSolver } from './TSolver.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TVertex } from '../board/core/TVertex.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
 import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { MultiIterable } from '../../workarounds/MultiIterable.ts';
-import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
-import { TFaceStateData } from '../data/face-state/TFaceStateData.ts';
-import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
-import FaceValue from '../data/face-value/FaceValue.ts';
-import { TVertex } from '../board/core/TVertex.ts';
 import { FaceState } from '../data/face-state/FaceState.ts';
 import { FaceStateSetAction } from '../data/face-state/FaceStateSetAction.ts';
+import { TFaceStateData } from '../data/face-state/TFaceStateData.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
+import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
+import { TSolver } from './TSolver.ts';
+
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TFaceValueData & TVertexStateData & TFaceColorData & TFaceStateData;
 

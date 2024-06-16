@@ -1,15 +1,15 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TState } from '../data/core/TState.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { TSolver } from './TSolver.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
-import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
+import { TState } from '../data/core/TState.ts';
+import { CompositeSolver } from './CompositeSolver.ts';
+import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SafeEdgeToSectorSolver } from './SafeEdgeToSectorSolver.ts';
-import { SafeEdgeSectorColorToVertexSolver } from './SafeEdgeSectorColorToVertexSolver.ts';
+import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
+import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
+import { TSolver } from './TSolver.ts';
 import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
-import { CompositeSolver } from './CompositeSolver.ts';
 
 export const getSafeSolverFactory = (
   faceColors: boolean,

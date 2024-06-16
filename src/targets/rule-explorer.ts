@@ -1,21 +1,34 @@
-import { Bounds2, Range } from 'phet-lib/dot';
-import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
 import { BooleanProperty, DerivedProperty, Multilink, Property } from 'phet-lib/axon';
-import _ from '../workarounds/_.ts';
-import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { Bounds2, Range } from 'phet-lib/dot';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
+import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
+import { ArrowButton, Panel, Slider } from 'phet-lib/sun';
+
+import { generalAllMixedGroup } from '../model/pattern/collection/generalAllMixedGroup.ts';
+import { generalColorMixedGroup } from '../model/pattern/collection/generalColorMixedGroup.ts';
+import { generalEdgeColorMixedGroup } from '../model/pattern/collection/generalEdgeColorMixedGroup.ts';
+import { generalEdgeMixedGroup } from '../model/pattern/collection/generalEdgeMixedGroup.ts';
+import { generalEdgeSectorMixedGroup } from '../model/pattern/collection/generalEdgeSectorMixedGroup.ts';
+import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
+import { computeEmbeddings } from '../model/pattern/embedding/computeEmbeddings.ts';
+import { FaceFeature } from '../model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from '../model/pattern/feature/RedEdgeFeature.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+
 import {
   LocalStorageEnumerationProperty,
   LocalStorageNullableEnumerationProperty,
   LocalStorageNumberProperty,
 } from '../util/localStorage.ts';
-import { UIText } from '../view/UIText.ts';
+
+import { availableThemes, currentTheme, themeProperty, uiFont } from '../view/Theme.ts';
 import { UILabeledVerticalAquaRadioButtonGroup } from '../view/UILabeledVerticalAquaRadioButtonGroup.ts';
-import { ArrowButton, Panel, Slider } from 'phet-lib/sun';
-import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
+import { UIText } from '../view/UIText.ts';
+import { DisplayTiling } from '../view/pattern/DisplayTiling.ts';
 import { EmbeddedPatternRuleNode } from '../view/pattern/EmbeddedPatternRuleNode.ts';
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
+import { getBestDisplayEmbeddingForRule } from '../view/pattern/getBestDisplayEmbeddingForRule.ts';
+import { TPuzzleStyle } from '../view/puzzle/TPuzzleStyle.ts';
 import {
   basicSectorsPuzzleStyle,
   classicPuzzleStyle,
@@ -23,18 +36,9 @@ import {
   puzzleStyleFromProperty,
   sectorsWithColorsPuzzleStyle,
 } from '../view/puzzle/puzzleStyles.ts';
-import { TPuzzleStyle } from '../view/puzzle/TPuzzleStyle.ts';
-import { availableThemes, currentTheme, themeProperty, uiFont } from '../view/Theme.ts';
-import { FaceFeature } from '../model/pattern/feature/FaceFeature.ts';
-import { RedEdgeFeature } from '../model/pattern/feature/RedEdgeFeature.ts';
-import { generalEdgeMixedGroup } from '../model/pattern/collection/generalEdgeMixedGroup.ts';
-import { generalEdgeColorMixedGroup } from '../model/pattern/collection/generalEdgeColorMixedGroup.ts';
-import { generalColorMixedGroup } from '../model/pattern/collection/generalColorMixedGroup.ts';
-import { generalEdgeSectorMixedGroup } from '../model/pattern/collection/generalEdgeSectorMixedGroup.ts';
-import { generalAllMixedGroup } from '../model/pattern/collection/generalAllMixedGroup.ts';
-import { DisplayTiling } from '../view/pattern/DisplayTiling.ts';
-import { computeEmbeddings } from '../model/pattern/embedding/computeEmbeddings.ts';
-import { getBestDisplayEmbeddingForRule } from '../view/pattern/getBestDisplayEmbeddingForRule.ts';
+
+import _ from '../workarounds/_.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 
 // Load with `http://localhost:5173/rule-explorer?debugger`
 

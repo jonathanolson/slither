@@ -1,11 +1,12 @@
-import { GeneralVertexStateAction } from './GeneralVertexStateAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeVertexStateData, TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TState } from '../core/TState.ts';
-import { TinyEmitter } from 'phet-lib/axon';
 import { TVertex } from '../../board/core/TVertex.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import { GeneralVertexStateAction } from './GeneralVertexStateAction.ts';
+import { TSerializedVertexStateData, TVertexStateData, serializeVertexStateData } from './TVertexStateData.ts';
 import { VertexState } from './VertexState.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralVertexStateDelta extends GeneralVertexStateAction implements TDelta<TVertexStateData> {
   public readonly vertexStateChangedEmitter = new TinyEmitter<

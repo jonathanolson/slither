@@ -1,7 +1,8 @@
-import { Formula } from './Formula.ts';
 // @ts-expect-error
 import Logic from '../solver/logic-solver/logic-solver.js';
+import { Formula } from './Formula.ts';
 import { Term } from './Term.ts';
+
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export class FormulaSolver<T> {

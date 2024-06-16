@@ -1,9 +1,10 @@
+import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
+import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { BinaryFeatureMap } from '../generation/BinaryFeatureMap.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
 import { GenericRichSolution } from './GenericRichSolution.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class RichSolution extends GenericRichSolution {
   public readonly solutionAttributeSet: SolutionAttributeSet;

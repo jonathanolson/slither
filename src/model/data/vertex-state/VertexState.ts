@@ -1,13 +1,15 @@
-import { TVertex } from '../../board/core/TVertex.ts';
-import _ from '../../../workarounds/_.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
-import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
 import EdgeState from '../edge-state/EdgeState.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
 import { TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
 import { getFaceOrderedSectorsFromVertex } from '../sector-state/getFaceOrderedSectorsFromVertex.ts';
+
 import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class VertexState {
   public readonly order: number;

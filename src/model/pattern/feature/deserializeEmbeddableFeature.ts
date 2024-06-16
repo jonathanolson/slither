@@ -1,17 +1,17 @@
-import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { FaceFeature } from './FaceFeature.ts';
 import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
-import { RedEdgeFeature } from './RedEdgeFeature.ts';
 import { FaceColorDualFeature } from './FaceColorDualFeature.ts';
-import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
+import { FaceFeature } from './FaceFeature.ts';
+import { FaceNotStateFeature } from './FaceNotStateFeature.ts';
+import { RedEdgeFeature } from './RedEdgeFeature.ts';
 import { SectorNotOneFeature } from './SectorNotOneFeature.ts';
-import { SectorNotZeroFeature } from './SectorNotZeroFeature.ts';
 import { SectorNotTwoFeature } from './SectorNotTwoFeature.ts';
+import { SectorNotZeroFeature } from './SectorNotZeroFeature.ts';
+import { SectorOnlyOneFeature } from './SectorOnlyOneFeature.ts';
+import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
+import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { VertexNotEmptyFeature } from './VertexNotEmptyFeature.ts';
 import { VertexNotPairFeature } from './VertexNotPairFeature.ts';
-import { FaceNotStateFeature } from './FaceNotStateFeature.ts';
 
 export const deserializeEmbeddableFeature = (
   serialized: TSerializedEmbeddableFeature,

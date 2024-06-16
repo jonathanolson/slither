@@ -1,43 +1,12 @@
-import { BooleanProperty, DerivedProperty, MappedProperty, Property } from 'phet-lib/axon';
-import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import {
-  autoSolveDoubleMinusOneFacesProperty,
-  autoSolveEnabledProperty,
-  autoSolveFaceColorParityColorsProperty,
-  autoSolveFaceColorParityPartialReductionProperty,
-  autoSolveFaceColorParityToBlackProperty,
-  autoSolveFaceColorParityToRedProperty,
-  autoSolveFaceColorToBlackProperty,
-  autoSolveFaceColorToRedProperty,
-  autoSolveFaceToBlackProperty,
-  autoSolveFaceToFaceColorsProperty,
-  autoSolveFaceToRedProperty,
-  autoSolveFaceToSectorsProperty,
-  autoSolveSimpleFaceToBlackProperty,
-  autoSolveSimpleFaceToRedProperty,
-  autoSolveSimpleLoopsProperty,
-  autoSolveSimpleLoopToBlackProperty,
-  autoSolveSimpleLoopToRedProperty,
-  autoSolveSimpleSectorProperty,
-  autoSolveSimpleVertexAlmostEmptyToRedProperty,
-  autoSolveSimpleVertexForcedLineToBlackProperty,
-  autoSolveSimpleVertexJointToRedProperty,
-  autoSolveStaticFaceSectorProperty,
-  autoSolveToBlackProperty,
-  autoSolveVertexColorToFaceProperty,
-  autoSolveVertexToBlackEdgeProperty,
-  autoSolveVertexToFaceColorProperty,
-  autoSolveVertexToRedEdgeProperty,
-  autoSolveVertexToSectorsProperty,
-} from '../model/solver/autoSolver';
+import { PopupNode } from './PopupNode.ts';
 import {
   allVertexStateVisibleProperty,
   availableThemes,
   currentTheme,
   edgesHaveColorsProperty,
   edgesVisibleProperty,
-  faceColorsVisibleProperty,
   faceColorThresholdProperty,
+  faceColorsVisibleProperty,
   faceStateVisibleProperty,
   faceValueStyleProperty,
   faceValueStyles,
@@ -64,24 +33,14 @@ import {
   verticesVisibleProperty,
   whiteLineVisibleProperty,
 } from './Theme.ts';
-import { PopupNode } from './PopupNode.ts';
-import { UITextCheckbox } from './UITextCheckbox.ts';
-import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
-import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
-import { UITextPushButton } from './UITextPushButton.ts';
-import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
-import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+import { TooltipListener } from './TooltipListener.ts';
 import { UIText } from './UIText.ts';
-import {
-  dimCompletedNumbersProperty,
-  highlightIncorrectMovesProperty,
-  highlightIncorrectNumbersProperty,
-  highlightIntersectionsProperty,
-  showUndoRedoAllProperty,
-  uiHintUsesBuiltInSolveProperty,
-} from '../model/puzzle/PuzzleModel.ts';
+import { UITextCheckbox } from './UITextCheckbox.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
 import { UITextSwitch } from './UITextSwitch.ts';
+import { ViewContext } from './ViewContext.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
+import { getVerticalRadioButtonGroup } from './getVerticalRadioButtonGroup.ts';
 import {
   basicFaceColoringPuzzleStyle,
   basicLinesPuzzleStyle,
@@ -96,9 +55,55 @@ import {
   showPuzzleTimerProperty,
   vertexStatePuzzleStyle,
 } from './puzzle/puzzleStyles.ts';
-import { ViewContext } from './ViewContext.ts';
-import { TooltipListener } from './TooltipListener.ts';
+
+import { BooleanProperty, DerivedProperty, MappedProperty, Property } from 'phet-lib/axon';
+import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
+
+import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+
+import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
+import {
+  dimCompletedNumbersProperty,
+  highlightIncorrectMovesProperty,
+  highlightIncorrectNumbersProperty,
+  highlightIntersectionsProperty,
+  showUndoRedoAllProperty,
+  uiHintUsesBuiltInSolveProperty,
+} from '../model/puzzle/PuzzleModel.ts';
 import StateTransitionMode, { stateTransitionModeProperty } from '../model/puzzle/StateTransitionMode.ts';
+import {
+  autoSolveDoubleMinusOneFacesProperty,
+  autoSolveEnabledProperty,
+  autoSolveFaceColorParityColorsProperty,
+  autoSolveFaceColorParityPartialReductionProperty,
+  autoSolveFaceColorParityToBlackProperty,
+  autoSolveFaceColorParityToRedProperty,
+  autoSolveFaceColorToBlackProperty,
+  autoSolveFaceColorToRedProperty,
+  autoSolveFaceToBlackProperty,
+  autoSolveFaceToFaceColorsProperty,
+  autoSolveFaceToRedProperty,
+  autoSolveFaceToSectorsProperty,
+  autoSolveSimpleFaceToBlackProperty,
+  autoSolveSimpleFaceToRedProperty,
+  autoSolveSimpleLoopToBlackProperty,
+  autoSolveSimpleLoopToRedProperty,
+  autoSolveSimpleLoopsProperty,
+  autoSolveSimpleSectorProperty,
+  autoSolveSimpleVertexAlmostEmptyToRedProperty,
+  autoSolveSimpleVertexForcedLineToBlackProperty,
+  autoSolveSimpleVertexJointToRedProperty,
+  autoSolveStaticFaceSectorProperty,
+  autoSolveToBlackProperty,
+  autoSolveVertexColorToFaceProperty,
+  autoSolveVertexToBlackEdgeProperty,
+  autoSolveVertexToFaceColorProperty,
+  autoSolveVertexToRedEdgeProperty,
+  autoSolveVertexToSectorsProperty,
+} from '../model/solver/autoSolver';
+
+import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
+
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty(
   'advancedSettingsVisibleProperty',

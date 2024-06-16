@@ -1,5 +1,6 @@
 // @ts-expect-error
 import { clampChroma, converter, formatHex, parse, toGamut } from 'culori';
+
 import { Color } from 'phet-lib/scenery';
 
 export const toRGB = toGamut('rgb');

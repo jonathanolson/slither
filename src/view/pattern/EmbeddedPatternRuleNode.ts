@@ -1,15 +1,18 @@
-import { HBox, Node, NodeOptions, Text } from 'phet-lib/scenery';
-import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
-import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
-import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
-import PuzzleNode from '../puzzle/PuzzleNode.ts';
 import { puzzleFont } from '../Theme.ts';
-import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
-import { Shape } from 'phet-lib/kite';
-import { Panel } from 'phet-lib/sun';
-import { optionize } from 'phet-lib/phet-core';
+import PuzzleNode from '../puzzle/PuzzleNode.ts';
 import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
+
+import { Shape } from 'phet-lib/kite';
+import { optionize } from 'phet-lib/phet-core';
+import { HBox, Node, NodeOptions, Text } from 'phet-lib/scenery';
 import { ArrowNode } from 'phet-lib/scenery-phet';
+import { Panel } from 'phet-lib/sun';
+
+import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
+import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
+import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
+
 
 type SelfOptions = {
   style?: TPuzzleStyle;

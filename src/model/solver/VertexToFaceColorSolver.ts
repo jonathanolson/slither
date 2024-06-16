@@ -1,17 +1,18 @@
-import { TSolver } from './TSolver.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TVertex } from '../board/core/TVertex.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
-import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
-import { getFaceOrderedSectorsFromVertex } from '../data/sector-state/getFaceOrderedSectorsFromVertex.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { TState } from '../data/core/TState.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import { getFaceOrderedSectorsFromVertex } from '../data/sector-state/getFaceOrderedSectorsFromVertex.ts';
+import { TVertexStateData, TVertexStateListener } from '../data/vertex-state/TVertexStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type Data = TFaceColorData & TVertexStateData;
 

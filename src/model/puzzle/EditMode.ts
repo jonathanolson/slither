@@ -1,6 +1,8 @@
-import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
 import { BooleanProperty, DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
+
+import { LocalStorageBooleanProperty, LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
+
 import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
 
 export default class EditMode extends EnumerationValue {

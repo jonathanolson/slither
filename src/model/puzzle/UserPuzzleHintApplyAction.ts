@@ -1,9 +1,9 @@
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { TAnnotation } from '../data/core/TAnnotation.ts';
-import { TAction, TSerializedAction } from '../data/core/TAction.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { NoOpAction } from '../data/core/NoOpAction.ts';
+import { TAction, TSerializedAction } from '../data/core/TAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TAnnotation } from '../data/core/TAnnotation.ts';
 
 export class UserPuzzleHintApplyAction implements TAnnotatedAction<TCompleteData> {
   public constructor(public readonly hintAction: TAnnotatedAction<TCompleteData>) {}

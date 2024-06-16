@@ -1,19 +1,20 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { FeatureSet } from '../feature/FeatureSet.ts';
-import { ConnectedFacePair, FaceConnectivity } from '../pattern-board/FaceConnectivity.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { TPatternSector } from '../pattern-board/TPatternSector.ts';
-import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
-import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { BlackEdgeFeature } from '../feature/BlackEdgeFeature.ts';
-import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
+import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
+import { FeatureSet } from '../feature/FeatureSet.ts';
+import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
+import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { SectorNotOneFeature } from '../feature/SectorNotOneFeature.ts';
 import { SectorNotTwoFeature } from '../feature/SectorNotTwoFeature.ts';
-import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
-import _ from '../../../workarounds/_.ts';
-import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
+import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
+import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
+import { ConnectedFacePair, FaceConnectivity } from '../pattern-board/FaceConnectivity.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export type BinaryFeatureMapOptions = {
   solveEdges: boolean;

@@ -1,14 +1,16 @@
-import { TState } from '../core/TState.ts';
-import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from './TFaceValueData.ts';
-import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { GeneralFaceValueDelta } from './GeneralFaceValueDelta.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import { TSerializedFace } from '../../board/core/TSerializedFace.ts';
 import { deserializeFace } from '../../board/core/deserializeFace.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import FaceValue from './FaceValue.ts';
+import { GeneralFaceValueDelta } from './GeneralFaceValueDelta.ts';
+import { TFaceValueData, TSerializedFaceValueData, serializeFaceValueData } from './TFaceValueData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralFaceValueData implements TState<TFaceValueData> {
   public readonly faceValueChangedEmitter = new TinyEmitter<[TFace, FaceValue]>();

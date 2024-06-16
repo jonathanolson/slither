@@ -1,13 +1,15 @@
-import { TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
+import { TState } from '../core/TState.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorValidator implements TState<TFaceColorData> {
   public readonly faceColorsChangedEmitter = new TinyEmitter<

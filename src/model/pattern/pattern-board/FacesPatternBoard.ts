@@ -1,21 +1,23 @@
-import { BasePatternBoard } from './BasePatternBoard.ts';
-import { TPlanarMappedPatternBoard } from './planar-map/TPlanarMappedPatternBoard.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TFace } from '../../board/core/TFace.ts';
-import { TPlanarPatternMap } from './planar-map/TPlanarPatternMap.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
-import { TPatternVertex } from './TPatternVertex.ts';
-import { Vector2 } from 'phet-lib/dot';
-import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { getSectorFromEdgePair } from '../../data/sector-state/getSectorFromEdgePair.ts';
-import { TPatternFace } from './TPatternFace.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
-import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
-import _ from '../../../workarounds/_.ts';
-import { PolygonalBoard } from '../../board/core/TiledBoard.ts';
 import { PolygonGenerator } from '../../board/PolygonGenerator.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { PolygonalBoard } from '../../board/core/TiledBoard.ts';
+import { getSectorFromEdgePair } from '../../data/sector-state/getSectorFromEdgePair.ts';
+import { BasePatternBoard } from './BasePatternBoard.ts';
+import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import { TPatternSector } from './TPatternSector.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
+import { arePatternBoardsIsomorphic } from './arePatternBoardsIsomorphic.ts';
+import { TPlanarMappedPatternBoard } from './planar-map/TPlanarMappedPatternBoard.ts';
+import { TPlanarPatternMap } from './planar-map/TPlanarPatternMap.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FacesPatternBoard extends BasePatternBoard implements TPlanarMappedPatternBoard {
   // TODO: can we remove this self-reference?

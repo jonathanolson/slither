@@ -1,16 +1,20 @@
-import { Circle, GridBox, Node, Path } from 'phet-lib/scenery';
-import { TFace } from '../../model/board/core/TFace.ts';
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { TState } from '../../model/data/core/TState.ts';
 import { puzzleFont } from '../Theme.ts';
+import { UIText } from '../UIText.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { Circle, GridBox, Node, Path } from 'phet-lib/scenery';
+
+import { TEdge } from '../../model/board/core/TEdge.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
+import { TState } from '../../model/data/core/TState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceStateData } from '../../model/data/face-state/TFaceStateData.ts';
-import { UIText } from '../UIText.ts';
-import { Shape } from 'phet-lib/kite';
-import { TEdge } from '../../model/board/core/TEdge.ts';
+
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
 
 export class FaceStateNode extends Node {
   public constructor(

@@ -1,61 +1,61 @@
+import { browserEvaluate, disposeBrowser, getBrowser } from './puppeteer-tools.js';
 import fs from 'fs';
 import os from 'os';
-import { browserEvaluate, disposeBrowser, getBrowser } from './puppeteer-tools.js';
 
-const name = process.argv[ 2 ];
+const name = process.argv[2];
 
-os.setPriority( os.constants.priority.PRIORITY_LOW );
+os.setPriority(os.constants.priority.PRIORITY_LOW);
 
-( async () => {
+(async () => {
   const browser = await getBrowser();
 
-  const evaluateHooks = async evaluate => {
-    return browserEvaluate( browser, 'http://localhost/slither/dist/hooks.html', evaluate );
+  const evaluateHooks = async (evaluate) => {
+    return browserEvaluate(browser, 'http://localhost/slither/dist/hooks.html', evaluate);
   };
 
-  const loadCollectionFromSequence = name => {
-    const sequence = JSON.parse( fs.readFileSync( `./data-sequences/${name}.json`, 'utf8' ) );
+  const loadCollectionFromSequence = (name) => {
+    const sequence = JSON.parse(fs.readFileSync(`./data-sequences/${name}.json`, 'utf8'));
     return sequence.collection;
   };
 
-  const withCollection = async ( name, a, b ) => {
-    console.log( name );
-    return evaluateHooks( `withCollection( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  const withCollection = async (name, a, b) => {
+    console.log(name);
+    return evaluateHooks(`withCollection( ${JSON.stringify(a)}, ${JSON.stringify(b)} )`);
   };
 
-  const withCollectionNonequal = async ( name, a, b ) => {
-    console.log( name );
-    return evaluateHooks( `withCollectionNonequal( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  const withCollectionNonequal = async (name, a, b) => {
+    console.log(name);
+    return evaluateHooks(`withCollectionNonequal( ${JSON.stringify(a)}, ${JSON.stringify(b)} )`);
   };
 
-  const withCollectionNonredundant = async ( name, a, b ) => {
-    console.log( name );
-    return evaluateHooks( `withCollectionNonredundant( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  const withCollectionNonredundant = async (name, a, b) => {
+    console.log(name);
+    return evaluateHooks(`withCollectionNonredundant( ${JSON.stringify(a)}, ${JSON.stringify(b)} )`);
   };
 
-  const withoutCollectionNonequal = async ( name, a, b ) => {
-    console.log( name );
-    return evaluateHooks( `withoutCollectionNonequal( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  const withoutCollectionNonequal = async (name, a, b) => {
+    console.log(name);
+    return evaluateHooks(`withoutCollectionNonequal( ${JSON.stringify(a)}, ${JSON.stringify(b)} )`);
   };
 
-  const withoutCollectionNonredundant = async ( name, a, b ) => {
-    console.log( name );
-    return evaluateHooks( `withoutCollectionNonredundant( ${JSON.stringify( a )}, ${JSON.stringify( b )} )` )
+  const withoutCollectionNonredundant = async (name, a, b) => {
+    console.log(name);
+    return evaluateHooks(`withoutCollectionNonredundant( ${JSON.stringify(a)}, ${JSON.stringify(b)} )`);
   };
 
-  const arrayCombine = async ( name, f, array ) => {
-    let result = array[ 0 ];
+  const arrayCombine = async (name, f, array) => {
+    let result = array[0];
 
-    for ( let i = 1; i < array.length; i++ ) {
-      result = await f( `${name} ${i}`, result, array[ i ] );
+    for (let i = 1; i < array.length; i++) {
+      result = await f(`${name} ${i}`, result, array[i]);
     }
 
     return result;
   };
 
-  const writeToFile = ( name, collection ) => {
-    console.log( `writing ${name}` );
-    fs.writeFileSync( `./data/collections/${name}.json`, JSON.stringify( collection ), 'utf8' );
+  const writeToFile = (name, collection) => {
+    console.log(`writing ${name}`);
+    fs.writeFileSync(`./data/collections/${name}.json`, JSON.stringify(collection), 'utf8');
   };
 
   const writeWith = async (
@@ -69,23 +69,18 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
     const unrestrictedFullCollection = await arrayCombine(
       `${name} unrestricted full`,
       withCollectionNonredundant,
-      unrestrictedFullNames.map( loadCollectionFromSequence )
+      unrestrictedFullNames.map(loadCollectionFromSequence),
     );
-    writeToFile( `${name}`, unrestrictedFullCollection );
+    writeToFile(`${name}`, unrestrictedFullCollection);
 
     let unrestrictedCollection;
-    if ( unrestrictedFallbackNames.length ) {
-
+    if (unrestrictedFallbackNames.length) {
       // non-redundant combine all "unrestricted" (so we will filter out ANYTHING that can be derived IN ORDER)
       // NOTE: doing this combination so PARTS of the fallbacks get considered for redundancy when computing next things
-      unrestrictedCollection = await arrayCombine(
-        `${name} unrestricted fallback combine`,
-        withCollectionNonredundant,
-        [
-          unrestrictedFullCollection,
-          ...unrestrictedFallbackNames.map( loadCollectionFromSequence ),
-        ]
-      );
+      unrestrictedCollection = await arrayCombine(`${name} unrestricted fallback combine`, withCollectionNonredundant, [
+        unrestrictedFullCollection,
+        ...unrestrictedFallbackNames.map(loadCollectionFromSequence),
+      ]);
 
       // Now, just filter out the DIRECT/EXACT rules from the "full"
       const unrestrictedFallbackCollection = await withoutCollectionNonequal(
@@ -93,18 +88,17 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         unrestrictedCollection,
         unrestrictedFullCollection,
       );
-      writeToFile( `${name}-fallback`, unrestrictedFallbackCollection );
-    }
-    else {
+      writeToFile(`${name}-fallback`, unrestrictedFallbackCollection);
+    } else {
       unrestrictedCollection = unrestrictedFullCollection;
     }
 
-    if ( highlanderFullNames.length ) {
+    if (highlanderFullNames.length) {
       // non-equal combine all "highlander full"
       const combinedHighlanderFullCollection = await arrayCombine(
         `${name} highlander full`,
         withCollectionNonequal,
-        highlanderFullNames.map( loadCollectionFromSequence )
+        highlanderFullNames.map(loadCollectionFromSequence),
       );
 
       // non-redundant filter based on unrestricted
@@ -113,14 +107,14 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         combinedHighlanderFullCollection,
         unrestrictedCollection,
       );
-      writeToFile( `${name}-highlander`, highlanderFullCollection );
+      writeToFile(`${name}-highlander`, highlanderFullCollection);
 
-      if ( highlanderFallbackNames.length ) {
+      if (highlanderFallbackNames.length) {
         // non-equal combine all "highlander fallback"
         const combinedHighlanderFallbackCollection = await arrayCombine(
           `${name} highlander fallback initial`,
           withCollectionNonequal,
-          highlanderFallbackNames.map( loadCollectionFromSequence )
+          highlanderFallbackNames.map(loadCollectionFromSequence),
         );
 
         // non-equal filter (ignore the full-highlander rules)
@@ -137,35 +131,24 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
           initialFilteredCollection,
           unrestrictedCollection,
         );
-        writeToFile( `${name}-highlander-fallback`, highlanderFallbackCollection );
+        writeToFile(`${name}-highlander-fallback`, highlanderFallbackCollection);
       }
     }
   };
 
-  if ( name === 'general-edge' ) {
-    await writeWith( 'general-edge',
-      [
-        'general-edge-unrestricted',
-        'square-only-edge-unrestricted',
-      ],
-      [
-      ],
-      [
-        'general-edge',
-        'square-only-edge',
-      ],
-      [
-      ],
+  if (name === 'general-edge') {
+    await writeWith(
+      'general-edge',
+      ['general-edge-unrestricted', 'square-only-edge-unrestricted'],
+      [],
+      ['general-edge', 'square-only-edge'],
+      [],
     );
-  }
-  else if ( name === 'general-color' ) {
-    await writeWith( 'general-color',
-      [
-        'general-color-unrestricted',
-        'square-only-color-unrestricted',
-      ],
-      [
-      ],
+  } else if (name === 'general-color') {
+    await writeWith(
+      'general-color',
+      ['general-color-unrestricted', 'square-only-color-unrestricted'],
+      [],
       [
         // 'general-color', TODO: nope, BAD!
       ],
@@ -173,23 +156,17 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         // 'square-only-color', TODO: nope, BAD!
       ],
     );
-  }
-  else if ( name === 'general-edge-color' ) {
-    await writeWith( 'general-edge-color',
-      [
-        'general-edge-color-unrestricted',
-        'square-only-edge-color-unrestricted',
-      ],
+  } else if (name === 'general-edge-color') {
+    await writeWith(
+      'general-edge-color',
+      ['general-edge-color-unrestricted', 'square-only-edge-color-unrestricted'],
       [
         'general-color-unrestricted',
         'square-only-color-unrestricted',
         'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
-      [
-        'general-edge-color',
-        'square-only-edge-color',
-      ],
+      ['general-edge-color', 'square-only-edge-color'],
       [
         // 'general-color',
         'general-edge',
@@ -197,33 +174,18 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         'square-only-edge',
       ],
     );
-  }
-  else if ( name === 'general-edge-sector' ) {
-    await writeWith( 'general-edge-sector',
-      [
-        'general-edge-sector-unrestricted',
-        'square-only-edge-sector-unrestricted',
-      ],
-      [
-        'general-edge-unrestricted',
-        'square-only-edge-unrestricted',
-      ],
-      [
-        'general-edge-sector',
-        'square-only-edge-sector',
-      ],
-      [
-        'general-edge',
-        'square-only-edge',
-      ],
+  } else if (name === 'general-edge-sector') {
+    await writeWith(
+      'general-edge-sector',
+      ['general-edge-sector-unrestricted', 'square-only-edge-sector-unrestricted'],
+      ['general-edge-unrestricted', 'square-only-edge-unrestricted'],
+      ['general-edge-sector', 'square-only-edge-sector'],
+      ['general-edge', 'square-only-edge'],
     );
-  }
-  else if ( name === 'general-all' ) {
-    await writeWith( 'general-all',
-      [
-        'general-all-unrestricted',
-        'square-only-all-unrestricted',
-      ],
+  } else if (name === 'general-all') {
+    await writeWith(
+      'general-all',
+      ['general-all-unrestricted', 'square-only-all-unrestricted'],
       [
         'general-edge-color-unrestricted',
         'square-only-edge-color-unrestricted',
@@ -234,10 +196,7 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         'general-edge-unrestricted',
         'square-only-edge-unrestricted',
       ],
-      [
-        'general-all',
-        'square-only-all',
-      ],
+      ['general-all', 'square-only-all'],
       [
         'general-edge-color',
         'square-only-edge-color',
@@ -247,10 +206,9 @@ os.setPriority( os.constants.priority.PRIORITY_LOW );
         'square-only-edge',
       ],
     );
-  }
-  else {
-    throw new Error( 'unknown name', name );
+  } else {
+    throw new Error('unknown name', name);
   }
 
-  await disposeBrowser( browser );
-} )();
+  await disposeBrowser(browser);
+})();

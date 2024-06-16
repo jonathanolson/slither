@@ -1,7 +1,9 @@
 import { TStructure } from './TStructure.ts';
 import { TVertex } from './TVertex.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 import { Vector2 } from 'phet-lib/dot';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BaseVertex<Structure extends TStructure> implements TVertex {
   // Half-edges with this vertex as their end vertex, in CCW order

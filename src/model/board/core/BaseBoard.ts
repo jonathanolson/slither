@@ -1,5 +1,5 @@
-import { TStructure } from './TStructure.ts';
 import { TBoard } from './TBoard.ts';
+import { TStructure } from './TStructure.ts';
 import { TBoardDescriptor } from './createBoardDescriptor.ts';
 
 export class BaseBoard<Structure extends TStructure> implements TBoard<Structure> {

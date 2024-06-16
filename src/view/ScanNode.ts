@@ -1,19 +1,24 @@
-import { HBox, Image, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
 import { PopupNode } from './PopupNode.ts';
 import { currentTheme, uiFont } from './Theme.ts';
-import { ScanOptions } from '../scan/scanURL.ts';
-import { Contour } from '../scan/Contour.ts';
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+import { UIText } from './UIText.ts';
+import { ViewContext } from './ViewContext.ts';
+import PuzzleNode from './puzzle/PuzzleNode.ts';
+
+import { HBox, Image, Node, Path, Rectangle, Text, VBox } from 'phet-lib/scenery';
+
+import { TEdge } from '../model/board/core/TEdge.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { TEdge } from '../model/board/core/TEdge.ts';
-import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import EdgeState from '../model/data/edge-state/EdgeState.ts';
-import PuzzleNode from './puzzle/PuzzleNode.ts';
-import { UIText } from './UIText.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { safeSolve } from '../model/solver/safeSolve.ts';
-import { ViewContext } from './ViewContext.ts';
+
+import { Contour } from '../scan/Contour.ts';
+import { ScanOptions } from '../scan/scanURL.ts';
+
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+
 
 // TODO: culori?
 const undecidedStroke = '#444';

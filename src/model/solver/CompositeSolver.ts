@@ -1,6 +1,6 @@
-import { TSolver } from './TSolver.ts';
-import { TState } from '../data/core/TState.ts';
 import { TAction } from '../data/core/TAction.ts';
+import { TState } from '../data/core/TState.ts';
+import { TSolver } from './TSolver.ts';
 
 export class CompositeSolver<Data, Action extends TAction<Data> = TAction<Data>> implements TSolver<Data, Action> {
   public constructor(private readonly solvers: TSolver<Data, Action>[]) {}

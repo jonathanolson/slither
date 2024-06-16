@@ -1,20 +1,24 @@
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { CompleteData } from '../data/combined/CompleteData.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TState } from '../data/core/TState.ts';
-import { CompleteData } from '../data/combined/CompleteData.ts';
-import { dotRandom } from 'phet-lib/dot';
-import { TFace } from '../board/core/TFace.ts';
-import _ from '../../workarounds/_.ts';
-import { satSolve } from '../solver/SATSolver.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { getSolvedPuzzle, TSolvedPuzzle } from './TSolvedPuzzle.ts';
-import { TStructure } from '../board/core/TStructure.ts';
-import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import FaceValue from '../data/face-value/FaceValue.ts';
-import { interruptableSleep } from '../../util/interruptableSleep.ts';
-import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
-import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
+import { satSolve } from '../solver/SATSolver.ts';
 import { MaximumSolverIterationsError } from '../solver/errors/MaximumSolverIterationsError.ts';
+import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
+import { TSolvedPuzzle, getSolvedPuzzle } from './TSolvedPuzzle.ts';
+
+import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
+import { dotRandom } from 'phet-lib/dot';
+
+import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
+
+import { interruptableSleep } from '../../util/interruptableSleep.ts';
+
+import _ from '../../workarounds/_.ts';
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
 // TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)

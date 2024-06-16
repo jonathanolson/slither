@@ -1,20 +1,22 @@
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { deserializeFace } from '../../board/core/deserializeFace.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
+import { GeneralFaceColor } from './GeneralFaceColor.ts';
+import { GeneralFaceColorDelta } from './GeneralFaceColorDelta.ts';
 import FaceColorState, {
-  serializeFaceColorData,
   TFaceColor,
   TFaceColorData,
   TSerializedFaceColorData,
+  serializeFaceColorData,
 } from './TFaceColorData.ts';
+
 import { TinyEmitter } from 'phet-lib/axon';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { GeneralFaceColorDelta } from './GeneralFaceColorDelta.ts';
-import { GeneralFaceColor } from './GeneralFaceColor.ts';
-import { TFace } from '../../board/core/TFace.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { dotRandom } from 'phet-lib/dot';
+
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
-import { deserializeFace } from '../../board/core/deserializeFace.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const getFaceColorGlobalId = (): number => dotRandom.nextInt(Number.MAX_SAFE_INTEGER);
 

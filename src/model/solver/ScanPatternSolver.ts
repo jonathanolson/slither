@@ -1,19 +1,19 @@
-import { TSolver } from './TSolver.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
-import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
-import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
 import { Embedding } from '../pattern/embedding/Embedding.ts';
 import { getEmbeddings } from '../pattern/embedding/getEmbeddings.ts';
-import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BoardFeatureData } from '../pattern/feature/BoardFeatureData.ts';
 import FeatureSetMatchState from '../pattern/feature/FeatureSetMatchState.ts';
+import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
+import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
+import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
 import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
+import { TSolver } from './TSolver.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 

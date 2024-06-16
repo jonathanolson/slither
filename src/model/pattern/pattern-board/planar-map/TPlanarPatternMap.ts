@@ -1,12 +1,14 @@
-import { TPatternVertex } from '../TPatternVertex.ts';
-import { Vector2 } from 'phet-lib/dot';
-import { TPatternSector } from '../TPatternSector.ts';
+import { TPatternBoard } from '../TPatternBoard.ts';
+import { TPatternBoardDescriptor } from '../TPatternBoardDescriptor.ts';
 import { TPatternEdge } from '../TPatternEdge.ts';
 import { TPatternFace } from '../TPatternFace.ts';
-import { TPatternBoard } from '../TPatternBoard.ts';
-import assert, { assertEnabled } from '../../../../workarounds/assert.ts';
+import { TPatternSector } from '../TPatternSector.ts';
+import { TPatternVertex } from '../TPatternVertex.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+
 import _ from '../../../../workarounds/_.ts';
-import { TPatternBoardDescriptor } from '../TPatternBoardDescriptor.ts';
+import assert, { assertEnabled } from '../../../../workarounds/assert.ts';
 
 export interface TPlanarPatternMap {
   vertexMap: Map<TPatternVertex, Vector2>;

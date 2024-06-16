@@ -1,7 +1,8 @@
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { Text, TextOptions } from 'phet-lib/scenery';
 import { currentTheme, uiFont } from './Theme.ts';
+
+import { TReadOnlyProperty } from 'phet-lib/axon';
 import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
+import { Text, TextOptions } from 'phet-lib/scenery';
 
 export type UITextOptions = TextOptions;
 

@@ -1,7 +1,10 @@
-import { TBoard } from '../../model/board/core/TBoard.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
+
 import { Shape } from 'phet-lib/kite';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
+
 
 // TODO: better options pattern!
 export type FaceViewInteractionNodeOptions = {

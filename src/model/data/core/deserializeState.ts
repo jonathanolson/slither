@@ -1,10 +1,10 @@
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TSerializedState } from './TSerializedState.ts';
-import { TCompleteData } from '../combined/TCompleteData.ts';
 import { CompleteData } from '../combined/CompleteData.ts';
-import { GeneralFaceValueData } from '../face-value/GeneralFaceValueData.ts';
+import { TCompleteData } from '../combined/TCompleteData.ts';
 import { GeneralEdgeStateData } from '../edge-state/GeneralEdgeStateData.ts';
+import { GeneralFaceValueData } from '../face-value/GeneralFaceValueData.ts';
 import { GeneralSimpleRegionData } from '../simple-region/GeneralSimpleRegionData.ts';
+import { TSerializedState } from './TSerializedState.ts';
 import { TState } from './TState.ts';
 
 export const deserializeState = (board: TBoard, serializedState: TSerializedState): TState<TCompleteData> => {

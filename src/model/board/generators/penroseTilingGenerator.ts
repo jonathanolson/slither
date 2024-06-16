@@ -1,6 +1,8 @@
 import { PolygonGenerator } from '../PolygonGenerator.ts';
+import { penrose6, penrose10, penrose11, penrose13, penrose14, penrose20 } from '../core/TiledBoard.ts';
+
 import { Vector2 } from 'phet-lib/dot';
-import { penrose10, penrose11, penrose13, penrose14, penrose20, penrose6 } from '../core/TiledBoard.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const penroseTilingGenerator: PolygonGenerator = {

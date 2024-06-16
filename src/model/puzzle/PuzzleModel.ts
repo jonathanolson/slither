@@ -1,60 +1,65 @@
+import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
+import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteAction.ts';
+import { EraseFaceCompleteAction } from '../data/combined/EraseFaceCompleteAction.ts';
+import { EraseSectorCompleteAction } from '../data/combined/EraseSectorCompleteAction.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TSerializedAction } from '../data/core/TAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TAnnotation } from '../data/core/TAnnotation.ts';
+import { TState } from '../data/core/TState.ts';
+import { deserializeAction } from '../data/core/deserializeAction.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
+import { FaceColorSetAbsoluteAction } from '../data/face-color/FaceColorSetAbsoluteAction.ts';
+import FaceColorState, { TFaceColor } from '../data/face-color/TFaceColorData.ts';
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { satSolve } from '../solver/SATSolver.ts';
+import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
+import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
+import { AutoSolverInvalidatedUserActionError } from '../solver/errors/AutoSolverInvalidatedUserActionError.ts';
+import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
+import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
+import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
+import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
+import HintState from './HintState.ts';
+import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
+import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
+import { stateTransitionModeProperty } from './StateTransitionMode.ts';
+import { TSolvablePropertyPuzzle } from './TPuzzle.ts';
+import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
+import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
+import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
+import { puzzleToCompressedString } from './puzzleToCompressedString.ts';
+import { serializedSolvablePuzzle } from './serializedSolvablePuzzle.ts';
+
 import {
   DerivedProperty,
   Disposable,
   TEmitter,
-  TinyEmitter,
-  TinyProperty,
   TProperty,
   TReadOnlyProperty,
+  TinyEmitter,
+  TinyProperty,
 } from 'phet-lib/axon';
-import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
-import { autoSolveEnabledProperty } from '../solver/autoSolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory, withSolverFactory } from '../solver/TSolver.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
-import { TStructure } from '../board/core/TStructure.ts';
-import { TBoard } from '../board/core/TBoard.ts';
-import { TSolvablePropertyPuzzle } from './TPuzzle.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
-import { satSolve } from '../solver/SATSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { CompleteValidator } from '../data/combined/CompleteValidator.ts';
-import { TAnnotation } from '../data/core/TAnnotation.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
-import { TFace } from '../board/core/TFace.ts';
-import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
-import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
-import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
-import FaceColorState, { TFaceColor } from '../data/face-color/TFaceColorData.ts';
-import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
-import { TSector } from '../data/sector-state/TSector.ts';
-import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
-import SectorState from '../data/sector-state/SectorState.ts';
-import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
-import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
-import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
-import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
-import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
-import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
-import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
-import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 import { optionize } from 'phet-lib/phet-core';
-import { puzzleToCompressedString } from './puzzleToCompressedString.ts';
+
+import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
+
+import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
+import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
+
 import { getHintWorker, hintWorkerLoadedProperty } from '../../workers/getHintWorker.ts';
-import { serializedSolvablePuzzle } from './serializedSolvablePuzzle.ts';
-import { TSerializedAction } from '../data/core/TAction.ts';
-import { deserializeAction } from '../data/core/deserializeAction.ts';
-import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
-import HintState from './HintState.ts';
-import { FaceColorSetAbsoluteAction } from '../data/face-color/FaceColorSetAbsoluteAction.ts';
-import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteAction.ts';
-import { AutoSolverInvalidatedUserActionError } from '../solver/errors/AutoSolverInvalidatedUserActionError.ts';
-import { EraseFaceCompleteAction } from '../data/combined/EraseFaceCompleteAction.ts';
-import { EraseSectorCompleteAction } from '../data/combined/EraseSectorCompleteAction.ts';
-import { stateTransitionModeProperty } from './StateTransitionMode.ts';
+
 
 export const uiHintUsesBuiltInSolveProperty = new LocalStorageBooleanProperty('uiHintUsesBuiltInSolve', false);
 export const showUndoRedoAllProperty = new LocalStorageBooleanProperty('showUndoRedoAllProperty', false);

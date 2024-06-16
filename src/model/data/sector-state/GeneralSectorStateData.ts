@@ -1,14 +1,16 @@
-import { TState } from '../core/TState.ts';
-import { serializeSectorStateData, TSectorStateData, TSerializedSectorStateData } from './TSectorStateData.ts';
-import SectorState, { TSerializedSectorState } from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { TSector } from './TSector.ts';
-import { GeneralSectorStateDelta } from './GeneralSectorStateDelta.ts';
 import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
 import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import { GeneralSectorStateDelta } from './GeneralSectorStateDelta.ts';
+import SectorState, { TSerializedSectorState } from './SectorState.ts';
+import { TSector } from './TSector.ts';
+import { TSectorStateData, TSerializedSectorStateData, serializeSectorStateData } from './TSectorStateData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralSectorStateData implements TState<TSectorStateData> {
   public readonly sectorStateChangedEmitter = new TinyEmitter<

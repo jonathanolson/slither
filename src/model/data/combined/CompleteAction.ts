@@ -1,14 +1,14 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TCompleteData } from './TCompleteData.ts';
-import { TFaceValueData } from '../face-value/TFaceValueData.ts';
-import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
-import { TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
-import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
-import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { deserializeAction } from '../core/deserializeAction.ts';
+import { TEdgeStateData } from '../edge-state/TEdgeStateData.ts';
+import { TFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TFaceStateData } from '../face-state/TFaceStateData.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
+import { TSectorStateData } from '../sector-state/TSectorStateData.ts';
+import { TSimpleRegionData } from '../simple-region/TSimpleRegionData.ts';
+import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+import { TCompleteData } from './TCompleteData.ts';
 
 export class CompleteAction implements TAction<TCompleteData> {
   public constructor(

@@ -1,18 +1,19 @@
-import { TSolver } from './TSolver.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import FaceValue from '../data/face-value/FaceValue.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
-import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
-import SectorState from '../data/sector-state/SectorState.ts';
-import { TSector } from '../data/sector-state/TSector.ts';
-import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
+import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TFaceValueData & TSectorStateData;

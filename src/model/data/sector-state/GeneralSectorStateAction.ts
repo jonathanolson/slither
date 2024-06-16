@@ -1,11 +1,11 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TSectorStateData } from './TSectorStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
+import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
+import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import SectorState, { TSerializedSectorState } from './SectorState.ts';
 import { TSector } from './TSector.ts';
-import { TSerializedHalfEdge } from '../../board/core/TSerializedHalfEdge.ts';
-import { serializeHalfEdge } from '../../board/core/serializeHalfEdge.ts';
-import { deserializeHalfEdge } from '../../board/core/deserializeHalfEdge.ts';
+import { TSectorStateData } from './TSectorStateData.ts';
 
 export class GeneralSectorStateAction implements TAction<TSectorStateData> {
   public constructor(

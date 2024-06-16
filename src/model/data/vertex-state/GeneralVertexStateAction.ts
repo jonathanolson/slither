@@ -1,11 +1,11 @@
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TSerializedVertex } from '../../board/core/TSerializedVertex.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { deserializeVertex } from '../../board/core/deserializeVertex.ts';
+import { serializeVertex } from '../../board/core/serializeVertex.ts';
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TVertexStateData } from './TVertexStateData.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
 import { TSerializedVertexState, VertexState } from './VertexState.ts';
-import { TSerializedVertex } from '../../board/core/TSerializedVertex.ts';
-import { serializeVertex } from '../../board/core/serializeVertex.ts';
-import { deserializeVertex } from '../../board/core/deserializeVertex.ts';
 
 export class GeneralVertexStateAction implements TAction<TVertexStateData> {
   public constructor(

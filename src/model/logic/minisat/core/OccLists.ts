@@ -1,8 +1,8 @@
 import { Vec } from '../mtl/Vec';
 import { VecNumber } from '../mtl/VecNumber';
+import { Lit } from './Lit';
 import { VecLit } from './VecLit';
 import { Watcher } from './Watcher';
-import { Lit } from './Lit';
 
 export class OccLists {
   private occs: Vec<Vec<Watcher>> = new Vec<Vec<Watcher>>();

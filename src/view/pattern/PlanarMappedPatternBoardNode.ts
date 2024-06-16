@@ -1,9 +1,11 @@
-import { Circle, Line, Node, Path, Text } from 'phet-lib/scenery';
-import { TPlanarMappedPatternBoard } from '../../model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
+import { puzzleFont } from '../Theme.ts';
+
 import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
+import { Circle, Line, Node, Path, Text } from 'phet-lib/scenery';
+
 import { getCentroid } from '../../model/board/core/createBoardDescriptor.ts';
-import { puzzleFont } from '../Theme.ts';
+import { TPlanarMappedPatternBoard } from '../../model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
 
 export type PlanarMappedPatternBoardNodeOptions = {
   labels?: boolean;

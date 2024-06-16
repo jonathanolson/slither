@@ -1,6 +1,6 @@
-import { FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
-import { Shape } from 'phet-lib/kite';
 import { TEmitter } from 'phet-lib/axon';
+import { Shape } from 'phet-lib/kite';
+import { FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
 
 export type ShapeInteractionNodeOptions<T> = {
   delayInteractionEmitter?: TEmitter<[T]>;

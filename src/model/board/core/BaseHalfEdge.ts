@@ -1,5 +1,6 @@
-import { TStructure } from './TStructure.ts';
 import { THalfEdge } from './THalfEdge.ts';
+import { TStructure } from './TStructure.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BaseHalfEdge<Structure extends TStructure> implements THalfEdge {

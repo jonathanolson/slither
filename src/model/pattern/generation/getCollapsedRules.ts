@@ -1,5 +1,6 @@
 // Find rules with the same input feature set and collapse them (union)
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const getCollapsedRules = (rules: PatternRule[]): PatternRule[] => {

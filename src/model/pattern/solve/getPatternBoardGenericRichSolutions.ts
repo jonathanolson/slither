@@ -1,7 +1,8 @@
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { GenericRichSolution } from './GenericRichSolution.ts';
 import { getPatternBoardSolutions } from './getPatternBoardSolutions.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 const globalPatternBoardGenericRichSolutionsMap = new WeakMap<TPatternBoard, GenericRichSolution[]>();
 

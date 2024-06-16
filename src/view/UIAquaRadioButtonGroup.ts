@@ -1,7 +1,8 @@
-import { Property } from 'phet-lib/axon';
-import { AquaRadioButtonGroup, AquaRadioButtonGroupItem, AquaRadioButtonGroupOptions } from 'phet-lib/sun';
-import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
 import { currentTheme } from './Theme.ts';
+
+import { Property } from 'phet-lib/axon';
+import { EmptySelfOptions, optionize } from 'phet-lib/phet-core';
+import { AquaRadioButtonGroup, AquaRadioButtonGroupItem, AquaRadioButtonGroupOptions } from 'phet-lib/sun';
 
 export type UIAquaRadioButtonGroupOptions = AquaRadioButtonGroupOptions;
 

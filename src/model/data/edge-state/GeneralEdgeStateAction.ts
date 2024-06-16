@@ -1,11 +1,11 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TEdgeStateData } from './TEdgeStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from './EdgeState.ts';
-import { serializeEdge } from '../../board/core/serializeEdge.ts';
-import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
 import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
+import EdgeState from './EdgeState.ts';
+import { TEdgeStateData } from './TEdgeStateData.ts';
 
 export class GeneralEdgeStateAction implements TAction<TEdgeStateData> {
   public constructor(

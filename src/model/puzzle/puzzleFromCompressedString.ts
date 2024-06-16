@@ -1,8 +1,9 @@
 import { TStructure } from '../board/core/TStructure.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { decompressString } from '../../util/compression.ts';
 import { TPropertyPuzzle } from './TPuzzle.ts';
 import { deserializePuzzle } from './deserializePuzzle.ts';
+
+import { decompressString } from '../../util/compression.ts';
 
 export const puzzleFromCompressedString = (
   compressedString: string,

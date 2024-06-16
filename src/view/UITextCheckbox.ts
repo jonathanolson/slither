@@ -1,9 +1,10 @@
-import { Property } from 'phet-lib/axon';
-import { Checkbox, CheckboxOptions } from 'phet-lib/sun';
-import { Text } from 'phet-lib/scenery';
-import { currentTheme, uiFont } from './Theme.ts';
-import { optionize } from 'phet-lib/phet-core';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import { currentTheme, uiFont } from './Theme.ts';
+
+import { Property } from 'phet-lib/axon';
+import { optionize } from 'phet-lib/phet-core';
+import { Text } from 'phet-lib/scenery';
+import { Checkbox, CheckboxOptions } from 'phet-lib/sun';
 
 type SelfOptions = {
   // If it is advanced, will only be visible when advancedSettingsVisibleProperty is true

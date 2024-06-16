@@ -1,10 +1,11 @@
-import { Property, TReadOnlyProperty } from 'phet-lib/axon';
-import { OnOffSwitch, OnOffSwitchOptions } from 'phet-lib/sun';
-import { HBox, HBoxOptions, Node } from 'phet-lib/scenery';
-import { optionize } from 'phet-lib/phet-core';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { currentTheme } from './Theme.ts';
+
+import { Property, TReadOnlyProperty } from 'phet-lib/axon';
 import { Dimension2 } from 'phet-lib/dot';
+import { optionize } from 'phet-lib/phet-core';
+import { HBox, HBoxOptions, Node } from 'phet-lib/scenery';
+import { OnOffSwitch, OnOffSwitchOptions } from 'phet-lib/sun';
 
 type SelfOptions = {
   // If it is advanced, will only be visible when advancedSettingsVisibleProperty is true

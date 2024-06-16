@@ -1,18 +1,21 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import _ from '../../workarounds/_.ts';
-import { GeneralSimpleRegion } from '../data/simple-region/GeneralSimpleRegion.ts';
-import { THalfEdge } from '../board/core/THalfEdge.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
-import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegionAction.ts';
-import { dotRandom } from 'phet-lib/dot';
+import { TEdge } from '../board/core/TEdge.ts';
+import { THalfEdge } from '../board/core/THalfEdge.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
+import { GeneralSimpleRegion } from '../data/simple-region/GeneralSimpleRegion.ts';
+import { GeneralSimpleRegionAction } from '../data/simple-region/GeneralSimpleRegionAction.ts';
+import { TSimpleRegion, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
+import { TSolver } from './TSolver.ts';
+
+import { dotRandom } from 'phet-lib/dot';
+
+import _ from '../../workarounds/_.ts';
+
 
 // Oops, because on app restart, region IDs are persistent
 const getSimpleRegionGlobalId = (): number => dotRandom.nextInt(Number.MAX_SAFE_INTEGER);

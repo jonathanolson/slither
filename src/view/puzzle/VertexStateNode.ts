@@ -1,15 +1,17 @@
-import { Circle, Node, Path } from 'phet-lib/scenery';
-import { TVertex } from '../../model/board/core/TVertex.ts';
-import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
-import { TState } from '../../model/data/core/TState.ts';
-import { Shape } from 'phet-lib/kite';
-import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
-import { TEdge } from '../../model/board/core/TEdge.ts';
-import { ConvexHull2, Vector2 } from 'phet-lib/dot';
-import { VertexState } from '../../model/data/vertex-state/VertexState.ts';
-import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
-import EdgeState from '../../model/data/edge-state/EdgeState.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
+import { ConvexHull2, Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { Circle, Node, Path } from 'phet-lib/scenery';
+
+import { TEdge } from '../../model/board/core/TEdge.ts';
+import { TVertex } from '../../model/board/core/TVertex.ts';
+import { TState } from '../../model/data/core/TState.ts';
+import EdgeState from '../../model/data/edge-state/EdgeState.ts';
+import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
+import { TVertexStateData } from '../../model/data/vertex-state/TVertexStateData.ts';
+import { VertexState } from '../../model/data/vertex-state/VertexState.ts';
 
 export class VertexStateNode extends Node {
   public constructor(

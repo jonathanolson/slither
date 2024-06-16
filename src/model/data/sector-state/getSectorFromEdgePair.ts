@@ -1,5 +1,5 @@
-import { TSector } from './TSector.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
+import { TSector } from './TSector.ts';
 
 export const getSectorFromEdgePair = (edgeA: TEdge, edgeB: TEdge): TSector => {
   // Be a bit paranoid and handle all cases

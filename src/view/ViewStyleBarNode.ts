@@ -1,15 +1,12 @@
-import { DerivedProperty, TinyProperty } from 'phet-lib/axon';
-import { Matrix3 } from 'phet-lib/dot';
-import { controlBarMargin, currentTheme } from './Theme.ts';
-import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
-import { Shape } from 'phet-lib/kite';
-import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
-import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
-import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
 import { fontAwesomePencilShape, toFontAwesomePath } from './FontAwesomeShape.ts';
-import { VertexStateNode } from './puzzle/VertexStateNode.ts';
-import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import { controlBarMargin, currentTheme } from './Theme.ts';
+import { TooltipListener } from './TooltipListener.ts';
+import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
+import { ViewContext } from './ViewContext.ts';
 import { FaceStateNode } from './puzzle/FaceStateNode.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+import { VertexStateNode } from './puzzle/VertexStateNode.ts';
 import {
   basicFaceColoringPuzzleStyle,
   basicLinesPuzzleStyle,
@@ -22,9 +19,16 @@ import {
   sectorsWithColorsPuzzleStyle,
   vertexStatePuzzleStyle,
 } from './puzzle/puzzleStyles.ts';
-import { TooltipListener } from './TooltipListener.ts';
-import { ViewContext } from './ViewContext.ts';
+
+import { DerivedProperty, TinyProperty } from 'phet-lib/axon';
+import { Matrix3 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
+
 import { puzzleFromCompressedString } from '../model/puzzle/puzzleFromCompressedString.ts';
+
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+
 
 export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuzzleStyle> {
   public constructor(viewContext: ViewContext) {

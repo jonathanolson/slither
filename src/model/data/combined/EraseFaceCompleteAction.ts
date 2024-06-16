@@ -1,12 +1,13 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TCompleteData } from './TCompleteData.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { serializeFace } from '../../board/core/serializeFace.ts';
-import { EraseEdgeCompleteAction } from './EraseEdgeCompleteAction.ts';
 import { TSerializedFace } from '../../board/core/TSerializedFace.ts';
 import { deserializeFace } from '../../board/core/deserializeFace.ts';
+import { serializeFace } from '../../board/core/serializeFace.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
+import { EraseEdgeCompleteAction } from './EraseEdgeCompleteAction.ts';
+import { TCompleteData } from './TCompleteData.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class EraseFaceCompleteAction implements TAction<TCompleteData> {
   public constructor(public readonly face: TFace) {

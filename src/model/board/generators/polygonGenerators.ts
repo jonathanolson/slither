@@ -1,6 +1,4 @@
 import { PolygonGenerator } from '../PolygonGenerator.ts';
-import { squarePolygonGenerator } from './squarePolygonGenerator.ts';
-import { getPeriodicTilingGenerator } from '../getPeriodicTilingGenerator.ts';
 import {
   bisectedHexagonalTiling,
   cairoPentagonalTiling,
@@ -19,13 +17,15 @@ import {
   tetrakisSquareTiling,
   triakisTriangularTiling,
   triangularTiling,
-  trihexagonalTiling,
   trihexAndHexTiling,
+  trihexagonalTiling,
   truncatedHexagonalTiling,
   truncatedSquareTiling,
 } from '../core/TiledBoard.ts';
+import { getPeriodicTilingGenerator } from '../getPeriodicTilingGenerator.ts';
 import { hexagonalPolygonGenerator } from './hexagonalPolygonGenerator.ts';
 import { penroseTilingGenerator } from './penroseTilingGenerator.ts';
+import { squarePolygonGenerator } from './squarePolygonGenerator.ts';
 
 export const polygonGenerators: PolygonGenerator[] = [
   squarePolygonGenerator,

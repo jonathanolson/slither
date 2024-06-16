@@ -1,29 +1,33 @@
-import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
-import { Panel } from 'phet-lib/sun';
-import { AlignBox, HBox, Node, NodeOptions, Text, VBox } from 'phet-lib/scenery';
-import { planarPatternMaps } from '../../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { PatternRuleNode } from './PatternRuleNode.ts';
-import { PatternBoardSolver } from '../../model/pattern/solve/PatternBoardSolver.ts';
-import { TPatternEdge } from '../../model/pattern/pattern-board/TPatternEdge.ts';
-import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
-import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
-import { BinaryFeatureMap } from '../../model/pattern/generation/BinaryFeatureMap.ts';
-import { RichSolution } from '../../model/pattern/solve/RichSolution.ts';
-import { Highlander } from '../../model/pattern/highlander/Highlander.ts';
-import { arrayRemove, optionize } from 'phet-lib/phet-core';
-import { IncompatibleFeatureError } from '../../model/pattern/feature/IncompatibleFeatureError.ts';
-import { PatternNode } from './PatternNode.ts';
-import _ from '../../workarounds/_.ts';
+import { darkTheme, lightTheme } from '../Theme.ts';
 import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
 import { getClassicPuzzleStyleWithTheme, getSectorsWithColorsPuzzleStyleWithTheme } from '../puzzle/puzzleStyles.ts';
 import { DisplayTiling } from './DisplayTiling.ts';
 import { EmbeddedPatternRuleNode } from './EmbeddedPatternRuleNode.ts';
-import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
-import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
-import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
-import { darkTheme, lightTheme } from '../Theme.ts';
+import { PatternNode } from './PatternNode.ts';
+import { PatternRuleNode } from './PatternRuleNode.ts';
 import { getBestDisplayEmbeddingForRule } from './getBestDisplayEmbeddingForRule.ts';
+
+import { arrayRemove, optionize } from 'phet-lib/phet-core';
+import { AlignBox, HBox, Node, NodeOptions, Text, VBox } from 'phet-lib/scenery';
+import { Panel } from 'phet-lib/sun';
+
+import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
+import { BlackEdgeFeature } from '../../model/pattern/feature/BlackEdgeFeature.ts';
+import { FaceFeature } from '../../model/pattern/feature/FaceFeature.ts';
+import { FeatureSet } from '../../model/pattern/feature/FeatureSet.ts';
+import { IncompatibleFeatureError } from '../../model/pattern/feature/IncompatibleFeatureError.ts';
+import { RedEdgeFeature } from '../../model/pattern/feature/RedEdgeFeature.ts';
+import { BinaryFeatureMap } from '../../model/pattern/generation/BinaryFeatureMap.ts';
+import { Highlander } from '../../model/pattern/highlander/Highlander.ts';
+import { TPatternEdge } from '../../model/pattern/pattern-board/TPatternEdge.ts';
+import { planarPatternMaps } from '../../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
+import { PatternBoardSolver } from '../../model/pattern/solve/PatternBoardSolver.ts';
+import { RichSolution } from '../../model/pattern/solve/RichSolution.ts';
+
+import _ from '../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+
 
 type SelfOptions = {
   layoutWidth?: number;

@@ -1,5 +1,5 @@
-import { TSerializedHalfEdge } from './TSerializedHalfEdge.ts';
 import { THalfEdge } from './THalfEdge.ts';
+import { TSerializedHalfEdge } from './TSerializedHalfEdge.ts';
 
 export const serializeHalfEdge = (halfEdge: THalfEdge): TSerializedHalfEdge => {
   return {

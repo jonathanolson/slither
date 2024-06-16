@@ -1,8 +1,11 @@
 import { TBoard } from '../model/board/core/TBoard.ts';
-import { TState } from '../model/data/core/TState.ts';
+import { CompleteValidator } from '../model/data/combined/CompleteValidator.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { TSolver } from '../model/solver/TSolver.ts';
 import { TAnnotatedAction } from '../model/data/core/TAnnotatedAction.ts';
+import { TState } from '../model/data/core/TState.ts';
+import { deserializeSolvablePuzzle } from '../model/puzzle/deserializeSolvablePuzzle.ts';
+import { TSolver } from '../model/solver/TSolver.ts';
+import { InvalidStateError } from '../model/solver/errors/InvalidStateError.ts';
 import {
   generalAllPatternSolverFactory,
   generalColorPatternSolverFactory,
@@ -10,9 +13,7 @@ import {
   generalEdgePatternSolverFactory,
   generalEdgeSectorPatternSolverFactory,
 } from '../model/solver/patternSolverFactory.ts';
-import { CompleteValidator } from '../model/data/combined/CompleteValidator.ts';
-import { InvalidStateError } from '../model/solver/errors/InvalidStateError.ts';
-import { deserializeSolvablePuzzle } from '../model/puzzle/deserializeSolvablePuzzle.ts';
+
 import { isAnnotationDisplayed } from '../view/isAnnotationDisplayed.ts';
 
 // TODO: also see web worker cases where this is used

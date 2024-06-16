@@ -1,9 +1,10 @@
-import { GenericRichSolution } from '../solve/GenericRichSolution.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { RichEdgeState } from '../generation/RichEdgeState.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { GenericRichSolution } from '../solve/GenericRichSolution.ts';
+import { getIndeterminateEdges } from './getIndeterminateEdges.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class Highlander {
   public static filterWithFeatureSet<SolutionType extends GenericRichSolution>(

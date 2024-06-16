@@ -1,6 +1,7 @@
-import { THalfEdge } from './THalfEdge.ts';
 import { TEdge } from './TEdge.ts';
+import { THalfEdge } from './THalfEdge.ts';
 import { TVertex } from './TVertex.ts';
+
 import { Vector2 } from 'phet-lib/dot';
 
 export interface TFace {

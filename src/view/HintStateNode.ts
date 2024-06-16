@@ -1,12 +1,15 @@
-import { HBox, Node } from 'phet-lib/scenery';
-import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
-import { Panel, PanelOptions } from 'phet-lib/sun';
 import { currentTheme } from './Theme.ts';
-import { ViewContext } from './ViewContext.ts';
-import HintState from '../model/puzzle/HintState.ts';
-import { SpinningIndicatorNode } from 'phet-lib/scenery-phet';
 import { UIText } from './UIText.ts';
 import { UITextPushButton } from './UITextPushButton.ts';
+import { ViewContext } from './ViewContext.ts';
+
+import { DerivedProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { HBox, Node } from 'phet-lib/scenery';
+import { SpinningIndicatorNode } from 'phet-lib/scenery-phet';
+import { Panel, PanelOptions } from 'phet-lib/sun';
+
+import HintState from '../model/puzzle/HintState.ts';
+
 
 const activeColor = currentTheme.uiForegroundColorProperty;
 const inactiveColor = new DerivedProperty([currentTheme.uiForegroundColorProperty], (color) => color.withAlpha(0.15));

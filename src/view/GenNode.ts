@@ -1,14 +1,18 @@
-import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
+import { GenerateNode } from './GenerateNode.ts';
 import { PopupNode } from './PopupNode.ts';
+import { ScanNode } from './ScanNode.ts';
+import { UITextPushButton } from './UITextPushButton.ts';
+import { ViewContext } from './ViewContext.ts';
+
+import { HBox, HSeparator, Node, VBox } from 'phet-lib/scenery';
+
 import { TStructure } from '../model/board/core/TStructure.ts';
-import scanURL from '../scan/scanURL.ts';
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import { GenerateNode } from './GenerateNode.ts';
-import { UITextPushButton } from './UITextPushButton.ts';
-import { ScanNode } from './ScanNode.ts';
-import { ViewContext } from './ViewContext.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+
+import scanURL from '../scan/scanURL.ts';
+
 
 export type GenNodeOptions = {
   loadPuzzle: (puzzle: TPropertyPuzzle<TStructure, TCompleteData>) => void;

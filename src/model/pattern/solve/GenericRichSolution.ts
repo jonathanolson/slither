@@ -1,11 +1,12 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { FeatureSet } from '../feature/FeatureSet.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { VertexConnection } from '../highlander/VertexConnection.ts';
-import _ from '../../../workarounds/_.ts';
 import { RichEdgeState } from '../generation/RichEdgeState.ts';
+import { VertexConnection } from '../highlander/VertexConnection.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 // A single solution, with metadata (that is NOT binary/solve-state dependent)
 export class GenericRichSolution {

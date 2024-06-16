@@ -1,23 +1,21 @@
-import { BaseBoard } from '../core/BaseBoard.ts';
-import EdgeState from '../../data/edge-state/EdgeState.ts';
-import FaceValue from '../../data/face-value/FaceValue.ts';
-import { TBoard } from '../core/TBoard.ts';
+import { CompleteData } from '../../data/combined/CompleteData.ts';
+import { TCompleteData } from '../../data/combined/TCompleteData.ts';
 import { TState } from '../../data/core/TState.ts';
-import { TFaceValueData } from '../../data/face-value/TFaceValueData.ts';
+import EdgeState from '../../data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../../data/edge-state/TEdgeStateData.ts';
-import { TVertex } from '../core/TVertex.ts';
-import { TFace } from '../core/TFace.ts';
+import FaceValue from '../../data/face-value/FaceValue.ts';
+import { TFaceValueData } from '../../data/face-value/TFaceValueData.ts';
+import { TPuzzle } from '../../puzzle/TPuzzle.ts';
+import { safeSolve } from '../../solver/safeSolve.ts';
+import { BaseBoard } from '../core/BaseBoard.ts';
+import { TBoard } from '../core/TBoard.ts';
 import { TEdge } from '../core/TEdge.ts';
+import { TFace } from '../core/TFace.ts';
 import { THalfEdge } from '../core/THalfEdge.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { TVertex } from '../core/TVertex.ts';
+import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
 import { validateBoard } from '../core/validateBoard.ts';
-import { arrayRemove } from 'phet-lib/phet-core';
-import _ from '../../../workarounds/_.ts';
-import { Vector2 } from 'phet-lib/dot';
 import { LayoutDerivative } from './LayoutDerivative.ts';
-import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
-import { currentTheme } from '../../../view/Theme.ts';
-import { Shape } from 'phet-lib/kite';
 import {
   LayoutEdge,
   LayoutExternalZone,
@@ -27,12 +25,19 @@ import {
   LayoutStructure,
   LayoutVertex,
 } from './layout.ts';
-import { getCentroid, getSignedArea } from '../core/createBoardDescriptor.ts';
-import { TCompleteData } from '../../data/combined/TCompleteData.ts';
-import { CompleteData } from '../../data/combined/CompleteData.ts';
-import { TPuzzle } from '../../puzzle/TPuzzle.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { arrayRemove } from 'phet-lib/phet-core';
+import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
+
 import { okhslToRGBString } from '../../../util/color.ts';
-import { safeSolve } from '../../solver/safeSolve.ts';
+
+import { currentTheme } from '../../../view/Theme.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
   public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();

@@ -1,7 +1,7 @@
-import { TPatternBoard } from './TPatternBoard.ts';
-import { getStandardDescribedPatternBoard, getStandardNamedPatternBoard } from './patternBoards.ts';
-import { deserializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
 import { BasePatternBoard } from './BasePatternBoard.ts';
+import { TPatternBoard } from './TPatternBoard.ts';
+import { deserializePatternBoardDescriptor } from './TPatternBoardDescriptor.ts';
+import { getStandardDescribedPatternBoard, getStandardNamedPatternBoard } from './patternBoards.ts';
 
 export const deserializePatternBoard = (serialized: string): TPatternBoard => {
   let board = getStandardNamedPatternBoard(serialized);

@@ -1,12 +1,14 @@
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
+import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
 import { TSerializedVertexStateData, TVertexStateData } from './TVertexStateData.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
 import { VertexState } from './VertexState.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class VertexStateValidator implements TState<TVertexStateData> {
   public readonly vertexStateChangedEmitter = new TinyEmitter<

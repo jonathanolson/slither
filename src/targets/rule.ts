@@ -1,5 +1,7 @@
 import { Display, Node } from 'phet-lib/scenery';
+
 import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+
 import { PatternRuleAnalysisNode } from '../view/pattern/PatternRuleAnalysisNode.ts';
 
 // @ts-expect-error

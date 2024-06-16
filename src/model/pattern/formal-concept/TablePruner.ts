@@ -1,4 +1,5 @@
 import { SolutionAttributeSet } from './SolutionAttributeSet.ts';
+
 import _ from '../../../workarounds/_.ts';
 
 const hasWithOptionalAttribute = (set: SolutionAttributeSet, i: number): boolean => {

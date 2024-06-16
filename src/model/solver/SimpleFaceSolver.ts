@@ -1,17 +1,17 @@
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import FaceValue from '../data/face-value/FaceValue.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
-import { TSolver } from './TSolver.ts';
+import { TBoard } from '../board/core/TBoard.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
-import { TState } from '../data/core/TState.ts';
-import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
-import { TBoard } from '../board/core/TBoard.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
+import { TFaceValueData, TFaceValueListener } from '../data/face-value/TFaceValueData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
 
 export type SimpleFaceSolverOptions = {
   solveToRed: boolean;

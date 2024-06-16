@@ -1,19 +1,21 @@
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
-import FaceValue from '../data/face-value/FaceValue.ts';
-import { CompleteData } from '../data/combined/CompleteData.ts';
-import { TinyProperty, TProperty } from 'phet-lib/axon';
-import { Vector2 } from 'phet-lib/dot';
+import { TFace } from '../board/core/TFace.ts';
 import { TStructure } from '../board/core/TStructure.ts';
+import { HexagonalBoard } from '../board/hex/HexagonalBoard.ts';
+import { SquareBoard } from '../board/square/SquareBoard.ts';
+import { CompleteData } from '../data/combined/CompleteData.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import FaceValue from '../data/face-value/FaceValue.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+
+import { TProperty, TinyProperty } from 'phet-lib/axon';
+import { Vector2 } from 'phet-lib/dot';
 import { Orientation } from 'phet-lib/phet-core';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { SquareBoard } from '../board/square/SquareBoard.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export class BasicPuzzle<Data> {
   public readonly stateProperty: TProperty<TState<Data>>;

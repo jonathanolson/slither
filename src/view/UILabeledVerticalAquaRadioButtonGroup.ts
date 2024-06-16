@@ -1,9 +1,10 @@
-import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
-import { UIAquaRadioButtonGroup, UIAquaRadioButtonGroupOptions } from './UIAquaRadioButtonGroup.ts';
-import { Property } from 'phet-lib/axon';
-import { AquaRadioButtonGroupItem } from 'phet-lib/sun';
-import { optionize } from 'phet-lib/phet-core';
 import { currentTheme, uiHeaderFont } from './Theme.ts';
+import { UIAquaRadioButtonGroup, UIAquaRadioButtonGroupOptions } from './UIAquaRadioButtonGroup.ts';
+
+import { Property } from 'phet-lib/axon';
+import { optionize } from 'phet-lib/phet-core';
+import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
+import { AquaRadioButtonGroupItem } from 'phet-lib/sun';
 
 type SelfOptions = {
   radioButtonGroupOptions?: UIAquaRadioButtonGroupOptions;

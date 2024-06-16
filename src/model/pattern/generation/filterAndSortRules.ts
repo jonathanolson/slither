@@ -1,5 +1,6 @@
-import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
+
 import _ from '../../../workarounds/_.ts';
 
 export const filterAndSortRules = (rules: PatternRule[], previousRules: PatternRule[] = []): PatternRule[] => {

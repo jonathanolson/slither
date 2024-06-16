@@ -1,18 +1,19 @@
-import { TSolver } from './TSolver.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { TState } from '../data/core/TState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TVertex } from '../board/core/TVertex.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
+import { TState } from '../data/core/TState.ts';
 import { TFaceStateData, TFaceStateListener } from '../data/face-state/TFaceStateData.ts';
 import { TVertexStateData } from '../data/vertex-state/TVertexStateData.ts';
 import { VertexState } from '../data/vertex-state/VertexState.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { VertexStateSetAction } from '../data/vertex-state/VertexStateSetAction.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type Data = TVertexStateData & TFaceStateData;
 

@@ -1,8 +1,9 @@
-import { Color, PaintableNode, PaintColorProperty } from 'phet-lib/scenery';
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { ButtonInteractionState, TButtonAppearanceStrategyOptions } from 'phet-lib/sun';
-import { combineOptions } from 'phet-lib/phet-core';
 import { currentTheme } from './Theme.ts';
+
+import { TReadOnlyProperty } from 'phet-lib/axon';
+import { combineOptions } from 'phet-lib/phet-core';
+import { Color, PaintColorProperty, PaintableNode } from 'phet-lib/scenery';
+import { ButtonInteractionState, TButtonAppearanceStrategyOptions } from 'phet-lib/sun';
 
 export class UIStickyToggleButtonAppearanceStrategy {
   public readonly maxLineWidth: number;

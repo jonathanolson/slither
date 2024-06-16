@@ -1,7 +1,8 @@
 import { Bounds2 } from 'phet-lib/dot';
-import tesseract from '../workarounds/tesseract';
-import { combineOptions, optionize3 } from 'phet-lib/phet-core';
 import { Shape } from 'phet-lib/kite';
+import { combineOptions, optionize3 } from 'phet-lib/phet-core';
+
+import tesseract from '../workarounds/tesseract';
 
 const createWorker = tesseract.createWorker;
 

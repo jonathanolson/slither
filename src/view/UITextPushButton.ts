@@ -1,7 +1,8 @@
-import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
-import { optionize } from 'phet-lib/phet-core';
-import { currentTheme, rectangularButtonAppearanceStrategy, uiFont } from './Theme.ts';
 import { advancedSettingsVisibleProperty } from './SettingsNode.ts';
+import { currentTheme, rectangularButtonAppearanceStrategy, uiFont } from './Theme.ts';
+
+import { optionize } from 'phet-lib/phet-core';
+import { TextPushButton, TextPushButtonOptions } from 'phet-lib/sun';
 
 type SelfOptions = {
   // If it is advanced, will only be visible when advancedSettingsVisibleProperty is true

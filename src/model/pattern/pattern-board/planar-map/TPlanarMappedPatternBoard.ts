@@ -1,7 +1,7 @@
-import { deserializePlanarPatternMap, serializePlanarPatternMap, TPlanarPatternMap } from './TPlanarPatternMap.ts';
-import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from '../TPatternBoardDescriptor.ts';
 import { BasePatternBoard } from '../BasePatternBoard.ts';
 import { TPatternBoard } from '../TPatternBoard.ts';
+import { deserializePatternBoardDescriptor, serializePatternBoardDescriptor } from '../TPatternBoardDescriptor.ts';
+import { TPlanarPatternMap, deserializePlanarPatternMap, serializePlanarPatternMap } from './TPlanarPatternMap.ts';
 
 export interface TPlanarMappedPatternBoard {
   patternBoard: TPatternBoard;

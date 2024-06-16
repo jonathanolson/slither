@@ -1,14 +1,14 @@
 import { TEdge } from '../../board/core/TEdge.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import { TSector } from '../sector-state/TSector.ts';
-import SectorState from '../sector-state/SectorState.ts';
-import { VertexState } from '../vertex-state/VertexState.ts';
-import { FaceState } from '../face-state/FaceState.ts';
-import FaceValue from '../face-value/FaceValue.ts';
-import { PatternRule } from '../../pattern/pattern-rule/PatternRule.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
 import { Embedding } from '../../pattern/embedding/Embedding.ts';
 import { BoardPatternBoard } from '../../pattern/pattern-board/BoardPatternBoard.ts';
+import { PatternRule } from '../../pattern/pattern-rule/PatternRule.ts';
+import { FaceState } from '../face-state/FaceState.ts';
+import FaceValue from '../face-value/FaceValue.ts';
+import SectorState from '../sector-state/SectorState.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import { VertexState } from '../vertex-state/VertexState.ts';
 
 export type ForcedLineAnnotation = {
   type: 'ForcedLine';

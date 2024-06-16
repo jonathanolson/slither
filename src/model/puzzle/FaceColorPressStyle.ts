@@ -1,5 +1,6 @@
-import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 import FaceColorState from '../data/face-color/TFaceColorData.ts';
+
+import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
 export default class FaceColorPressStyle extends EnumerationValue {
   public constructor(

@@ -1,10 +1,14 @@
-import { TEdge } from '../../model/board/core/TEdge.ts';
-import { Shape } from 'phet-lib/kite';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { DotUtils, Vector2 } from 'phet-lib/dot';
-import { TBoard } from '../../model/board/core/TBoard.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
+
 import { TEmitter } from 'phet-lib/axon';
+import { DotUtils, Vector2 } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TEdge } from '../../model/board/core/TEdge.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+
 
 // TODO: better options pattern!
 export type EdgeViewInteractionNodeOptions = {

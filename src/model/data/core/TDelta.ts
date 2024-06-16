@@ -1,5 +1,5 @@
-import { TState } from './TState.ts';
 import { TAction } from './TAction.ts';
+import { TState } from './TState.ts';
 
 export type TDelta<Data> = {
   // Refine the clone from a TState => TDelta

@@ -1,10 +1,11 @@
-import { GeneralEdgeStateAction } from './GeneralEdgeStateAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from './TEdgeStateData.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
-import EdgeState from './EdgeState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
+import EdgeState from './EdgeState.ts';
+import { GeneralEdgeStateAction } from './GeneralEdgeStateAction.ts';
+import { TEdgeStateData, TSerializedEdgeStateData, serializeEdgeStateData } from './TEdgeStateData.ts';
+
 import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralEdgeStateDelta extends GeneralEdgeStateAction implements TDelta<TEdgeStateData> {

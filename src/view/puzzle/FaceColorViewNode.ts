@@ -1,16 +1,20 @@
-import { Color, Node, Path, TPaint } from 'phet-lib/scenery';
-import FaceColorState, { TFaceColor, TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
-import { Shape } from 'phet-lib/kite';
-import { TReadOnlyProperty } from 'phet-lib/axon';
-import { TState } from '../../model/data/core/TState.ts';
-import { arrayDifference, Enumeration, EnumerationValue } from 'phet-lib/phet-core';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { dotRandom, Vector2 } from 'phet-lib/dot';
-import _ from '../../workarounds/_.ts';
-import { TFace } from '../../model/board/core/TFace.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
+import { TReadOnlyProperty } from 'phet-lib/axon';
+import { Vector2, dotRandom } from 'phet-lib/dot';
+import { Shape } from 'phet-lib/kite';
+import { Enumeration, EnumerationValue, arrayDifference } from 'phet-lib/phet-core';
+import { Color, Node, Path, TPaint } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
+import { TState } from '../../model/data/core/TState.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from '../../model/data/face-color/TFaceColorData.ts';
+
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
+import _ from '../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
+
 
 export class FaceColorViewNode extends Node {
   private readonly faceColorNodeMap: Map<TFaceColor, FaceColorNode> = new Map();

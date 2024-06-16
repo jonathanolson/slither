@@ -1,7 +1,8 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
+import { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralFaceColorAction implements TAction<TFaceColorData> {

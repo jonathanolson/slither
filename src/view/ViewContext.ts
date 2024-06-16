@@ -1,4 +1,4 @@
-import { TinyEmitter, TReadOnlyProperty } from 'phet-lib/axon';
+import { TReadOnlyProperty, TinyEmitter } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { Node } from 'phet-lib/scenery';
 

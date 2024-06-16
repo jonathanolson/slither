@@ -1,15 +1,15 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
-import { TSector } from '../data/sector-state/TSector.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import SectorState from '../data/sector-state/SectorState.ts';
 import { SectorStateSetAction } from '../data/sector-state/SectorStateSetAction.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { TSolver } from './TSolver.ts';
 
 type Data = TEdgeStateData & TSectorStateData;
 

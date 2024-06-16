@@ -1,24 +1,24 @@
+import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
+import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
+import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSolver } from './TSolver.ts';
 import { InvalidStateError } from './errors/InvalidStateError.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
-import { TBoard } from '../board/core/TBoard.ts';
-import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
-import { TFace } from '../board/core/TFace.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
-import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { CompositeAction } from '../data/core/CompositeAction.ts';
-import _ from '../../workarounds/_.ts';
-import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
-import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
-import { FaceColorAnnotationPartial } from '../data/core/TAnnotation.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
-import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
+import _ from '../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export type FaceColorParitySolverOptions = {
   solveToRed: boolean;

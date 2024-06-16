@@ -1,10 +1,11 @@
-import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from './FaceValue.ts';
-import { TEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import { TSerializedFace } from '../../board/core/TSerializedFace.ts';
 import { serializeFace } from '../../board/core/serializeFace.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
+import FaceValue from './FaceValue.ts';
+
+import { TEmitter } from 'phet-lib/axon';
 
 export interface TFaceValueData {
   getFaceValue(face: TFace): FaceValue;

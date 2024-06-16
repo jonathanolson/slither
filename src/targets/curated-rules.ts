@@ -1,9 +1,12 @@
 import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
-import { copyToClipboard } from '../util/copyToClipboard.ts';
-import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
-import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+
 import { curatedRules } from '../model/pattern/data/curatedRules.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+
+import { copyToClipboard } from '../util/copyToClipboard.ts';
+
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();

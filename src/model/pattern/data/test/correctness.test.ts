@@ -1,19 +1,19 @@
-import generalColorUnrestrictedSequence from '../../../../../data-sequences/general-color-unrestricted.json';
-import generalEdgeSectorSequence from '../../../../../data-sequences/general-edge-sector.json';
-import generalEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/general-edge-sector-unrestricted.json';
-import generalAllSequence from '../../../../../data-sequences/general-all.json';
 import generalAllUnrestrictedSequence from '../../../../../data-sequences/general-all-unrestricted.json';
-import squareOnlyColorUnrestrictedSequence from '../../../../../data-sequences/square-only-color-unrestricted.json';
-import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-only-edge-sector.json';
-import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
-import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
+import generalAllSequence from '../../../../../data-sequences/general-all.json';
+import generalColorUnrestrictedSequence from '../../../../../data-sequences/general-color-unrestricted.json';
+import generalEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/general-edge-sector-unrestricted.json';
+import generalEdgeSectorSequence from '../../../../../data-sequences/general-edge-sector.json';
 import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
-import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
+import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
+import squareOnlyColorUnrestrictedSequence from '../../../../../data-sequences/square-only-color-unrestricted.json';
+import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
+import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-only-edge-sector.json';
 import { BinaryRuleCollection } from '../../collection/BinaryRuleCollection.ts';
-import { isPatternRuleValid } from '../../pattern-rule/isPatternRuleValid.ts';
-import QUnit from 'qunit';
+import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
 import { serializePatternBoard } from '../../pattern-board/serializePatternBoard.ts';
+import { isPatternRuleValid } from '../../pattern-rule/isPatternRuleValid.ts';
 import { getPatternBoardGenericRichSolutions } from '../../solve/getPatternBoardGenericRichSolutions.ts';
+import QUnit from 'qunit';
 
 QUnit.module('pattern rule correctness', () => {
   const testCollection = (collectionName: string, collection: BinaryRuleCollection) => {

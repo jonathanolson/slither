@@ -1,10 +1,10 @@
 import { FeatureSet } from '../feature/FeatureSet.ts';
+import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
+import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
 import { SolutionAttributeSet } from '../formal-concept/SolutionAttributeSet.ts';
-import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
 import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
 import { RichSolution } from '../solve/RichSolution.ts';
-import { HighlanderPruner } from '../formal-concept/HighlanderPruner.ts';
-import { IncompatibleFeatureError } from '../feature/IncompatibleFeatureError.ts';
+import { BinaryFeatureMap } from './BinaryFeatureMap.ts';
 
 export const getFeatureSetClosure = (
   featureSet: FeatureSet,

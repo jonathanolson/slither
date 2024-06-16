@@ -1,7 +1,6 @@
-import { TVertex } from './TVertex.ts';
-import { THalfEdge } from './THalfEdge.ts';
-
 import { TFace } from './TFace.ts';
+import { THalfEdge } from './THalfEdge.ts';
+import { TVertex } from './TVertex.ts';
 
 export interface TEdge {
   start: TVertex;

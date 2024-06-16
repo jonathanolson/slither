@@ -1,13 +1,15 @@
 import { AlignBox, Display, Node, VBox } from 'phet-lib/scenery';
+
+import { Solver } from '../model/logic/minisat/core/Solver.ts';
+import { getStructuralFeatures } from '../model/pattern/feature/getStructuralFeatures.ts';
 import {
   standardSquareBoardGenerations,
   standardTriangularBoardGenerations,
 } from '../model/pattern/pattern-board/patternBoards.ts';
 import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import { PlanarMappedPatternBoardNode } from '../view/pattern/PlanarMappedPatternBoardNode.ts';
 import { PatternBoardSolver } from '../model/pattern/solve/PatternBoardSolver.ts';
-import { getStructuralFeatures } from '../model/pattern/feature/getStructuralFeatures.ts';
-import { Solver } from '../model/logic/minisat/core/Solver.ts';
+
+import { PlanarMappedPatternBoardNode } from '../view/pattern/PlanarMappedPatternBoardNode.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();

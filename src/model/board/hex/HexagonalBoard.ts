@@ -1,16 +1,18 @@
 import { BaseBoard } from '../core/BaseBoard.ts';
-import { TStructure } from '../core/TStructure.ts';
 import { TBoard } from '../core/TBoard.ts';
-import _ from '../../../workarounds/_.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { Vector2 } from 'phet-lib/dot';
-import { validateBoard } from '../core/validateBoard.ts';
+import { TStructure } from '../core/TStructure.ts';
 import {
-  createBoardDescriptor,
-  rescaleProtoDescriptorAverage,
   TFaceDescriptor,
   TVertexDescriptor,
+  createBoardDescriptor,
+  rescaleProtoDescriptorAverage,
 } from '../core/createBoardDescriptor.ts';
+import { validateBoard } from '../core/validateBoard.ts';
+
+import { Vector2 } from 'phet-lib/dot';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class HexagonalBoard extends BaseBoard<TStructure> implements TBoard {
   public readonly isHexagonal = true;

@@ -1,14 +1,14 @@
-import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternSector } from '../pattern-board/TPatternSector.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicNot, logicOr } from '../../logic/operations.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import { TFeature } from './TFeature.ts';
-import { RedEdgeFeature } from './RedEdgeFeature.ts';
-import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
+import { RedEdgeFeature } from './RedEdgeFeature.ts';
+import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
+import { TFeature } from './TFeature.ts';
+import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
 
 export class SectorNotTwoFeature implements TEmbeddableFeature {
   public constructor(public readonly sector: TPatternSector) {}

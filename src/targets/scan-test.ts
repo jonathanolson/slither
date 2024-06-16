@@ -1,11 +1,13 @@
 import '../main.css';
 
-import { platform } from 'phet-lib/phet-core';
-import { Bounds2 } from 'phet-lib/dot';
 import { NumberProperty, PatternStringProperty, Property, StringProperty } from 'phet-lib/axon';
+import { Bounds2 } from 'phet-lib/dot';
+import { platform } from 'phet-lib/phet-core';
 import { AlignBox, AnimatedPanZoomListener, Display, Font, Node, Text, VBox } from 'phet-lib/scenery';
 import { TextPushButton } from 'phet-lib/sun';
+
 import scanURL from '../scan/scanURL.ts';
+
 // import scanFaceValues from './scan/scanFaceValues';
 
 const opencvURL = localStorage.getItem('opencv-url');

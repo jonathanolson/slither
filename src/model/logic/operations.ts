@@ -1,8 +1,10 @@
-import { Formula } from './Formula.ts';
 // @ts-expect-error
 import Logic from '../solver/logic-solver/logic-solver.js';
+import { Formula } from './Formula.ts';
 import { Term } from './Term.ts';
+
 import { Combination } from 'phet-lib/dot';
+
 import _ from '../../workarounds/_.ts';
 
 const toLogicParameter = <T>(parameter: Formula<T>): unknown => {

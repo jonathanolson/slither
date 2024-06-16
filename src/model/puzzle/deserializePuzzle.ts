@@ -1,6 +1,6 @@
 import { TStructure } from '../board/core/TStructure.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { deserializeBoard } from '../board/core/deserializeBoard.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { deserializeState } from '../data/core/deserializeState.ts';
 import { BasicPuzzle } from './BasicPuzzle.ts';
 import { TPropertyPuzzle, TSerializedPuzzle } from './TPuzzle.ts';

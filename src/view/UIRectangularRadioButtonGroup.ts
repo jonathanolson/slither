@@ -1,6 +1,7 @@
-import { RectangularRadioButtonGroup, RectangularRadioButtonGroupOptions } from 'phet-lib/sun';
 import { currentTheme } from './Theme.ts';
+
 import { combineOptions } from 'phet-lib/phet-core';
+import { RectangularRadioButtonGroup, RectangularRadioButtonGroupOptions } from 'phet-lib/sun';
 
 export default class UIRectangularRadioButtonGroup<T> extends RectangularRadioButtonGroup<T> {
   public constructor(

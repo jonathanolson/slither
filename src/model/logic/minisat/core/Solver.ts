@@ -1,19 +1,19 @@
-import { Lbool } from './Lbool.ts';
-import { Watcher } from './Watcher.ts';
+import { Vec } from '../mtl/Vec.ts';
+import { VecBool } from '../mtl/VecBool.ts';
+import { VecNumber } from '../mtl/VecNumber.ts';
 import { Clause } from './Clause.ts';
+import { ClauseAllocator } from './ClauseAllocator.ts';
+import { HeapVarOrderLt } from './HeapVarOrderLt.ts';
+import { Lbool } from './Lbool.ts';
 import { Lit } from './Lit.ts';
+import { OccLists } from './OccLists.ts';
+import { Var } from './Var.ts';
 import { VarData } from './VarData.ts';
+import { VarOrderLt } from './VarOrderLt.ts';
 import { VecLbool } from './VecLbool.ts';
 import { VecLit } from './VecLit.ts';
-import { Vec } from '../mtl/Vec.ts';
-import { VecNumber } from '../mtl/VecNumber.ts';
-import { OccLists } from './OccLists.ts';
-import { VecBool } from '../mtl/VecBool.ts';
-import { HeapVarOrderLt } from './HeapVarOrderLt.ts';
-import { VarOrderLt } from './VarOrderLt.ts';
-import { Var } from './Var.ts';
-import { ClauseAllocator } from './ClauseAllocator.ts';
 import { VecVar } from './VecVar.ts';
+import { Watcher } from './Watcher.ts';
 
 export class Solver {
   public static printf(format: string, ...args: any[]): void {

@@ -1,14 +1,14 @@
-import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternFace } from '../pattern-board/TPatternFace.ts';
 import FaceValue from '../../data/face-value/FaceValue.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicExactlyN, logicTrue } from '../../logic/operations.ts';
 import { Embedding } from '../embedding/Embedding.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 
 export class FaceFeature implements TEmbeddableFeature {
   public constructor(

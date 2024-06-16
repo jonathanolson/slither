@@ -1,36 +1,38 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { BoardPatternBoard } from '../pattern-board/BoardPatternBoard.ts';
+import { BaseBoard } from '../../board/core/BaseBoard.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { Embedding } from './Embedding.ts';
-import { TFace } from '../../board/core/TFace.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import { TSector } from '../../data/sector-state/TSector.ts';
-import { TPatternFace } from '../pattern-board/TPatternFace.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { TPatternSector } from '../pattern-board/TPatternSector.ts';
-import { FeatureSet } from '../feature/FeatureSet.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { createBoardDescriptor } from '../../board/core/createBoardDescriptor.ts';
 import { CompleteData } from '../../data/combined/CompleteData.ts';
-import { FaceFeature } from '../feature/FaceFeature.ts';
-import { BlackEdgeFeature } from '../feature/BlackEdgeFeature.ts';
 import EdgeState from '../../data/edge-state/EdgeState.ts';
-import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
-import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
+import { FaceColorMakeOppositeAction } from '../../data/face-color/FaceColorMakeOppositeAction.ts';
+import { FaceColorMakeSameAction } from '../../data/face-color/FaceColorMakeSameAction.ts';
+import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.ts';
 import SectorState from '../../data/sector-state/SectorState.ts';
+import { TSector } from '../../data/sector-state/TSector.ts';
+import { safeSolve } from '../../solver/safeSolve.ts';
+import { BlackEdgeFeature } from '../feature/BlackEdgeFeature.ts';
+import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
+import { FaceFeature } from '../feature/FaceFeature.ts';
+import { FeatureSet } from '../feature/FeatureSet.ts';
+import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { SectorNotOneFeature } from '../feature/SectorNotOneFeature.ts';
 import { SectorNotTwoFeature } from '../feature/SectorNotTwoFeature.ts';
+import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../feature/SectorOnlyOneFeature.ts';
-import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
-import { FaceColorMakeSameAction } from '../../data/face-color/FaceColorMakeSameAction.ts';
-import { FaceColorMakeOppositeAction } from '../../data/face-color/FaceColorMakeOppositeAction.ts';
-import { safeSolve } from '../../solver/safeSolve.ts';
-import { computeEmbeddings } from './computeEmbeddings.ts';
-import { Bounds2 } from 'phet-lib/dot';
+import { BoardPatternBoard } from '../pattern-board/BoardPatternBoard.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
 import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
-import { createBoardDescriptor } from '../../board/core/createBoardDescriptor.ts';
-import { BaseBoard } from '../../board/core/BaseBoard.ts';
-import { getFaceColorPointer } from '../../data/face-color/getFaceColorPointer.ts';
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
+import { Embedding } from './Embedding.ts';
+import { computeEmbeddings } from './computeEmbeddings.ts';
+
+import { Bounds2 } from 'phet-lib/dot';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class DisplayEmbedding {
   public constructor(

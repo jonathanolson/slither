@@ -1,10 +1,12 @@
-import { GeneralFaceColorAction } from './GeneralFaceColorAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeFaceColorData, TFaceColor, TFaceColorData, TSerializedFaceColorData } from './TFaceColorData.ts';
-import { TinyEmitter } from 'phet-lib/axon';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TState } from '../core/TState.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import { GeneralFaceColorAction } from './GeneralFaceColorAction.ts';
+import { TFaceColor, TFaceColorData, TSerializedFaceColorData, serializeFaceColorData } from './TFaceColorData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDelta<TFaceColorData> {

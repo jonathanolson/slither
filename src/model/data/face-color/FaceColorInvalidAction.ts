@@ -1,6 +1,6 @@
+import { TBoard } from '../../board/core/TBoard.ts';
 import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceColorData } from './TFaceColorData.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
 
 export class FaceColorInvalidAction implements TAction<TFaceColorData> {
   public constructor() {}

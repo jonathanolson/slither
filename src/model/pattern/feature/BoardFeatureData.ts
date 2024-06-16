@@ -1,12 +1,13 @@
-import { BoardPatternBoard } from '../pattern-board/BoardPatternBoard.ts';
-import FaceValue from '../../data/face-value/FaceValue.ts';
-import { TFaceColor, TFaceColorData } from '../../data/face-color/TFaceColorData.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import EdgeState from '../../data/edge-state/EdgeState.ts';
-import { TBoardFeatureData } from './TBoardFeatureData.ts';
-import { TFaceValueData } from '../../data/face-value/TFaceValueData.ts';
 import { TEdgeStateData } from '../../data/edge-state/TEdgeStateData.ts';
+import { TFaceColor, TFaceColorData } from '../../data/face-color/TFaceColorData.ts';
+import FaceValue from '../../data/face-value/FaceValue.ts';
+import { TFaceValueData } from '../../data/face-value/TFaceValueData.ts';
 import { TSectorStateData } from '../../data/sector-state/TSectorStateData.ts';
+import { BoardPatternBoard } from '../pattern-board/BoardPatternBoard.ts';
+import { TBoardFeatureData } from './TBoardFeatureData.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BoardFeatureData implements TBoardFeatureData {
   public readonly faceValues: FaceValue[] = [];

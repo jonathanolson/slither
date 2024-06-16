@@ -1,5 +1,5 @@
-import { Option } from './Option';
 import { DoubleRange } from './DoubleRange';
+import { Option } from './Option';
 
 export class DoubleOption extends Option {
   private range: DoubleRange;

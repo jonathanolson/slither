@@ -1,8 +1,9 @@
-import { Property } from 'phet-lib/axon';
-import { AquaRadioButtonGroupItem, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
-import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
 import { currentTheme, uiHeaderFont } from './Theme.ts';
+
+import { Property } from 'phet-lib/axon';
 import { optionize } from 'phet-lib/phet-core';
+import { Text, VBox, VBoxOptions } from 'phet-lib/scenery';
+import { AquaRadioButtonGroupItem, VerticalAquaRadioButtonGroup } from 'phet-lib/sun';
 
 export const getVerticalRadioButtonGroup = <T>(
   label: string,

@@ -1,16 +1,16 @@
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
+import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
+import { serializeEdge } from '../../board/core/serializeEdge.ts';
 import { TAction, TSerializedAction } from '../core/TAction.ts';
+import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
 import {
-  serializedSimpleRegion,
   TSerializedSimpleRegion,
   TSimpleRegion,
   TSimpleRegionData,
+  serializedSimpleRegion,
 } from './TSimpleRegionData.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TEdge } from '../../board/core/TEdge.ts';
-import { GeneralSimpleRegion } from './GeneralSimpleRegion.ts';
-import { serializeEdge } from '../../board/core/serializeEdge.ts';
-import { deserializeEdge } from '../../board/core/deserializeEdge.ts';
-import { TSerializedEdge } from '../../board/core/TSerializedEdge.ts';
 
 export class GeneralSimpleRegionAction implements TAction<TSimpleRegionData> {
   public constructor(

@@ -1,8 +1,10 @@
-import { PeriodicBoardTiling } from './core/TiledBoard.ts';
 import { PolygonGenerator } from './PolygonGenerator.ts';
-import { Bounds2, Range, Vector2 } from 'phet-lib/dot';
-import _ from '../../workarounds/_.ts';
+import { PeriodicBoardTiling } from './core/TiledBoard.ts';
 import { getCentroid } from './core/createBoardDescriptor.ts';
+
+import { Bounds2, Range, Vector2 } from 'phet-lib/dot';
+
+import _ from '../../workarounds/_.ts';
 
 export type PeriodicTilingParameterOverrides = {
   width?: number;

@@ -1,5 +1,5 @@
-import { TDelta } from './TDelta.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TDelta } from './TDelta.ts';
 import { TSerializedState } from './TSerializedState.ts';
 
 export type TState<Data> = {

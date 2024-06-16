@@ -1,25 +1,25 @@
-import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from '../face-value/TFaceValueData.ts';
-import { serializeEdgeStateData, TEdgeStateData, TSerializedEdgeStateData } from '../edge-state/TEdgeStateData.ts';
-import {
-  serializeSimpleRegionData,
-  TSerializedSimpleRegionData,
-  TSimpleRegionData,
-} from '../simple-region/TSimpleRegionData.ts';
-import { TAnyData } from './TAnyData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { serializeFaceColorData, TFaceColorData, TSerializedFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TSerializedState } from '../core/TSerializedState.ts';
+import { TEdgeStateData, TSerializedEdgeStateData, serializeEdgeStateData } from '../edge-state/TEdgeStateData.ts';
+import { TFaceColorData, TSerializedFaceColorData, serializeFaceColorData } from '../face-color/TFaceColorData.ts';
+import { TFaceStateData, TSerializedFaceStateData, serializeFaceStateData } from '../face-state/TFaceStateData.ts';
+import { TFaceValueData, TSerializedFaceValueData, serializeFaceValueData } from '../face-value/TFaceValueData.ts';
 import {
-  serializeSectorStateData,
   TSectorStateData,
   TSerializedSectorStateData,
+  serializeSectorStateData,
 } from '../sector-state/TSectorStateData.ts';
 import {
-  serializeVertexStateData,
+  TSerializedSimpleRegionData,
+  TSimpleRegionData,
+  serializeSimpleRegionData,
+} from '../simple-region/TSimpleRegionData.ts';
+import {
   TSerializedVertexStateData,
   TVertexStateData,
+  serializeVertexStateData,
 } from '../vertex-state/TVertexStateData.ts';
-import { serializeFaceStateData, TFaceStateData, TSerializedFaceStateData } from '../face-state/TFaceStateData.ts';
-import { TSerializedState } from '../core/TSerializedState.ts';
+import { TAnyData } from './TAnyData.ts';
 
 export interface TCompleteData
   extends TFaceValueData,

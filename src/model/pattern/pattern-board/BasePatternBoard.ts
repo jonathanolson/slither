@@ -1,19 +1,20 @@
+import { BasePatternEdge } from './BasePatternEdge.ts';
+import { BasePatternFace } from './BasePatternFace.ts';
+import { BasePatternSector } from './BasePatternSector.ts';
+import { BasePatternVertex } from './BasePatternVertex.ts';
 import { TPatternBoard } from './TPatternBoard.ts';
-import { TPatternVertex } from './TPatternVertex.ts';
-import { TPatternEdge } from './TPatternEdge.ts';
-import { TPatternSector } from './TPatternSector.ts';
-import { TPatternFace } from './TPatternFace.ts';
 import {
+  TPatternBoardDescriptor,
   deserializePatternBoardDescriptor,
   serializePatternBoardDescriptor,
-  TPatternBoardDescriptor,
 } from './TPatternBoardDescriptor.ts';
-import { BasePatternVertex } from './BasePatternVertex.ts';
+import { TPatternEdge } from './TPatternEdge.ts';
+import { TPatternFace } from './TPatternFace.ts';
+import { TPatternSector } from './TPatternSector.ts';
+import { TPatternVertex } from './TPatternVertex.ts';
+
 import _ from '../../../workarounds/_.ts';
-import { BasePatternEdge } from './BasePatternEdge.ts';
-import { BasePatternSector } from './BasePatternSector.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { BasePatternFace } from './BasePatternFace.ts';
 
 export class BasePatternBoard implements TPatternBoard {
   // Settable externally

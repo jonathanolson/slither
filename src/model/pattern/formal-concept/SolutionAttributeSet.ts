@@ -1,6 +1,7 @@
 import { AttributeSet } from './AttributeSet.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class SolutionAttributeSet extends AttributeSet {
   public readonly optionalDataComplement: bigint;

@@ -1,7 +1,8 @@
 import { TBoard } from './TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { TEdge } from './TEdge.ts';
 import { TSerializedEdge } from './TSerializedEdge.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const deserializeEdge = (board: TBoard, serializedEdge: TSerializedEdge): TEdge => {
   // TODO: more efficient lookup

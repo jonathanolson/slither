@@ -1,24 +1,23 @@
-import QUnit from 'qunit';
-import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
-
-import generalEdgeSequence from '../../../../../data-sequences/general-edge.json';
-import generalEdgeUnrestrictedSequence from '../../../../../data-sequences/general-edge-unrestricted.json';
-import generalColorUnrestrictedSequence from '../../../../../data-sequences/general-color-unrestricted.json';
-import generalEdgeColorSequence from '../../../../../data-sequences/general-edge-color.json';
-import generalEdgeColorUnrestrictedSequence from '../../../../../data-sequences/general-edge-color-unrestricted.json';
-import generalEdgeSectorSequence from '../../../../../data-sequences/general-edge-sector.json';
-import generalEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/general-edge-sector-unrestricted.json';
-import generalAllSequence from '../../../../../data-sequences/general-all.json';
 import generalAllUnrestrictedSequence from '../../../../../data-sequences/general-all-unrestricted.json';
-import squareOnlyEdgeSequence from '../../../../../data-sequences/square-only-edge.json';
-import squareOnlyEdgeUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-unrestricted.json';
-import squareOnlyColorUnrestrictedSequence from '../../../../../data-sequences/square-only-color-unrestricted.json';
-import squareOnlyEdgeColorSequence from '../../../../../data-sequences/square-only-edge-color.json';
-import squareOnlyEdgeColorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-color-unrestricted.json';
-import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-only-edge-sector.json';
-import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
-import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
+import generalAllSequence from '../../../../../data-sequences/general-all.json';
+import generalColorUnrestrictedSequence from '../../../../../data-sequences/general-color-unrestricted.json';
+import generalEdgeColorUnrestrictedSequence from '../../../../../data-sequences/general-edge-color-unrestricted.json';
+import generalEdgeColorSequence from '../../../../../data-sequences/general-edge-color.json';
+import generalEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/general-edge-sector-unrestricted.json';
+import generalEdgeSectorSequence from '../../../../../data-sequences/general-edge-sector.json';
+import generalEdgeUnrestrictedSequence from '../../../../../data-sequences/general-edge-unrestricted.json';
+import generalEdgeSequence from '../../../../../data-sequences/general-edge.json';
 import squareOnlyAllUnrestrictedSequence from '../../../../../data-sequences/square-only-all-unrestricted.json';
+import squareOnlyAllSequence from '../../../../../data-sequences/square-only-all.json';
+import squareOnlyColorUnrestrictedSequence from '../../../../../data-sequences/square-only-color-unrestricted.json';
+import squareOnlyEdgeColorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-color-unrestricted.json';
+import squareOnlyEdgeColorSequence from '../../../../../data-sequences/square-only-edge-color.json';
+import squareOnlyEdgeSectorUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-sector-unrestricted.json';
+import squareOnlyEdgeSectorSequence from '../../../../../data-sequences/square-only-edge-sector.json';
+import squareOnlyEdgeUnrestrictedSequence from '../../../../../data-sequences/square-only-edge-unrestricted.json';
+import squareOnlyEdgeSequence from '../../../../../data-sequences/square-only-edge.json';
+import { BinaryRuleSequence, SerializedBinaryRuleSequence } from '../../collection/BinaryRuleSequence.ts';
+import QUnit from 'qunit';
 
 QUnit.module('Generation', () => {
   const testGeneration = (expectedSequence: BinaryRuleSequence, boardCount: number) => {

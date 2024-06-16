@@ -1,17 +1,18 @@
-import { FeatureSet, TSerializedFeatureSet } from '../feature/FeatureSet.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import PatternRuleMatchState from './PatternRuleMatchState.ts';
-import FeatureCompatibility from '../feature/FeatureCompatibility.ts';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
-import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
-import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
-import { getBinaryFeatureMapping } from '../generation/BinaryFeatureMapping.ts';
-import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
 import { FaceColorDualFeature } from '../feature/FaceColorDualFeature.ts';
+import FeatureCompatibility from '../feature/FeatureCompatibility.ts';
+import { FeatureSet, TSerializedFeatureSet } from '../feature/FeatureSet.ts';
+import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
+import { getBinaryFeatureMapping } from '../generation/BinaryFeatureMapping.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
+import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
+import { PatternBoardSolver } from '../solve/PatternBoardSolver.ts';
+import PatternRuleMatchState from './PatternRuleMatchState.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export type SerializedPatternRule = {
   patternBoard: string;

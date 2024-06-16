@@ -1,14 +1,17 @@
 import { controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
-import EditMode, { editModeProperty, eraserEnabledProperty } from '../model/puzzle/EditMode.ts';
-import { HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
-import { Shape } from 'phet-lib/kite';
-import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { TooltipListener } from './TooltipListener.ts';
-import { ViewContext } from './ViewContext.ts';
-import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
-import { combineOptions } from 'phet-lib/phet-core';
+import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { UIStickyToggleButtonAppearanceStrategy } from './UIStickyToggleButtonAppearanceStrategy.ts';
 import { UIStickyToggleContentAppearanceStrategy } from './UIStickyToggleContentAppearanceStrategy.ts';
+import { ViewContext } from './ViewContext.ts';
+
+import { Shape } from 'phet-lib/kite';
+import { combineOptions } from 'phet-lib/phet-core';
+import { HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
+import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
+
+import EditMode, { editModeProperty, eraserEnabledProperty } from '../model/puzzle/EditMode.ts';
+
 
 const HIDE_ERASE = false;
 

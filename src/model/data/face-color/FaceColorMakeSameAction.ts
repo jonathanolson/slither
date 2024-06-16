@@ -1,12 +1,13 @@
-import { TAction, TSerializedAction } from '../core/TAction.ts';
-import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+import { TAction, TSerializedAction } from '../core/TAction.ts';
 import { TFaceColorPointer, TSerializedFaceColorPointer } from './FaceColorPointer.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from './TFaceColorData.ts';
+import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
 import { deserializeFaceColorPointer } from './deserializeFaceColorPointer.ts';
 import { serializeFaceColorPointer } from './serializeFaceColorPointer.ts';
-import { dereferenceFaceColorPointer } from './dereferenceFaceColorPointer.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorMakeSameAction implements TAction<TFaceColorData> {
   public constructor(

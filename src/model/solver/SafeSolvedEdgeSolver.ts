@@ -1,13 +1,13 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
-import { simpleRegionIsSolved, TSimpleRegionData } from '../data/simple-region/TSimpleRegionData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
-import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
+import { TSimpleRegionData, simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { TSolver } from './TSolver.ts';
 
 type Data = TSimpleRegionData & TEdgeStateData;
 

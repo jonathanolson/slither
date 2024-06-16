@@ -1,7 +1,7 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { TFeature } from '../feature/TFeature.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { FaceFeature } from '../feature/FaceFeature.ts';
+import { TFeature } from '../feature/TFeature.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 
 export const getIndeterminateEdges = (patternBoard: TPatternBoard, features: TFeature[]): TPatternEdge[] => {
   const faceFeatures = features.filter((feature) => feature instanceof FaceFeature) as FaceFeature[];

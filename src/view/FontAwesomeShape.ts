@@ -2,6 +2,7 @@ import { Shape } from 'phet-lib/kite';
 import { combineOptions } from 'phet-lib/phet-core';
 import { Path, PathOptions } from 'phet-lib/scenery';
 
+
 // From https://github.com/onface/font-awesome (under SIL OFL 1.1 license) by Dave Gandy
 // SVG in https://github.com/jalmeydaa/portfolio/blob/master/fonts/fontawesome-webfont.svg%3Fv%3D4.7.0
 // List is https://fontawesome.com/v4/icons/

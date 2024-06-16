@@ -1,11 +1,13 @@
 import { BaseBoard } from '../core/BaseBoard.ts';
-import { assertEnabled } from '../../../workarounds/assert.ts';
 import { TBoard } from '../core/TBoard.ts';
 import { TStructure } from '../core/TStructure.ts';
-import { createBoardDescriptor, TFaceDescriptor, TVertexDescriptor } from '../core/createBoardDescriptor.ts';
+import { TFaceDescriptor, TVertexDescriptor, createBoardDescriptor } from '../core/createBoardDescriptor.ts';
 import { validateBoard } from '../core/validateBoard.ts';
+
 import { Vector2 } from 'phet-lib/dot';
+
 import _ from '../../../workarounds/_.ts';
+import { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class SquareBoard extends BaseBoard<TStructure> implements TBoard {
   public readonly isSquare = true;

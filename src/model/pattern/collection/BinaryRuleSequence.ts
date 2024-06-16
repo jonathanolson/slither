@@ -1,7 +1,8 @@
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
+import { computeEmbeddings } from '../embedding/computeEmbeddings.ts';
+import { getEmbeddings } from '../embedding/getEmbeddings.ts';
+import { getSolutionImpliedRules } from '../generation/getSolutionImpliedRules.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 import { deserializePatternBoard } from '../pattern-board/deserializePatternBoard.ts';
-import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
 import { generalPatternBoardGenerations } from '../pattern-board/generalPatternBoardGenerations.ts';
 import {
   basicPatternBoards,
@@ -17,12 +18,12 @@ import {
   vertexNonExit3PatternBoard,
   vertexNonExit4PatternBoard,
 } from '../pattern-board/patternBoards.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import { planarPatternMaps } from '../pattern-board/planar-map/planarPatternMaps.ts';
-import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import { getSolutionImpliedRules } from '../generation/getSolutionImpliedRules.ts';
-import { computeEmbeddings } from '../embedding/computeEmbeddings.ts';
+import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
+
 import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export type SequenceBoardType = 'general' | 'square' | 'hexagonal';
 

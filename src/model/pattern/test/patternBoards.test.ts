@@ -1,5 +1,5 @@
-import QUnit from 'qunit';
 import { standardSquareBoardGenerations } from '../pattern-board/patternBoards.ts';
+import QUnit from 'qunit';
 
 QUnit.module('patternBoards', () => {
   QUnit.test('square pattern sanity', (assert) => {

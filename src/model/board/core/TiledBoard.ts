@@ -1,18 +1,23 @@
 // @ts-expect-error
-import { IsohedralTiling, tilingTypes } from 'tactile-js'; // Note: EdgeShape from here
-import { Shape } from 'phet-lib/kite';
-import { Bounds2, Matrix3, Vector2 } from 'phet-lib/dot';
+import { BaseBoard } from './BaseBoard.ts';
 import { TBoard } from './TBoard.ts';
 import { TStructure } from './TStructure.ts';
-import { BaseBoard } from './BaseBoard.ts';
 import {
-  createBoardDescriptor,
-  rescaleProtoDescriptorMinimum,
   TFaceDescriptor,
   TVertexDescriptor,
+  createBoardDescriptor,
+  rescaleProtoDescriptorMinimum,
 } from './createBoardDescriptor.ts';
+import { IsohedralTiling, tilingTypes } from 'tactile-js';
+
+import { Bounds2, Matrix3, Vector2 } from 'phet-lib/dot';
+// Note: EdgeShape from here
+import { Shape } from 'phet-lib/kite';
+
 import { getCoordinateClusteredMap } from '../../../util/getCoordinateClusteredMap.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 
 // console.log( EdgeShape );
 

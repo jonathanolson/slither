@@ -1,5 +1,7 @@
-import _ from '../../../workarounds/_';
 import MiniSat from './minisat_wrapper.js';
+
+import _ from '../../../workarounds/_';
+
 
 // var MiniSat = require("./minisat_wrapper.js");
 // var _ = require("underscore");
@@ -1989,13 +1991,11 @@ var minMaxWS = function (solver, solution, costTerms, costWeights, options, isMi
 // works.  All strategies first try and see if a cost of 0 is possible.
 
 // ("costTerms" is kind of a misnomer since they may be Formulas or Terms.)
-Logic.Solver.prototype.minimizeWeightedSum = function( solution, costTerms,
-                                                       costWeights, options ) {
-  return minMaxWS( this, solution, costTerms, costWeights, options, true );
+Logic.Solver.prototype.minimizeWeightedSum = function (solution, costTerms, costWeights, options) {
+  return minMaxWS(this, solution, costTerms, costWeights, options, true);
 };
 
-Logic.Solver.prototype.maximizeWeightedSum = function( solution, costTerms,
-                                                       costWeights, options ) {
-  return minMaxWS( this, solution, costTerms, costWeights, options, false );
+Logic.Solver.prototype.maximizeWeightedSum = function (solution, costTerms, costWeights, options) {
+  return minMaxWS(this, solution, costTerms, costWeights, options, false);
 };
 export default Logic;

@@ -1,7 +1,8 @@
-import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.js';
 import { DisplayTiling } from './DisplayTiling.js';
-import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.js';
 import { getBestDisplayEmbedding } from './getBestDisplayEmbedding.js';
+
+import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.js';
+import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.js';
 
 export const getBestDisplayEmbeddingForRule = (
   rule: PatternRule,

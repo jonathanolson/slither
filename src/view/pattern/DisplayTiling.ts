@@ -1,4 +1,5 @@
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
+
 import { TBoard } from '../../model/board/core/TBoard.ts';
 import { BoardPatternBoard } from '../../model/pattern/pattern-board/BoardPatternBoard.ts';
 import {

@@ -1,5 +1,7 @@
-import _ from '../../../workarounds/_';
 import C_MINISAT from './minisat.js';
+
+import _ from '../../../workarounds/_';
+
 
 // var C_MINISAT = require("./minisat.js");
 // var _ = require("underscore");

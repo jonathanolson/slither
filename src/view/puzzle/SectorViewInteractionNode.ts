@@ -1,7 +1,9 @@
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { SectorNode } from './SectorNode.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
+import { TSector } from '../../model/data/sector-state/TSector.ts';
+
 
 // TODO: better options pattern!
 export type SectorViewInteractionNodeOptions = {

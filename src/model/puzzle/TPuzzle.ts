@@ -1,11 +1,12 @@
+import { TBoard } from '../board/core/TBoard.ts';
+import { TSerializedBoard } from '../board/core/TSerializedBoard.ts';
 import { TStructure } from '../board/core/TStructure.ts';
+import { TSerializedState } from '../data/core/TSerializedState.ts';
 import { TState } from '../data/core/TState.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { TBoard } from '../board/core/TBoard.ts';
-import { TProperty } from 'phet-lib/axon';
 import { TSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
-import { TSerializedBoard } from '../board/core/TSerializedBoard.ts';
-import { TSerializedState } from '../data/core/TSerializedState.ts';
+
+import { TProperty } from 'phet-lib/axon';
 
 export type TPuzzle<Structure extends TStructure = TStructure, Data extends TFaceValueData = TFaceValueData> = {
   board: TBoard<Structure>;

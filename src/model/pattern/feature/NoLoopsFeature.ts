@@ -1,10 +1,11 @@
-import { TFeature } from './TFeature.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicAnd, logicNotAll, logicTrue } from '../../logic/operations.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
 import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+import { TFeature } from './TFeature.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class NoLoopsFeature implements TFeature {

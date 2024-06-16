@@ -1,5 +1,5 @@
-import { TSerializedFace } from './TSerializedFace.ts';
 import { TFace } from './TFace.ts';
+import { TSerializedFace } from './TSerializedFace.ts';
 
 export const serializeFace = (face: TFace): TSerializedFace => {
   return {

@@ -1,12 +1,13 @@
-import { TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { TFaceValueData } from './TFaceValueData.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
-import FaceValue from './FaceValue.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
+import { TState } from '../core/TState.ts';
+import FaceValue from './FaceValue.ts';
+import { TFaceValueData } from './TFaceValueData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
 
 export class FaceValueValidator implements TState<TFaceValueData> {
   public readonly faceValueChangedEmitter = new TinyEmitter<[TFace, FaceValue]>();

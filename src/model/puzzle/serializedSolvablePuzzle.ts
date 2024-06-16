@@ -1,5 +1,5 @@
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TStructure } from '../board/core/TStructure.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TSerializedSolvablePuzzle, TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { serializePuzzle } from './serializePuzzle.ts';
 

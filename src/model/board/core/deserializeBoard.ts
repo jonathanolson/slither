@@ -1,10 +1,11 @@
-import { createBoardDescriptor, TFaceDescriptor, TVertexDescriptor } from './createBoardDescriptor.ts';
-import { Vector2 } from 'phet-lib/dot';
-import { BaseBoard } from './BaseBoard.ts';
-import { SquareBoard } from '../square/SquareBoard.ts';
 import { HexagonalBoard } from '../hex/HexagonalBoard.ts';
+import { SquareBoard } from '../square/SquareBoard.ts';
+import { BaseBoard } from './BaseBoard.ts';
 import { TBoard } from './TBoard.ts';
 import { TSerializedBoard } from './TSerializedBoard.ts';
+import { TFaceDescriptor, TVertexDescriptor, createBoardDescriptor } from './createBoardDescriptor.ts';
+
+import { Vector2 } from 'phet-lib/dot';
 
 export const deserializeBoard = (serializedBoard: TSerializedBoard): TBoard => {
   if (serializedBoard.type === 'BaseBoard') {

@@ -1,7 +1,9 @@
-import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
 import { DisplayTiling } from './DisplayTiling.ts';
+
 import { DisplayEmbedding, DisplayEmbeddingCreationOptions } from '../../model/pattern/embedding/DisplayEmbedding.ts';
 import { Embedding } from '../../model/pattern/embedding/Embedding.ts';
+import { TPatternBoard } from '../../model/pattern/pattern-board/TPatternBoard.ts';
+
 
 // TODO: globals bad here!
 

@@ -1,10 +1,11 @@
-import { GeneralFaceValueAction } from './GeneralFaceValueAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeFaceValueData, TFaceValueData, TSerializedFaceValueData } from './TFaceValueData.ts';
-import { TFace } from '../../board/core/TFace.ts';
-import FaceValue from './FaceValue.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
+import FaceValue from './FaceValue.ts';
+import { GeneralFaceValueAction } from './GeneralFaceValueAction.ts';
+import { TFaceValueData, TSerializedFaceValueData, serializeFaceValueData } from './TFaceValueData.ts';
+
 import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralFaceValueDelta extends GeneralFaceValueAction implements TDelta<TFaceValueData> {

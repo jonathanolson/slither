@@ -1,21 +1,22 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TFace } from '../board/core/TFace.ts';
+import { TVertex } from '../board/core/TVertex.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
-import { TSector } from '../data/sector-state/TSector.ts';
-import SectorState from '../data/sector-state/SectorState.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceColor, TFaceColorData, TFaceColorListener } from '../data/face-color/TFaceColorData.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
 import { TVertexStateData } from '../data/vertex-state/TVertexStateData.ts';
-import { TVertex } from '../board/core/TVertex.ts';
-import { MultiIterable } from '../../workarounds/MultiIterable.ts';
-import { TFace } from '../board/core/TFace.ts';
 import { VertexState } from '../data/vertex-state/VertexState.ts';
 import { VertexStateSetAction } from '../data/vertex-state/VertexStateSetAction.ts';
+import { TSolver } from './TSolver.ts';
+
+import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TEdgeStateData & TSectorStateData & TFaceColorData & TVertexStateData;
 

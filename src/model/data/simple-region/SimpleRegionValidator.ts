@@ -1,13 +1,15 @@
-import { TState } from '../core/TState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
-import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
-import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TSerializedState } from '../core/TSerializedState.ts';
+import { TState } from '../core/TState.ts';
+import { TSimpleRegion, TSimpleRegionData } from './TSimpleRegionData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class SimpleRegionValidator implements TState<TSimpleRegionData> {
   public readonly simpleRegionsChangedEmitter = new TinyEmitter<

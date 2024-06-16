@@ -1,5 +1,5 @@
-import { VecLit } from './VecLit';
 import { Lit } from './Lit';
+import { VecLit } from './VecLit';
 
 export class Clause extends VecLit {
   private _mark: number;

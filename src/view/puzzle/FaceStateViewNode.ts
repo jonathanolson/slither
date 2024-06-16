@@ -1,11 +1,13 @@
-import { Node } from 'phet-lib/scenery';
+import { FaceStateNode } from './FaceStateNode.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
+import { Node } from 'phet-lib/scenery';
+
+import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TState } from '../../model/data/core/TState.ts';
 import { TEdgeStateData } from '../../model/data/edge-state/TEdgeStateData.ts';
 import { TFaceStateData } from '../../model/data/face-state/TFaceStateData.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { TBoard } from '../../model/board/core/TBoard.ts';
-import { FaceStateNode } from './FaceStateNode.ts';
 
 export class FaceStateViewNode extends Node {
   public constructor(

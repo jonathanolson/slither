@@ -1,13 +1,16 @@
-import { Node, NodeOptions } from 'phet-lib/scenery';
+import { AnnotationNode } from './AnnotationNode.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
-import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
+
+import { combineOptions, optionize } from 'phet-lib/phet-core';
+import { Node, NodeOptions } from 'phet-lib/scenery';
+
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
-import { AnnotationNode } from './AnnotationNode.ts';
-import { TSector } from '../model/data/sector-state/TSector.ts';
 import SectorState from '../model/data/sector-state/SectorState.ts';
+import { TSector } from '../model/data/sector-state/TSector.ts';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
+
 
 type SelfOptions = {
   focusNodeCallback?: (node: Node) => void;

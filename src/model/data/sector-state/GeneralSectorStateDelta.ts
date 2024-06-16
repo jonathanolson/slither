@@ -1,11 +1,12 @@
-import { GeneralSectorStateAction } from './GeneralSectorStateAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeSectorStateData, TSectorStateData, TSerializedSectorStateData } from './TSectorStateData.ts';
-import SectorState from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
-import { TinyEmitter } from 'phet-lib/axon';
+import { GeneralSectorStateAction } from './GeneralSectorStateAction.ts';
+import SectorState from './SectorState.ts';
 import { TSector } from './TSector.ts';
+import { TSectorStateData, TSerializedSectorStateData, serializeSectorStateData } from './TSectorStateData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralSectorStateDelta extends GeneralSectorStateAction implements TDelta<TSectorStateData> {
   public readonly sectorStateChangedEmitter = new TinyEmitter<

@@ -1,5 +1,5 @@
-import { Option } from './Option';
 import { IntRange } from './IntRange';
+import { Option } from './Option';
 
 export class IntOption extends Option {
   protected range: IntRange;

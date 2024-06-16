@@ -1,16 +1,18 @@
-import { GeneralSimpleRegionAction } from './GeneralSimpleRegionAction.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
+import { TVertex } from '../../board/core/TVertex.ts';
 import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import { GeneralSimpleRegionAction } from './GeneralSimpleRegionAction.ts';
 import {
-  serializeSimpleRegionData,
   TSerializedSimpleRegionData,
   TSimpleRegion,
   TSimpleRegionData,
+  serializeSimpleRegionData,
 } from './TSimpleRegionData.ts';
+
 import { TinyEmitter } from 'phet-lib/axon';
-import { TEdge } from '../../board/core/TEdge.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
-import { TState } from '../core/TState.ts';
-import { TVertex } from '../../board/core/TVertex.ts';
+
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
 
 export class GeneralSimpleRegionDelta extends GeneralSimpleRegionAction implements TDelta<TSimpleRegionData> {

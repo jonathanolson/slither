@@ -1,8 +1,10 @@
-import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
-import { PatternRule } from '../pattern-rule/PatternRule.ts';
-import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
-import _ from '../../../workarounds/_.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
+import { BinaryRuleCollection, SerializedBinaryRuleCollection } from './BinaryRuleCollection.ts';
+
+import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
+
+import _ from '../../../workarounds/_.ts';
 
 export class BinaryMixedRuleGroup {
   private constructor(

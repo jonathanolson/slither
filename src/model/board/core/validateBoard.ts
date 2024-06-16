@@ -1,6 +1,7 @@
 import { TBoard } from './TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const validateBoard = (board: TBoard): void => {
   if (!assertEnabled()) {

@@ -1,9 +1,9 @@
-import { TFeature } from './TFeature.ts';
-import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicZeroOrTwo } from '../../logic/operations.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+import { TFeature } from './TFeature.ts';
 
 // Either 0 or 2 edges connected to a vertex will be black.
 export class VertexFeature implements TFeature {

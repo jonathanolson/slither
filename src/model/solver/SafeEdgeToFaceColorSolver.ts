@@ -1,22 +1,22 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
-import FaceColorState, { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { GeneralFaceColor } from '../data/face-color/GeneralFaceColor.ts';
-import { getFaceColorGlobalId } from '../data/face-color/GeneralFaceColorData.ts';
-import { GeneralFaceColorAction } from '../data/face-color/GeneralFaceColorAction.ts';
+import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { FaceColorInvalidAction } from '../data/face-color/FaceColorInvalidAction.ts';
 import { FaceColorMakeOppositeAction } from '../data/face-color/FaceColorMakeOppositeAction.ts';
 import { FaceColorMakeSameAction } from '../data/face-color/FaceColorMakeSameAction.ts';
-import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-
+import { GeneralFaceColor } from '../data/face-color/GeneralFaceColor.ts';
+import { GeneralFaceColorAction } from '../data/face-color/GeneralFaceColorAction.ts';
+import { getFaceColorGlobalId } from '../data/face-color/GeneralFaceColorData.ts';
+import FaceColorState, { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { getFaceColorPointer } from '../data/face-color/getFaceColorPointer.ts';
+import { TSolver } from './TSolver.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type Data = TEdgeStateData & TFaceColorData;
 

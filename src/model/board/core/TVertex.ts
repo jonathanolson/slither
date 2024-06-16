@@ -1,7 +1,8 @@
-import { Vector2 } from 'phet-lib/dot';
-import { THalfEdge } from './THalfEdge.ts';
 import { TEdge } from './TEdge.ts';
 import { TFace } from './TFace.ts';
+import { THalfEdge } from './THalfEdge.ts';
+
+import { Vector2 } from 'phet-lib/dot';
 
 export interface TVertex {
   logicalCoordinates: Vector2;

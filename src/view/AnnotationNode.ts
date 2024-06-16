@@ -1,15 +1,19 @@
-import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
-import { TAnnotation } from '../model/data/core/TAnnotation.ts';
-import { TEdge } from '../model/board/core/TEdge.ts';
-import { LineStyles, Shape } from 'phet-lib/kite';
-import _ from '../workarounds/_.ts';
-import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
-import { Bounds2 } from 'phet-lib/dot';
-import { TBoard } from '../model/board/core/TBoard.ts';
-import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
-import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
 import { currentTheme } from './Theme.ts';
+import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
+import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
+
+import { Bounds2 } from 'phet-lib/dot';
+import { LineStyles, Shape } from 'phet-lib/kite';
 import { Orientation } from 'phet-lib/phet-core';
+import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
+
+import { TBoard } from '../model/board/core/TBoard.ts';
+import { TEdge } from '../model/board/core/TEdge.ts';
+import { TAnnotation } from '../model/data/core/TAnnotation.ts';
+import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
+
+import _ from '../workarounds/_.ts';
+
 
 export class AnnotationNode extends Node {
   public constructor(

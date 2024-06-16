@@ -1,3 +1,4 @@
+import { TPatternBoard } from './TPatternBoard.ts';
 import {
   standardCairoBoardGenerations,
   standardDeltoidalTrihexagonalBoardGenerations,
@@ -13,8 +14,8 @@ import {
   standardTriangularBoardGenerations,
   standardTrihexagonalBoardGenerations,
 } from './patternBoards.ts';
+
 import _ from '../../../workarounds/_.ts';
-import { TPatternBoard } from './TPatternBoard.ts';
 
 const generationsOrder = [
   standardSquareBoardGenerations,

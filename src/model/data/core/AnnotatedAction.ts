@@ -1,16 +1,17 @@
-import { TAction, TSerializedAction } from './TAction.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TCompleteData } from '../combined/TCompleteData.ts';
-import { AnnotatedPattern, TAnnotation } from './TAnnotation.ts';
-import { PatternRule } from '../../pattern/pattern-rule/PatternRule.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { BoardPatternBoard } from '../../pattern/pattern-board/BoardPatternBoard.ts';
-import { TFace } from '../../board/core/TFace.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
+import { TFace } from '../../board/core/TFace.ts';
 import { deserializeAction } from '../../data/core/deserializeAction.ts';
-import { TSector } from '../sector-state/TSector.ts';
-import FaceValue from '../face-value/FaceValue.ts';
 import { Embedding } from '../../pattern/embedding/Embedding.ts';
+import { BoardPatternBoard } from '../../pattern/pattern-board/BoardPatternBoard.ts';
+import { PatternRule } from '../../pattern/pattern-rule/PatternRule.ts';
+import { TCompleteData } from '../combined/TCompleteData.ts';
+import FaceValue from '../face-value/FaceValue.ts';
+import { TSector } from '../sector-state/TSector.ts';
+import { TAction, TSerializedAction } from './TAction.ts';
+import { AnnotatedPattern, TAnnotation } from './TAnnotation.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class AnnotatedAction<Data> implements TAction<Data> {
   public constructor(

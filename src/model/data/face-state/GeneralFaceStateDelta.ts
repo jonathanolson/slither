@@ -1,11 +1,12 @@
-import { GeneralFaceStateAction } from './GeneralFaceStateAction.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { serializeFaceStateData, TFaceStateData, TSerializedFaceStateData } from './TFaceStateData.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import { TState } from '../core/TState.ts';
-import { TinyEmitter } from 'phet-lib/axon';
 import { TFace } from '../../board/core/TFace.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
 import { FaceState } from './FaceState.ts';
+import { GeneralFaceStateAction } from './GeneralFaceStateAction.ts';
+import { TFaceStateData, TSerializedFaceStateData, serializeFaceStateData } from './TFaceStateData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
 
 export class GeneralFaceStateDelta extends GeneralFaceStateAction implements TDelta<TFaceStateData> {
   public readonly faceStateChangedEmitter = new TinyEmitter<[face: TFace, state: FaceState, oldState: FaceState]>();

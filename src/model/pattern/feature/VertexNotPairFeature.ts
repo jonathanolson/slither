@@ -1,15 +1,15 @@
-import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicNotAll } from '../../logic/operations.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import { TFeature } from './TFeature.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
 import { BlackEdgeFeature } from './BlackEdgeFeature.ts';
 import { RedEdgeFeature } from './RedEdgeFeature.ts';
+import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
+import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
 
 export class VertexNotPairFeature implements TEmbeddableFeature {
   public constructor(

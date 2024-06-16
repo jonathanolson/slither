@@ -1,9 +1,10 @@
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import { TPatternSector } from '../pattern-board/TPatternSector.ts';
-import { TPatternFace } from '../pattern-board/TPatternFace.ts';
 import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { TPatternSector } from '../pattern-board/TPatternSector.ts';
+import { TPatternVertex } from '../pattern-board/TPatternVertex.ts';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class Embedding {
   public readonly isAutomorphism: boolean;

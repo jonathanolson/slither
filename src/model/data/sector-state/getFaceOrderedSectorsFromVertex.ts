@@ -1,6 +1,7 @@
 import { TVertex } from '../../board/core/TVertex.ts';
 import { TSector } from './TSector.ts';
 import { getSectorsFromVertex } from './getSectorsFromVertex.ts';
+
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const getFaceOrderedSectorsFromVertex = (vertex: TVertex): TSector[] => {

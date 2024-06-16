@@ -1,24 +1,30 @@
-import cv from '@techstark/opencv-js';
-import { scanShapeFaceValue } from './scanFaceValues.ts';
-import { cvReady, drawContour, imshow, matToCanvas, matToGrayscale, matWithZeros, withMat } from './opencvUtils.ts';
-import { ContourCollection } from './ContourCollection.ts';
-import _ from '../workarounds/_';
 import { Contour } from './Contour.ts';
+import { ContourCollection } from './ContourCollection.ts';
+import { cvReady, drawContour, imshow, matToCanvas, matToGrayscale, matWithZeros, withMat } from './opencvUtils.ts';
+import cv from '@techstark/opencv-js';
+
 import { Vector2 } from 'phet-lib/dot';
-import EdgeState from '../model/data/edge-state/EdgeState.ts';
 import { Orientation } from 'phet-lib/phet-core';
-import assert, { assertEnabled } from '../workarounds/assert.ts';
-import { SquareBoard } from '../model/board/square/SquareBoard.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { CompleteData } from '../model/data/combined/CompleteData.ts';
-import { getCoordinateClusteredMap } from '../util/getCoordinateClusteredMap.ts';
-import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import { TStructure } from '../model/board/core/TStructure.ts';
-import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
+
 import { TEdge } from '../model/board/core/TEdge.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { CompleteData } from '../model/data/combined/CompleteData.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import EdgeState from '../model/data/edge-state/EdgeState.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { satSolve } from '../model/solver/SATSolver.ts';
 import { InvalidStateError } from '../model/solver/errors/InvalidStateError.ts';
 import { MultipleSolutionsError } from '../model/solver/errors/MultipleSolutionsError.ts';
+
+import { scanShapeFaceValue } from './scanFaceValues.ts';
+
+import { getCoordinateClusteredMap } from '../util/getCoordinateClusteredMap.ts';
+
+import _ from '../workarounds/_';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+
 
 // Basic mat ops: https://docs.opencv.org/4.x/de/d06/tutorial_js_basic_ops.html
 // Image ops: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html

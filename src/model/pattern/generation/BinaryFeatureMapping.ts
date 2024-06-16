@@ -1,18 +1,19 @@
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
-import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
 import { Embedding } from '../embedding/Embedding.ts';
-import FeatureSetMatchState from '../feature/FeatureSetMatchState.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import _ from '../../../workarounds/_.ts';
-import { FaceFeature } from '../feature/FaceFeature.ts';
-import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { BlackEdgeFeature } from '../feature/BlackEdgeFeature.ts';
-import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
+import { FaceFeature } from '../feature/FaceFeature.ts';
+import { FeatureSet } from '../feature/FeatureSet.ts';
+import FeatureSetMatchState from '../feature/FeatureSetMatchState.ts';
+import { RedEdgeFeature } from '../feature/RedEdgeFeature.ts';
 import { SectorNotOneFeature } from '../feature/SectorNotOneFeature.ts';
 import { SectorNotTwoFeature } from '../feature/SectorNotTwoFeature.ts';
+import { SectorNotZeroFeature } from '../feature/SectorNotZeroFeature.ts';
 import { SectorOnlyOneFeature } from '../feature/SectorOnlyOneFeature.ts';
-import { FeatureSet } from '../feature/FeatureSet.ts';
+import { TBoardFeatureData } from '../feature/TBoardFeatureData.ts';
+import { TEmbeddableFeature } from '../feature/TEmbeddableFeature.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class BinaryFeatureMapping {
   public readonly featureArray: TEmbeddableFeature[] = [];

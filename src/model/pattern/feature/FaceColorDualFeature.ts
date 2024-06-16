@@ -1,16 +1,17 @@
-import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
-import { TPatternFace } from '../pattern-board/TPatternFace.ts';
-import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { Term } from '../../logic/Term.ts';
 import { Formula } from '../../logic/Formula.ts';
+import { Term } from '../../logic/Term.ts';
 import { logicAnd, logicEven, logicOdd } from '../../logic/operations.ts';
 import { Embedding } from '../embedding/Embedding.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { TPatternEdge } from '../pattern-board/TPatternEdge.ts';
+import { TPatternFace } from '../pattern-board/TPatternFace.ts';
+import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
+import { TEmbeddableFeature } from './TEmbeddableFeature.ts';
 import { TFeature } from './TFeature.ts';
 import { TSerializedEmbeddableFeature } from './TSerializedEmbeddableFeature.ts';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+
 import _ from '../../../workarounds/_.ts';
-import { IncompatibleFeatureError } from './IncompatibleFeatureError.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceColorDualFeature implements TEmbeddableFeature {
   public readonly allFaces: Set<TPatternFace> = new Set();

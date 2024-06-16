@@ -1,39 +1,42 @@
-import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
-import { DerivedProperty, Property, TEmitter, TinyEmitter, TReadOnlyProperty } from 'phet-lib/axon';
-import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
 import { puzzleFont } from '../Theme.ts';
-import { TEdge } from '../../model/board/core/TEdge.ts';
-import { TStructure } from '../../model/board/core/TStructure.ts';
-import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
-import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
+import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
+import { EdgeViewNode } from './EdgeViewNode.ts';
 import { FaceColorViewNode } from './FaceColorViewNode.ts';
-import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
+import { FaceStateViewNode } from './FaceStateViewNode.ts';
+import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
+import { FaceViewNode } from './FaceViewNode.ts';
+import { PuzzleBackgroundNode, PuzzleBackgroundNodeOptions } from './PuzzleBackgroundNode.ts';
+import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
+import { SectorViewNode } from './SectorViewNode.ts';
+import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
+import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
+import { SimpleRegionViewNode } from './SimpleRegionViewNode.ts';
+import { TPuzzleStyle } from './TPuzzleStyle.ts';
+import { VertexStateViewNode } from './VertexStateViewNode.ts';
+import { VertexViewNode } from './VertexViewNode.ts';
+import { currentPuzzleStyle } from './puzzleStyles.ts';
+
+import { DerivedProperty, Property, TEmitter, TReadOnlyProperty, TinyEmitter } from 'phet-lib/axon';
+import { Bounds2 } from 'phet-lib/dot';
+import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
+import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
+
+import { TEdge } from '../../model/board/core/TEdge.ts';
+import { TFace } from '../../model/board/core/TFace.ts';
+import { TStructure } from '../../model/board/core/TStructure.ts';
 import { TCompleteData } from '../../model/data/combined/TCompleteData.ts';
+import SectorState from '../../model/data/sector-state/SectorState.ts';
+import { TSector } from '../../model/data/sector-state/TSector.ts';
 import {
   isEdgeEditModeProperty,
   isFaceEditModeProperty,
   isSectorEditModeProperty,
   isVertexEditModeProperty,
 } from '../../model/puzzle/EditMode.ts';
-import { TFace } from '../../model/board/core/TFace.ts';
 import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColorHighlight.ts';
-import { SelectedFaceColorHighlightNode } from './SelectedFaceColorHighlightNode.ts';
-import { TSector } from '../../model/data/sector-state/TSector.ts';
 import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
-import { SelectedSectorEditNode } from './SelectedSectorEditNode.ts';
-import SectorState from '../../model/data/sector-state/SectorState.ts';
-import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { currentPuzzleStyle } from './puzzleStyles.ts';
-import { Bounds2 } from 'phet-lib/dot';
-import { EdgeViewNode } from './EdgeViewNode.ts';
-import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
-import { SectorViewNode } from './SectorViewNode.ts';
-import { SectorViewInteractionNode } from './SectorViewInteractionNode.ts';
-import { FaceStateViewNode } from './FaceStateViewNode.ts';
-import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
-import { FaceViewNode } from './FaceViewNode.ts';
-import { VertexStateViewNode } from './VertexStateViewNode.ts';
-import { VertexViewNode } from './VertexViewNode.ts';
+import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
+
 
 type SelfOptions = {
   textOptions?: TextOptions;

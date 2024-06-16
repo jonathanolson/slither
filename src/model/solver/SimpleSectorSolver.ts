@@ -1,17 +1,18 @@
-import { TSolver } from './TSolver.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { TState } from '../data/core/TState.ts';
-import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
-import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
-import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
-import { TSector } from '../data/sector-state/TSector.ts';
-import SectorState from '../data/sector-state/SectorState.ts';
-import { InvalidStateError } from './errors/InvalidStateError.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
+import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { EdgeStateSetAction } from '../data/edge-state/EdgeStateSetAction.ts';
+import { TEdgeStateData, TEdgeStateListener } from '../data/edge-state/TEdgeStateData.ts';
+import SectorState from '../data/sector-state/SectorState.ts';
+import { TSector } from '../data/sector-state/TSector.ts';
+import { TSectorStateData, TSectorStateListener } from '../data/sector-state/TSectorStateData.ts';
+import { TSolver } from './TSolver.ts';
+import { InvalidStateError } from './errors/InvalidStateError.ts';
+
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 type Data = TEdgeStateData & TSectorStateData;

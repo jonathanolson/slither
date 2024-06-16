@@ -1,16 +1,19 @@
 import { BooleanProperty, DerivedProperty, DynamicProperty, TReadOnlyProperty } from 'phet-lib/axon';
+import { platform } from 'phet-lib/phet-core';
 import { Color, Font, PaintColorProperty } from 'phet-lib/scenery';
+import { RectangularButton } from 'phet-lib/sun';
+
+import { okhslToRGBString, parseToOKHSL } from '../util/color.ts';
+import { copyToClipboard } from '../util/copyToClipboard.ts';
 import {
   LocalStorageBooleanProperty,
   LocalStorageNumberProperty,
   LocalStorageProperty,
   LocalStorageStringProperty,
 } from '../util/localStorage.ts';
-import { RectangularButton } from 'phet-lib/sun';
-import { copyToClipboard } from '../util/copyToClipboard.ts';
-import { platform } from 'phet-lib/phet-core';
+
 import _ from '../workarounds/_.ts';
-import { okhslToRGBString, parseToOKHSL } from '../util/color.ts';
+
 
 // Listen to the OS default light/dark mode
 const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');

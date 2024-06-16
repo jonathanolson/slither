@@ -1,20 +1,22 @@
-import { TFace } from '../../board/core/TFace.ts';
-import _ from '../../../workarounds/_.ts';
+import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
+import { TFace } from '../../board/core/TFace.ts';
+import EdgeState from '../edge-state/EdgeState.ts';
+import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import FaceValue from '../face-value/FaceValue.ts';
+import { TFaceValueData } from '../face-value/TFaceValueData.ts';
+import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
+
 import {
   getBinaryIndex,
   getBinaryQuantity,
   getCombinationIndex,
   getCombinationQuantity,
 } from '../../../util/booleanIndexing.ts';
-import { TVertexStateData } from '../vertex-state/TVertexStateData.ts';
-import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
-import { TFaceValueData } from '../face-value/TFaceValueData.ts';
-import EdgeState from '../edge-state/EdgeState.ts';
-import { TBoard } from '../../board/core/TBoard.ts';
+import { packBooleanArray, unpackBooleanArray } from '../../../util/booleanPacking.ts';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class FaceState {
   public readonly order: number;

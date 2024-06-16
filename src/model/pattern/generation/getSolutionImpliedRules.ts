@@ -1,13 +1,15 @@
-import { optionize3 } from 'phet-lib/phet-core';
-import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
-import { GET_RULES_DEFAULTS, GetRulesOptions, GetRulesSelfOptions } from './GetRulesOptions.ts';
-import { PatternRule } from '../pattern-rule/PatternRule.ts';
-import { BasicSolveOptions, FeatureSet } from '../feature/FeatureSet.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 import FaceValue from '../../data/face-value/FaceValue.ts';
 import { getEmbeddings } from '../embedding/getEmbeddings.ts';
-import _ from '../../../workarounds/_.ts';
+import { BasicSolveOptions, FeatureSet } from '../feature/FeatureSet.ts';
+import { TPatternBoard } from '../pattern-board/TPatternBoard.ts';
+import { PatternRule } from '../pattern-rule/PatternRule.ts';
+import { GET_RULES_DEFAULTS, GetRulesOptions, GetRulesSelfOptions } from './GetRulesOptions.ts';
 import { getFeatureImpliedRules } from './getFeatureImpliedRules.ts';
+
+import { optionize3 } from 'phet-lib/phet-core';
+
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const getSolutionImpliedRules = (
   patternBoard: TPatternBoard,

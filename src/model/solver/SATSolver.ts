@@ -7,27 +7,28 @@
  *
  * Could in the future consider https://www.comp.nus.edu.sg/~gregory/sat/.
  */
-
 import { TBoard } from '../board/core/TBoard.ts';
+import { TEdge } from '../board/core/TEdge.ts';
+import { TStructure } from '../board/core/TStructure.ts';
+import { TVertex } from '../board/core/TVertex.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TState } from '../data/core/TState.ts';
+import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
-import { TEdge } from '../board/core/TEdge.ts';
-import { Combination } from 'phet-lib/dot';
+import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { getSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
+import { finalStateSolve } from './autoSolver.ts';
+import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
+import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
 // @ts-expect-error
 import Logic from './logic-solver/logic-solver.js';
-import { TVertex } from '../board/core/TVertex.ts';
-import assert, { assertEnabled } from '../../workarounds/assert.ts';
-import { TState } from '../data/core/TState.ts';
-import { TStructure } from '../board/core/TStructure.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
+
 import { Property } from 'phet-lib/axon';
-import { finalStateSolve } from './autoSolver.ts';
-import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
-import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
-import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
-import { getSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+import { Combination } from 'phet-lib/dot';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export const getSolvablePropertyPuzzle = <
   Structure extends TStructure = TStructure,

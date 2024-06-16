@@ -1,12 +1,14 @@
-import { TState } from '../core/TState.ts';
-import { TSectorStateData, TSerializedSectorStateData } from './TSectorStateData.ts';
-import SectorState from './SectorState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
-import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-import { TDelta } from '../core/TDelta.ts';
-import { TinyEmitter } from 'phet-lib/axon';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
+import { TDelta } from '../core/TDelta.ts';
+import { TState } from '../core/TState.ts';
+import SectorState from './SectorState.ts';
 import { TSector } from './TSector.ts';
+import { TSectorStateData, TSerializedSectorStateData } from './TSectorStateData.ts';
+
+import { TinyEmitter } from 'phet-lib/axon';
+
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class SectorStateValidator implements TState<TSectorStateData> {
   public readonly sectorStateChangedEmitter = new TinyEmitter<

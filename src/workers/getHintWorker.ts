@@ -1,5 +1,6 @@
 // @ts-expect-error
 import HintWorker from './hintWorker.ts?worker';
+
 import { TinyProperty } from 'phet-lib/axon';
 
 let hintWorker: Worker | null = null;

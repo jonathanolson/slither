@@ -1,5 +1,5 @@
-import { VarOrderLt } from './VarOrderLt';
 import { VecNumber } from '../mtl/VecNumber';
+import { VarOrderLt } from './VarOrderLt';
 
 export class HeapVarOrderLt {
   private lt: VarOrderLt;
