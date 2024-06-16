@@ -14,6 +14,11 @@
     - Set up MSI laptop with generation?
     - 
     - Difficulties based on patterns(!!!!!)
+    - Generate puzzles and measure pattern frequency
+      - STORE puzzles based on which patterns they require, and generate a TON
+        - THUS have library of puzzles that "require" certain patterns
+      - Are empty face values correlated with difficulty?
+        - !! Removing a face value MIGHT make it easier, due to highlander rules?
     - "Hint" button should swap to "apply"?
     - 
     - Auto-solve / Erase
@@ -55,6 +60,8 @@
         - b: no errors, but incomplete
         - c: solved!
       - [feature] Auto-solve delayed start (maybe) (optional)
+    - 
+    - Find "forced color bridge" regions
     - 
     - Auto-load hint solver (in the background), since it isn't killing memory
     - Embedding improvements soon.
