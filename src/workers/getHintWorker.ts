@@ -20,3 +20,6 @@ export const getHintWorker = (): Worker => {
 
   return hintWorker!;
 };
+
+// Load on startup (for now)
+getHintWorker();

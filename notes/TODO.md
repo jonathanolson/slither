@@ -13,6 +13,9 @@
     - 
     - Set up MSI laptop with generation?
     - 
+    - [performance] Share BoardPatternBoards when solving --- even... potentially deserialize the board to the same thing?
+      - We are also (a) leaking memory, and (b) computing a ton of unneeded embeddings
+    - 
     - Difficulties based on patterns(!!!!!)
     - Generate puzzles and measure pattern frequency
       - STORE puzzles based on which patterns they require, and generate a TON
@@ -64,7 +67,6 @@
     - 
     - Find "forced color bridge" regions
     - 
-    - Auto-load hint solver (in the background), since it isn't killing memory
     - Embedding improvements soon.
     - Show changelog in settings/info somewhere
     - Improve "incorrect move" highlight (don't "scary bars" them))
