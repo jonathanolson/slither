@@ -22,6 +22,7 @@ const config = {
     'phet-lib',
     '^\./model',
     '^\./scan',
+    '^\./targets',
     '^\./test',
     '^\./util',
     '^\./view',
