@@ -1,40 +1,40 @@
 import { Bounds2, Range } from 'phet-lib/dot';
 import { AlignBox, Display, FireListener, GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
 import { BooleanProperty, DerivedProperty, Multilink, Property } from 'phet-lib/axon';
-import _ from './workarounds/_.ts';
-import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import assert, { assertEnabled } from './workarounds/assert.ts';
+import _ from '../workarounds/_.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
 import { Enumeration, EnumerationValue, Orientation, platform } from 'phet-lib/phet-core';
 import {
   LocalStorageEnumerationProperty,
   LocalStorageNullableEnumerationProperty,
   LocalStorageNumberProperty,
-} from './util/localStorage.ts';
-import { UIText } from './view/UIText.ts';
-import { UILabeledVerticalAquaRadioButtonGroup } from './view/UILabeledVerticalAquaRadioButtonGroup.ts';
+} from '../util/localStorage.ts';
+import { UIText } from '../view/UIText.ts';
+import { UILabeledVerticalAquaRadioButtonGroup } from '../view/UILabeledVerticalAquaRadioButtonGroup.ts';
 import { ArrowButton, Panel, Slider } from 'phet-lib/sun';
-import { DisplayEmbedding } from './model/pattern/embedding/DisplayEmbedding.ts';
-import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
+import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
+import { EmbeddedPatternRuleNode } from '../view/pattern/EmbeddedPatternRuleNode.ts';
 import {
   basicSectorsPuzzleStyle,
   classicPuzzleStyle,
   currentPuzzleStyle,
   puzzleStyleFromProperty,
   sectorsWithColorsPuzzleStyle,
-} from './view/puzzle/puzzleStyles.ts';
-import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
-import { availableThemes, currentTheme, themeProperty, uiFont } from './view/Theme.ts';
-import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
-import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
-import { generalEdgeMixedGroup } from './model/pattern/collection/generalEdgeMixedGroup.ts';
-import { generalEdgeColorMixedGroup } from './model/pattern/collection/generalEdgeColorMixedGroup.ts';
-import { generalColorMixedGroup } from './model/pattern/collection/generalColorMixedGroup.ts';
-import { generalEdgeSectorMixedGroup } from './model/pattern/collection/generalEdgeSectorMixedGroup.ts';
-import { generalAllMixedGroup } from './model/pattern/collection/generalAllMixedGroup.ts';
-import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
-import { computeEmbeddings } from './model/pattern/embedding/computeEmbeddings.ts';
-import { getBestDisplayEmbeddingForRule } from './view/pattern/getBestDisplayEmbeddingForRule.ts';
+} from '../view/puzzle/puzzleStyles.ts';
+import { TPuzzleStyle } from '../view/puzzle/TPuzzleStyle.ts';
+import { availableThemes, currentTheme, themeProperty, uiFont } from '../view/Theme.ts';
+import { FaceFeature } from '../model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from '../model/pattern/feature/RedEdgeFeature.ts';
+import { generalEdgeMixedGroup } from '../model/pattern/collection/generalEdgeMixedGroup.ts';
+import { generalEdgeColorMixedGroup } from '../model/pattern/collection/generalEdgeColorMixedGroup.ts';
+import { generalColorMixedGroup } from '../model/pattern/collection/generalColorMixedGroup.ts';
+import { generalEdgeSectorMixedGroup } from '../model/pattern/collection/generalEdgeSectorMixedGroup.ts';
+import { generalAllMixedGroup } from '../model/pattern/collection/generalAllMixedGroup.ts';
+import { DisplayTiling } from '../view/pattern/DisplayTiling.ts';
+import { computeEmbeddings } from '../model/pattern/embedding/computeEmbeddings.ts';
+import { getBestDisplayEmbeddingForRule } from '../view/pattern/getBestDisplayEmbeddingForRule.ts';
 
 // Load with `http://localhost:5173/rule-explorer?debugger`
 

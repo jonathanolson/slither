@@ -2,24 +2,24 @@ import { Display, Node } from 'phet-lib/scenery';
 import {
   getSerializedPatternBoardLibrary,
   standardSquareBoardGenerations,
-} from './model/pattern/pattern-board/patternBoards.ts';
+} from '../model/pattern/pattern-board/patternBoards.ts';
 import {
   BinaryRuleCollection,
   SerializedBinaryRuleCollection,
-} from './model/pattern/collection/BinaryRuleCollection.ts';
+} from '../model/pattern/collection/BinaryRuleCollection.ts';
 import {
   BinaryRuleSequence,
   SequenceSpecifier,
   SerializedBinaryRuleSequence,
-} from './model/pattern/collection/BinaryRuleSequence.ts';
-import { serializePatternBoard } from './model/pattern/pattern-board/serializePatternBoard.ts';
-import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
-import { deserializePatternBoard } from './model/pattern/pattern-board/deserializePatternBoard.ts';
+} from '../model/pattern/collection/BinaryRuleSequence.ts';
+import { serializePatternBoard } from '../model/pattern/pattern-board/serializePatternBoard.ts';
+import { TPatternBoard } from '../model/pattern/pattern-board/TPatternBoard.ts';
+import { deserializePatternBoard } from '../model/pattern/pattern-board/deserializePatternBoard.ts';
 import {
   BinaryMixedRuleGroup,
   SerializedBinaryMixedRuleGroup,
-} from './model/pattern/collection/BinaryMixedRuleGroup.ts';
-import { compressString } from './util/compression.ts';
+} from '../model/pattern/collection/BinaryMixedRuleGroup.ts';
+import { compressString } from '../util/compression.ts';
 
 // Load with `http://localhost:5173/rules-test.html?debugger`
 

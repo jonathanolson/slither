@@ -1,19 +1,19 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
-import { FormulaSolver } from './model/logic/FormulaSolver.ts';
-import { logicOr } from './model/logic/operations.ts';
-import { Term } from './model/logic/Term.ts';
-import { BasePatternBoard } from './model/pattern/pattern-board/BasePatternBoard.ts';
-import { serializePatternBoardDescriptor } from './model/pattern/pattern-board/TPatternBoardDescriptor.ts';
-import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
-import { BoardPatternBoard } from './model/pattern/pattern-board/BoardPatternBoard.ts';
-import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { EmbeddingNode } from './view/pattern/EmbeddingNode.ts';
-import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
-import _ from './workarounds/_.ts';
-import assert, { assertEnabled } from './workarounds/assert.ts';
-import { TBoard } from './model/board/core/TBoard.ts';
-import { FacesPatternBoard } from './model/pattern/pattern-board/FacesPatternBoard.ts';
-import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
+import { FormulaSolver } from '../model/logic/FormulaSolver.ts';
+import { logicOr } from '../model/logic/operations.ts';
+import { Term } from '../model/logic/Term.ts';
+import { BasePatternBoard } from '../model/pattern/pattern-board/BasePatternBoard.ts';
+import { serializePatternBoardDescriptor } from '../model/pattern/pattern-board/TPatternBoardDescriptor.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import { BoardPatternBoard } from '../model/pattern/pattern-board/BoardPatternBoard.ts';
+import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { EmbeddingNode } from '../view/pattern/EmbeddingNode.ts';
+import { PlanarMappedPatternBoardNode } from '../view/pattern/PlanarMappedPatternBoardNode.ts';
+import _ from '../workarounds/_.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { TBoard } from '../model/board/core/TBoard.ts';
+import { FacesPatternBoard } from '../model/pattern/pattern-board/FacesPatternBoard.ts';
+import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import {
   cairoPentagonalTiling,
   PolygonalBoard,
@@ -21,32 +21,32 @@ import {
   snubSquareTiling,
   triangularTiling,
   trihexagonalTiling,
-} from './model/board/core/TiledBoard.ts';
+} from '../model/board/core/TiledBoard.ts';
 import {
   deserializePlanarMappedPatternBoard,
   serializePlanarMappedPatternBoard,
-} from './model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
+} from '../model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
 import {
   generateAllDisjointNonSingleSubsets,
   generateBinaryPartitions,
   getFaceFeatureCombinations,
-} from './model/pattern/feature/getFaceFeatureCombinations.ts';
-import { PatternNode } from './view/pattern/PatternNode.ts';
-import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
-import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
-import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
-import { FaceColorDualFeature } from './model/pattern/feature/FaceColorDualFeature.ts';
-import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
-import { PatternBoardSolver } from './model/pattern/solve/PatternBoardSolver.ts';
-import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
-import { arePatternBoardsIsomorphic } from './model/pattern/pattern-board/arePatternBoardsIsomorphic.ts';
-import { basicPatternBoards } from './model/pattern/pattern-board/patternBoards.ts';
-import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import { getEmbeddings } from './model/pattern/embedding/getEmbeddings.ts';
-import { filterHighlanderSolutions } from './model/pattern/highlander/filterHighlanderSolutions.ts';
-import { getIndeterminateEdges } from './model/pattern/highlander/getIndeterminateEdges.ts';
-import { PolygonGenerator } from './model/board/PolygonGenerator.ts';
-import { getPeriodicTilingGenerator } from './model/board/getPeriodicTilingGenerator.ts';
+} from '../model/pattern/feature/getFaceFeatureCombinations.ts';
+import { PatternNode } from '../view/pattern/PatternNode.ts';
+import { FaceFeature } from '../model/pattern/feature/FaceFeature.ts';
+import { BlackEdgeFeature } from '../model/pattern/feature/BlackEdgeFeature.ts';
+import { RedEdgeFeature } from '../model/pattern/feature/RedEdgeFeature.ts';
+import { FaceColorDualFeature } from '../model/pattern/feature/FaceColorDualFeature.ts';
+import { SectorOnlyOneFeature } from '../model/pattern/feature/SectorOnlyOneFeature.ts';
+import { PatternBoardSolver } from '../model/pattern/solve/PatternBoardSolver.ts';
+import { FeatureSet } from '../model/pattern/feature/FeatureSet.ts';
+import { arePatternBoardsIsomorphic } from '../model/pattern/pattern-board/arePatternBoardsIsomorphic.ts';
+import { basicPatternBoards } from '../model/pattern/pattern-board/patternBoards.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { getEmbeddings } from '../model/pattern/embedding/getEmbeddings.ts';
+import { filterHighlanderSolutions } from '../model/pattern/highlander/filterHighlanderSolutions.ts';
+import { getIndeterminateEdges } from '../model/pattern/highlander/getIndeterminateEdges.ts';
+import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
+import { getPeriodicTilingGenerator } from '../model/board/getPeriodicTilingGenerator.ts';
 
 // Load with `http://localhost:5173/discover-rules.html?debugger`
 

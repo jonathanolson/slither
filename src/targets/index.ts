@@ -1,7 +1,7 @@
-import '../index.css';
+import '../../index.css';
 
 import { Circle, Display, Node, Path } from 'phet-lib/scenery';
-import PuzzleNode from './view/puzzle/PuzzleNode.ts';
+import PuzzleNode from '../view/puzzle/PuzzleNode.ts';
 import {
   getBasicColoringPuzzleStyleWithTheme,
   getBasicLinesPuzzleStyleWithTheme,
@@ -9,29 +9,29 @@ import {
   getClassicWithSectorsPuzzleStyleWithTheme,
   getPureColoringPuzzleStyleWithTheme,
   getSectorsWithColorsPuzzleStyleWithTheme,
-} from './view/puzzle/puzzleStyles.ts';
-import { lightTheme } from './view/Theme.ts';
-import { TPuzzleStyle } from './view/puzzle/TPuzzleStyle.ts';
-import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
-import { EmbeddedPatternRuleNode } from './view/pattern/EmbeddedPatternRuleNode.ts';
-import { DisplayTiling } from './view/pattern/DisplayTiling.ts';
+} from '../view/puzzle/puzzleStyles.ts';
+import { lightTheme } from '../view/Theme.ts';
+import { TPuzzleStyle } from '../view/puzzle/TPuzzleStyle.ts';
+import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+import { EmbeddedPatternRuleNode } from '../view/pattern/EmbeddedPatternRuleNode.ts';
+import { DisplayTiling } from '../view/pattern/DisplayTiling.ts';
 import { Bounds2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import {
   standardSquareBoardGenerations,
   vertexNonExit4PatternBoard,
-} from './model/pattern/pattern-board/patternBoards.ts';
-import { FeatureSet } from './model/pattern/feature/FeatureSet.ts';
-import { SectorOnlyOneFeature } from './model/pattern/feature/SectorOnlyOneFeature.ts';
-import { FaceFeature } from './model/pattern/feature/FaceFeature.ts';
-import { RedEdgeFeature } from './model/pattern/feature/RedEdgeFeature.ts';
-import { BlackEdgeFeature } from './model/pattern/feature/BlackEdgeFeature.ts';
+} from '../model/pattern/pattern-board/patternBoards.ts';
+import { FeatureSet } from '../model/pattern/feature/FeatureSet.ts';
+import { SectorOnlyOneFeature } from '../model/pattern/feature/SectorOnlyOneFeature.ts';
+import { FaceFeature } from '../model/pattern/feature/FaceFeature.ts';
+import { RedEdgeFeature } from '../model/pattern/feature/RedEdgeFeature.ts';
+import { BlackEdgeFeature } from '../model/pattern/feature/BlackEdgeFeature.ts';
 import { BooleanProperty } from 'phet-lib/axon';
-import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
 import { Panel } from 'phet-lib/sun';
-import { puzzleFromCompressedString } from './model/puzzle/puzzleFromCompressedString.ts';
-import { getBestDisplayEmbeddingForRule } from './view/pattern/getBestDisplayEmbeddingForRule.ts';
+import { puzzleFromCompressedString } from '../model/puzzle/puzzleFromCompressedString.ts';
+import { getBestDisplayEmbeddingForRule } from '../view/pattern/getBestDisplayEmbeddingForRule.ts';
 
 // @ts-expect-error
 if (window.assertions && !import.meta.env.PROD) {

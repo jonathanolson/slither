@@ -1,13 +1,9 @@
 import { AlignBox, Display, FireListener, Node, Rectangle, VBox } from 'phet-lib/scenery';
-import { PatternRuleNode } from './view/pattern/PatternRuleNode.ts';
-import { copyToClipboard } from './util/copyToClipboard.ts';
-import { PatternRule } from './model/pattern/pattern-rule/PatternRule.ts';
-import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
-import { curatedRules } from './model/pattern/data/curatedRules.ts';
-import { getEmbeddings } from './model/pattern/embedding/getEmbeddings.ts';
-
-const DO_FILTER = true;
+import { PatternRuleNode } from '../view/pattern/PatternRuleNode.ts';
+import { copyToClipboard } from '../util/copyToClipboard.ts';
+import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { curatedRules } from '../model/pattern/data/curatedRules.ts';
 
 // @ts-expect-error
 window.assertions.enableAssert();
@@ -47,28 +43,7 @@ console.log('test');
     container.addChild(new AlignBox(node, { margin: 5 }));
   };
 
-  let rules: PatternRule[] = [];
-
-  // rules.push( ...ruleSet.rules );
-  // TODO: add back in rules
-
-  const embeddedRuleMap = new Map<TPatternBoard, PatternRule[]>();
-
-  const getEmbeddedRules = (patternBoard: TPatternBoard) => {
-    if (!embeddedRuleMap.has(patternBoard)) {
-      embeddedRuleMap.set(
-        patternBoard,
-        curatedRules.flatMap((curatedRule) =>
-          curatedRule.getEmbeddedRules(getEmbeddings(curatedRule.patternBoard, patternBoard)),
-        ),
-      );
-    }
-    return embeddedRuleMap.get(patternBoard)!;
-  };
-
-  if (DO_FILTER) {
-    rules = rules.filter((rule) => !rule.isRedundant(getEmbeddedRules(rule.patternBoard)));
-  }
+  const rules: PatternRule[] = curatedRules;
 
   addPaddedNode(
     new VBox({

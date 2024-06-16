@@ -1,6 +1,6 @@
 import { AlignBox, AlignGroup, Display, HBox, Node, Text, VBox } from 'phet-lib/scenery';
-import { PlanarMappedPatternBoardNode } from './view/pattern/PlanarMappedPatternBoardNode.ts';
-import { deserializePlanarMappedPatternBoard } from './model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
+import { PlanarMappedPatternBoardNode } from '../view/pattern/PlanarMappedPatternBoardNode.ts';
+import { deserializePlanarMappedPatternBoard } from '../model/pattern/pattern-board/planar-map/TPlanarMappedPatternBoard.ts';
 import {
   basicPatternBoards,
   standardCairoBoardGenerations,
@@ -10,10 +10,10 @@ import {
   standardSquareBoardGenerations,
   standardTriangularBoardGenerations,
   standardTrihexagonalBoardGenerations,
-} from './model/pattern/pattern-board/patternBoards.ts';
-import { planarPatternMaps } from './model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
-import { TPatternBoard } from './model/pattern/pattern-board/TPatternBoard.ts';
-import { generalPatternBoardGenerations } from './model/pattern/pattern-board/generalPatternBoardGenerations.ts';
+} from '../model/pattern/pattern-board/patternBoards.ts';
+import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/planarPatternMaps.ts';
+import { TPatternBoard } from '../model/pattern/pattern-board/TPatternBoard.ts';
+import { generalPatternBoardGenerations } from '../model/pattern/pattern-board/generalPatternBoardGenerations.ts';
 
 // Load with `http://localhost:5173/pattern-boards.html?debugger`
 

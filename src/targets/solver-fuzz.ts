@@ -1,24 +1,24 @@
 import { Display, Node } from 'phet-lib/scenery';
-import { SquareBoard } from './model/board/square/SquareBoard.ts';
-import { HexagonalBoard } from './model/board/hex/HexagonalBoard.ts';
-import { generateFaceAdditive } from './model/generator/generateFaceAdditive.ts';
-import { greedyFaceMinimize } from './model/generator/greedyFaceMinimize.ts';
-import { BasicPuzzle } from './model/puzzle/BasicPuzzle.ts';
-import PuzzleNode from './view/puzzle/PuzzleNode.ts';
-import { sleep } from './util/sleep.ts';
+import { SquareBoard } from '../model/board/square/SquareBoard.ts';
+import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
+import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
+import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
+import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
+import PuzzleNode from '../view/puzzle/PuzzleNode.ts';
+import { sleep } from '../util/sleep.ts';
 import { BooleanProperty } from 'phet-lib/axon';
-import { finalStateSolve } from './model/solver/autoSolver.ts';
-import { CompleteValidator } from './model/data/combined/CompleteValidator.ts';
-import EdgeState from './model/data/edge-state/EdgeState.ts';
-import { simpleRegionIsSolved } from './model/data/simple-region/TSimpleRegionData.ts';
-import _ from './workarounds/_.ts';
-import assert, { assertEnabled } from './workarounds/assert.ts';
-import { PolygonalBoard } from './model/board/core/TiledBoard.ts';
-import { AnnotationNode } from './view/AnnotationNode.ts';
-import { standardSolverFactory } from './model/solver/standardSolverFactory.ts';
-import { currentPuzzleStyle } from './view/puzzle/puzzleStyles.ts';
-import { PolygonGenerator } from './model/board/PolygonGenerator.ts';
-import { polygonGenerators } from './model/board/generators/polygonGenerators.ts';
+import { finalStateSolve } from '../model/solver/autoSolver.ts';
+import { CompleteValidator } from '../model/data/combined/CompleteValidator.ts';
+import EdgeState from '../model/data/edge-state/EdgeState.ts';
+import { simpleRegionIsSolved } from '../model/data/simple-region/TSimpleRegionData.ts';
+import _ from '../workarounds/_.ts';
+import assert, { assertEnabled } from '../workarounds/assert.ts';
+import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
+import { AnnotationNode } from '../view/AnnotationNode.ts';
+import { standardSolverFactory } from '../model/solver/standardSolverFactory.ts';
+import { currentPuzzleStyle } from '../view/puzzle/puzzleStyles.ts';
+import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
+import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
 
 // Load with `http://localhost:5173/solver-fuzz.html?debugger`
 
