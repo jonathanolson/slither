@@ -13,7 +13,7 @@
     "@techstark/opencv-js": "4.9.0-release.2",
     "culori": "~4.0.1",
     "pako": "~2.1.0",
-    "phet-lib": "0.0.11",
+    "phet-lib": "0.0.12",
     "tactile-js": "~1.0.0",
     "tesseract.js": "~5.0.4"
   },

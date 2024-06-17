@@ -5,6 +5,7 @@ export const changelog = [
     'Added new computed hints',
     'Improved error highlighting for incorrect moves',
     'Pause timer when solved',
+    'Added help popup',
   ],
   [
     '2024-06-15',

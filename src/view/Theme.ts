@@ -482,6 +482,12 @@ export const timerFont = new Font({
   size: 14,
 });
 
+export const uiBigHelpFont = new Font({
+  family: uiFontFamily,
+  size: 20,
+  weight: 'bold',
+});
+
 export const customAllowEdgeEditProperty = new LocalStorageBooleanProperty('customAllowEdgeEditProperty', true);
 export const customAllowAbsoluteFaceColorEditProperty = new LocalStorageBooleanProperty(
   'customAllowAbsoluteFaceColorEditProperty',

@@ -2,12 +2,14 @@ import {
   fontAwesomeBackwardShape,
   fontAwesomeForwardShape,
   fontAwesomeGearShape,
+  fontAwesomeQuestionCircleShape,
   fontAwesomeShareShape,
   fontAwesomeStepBackwardShape,
   fontAwesomeStepForwardShape,
   toFontAwesomePath,
 } from './FontAwesomeShape.ts';
 import { GenNode } from './GenNode.ts';
+import { HelpNode } from './HelpNode.ts';
 import { SettingsNode } from './SettingsNode.ts';
 import { ShareNode } from './ShareNode.ts';
 import { controlBarFont, controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
@@ -85,6 +87,7 @@ export default class ControlBarNode extends HBox {
     let genNode: GenNode | null = null;
     let shareNode: ShareNode | null = null;
     let settingsNode: SettingsNode | null = null;
+    let helpNode: HelpNode | null = null;
 
     const commonButtonOptions = {
       buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
@@ -249,6 +252,17 @@ export default class ControlBarNode extends HBox {
             yMargin: 5,
             font: controlBarFont,
             buttonAppearanceStrategy: rectangularButtonAppearanceStrategy,
+          }),
+        ),
+        new RectangularPushButton(
+          combineOptions<RectangularPushButtonOptions>({}, commonButtonOptions, {
+            accessibleName: 'Help',
+            content: toFontAwesomePath(fontAwesomeQuestionCircleShape),
+            listener: () => {
+              helpNode = helpNode || new HelpNode(viewContext);
+
+              helpNode.show();
+            },
           }),
         ),
       ],

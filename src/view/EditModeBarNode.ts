@@ -7,118 +7,16 @@ import { ViewContext } from './ViewContext.ts';
 
 import { Shape } from 'phet-lib/kite';
 import { combineOptions } from 'phet-lib/phet-core';
-import { HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
+import { AlignGroup, HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
 import { BooleanRectangularStickyToggleButton, BooleanRectangularStickyToggleButtonOptions } from 'phet-lib/sun';
 
 import EditMode, { editModeProperty, eraserEnabledProperty } from '../model/puzzle/EditMode.ts';
-
 
 const HIDE_ERASE = false;
 
 // TODO: support a background node with more complexity in the future?
 export default class EditModeBarNode extends HBox {
   public constructor(viewContext: ViewContext) {
-    const edgeIcon = new Line(0, 0, 15, 0, {
-      stroke: currentTheme.uiButtonForegroundProperty,
-      lineWidth: 4,
-      lineCap: 'round',
-    });
-
-    const halfSize = 6;
-    const xShape = new Shape()
-      .moveTo(-halfSize, -halfSize)
-      .lineTo(halfSize, halfSize)
-      .moveTo(-halfSize, halfSize)
-      .lineTo(halfSize, -halfSize);
-
-    const edgeReversedIcon = new Path(xShape, {
-      stroke: currentTheme.uiButtonForegroundProperty,
-      lineWidth: 2,
-    });
-
-    const faceColorOutsideIcon = new Node({
-      children: [
-        new Rectangle(0, 0, 14, 14, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiButtonFaceOutsideColorProperty,
-        }),
-      ],
-    });
-
-    const faceColorInsideIcon = new Node({
-      children: [
-        new Rectangle(0, 0, 14, 14, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiButtonFaceInsideColorProperty,
-        }),
-      ],
-    });
-
-    const faceColorMatchIcon = new Node({
-      children: [
-        new Rectangle(0, 0, 7, 7, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiForegroundColorProperty,
-        }),
-        new Rectangle(7, 7, 7, 7, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiForegroundColorProperty,
-        }),
-      ],
-    });
-
-    const faceColorOppositeIcon = new Node({
-      children: [
-        new Rectangle(0, 0, 7, 7, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiForegroundColorProperty,
-        }),
-        new Rectangle(7, 7, 7, 7, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          fill: currentTheme.uiBackgroundColorProperty,
-        }),
-      ],
-    });
-
-    const sectorIcon = new Node({
-      children: [
-        new Path(new Shape().moveTo(0, 14).lineTo(0, 0).lineTo(14, 0), {
-          stroke: currentTheme.uiButtonForegroundProperty,
-        }),
-        new Path(new Shape().arc(0, 0, 7, 0, Math.PI / 2, false), {
-          stroke: currentTheme.uiButtonForegroundProperty,
-        }),
-      ],
-    });
-
-    const eraserWidth = 17;
-    const eraserTipWidth = 6;
-    const eraserHeight = 7;
-    const eraserCornerRadius = 2;
-    const eraserDiagonal = eraserHeight / Math.sqrt(2);
-    const eraserIcon = new Node({
-      children: [
-        new Node({
-          rotation: -Math.PI / 4,
-          children: [
-            new Rectangle(0, 0, eraserWidth, eraserHeight, {
-              stroke: currentTheme.uiButtonForegroundProperty,
-              fill: currentTheme.uiButtonInvertedForegroundProperty,
-              cornerRadius: eraserCornerRadius,
-            }),
-            new Rectangle(eraserTipWidth, 0, eraserWidth - eraserTipWidth, eraserHeight, {
-              fill: currentTheme.uiButtonForegroundProperty,
-              cornerRadius: eraserCornerRadius,
-            }),
-          ],
-        }),
-        new Line(eraserDiagonal, eraserDiagonal - 0.5, eraserDiagonal + 12, eraserDiagonal - 0.5, {
-          stroke: currentTheme.uiButtonForegroundProperty,
-          lineDash: [5, 1, 3, 1, 2],
-        }),
-      ],
-    });
-
     const tooltipListener = new TooltipListener(viewContext);
 
     const wrapIcon = (icon: Node) => {
@@ -127,6 +25,17 @@ export default class EditModeBarNode extends HBox {
         children: [icon],
       });
     };
+
+    const {
+      edgeIcon,
+      edgeReversedIcon,
+      faceColorInsideIcon,
+      faceColorOutsideIcon,
+      faceColorMatchIcon,
+      faceColorOppositeIcon,
+      sectorIcon,
+      eraserIcon,
+    } = EditModeBarNode.getIcons();
 
     const editModeRadioButtonGroup = new UIRectangularRadioButtonGroup<EditMode>(
       editModeProperty,
@@ -231,5 +140,121 @@ export default class EditModeBarNode extends HBox {
     viewContext.layoutBoundsProperty.link((bounds) => {
       this.maxWidth = Math.max(1, bounds.width - 2 * controlBarMargin);
     });
+  }
+
+  public static getIcons() {
+    const edgeIcon = new Line(0, 0, 15, 0, {
+      stroke: currentTheme.uiButtonForegroundProperty,
+      lineWidth: 4,
+      lineCap: 'round',
+    });
+
+    const halfSize = 6;
+    const xShape = new Shape()
+      .moveTo(-halfSize, -halfSize)
+      .lineTo(halfSize, halfSize)
+      .moveTo(-halfSize, halfSize)
+      .lineTo(halfSize, -halfSize);
+
+    const edgeReversedIcon = new Path(xShape, {
+      stroke: currentTheme.uiButtonForegroundProperty,
+      lineWidth: 2,
+    });
+
+    const faceColorOutsideIcon = new Node({
+      children: [
+        new Rectangle(0, 0, 14, 14, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiButtonFaceOutsideColorProperty,
+        }),
+      ],
+    });
+
+    const faceColorInsideIcon = new Node({
+      children: [
+        new Rectangle(0, 0, 14, 14, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiButtonFaceInsideColorProperty,
+        }),
+      ],
+    });
+
+    const faceColorMatchIcon = new Node({
+      children: [
+        new Rectangle(0, 0, 7, 7, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty,
+        }),
+        new Rectangle(7, 7, 7, 7, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty,
+        }),
+      ],
+    });
+
+    const faceColorOppositeIcon = new Node({
+      children: [
+        new Rectangle(0, 0, 7, 7, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiForegroundColorProperty,
+        }),
+        new Rectangle(7, 7, 7, 7, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          fill: currentTheme.uiBackgroundColorProperty,
+        }),
+      ],
+    });
+
+    const sectorIcon = new Node({
+      children: [
+        new Path(new Shape().moveTo(0, 14).lineTo(0, 0).lineTo(14, 0), {
+          stroke: currentTheme.uiButtonForegroundProperty,
+        }),
+        new Path(new Shape().arc(0, 0, 7, 0, Math.PI / 2, false), {
+          stroke: currentTheme.uiButtonForegroundProperty,
+        }),
+      ],
+    });
+
+    const eraserWidth = 17;
+    const eraserTipWidth = 6;
+    const eraserHeight = 7;
+    const eraserCornerRadius = 2;
+    const eraserDiagonal = eraserHeight / Math.sqrt(2);
+    const eraserIcon = new Node({
+      children: [
+        new Node({
+          rotation: -Math.PI / 4,
+          children: [
+            new Rectangle(0, 0, eraserWidth, eraserHeight, {
+              stroke: currentTheme.uiButtonForegroundProperty,
+              fill: currentTheme.uiButtonInvertedForegroundProperty,
+              cornerRadius: eraserCornerRadius,
+            }),
+            new Rectangle(eraserTipWidth, 0, eraserWidth - eraserTipWidth, eraserHeight, {
+              fill: currentTheme.uiButtonForegroundProperty,
+              cornerRadius: eraserCornerRadius,
+            }),
+          ],
+        }),
+        new Line(eraserDiagonal, eraserDiagonal - 0.5, eraserDiagonal + 12, eraserDiagonal - 0.5, {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          lineDash: [5, 1, 3, 1, 2],
+        }),
+      ],
+    });
+
+    const alignGroup = new AlignGroup();
+
+    return {
+      edgeIcon: alignGroup.createBox(edgeIcon),
+      edgeReversedIcon: alignGroup.createBox(edgeReversedIcon),
+      faceColorInsideIcon: alignGroup.createBox(faceColorInsideIcon),
+      faceColorOutsideIcon: alignGroup.createBox(faceColorOutsideIcon),
+      faceColorMatchIcon: alignGroup.createBox(faceColorMatchIcon),
+      faceColorOppositeIcon: alignGroup.createBox(faceColorOppositeIcon),
+      sectorIcon: alignGroup.createBox(sectorIcon),
+      eraserIcon: alignGroup.createBox(eraserIcon),
+    };
   }
 }
