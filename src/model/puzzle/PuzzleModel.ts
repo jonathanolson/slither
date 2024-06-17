@@ -268,7 +268,7 @@ export default class PuzzleModel<
 
   public step(dt: number): void {
     if (!this.isSolvedProperty.value) {
-      this.timeElapsedProperty.value += Math.max(dt, 5); // Limit the jump (if they tab back in)
+      this.timeElapsedProperty.value += Math.min(dt, 5); // Limit the jump (if they tab back in)
       localStorage.setItem('timeElapsedProperty', JSON.stringify(this.timeElapsedProperty.value));
     }
   }
