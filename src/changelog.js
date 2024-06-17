@@ -7,6 +7,7 @@ export const changelog = [
     'Pause timer when solved',
     'Added help popup',
     'Added extra control for presence of sectors',
+    'Added line/cell dragging, with toggle between pan/drag modes',
   ],
   [
     '2024-06-15',
