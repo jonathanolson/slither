@@ -1,5 +1,10 @@
 export const changelog = [
-  ['Allow loading puzzles when in an error state', 'Auto-loading hint solver', 'Added new computed hints'],
+  [
+    'Allow loading puzzles when in an error state',
+    'Auto-loading hint solver',
+    'Added new computed hints',
+    'Improved error highlighting for incorrect moves',
+  ],
   [
     '2024-06-15',
     'Erase feature / edge toggle can use erase',

@@ -1,6 +1,8 @@
 import { AnnotationNode } from './AnnotationNode.ts';
+import { CorrectnessStateNode } from './CorrectnessStateNode.ts';
 import PuzzleNode from './puzzle/PuzzleNode.ts';
 
+import { Multilink } from 'phet-lib/axon';
 import { combineOptions, optionize } from 'phet-lib/phet-core';
 import { Node, NodeOptions } from 'phet-lib/scenery';
 
@@ -9,8 +11,7 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import SectorState from '../model/data/sector-state/SectorState.ts';
 import { TSector } from '../model/data/sector-state/TSector.ts';
-import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
-
+import PuzzleModel, { highlightIncorrectMovesProperty } from '../model/puzzle/PuzzleModel.ts';
 
 type SelfOptions = {
   focusNodeCallback?: (node: Node) => void;
@@ -53,10 +54,12 @@ export default class PuzzleModelNode<
       delayEdgeInteractionEmitter: puzzleModel.edgeAutoSolvedEmitter,
     });
 
+    const correctnessStateContainerNode = new Node();
+
     super(
       combineOptions<NodeOptions>(
         {
-          children: [puzzleNode],
+          children: [puzzleNode, correctnessStateContainerNode],
         },
         options,
       ),
@@ -96,5 +99,19 @@ export default class PuzzleModelNode<
 
     puzzleModel.displayedAnnotationProperty.link(annotationListener);
     this.disposeEmitter.addListener(() => puzzleModel.displayedAnnotationProperty.unlink(annotationListener));
+
+    // TODO: disposal of CorrectnessStateNode!!!
+    const multilink = Multilink.multilink(
+      [highlightIncorrectMovesProperty, puzzleModel.correctnessStateProperty],
+      (highlightIncorrectMoves, correctnessState) => {
+        if (highlightIncorrectMoves && !correctnessState.isCorrect()) {
+          const correctnessStateNode = new CorrectnessStateNode(puzzleModel.puzzle.board, correctnessState);
+          correctnessStateContainerNode.children = [correctnessStateNode];
+        } else {
+          correctnessStateContainerNode.children = [];
+        }
+      },
+    );
+    this.disposeEmitter.addListener(() => multilink.dispose());
   }
 }

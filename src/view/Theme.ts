@@ -14,7 +14,6 @@ import {
 
 import _ from '../workarounds/_.ts';
 
-
 // Listen to the OS default light/dark mode
 const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
 const isOSDarkModeProperty = new BooleanProperty(mediaQueryList.matches);
@@ -68,6 +67,9 @@ export const themeColorPropertyNames = [
   'faceValueErrorColorProperty',
   'faceValueRatioColorProperty',
   'edgeWeirdColorProperty',
+  'incorrectEdgeColorProperty',
+  'incorrectFaceColorProperty',
+
   'uiForegroundColorProperty',
   'uiBackgroundColorProperty',
   'uiButtonForegroundProperty',
@@ -216,6 +218,8 @@ export const lightTheme = addThemeLUT({
   faceValueErrorColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   faceValueRatioColorProperty: new PaintColorProperty('rgba(0,0,0,0.2999999999999999889)'),
   edgeWeirdColorProperty: new PaintColorProperty('rgb(255,0,0)'),
+  incorrectEdgeColorProperty: new PaintColorProperty('rgba(255,0,0,0.3)'),
+  incorrectFaceColorProperty: new PaintColorProperty('rgba(255,0,0,0.3)'),
   uiForegroundColorProperty: new PaintColorProperty('rgb(0,0,0)'),
   uiBackgroundColorProperty: new PaintColorProperty('rgb(255,255,255)'),
   uiButtonForegroundProperty: new PaintColorProperty('rgb(0,0,0)'),
@@ -274,6 +278,8 @@ export const darkTheme = addThemeLUT({
   faceValueErrorColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   faceValueRatioColorProperty: new PaintColorProperty('rgba(204,204,204,0.2999999999999999889)'),
   edgeWeirdColorProperty: new PaintColorProperty('rgb(255,0,0)'),
+  incorrectEdgeColorProperty: new PaintColorProperty('rgba(255,0,0,0.3)'),
+  incorrectFaceColorProperty: new PaintColorProperty('rgba(255,0,0,0.3)'),
   uiForegroundColorProperty: new PaintColorProperty('rgb(204,204,204)'),
   uiBackgroundColorProperty: new PaintColorProperty('rgb(34,34,34)'),
   uiButtonForegroundProperty: new PaintColorProperty('rgb(0,0,0)'),
