@@ -197,7 +197,7 @@ export class FaceColorValidator implements TState<TFaceColorData> {
             oppositeFaces.filter((face) => solvedState.getFaceColor(face) === solvedInsideColor).length;
           let totalCount = faces.length + oppositeFaces.length;
 
-          if (outsidePrimaryCount > 1 && outsidePrimaryCount < totalCount) {
+          if (outsidePrimaryCount > 0 && outsidePrimaryCount < totalCount) {
             const isPrimaryOutside = outsidePrimaryCount > totalCount / 2;
 
             const primaryColor = isPrimaryOutside ? solvedOutsideColor : solvedInsideColor;

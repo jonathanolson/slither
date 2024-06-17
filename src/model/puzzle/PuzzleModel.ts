@@ -54,7 +54,7 @@ import {
 } from 'phet-lib/axon';
 import { optionize } from 'phet-lib/phet-core';
 
-import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
+import { LocalStorageBooleanProperty, LocalStorageNumberProperty } from '../../util/localStorage.ts';
 
 import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
@@ -71,6 +71,11 @@ export const highlightIncorrectNumbersProperty = new LocalStorageBooleanProperty
 );
 export const highlightIncorrectMovesProperty = new LocalStorageBooleanProperty('highlightIncorrectMovesProperty', true);
 export const highlightIntersectionsProperty = new LocalStorageBooleanProperty('highlightIntersectionsProperty', true);
+
+export const highlightIncorrectMovesDelayProperty = new LocalStorageNumberProperty(
+  'highlightIncorrectMovesDelayProperty',
+  0.7,
+);
 
 export type PendingFaceColor = {
   face: TFace | null;

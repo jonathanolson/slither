@@ -39,7 +39,10 @@ export class CorrectnessStateNode extends Node {
     };
 
     const addBadFace = (face: TFace) => {
-      addDilatedFaceShape(Shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates)));
+      // Don't highlight incorrect faces if there is an incorrect edge to highlight too!
+      if (face.edges.every((edge) => !correctnessState.incorrectEdges.has(edge))) {
+        addDilatedFaceShape(Shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates)));
+      }
     };
 
     correctnessState.incorrectEdges.forEach(addBadEdge);

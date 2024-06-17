@@ -11,7 +11,10 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import SectorState from '../model/data/sector-state/SectorState.ts';
 import { TSector } from '../model/data/sector-state/TSector.ts';
-import PuzzleModel, { highlightIncorrectMovesProperty } from '../model/puzzle/PuzzleModel.ts';
+import PuzzleModel, {
+  highlightIncorrectMovesDelayProperty,
+  highlightIncorrectMovesProperty,
+} from '../model/puzzle/PuzzleModel.ts';
 
 type SelfOptions = {
   focusNodeCallback?: (node: Node) => void;
@@ -100,15 +103,31 @@ export default class PuzzleModelNode<
     puzzleModel.displayedAnnotationProperty.link(annotationListener);
     this.disposeEmitter.addListener(() => puzzleModel.displayedAnnotationProperty.unlink(annotationListener));
 
-    // TODO: disposal of CorrectnessStateNode!!!
     const multilink = Multilink.multilink(
       [highlightIncorrectMovesProperty, puzzleModel.correctnessStateProperty],
       (highlightIncorrectMoves, correctnessState) => {
+        const disposeExistingNodes = () => {
+          correctnessStateContainerNode.children.forEach((child) => child.dispose());
+        };
+
         if (highlightIncorrectMoves && !correctnessState.isCorrect()) {
-          const correctnessStateNode = new CorrectnessStateNode(puzzleModel.puzzle.board, correctnessState);
-          correctnessStateContainerNode.children = [correctnessStateNode];
+          setTimeout(
+            () => {
+              // If it is still viable
+              if (
+                highlightIncorrectMovesProperty.value &&
+                correctnessState === puzzleModel.correctnessStateProperty.value
+              ) {
+                const correctnessStateNode = new CorrectnessStateNode(puzzleModel.puzzle.board, correctnessState);
+                disposeExistingNodes();
+                correctnessStateContainerNode.children = [correctnessStateNode];
+                console.log('showing error');
+              }
+            },
+            Math.ceil(highlightIncorrectMovesDelayProperty.value * 1000),
+          );
         } else {
-          correctnessStateContainerNode.children = [];
+          disposeExistingNodes();
         }
       },
     );
