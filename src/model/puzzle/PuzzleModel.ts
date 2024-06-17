@@ -262,8 +262,10 @@ export default class PuzzleModel<
   }
 
   public step(dt: number): void {
-    this.timeElapsedProperty.value += dt;
-    localStorage.setItem('timeElapsedProperty', JSON.stringify(this.timeElapsedProperty.value));
+    if (!this.isSolvedProperty.value) {
+      this.timeElapsedProperty.value += dt;
+      localStorage.setItem('timeElapsedProperty', JSON.stringify(this.timeElapsedProperty.value));
+    }
   }
 
   private updateState(): void {

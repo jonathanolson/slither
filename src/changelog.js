@@ -4,6 +4,7 @@ export const changelog = [
     'Auto-loading hint solver',
     'Added new computed hints',
     'Improved error highlighting for incorrect moves',
+    'Pause timer when solved',
   ],
   [
     '2024-06-15',
