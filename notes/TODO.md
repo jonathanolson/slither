@@ -29,6 +29,8 @@
       - 
       - ERASE with opposite color still?!?
       - 
+      - keypress to activate pan/drag opposite of current mode (ctrl?)
+      - 
       - (line drawing + left click on a line = erase lines/x's)
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
       - May want to separate "hit" areas a bit, to prevent accidental bits?
