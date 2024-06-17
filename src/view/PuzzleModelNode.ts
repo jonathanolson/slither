@@ -39,18 +39,13 @@ export default class PuzzleModelNode<
     );
 
     const puzzleNode = new PuzzleNode(puzzleModel.puzzle, {
-      edgePressListener: (edge, button) => {
-        puzzleModel.onUserEdgePress(edge, button);
-      },
-      facePressListener: (face, button) => {
-        puzzleModel.onUserFacePress(face, button);
-      },
-      sectorPressListener: (sector, button) => {
-        puzzleModel.onUserSectorPress(sector, button);
-      },
-      sectorSetListener: (sector: TSector, state: SectorState) => {
-        puzzleModel.onUserSectorSet(sector, state);
-      },
+      edgePressListener: (edge, button) => puzzleModel.onUserEdgePress(edge, button),
+      onEdgeDragStart: (edge, button: 0 | 2) => puzzleModel.onUserEdgeDragStart(edge, button),
+      onEdgeDrag: (edge) => puzzleModel.onUserEdgeDrag(edge),
+      onEdgeDragEnd: () => puzzleModel.onUserEdgeDragEnd(),
+      facePressListener: (face, button) => puzzleModel.onUserFacePress(face, button),
+      sectorPressListener: (sector, button) => puzzleModel.onUserSectorPress(sector, button),
+      sectorSetListener: (sector: TSector, state: SectorState) => puzzleModel.onUserSectorSet(sector, state),
       selectedFaceColorHighlightProperty: puzzleModel.selectedFaceColorHighlightProperty,
       selectedSectorEditProperty: puzzleModel.selectedSectorEditProperty,
       style: puzzleModel.style,

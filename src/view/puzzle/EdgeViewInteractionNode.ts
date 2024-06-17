@@ -14,6 +14,10 @@ import assert, { assertEnabled } from '../../workarounds/assert.ts';
 export type EdgeViewInteractionNodeOptions = {
   edgePressListener: (edge: TEdge, button: 0 | 1 | 2) => void;
   backgroundOffsetDistance: number;
+
+  onEdgeDragStart?: (edge: TEdge, button: 0 | 2) => void;
+  onEdgeDrag?: (edge: TEdge) => void;
+  onEdgeDragEnd?: () => void;
 };
 
 export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
@@ -90,6 +94,9 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
       {
         delayInteractionEmitter: delayEdgeInteractionEmitter,
         isDragModeProperty: isDragModeProperty,
+        onDragStart: options.onEdgeDragStart,
+        onDrag: options.onEdgeDrag,
+        onDragEnd: options.onEdgeDragEnd,
       },
     );
 

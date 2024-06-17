@@ -37,10 +37,12 @@ import { SelectedFaceColorHighlight } from '../../model/puzzle/SelectedFaceColor
 import { SelectedSectorEdit } from '../../model/puzzle/SelectedSectorEdit.ts';
 import { TPropertyPuzzle } from '../../model/puzzle/TPuzzle.ts';
 
-
 type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: (edge: TEdge, button: 0 | 1 | 2) => void;
+  onEdgeDragStart?: (edge: TEdge, button: 0 | 2) => void;
+  onEdgeDrag?: (edge: TEdge) => void;
+  onEdgeDragEnd?: () => void;
   facePressListener?: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
   sectorPressListener?: (sector: TSector, button: 0 | 1 | 2) => void;
   sectorSetListener?: (sector: TSector, state: SectorState) => void;
@@ -79,6 +81,9 @@ export default class PuzzleNode<
           maxHeight: 0.9,
         },
         edgePressListener: () => {},
+        onEdgeDragStart: () => {},
+        onEdgeDrag: () => {},
+        onEdgeDragEnd: () => {},
         facePressListener: () => {},
         sectorPressListener: () => {},
         sectorSetListener: () => {},

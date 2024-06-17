@@ -8,6 +8,7 @@ import { EraseEdgeCompleteAction } from '../data/combined/EraseEdgeCompleteActio
 import { EraseFaceCompleteAction } from '../data/combined/EraseFaceCompleteAction.ts';
 import { EraseSectorCompleteAction } from '../data/combined/EraseSectorCompleteAction.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TSerializedAction } from '../data/core/TAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TAnnotation } from '../data/core/TAnnotation.ts';
@@ -33,10 +34,13 @@ import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
 import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
 import HintState from './HintState.ts';
+import { LineDrag } from './LineDrag.ts';
+import LineDragState from './LineDragState.ts';
 import { SelectedFaceColorHighlight } from './SelectedFaceColorHighlight.ts';
 import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 import { stateTransitionModeProperty } from './StateTransitionMode.ts';
 import { TSolvablePropertyPuzzle } from './TPuzzle.ts';
+import { UserEdgeDragAction } from './UserEdgeDragAction.ts';
 import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
@@ -58,6 +62,8 @@ import { LocalStorageBooleanProperty, LocalStorageNumberProperty } from '../../u
 
 import { TPuzzleStyle } from '../../view/puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from '../../view/puzzle/puzzleStyles.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 import { getHintWorker, hintWorkerLoadedProperty } from '../../workers/getHintWorker.ts';
 
@@ -130,6 +136,8 @@ export default class PuzzleModel<
 
   public readonly style: TPuzzleStyle;
 
+  public readonly lineDrag: LineDrag;
+
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
     providedOptions?: PuzzleModelOptions,
@@ -148,6 +156,8 @@ export default class PuzzleModel<
 
     this.style = style;
     this.timeElapsedProperty.value = options.initialTimeElapsed;
+
+    this.lineDrag = new LineDrag(puzzle.board);
 
     this.autoSolverFactoryProperty = new DerivedProperty(
       [autoSolveEnabledProperty, style.safeSolverFactoryProperty, style.autoSolverFactoryProperty],
@@ -496,14 +506,18 @@ export default class PuzzleModel<
     return style.apply(oldFaceColorState);
   }
 
-  public onUserEdgePress(edge: TEdge, button: 0 | 1 | 2): void {
+  private getNextEdgeState(edge: TEdge, button: 0 | 1 | 2): EdgeState {
     const isErase = eraserEnabledProperty.value;
 
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
-    const newEdgeState =
-      isErase ?
+    return isErase ?
         EdgeState.WHITE
       : this.getNewEdgeState(oldEdgeState, button, editModeProperty.value === EditMode.EDGE_STATE_REVERSED);
+  }
+
+  public onUserEdgePress(edge: TEdge, button: 0 | 1 | 2): void {
+    const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
+    const newEdgeState = this.getNextEdgeState(edge, button);
 
     if (oldEdgeState !== newEdgeState) {
       const lastTransition = this.stack[this.stackPositionProperty.value];
@@ -535,6 +549,74 @@ export default class PuzzleModel<
 
       this.updateState();
     }
+  }
+
+  public onUserEdgeDragStart(edge: TEdge, button: 0 | 2): void {
+    if (this.lineDrag.lineDragStateProperty.value !== LineDragState.NONE) {
+      return;
+    }
+
+    const nextEdgeState = this.getNextEdgeState(edge, button);
+
+    if (nextEdgeState === EdgeState.BLACK) {
+      this.lineDrag.onLineDragStart(edge);
+    } else {
+      this.lineDrag.onPaintDragStart(edge, nextEdgeState);
+    }
+
+    this.updateEdgeDrag();
+  }
+
+  public onUserEdgeDrag(edge: TEdge): void {
+    const changed = this.lineDrag.onDrag(edge);
+
+    if (changed) {
+      this.updateEdgeDrag();
+    }
+  }
+
+  public onUserEdgeDragEnd(): void {
+    this.lineDrag.onDragEnd();
+  }
+
+  private updateEdgeDrag(): void {
+    const lastTransition = this.stack[this.stackPositionProperty.value];
+
+    // Handle "overwriting" the last one
+    if (
+      lastTransition.action &&
+      lastTransition.action instanceof UserEdgeDragAction &&
+      lastTransition.action.dragIndex === this.lineDrag.dragIndex
+    ) {
+      this.stackPositionProperty.value--;
+    }
+
+    assertEnabled() &&
+      assert(this.lineDrag.lineDragStateProperty.value !== LineDragState.NONE, 'line drag state should not be NONE');
+
+    const edges =
+      this.lineDrag.lineDragStateProperty.value === LineDragState.LINE_DRAG ?
+        this.lineDrag.edgeStack.slice()
+      : Array.from(this.lineDrag.paintEdgeSet);
+    const edgeState =
+      this.lineDrag.lineDragStateProperty.value === LineDragState.LINE_DRAG ?
+        EdgeState.BLACK
+      : this.lineDrag.paintEdgeState;
+
+    const erasedEdges = edges.filter((edge) => this.puzzle.stateProperty.value.getEdgeState(edge) !== EdgeState.WHITE);
+    const eraseAction = new CompositeAction<Data>(erasedEdges.map((edge) => new EraseEdgeCompleteAction(edge)));
+
+    const userAction = new UserEdgeDragAction(edges, edgeState, this.lineDrag.dragIndex);
+
+    this.applyUserActionToStack(userAction, {
+      erase: (state) => eraseAction.apply(state),
+      checkAutoSolve: (state) => {
+        return edges.every((edge) => state.getEdgeState(edge) === edgeState);
+      },
+      excludedEdges: new Set(edges),
+    });
+
+    this.updateState();
   }
 
   public onUserFacePress(face: TFace | null, button: 0 | 1 | 2): void {
@@ -821,6 +903,7 @@ export type PuzzleModelUserAction =
   | EraseEdgeCompleteAction
   | EraseFaceCompleteAction
   | EraseSectorCompleteAction
+  | UserEdgeDragAction
   | UserLoadPuzzleAutoSolveAction
   | UserRequestSolveAction
   | UserPuzzleHintApplyAction;
