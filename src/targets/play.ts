@@ -1,14 +1,6 @@
 import '../main.css';
 
-import {
-  BooleanProperty,
-  DynamicProperty,
-  Multilink,
-  Property,
-  TReadOnlyProperty,
-  TinyEmitter,
-  TinyProperty,
-} from 'phet-lib/axon';
+import { DynamicProperty, Multilink, Property, TReadOnlyProperty, TinyEmitter, TinyProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { platform } from 'phet-lib/phet-core';
 import { AlignBox, Display, HBox, ManualConstraint, Node, VBox, globalKeyStateTracker } from 'phet-lib/scenery';
@@ -20,7 +12,7 @@ import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import EditMode, { eraserEnabledProperty, tryToSetEditMode } from '../model/puzzle/EditMode.ts';
 import HintState from '../model/puzzle/HintState.ts';
-import PuzzleModel, { highlightIncorrectMovesProperty } from '../model/puzzle/PuzzleModel.ts';
+import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 import { getStartupPuzzleModel } from '../model/puzzle/getStartupPuzzleModel.ts';
 import { getSolvablePropertyPuzzle } from '../model/solver/SATSolver.ts';
@@ -94,12 +86,6 @@ const topologicalContainerNode = new PuzzleContainerNode(puzzleModelProperty, cu
   visibleProperty: showLayoutTestProperty,
 });
 
-const falseProperty = new BooleanProperty(false);
-const hasErrorProperty = new DynamicProperty(puzzleModelProperty, {
-  derive: (puzzleModel: PuzzleModel | null) => {
-    return puzzleModel ? puzzleModel.hasErrorProperty : falseProperty;
-  },
-}) as TReadOnlyProperty<boolean>; // Why, TS?
 const hintStateProperty = new DynamicProperty(puzzleModelProperty, {
   derive: (puzzleModel: PuzzleModel | null): TReadOnlyProperty<HintState> => {
     return puzzleModel ? puzzleModel.hintStateProperty : new TinyProperty(HintState.DEFAULT);
@@ -107,17 +93,9 @@ const hintStateProperty = new DynamicProperty(puzzleModelProperty, {
 }) as TReadOnlyProperty<HintState>; // Why, TS?
 
 // TODO: better place to handle this type of logic...
-Multilink.multilink(
-  [
-    hasErrorProperty,
-    highlightIncorrectMovesProperty,
-    currentTheme.navbarBackgroundColorProperty,
-    currentTheme.navbarErrorBackgroundColorProperty,
-  ],
-  (hasError, highlightIncorrectMoves, color, errorColor) => {
-    display.backgroundColor = hasError && highlightIncorrectMoves ? errorColor : color;
-  },
-);
+Multilink.multilink([currentTheme.navbarBackgroundColorProperty], (color) => {
+  display.backgroundColor = color;
+});
 
 const stepEmitter = new TinyEmitter<[number]>();
 const viewContext = new ViewContext(layoutBoundsProperty, glassPane, stepEmitter);

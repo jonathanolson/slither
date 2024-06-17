@@ -23,7 +23,6 @@ mediaQueryList.addEventListener('change', (e) => {
 
 export const themeColorPropertyNames = [
   'navbarBackgroundColorProperty',
-  'navbarErrorBackgroundColorProperty',
   'playAreaBackgroundColorProperty',
   'playAreaLinearTopColorProperty',
   'playAreaLinearMiddleColorProperty',
@@ -181,7 +180,6 @@ export const lightTheme = addThemeLUT({
   name: 'Light',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty('rgb(238,238,238)'),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty('rgb(218,107,91)'),
   playAreaBackgroundColorProperty: new PaintColorProperty('rgb(237,237,237)'),
   playAreaLinearTopColorProperty: new PaintColorProperty('rgba(0,0,0,0)'),
   playAreaLinearMiddleColorProperty: new PaintColorProperty('rgba(0,0,0,0)'),
@@ -241,7 +239,6 @@ export const darkTheme = addThemeLUT({
   name: 'Dark',
   isEditable: true,
   navbarBackgroundColorProperty: new PaintColorProperty('rgb(17,17,17)'),
-  navbarErrorBackgroundColorProperty: new PaintColorProperty('rgb(115,44,34)'),
   playAreaBackgroundColorProperty: new PaintColorProperty('rgb(51,51,51)'),
   playAreaLinearTopColorProperty: new PaintColorProperty('rgba(0,0,0,0)'),
   playAreaLinearMiddleColorProperty: new PaintColorProperty('rgba(0,0,0,0)'),
