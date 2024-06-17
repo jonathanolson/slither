@@ -1,4 +1,4 @@
-import { fontAwesomeArrowsAltShape } from './FontAwesomeShape.ts';
+import { fontAwesomeArrowsAltShape, fontAwesomePencilShape } from './FontAwesomeShape.ts';
 import PanDragMode, { panDragModeProperty } from './PanDragMode.ts';
 import { controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
 import { TooltipListener } from './TooltipListener.ts';
@@ -275,20 +275,19 @@ export default class EditModeBarNode extends HBox {
       maxHeight: 14,
     });
 
-    const dragShape = new Shape()
-      .moveTo(0, 0)
-      .lineTo(0, 6)
-      .lineTo(6, 6)
-      .lineTo(6, 0)
-      .lineTo(12, 0)
-      .lineTo(12, 6)
-      .lineTo(12, 12)
-      .lineTo(6, 12);
-    const dragIcon = new Path(dragShape, {
-      stroke: currentTheme.uiButtonForegroundProperty,
-      lineWidth: 1.5,
-      lineJoin: 'round',
-      lineCap: 'round',
+    const dragIcon = new Node({
+      children: [
+        new Path(fontAwesomePencilShape, {
+          fill: currentTheme.uiButtonForegroundProperty,
+          matrix: Matrix3.Y_REFLECTION,
+          maxWidth: 14,
+          maxHeight: 14,
+        }),
+        new Path(new Shape().moveTo(0, 1.5).lineTo(12, 1.5), {
+          stroke: currentTheme.uiButtonForegroundProperty,
+          lineDash: [9, 1, 2],
+        }),
+      ],
     });
 
     const alignGroup = new AlignGroup();
