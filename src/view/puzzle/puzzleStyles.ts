@@ -59,7 +59,6 @@ import { getSafeSolverFactory } from '../../model/solver/getSafeSolverFactory.ts
 
 import { LocalStorageBooleanProperty, LocalStorageProperty } from '../../util/localStorage.ts';
 
-
 export const customPuzzleStyle: TPuzzleStyle = {
   allowEdgeEditProperty: customAllowEdgeEditProperty,
   allowAbsoluteFaceColorEditProperty: customAllowAbsoluteFaceColorEditProperty,
@@ -693,3 +692,5 @@ export const currentPuzzleStyle: TPuzzleStyle = puzzleStyleFromProperty(puzzleSt
 export const showPuzzleStyleProperty = new LocalStorageBooleanProperty('showPuzzleStyleProperty', true);
 
 export const showPuzzleTimerProperty = new LocalStorageBooleanProperty('showPuzzleTimerProperty', false);
+
+export const showSectorViewModesProperty = new LocalStorageBooleanProperty('showSectorViewModesProperty', false);

@@ -6,6 +6,7 @@ export const changelog = [
     'Improved error highlighting for incorrect moves',
     'Pause timer when solved',
     'Added help popup',
+    'Added extra control for presence of sectors',
   ],
   [
     '2024-06-15',

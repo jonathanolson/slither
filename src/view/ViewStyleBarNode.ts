@@ -17,6 +17,7 @@ import {
   pureFaceColorPuzzleStyle,
   puzzleStyleProperty,
   sectorsWithColorsPuzzleStyle,
+  showSectorViewModesProperty,
   vertexStatePuzzleStyle,
 } from './puzzle/puzzleStyles.ts';
 
@@ -28,7 +29,6 @@ import { AlignGroup, Node, Path, Rectangle } from 'phet-lib/scenery';
 import { puzzleFromCompressedString } from '../model/puzzle/puzzleFromCompressedString.ts';
 
 import assert, { assertEnabled } from '../workarounds/assert.ts';
-
 
 export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuzzleStyle> {
   public constructor(viewContext: ViewContext) {
@@ -77,7 +77,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => basicSectorsIcon,
         labelContent: 'Sectors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty,
+          visibleProperty: showSectorViewModesProperty,
         },
       },
       {
@@ -85,7 +85,7 @@ export default class ViewStyleBarNode extends UIRectangularRadioButtonGroup<TPuz
         createNode: () => sectorsWithColorsIcon,
         labelContent: 'Sectors and Colors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty,
+          visibleProperty: showSectorViewModesProperty,
         },
       },
       {

@@ -53,6 +53,7 @@ import {
   sectorsWithColorsPuzzleStyle,
   showPuzzleStyleProperty,
   showPuzzleTimerProperty,
+  showSectorViewModesProperty,
   vertexStatePuzzleStyle,
 } from './puzzle/puzzleStyles.ts';
 
@@ -103,7 +104,6 @@ import {
 } from '../model/solver/autoSolver';
 
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
-
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty(
   'advancedSettingsVisibleProperty',
@@ -442,6 +442,7 @@ export class SettingsNode extends PopupNode {
         new UITextSwitch(showPuzzleStyleProperty, 'Show View Style Controls'),
         new UITextSwitch(redLineVisibleProperty, 'Show Impossible Lines'),
         new UITextSwitch(showPuzzleTimerProperty, 'Show Elapsed Time'),
+        new UITextSwitch(showSectorViewModesProperty, 'Enable Sector View Styles'),
         new UITextSwitch(showUndoRedoAllProperty, 'Show Undo-All / Redo-All', {
           advanced: true,
         }),
@@ -490,7 +491,7 @@ export class SettingsNode extends PopupNode {
         createNode: () => getViewLabel(viewStyleIcons.basicSectorsIcon, 'Sectors'),
         labelContent: 'Sectors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty,
+          visibleProperty: showSectorViewModesProperty,
         },
       },
       {
@@ -498,7 +499,7 @@ export class SettingsNode extends PopupNode {
         createNode: () => getViewLabel(viewStyleIcons.sectorsWithColorsIcon, 'Sectors and Colors'),
         labelContent: 'Sectors and Colors',
         options: {
-          visibleProperty: advancedSettingsVisibleProperty,
+          visibleProperty: showSectorViewModesProperty,
         },
       },
       {

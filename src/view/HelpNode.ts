@@ -4,6 +4,7 @@ import { currentTheme, uiBigHelpFont, uiHeaderFont } from './Theme.ts';
 import { UIRichText } from './UIRichText.ts';
 import { ViewContext } from './ViewContext.ts';
 import ViewStyleBarNode from './ViewStyleBarNode.ts';
+import { showSectorViewModesProperty } from './puzzle/puzzleStyles.ts';
 
 import { HBox, Node, Rectangle, VBox } from 'phet-lib/scenery';
 
@@ -105,6 +106,7 @@ export class HelpNode extends PopupNode {
                   wrapIcon(editModeIcons.sectorIcon),
                   new UIRichText('Click/tap to pop up a selector, then select the sector color'),
                 ],
+                visibleProperty: showSectorViewModesProperty,
               }),
               new HBox({
                 spacing: 10,
@@ -116,12 +118,21 @@ export class HelpNode extends PopupNode {
             ],
           }),
           new UIRichText(
+            'The number keys (1-9) can switch between edit modes. E will activate the eraser when pressed.',
+          ),
+          new UIRichText(
             'The line/X and inside/outside color controls will cycle through the states (e.g. blank => line => X => blank) by default, but can be changed to toggle (e.g. blank => line, line => blank, X => line) in settings.',
             {
               lineWrap: lineWrap,
             },
           ),
-          new UIRichText('View Modes', { font: uiHeaderFont }),
+          new UIRichText(
+            'Right-click or shift-click will activate the "opposite" mode (e.g. in line mode, shift-click will set an X). This will work for lines <=> X\'s, inside <=> outside colors, and the final click for make same <=> make opposite colors.',
+            {
+              lineWrap: lineWrap,
+            },
+          ),
+          new UIRichText('View Styles', { font: uiHeaderFont }),
           new VBox({
             spacing: 5,
             align: 'left',
@@ -164,6 +175,7 @@ export class HelpNode extends PopupNode {
                   wrapIcon(viewModeIcons.basicSectorsIcon),
                   new UIRichText('Cleaner lines, with sectors (see the solving guide)'),
                 ],
+                visibleProperty: showSectorViewModesProperty,
               }),
               new HBox({
                 spacing: 10,
@@ -171,6 +183,7 @@ export class HelpNode extends PopupNode {
                   wrapIcon(viewModeIcons.sectorsWithColorsIcon),
                   new UIRichText('Cleaner lines with colors and sectors (see the solving guide)'),
                 ],
+                visibleProperty: showSectorViewModesProperty,
               }),
             ],
           }),
