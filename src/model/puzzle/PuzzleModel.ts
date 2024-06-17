@@ -1,3 +1,4 @@
+import { CorrectnessState } from '../CorrectnessState.ts';
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
@@ -106,6 +107,7 @@ export default class PuzzleModel<
 
   public readonly currentSnapshotProperty: TReadOnlyProperty<PuzzleSnapshot<Structure, Data>>;
   public readonly hasErrorProperty: TReadOnlyProperty<boolean>;
+  public readonly correctnessStateProperty: TReadOnlyProperty<CorrectnessState>;
   public readonly isSolvedProperty: TReadOnlyProperty<boolean>;
 
   private hintWorkerMessageID = 0;
@@ -200,7 +202,7 @@ export default class PuzzleModel<
       puzzle.stateProperty.value = newState;
     }
 
-    this.stack = [new PuzzleSnapshot(this.puzzle.board, null, puzzle.stateProperty.value)];
+    this.stack = [this.getSnapshot(null, puzzle.stateProperty.value)];
     this.stackLengthProperty.value = 1;
 
     // TODO: base more things on this property!
@@ -215,7 +217,10 @@ export default class PuzzleModel<
       },
     );
     this.hasErrorProperty = new DerivedProperty([this.currentSnapshotProperty], (snapshot) => {
-      return snapshot.errorDetected;
+      return !snapshot.correctnessState.isCorrect();
+    });
+    this.correctnessStateProperty = new DerivedProperty([this.currentSnapshotProperty], (snapshot) => {
+      return snapshot.correctnessState;
     });
     this.isSolvedProperty = new DerivedProperty([this.currentSnapshotProperty], (snapshot) => {
       if (snapshot.state.getWeirdEdges().length || snapshot.state.hasInvalidFaceColors()) {
@@ -304,8 +309,6 @@ export default class PuzzleModel<
 
     const lastTransition = this.stack[this.stackPositionProperty.value];
 
-    let errorDetected = false;
-
     let cleanState = lastTransition.state;
     if (options?.erase) {
       cleanState = cleanState.clone();
@@ -339,7 +342,6 @@ export default class PuzzleModel<
         throw new AutoSolverInvalidatedUserActionError('Auto-solver did not respect user action');
       }
     } catch (e) {
-      errorDetected = !(e instanceof AutoSolverInvalidatedUserActionError);
       changedEdges = new Set();
 
       if (e instanceof InvalidStateError || e instanceof AutoSolverInvalidatedUserActionError) {
@@ -371,20 +373,7 @@ export default class PuzzleModel<
     const newState = cleanState.clone();
     delta.apply(newState);
 
-    // TODO: see if we actually NEED to compare against the full solution state (if it was valid before, we only need to check the validator(!)
-    errorDetected =
-      errorDetected || !CompleteValidator.isStateCorrect(this.puzzle.board, newState, this.puzzle.solution.solvedState);
-    // TODO: our validator doesn't seem to catch buggy inside/outside states
-    // TODO: Should we just... deprecate the validator? fix it?
-    // // Validate against the solution!
-    // const validator = new CompleteValidator(this.puzzle.board, cleanState, this.puzzle.solution.solvedState);
-    // try {
-    //   userAction.apply(validator);
-    // } catch (e) {
-    //   errorDetected = true;
-    // }
-
-    this.pushTransitionAtCurrentPosition(new PuzzleSnapshot(this.puzzle.board, userAction, newState, errorDetected));
+    this.pushTransitionAtCurrentPosition(this.getSnapshot(userAction, newState));
 
     for (const changedEdge of changedEdges) {
       if (!options?.excludedEdges || !options.excludedEdges.has(changedEdge)) {
@@ -393,6 +382,14 @@ export default class PuzzleModel<
         this.edgeAutoSolvedEmitter.emit(changedEdge);
       }
     }
+  }
+
+  private computeCorrectnessState(state = this.puzzle.stateProperty.value): CorrectnessState {
+    return CompleteValidator.getCorrectnessState(this.puzzle.board, state, this.puzzle.solution.solvedState);
+  }
+
+  private getSnapshot(userAction: PuzzleModelUserAction | null, state: TState<Data>): PuzzleSnapshot<Structure, Data> {
+    return new PuzzleSnapshot(this.puzzle.board, userAction, state, this.computeCorrectnessState(state));
   }
 
   private addAutoSolveDelta(): void {
@@ -405,9 +402,7 @@ export default class PuzzleModel<
         autoSolveDelta.apply(autoSolveState);
         // puzzle.stateProperty.value = autoSolveState;
 
-        this.pushTransitionAtCurrentPosition(
-          new PuzzleSnapshot(this.puzzle.board, new UserLoadPuzzleAutoSolveAction(), autoSolveState),
-        );
+        this.pushTransitionAtCurrentPosition(this.getSnapshot(new UserLoadPuzzleAutoSolveAction(), autoSolveState));
       }
     } catch (e) {
       if (e instanceof InvalidStateError) {
@@ -687,9 +682,7 @@ export default class PuzzleModel<
 
         iterateSolverFactory(standardSolverFactory, this.puzzle.board, moreSolvedState, true);
 
-        this.pushTransitionAtCurrentPosition(
-          new PuzzleSnapshot(this.puzzle.board, new UserRequestSolveAction(), moreSolvedState, false),
-        );
+        this.pushTransitionAtCurrentPosition(this.getSnapshot(new UserRequestSolveAction(), moreSolvedState));
         this.updateState();
       } else {
         const solutions = satSolve(this.puzzle.board, this.puzzle.stateProperty.value, {
@@ -705,9 +698,7 @@ export default class PuzzleModel<
           });
           safeSolveWithFactory(this.puzzle.board, solvedState, this.style.safeSolverFactoryProperty.value);
 
-          this.pushTransitionAtCurrentPosition(
-            new PuzzleSnapshot(this.puzzle.board, new UserRequestSolveAction(), solvedState, false),
-          );
+          this.pushTransitionAtCurrentPosition(this.getSnapshot(new UserRequestSolveAction(), solvedState));
           this.updateState();
         } else if (solutions.length === 0) {
           console.log('No solution found');
@@ -832,6 +823,6 @@ export class PuzzleSnapshot<Structure extends TStructure = TStructure, Data exte
     public readonly board: TBoard<Structure>,
     public readonly action: PuzzleModelUserAction | null,
     public readonly state: TState<Data>,
-    public readonly errorDetected: boolean = false,
+    public readonly correctnessState: CorrectnessState,
   ) {}
 }

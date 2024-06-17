@@ -1,3 +1,4 @@
+import { CorrectnessState } from '../../CorrectnessState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
@@ -46,19 +47,21 @@ export class EdgeStateValidator implements TState<TEdgeStateData> {
     throw new Error('unimplemented');
   }
 
-  public static isStateCorrect(
+  public static getCorrectnessState(
     board: TBoard,
     state: TState<TEdgeStateData>,
     solvedState: TState<TEdgeStateData>,
-  ): boolean {
+  ): CorrectnessState {
+    const incorrectEdges = new Set<TEdge>();
+
     for (const edge of board.edges) {
       const edgeState = state.getEdgeState(edge);
 
       if (edgeState !== EdgeState.WHITE && edgeState !== solvedState.getEdgeState(edge)) {
-        return false;
+        incorrectEdges.add(edge);
       }
     }
 
-    return true;
+    return new CorrectnessState(incorrectEdges, new Set());
   }
 }

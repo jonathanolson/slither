@@ -1,3 +1,4 @@
+import { CorrectnessState } from '../../CorrectnessState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
@@ -150,11 +151,13 @@ export class FaceColorValidator implements TState<TFaceColorData> {
     throw new Error('unimplemented');
   }
 
-  public static isStateCorrect(
+  public static getCorrectnessState(
     board: TBoard,
     state: TState<TFaceColorData>,
     solvedState: TState<TFaceColorData>,
-  ): boolean {
+  ): CorrectnessState {
+    const incorrectFaces: Set<TFace> = new Set();
+
     const checkedColors: Set<TFaceColor> = new Set();
 
     const outsideColor = state.getOutsideColor();
@@ -175,41 +178,38 @@ export class FaceColorValidator implements TState<TFaceColorData> {
       const faces = state.getFacesWithColor(color);
       const oppositeFaces = oppositeColor ? state.getFacesWithColor(oppositeColor) : [];
 
+      const expectSolvedColor = (face: TFace, color: TFaceColor) => {
+        if (solvedState.getFaceColor(face) !== color) {
+          incorrectFaces.add(face);
+        }
+      };
+
       if (color === outsideColor) {
-        if (
-          faces.some((face) => solvedState.getFaceColor(face) !== solvedOutsideColor) ||
-          oppositeFaces.some((face) => solvedState.getFaceColor(face) !== solvedInsideColor)
-        ) {
-          return false;
-        }
+        faces.forEach((face) => expectSolvedColor(face, solvedOutsideColor));
+        oppositeFaces.forEach((face) => expectSolvedColor(face, solvedInsideColor));
       } else if (color === insideColor) {
-        if (
-          faces.some((face) => solvedState.getFaceColor(face) !== solvedInsideColor) ||
-          oppositeFaces.some((face) => solvedState.getFaceColor(face) !== solvedOutsideColor)
-        ) {
-          return false;
-        }
+        faces.forEach((face) => expectSolvedColor(face, solvedInsideColor));
+        oppositeFaces.forEach((face) => expectSolvedColor(face, solvedOutsideColor));
       } else {
         if (faces.length) {
-          const solvedColor = solvedState.getFaceColor(faces[0]);
-          const solvedOppositeColor = solvedState.getOppositeFaceColor(solvedColor);
-          assertEnabled() && assert(solvedOppositeColor);
+          let outsidePrimaryCount =
+            faces.filter((face) => solvedState.getFaceColor(face) === solvedOutsideColor).length +
+            oppositeFaces.filter((face) => solvedState.getFaceColor(face) === solvedInsideColor).length;
+          let totalCount = faces.length + oppositeFaces.length;
 
-          for (const face of faces) {
-            if (solvedState.getFaceColor(face) !== solvedColor) {
-              return false;
-            }
-          }
+          if (outsidePrimaryCount > 1 && outsidePrimaryCount < totalCount) {
+            const isPrimaryOutside = outsidePrimaryCount > totalCount / 2;
 
-          for (const oppositeFace of oppositeFaces) {
-            if (solvedState.getFaceColor(oppositeFace) !== solvedOppositeColor) {
-              return false;
-            }
+            const primaryColor = isPrimaryOutside ? solvedOutsideColor : solvedInsideColor;
+            const secondaryColor = isPrimaryOutside ? solvedInsideColor : solvedOutsideColor;
+
+            faces.forEach((face) => expectSolvedColor(face, primaryColor));
+            oppositeFaces.forEach((face) => expectSolvedColor(face, secondaryColor));
           }
         }
       }
     }
 
-    return true;
+    return new CorrectnessState(new Set(), incorrectFaces);
   }
 }

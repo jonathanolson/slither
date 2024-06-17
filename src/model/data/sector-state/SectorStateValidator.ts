@@ -1,4 +1,6 @@
+import { CorrectnessState } from '../../CorrectnessState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
+import { TEdge } from '../../board/core/TEdge.ts';
 import { InvalidStateError } from '../../solver/errors/InvalidStateError.ts';
 import { TDelta } from '../core/TDelta.ts';
 import { TState } from '../core/TState.ts';
@@ -48,11 +50,13 @@ export class SectorStateValidator implements TState<TSectorStateData> {
     throw new Error('unimplemented');
   }
 
-  public static isStateCorrect(
+  public static getCorrectnessState(
     board: TBoard,
     state: TState<TSectorStateData>,
     solvedState: TState<TEdgeStateData>,
-  ): boolean {
+  ): CorrectnessState {
+    const incorrectEdges = new Set<TEdge>();
+
     for (const sector of board.halfEdges) {
       const edgeA = sector.edge;
       const edgeB = sector.next.edge;
@@ -64,10 +68,11 @@ export class SectorStateValidator implements TState<TSectorStateData> {
         (solvedState.getEdgeState(edgeB) === EdgeState.BLACK ? 1 : 0);
 
       if (!sectorState.allows(count)) {
-        return false;
+        incorrectEdges.add(edgeA);
+        incorrectEdges.add(edgeB);
       }
     }
 
-    return true;
+    return new CorrectnessState(incorrectEdges, new Set());
   }
 }

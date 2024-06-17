@@ -1,3 +1,4 @@
+import { CorrectnessState } from '../../CorrectnessState.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TFace } from '../../board/core/TFace.ts';
@@ -226,17 +227,18 @@ export class CompleteValidator implements TState<TCompleteData> {
     throw new Error('unimplemented');
   }
 
-  public static isStateCorrect(
+  // TODO: consider... pulling this out into a separate place?
+  public static getCorrectnessState(
     board: TBoard,
     state: TState<TCompleteData>,
     solvedState: TState<TEdgeStateData & TFaceColorData>,
-  ): boolean {
+  ): CorrectnessState {
     // TODO: consider more checks, for vertex/face state?
 
-    return (
-      EdgeStateValidator.isStateCorrect(board, state, solvedState) &&
-      FaceColorValidator.isStateCorrect(board, state, solvedState) &&
-      SectorStateValidator.isStateCorrect(board, state, solvedState)
-    );
+    return CorrectnessState.with([
+      EdgeStateValidator.getCorrectnessState(board, state, solvedState),
+      FaceColorValidator.getCorrectnessState(board, state, solvedState),
+      SectorStateValidator.getCorrectnessState(board, state, solvedState),
+    ]);
   }
 }

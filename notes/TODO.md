@@ -57,8 +57,6 @@
       - NO auto-solve actions on view mode switches(?)
       - Allow changing sectors to arbitrary states, perhaps toggle support like edges?
       - Auto-Solve options are PER VIEW MODE(?), with a global on/off control?
-      - Improve "error" condition views
-        - NOTICE on startup if in a global error condition
       - [feature] "Check Solution" button?
         - a: has errors
         - b: no errors, but incomplete
@@ -70,9 +68,11 @@
     - Embedding improvements soon.
     - Show changelog in settings/info somewhere
     - Improve "incorrect move" highlight (don't "scary bars" them))
+      - Improve "error" condition views
+        - NOTICE on startup if in a global error condition
+        - FADE IN the error condition (fade out the previous one)
       - Add "delay" option, to delay visibility of them (e.g. on mobile, double tap toggle shouldn't immediately show)
       - TRACK which edges/colors/sectors are wrong, and highlight them
-      - DO NOT hide it when they do an "ok" move after a wrong one
     - Tabs for Settings (semi like PhET preferences, but evenly space, and make bottom larger, AND change color of highlighted section text to match bottom color)
       - Add descriptions for settings underneath (indented), so it is more explained
       - Show previews for all themes(!)
