@@ -1,7 +1,7 @@
-import PanDragMode, { panDragModeProperty } from '../PanDragMode.ts';
+import { isDragModeProperty } from '../PanDragMode.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
 
-import { DerivedProperty, TEmitter } from 'phet-lib/axon';
+import { TEmitter } from 'phet-lib/axon';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 
@@ -26,11 +26,6 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
     delayEdgeInteractionEmitter: TEmitter<[TEdge]>,
     options: EdgeViewInteractionNodeOptions,
   ) {
-    const isDragModeProperty = new DerivedProperty(
-      [panDragModeProperty],
-      (panDragMode) => panDragMode === PanDragMode.DRAG_ONLY,
-    );
-
     super(
       board.edges,
       (edge) => {
@@ -99,7 +94,5 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
         onDragEnd: options.onEdgeDragEnd,
       },
     );
-
-    this.disposeEmitter.addListener(() => isDragModeProperty.dispose());
   }
 }

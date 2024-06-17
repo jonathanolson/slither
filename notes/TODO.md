@@ -27,6 +27,8 @@
     - [gereleth] Drag lines
       - Have a "within the shape by a certain amount" for X-dragging?
       - 
+      - ERASE with opposite color still?!?
+      - 
       - (line drawing + left click on a line = erase lines/x's)
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
       - May want to separate "hit" areas a bit, to prevent accidental bits?

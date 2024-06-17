@@ -8,6 +8,7 @@ export type ShapeInteractionNodeOptions<T> = {
   onDragStart?: (item: T, button: 0 | 2) => void;
   onDrag?: (item: T) => void;
   onDragEnd?: () => void;
+  noItemItem?: T;
 };
 
 export class ShapeInteractionNode<T> extends Node {
@@ -109,6 +110,9 @@ export class ShapeInteractionNode<T> extends Node {
         const item = getItemFromEvent(event);
         if (item) {
           options.onDragStart?.(item, button);
+        } else if (options.noItemItem !== undefined) {
+          // TODO: use this pattern for the "outside"?
+          options.onDragStart?.(options.noItemItem, button);
         }
       };
 
@@ -116,6 +120,8 @@ export class ShapeInteractionNode<T> extends Node {
         const item = getItemFromEvent(event);
         if (item) {
           options.onDrag?.(item);
+        } else if (options.noItemItem !== undefined) {
+          options.onDrag?.(options.noItemItem);
         }
       };
 

@@ -44,6 +44,9 @@ type SelfOptions = {
   onEdgeDrag?: (edge: TEdge) => void;
   onEdgeDragEnd?: () => void;
   facePressListener?: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
+  onFaceDragStart?: (face: TFace | null, button: 0 | 2) => void;
+  onFaceDrag?: (face: TFace | null) => void;
+  onFaceDragEnd?: () => void;
   sectorPressListener?: (sector: TSector, button: 0 | 1 | 2) => void;
   sectorSetListener?: (sector: TSector, state: SectorState) => void;
   backgroundOffsetDistance?: number;
@@ -85,6 +88,9 @@ export default class PuzzleNode<
         onEdgeDrag: () => {},
         onEdgeDragEnd: () => {},
         facePressListener: () => {},
+        onFaceDragStart: () => {},
+        onFaceDrag: () => {},
+        onFaceDragEnd: () => {},
         sectorPressListener: () => {},
         sectorSetListener: () => {},
         backgroundOffsetDistance: 0.3,

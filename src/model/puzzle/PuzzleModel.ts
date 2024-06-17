@@ -33,6 +33,8 @@ import { InvalidStateError } from '../solver/errors/InvalidStateError.ts';
 import { safeSolveWithFactory } from '../solver/safeSolveWithFactory.ts';
 import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 import EditMode, { editModeProperty, eraserEnabledProperty } from './EditMode.ts';
+import { FaceDrag } from './FaceDrag.ts';
+import FaceDragState from './FaceDragState.ts';
 import HintState from './HintState.ts';
 import { LineDrag } from './LineDrag.ts';
 import LineDragState from './LineDragState.ts';
@@ -41,6 +43,7 @@ import { SelectedSectorEdit } from './SelectedSectorEdit.ts';
 import { stateTransitionModeProperty } from './StateTransitionMode.ts';
 import { TSolvablePropertyPuzzle } from './TPuzzle.ts';
 import { UserEdgeDragAction } from './UserEdgeDragAction.ts';
+import { UserFaceDragAction } from './UserFaceDragAction.ts';
 import { UserLoadPuzzleAutoSolveAction } from './UserLoadPuzzleAutoSolveAction.ts';
 import { UserPuzzleHintApplyAction } from './UserPuzzleHintApplyAction.ts';
 import { UserRequestSolveAction } from './UserRequestSolveAction.ts';
@@ -137,6 +140,7 @@ export default class PuzzleModel<
   public readonly style: TPuzzleStyle;
 
   public readonly lineDrag: LineDrag;
+  public readonly faceDrag: FaceDrag;
 
   public constructor(
     public readonly puzzle: TSolvablePropertyPuzzle<Structure, Data>,
@@ -158,6 +162,7 @@ export default class PuzzleModel<
     this.timeElapsedProperty.value = options.initialTimeElapsed;
 
     this.lineDrag = new LineDrag(puzzle.board);
+    this.faceDrag = new FaceDrag(puzzle.board);
 
     this.autoSolverFactoryProperty = new DerivedProperty(
       [autoSolveEnabledProperty, style.safeSolverFactoryProperty, style.autoSolverFactoryProperty],
@@ -515,6 +520,19 @@ export default class PuzzleModel<
       : this.getNewEdgeState(oldEdgeState, button, editModeProperty.value === EditMode.EDGE_STATE_REVERSED);
   }
 
+  private getNextFaceColorState(face: TFace, button: 0 | 1 | 2): FaceColorState {
+    const outsideColor = this.puzzle.stateProperty.value.getOutsideColor();
+    const insideColor = this.puzzle.stateProperty.value.getInsideColor();
+
+    const oldColor = this.puzzle.stateProperty.value.getFaceColor(face);
+
+    const oldFaceColorState =
+      oldColor === outsideColor ? FaceColorState.OUTSIDE
+      : oldColor === insideColor ? FaceColorState.INSIDE
+      : FaceColorState.UNDECIDED;
+    return this.getNewFaceColorState(oldFaceColorState, button, editModeProperty.value === EditMode.FACE_COLOR_OUTSIDE);
+  }
+
   public onUserEdgePress(edge: TEdge, button: 0 | 1 | 2): void {
     const oldEdgeState = this.puzzle.stateProperty.value.getEdgeState(edge);
     const newEdgeState = this.getNextEdgeState(edge, button);
@@ -737,6 +755,123 @@ export default class PuzzleModel<
     }
   }
 
+  public onUserFaceDragStart(face: TFace | null, button: 0 | 2): void {
+    if (this.faceDrag.faceDragStateProperty.value !== FaceDragState.NONE) {
+      return;
+    }
+
+    const editMode = editModeProperty.value;
+
+    if (eraserEnabledProperty.value) {
+      this.faceDrag.onAbsolutePaintStart(face, FaceColorState.UNDECIDED);
+    } else if (editMode === EditMode.FACE_COLOR_MATCH || editMode === EditMode.FACE_COLOR_OPPOSITE) {
+      if ((editMode === EditMode.FACE_COLOR_MATCH) === (button === 0)) {
+        this.faceDrag.onMakeSameStart(face);
+      } else {
+        this.faceDrag.onMakeOppositeStart(face);
+      }
+    } else if (editMode === EditMode.FACE_COLOR_INSIDE || editMode === EditMode.FACE_COLOR_OUTSIDE) {
+      // If we start from outside... yeesh, just make it outside?
+      const nextFaceColorState = face ? this.getNextFaceColorState(face, button) : EditMode.FACE_COLOR_OUTSIDE;
+      this.faceDrag.onAbsolutePaintStart(face, nextFaceColorState);
+    }
+
+    this.updateFaceDrag();
+  }
+
+  public onUserFaceDrag(face: TFace | null): void {
+    const changed = this.faceDrag.onDrag(face);
+
+    if (changed) {
+      this.updateFaceDrag();
+    }
+  }
+
+  public onUserFaceDragEnd(): void {
+    // Handle a SINGLE face as the typical behavior
+    if (this.faceDrag.isNoOpSingleFace()) {
+      const isSame =
+        (editModeProperty.value === EditMode.FACE_COLOR_MATCH) ===
+        (this.faceDrag.faceDragStateProperty.value === FaceDragState.MAKE_SAME);
+      this.onUserFacePress([...this.faceDrag.paintFaceSet][0], isSame ? 0 : 2);
+    }
+
+    this.faceDrag.onDragEnd();
+  }
+
+  private updateFaceDrag(): void {
+    const lastTransition = this.stack[this.stackPositionProperty.value];
+
+    // Handle "overwriting" the last one
+    if (
+      lastTransition.action &&
+      lastTransition.action instanceof UserFaceDragAction &&
+      lastTransition.action.dragIndex === this.faceDrag.dragIndex
+    ) {
+      this.stackPositionProperty.value--;
+    }
+
+    const faceDragState = this.faceDrag.faceDragStateProperty.value;
+
+    assertEnabled() && assert(faceDragState !== FaceDragState.NONE, 'line drag state should not be NONE');
+
+    // No update needed, DEFINITELY don't trigger things (we want to be able to highlight faces for the two-click options)
+    if (this.faceDrag.isNoOpSingleFace()) {
+      return;
+    }
+
+    const primaryFaces = [...this.faceDrag.paintFaceSet];
+    const secondaryFaces = faceDragState === FaceDragState.MAKE_OPPOSITE ? [...this.faceDrag.paintFaceOppositeSet] : [];
+    const faceColorState = this.faceDrag.absolutePaintState;
+    const isAbsolute = faceDragState === FaceDragState.ABSOLUTE_PAINT;
+
+    const userAction = new UserFaceDragAction(
+      primaryFaces,
+      secondaryFaces,
+      isAbsolute,
+      faceColorState,
+      this.faceDrag.dragIndex,
+    );
+
+    // TODO erase action???
+
+    // const erasedFaces = faces.filter((face) => this.puzzle.stateProperty.value.getFaceState(face) !== FaceState.WHITE);
+    // const eraseAction = new CompositeAction<Data>(erasedFaces.map((face) => new EraseFaceCompleteAction(face)));
+
+    this.applyUserActionToStack(userAction, {
+      // erase: (state) => eraseAction.apply(state),
+      checkAutoSolve: (state) => {
+        if (primaryFaces.length) {
+          const primaryColor = primaryFaces[0] ? state.getFaceColor(primaryFaces[0]) : state.getOutsideColor();
+          if (
+            primaryFaces.some((face) => (face ? state.getFaceColor(face) : state.getOutsideColor()) !== primaryColor)
+          ) {
+            return false;
+          }
+
+          if (secondaryFaces.length) {
+            const secondaryColor = secondaryFaces[0] ? state.getFaceColor(secondaryFaces[0]) : state.getOutsideColor();
+            if (
+              secondaryFaces.some(
+                (face) => (face ? state.getFaceColor(face) : state.getOutsideColor()) !== secondaryColor,
+              )
+            ) {
+              return false;
+            }
+
+            if (state.getOppositeFaceColor(primaryColor) !== secondaryColor) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      },
+    });
+
+    this.updateState();
+  }
+
   public onUserSectorPress(sector: TSector, button: 0 | 1 | 2): void {
     const isErase = eraserEnabledProperty.value;
 
@@ -904,6 +1039,7 @@ export type PuzzleModelUserAction =
   | EraseFaceCompleteAction
   | EraseSectorCompleteAction
   | UserEdgeDragAction
+  | UserFaceDragAction
   | UserLoadPuzzleAutoSolveAction
   | UserRequestSolveAction
   | UserPuzzleHintApplyAction;
