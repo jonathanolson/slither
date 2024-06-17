@@ -77,12 +77,7 @@
     - 
     - Limit number of patterns based on difficulty criteria? (faster load and search)
     - 
-    - VM for running computations when not around(!)
-      - See that latest commit of what I "paused"
-      - OR just do LinClosure (accelerated), it will save a lot of time/hassle comparatively?
-    - 
     - [nowayjay] - BLUR the outside section of the puzzle when a hint is visible. Clicking on it will dismiss the hint.
-    - 
     - [nowayjay] - Pattern Play - shows the "before", you need to guess the "after"
     - 
     - Memory - web-worker the scanURL bits?
@@ -128,10 +123,6 @@
       - draw-only (drag) - pan/zoom with two fingers
       - hybrid (delay?)
       - pan-only
-    - Disable "eager error" indication (scary red bars)
-      - Try the "exploration" of other things mode
-    - 
-    - Puzzle generation using pattern-based difficulty
     - 
     - HELP / INFO / INSTRUCTIONS button/section
       - Add to play AND rule explorer! 
@@ -156,10 +147,7 @@
     - Bug: rule explorer layout on phone is horrible
     - Bug: generation 2x2 when it creates a single loop around a face (e.g. 4 in square)
     - Bug: pattern solvers when there is a legitimate small loop
-    - Bug: hint annotations with patterns that take up a lot of the vertical puzzle are UNUSABLY small or hidden
     - Bug: Fix puzzles in localStorage, having it lose progress is not cool
-    - Bug: Highlight "outside" color when face operation on it with blank puzzle. Doesn't highlight at the start.
-    - Bug: Extra spacing on pattern views, e.g. https://jonathanolson.net/slitherlink-dev/rule?r=square-1-0%2FAAgT%2FxshGCIm%2FgKF%2FgYJ%2FgeI%2Fw%3D%3D
     - 
     - UI: Increase touch area for puzzle size buttons
       - Nope, just make the buttons bigger...
@@ -214,10 +202,9 @@
         - Delete face?
     - Bolder colors in face-color-only mode?
     - Undo/redo larger (and at the bottom, with edit modes?)
-    - REVIEW SLITHERLINK DISCORD (PuzzleTeam, slither-link channel)
     - "Automatic" auto-solve icon
     - phet-lib:
-      - Use hotkey system that is new
+      - Use hotkey system that is new (bleh, this does NOT work well with ctrl-z and ctrl-shift-z - latter bugs it up)
       - GET IT WORKING WITH d.ts FILES!!!
   - 
   - 
