@@ -13,7 +13,7 @@
     - 
     - Set up MSI laptop with generation?
     - 
-    - [performance] Share BoardPatternBoards when solving --- even... potentially deserialize the board to the same thing?
+    - [performance/memory] Share BoardPatternBoards when solving --- even... potentially deserialize the board to the same thing?
       - We are also (a) leaking memory, and (b) computing a ton of unneeded embeddings
     - 
     - Difficulties based on patterns(!!!!!)
@@ -23,6 +23,21 @@
       - Are empty face values correlated with difficulty?
         - !! Removing a face value MIGHT make it easier, due to highlander rules?
     - "Hint" button should swap to "apply"?
+    - 
+    - [gereleth] Drag lines
+      - (line drawing + left click on a line = erase lines/x's)
+      - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
+      - May want to separate "hit" areas a bit, to prevent accidental bits?
+      - Compatibility with pan/zoom:
+        - Modes:
+          - Pan-only (old style)
+          - Drag lines
+          - Hybrid.... how? delays?
+            - Middle mouse to pan... but what on mobile?
+        - Minimap (draggable?)
+        - ARROW KEYS? (SC2 style)
+      - EXPLAIN in help dialog
+      - HYBRID: key press allows pan (or... just always allow this in drag mode)
     - 
     - Auto-solve
       - Auto-solve INTO history (in the future), animate out
@@ -101,19 +116,6 @@
     - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode
-    - 
-    - [gereleth] Drag lines
-      - (line drawing + left click on a line = erase lines/x's)
-      - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
-      - May want to separate "hit" areas a bit, to prevent accidental bits?
-      - Compatibility with pan/zoom:
-        - Modes:
-          - Pan-only (old style)
-          - Drag lines
-          - Hybrid.... how? delays?
-            - Middle mouse to pan... but what on mobile?
-        - Minimap (draggable?)
-        - ARROW KEYS? (SC2 style)
     - 
     - [gereleth] Tabbing out (work in background) for puzzle generation
       - How to signal this for the browser?

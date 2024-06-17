@@ -62,13 +62,33 @@ export class TooltipListener implements TInputListener {
   public enter(event: SceneryEvent<MouseEvent | TouchEvent | PointerEvent>): void {
     const node = event.currentTarget;
 
-    const label = this.tooltipTextOverride ?? node?.labelContent ?? node?.accessibleName;
-
     const pointer = event.pointer;
 
-    if (node && label && this.timerListener === null) {
+    if (node && this.timerListener === null) {
+      // Listen to something that changes when our accessibleName changes (or anything else) so we can update the tooltip on changes
+      const updateTooltip = () => {
+        const label = this.tooltipTextOverride ?? node?.labelContent ?? node?.accessibleName;
+
+        if (label) {
+          this.showTooltip(label!, node, pointer);
+
+          let tooltipNode = this.tooltipNode!;
+
+          const labelUpdateListener = () => {
+            if (this.tooltipNode === tooltipNode) {
+              this.hideTooltip();
+              updateTooltip();
+            }
+          };
+          node.rendererSummaryRefreshEmitter.addListener(labelUpdateListener);
+          tooltipNode.disposeEmitter.addListener(() => {
+            node.rendererSummaryRefreshEmitter.removeListener(labelUpdateListener);
+          });
+        }
+      };
+
       this.timerListener = stepTimer.setTimeout(() => {
-        this.showTooltip(label!, node, pointer);
+        updateTooltip();
       }, 200);
     }
   }

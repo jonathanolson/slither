@@ -1,10 +1,14 @@
+import { fontAwesomeArrowsAltShape } from './FontAwesomeShape.ts';
+import PanDragMode, { panDragModeProperty } from './PanDragMode.ts';
 import { controlBarMargin, currentTheme, rectangularButtonAppearanceStrategy } from './Theme.ts';
 import { TooltipListener } from './TooltipListener.ts';
+import { UIRectangularPushButton } from './UIRectangularPushButton.ts';
 import UIRectangularRadioButtonGroup from './UIRectangularRadioButtonGroup.ts';
 import { UIStickyToggleButtonAppearanceStrategy } from './UIStickyToggleButtonAppearanceStrategy.ts';
 import { UIStickyToggleContentAppearanceStrategy } from './UIStickyToggleContentAppearanceStrategy.ts';
 import { ViewContext } from './ViewContext.ts';
 
+import { Matrix3 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { combineOptions } from 'phet-lib/phet-core';
 import { AlignGroup, HBox, Line, Node, Path, Rectangle, VSeparator } from 'phet-lib/scenery';
@@ -35,6 +39,8 @@ export default class EditModeBarNode extends HBox {
       faceColorOppositeIcon,
       sectorIcon,
       eraserIcon,
+      panIcon,
+      dragIcon,
     } = EditModeBarNode.getIcons();
 
     const editModeRadioButtonGroup = new UIRectangularRadioButtonGroup<EditMode>(
@@ -129,10 +135,29 @@ export default class EditModeBarNode extends HBox {
     );
     eraserButton.addInputListener(tooltipListener);
 
+    const wrappedPanIcon = wrapIcon(panIcon);
+    const wrappedDragIcon = wrapIcon(dragIcon);
+    const panDragIcon = new Node();
+    panDragModeProperty.link((mode) => {
+      panDragIcon.children = [mode === PanDragMode.PAN_ONLY ? wrappedPanIcon : wrappedDragIcon];
+    });
+
+    const panDragButton = new UIRectangularPushButton({
+      content: panDragIcon,
+      listener: () => {
+        panDragModeProperty.value =
+          panDragModeProperty.value === PanDragMode.PAN_ONLY ? PanDragMode.DRAG_ONLY : PanDragMode.PAN_ONLY;
+      },
+    });
+    panDragModeProperty.link((mode) => {
+      panDragButton.accessibleName = mode === PanDragMode.PAN_ONLY ? 'Pan Mode (toggle)' : 'Drag Input Mode (toggle)';
+    });
+    panDragButton.addInputListener(tooltipListener);
+
     super({
       spacing: 13,
       stretch: true,
-      children: [editModeRadioButtonGroup, ...(HIDE_ERASE ? [] : [new VSeparator(), eraserButton])],
+      children: [editModeRadioButtonGroup, ...(HIDE_ERASE ? [] : [new VSeparator(), eraserButton, panDragButton])],
     });
 
     // TODO: target buttons more directly?
@@ -244,6 +269,28 @@ export default class EditModeBarNode extends HBox {
       ],
     });
 
+    const panIcon = new Path(fontAwesomeArrowsAltShape.transformed(Matrix3.rotationZ(Math.PI / 4)), {
+      fill: currentTheme.uiButtonForegroundProperty,
+      maxWidth: 14,
+      maxHeight: 14,
+    });
+
+    const dragShape = new Shape()
+      .moveTo(0, 0)
+      .lineTo(0, 6)
+      .lineTo(6, 6)
+      .lineTo(6, 0)
+      .lineTo(12, 0)
+      .lineTo(12, 6)
+      .lineTo(12, 12)
+      .lineTo(6, 12);
+    const dragIcon = new Path(dragShape, {
+      stroke: currentTheme.uiButtonForegroundProperty,
+      lineWidth: 1.5,
+      lineJoin: 'round',
+      lineCap: 'round',
+    });
+
     const alignGroup = new AlignGroup();
 
     return {
@@ -255,6 +302,8 @@ export default class EditModeBarNode extends HBox {
       faceColorOppositeIcon: alignGroup.createBox(faceColorOppositeIcon),
       sectorIcon: alignGroup.createBox(sectorIcon),
       eraserIcon: alignGroup.createBox(eraserIcon),
+      panIcon: alignGroup.createBox(panIcon),
+      dragIcon: alignGroup.createBox(dragIcon),
     };
   }
 }
