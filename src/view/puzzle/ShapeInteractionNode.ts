@@ -1,9 +1,13 @@
-import { TEmitter } from 'phet-lib/axon';
+import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import { Shape } from 'phet-lib/kite';
-import { FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
+import { DragListener, FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
 
 export type ShapeInteractionNodeOptions<T> = {
   delayInteractionEmitter?: TEmitter<[T]>;
+  isDragModeProperty?: TReadOnlyProperty<boolean>;
+  onDragStart?: (item: T, button: 0 | 2) => void;
+  onDrag?: (item: T) => void;
+  onDragEnd?: () => void;
 };
 
 export class ShapeInteractionNode<T> extends Node {
@@ -72,6 +76,8 @@ export class ShapeInteractionNode<T> extends Node {
       }
     };
 
+    this.cursor = 'pointer';
+
     // TODO: config setting for shift-click reversal?
     const primaryFireListener = new FireListener({
       mouseButton: 0,
@@ -90,15 +96,79 @@ export class ShapeInteractionNode<T> extends Node {
       fire: (event) => onPress(event, 1),
     });
 
-    this.addInputListener(primaryFireListener);
-    this.addInputListener(secondaryFireListener);
-    this.addInputListener(tertiaryFireListener);
-    this.cursor = 'pointer';
-
     this.disposeEmitter.addListener(() => {
       primaryFireListener.dispose();
       secondaryFireListener.dispose();
       tertiaryFireListener.dispose();
     });
+
+    if (options?.isDragModeProperty) {
+      const isDragModeProperty = options.isDragModeProperty;
+
+      const onStart = (event: SceneryEvent, button: 0 | 2) => {
+        const item = getItemFromEvent(event);
+        if (item) {
+          options.onDragStart?.(item, button);
+        }
+      };
+
+      const onDrag = (event: SceneryEvent) => {
+        const item = getItemFromEvent(event);
+        if (item) {
+          options.onDrag?.(item);
+        }
+      };
+
+      const onEnd = () => {
+        options.onDragEnd?.();
+      };
+
+      const canStartPress = (event: SceneryEvent | null): boolean => {
+        if (!event) {
+          return false;
+        }
+
+        // Don't let the drag listener start if we don't get a valid item
+        const item = getItemFromEvent(event);
+
+        return !!item;
+      };
+
+      const primaryDragListener = new DragListener({
+        mouseButton: 0,
+        // @ts-expect-error
+        start: (event) => onStart(event, event.domEvent?.shiftKey ? 2 : 0),
+        drag: onDrag,
+        end: onEnd,
+        canStartPress: canStartPress,
+      });
+
+      const secondaryDragListener = new DragListener({
+        mouseButton: 2,
+        // @ts-expect-error
+        start: (event) => onStart(event, event.domEvent?.shiftKey ? 0 : 2),
+        drag: onDrag,
+        end: onEnd,
+        canStartPress: canStartPress,
+      });
+
+      this.disposeEmitter.addListener(() => {
+        primaryDragListener.dispose();
+        secondaryDragListener.dispose();
+      });
+
+      const dragModeListener = (isDragMode: boolean) => {
+        this.inputListeners =
+          isDragMode ?
+            [primaryDragListener, secondaryDragListener]
+          : [primaryFireListener, secondaryFireListener, tertiaryFireListener];
+      };
+      isDragModeProperty.link(dragModeListener);
+      this.disposeEmitter.addListener(() => isDragModeProperty.unlink(dragModeListener));
+    } else {
+      this.addInputListener(primaryFireListener);
+      this.addInputListener(secondaryFireListener);
+      this.addInputListener(tertiaryFireListener);
+    }
   }
 }

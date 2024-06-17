@@ -1,6 +1,7 @@
+import PanDragMode, { panDragModeProperty } from '../PanDragMode.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
 
-import { TEmitter } from 'phet-lib/axon';
+import { DerivedProperty, TEmitter } from 'phet-lib/axon';
 import { DotUtils, Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 
@@ -8,7 +9,6 @@ import { TBoard } from '../../model/board/core/TBoard.ts';
 import { TEdge } from '../../model/board/core/TEdge.ts';
 
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
-
 
 // TODO: better options pattern!
 export type EdgeViewInteractionNodeOptions = {
@@ -22,6 +22,11 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
     delayEdgeInteractionEmitter: TEmitter<[TEdge]>,
     options: EdgeViewInteractionNodeOptions,
   ) {
+    const isDragModeProperty = new DerivedProperty(
+      [panDragModeProperty],
+      (panDragMode) => panDragMode === PanDragMode.DRAG_ONLY,
+    );
+
     super(
       board.edges,
       (edge) => {
@@ -84,7 +89,10 @@ export class EdgeViewInteractionNode extends ShapeInteractionNode<TEdge> {
       options.edgePressListener,
       {
         delayInteractionEmitter: delayEdgeInteractionEmitter,
+        isDragModeProperty: isDragModeProperty,
       },
     );
+
+    this.disposeEmitter.addListener(() => isDragModeProperty.dispose());
   }
 }
