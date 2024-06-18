@@ -1,4 +1,5 @@
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
+import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { DragListener, FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
 
@@ -6,7 +7,7 @@ export type ShapeInteractionNodeOptions<T> = {
   delayInteractionEmitter?: TEmitter<[T]>;
   isDragModeProperty?: TReadOnlyProperty<boolean>;
   onDragStart?: (item: T, button: 0 | 2) => void;
-  onDrag?: (item: T) => void;
+  onDrag?: (item: T, point: Vector2) => void;
   onDragEnd?: () => void;
   noItemItem?: T;
 };
@@ -117,11 +118,13 @@ export class ShapeInteractionNode<T> extends Node {
       };
 
       const onDrag = (event: SceneryEvent) => {
+        const point = event.trail.globalToLocalPoint(event.pointer.point);
+
         const item = getItemFromEvent(event);
         if (item) {
-          options.onDrag?.(item);
+          options.onDrag?.(item, point);
         } else if (options.noItemItem !== undefined) {
-          options.onDrag?.(options.noItemItem);
+          options.onDrag?.(options.noItemItem, point);
         }
       };
 

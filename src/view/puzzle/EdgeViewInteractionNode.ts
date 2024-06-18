@@ -16,7 +16,7 @@ export type EdgeViewInteractionNodeOptions = {
   backgroundOffsetDistance: number;
 
   onEdgeDragStart?: (edge: TEdge, button: 0 | 2) => void;
-  onEdgeDrag?: (edge: TEdge) => void;
+  onEdgeDrag?: (edge: TEdge, point: Vector2) => void;
   onEdgeDragEnd?: () => void;
 };
 

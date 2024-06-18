@@ -5,6 +5,7 @@ import EdgeState from '../data/edge-state/EdgeState.ts';
 import LineDragState from './LineDragState.ts';
 
 import { TinyProperty } from 'phet-lib/axon';
+import { Vector2 } from 'phet-lib/dot';
 
 export class LineDrag {
   public readonly edgeStack: TEdge[] = [];
@@ -43,7 +44,7 @@ export class LineDrag {
   }
 
   // Returns whether it changed
-  public onDrag(edge: TEdge): boolean {
+  public onDrag(edge: TEdge, point: Vector2): boolean {
     if (this.lineDragStateProperty.value === LineDragState.LINE_DRAG) {
       const lastEdge = this.edgeStack[this.edgeStack.length - 1];
       const nextToLastEdge = this.edgeStack.length > 1 ? this.edgeStack[this.edgeStack.length - 2] : null;
@@ -90,6 +91,13 @@ export class LineDrag {
         }
       }
     } else if (this.lineDragStateProperty.value === LineDragState.EDGE_PAINT) {
+      const mainDistance = edge.start.viewCoordinates.distance(edge.end.viewCoordinates);
+      const vertexDistance = Math.min(...edge.vertices.map((vertex) => vertex.viewCoordinates.distance(point)));
+
+      if (vertexDistance / mainDistance < 0.2) {
+        return false;
+      }
+
       if (!this.paintEdgeSet.has(edge)) {
         this.paintEdgeSet.add(edge);
         return true;

@@ -59,6 +59,7 @@ import {
   TinyEmitter,
   TinyProperty,
 } from 'phet-lib/axon';
+import { Vector2 } from 'phet-lib/dot';
 import { optionize } from 'phet-lib/phet-core';
 
 import { LocalStorageBooleanProperty, LocalStorageNumberProperty } from '../../util/localStorage.ts';
@@ -585,8 +586,8 @@ export default class PuzzleModel<
     this.updateEdgeDrag();
   }
 
-  public onUserEdgeDrag(edge: TEdge): void {
-    const changed = this.lineDrag.onDrag(edge);
+  public onUserEdgeDrag(edge: TEdge, point: Vector2): void {
+    const changed = this.lineDrag.onDrag(edge, point);
 
     if (changed) {
       this.updateEdgeDrag();
@@ -779,8 +780,8 @@ export default class PuzzleModel<
     this.updateFaceDrag();
   }
 
-  public onUserFaceDrag(face: TFace | null): void {
-    const changed = this.faceDrag.onDrag(face);
+  public onUserFaceDrag(face: TFace | null, point: Vector2): void {
+    const changed = this.faceDrag.onDrag(face, point);
 
     if (changed) {
       this.updateFaceDrag();

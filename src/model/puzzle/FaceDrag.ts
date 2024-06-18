@@ -4,6 +4,7 @@ import FaceColorState from '../data/face-color/TFaceColorData.ts';
 import FaceDragState from './FaceDragState.ts';
 
 import { TinyProperty } from 'phet-lib/axon';
+import { Vector2 } from 'phet-lib/dot';
 
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
@@ -68,7 +69,18 @@ export class FaceDrag {
   }
 
   // Returns whether it changed
-  public onDrag(face: TFace | null): boolean {
+  public onDrag(face: TFace | null, point: Vector2): boolean {
+    if (face) {
+      const faceCenterDistance = face.viewCoordinates.distance(point);
+      const minVertexDistance = face.vertices
+        .map((vertex) => vertex.viewCoordinates.distance(point))
+        .reduce((min, distance) => Math.min(min, distance), Number.POSITIVE_INFINITY);
+
+      if (faceCenterDistance > 0.3 && minVertexDistance / faceCenterDistance < 0.7) {
+        return false;
+      }
+    }
+
     const lastFace = this.lastFace;
     this.lastFace = face;
 

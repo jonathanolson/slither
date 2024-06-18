@@ -1,6 +1,7 @@
 import { isDragModeProperty } from '../PanDragMode.ts';
 import { ShapeInteractionNode } from './ShapeInteractionNode.ts';
 
+import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 
 import { TBoard } from '../../model/board/core/TBoard.ts';
@@ -11,7 +12,7 @@ export type FaceViewInteractionNodeOptions = {
   facePressListener: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
 
   onFaceDragStart?: (face: TFace | null, button: 0 | 2) => void;
-  onFaceDrag?: (face: TFace | null) => void;
+  onFaceDrag?: (face: TFace | null, point: Vector2) => void;
   onFaceDragEnd?: () => void;
 };
 

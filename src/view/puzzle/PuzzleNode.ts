@@ -17,7 +17,7 @@ import { VertexViewNode } from './VertexViewNode.ts';
 import { currentPuzzleStyle } from './puzzleStyles.ts';
 
 import { DerivedProperty, Property, TEmitter, TReadOnlyProperty, TinyEmitter } from 'phet-lib/axon';
-import { Bounds2 } from 'phet-lib/dot';
+import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
 import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
 
@@ -41,11 +41,11 @@ type SelfOptions = {
   textOptions?: TextOptions;
   edgePressListener?: (edge: TEdge, button: 0 | 1 | 2) => void;
   onEdgeDragStart?: (edge: TEdge, button: 0 | 2) => void;
-  onEdgeDrag?: (edge: TEdge) => void;
+  onEdgeDrag?: (edge: TEdge, point: Vector2) => void;
   onEdgeDragEnd?: () => void;
   facePressListener?: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
   onFaceDragStart?: (face: TFace | null, button: 0 | 2) => void;
-  onFaceDrag?: (face: TFace | null) => void;
+  onFaceDrag?: (face: TFace | null, point: Vector2) => void;
   onFaceDragEnd?: () => void;
   sectorPressListener?: (sector: TSector, button: 0 | 1 | 2) => void;
   sectorSetListener?: (sector: TSector, state: SectorState) => void;

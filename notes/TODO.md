@@ -29,6 +29,8 @@
       - 
       - ERASE with opposite color still?!?
       - 
+      - DRAG from outside.
+      - 
       - keypress to activate pan/drag opposite of current mode (ctrl?)
       - 
       - (line drawing + left click on a line = erase lines/x's)
