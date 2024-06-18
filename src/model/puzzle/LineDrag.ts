@@ -78,15 +78,20 @@ export class LineDrag {
           const lastVertex = this.vertexStack[this.vertexStack.length - 1];
 
           if (edge.vertices.includes(lastVertex)) {
-            const nextVertex = edge.getOtherVertex(lastVertex);
-
             // NOTE: Here we are explicitly allowing the user to make a loop (in case they solve the puzzle fully with this)
+            this.edgeStack.pop();
             this.edgeStack.push(edge);
-            this.vertexStack.push(nextVertex);
             return true;
           } else {
-            // We must have... skipped somewhere. Ignore (unfortunately)
-            return false;
+            const nextVertex = lastEdge.getOtherVertex(lastVertex);
+            if (edge.vertices.includes(nextVertex)) {
+              this.edgeStack.push(edge);
+              this.vertexStack.push(nextVertex);
+              return true;
+            } else {
+              // We must have... skipped somewhere. Ignore (unfortunately)
+              return false;
+            }
           }
         }
       }
