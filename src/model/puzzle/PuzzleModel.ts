@@ -632,7 +632,8 @@ export default class PuzzleModel<
       checkAutoSolve: (state) => {
         return edges.every((edge) => state.getEdgeState(edge) === edgeState);
       },
-      excludedEdges: new Set(edges),
+      // NOTE: Do not exclude edges, since this prevents it from mousing over them immediately.
+      excludedEdges: new Set(this.puzzle.board.edges),
     });
 
     this.updateState();
