@@ -22,6 +22,7 @@ import { workaroundResolveStep } from '../util/sleep.ts';
 import ControlBarNode from '../view/ControlBarNode.ts';
 import EditModeBarNode from '../view/EditModeBarNode.ts';
 import { HintStateNode } from '../view/HintStateNode.ts';
+import PanDragMode, { panDragModeProperty } from '../view/PanDragMode.ts';
 import PuzzleContainerNode from '../view/PuzzleContainerNode.ts';
 import { controlBarMargin, currentTheme } from '../view/Theme.ts';
 import { ViewContext } from '../view/ViewContext.ts';
@@ -240,6 +241,17 @@ globalKeyStateTracker.keydownEmitter.addListener((keyboardEvent) => {
 globalKeyStateTracker.keyupEmitter.addListener((keyboardEvent) => {
   if (keyboardEvent.key === 'e') {
     eraserEnabledProperty.value = false;
+  }
+});
+
+let wasSpacePressed = false;
+globalKeyStateTracker.keyDownStateChangedEmitter.addListener(() => {
+  const spacePressed = globalKeyStateTracker.isEnglishKeyDown('space');
+
+  if (spacePressed !== wasSpacePressed) {
+    wasSpacePressed = spacePressed;
+    panDragModeProperty.value =
+      panDragModeProperty.value === PanDragMode.PAN_ONLY ? PanDragMode.DRAG_ONLY : PanDragMode.PAN_ONLY;
   }
 });
 

@@ -25,27 +25,15 @@
     - "Hint" button should swap to "apply"?
     - 
     - [gereleth] Drag lines
-      - Have a "within the shape by a certain amount" for X-dragging?
-      - 
       - ERASE with opposite color still?!?
       - 
       - DRAG from outside.
       - 
-      - keypress to activate pan/drag opposite of current mode (ctrl?)
+      - DOCUMENT THIS in the help section
       - 
-      - (line drawing + left click on a line = erase lines/x's)
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
-      - May want to separate "hit" areas a bit, to prevent accidental bits?
-      - Compatibility with pan/zoom:
-        - Modes:
-          - Pan-only (old style)
-          - Drag lines
-          - Hybrid.... how? delays?
-            - Middle mouse to pan... but what on mobile?
-        - Minimap (draggable?)
-        - ARROW KEYS? (SC2 style)
-      - EXPLAIN in help dialog
-      - HYBRID: key press allows pan (or... just always allow this in drag mode)
+      - Minimap (draggable?)
+      - ARROW KEYS? (SC2 style)
     - 
     - Auto-solve
       - Auto-solve INTO history (in the future), animate out
