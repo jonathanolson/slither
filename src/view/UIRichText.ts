@@ -12,6 +12,7 @@ export class UIRichText extends RichText {
       {
         font: uiFont,
         fill: currentTheme.uiForegroundColorProperty,
+        linkFill: currentTheme.uiLinkColorProperty,
       },
       providedOptions,
     );

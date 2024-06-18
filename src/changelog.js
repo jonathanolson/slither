@@ -1,13 +1,14 @@
 export const changelog = [
   [
+    '2024-06-18',
+    'Added line/cell dragging, with toggle between pan/drag modes - space temporarily toggles when pressed',
+    'Improved error highlighting for incorrect moves',
+    'Added help popup',
     'Allow loading puzzles when in an error state',
     'Auto-loading hint solver',
     'Added new computed hints',
-    'Improved error highlighting for incorrect moves',
     'Pause timer when solved',
-    'Added help popup',
     'Added extra control for presence of sectors',
-    'Added line/cell dragging, with toggle between pan/drag modes - space temporarily toggles when pressed',
   ],
   [
     '2024-06-15',

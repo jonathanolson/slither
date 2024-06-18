@@ -68,52 +68,43 @@ export class HelpNode extends PopupNode {
             spacing: 5,
             align: 'left',
             children: [
-              new HBox({
-                spacing: 10,
-                children: [wrapIcon(editModeIcons.edgeIcon), new UIRichText('Click/tap adds a line')],
-              }),
-              new HBox({
-                spacing: 10,
-                children: [
-                  wrapIcon(editModeIcons.edgeReversedIcon),
-                  new UIRichText('Click/tap adds an X (marking where a line will not go)'),
-                ],
-              }),
-              new HBox({
-                spacing: 10,
-                children: [
-                  wrapIcon(editModeIcons.faceColorInsideIcon),
-                  new UIRichText('Sets the color of a cell to the inside color'),
-                ],
-              }),
-              new HBox({
-                spacing: 10,
-                children: [
-                  wrapIcon(editModeIcons.faceColorOutsideIcon),
-                  new UIRichText('Sets the color of a cell to the outside color'),
-                ],
-              }),
-              new HBox({
-                spacing: 10,
-                children: [
-                  wrapIcon(editModeIcons.faceColorMatchIcon),
-                  new UIRichText('Click/tap on one cell, then click/tap on another to make them the same color'),
-                ],
-              }),
+              new UIRichText(
+                '<node id="edge" align="center"/> + click/tap adds a line, <node id="x" align="center"/> marks where lines are impossible',
+                {
+                  lineWrap: lineWrap,
+                  nodes: {
+                    edge: wrapIcon(editModeIcons.edgeIcon),
+                    x: wrapIcon(editModeIcons.edgeReversedIcon),
+                  },
+                },
+              ),
+              new UIRichText(
+                '<node id="inside" align="center"/> + click/tap marks with the inside color, <node id="outside" align="center"/> marks with the outside color',
+                {
+                  lineWrap: lineWrap,
+                  nodes: {
+                    inside: wrapIcon(editModeIcons.faceColorInsideIcon),
+                    outside: wrapIcon(editModeIcons.faceColorOutsideIcon),
+                  },
+                },
+              ),
+              new UIRichText(
+                '<node id="same" align="center"/> + click/tap on 1st cell + click/tap on 2nd to match colors, <node id="opposite" align="center"/> marks opposite colors',
+                {
+                  lineWrap: lineWrap,
+                  nodes: {
+                    same: wrapIcon(editModeIcons.faceColorMatchIcon),
+                    opposite: wrapIcon(editModeIcons.faceColorOppositeIcon),
+                  },
+                },
+              ),
               new HBox({
                 spacing: 10,
                 children: [
                   wrapIcon(editModeIcons.sectorIcon),
-                  new UIRichText('Click/tap to pop up a selector, then select the sector color'),
+                  new UIRichText(' + click/tap to pop up a selector, then select the sector color (see solving guide)'),
                 ],
                 visibleProperty: showSectorViewModesProperty,
-              }),
-              new HBox({
-                spacing: 10,
-                children: [
-                  wrapIcon(editModeIcons.eraserIcon),
-                  new UIRichText('When activated, the line/cell/sector (from the modes above) will be erased'),
-                ],
               }),
             ],
           }),
@@ -126,10 +117,38 @@ export class HelpNode extends PopupNode {
               lineWrap: lineWrap,
             },
           ),
+          new UIRichText('Modifiers', { font: uiHeaderFont }),
           new UIRichText(
-            'Right-click or shift-click will activate the "opposite" mode (e.g. in line mode, shift-click will set an X). This will work for lines <=> X\'s, inside <=> outside colors, and the final click for make same <=> make opposite colors.',
+            'With erase (<node id="erase" align="center"/>) toggled on, edit modes will instead erase lines/X\'s/colors.',
             {
               lineWrap: lineWrap,
+              nodes: {
+                erase: wrapIcon(editModeIcons.eraserIcon),
+              },
+            },
+          ),
+          new UIRichText(
+            'Pan mode (<node id="pan" align="center"/>) will treat dragging as panning the view, while drag-edit mode (<node id="drag" align="center"/>) will allow setting the state of many lines/cells with one dragged press.',
+            {
+              lineWrap: lineWrap,
+              nodes: {
+                pan: wrapIcon(editModeIcons.panIcon),
+                drag: wrapIcon(editModeIcons.dragIcon),
+              },
+            },
+          ),
+          new UIRichText(
+            'Right-click or shift-click will activate the "opposite" mode (e.g. in line mode, shift-click will set an X). This will work for <node id="edge" align="center"/> / <node id="x" align="center"/>, <node id="inside" align="center"/> / <node id="outside" align="center"/>, and the final click for <node id="same" align="center"/> / <node id="opposite" align="center"/>.',
+            {
+              lineWrap: lineWrap,
+              nodes: {
+                edge: wrapIcon(editModeIcons.edgeIcon),
+                x: wrapIcon(editModeIcons.edgeReversedIcon),
+                inside: wrapIcon(editModeIcons.faceColorInsideIcon),
+                outside: wrapIcon(editModeIcons.faceColorOutsideIcon),
+                same: wrapIcon(editModeIcons.faceColorMatchIcon),
+                opposite: wrapIcon(editModeIcons.faceColorOppositeIcon),
+              },
             },
           ),
           new UIRichText('View Styles', { font: uiHeaderFont }),

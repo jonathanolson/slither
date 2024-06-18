@@ -26,12 +26,6 @@
     - 
     - [gereleth] Drag lines
       - ERASE with opposite color still?!?
-      - 
-      - DOCUMENT THIS in the help section
-      - 
-      - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE
-      - Minimap (draggable?)
-      - ARROW KEYS? (SC2 style)
     - 
     - Auto-solve
       - Auto-solve INTO history (in the future), animate out
@@ -202,7 +196,8 @@
     - phet-lib:
       - Use hotkey system that is new (bleh, this does NOT work well with ctrl-z and ctrl-shift-z - latter bugs it up)
       - GET IT WORKING WITH d.ts FILES!!!
-  - 
+  - Minimap (draggable?)
+  - ARROW KEYS? (SC2 style)
   - 
   - Edit modes (row for all of this?):
     - Modes:
