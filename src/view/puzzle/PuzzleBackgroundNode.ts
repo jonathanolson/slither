@@ -1,9 +1,9 @@
 import { TPuzzleStyle } from './TPuzzleStyle.ts';
-import { hookPuzzleListeners } from './hookPuzzleListeners.ts';
+import { hookPuzzleBackgroundListeners } from './hookPuzzleBackgroundListeners.ts';
 
 import { Graph, LineStyles, Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
-import { Node, Path } from 'phet-lib/scenery';
+import { Node, Path, PressListenerEvent } from 'phet-lib/scenery';
 
 import { TFace } from '../../model/board/core/TFace.ts';
 import { THalfEdge } from '../../model/board/core/THalfEdge.ts';
@@ -12,11 +12,11 @@ import { isFaceColorPairEditModeProperty } from '../../model/puzzle/EditMode.ts'
 
 import _ from '../../workarounds/_.ts';
 
-
 export type PuzzleBackgroundNodeOptions = {
   useBackgroundOffsetStroke?: boolean;
   backgroundOffsetDistance?: number;
   facePressListener?: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
+  faceBackgroundDragStartListener?: (event: PressListenerEvent) => void;
   noninteractive?: boolean;
 };
 
@@ -32,6 +32,7 @@ export class PuzzleBackgroundNode extends Node {
         useBackgroundOffsetStroke: false,
         backgroundOffsetDistance: 0.3,
         facePressListener: () => {},
+        faceBackgroundDragStartListener: () => {},
         noninteractive: false,
       },
       providedOptions,
@@ -41,7 +42,12 @@ export class PuzzleBackgroundNode extends Node {
       pickableProperty: isFaceColorPairEditModeProperty,
     });
 
-    !options.noninteractive && hookPuzzleListeners(null, this, options.facePressListener);
+    !options.noninteractive &&
+      hookPuzzleBackgroundListeners(
+        this,
+        (button) => options.facePressListener(null, button),
+        options.faceBackgroundDragStartListener,
+      );
 
     const outerBoundaryPoints = outerBoundary.map((halfEdge) => halfEdge.start.viewCoordinates);
 

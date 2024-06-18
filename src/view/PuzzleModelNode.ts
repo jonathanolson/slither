@@ -27,6 +27,8 @@ export default class PuzzleModelNode<
   Structure extends TStructure = TStructure,
   Data extends TCompleteData = TCompleteData,
 > extends Node {
+  public readonly puzzleNode: PuzzleNode<Structure, Data>;
+
   public constructor(
     public readonly puzzleModel: PuzzleModel<Structure, Data>,
     providedOptions?: PuzzleModelNodeOptions,
@@ -65,6 +67,8 @@ export default class PuzzleModelNode<
         options,
       ),
     );
+
+    this.puzzleNode = puzzleNode;
 
     this.disposeEmitter.addListener(() => puzzleNode.dispose());
 

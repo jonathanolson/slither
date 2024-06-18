@@ -19,7 +19,7 @@ import { currentPuzzleStyle } from './puzzleStyles.ts';
 import { DerivedProperty, Property, TEmitter, TReadOnlyProperty, TinyEmitter } from 'phet-lib/axon';
 import { Bounds2, Vector2 } from 'phet-lib/dot';
 import { combineOptions, optionize, platform } from 'phet-lib/phet-core';
-import { Node, NodeOptions, TextOptions } from 'phet-lib/scenery';
+import { Node, NodeOptions, PressListenerEvent, TextOptions } from 'phet-lib/scenery';
 
 import { TEdge } from '../../model/board/core/TEdge.ts';
 import { TFace } from '../../model/board/core/TFace.ts';
@@ -44,6 +44,7 @@ type SelfOptions = {
   onEdgeDrag?: (edge: TEdge, point: Vector2) => void;
   onEdgeDragEnd?: () => void;
   facePressListener?: (face: TFace | null, button: 0 | 1 | 2) => void; // null is the "outside" face
+  faceBackgroundDragStartListener?: (event: PressListenerEvent) => void;
   onFaceDragStart?: (face: TFace | null, button: 0 | 2) => void;
   onFaceDrag?: (face: TFace | null, point: Vector2) => void;
   onFaceDragEnd?: () => void;
@@ -63,13 +64,14 @@ export type PuzzleNodeOptions = SelfOptions & ParentOptions;
 
 export type PuzzleNodeData = TCompleteData;
 
-// TODO: disposal!
 export default class PuzzleNode<
   Structure extends TStructure = TStructure,
   Data extends PuzzleNodeData = PuzzleNodeData,
 > extends Node {
   private readonly annotationContainer: Node;
   private readonly backgroundNode: Node;
+
+  public readonly onFaceBackgroundDragStart: (event: PressListenerEvent) => void;
 
   public constructor(
     public readonly puzzle: TPropertyPuzzle<Structure, Data>,
@@ -88,6 +90,7 @@ export default class PuzzleNode<
         onEdgeDrag: () => {},
         onEdgeDragEnd: () => {},
         facePressListener: () => {},
+        faceBackgroundDragStartListener: (event) => this.onFaceBackgroundDragStart(event),
         onFaceDragStart: () => {},
         onFaceDrag: () => {},
         onFaceDragEnd: () => {},
@@ -155,8 +158,10 @@ export default class PuzzleNode<
 
     faceContainer.addChild(new FaceViewNode(puzzle.board, puzzle.stateProperty, style, options));
 
+    let faceViewInteractionNode: FaceViewInteractionNode | null = null;
     if (!options.noninteractive) {
-      faceContainer.addChild(new FaceViewInteractionNode(puzzle.board, options));
+      faceViewInteractionNode = new FaceViewInteractionNode(puzzle.board, options);
+      faceContainer.addChild(faceViewInteractionNode);
     }
 
     faceStateContainer.addChild(new FaceStateViewNode(puzzle.board, puzzle.stateProperty, isSolvedProperty, style));
@@ -207,6 +212,12 @@ export default class PuzzleNode<
         options,
       ),
     );
+
+    if (faceViewInteractionNode) {
+      this.onFaceBackgroundDragStart = (event) => faceViewInteractionNode!.triggerDrag?.(event);
+    } else {
+      this.onFaceBackgroundDragStart = () => {};
+    }
 
     this.annotationContainer = annotationContainer;
 

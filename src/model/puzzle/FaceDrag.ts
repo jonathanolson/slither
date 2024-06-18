@@ -85,11 +85,7 @@ export class FaceDrag {
     this.lastFace = face;
 
     if (!this.paintFaceSet.has(face) && !this.paintFaceOppositeSet.has(face)) {
-      if (
-        this.faceDragStateProperty.value === FaceDragState.MAKE_OPPOSITE &&
-        lastFace &&
-        this.paintFaceSet.has(lastFace)
-      ) {
+      if (this.faceDragStateProperty.value === FaceDragState.MAKE_OPPOSITE && this.paintFaceSet.has(lastFace)) {
         assertEnabled() && assert(!this.paintFaceSet.has(face));
         this.paintFaceOppositeSet.add(face);
       } else {

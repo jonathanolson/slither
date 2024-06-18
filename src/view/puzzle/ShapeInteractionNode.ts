@@ -1,7 +1,7 @@
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
-import { DragListener, FireListener, Node, SceneryEvent } from 'phet-lib/scenery';
+import { DragListener, FireListener, Node, PressListenerEvent, SceneryEvent } from 'phet-lib/scenery';
 
 export type ShapeInteractionNodeOptions<T> = {
   delayInteractionEmitter?: TEmitter<[T]>;
@@ -13,6 +13,8 @@ export type ShapeInteractionNodeOptions<T> = {
 };
 
 export class ShapeInteractionNode<T> extends Node {
+  public readonly triggerDrag?: (event: PressListenerEvent) => void;
+
   public constructor(
     items: T[],
     getShape: (item: T) => Shape,
@@ -53,7 +55,8 @@ export class ShapeInteractionNode<T> extends Node {
 
     // TODO: set up listeners in a better way?
 
-    const getItemFromEvent = (event: SceneryEvent): T | null => {
+    // Returns false if we have a "delayed" item
+    const getItemFromEvent = (event: SceneryEvent): T | false => {
       const point = event.trail.globalToLocalPoint(event.pointer.point);
 
       for (let i = 0; i < itemShapes.length; i++) {
@@ -68,12 +71,12 @@ export class ShapeInteractionNode<T> extends Node {
         }
       }
 
-      return null;
+      return false;
     };
 
     const onPress = (event: SceneryEvent, button: 0 | 1 | 2) => {
       const item = getItemFromEvent(event);
-      if (item) {
+      if (item !== false) {
         listener(item, button);
       }
     };
@@ -109,7 +112,7 @@ export class ShapeInteractionNode<T> extends Node {
 
       const onStart = (event: SceneryEvent, button: 0 | 2) => {
         const item = getItemFromEvent(event);
-        if (item) {
+        if (item !== false) {
           options.onDragStart?.(item, button);
         } else if (options.noItemItem !== undefined) {
           // TODO: use this pattern for the "outside"?
@@ -121,7 +124,7 @@ export class ShapeInteractionNode<T> extends Node {
         const point = event.trail.globalToLocalPoint(event.pointer.point);
 
         const item = getItemFromEvent(event);
-        if (item) {
+        if (item !== false) {
           options.onDrag?.(item, point);
         } else if (options.noItemItem !== undefined) {
           options.onDrag?.(options.noItemItem, point);
@@ -140,7 +143,7 @@ export class ShapeInteractionNode<T> extends Node {
         // Don't let the drag listener start if we don't get a valid item
         const item = getItemFromEvent(event);
 
-        return !!item;
+        return item !== false || options.noItemItem !== undefined;
       };
 
       const primaryDragListener = new DragListener({
@@ -160,6 +163,14 @@ export class ShapeInteractionNode<T> extends Node {
         end: onEnd,
         canStartPress: canStartPress,
       });
+
+      this.triggerDrag = (event: PressListenerEvent) => {
+        if ((event.domEvent as MouseEvent).button === 2) {
+          secondaryDragListener.press(event, this);
+        } else {
+          primaryDragListener.press(event, this);
+        }
+      };
 
       this.disposeEmitter.addListener(() => {
         primaryDragListener.dispose();

@@ -11,12 +11,13 @@ import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
 import { toPropertyPuzzle } from '../model/puzzle/toPropertyPuzzle.ts';
 
-
 // TODO: instead of State, do Data (and we'll TState it)???
 export default class TopologicalPuzzleNode<
   Structure extends TStructure = TStructure,
   Data extends TCompleteData = TCompleteData,
 > extends Node {
+  public puzzleNode!: PuzzleNode<Structure, Data>;
+
   public constructor(
     public readonly puzzleModel: PuzzleModel<Structure, Data>,
     options?: NodeOptions,
@@ -128,6 +129,7 @@ export default class TopologicalPuzzleNode<
           }
         },
       });
+      this.puzzleNode = puzzleNode as unknown as PuzzleNode<Structure, Data>;
       lastPuzzleNode = puzzleNode;
 
       // const angularDerivative = LayoutDerivative.getAngularDeltas( layoutPuzzle ).getAreaCorrectedDerivative();

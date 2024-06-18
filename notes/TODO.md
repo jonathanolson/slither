@@ -27,8 +27,6 @@
     - [gereleth] Drag lines
       - ERASE with opposite color still?!?
       - 
-      - DRAG from outside.
-      - 
       - DOCUMENT THIS in the help section
       - 
       - Dragging line should "tree branch" out, ideally not overlapping, CAN REVERSE

@@ -1,7 +1,7 @@
 import PuzzleModelNode from './PuzzleModelNode.ts';
 import TopologicalPuzzleNode from './TopologicalPuzzleNode.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
-import { hookPuzzleListeners } from './puzzle/hookPuzzleListeners.ts';
+import { hookPuzzleBackgroundListeners } from './puzzle/hookPuzzleBackgroundListeners.ts';
 import { currentPuzzleStyle } from './puzzle/puzzleStyles.ts';
 
 import { Multilink, TReadOnlyProperty } from 'phet-lib/axon';
@@ -22,7 +22,6 @@ import {
 import { showLayoutTestProperty } from '../model/board/layout/layout.ts';
 import { isFaceColorOutsideAvailableEditModeProperty } from '../model/puzzle/EditMode.ts';
 import PuzzleModel from '../model/puzzle/PuzzleModel.ts';
-
 
 type SelfOptions = {
   topological?: boolean;
@@ -69,9 +68,15 @@ export default class PuzzleContainerNode extends Sizable(Node) {
 
     // TODO: adjust pickable based on edit mode
 
-    hookPuzzleListeners(null, this.facePressRect, (face, button) => {
-      puzzleModelProperty.value?.onUserFacePress(face, button);
-    });
+    hookPuzzleBackgroundListeners(
+      this.facePressRect,
+      (button) => {
+        puzzleModelProperty.value?.onUserFacePress(null, button);
+      },
+      (event) => {
+        this.puzzleNode?.puzzleNode.onFaceBackgroundDragStart(event);
+      },
+    );
 
     this.rectangularGradientRect = new Rectangle({
       pickable: false,
@@ -115,6 +120,7 @@ export default class PuzzleContainerNode extends Sizable(Node) {
         if (puzzleModel) {
           if (options.topological) {
             if (showLayout) {
+              // TODO: omg this hackery! We are... relying on STRUCTURAL typing of these two types to be equivalent?
               this.puzzleNode = new TopologicalPuzzleNode(puzzleModel);
             }
           } else {
