@@ -98,8 +98,9 @@ export class LineDrag {
     } else if (this.lineDragStateProperty.value === LineDragState.EDGE_PAINT) {
       const mainDistance = edge.start.viewCoordinates.distance(edge.end.viewCoordinates);
       const vertexDistance = Math.min(...edge.vertices.map((vertex) => vertex.viewCoordinates.distance(point)));
+      const faceDistance = Math.min(...edge.faces.map((face) => face.viewCoordinates.distance(point)));
 
-      if (vertexDistance / mainDistance < 0.2) {
+      if (Math.min(vertexDistance, faceDistance) / mainDistance < 0.3) {
         return false;
       }
 
