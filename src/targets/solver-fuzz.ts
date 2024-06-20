@@ -2,7 +2,7 @@ import { BooleanProperty } from 'phet-lib/axon';
 import { Display, Node } from 'phet-lib/scenery';
 
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
-import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
+import { PolygonGeneratorBoard } from '../model/board/core/PolygonGeneratorBoard.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';
@@ -48,9 +48,7 @@ display.setWidthHeight(window.innerWidth, window.innerHeight);
 console.log('test');
 
 const getPolygonalBoard = (generator: PolygonGenerator) => {
-  const polygons = generator.generate(generator.defaultParameterValues);
-
-  return new PolygonalBoard(polygons, generator.scale ?? 1);
+  return PolygonGeneratorBoard.get(generator, generator.defaultParameterValues);
 };
 
 const boards = [

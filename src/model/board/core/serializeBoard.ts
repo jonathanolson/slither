@@ -1,11 +1,18 @@
 import { HexagonalBoard } from '../hex/HexagonalBoard.ts';
 import { SquareBoard } from '../square/SquareBoard.ts';
+import { PolygonGeneratorBoard } from './PolygonGeneratorBoard.ts';
 import { TBoard } from './TBoard.ts';
 import { TSerializedBoard } from './TSerializedBoard.ts';
 
-
 // TODO: how better to encode better board serializations for hex/square?
 export const serializeBoard = (board: TBoard): TSerializedBoard => {
+  if (board instanceof PolygonGeneratorBoard) {
+    return {
+      type: 'PolygonGeneratorBoard',
+      generator: board.generator.name,
+      parameters: board.parameters,
+    };
+  }
   if (board instanceof SquareBoard) {
     return {
       type: 'SquareBoard',

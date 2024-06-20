@@ -1,5 +1,5 @@
 import { PolygonGenerator } from '../../board/PolygonGenerator.ts';
-import { PolygonalBoard } from '../../board/core/PolygonalBoard.ts';
+import { PolygonGeneratorBoard } from '../../board/core/PolygonGeneratorBoard.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TFace } from '../../board/core/TFace.ts';
@@ -222,14 +222,11 @@ export class FacesPatternBoard extends BasePatternBoard implements TPlanarMapped
   }
 
   public static getUniformTilingGenerations(generator: PolygonGenerator, n: number): FacesPatternBoard[][] {
-    // TODO: simplify this board generation
-    const polygons = generator.generate({
+    const board = PolygonGeneratorBoard.get(generator, {
       // TODO: make this variable
       width: 15,
       height: 15,
     });
-
-    const board = new PolygonalBoard(polygons, generator.scale ?? 1);
 
     return FacesPatternBoard.getFirstNGenerations(board, n);
   }

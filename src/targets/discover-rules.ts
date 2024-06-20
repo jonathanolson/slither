@@ -8,7 +8,7 @@ import {
   triangularTiling,
   trihexagonalTiling,
 } from '../model/board/core/PeriodicBoardTiling.ts';
-import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
+import { PolygonGeneratorBoard } from '../model/board/core/PolygonGeneratorBoard.ts';
 import { TBoard } from '../model/board/core/TBoard.ts';
 import { getPeriodicTilingGenerator } from '../model/board/getPeriodicTilingGenerator.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
@@ -426,14 +426,11 @@ console.log('test');
       };
 
       const getUniformTilingGenerations = (generator: PolygonGenerator, n: number): FacesPatternBoard[][] => {
-        // TODO: simplify this board generation
-        const polygons = generator.generate({
+        const board = PolygonGeneratorBoard.get(generator, {
           // TODO: make this variable
           width: 15,
           height: 15,
         });
-
-        const board = new PolygonalBoard(polygons, generator.scale ?? 1);
 
         return getFirstNGenerations(board, n);
       };

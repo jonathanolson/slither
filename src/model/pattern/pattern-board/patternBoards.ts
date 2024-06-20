@@ -12,6 +12,7 @@ import {
   triangularTiling,
   trihexagonalTiling,
 } from '../../board/core/PeriodicBoardTiling.ts';
+import { PolygonGeneratorBoard } from '../../board/core/PolygonGeneratorBoard.ts';
 import { PolygonalBoard } from '../../board/core/PolygonalBoard.ts';
 import { getPeriodicTilingGenerator } from '../../board/getPeriodicTilingGenerator.ts';
 import { HexagonalBoard } from '../../board/hex/HexagonalBoard.ts';
@@ -336,14 +337,11 @@ export const vertexNonExitPatternBoards = [
 export const basicPatternBoards = [edgePatternBoard, ...vertexExitPatternBoards, ...vertexNonExitPatternBoards];
 
 const boardFromPolygonGenerator = (generator: PolygonGenerator): PolygonalBoard => {
-  // TODO: simplify this board generation
-  const polygons = generator.generate({
+  return PolygonGeneratorBoard.get(generator, {
     // TODO: make this variable
     width: 20,
     height: 20,
   });
-
-  return new PolygonalBoard(polygons, generator.scale ?? 1);
 };
 
 export const standardTriangularBoard = boardFromPolygonGenerator(getPeriodicTilingGenerator(triangularTiling));

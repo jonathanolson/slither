@@ -15,7 +15,7 @@ import { HBox, HBoxOptions, HSeparator, Node, Path, Rectangle, Text, VBox } from
 import { NumberControl } from 'phet-lib/scenery-phet';
 
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
-import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
+import { PolygonGeneratorBoard } from '../model/board/core/PolygonGeneratorBoard.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
@@ -297,7 +297,7 @@ export class GenerateNode extends HBox {
 
             const polygons = generator.generate(parameters);
 
-            const board = new PolygonalBoard(polygons, generator.scale ?? 1);
+            const board = PolygonGeneratorBoard.get(generator, parameters);
 
             const interruptedProperty = new TinyProperty(false);
 

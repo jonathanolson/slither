@@ -1,5 +1,10 @@
 export type TSerializedBoard =
   | {
+      type: 'PolygonGeneratorBoard';
+      generator: string;
+      parameters: Record<string, any>;
+    }
+  | {
       type: 'BaseBoard';
       vertices: {
         x: number;

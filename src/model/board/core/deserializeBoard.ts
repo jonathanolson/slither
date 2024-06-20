@@ -1,14 +1,23 @@
+import { polygonGenerators } from '../generators/polygonGenerators.ts';
 import { HexagonalBoard } from '../hex/HexagonalBoard.ts';
 import { SquareBoard } from '../square/SquareBoard.ts';
 import { BaseBoard } from './BaseBoard.ts';
+import { PolygonGeneratorBoard } from './PolygonGeneratorBoard.ts';
 import { TBoard } from './TBoard.ts';
 import { TSerializedBoard } from './TSerializedBoard.ts';
 import { TFaceDescriptor, TVertexDescriptor, createBoardDescriptor } from './createBoardDescriptor.ts';
 
 import { Vector2 } from 'phet-lib/dot';
 
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
+
 export const deserializeBoard = (serializedBoard: TSerializedBoard): TBoard => {
-  if (serializedBoard.type === 'BaseBoard') {
+  if (serializedBoard.type === 'PolygonGeneratorBoard') {
+    const generator = polygonGenerators.find((generator) => generator.name === serializedBoard.generator)!;
+    assertEnabled() && assert(generator);
+
+    return PolygonGeneratorBoard.get(generator, serializedBoard.parameters);
+  } else if (serializedBoard.type === 'BaseBoard') {
     const vertexDescriptors: TVertexDescriptor[] = serializedBoard.vertices.map((vertex) => {
       return {
         logicalCoordinates: new Vector2(vertex.x, vertex.y),
