@@ -605,7 +605,9 @@ export default class PuzzleModel<
     if (
       lastTransition.action &&
       lastTransition.action instanceof UserEdgeDragAction &&
-      lastTransition.action.dragIndex === this.lineDrag.dragIndex
+      // We will reverse either the same "drag" actions from before, OR a drag starting on the same edge from before.
+      (lastTransition.action.dragIndex === this.lineDrag.dragIndex ||
+        lastTransition.action.firstEdge === this.lineDrag.firstEdge)
     ) {
       this.stackPositionProperty.value--;
     }
@@ -625,7 +627,7 @@ export default class PuzzleModel<
     const erasedEdges = edges.filter((edge) => this.puzzle.stateProperty.value.getEdgeState(edge) !== EdgeState.WHITE);
     const eraseAction = new CompositeAction<Data>(erasedEdges.map((edge) => new EraseEdgeCompleteAction(edge)));
 
-    const userAction = new UserEdgeDragAction(edges, edgeState, this.lineDrag.dragIndex);
+    const userAction = new UserEdgeDragAction(this.lineDrag.firstEdge, edges, edgeState, this.lineDrag.dragIndex);
 
     this.applyUserActionToStack(userAction, {
       erase: (state) => eraseAction.apply(state),

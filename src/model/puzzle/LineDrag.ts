@@ -8,6 +8,7 @@ import { TinyProperty } from 'phet-lib/axon';
 import { Vector2 } from 'phet-lib/dot';
 
 export class LineDrag {
+  public firstEdge!: TEdge;
   public readonly edgeStack: TEdge[] = [];
   public readonly vertexStack: TVertex[] = [];
 
@@ -21,6 +22,8 @@ export class LineDrag {
   public constructor(public readonly board: TBoard) {}
 
   public onLineDragStart(edge: TEdge): void {
+    this.firstEdge = edge;
+
     this.lineDragStateProperty.value = LineDragState.LINE_DRAG;
 
     this.edgeStack.length = 0;
@@ -33,6 +36,8 @@ export class LineDrag {
   }
 
   public onPaintDragStart(edge: TEdge, edgeState: EdgeState): void {
+    this.firstEdge = edge;
+
     this.lineDragStateProperty.value = LineDragState.EDGE_PAINT;
 
     this.paintEdgeSet.clear();

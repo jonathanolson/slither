@@ -9,6 +9,7 @@ import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 
 export class UserEdgeDragAction implements TAction<TEdgeStateData> {
   public constructor(
+    public readonly firstEdge: TEdge,
     public readonly edges: TEdge[],
     public readonly state: EdgeState,
     public readonly dragIndex: number,
@@ -31,6 +32,7 @@ export class UserEdgeDragAction implements TAction<TEdgeStateData> {
   public serializeAction(): TSerializedAction {
     return {
       type: 'UserEdgeDragAction',
+      firstEdge: serializeEdge(this.firstEdge),
       edges: this.edges.map((edge) => serializeEdge(edge)),
       state: this.state.name,
       dragIndex: this.dragIndex,
@@ -39,6 +41,7 @@ export class UserEdgeDragAction implements TAction<TEdgeStateData> {
 
   public static deserializeAction(board: TBoard, serializedAction: TSerializedAction): UserEdgeDragAction {
     return new UserEdgeDragAction(
+      deserializeEdge(board, serializedAction.firstEdge as TSerializedEdge),
       serializedAction.edges.map((edge: TSerializedEdge) => deserializeEdge(board, edge)),
       EdgeState.enumeration.getValue(serializedAction.state),
       serializedAction.dragIndex,
