@@ -15,8 +15,8 @@ import { HBox, HBoxOptions, HSeparator, Node, Path, Rectangle, Text, VBox } from
 import { NumberControl } from 'phet-lib/scenery-phet';
 
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
+import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
 import { TStructure } from '../model/board/core/TStructure.ts';
-import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
 import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
@@ -31,7 +31,6 @@ import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
 
 import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
-
 
 type SelfOptions = {
   loadPuzzle: (puzzle: TPropertyPuzzle<TStructure, TCompleteData>) => void;

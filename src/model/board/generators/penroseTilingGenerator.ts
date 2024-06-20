@@ -1,5 +1,5 @@
 import { PolygonGenerator } from '../PolygonGenerator.ts';
-import { penrose6, penrose10, penrose11, penrose13, penrose14, penrose20 } from '../core/TiledBoard.ts';
+import { penrose6, penrose10, penrose11, penrose13, penrose14, penrose20 } from '../core/PenroseTiling.ts';
 
 import { Vector2 } from 'phet-lib/dot';
 

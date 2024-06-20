@@ -1,15 +1,15 @@
 import { AlignBox, Display, HBox, Node, VBox } from 'phet-lib/scenery';
 
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
-import { TBoard } from '../model/board/core/TBoard.ts';
 import {
-  PolygonalBoard,
   cairoPentagonalTiling,
   rhombilleTiling,
   snubSquareTiling,
   triangularTiling,
   trihexagonalTiling,
-} from '../model/board/core/TiledBoard.ts';
+} from '../model/board/core/PeriodicBoardTiling.ts';
+import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
+import { TBoard } from '../model/board/core/TBoard.ts';
 import { getPeriodicTilingGenerator } from '../model/board/getPeriodicTilingGenerator.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';

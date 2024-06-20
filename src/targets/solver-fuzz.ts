@@ -2,7 +2,7 @@ import { BooleanProperty } from 'phet-lib/axon';
 import { Display, Node } from 'phet-lib/scenery';
 
 import { PolygonGenerator } from '../model/board/PolygonGenerator.ts';
-import { PolygonalBoard } from '../model/board/core/TiledBoard.ts';
+import { PolygonalBoard } from '../model/board/core/PolygonalBoard.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
 import { HexagonalBoard } from '../model/board/hex/HexagonalBoard.ts';
 import { SquareBoard } from '../model/board/square/SquareBoard.ts';

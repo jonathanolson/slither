@@ -21,7 +21,7 @@ import {
   trihexagonalTiling,
   truncatedHexagonalTiling,
   truncatedSquareTiling,
-} from '../core/TiledBoard.ts';
+} from '../core/PeriodicBoardTiling.ts';
 import { getPeriodicTilingGenerator } from '../getPeriodicTilingGenerator.ts';
 import { hexagonalPolygonGenerator } from './hexagonalPolygonGenerator.ts';
 import { penroseTilingGenerator } from './penroseTilingGenerator.ts';

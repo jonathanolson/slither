@@ -1,0 +1,690 @@
+import { Vector2 } from 'phet-lib/dot';
+
+export interface PeriodicBoardTiling {
+  name: string;
+  basisA: Vector2;
+  basisB: Vector2;
+  polygons: Vector2[][];
+  translation: Vector2;
+  scale?: number;
+}
+
+export const squareTiling: PeriodicBoardTiling = {
+  name: 'Square Tiling',
+  basisA: new Vector2(1, 0),
+  basisB: new Vector2(0, 1),
+  polygons: [[new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0)]],
+  translation: new Vector2(1, 1),
+};
+export const hexagonalTiling: PeriodicBoardTiling = {
+  name: 'Hexagonal Tiling',
+  basisA: new Vector2(1, 0),
+  basisB: new Vector2(0.5, Math.sqrt(3) / 2),
+  polygons: [
+    [
+      new Vector2(0, 1 / Math.sqrt(3)),
+      new Vector2(0.5, Math.sqrt(3) / 2),
+      new Vector2(1, 1 / Math.sqrt(3)),
+      new Vector2(1, 0),
+      new Vector2(0.5, -(1 / (2 * Math.sqrt(3)))),
+      new Vector2(0, 0),
+    ],
+  ],
+  translation: new Vector2(3 / 2, Math.sqrt(3) / 2),
+};
+export const triangularTiling: PeriodicBoardTiling = {
+  name: 'Triangular',
+  basisA: new Vector2(1, 0),
+  basisB: new Vector2(0.5, Math.sqrt(3) / 2),
+  polygons: [
+    [new Vector2(0, 0), new Vector2(1, 0), new Vector2(0.5, Math.sqrt(3) / 2)],
+    [new Vector2(0.5, Math.sqrt(3) / 2), new Vector2(3 / 2, Math.sqrt(3) / 2), new Vector2(1, 0)],
+  ],
+  translation: new Vector2(3 / 2, Math.sqrt(3) / 2),
+};
+export const trihexagonalTiling: PeriodicBoardTiling = {
+  name: 'Trihexagonal',
+  basisA: new Vector2(2, 0),
+  basisB: new Vector2(1, Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2(1, 0),
+      new Vector2(1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-1, 0),
+      new Vector2(-1 / 2, Math.sqrt(3) / 2),
+    ],
+    [new Vector2(1 / 2, Math.sqrt(3) / 2), new Vector2(1, 0), new Vector2(3 / 2, Math.sqrt(3) / 2)],
+    [new Vector2(1 / 2, -(Math.sqrt(3) / 2)), new Vector2(1, 0), new Vector2(3 / 2, -(Math.sqrt(3) / 2))],
+  ],
+  translation: new Vector2(3, Math.sqrt(3)),
+};
+export const smallRhombitrihexagonalTiling: PeriodicBoardTiling = {
+  name: 'Rhombitrihexagonal',
+  basisA: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+  basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2(1, 0),
+      new Vector2(1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-1, 0),
+      new Vector2(-1 / 2, Math.sqrt(3) / 2),
+    ],
+    [
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2(1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(1, 0),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), -1 / 2),
+    ],
+    [new Vector2(1 + Math.sqrt(3) / 2, 1 / 2), new Vector2(1, 0), new Vector2(1 + Math.sqrt(3) / 2, -1 / 2)],
+    [
+      new Vector2(1 + Math.sqrt(3) / 2, 1 / 2),
+      new Vector2(1, 0),
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(1 / 2, (1 / 2) * (2 + Math.sqrt(3))),
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(1 / 2, (1 / 2) * (2 + Math.sqrt(3))),
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2(-1 / 2, Math.sqrt(3) / 2),
+      new Vector2(-1 / 2, (1 / 2) * (2 + Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(3 + Math.sqrt(3), 0.5 * (-1 - Math.sqrt(3)) + 0.5 * (1 + Math.sqrt(3))),
+};
+export const truncatedSquareTiling: PeriodicBoardTiling = {
+  name: 'Truncated Square',
+  basisA: new Vector2(2 + Math.sqrt(2), 0),
+  basisB: new Vector2(0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
+  polygons: [
+    [
+      new Vector2(0.5, 0.5 * (1 + Math.sqrt(2))),
+      new Vector2(0.5 * (1 + Math.sqrt(2)), 0.5),
+      new Vector2(0.5 * (1 + Math.sqrt(2)), -0.5),
+      new Vector2(0.5, 0.5 * (-1 - Math.sqrt(2))),
+      new Vector2(-0.5, 0.5 * (-1 - Math.sqrt(2))),
+      new Vector2(0.5 * (-1 - Math.sqrt(2)), -0.5),
+      new Vector2(0.5 * (-1 - Math.sqrt(2)), 0.5),
+      new Vector2(-0.5, 0.5 * (1 + Math.sqrt(2))),
+    ],
+    [
+      new Vector2(0.5 * (1 + Math.sqrt(2)), 0.5),
+      new Vector2(0.5 * (1 + Math.sqrt(2)), -0.5),
+      new Vector2(3 / 2 + 1 / Math.sqrt(2), -0.5),
+      new Vector2(3 / 2 + 1 / Math.sqrt(2), 0.5),
+    ],
+  ],
+  translation: new Vector2(2 + Math.sqrt(2) + 0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
+};
+export const snubSquareTiling: PeriodicBoardTiling = {
+  name: 'Snub Square',
+  basisA: new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+  basisB: new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+  polygons: [
+    [new Vector2(1 / 2, 0), new Vector2(0, -(Math.sqrt(3) / 2)), new Vector2(-(1 / 2), 0)],
+    [new Vector2(1 / 2, 0), new Vector2(0, Math.sqrt(3) / 2), new Vector2(-(1 / 2), 0)],
+    [
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), 1 / 2),
+      new Vector2(1 / 2, 0),
+      new Vector2(0, Math.sqrt(3) / 2),
+      new Vector2(Math.sqrt(3) / 2, (1 / 2) * (1 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(Math.sqrt(3) / 2, (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2(0, Math.sqrt(3) / 2),
+      new Vector2(0, (1 / 2) * (2 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(-(Math.sqrt(3) / 2), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2(0, Math.sqrt(3) / 2),
+      new Vector2(0, (1 / 2) * (2 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 2) * (-1 - Math.sqrt(3)), 1 / 2),
+      new Vector2(-(1 / 2), 0),
+      new Vector2(0, Math.sqrt(3) / 2),
+      new Vector2(-(Math.sqrt(3) / 2), (1 / 2) * (1 + Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2((1 / 2) * (-1 - Math.sqrt(3)) + (1 / 2) * (1 + Math.sqrt(3)), -1 - Math.sqrt(3)),
+};
+export const truncatedHexagonalTiling: PeriodicBoardTiling = {
+  name: 'Truncated Hexagonal',
+  basisA: new Vector2(2 + Math.sqrt(3), 0),
+  basisB: new Vector2(0.5 * (2 + Math.sqrt(3)), 3 / 2 + Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(1 / 2, (1 / 2) * (2 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), 1 / 2),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2(1 / 2, (1 / 2) * (-2 - Math.sqrt(3))),
+      new Vector2(-(1 / 2), (1 / 2) * (-2 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (-2 - Math.sqrt(3)), -(1 / 2)),
+      new Vector2((1 / 2) * (-2 - Math.sqrt(3)), 1 / 2),
+      new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2(-(1 / 2), (1 / 2) * (2 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (3 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), 1 / 2),
+    ],
+    [
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (3 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), -(1 / 2)),
+    ],
+  ],
+  translation: new Vector2(2 + Math.sqrt(3) + 0.5 * (2 + Math.sqrt(3)), 3 / 2 + Math.sqrt(3)),
+};
+export const elongatedTriangularTiling: PeriodicBoardTiling = {
+  name: 'Elongated Triangular',
+  basisA: new Vector2(1, 0),
+  basisB: new Vector2(0.5, 0.5 * (2 + Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(-(1 / 2), -(1 / 2)),
+      new Vector2(-(1 / 2), 1 / 2),
+      new Vector2(1 / 2, 1 / 2),
+      new Vector2(1 / 2, -(1 / 2)),
+    ],
+    [new Vector2(1 / 2, 1 / 2), new Vector2(0, (1 / 2) * (1 + Math.sqrt(3))), new Vector2(-(1 / 2), 1 / 2)],
+    [new Vector2(1 / 2, -(1 / 2)), new Vector2(0, (1 / 2) * (-1 - Math.sqrt(3))), new Vector2(-(1 / 2), -(1 / 2))],
+  ],
+  translation: new Vector2(3 / 2, 0.5 * (2 + Math.sqrt(3))),
+};
+export const greatRhombitrihexagonalTiling: PeriodicBoardTiling = {
+  name: 'Great Rhombitrihexagonal',
+  basisA: new Vector2(3 + Math.sqrt(3), 0),
+  basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(1 / 2, (1 / 2) * (2 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), 1 / 2),
+      new Vector2((1 / 2) * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2(1 / 2, (1 / 2) * (-2 - Math.sqrt(3))),
+      new Vector2(-(1 / 2), (1 / 2) * (-2 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
+      new Vector2((1 / 2) * (-2 - Math.sqrt(3)), -(1 / 2)),
+      new Vector2((1 / 2) * (-2 - Math.sqrt(3)), 1 / 2),
+      new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (1 + Math.sqrt(3))),
+      new Vector2(-(1 / 2), (1 / 2) * (2 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(1, 1 + Math.sqrt(3)),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5 * (1 + 2 * Math.sqrt(3))),
+      new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+      new Vector2(0.5, 0.5 * (2 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5),
+      new Vector2(1 + 0.5 * (2 + Math.sqrt(3)), 0.5),
+      new Vector2(0.5 * (5 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+      new Vector2(0.5 * (4 + Math.sqrt(3)), 0.5 * (1 + 2 * Math.sqrt(3))),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5 * (1 + 2 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(1 + 0.5 * (2 + Math.sqrt(3)), 0.5),
+      new Vector2(1 + 0.5 * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5),
+    ],
+    [
+      new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2(1 + 0.5 * (2 + Math.sqrt(3)), -(1 / 2)),
+      new Vector2(0.5 * (5 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2(0.5 * (4 + Math.sqrt(3)), 0.5 * (-1 - 2 * Math.sqrt(3))),
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5 * (-1 - 2 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.5 * (2 + Math.sqrt(3)), 0.5 * (-1 - 2 * Math.sqrt(3))),
+      new Vector2(1, -1 - Math.sqrt(3)),
+      new Vector2(0.5, 0.5 * (-2 - Math.sqrt(3))),
+      new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(3 + Math.sqrt(3) + 0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
+};
+export const snubHexagonalTiling: PeriodicBoardTiling = {
+  name: 'Snub Hexagonal',
+  basisA: new Vector2(5 / 2, -Math.sqrt(3) / 2),
+  basisB: new Vector2(-1 / 2, (3 * Math.sqrt(3)) / 2),
+  polygons: [
+    [
+      new Vector2(1 / 2, Math.sqrt(3) / 2),
+      new Vector2(1, 0),
+      new Vector2(1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-(1 / 2), -(Math.sqrt(3) / 2)),
+      new Vector2(-1, 0),
+      new Vector2(-(1 / 2), Math.sqrt(3) / 2),
+    ],
+    [new Vector2(-1, 0), new Vector2(-3 / 2, -(Math.sqrt(3) / 2)), new Vector2(-2, 0)],
+    [new Vector2(-(1 / 2), -(Math.sqrt(3) / 2)), new Vector2(-1, 0), new Vector2(-3 / 2, -(Math.sqrt(3) / 2))],
+    [new Vector2(1 / 2, Math.sqrt(3) / 2), new Vector2(1, 0), new Vector2(3 / 2, Math.sqrt(3) / 2)],
+    [new Vector2(1, 0), new Vector2(3 / 2, Math.sqrt(3) / 2), new Vector2(2, 0)],
+    [new Vector2(-1, 0), new Vector2(-(1 / 2), Math.sqrt(3) / 2), new Vector2(-(3 / 2), Math.sqrt(3) / 2)],
+    [
+      new Vector2(1 / 2, -(Math.sqrt(3) / 2)),
+      new Vector2(-(1 / 2), -(Math.sqrt(3) / 2)),
+      new Vector2(0, -Math.sqrt(3)),
+    ],
+    [new Vector2(1, 0), new Vector2(1 / 2, -(Math.sqrt(3) / 2)), new Vector2(3 / 2, -(Math.sqrt(3) / 2))],
+    [new Vector2(-(1 / 2), Math.sqrt(3) / 2), new Vector2(1 / 2, Math.sqrt(3) / 2), new Vector2(0, Math.sqrt(3))],
+  ],
+  translation: new Vector2(2, Math.sqrt(3)),
+};
+export const rhombilleTiling: PeriodicBoardTiling = {
+  name: 'Rhombille',
+  basisA: new Vector2(2, 0),
+  basisB: new Vector2(1, Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(5, 5 / Math.sqrt(3)),
+      new Vector2(4, 2 * Math.sqrt(3)),
+      new Vector2(5, 7 / Math.sqrt(3)),
+      new Vector2(6, 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(5, 5 / Math.sqrt(3)),
+      new Vector2(6, 2 * Math.sqrt(3)),
+      new Vector2(6, 4 / Math.sqrt(3)),
+      new Vector2(5, Math.sqrt(3)),
+    ],
+    [
+      new Vector2(5, 5 / Math.sqrt(3)),
+      new Vector2(5, Math.sqrt(3)),
+      new Vector2(4, 4 / Math.sqrt(3)),
+      new Vector2(4, 2 * Math.sqrt(3)),
+    ],
+  ],
+  translation: new Vector2(3, Math.sqrt(3)),
+};
+export const deltoidalTrihexagonalTiling: PeriodicBoardTiling = {
+  name: 'Deltoidal Trihexagonal',
+  basisA: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+  basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2((1 / 3) * (12 + 4 * Math.sqrt(3)), 0),
+      new Vector2((1 / 4) * (15 + 5 * Math.sqrt(3)), 0.25 * (-1 - Math.sqrt(3))),
+      new Vector2(3 + Math.sqrt(3), 0),
+      new Vector2((1 / 4) * (15 + 5 * Math.sqrt(3)), 0.25 * (1 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 3) * (12 + 4 * Math.sqrt(3)), 0),
+      new Vector2((1 / 4) * (15 + 5 * Math.sqrt(3)), 0.25 * (1 + Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0),
+    ],
+    [
+      new Vector2((1 / 3) * (12 + 4 * Math.sqrt(3)), 0),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2((1 / 4) * (15 + 5 * Math.sqrt(3)), 0.25 * (-1 - Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 3) * (15 + 5 * Math.sqrt(3)), 0),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
+      new Vector2((1 / 4) * (21 + 7 * Math.sqrt(3)), 0.25 * (1 + Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 3) * (15 + 5 * Math.sqrt(3)), 0),
+      new Vector2((1 / 4) * (21 + 7 * Math.sqrt(3)), 0.25 * (1 + Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 0),
+      new Vector2((1 / 4) * (21 + 7 * Math.sqrt(3)), 0.25 * (-1 - Math.sqrt(3))),
+    ],
+    [
+      new Vector2((1 / 3) * (15 + 5 * Math.sqrt(3)), 0),
+      new Vector2((1 / 4) * (21 + 7 * Math.sqrt(3)), 0.25 * (-1 - Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0),
+    ],
+  ],
+  translation: new Vector2(3 + Math.sqrt(3), 0.5 * (-1 - Math.sqrt(3)) + 0.5 * (1 + Math.sqrt(3))),
+};
+export const tetrakisSquareTiling: PeriodicBoardTiling = {
+  name: 'Tetrakis Square',
+  basisA: new Vector2(2 + Math.sqrt(2), 0),
+  basisB: new Vector2(0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
+  polygons: [
+    [
+      new Vector2(4 + 2 * Math.sqrt(2), 0.5 * (2 + Math.sqrt(2))),
+      new Vector2(4 + 2 * Math.sqrt(2), 2 + Math.sqrt(2)),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 0.5 * (2 + Math.sqrt(2))),
+    ],
+    [
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 2 + Math.sqrt(2)),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 0.5 * (2 + Math.sqrt(2))),
+      new Vector2(4 + 2 * Math.sqrt(2), 2 + Math.sqrt(2)),
+    ],
+    [
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 2 + Math.sqrt(2)),
+      new Vector2(6 + 3 * Math.sqrt(2), 2 + Math.sqrt(2)),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 0.5 * (2 + Math.sqrt(2))),
+    ],
+    [
+      new Vector2(6 + 3 * Math.sqrt(2), 2 + Math.sqrt(2)),
+      new Vector2(6 + 3 * Math.sqrt(2), 0.5 * (2 + Math.sqrt(2))),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(2)), 0.5 * (2 + Math.sqrt(2))),
+    ],
+  ],
+  translation: new Vector2(2 + Math.sqrt(2) + 0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
+};
+export const cairoPentagonalTiling: PeriodicBoardTiling = {
+  name: 'Cairo Pentagonal',
+  basisA: new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+  basisB: new Vector2(0.5 * (-1 - Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(0, (1 / 6) * (-6 - 5 * Math.sqrt(3))),
+      new Vector2(0.25 * (-1 - Math.sqrt(3)), 0.25 * (-3 - 3 * Math.sqrt(3))),
+      new Vector2(-1 / (2 * Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2(1 / (2 * Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
+      new Vector2(0.25 * (1 + Math.sqrt(3)), 0.25 * (-3 - 3 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0, (1 / 6) * (-6 - 5 * Math.sqrt(3))),
+      new Vector2(0.25 * (1 + Math.sqrt(3)), 0.25 * (-3 - 3 * Math.sqrt(3))),
+      new Vector2((1 / 6) * (3 + 2 * Math.sqrt(3)), -1 - Math.sqrt(3)),
+      new Vector2(0.25 * (1 + Math.sqrt(3)), 0.25 * (-5 - 5 * Math.sqrt(3))),
+      new Vector2(0, (1 / 6) * (-6 - 7 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0, (1 / 6) * (-6 - 7 * Math.sqrt(3))),
+      new Vector2(0.25 * (-1 - Math.sqrt(3)), 0.25 * (-5 - 5 * Math.sqrt(3))),
+      new Vector2((1 / 6) * (-3 - 2 * Math.sqrt(3)), -1 - Math.sqrt(3)),
+      new Vector2(0.25 * (-1 - Math.sqrt(3)), 0.25 * (-3 - 3 * Math.sqrt(3))),
+      new Vector2(0, (1 / 6) * (-6 - 5 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0, (1 / 6) * (-6 - 7 * Math.sqrt(3))),
+      new Vector2(0.25 * (1 + Math.sqrt(3)), 0.25 * (-5 - 5 * Math.sqrt(3))),
+      new Vector2(1 / (2 * Math.sqrt(3)), 0.5 * (-3 - 3 * Math.sqrt(3))),
+      new Vector2(-1 / (2 * Math.sqrt(3)), 0.5 * (-3 - 3 * Math.sqrt(3))),
+      new Vector2(0.25 * (-1 - Math.sqrt(3)), 0.25 * (-5 - 5 * Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(0.5 * (-1 - Math.sqrt(3)) + 0.5 * (1 + Math.sqrt(3)), -1 - Math.sqrt(3)),
+};
+export const triakisTriangularTiling: PeriodicBoardTiling = {
+  name: 'Triakis Triangular',
+  basisA: new Vector2(2 + Math.sqrt(3), 0),
+  basisB: new Vector2(0.5 * (2 + Math.sqrt(3)), 1.5 + Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(4 + 2 * Math.sqrt(3), (1 / 3) * (6 + 4 * Math.sqrt(3))),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+      new Vector2(0.5 * (6 + 3 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(4 + 2 * Math.sqrt(3), (1 / 3) * (6 + 4 * Math.sqrt(3))),
+      new Vector2(0.5 * (6 + 3 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+      new Vector2(4 + 2 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(4 + 2 * Math.sqrt(3), (1 / 3) * (6 + 4 * Math.sqrt(3))),
+      new Vector2(4 + 2 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), (1 / 6) * (15 + 10 * Math.sqrt(3))),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+      new Vector2(4 + 2 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), (1 / 6) * (15 + 10 * Math.sqrt(3))),
+      new Vector2(4 + 2 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+      new Vector2(6 + 3 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), (1 / 6) * (15 + 10 * Math.sqrt(3))),
+      new Vector2(6 + 3 * Math.sqrt(3), 3 + 2 * Math.sqrt(3)),
+      new Vector2(0.5 * (10 + 5 * Math.sqrt(3)), 0.5 * (3 + 2 * Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(2 + Math.sqrt(3) + 0.5 * (2 + Math.sqrt(3)), 1.5 + Math.sqrt(3)),
+};
+export const prismaticPentagonalTiling: PeriodicBoardTiling = {
+  name: 'Prismatic Pentagonal',
+  basisA: new Vector2(1, 0),
+  basisB: new Vector2(0.5, 0.5 * (2 + Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(2, (1 / 6) * (9 + 5 * Math.sqrt(3))),
+      new Vector2(2.5, (1 / 6) * (9 + 4 * Math.sqrt(3))),
+      new Vector2(2.5, 0.5 * (2 + Math.sqrt(3))),
+      new Vector2(1.5, 0.5 * (2 + Math.sqrt(3))),
+      new Vector2(1.5, (1 / 6) * (9 + 4 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(2.5, (1 / 6) * (9 + 4 * Math.sqrt(3))),
+      new Vector2(2, (1 / 6) * (9 + 5 * Math.sqrt(3))),
+      new Vector2(2, 2 + Math.sqrt(3)),
+      new Vector2(3, 2 + Math.sqrt(3)),
+      new Vector2(3, (1 / 6) * (9 + 5 * Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(1.5, 0.5 * (2 + Math.sqrt(3))),
+};
+export const bisectedHexagonalTiling: PeriodicBoardTiling = {
+  name: 'Bisected Hexagonal',
+  basisA: new Vector2(3 + Math.sqrt(3), 0),
+  basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
+  polygons: [
+    [
+      new Vector2(6 + 2 * Math.sqrt(3), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(6 + 2 * Math.sqrt(3), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 1 + Math.sqrt(3)),
+    ],
+    [
+      new Vector2(6 + 2 * Math.sqrt(3), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 1 + Math.sqrt(3)),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(6 + 2 * Math.sqrt(3), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.25 * (21 + 7 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.25 * (21 + 7 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (5 + 5 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.25 * (21 + 7 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(0.5 * (9 + 3 * Math.sqrt(3)), 0.5 * (5 + 5 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 3 + 3 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.25 * (21 + 7 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 3 + 3 * Math.sqrt(3)),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.25 * (27 + 9 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+      new Vector2(6 + 2 * Math.sqrt(3), 3 + 3 * Math.sqrt(3)),
+    ],
+    [
+      new Vector2(0.25 * (27 + 9 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 3 + 3 * Math.sqrt(3)),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (5 + 5 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.25 * (27 + 9 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (5 + 5 * Math.sqrt(3))),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(0.25 * (27 + 9 * Math.sqrt(3)), 0.25 * (9 + 9 * Math.sqrt(3))),
+      new Vector2(0.5 * (15 + 5 * Math.sqrt(3)), 0.5 * (3 + 3 * Math.sqrt(3))),
+      new Vector2(6 + 2 * Math.sqrt(3), 2 + 2 * Math.sqrt(3)),
+    ],
+  ],
+  translation: new Vector2(3 + Math.sqrt(3) + 0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
+};
+export const floretPentagonalTiling: PeriodicBoardTiling = {
+  name: 'Floret Pentagonal',
+  basisA: new Vector2(2.5, -Math.sqrt(3) / 2),
+  basisB: new Vector2(-0.5, (3 * Math.sqrt(3)) / 2),
+  polygons: [
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(3, 4 / Math.sqrt(3)),
+      new Vector2(3.5, 7 / (2 * Math.sqrt(3))),
+      new Vector2(3.5, 5 / (2 * Math.sqrt(3))),
+      new Vector2(3, 2 / Math.sqrt(3)),
+    ],
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(3, 2 / Math.sqrt(3)),
+      new Vector2(3, 1 / Math.sqrt(3)),
+      new Vector2(2.5, 1 / (2 * Math.sqrt(3))),
+      new Vector2(2, 1 / Math.sqrt(3)),
+    ],
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(2, 1 / Math.sqrt(3)),
+      new Vector2(1.5, 1 / (2 * Math.sqrt(3))),
+      new Vector2(1, 1 / Math.sqrt(3)),
+      new Vector2(1, 2 / Math.sqrt(3)),
+    ],
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(1, 2 / Math.sqrt(3)),
+      new Vector2(0.5, 5 / (2 * Math.sqrt(3))),
+      new Vector2(0.5, 7 / (2 * Math.sqrt(3))),
+      new Vector2(1, 4 / Math.sqrt(3)),
+    ],
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(1, 4 / Math.sqrt(3)),
+      new Vector2(1, 5 / Math.sqrt(3)),
+      new Vector2(1.5, 11 / (2 * Math.sqrt(3))),
+      new Vector2(2, 5 / Math.sqrt(3)),
+    ],
+    [
+      new Vector2(2, Math.sqrt(3)),
+      new Vector2(2, 5 / Math.sqrt(3)),
+      new Vector2(2.5, 11 / (2 * Math.sqrt(3))),
+      new Vector2(3, 5 / Math.sqrt(3)),
+      new Vector2(3, 4 / Math.sqrt(3)),
+    ],
+  ],
+  translation: new Vector2(2, Math.sqrt(3)),
+};
+export const portugalTiling: PeriodicBoardTiling = {
+  name: 'Portugal',
+  basisA: new Vector2(2, 2),
+  basisB: new Vector2(-2, 2),
+  polygons: [
+    [new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 1), new Vector2(2, 2), new Vector2(1, 2), new Vector2(0, 1)],
+    [new Vector2(2, 2), new Vector2(3, 2), new Vector2(4, 1), new Vector2(4, 0), new Vector2(3, 0), new Vector2(2, 1)],
+    [new Vector2(1, 0), new Vector2(2, 1), new Vector2(3, 0), new Vector2(2, -1)],
+  ],
+  translation: new Vector2(0, 4),
+};
+export const falseCubicTiling: PeriodicBoardTiling = {
+  name: 'False Cubic',
+  basisA: new Vector2(1.5, Math.sqrt(3) / 2),
+  basisB: new Vector2(0, Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(-1, 0),
+      new Vector2(-1, 1 / Math.sqrt(3)),
+      new Vector2(-0.5, Math.sqrt(3) / 2),
+      new Vector2(0, 1 / Math.sqrt(3)),
+      new Vector2(0.5, Math.sqrt(3) / 2),
+      new Vector2(1, 1 / Math.sqrt(3)),
+      new Vector2(1, 0),
+      new Vector2(0.5, -1 / (2 * Math.sqrt(3))),
+      new Vector2(0.5, -Math.sqrt(3) / 2),
+      new Vector2(0, -2 / Math.sqrt(3)),
+      new Vector2(-0.5, -Math.sqrt(3) / 2),
+      new Vector2(-0.5, -1 / (2 * Math.sqrt(3))),
+    ],
+  ],
+  translation: new Vector2(1.5, 1.5 * Math.sqrt(3)),
+  scale: 2,
+};
+export const trihexAndHexTiling: PeriodicBoardTiling = {
+  name: 'Trihex and Hex',
+  basisA: new Vector2(2, 0),
+  basisB: new Vector2(1, Math.sqrt(3)),
+  polygons: [
+    [
+      new Vector2(-1, 0),
+      new Vector2(-1, 1 / Math.sqrt(3)),
+      new Vector2(-0.5, Math.sqrt(3) / 2),
+      new Vector2(0, 1 / Math.sqrt(3)),
+      new Vector2(0.5, Math.sqrt(3) / 2),
+      new Vector2(1, 1 / Math.sqrt(3)),
+      new Vector2(1, 0),
+      new Vector2(0.5, -1 / (2 * Math.sqrt(3))),
+      new Vector2(0.5, -Math.sqrt(3) / 2),
+      new Vector2(0, -2 / Math.sqrt(3)),
+      new Vector2(-0.5, -Math.sqrt(3) / 2),
+      new Vector2(-0.5, -1 / (2 * Math.sqrt(3))),
+    ],
+    [
+      new Vector2(-0.5, 5 / (2 * Math.sqrt(3))),
+      new Vector2(0, Math.sqrt(3)),
+      new Vector2(0.5, 5 / (2 * Math.sqrt(3))),
+      new Vector2(0.5, Math.sqrt(3) / 2),
+      new Vector2(0, 1 / Math.sqrt(3)),
+      new Vector2(-0.5, Math.sqrt(3) / 2),
+    ],
+  ],
+  translation: new Vector2(3, Math.sqrt(3)),
+};
+export const periodicTilings: PeriodicBoardTiling[] = [
+  squareTiling,
+  hexagonalTiling,
+  triangularTiling,
+  trihexagonalTiling,
+  smallRhombitrihexagonalTiling,
+  truncatedSquareTiling,
+  snubSquareTiling,
+  truncatedHexagonalTiling,
+  elongatedTriangularTiling,
+  greatRhombitrihexagonalTiling,
+  snubHexagonalTiling,
+  rhombilleTiling,
+  deltoidalTrihexagonalTiling,
+  tetrakisSquareTiling,
+  cairoPentagonalTiling,
+  triakisTriangularTiling,
+  prismaticPentagonalTiling,
+  bisectedHexagonalTiling,
+  floretPentagonalTiling,
+  portugalTiling,
+  falseCubicTiling,
+  trihexAndHexTiling,
+];

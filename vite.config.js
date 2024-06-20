@@ -1,6 +1,6 @@
+import modify from 'rollup-plugin-modify';
 import unassert from 'rollup-plugin-unassert';
 import { defineConfig } from 'vite';
-import modify from 'rollup-plugin-modify'
 
 // Using js/ts compatibility from https://github.com/vitejs/vite/issues/3040
 
@@ -11,88 +11,88 @@ import modify from 'rollup-plugin-modify'
  */
 
 // https://vitejs.dev/config/
-export default defineConfig( {
+export default defineConfig({
   base: '',
   resolve: {
     alias: [
       {
         find: /^(.*)\.js$/,
-        replacement: '$1'
-      }
-    ]
+        replacement: '$1',
+      },
+    ],
   },
 
   // Because of https://github.com/vitejs/vite/issues/12434?
   optimizeDeps: {
-    exclude: [ 'phet-lib', 'tesseract.js', 'culori', 'pako', 'tactile-js' ],
-    entries: []
+    exclude: ['phet-lib', 'tesseract.js', 'culori', 'pako'],
+    entries: [],
   },
 
   plugins: [
     // Work around paper.js stuff
-    modify( {
+    modify({
       find: 'self = self || window.self;',
       replace: '',
-    } ),
-    modify( {
+    }),
+    modify({
       find: 'var window = self.window,',
       replace: '',
-    } ),
-    modify( {
+    }),
+    modify({
       find: 'document = self.document;',
       replace: 'var document = self.document;',
-    } ),
+    }),
 
     // Work around a Display.ts issue where we alias self and THEN try to access window
-    modify( {
+    modify({
       find: /const self = this;\s*\(/gm,
       replace: 'const _self = this;\n(',
-    } ),
-    modify( {
+    }),
+    modify({
       find: 'self._requestAnimationFrameID = window.requestAnimationFrame( step, self._domElement );',
       replace: '_self._requestAnimationFrameID = self.requestAnimationFrame( step, _self._domElement );',
-    } ),
-    modify( {
+    }),
+    modify({
       find: 'self.updateDisplay();',
       replace: '_self.updateDisplay();',
-    } ),
+    }),
 
     // Redirect window to self
-    modify( {
+    modify({
       find: /([^.a-zA-Z0-9_])window(\.|\?\.|\[)/g,
-      replace: ( match, prefix, suffix ) => `${ prefix }self${ suffix }`
-    } ),
+      replace: (match, prefix, suffix) => `${prefix}self${suffix}`,
+    }),
 
     // Standalone window to self
-    modify( {
+    modify({
       find: /(\s+)window(\s+)/g,
-      replace: ( match, prefix, suffix ) => `${ prefix }self${ suffix }`
-    } ),
-    modify( {
+      replace: (match, prefix, suffix) => `${prefix}self${suffix}`,
+    }),
+    modify({
       find: /\(\s*window\s*\)/g,
       replace: '(self)',
-    } ),
-    modify( {
+    }),
+    modify({
       find: /\(\s*window\s*,/g,
       replace: '(self,',
-    } ),
-    modify( {
+    }),
+    modify({
       find: /\(\s*!window\s*\)/g,
       replace: '(!self)',
-    } ),
-    modify( {
+    }),
+    modify({
       find: /in window;/g,
       replace: 'in self;',
-    } ),
+    }),
   ],
 
   build: {
     rollupOptions: {
       input: {
-        'index': '/index.html',
-        'play': '/play.html',
+        index: '/index.html',
+        play: '/play.html',
         'rule-explorer': '/rule-explorer.html',
-        'rule': '/rule.html',
+        rule: '/rule.html',
         'scan-test': '/scan-test.html',
         'solver-fuzz': '/solver-fuzz.html',
         'discover-rules': '/discover-rules.html',
@@ -102,45 +102,45 @@ export default defineConfig( {
         'filtered-rules': '/filtered-rules.html',
         'formal-concept-analysis': '/formal-concept-analysis.html',
         'pattern-boards': '/pattern-boards.html',
-        'hooks': '/hooks.html',
+        hooks: '/hooks.html',
         'test/model-tests': '/test/model-tests.html',
         'test/correctness-tests': '/test/correctness-tests.html',
       },
       plugins: [
-        unassert( {
+        unassert({
           // include: [ '**/**.js', '**/**.ts' ]
-        } ),
+        }),
 
         // TODO: why are these extra ones needed? This is a wreck
 
         // Redirect window to self
-        modify( {
+        modify({
           find: /([^.a-zA-Z0-9_])window(\.|\?\.|\[)/g,
-          replace: ( match, prefix, suffix ) => `${ prefix }self${ suffix }`
-        } ),
+          replace: (match, prefix, suffix) => `${prefix}self${suffix}`,
+        }),
 
         // Standalone window to self
-        modify( {
+        modify({
           find: /(\s+)window(\s+)/g,
-          replace: ( match, prefix, suffix ) => `${ prefix }self${ suffix }`
-        } ),
-        modify( {
+          replace: (match, prefix, suffix) => `${prefix}self${suffix}`,
+        }),
+        modify({
           find: /\(\s*window\s*\)/g,
           replace: '(self)',
-        } ),
-        modify( {
+        }),
+        modify({
           find: /\(\s*window\s*,/g,
           replace: '(self,',
-        } ),
-        modify( {
+        }),
+        modify({
           find: /\(\s*!window\s*\)/g,
           replace: '(!self)',
-        } ),
-        modify( {
+        }),
+        modify({
           find: /in window;/g,
           replace: 'in self;',
-        } ),
-      ]
-    }
-  }
-} )
+        }),
+      ],
+    },
+  },
+});

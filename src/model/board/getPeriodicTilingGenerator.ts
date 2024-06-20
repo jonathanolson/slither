@@ -1,5 +1,5 @@
 import { PolygonGenerator } from './PolygonGenerator.ts';
-import { PeriodicBoardTiling } from './core/TiledBoard.ts';
+import { PeriodicBoardTiling } from './core/PeriodicBoardTiling.ts';
 import { getCentroid } from './core/createBoardDescriptor.ts';
 
 import { Bounds2, Range, Vector2 } from 'phet-lib/dot';

@@ -1,9 +1,9 @@
 import { PolygonGenerator } from '../../board/PolygonGenerator.ts';
+import { PolygonalBoard } from '../../board/core/PolygonalBoard.ts';
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TFace } from '../../board/core/TFace.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
-import { PolygonalBoard } from '../../board/core/TiledBoard.ts';
 import { getSectorFromEdgePair } from '../../data/sector-state/getSectorFromEdgePair.ts';
 import { BasePatternBoard } from './BasePatternBoard.ts';
 import { TPatternEdge } from './TPatternEdge.ts';
