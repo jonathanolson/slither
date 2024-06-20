@@ -31,67 +31,67 @@ export class DisplayTiling extends EnumerationValue {
   public static readonly SQUARE = new DisplayTiling(
     'Square',
     standardSquareBoard,
-    new BoardPatternBoard(standardSquareBoard),
+    BoardPatternBoard.get(standardSquareBoard),
   );
   public static readonly HEXAGONAL = new DisplayTiling(
     'Hexagonal',
     standardHexagonalBoard,
-    new BoardPatternBoard(standardHexagonalBoard),
+    BoardPatternBoard.get(standardHexagonalBoard),
   );
   public static readonly CAIRO = new DisplayTiling(
     'Cairo',
     standardCairoBoard,
-    new BoardPatternBoard(standardCairoBoard),
+    BoardPatternBoard.get(standardCairoBoard),
   );
   public static readonly TRIANGULAR = new DisplayTiling(
     'Triangular',
     standardTriangularBoard,
-    new BoardPatternBoard(standardTriangularBoard),
+    BoardPatternBoard.get(standardTriangularBoard),
   );
   public static readonly RHOMBILLE = new DisplayTiling(
     'Rhombille',
     standardRhombilleBoard,
-    new BoardPatternBoard(standardRhombilleBoard),
+    BoardPatternBoard.get(standardRhombilleBoard),
   );
   public static readonly SNUB_SQUARE = new DisplayTiling(
     'Snub Square',
     standardSnubSquareBoard,
-    new BoardPatternBoard(standardSnubSquareBoard),
+    BoardPatternBoard.get(standardSnubSquareBoard),
   );
   public static readonly TRIHEXAGONAL = new DisplayTiling(
     'Trihexagonal',
     standardTrihexagonalBoard,
-    new BoardPatternBoard(standardTrihexagonalBoard),
+    BoardPatternBoard.get(standardTrihexagonalBoard),
   );
   public static readonly FLORET_PENTAGONAL = new DisplayTiling(
     'Floret Pentagonal',
     standardFloretPentagonalBoard,
-    new BoardPatternBoard(standardFloretPentagonalBoard),
+    BoardPatternBoard.get(standardFloretPentagonalBoard),
   );
   public static readonly DELTOIDAL_TRIHEXAGONAL = new DisplayTiling(
     'Deltoidal Trihexagonal',
     standardDeltoidalTrihexagonalBoard,
-    new BoardPatternBoard(standardDeltoidalTrihexagonalBoard),
+    BoardPatternBoard.get(standardDeltoidalTrihexagonalBoard),
   );
   public static readonly PORTUGAL = new DisplayTiling(
     'Portugal',
     standardPortugalBoard,
-    new BoardPatternBoard(standardPortugalBoard),
+    BoardPatternBoard.get(standardPortugalBoard),
   );
   public static readonly RHOMBITRIHEXAGONAL = new DisplayTiling(
     'Rhombitrihexagonal',
     standardRhombitrihexagonalBoard,
-    new BoardPatternBoard(standardRhombitrihexagonalBoard),
+    BoardPatternBoard.get(standardRhombitrihexagonalBoard),
   );
   public static readonly PRISMATIC_PENTAGONAL = new DisplayTiling(
     'Prismatic Pentagonal',
     standardPrismaticPentagonalBoard,
-    new BoardPatternBoard(standardPrismaticPentagonalBoard),
+    BoardPatternBoard.get(standardPrismaticPentagonalBoard),
   );
   public static readonly ELONGATED_TRIANGULAR = new DisplayTiling(
     'Elongated Triangular',
     standardElongatedTriangularBoard,
-    new BoardPatternBoard(standardElongatedTriangularBoard),
+    BoardPatternBoard.get(standardElongatedTriangularBoard),
   );
 
   public static readonly enumeration = new Enumeration(DisplayTiling);

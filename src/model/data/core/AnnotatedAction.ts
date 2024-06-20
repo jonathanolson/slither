@@ -153,7 +153,7 @@ pathEdges: TEdge[];
       };
 
       const rule = PatternRule.deserialize(serializedAction.annotation.rule);
-      const boardPatternBoard = new BoardPatternBoard(board);
+      const boardPatternBoard = BoardPatternBoard.get(board);
       const embedding = Embedding.deserialize(
         rule.patternBoard,
         boardPatternBoard,

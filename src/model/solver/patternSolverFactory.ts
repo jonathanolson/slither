@@ -22,8 +22,7 @@ import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 
 const getFactory = (groups: BinaryMixedRuleGroup[]) => {
   return (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
-    // TODO: how can we NOT leak things? Embeddings...? Lazy creation?
-    const boardPatternBoard = new BoardPatternBoard(board);
+    const boardPatternBoard = BoardPatternBoard.get(board);
 
     return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
       new SafeEdgeToSimpleRegionSolver(board, state),

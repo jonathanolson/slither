@@ -13,6 +13,8 @@ import { TPatternVertex } from './TPatternVertex.ts';
 
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
+const boardToBoardPatternBoardMap = new WeakMap<TBoard, BoardPatternBoard>();
+
 export class BoardPatternBoard extends BasePatternBoard {
   private readonly vertexToIndexMap: Map<TVertex, number>;
 
@@ -26,7 +28,7 @@ export class BoardPatternBoard extends BasePatternBoard {
   private readonly faceToPatternFaceMap: Map<TFace, TPatternFace> = new Map();
   private readonly patternFaceToFaceMap: Map<TPatternFace, TFace | null> = new Map();
 
-  public constructor(public readonly board: TBoard) {
+  protected constructor(public readonly board: TBoard) {
     const vertexToIndexMap = new Map(board.vertices.map((vertex, index) => [vertex, index]));
     const getVertexIndex = (vertex: TVertex) => {
       const index = vertexToIndexMap.get(vertex)!;
@@ -155,5 +157,14 @@ export class BoardPatternBoard extends BasePatternBoard {
   public getOutsidePatternFace(): TPatternFace {
     assertEnabled() && assert(this.outsidePatternFace !== null);
     return this.outsidePatternFace!;
+  }
+
+  public static get(board: TBoard): BoardPatternBoard {
+    let result = boardToBoardPatternBoardMap.get(board);
+    if (!result) {
+      result = new BoardPatternBoard(board);
+      boardToBoardPatternBoardMap.set(board, result);
+    }
+    return result;
   }
 }

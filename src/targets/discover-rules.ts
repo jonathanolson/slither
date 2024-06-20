@@ -139,12 +139,12 @@ console.log('test');
   console.log(serializePatternBoardDescriptor(facesBoard2.descriptor));
 
   const puzzle = BasicPuzzle.loadDefaultPuzzle();
-  const boardPatternBoard = new BoardPatternBoard(puzzle.board);
+  const boardPatternBoard = BoardPatternBoard.get(puzzle.board);
   console.log('boardPatternBoard', boardPatternBoard);
   console.log(serializePatternBoardDescriptor(boardPatternBoard.descriptor));
 
   const simpleBoard = new SquareBoard(2, 3);
-  const simplePatternBoard = new BoardPatternBoard(simpleBoard);
+  const simplePatternBoard = BoardPatternBoard.get(simpleBoard);
   console.log('simplePatternBoard', simplePatternBoard);
   console.log(serializePatternBoardDescriptor(simplePatternBoard.descriptor));
 
