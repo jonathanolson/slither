@@ -1,10 +1,12 @@
 import { TBoard } from '../board/core/TBoard.ts';
+import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TState } from '../data/core/TState.ts';
 import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { BinaryMixedRuleGroup } from '../pattern/collection/BinaryMixedRuleGroup.ts';
 import { Embedding } from '../pattern/embedding/Embedding.ts';
 import { BoardFeatureData } from '../pattern/feature/BoardFeatureData.ts';
 import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
@@ -13,6 +15,8 @@ import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
 import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
 import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
 import { TSolver } from './TSolver.ts';
+
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 
@@ -90,5 +94,33 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
     this.state.edgeStateChangedEmitter.removeListener(this.dirtyListener);
     this.state.sectorStateChangedEmitter.removeListener(this.dirtyListener);
     this.state.faceColorsChangedEmitter.removeListener(this.dirtyListener);
+  }
+
+  public static fromGroup(
+    board: TBoard,
+    boardPatternBoard: BoardPatternBoard,
+    state: TState<TCompleteData>,
+    group: BinaryMixedRuleGroup,
+    size = group.size,
+  ): BinaryPatternSolver {
+    assertEnabled() && assert(size <= group.size);
+
+    return new BinaryPatternSolver(board, boardPatternBoard, state, {
+      size: size,
+      findNextActionableEmbeddedRuleFromData: (
+        targetPatternBoard: TPatternBoard,
+        boardData: TBoardFeatureData,
+        initialRuleIndex = 0,
+      ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null => {
+        return group.collection.findNextActionableEmbeddedRuleFromData(
+          targetPatternBoard,
+          boardData,
+          initialRuleIndex,
+          (ruleIndex) => {
+            return group.isRuleIndexHighlander(ruleIndex);
+          },
+        );
+      },
+    });
   }
 }

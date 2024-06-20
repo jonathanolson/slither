@@ -8,11 +8,7 @@ import { generalColorMixedGroup } from '../pattern/collection/generalColorMixedG
 import { generalEdgeColorMixedGroup } from '../pattern/collection/generalEdgeColorMixedGroup.ts';
 import { generalEdgeMixedGroup } from '../pattern/collection/generalEdgeMixedGroup.ts';
 import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSectorMixedGroup.ts';
-import { Embedding } from '../pattern/embedding/Embedding.ts';
-import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
-import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
-import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
@@ -29,26 +25,7 @@ const getFactory = (groups: BinaryMixedRuleGroup[]) => {
       new SafeSolvedEdgeSolver(board, state),
       new SafeEdgeToFaceColorSolver(board, state),
 
-      ...groups.map((group) => {
-        // TODO: should we move this code into BinaryMixedRuleGroup?
-        return new BinaryPatternSolver(board, boardPatternBoard, state, {
-          size: group.size,
-          findNextActionableEmbeddedRuleFromData: (
-            targetPatternBoard: TPatternBoard,
-            boardData: TBoardFeatureData,
-            initialRuleIndex = 0,
-          ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null => {
-            return group.collection.findNextActionableEmbeddedRuleFromData(
-              targetPatternBoard,
-              boardData,
-              initialRuleIndex,
-              (ruleIndex) => {
-                return group.isRuleIndexHighlander(ruleIndex);
-              },
-            );
-          },
-        });
-      }),
+      ...groups.map((group) => BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, group)),
 
       new SimpleLoopSolver(board, state, {
         solveToRed: true,
