@@ -99,7 +99,7 @@ export class GenerateNode extends HBox {
         grow: 0,
       },
       children: [
-        new UIText('Solver Difficulty'),
+        new UIText('Difficulty'),
         new UIAquaRadioButtonGroup(
           canSolveDifficultyProperty,
           [
@@ -109,9 +109,14 @@ export class GenerateNode extends HBox {
               labelContent: 'Easy',
             },
             {
-              value: CanSolveDifficulty.STANDARD,
-              createNode: () => new UIText('Standard'),
-              labelContent: 'Standard',
+              value: CanSolveDifficulty.MEDIUM,
+              createNode: () => new UIText('Medium'),
+              labelContent: 'Medium',
+            },
+            {
+              value: CanSolveDifficulty.HARD,
+              createNode: () => new UIText('Hard'),
+              labelContent: 'Hard',
             },
             {
               value: CanSolveDifficulty.NO_LIMIT,
@@ -441,9 +446,11 @@ export class GenerateNode extends HBox {
           const availableWidth = width - 2 * padding;
           const availableHeight = height - 2 * padding;
           const scale = Math.min(availableWidth / localBounds.width, availableHeight / localBounds.height);
-          previewContainer.setScaleMagnitude(scale);
-          previewContainer.centerX = width / 2;
-          previewContainer.centerY = height / 2;
+          if (scale > 0) {
+            previewContainer.setScaleMagnitude(scale);
+            previewContainer.centerX = width / 2;
+            previewContainer.centerY = height / 2;
+          }
         }
       },
     );

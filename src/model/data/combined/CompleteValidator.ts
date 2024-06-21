@@ -156,7 +156,7 @@ export class CompleteValidator implements TState<TCompleteData> {
     addedFaceColors: MultiIterable<TFaceColor>,
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean,
   ): void {
     this.faceColorValidator.modifyFaceColors(

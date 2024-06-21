@@ -96,7 +96,7 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
     addedFaceColors: MultiIterable<TFaceColor>,
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean,
   ): void {
     for (const addedFaceColor of addedFaceColors) {

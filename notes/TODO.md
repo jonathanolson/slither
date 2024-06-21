@@ -16,7 +16,7 @@
     - [performance/memory] Share BoardPatternBoards when solving --- even... potentially deserialize the board to the same thing?
       - We are also (a) leaking memory, and (b) computing a ton of unneeded embeddings
     - 
-    - Difficulties based on patterns(!!!!!)
+    - 
     - Generate puzzles and measure pattern frequency
       - STORE puzzles based on which patterns they require, and generate a TON
         - THUS have library of puzzles that "require" certain patterns

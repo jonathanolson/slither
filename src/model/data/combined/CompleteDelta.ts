@@ -155,7 +155,7 @@ export class CompleteDelta extends CompleteAction implements TDelta<TCompleteDat
     addedFaceColors: MultiIterable<TFaceColor>,
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean,
   ): void {
     this.faceColorDelta.modifyFaceColors(

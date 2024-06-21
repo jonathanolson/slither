@@ -142,7 +142,7 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     addedFaceColors: MultiIterable<TFaceColor>,
     removedFaceColors: MultiIterable<TFaceColor>,
     faceChangeMap: Map<TFace, TFaceColor>,
-    oppositeChangeMap: Map<TFaceColor, TFaceColor>,
+    oppositeChangeMap: Map<TFaceColor, TFaceColor | null>,
     invalidFaceColor: boolean,
   ): void {
     for (const addedFaceColor of addedFaceColors) {
@@ -160,8 +160,12 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
     }
 
     for (const [oldColor, newColor] of oppositeChangeMap.entries()) {
-      this.oppositeColorMap.set(oldColor, newColor);
-      this.oppositeColorMap.set(newColor, oldColor);
+      if (newColor === null) {
+        this.oppositeColorMap.delete(oldColor);
+      } else {
+        this.oppositeColorMap.set(oldColor, newColor);
+        this.oppositeColorMap.set(newColor, oldColor);
+      }
     }
 
     const toRemoveForOpposites = new Set<TFaceColor>();
@@ -197,9 +201,9 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
         }
       }
 
-      // for ( const color of oppositeChangedFaceColors ) {
-      //   assert( colors.has( color ) );
-      // }
+      for (const color of this.oppositeColorMap.keys()) {
+        assert(this.oppositeColorMap.has(this.oppositeColorMap.get(color)!));
+      }
     }
 
     this.faceColorsChangedEmitter.emit(addedFaceColors, removedFaceColors, oppositeChangedFaceColors, [

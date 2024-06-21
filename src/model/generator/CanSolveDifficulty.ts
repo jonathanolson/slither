@@ -3,7 +3,9 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TState } from '../data/core/TState.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { generalEdgeColorMixedGroup } from '../pattern/collection/generalEdgeColorMixedGroup.ts';
 import { generalEdgeMixedGroup } from '../pattern/collection/generalEdgeMixedGroup.ts';
+import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSectorMixedGroup.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from '../solver/BinaryPatternSolver.ts';
 import { CompositeSolver } from '../solver/CompositeSolver.ts';
@@ -52,10 +54,65 @@ export default class CanSolveDifficulty extends EnumerationValue {
     return simpleRegionIsSolved(state);
   });
 
-  public static readonly STANDARD = new CanSolveDifficulty((board, state) => {
+  public static readonly MEDIUM = new CanSolveDifficulty((board, state) => {
     state = state.clone();
 
-    iterateSolverFactory(standardSolverFactory, board, state, true);
+    iterateSolverFactory(
+      (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+        const boardPatternBoard = BoardPatternBoard.get(board);
+
+        return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+          new SafeEdgeToSimpleRegionSolver(board, state),
+          new SafeSolvedEdgeSolver(board, state),
+          new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleLoopSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+            resolveAllRegions: false, // NOTE: this will be faster
+          }),
+
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup, 50),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeMixedGroup, 360),
+        ]);
+      },
+      board,
+      state,
+      true,
+    );
+
+    return simpleRegionIsSolved(state);
+  });
+
+  public static readonly HARD = new CanSolveDifficulty((board, state) => {
+    state = state.clone();
+
+    iterateSolverFactory(
+      (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+        const boardPatternBoard = BoardPatternBoard.get(board);
+
+        return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+          new SafeEdgeToSimpleRegionSolver(board, state),
+          new SafeSolvedEdgeSolver(board, state),
+          new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleLoopSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+            resolveAllRegions: false, // NOTE: this will be faster
+          }),
+
+          standardSolverFactory(board, state, dirty),
+
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeColorMixedGroup, 600),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup, 100),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeMixedGroup, 1000),
+        ]);
+      },
+      board,
+      state,
+      true,
+    );
 
     return simpleRegionIsSolved(state);
   });
@@ -67,5 +124,5 @@ export default class CanSolveDifficulty extends EnumerationValue {
 
 export const canSolveDifficultyProperty = new LocalStorageEnumerationProperty(
   'canSolveDifficulty',
-  CanSolveDifficulty.STANDARD,
+  CanSolveDifficulty.EASY,
 );
