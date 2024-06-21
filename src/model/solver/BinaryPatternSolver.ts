@@ -119,6 +119,7 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
           (ruleIndex) => {
             return group.isRuleIndexHighlander(ruleIndex);
           },
+          size,
         );
       },
     });

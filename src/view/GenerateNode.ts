@@ -104,6 +104,11 @@ export class GenerateNode extends HBox {
           canSolveDifficultyProperty,
           [
             {
+              value: CanSolveDifficulty.EASY,
+              createNode: () => new UIText('Easy'),
+              labelContent: 'Easy',
+            },
+            {
               value: CanSolveDifficulty.STANDARD,
               createNode: () => new UIText('Standard'),
               labelContent: 'Standard',

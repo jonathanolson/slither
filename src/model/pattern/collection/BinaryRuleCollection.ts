@@ -368,9 +368,10 @@ export class BinaryRuleCollection {
     boardData: TBoardFeatureData,
     initialRuleIndex = 0,
     highlanderOverride?: (ruleIndex: number) => boolean,
+    maxRules = this.size,
   ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null {
     let count = 0;
-    for (let ruleIndex = initialRuleIndex; ruleIndex < this.ruleIndices.length; ruleIndex++) {
+    for (let ruleIndex = initialRuleIndex; ruleIndex < maxRules; ruleIndex++) {
       if (count % 1000 === 0) {
         console.log('search', count);
       }
