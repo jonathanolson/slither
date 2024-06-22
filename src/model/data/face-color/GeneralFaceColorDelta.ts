@@ -8,6 +8,8 @@ import { TFaceColor, TFaceColorData, TSerializedFaceColorData, serializeFaceColo
 import { TinyEmitter } from 'phet-lib/axon';
 
 import { MultiIterable } from '../../../workarounds/MultiIterable.ts';
+import _ from '../../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDelta<TFaceColorData> {
   public readonly faceColorsChangedEmitter = new TinyEmitter<
@@ -103,7 +105,10 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
       this.addedFaceColors.add(addedFaceColor);
     }
 
+    const colorsToRemove = new Set<TFaceColor>();
     for (const removedFaceColor of removedFaceColors) {
+      colorsToRemove.add(removedFaceColor);
+
       if (this.addedFaceColors.has(removedFaceColor)) {
         this.addedFaceColors.delete(removedFaceColor);
       } else {
@@ -117,7 +122,10 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
     }
 
     for (const [color, oppositeColor] of oppositeChangeMap.entries()) {
-      this.oppositeChangeMap.set(color, oppositeColor);
+      // Don't set something for a color we are removing
+      if (!colorsToRemove.has(color)) {
+        this.oppositeChangeMap.set(color, oppositeColor);
+      }
     }
 
     const toRemoveForOpposites = new Set<TFaceColor>(removedFaceColors);
@@ -128,6 +136,13 @@ export class GeneralFaceColorDelta extends GeneralFaceColorAction implements TDe
       if (opposite && toRemoveForOpposites.has(opposite)) {
         this.oppositeChangeMap.set(color, null);
       }
+    }
+
+    if (assertEnabled()) {
+      const values = [...oppositeChangeMap.values()].filter((value) => value !== null);
+      const uniqueValues = _.uniq(values);
+
+      assert(values.length === uniqueValues.length);
     }
 
     const oppositeChangedFaceColors = new Set<TFaceColor>(oppositeChangeMap.keys());

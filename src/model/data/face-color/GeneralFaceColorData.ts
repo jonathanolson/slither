@@ -159,26 +159,28 @@ export class GeneralFaceColorData implements TState<TFaceColorData> {
       this.colorInverseMap.get(newColor)!.add(face);
     }
 
-    for (const [oldColor, newColor] of oppositeChangeMap.entries()) {
-      if (newColor === null) {
-        this.oppositeColorMap.delete(oldColor);
-      } else {
-        this.oppositeColorMap.set(oldColor, newColor);
-        this.oppositeColorMap.set(newColor, oldColor);
-      }
-    }
-
-    const toRemoveForOpposites = new Set<TFaceColor>();
+    const colorsToRemove = new Set<TFaceColor>();
     for (const removedFaceColor of removedFaceColors) {
-      toRemoveForOpposites.add(removedFaceColor);
+      colorsToRemove.add(removedFaceColor);
+
       this.faceColors.delete(removedFaceColor);
       this.colorInverseMap.delete(removedFaceColor);
       this.oppositeColorMap.delete(removedFaceColor);
     }
 
+    for (const [oldColor, newColor] of oppositeChangeMap.entries()) {
+      if (newColor === null) {
+        this.oppositeColorMap.delete(oldColor);
+      } else if (!colorsToRemove.has(oldColor)) {
+        // If we have the start of a "removed" color, don't set the rest
+        this.oppositeColorMap.set(oldColor, newColor);
+        this.oppositeColorMap.set(newColor, oldColor);
+      }
+    }
+
     // Remove opposite colors that are now invalid
     for (const color of this.faceColors) {
-      if (this.oppositeColorMap.has(color) && toRemoveForOpposites.has(this.oppositeColorMap.get(color)!)) {
+      if (this.oppositeColorMap.has(color) && colorsToRemove.has(this.oppositeColorMap.get(color)!)) {
         this.oppositeColorMap.delete(color);
       }
     }
