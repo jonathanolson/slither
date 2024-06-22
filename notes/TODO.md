@@ -96,8 +96,6 @@
     - 
     - TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
     - 
-    - [nowayjay] Share icon better
-    - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode
     - 

@@ -1,5 +1,9 @@
 export const changelog = [
-  ['Fix edge dragging when pressing on an already-pressed edge', 'Adding difficulties'],
+  [
+    'Fix edge dragging when pressing on an already-pressed edge',
+    'Adding difficulties for generation',
+    'Improved share icon',
+  ],
   [
     '2024-06-18',
     'Added line/cell dragging, with toggle between pan/drag modes - space temporarily toggles when pressed',
