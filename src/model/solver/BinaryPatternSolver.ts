@@ -1,4 +1,5 @@
 import { TBoard } from '../board/core/TBoard.ts';
+import { getQuickBoardSpanningFaceCount } from '../board/core/getQuickBoardSpanningFaceCount.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TState } from '../data/core/TState.ts';
@@ -34,6 +35,8 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
 
   private readonly dirtyListener: () => void;
 
+  private readonly quickSpanningCount: number;
+
   public constructor(
     private readonly board: TBoard,
     private readonly boardPatternBoard: BoardPatternBoard,
@@ -41,6 +44,8 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
     private readonly binaryRuleCollection: BinaryPatternSolverData,
     initialIndex = 0,
   ) {
+    this.quickSpanningCount = getQuickBoardSpanningFaceCount(board, state);
+
     this.nextIndex = initialIndex;
 
     this.dirtyListener = () => {
