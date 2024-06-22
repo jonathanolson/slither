@@ -10,6 +10,7 @@ import { serializePatternBoard } from '../pattern-board/serializePatternBoard.ts
 import { PatternRule } from '../pattern-rule/PatternRule.ts';
 import PatternRuleMatchState from '../pattern-rule/PatternRuleMatchState.ts';
 import { isPatternRuleValid } from '../pattern-rule/isPatternRuleValid.ts';
+import { ActionableRuleEmbedding } from './ActionableRuleEmbedding.ts';
 
 import { compressByteArray, decompressByteArray } from '../../../util/compression.ts';
 
@@ -367,9 +368,10 @@ export class BinaryRuleCollection {
     targetPatternBoard: TPatternBoard,
     boardData: TBoardFeatureData,
     initialRuleIndex = 0,
+    initialEmbeddingIndex = 0,
     highlanderOverride?: (ruleIndex: number) => boolean,
     maxRules = this.size,
-  ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null {
+  ): ActionableRuleEmbedding | null {
     let count = 0;
     for (let ruleIndex = initialRuleIndex; ruleIndex < maxRules; ruleIndex++) {
       if (count % 1000 === 0) {
@@ -384,7 +386,12 @@ export class BinaryRuleCollection {
       // TODO: don't memory leak this!
       const embeddings = getEmbeddings(patternBoard, targetPatternBoard);
 
-      for (const embedding of embeddings) {
+      let embeddingIndex = initialEmbeddingIndex;
+      initialEmbeddingIndex = 0;
+
+      for (; embeddingIndex < embeddings.length; embeddingIndex++) {
+        const embedding = embeddings[embeddingIndex];
+
         if (this.isActionableEmbeddingFromData(targetPatternBoard, boardData, ruleIndex, embedding)) {
           // TODO: in what cases will this NOT return a rule???
           const rule =
@@ -405,12 +412,7 @@ export class BinaryRuleCollection {
           }
 
           if (embeddedRule) {
-            return {
-              rule,
-              embeddedRule,
-              embedding,
-              ruleIndex,
-            };
+            return new ActionableRuleEmbedding(ruleIndex, embeddingIndex, rule, embeddedRule, embedding);
           } else {
             debugger;
             throw new Error('Why would this happen');

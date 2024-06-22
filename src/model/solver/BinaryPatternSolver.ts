@@ -7,13 +7,12 @@ import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceColorData } from '../data/face-color/TFaceColorData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { TSectorStateData } from '../data/sector-state/TSectorStateData.ts';
+import { ActionableRuleEmbedding } from '../pattern/collection/ActionableRuleEmbedding.ts';
 import { BinaryMixedRuleGroup } from '../pattern/collection/BinaryMixedRuleGroup.ts';
-import { Embedding } from '../pattern/embedding/Embedding.ts';
 import { BoardFeatureData } from '../pattern/feature/BoardFeatureData.ts';
 import { TBoardFeatureData } from '../pattern/feature/TBoardFeatureData.ts';
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { TPatternBoard } from '../pattern/pattern-board/TPatternBoard.ts';
-import { PatternRule } from '../pattern/pattern-rule/PatternRule.ts';
 import { getPatternRuleAction } from '../pattern/solve/getPatternRuleAction.ts';
 import { TSolver } from './TSolver.ts';
 
@@ -23,33 +22,38 @@ type Data = TFaceValueData & TEdgeStateData & TSectorStateData & TFaceColorData;
 
 export type BinaryPatternSolverData = {
   size: number;
-  findNextActionableEmbeddedRuleFromData: (
+  getNext: (
     targetPatternBoard: TPatternBoard,
     boardData: TBoardFeatureData,
     initialRuleIndex?: number,
-  ) => { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null;
+    initialEmbeddingIndex?: number,
+  ) => ActionableRuleEmbedding | null;
 };
 
 export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>> {
-  private nextIndex: number;
+  private nextRuleIndex: number;
+  private nextEmbeddingIndex: number;
 
   private readonly dirtyListener: () => void;
 
   private readonly quickSpanningCount: number;
 
-  public constructor(
+  protected constructor(
     private readonly board: TBoard,
     private readonly boardPatternBoard: BoardPatternBoard,
     private readonly state: TState<Data>,
-    private readonly binaryRuleCollection: BinaryPatternSolverData,
+    private readonly binaryData: BinaryPatternSolverData,
     initialIndex = 0,
+    initialEmbeddingIndex = 0,
   ) {
     this.quickSpanningCount = getQuickBoardSpanningFaceCount(board, state);
 
-    this.nextIndex = initialIndex;
+    this.nextRuleIndex = initialIndex;
+    this.nextEmbeddingIndex = initialEmbeddingIndex;
 
     this.dirtyListener = () => {
-      this.nextIndex = 0;
+      this.nextRuleIndex = 0;
+      this.nextEmbeddingIndex = 0;
     };
 
     this.state.faceValueChangedEmitter.addListener(this.dirtyListener);
@@ -59,7 +63,7 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
   }
 
   public get dirty(): boolean {
-    return this.nextIndex < this.binaryRuleCollection.size;
+    return this.nextRuleIndex < this.binaryData.size;
   }
 
   public nextAction(): TAnnotatedAction<Data> | null {
@@ -69,17 +73,18 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
 
     const boardFeatureData = new BoardFeatureData(this.boardPatternBoard, this.state);
 
-    const match = this.binaryRuleCollection.findNextActionableEmbeddedRuleFromData(
+    const match = this.binaryData.getNext(
       boardFeatureData.boardPatternBoard,
       boardFeatureData,
-      this.nextIndex,
+      this.nextRuleIndex,
+      this.nextEmbeddingIndex,
     );
     if (match) {
-      this.nextIndex = match.ruleIndex + 1; // If called again immediately, we will only start searching from here
+      this.nextRuleIndex = match.ruleIndex + 1; // If called again immediately, we will only start searching from here
 
       return getPatternRuleAction(this.boardPatternBoard, this.state, match.embeddedRule, match.rule, match.embedding);
     } else {
-      this.nextIndex = this.binaryRuleCollection.size;
+      this.nextRuleIndex = this.binaryData.size;
       return null;
     }
   }
@@ -89,8 +94,8 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
       this.board,
       this.boardPatternBoard,
       equivalentState,
-      this.binaryRuleCollection,
-      this.nextIndex,
+      this.binaryData,
+      this.nextRuleIndex,
     );
   }
 
@@ -112,15 +117,17 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
 
     return new BinaryPatternSolver(board, boardPatternBoard, state, {
       size: size,
-      findNextActionableEmbeddedRuleFromData: (
+      getNext: (
         targetPatternBoard: TPatternBoard,
         boardData: TBoardFeatureData,
         initialRuleIndex = 0,
-      ): { rule: PatternRule; embeddedRule: PatternRule; embedding: Embedding; ruleIndex: number } | null => {
+        initialEmbeddingIndex = 0,
+      ): ActionableRuleEmbedding | null => {
         return group.collection.findNextActionableEmbeddedRuleFromData(
           targetPatternBoard,
           boardData,
           initialRuleIndex,
+          initialEmbeddingIndex,
           (ruleIndex) => {
             return group.isRuleIndexHighlander(ruleIndex);
           },
