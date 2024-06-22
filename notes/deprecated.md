@@ -1,4 +1,6 @@
-
+- Minimap (draggable?)
+- Pan with arrow keys (SC2 style)
+- Vertex-state/face-state edit modes
 - Haptics? (vibration on... long press?) - Not supported by iOS
 - Allow users to have custom-saved boards, with names (to generate from?)
 - Backtracker:
