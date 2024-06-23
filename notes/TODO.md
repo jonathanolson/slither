@@ -8,6 +8,8 @@
   - 
   - Priorities:
     - 
+    - Consistent colors for hint patterns
+    - 
     - "measure difficulty" of puzzles accurately, then offline generate
     - 
     - Better "Solved" screen (allow keep playing)
