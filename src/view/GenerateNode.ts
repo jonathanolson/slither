@@ -22,14 +22,10 @@ import { polygonGenerators } from '../model/board/generators/polygonGenerators.t
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import FaceValue from '../model/data/face-value/FaceValue.ts';
 import CanSolveDifficulty, { canSolveDifficultyProperty } from '../model/generator/CanSolveDifficulty.ts';
-import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
-import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
-import { withAllFacesFilled } from '../model/generator/withAllFacesFilled.ts';
+import { generateAdditiveConstrained } from '../model/generator/generateAdditiveConstrained.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
-import { InterruptedError } from '../model/solver/errors/InterruptedError.ts';
 
-import { interruptableSleep } from '../util/interruptableSleep.ts';
 import { LocalStorageProperty } from '../util/localStorage.ts';
 
 type SelfOptions = {
@@ -366,62 +362,18 @@ export class GenerateNode extends HBox {
               }
             });
 
-            try {
-              const canSolveDifficulty = canSolveDifficultyProperty.value;
-              const canSolve = canSolveDifficulty.canSolve;
+            const minimizedPuzzle = await generateAdditiveConstrained(
+              board,
+              canSolveDifficultyProperty.value,
+              interruptedProperty,
+              faceDefineEmitter,
+              faceMinimizeEmitter,
+              faceResetEmitter,
+            );
 
-              const getUniquePuzzle = async () => {
-                return await generateFaceAdditive(board, interruptedProperty, faceDefineEmitter);
-              };
-
-              const getMinimizablePuzzle = async () => {
-                let uniquePuzzle = await getUniquePuzzle();
-
-                if (canSolveDifficulty === CanSolveDifficulty.NO_LIMIT) {
-                  return uniquePuzzle;
-                } else {
-                  // TODO: should we do this on everything? probably not, because it ... doesn't change the distribution? BUT might make it harder?
-
-                  const blankFaces = board.faces.filter((face) => uniquePuzzle.cleanState.getFaceValue(face) === null);
-                  const minimizablePuzzle = withAllFacesFilled(uniquePuzzle);
-                  blankFaces.forEach((face) => {
-                    faceDefineEmitter.emit(board.faces.indexOf(face), minimizablePuzzle.cleanState.getFaceValue(face));
-                  });
-                  return minimizablePuzzle;
-                }
-              };
-
-              let minimizablePuzzle = await getMinimizablePuzzle();
-              while (
-                // Don't allow the "fully full" state, e.g. 4 in square, since it will be boring trivial puzzles, and for
-                // https://github.com/jonathanolson/slither/issues/2
-                minimizablePuzzle.board.faces.some(
-                  (face) => minimizablePuzzle.solvedState.getFaceValue(face) === face.edges.length,
-                ) ||
-                !canSolve(minimizablePuzzle.board, minimizablePuzzle.cleanState.clone())
-              ) {
-                faceResetEmitter.emit();
-                minimizablePuzzle = await getMinimizablePuzzle();
-              }
-
-              const minimizedPuzzle = await greedyFaceMinimize(
-                minimizablePuzzle,
-                canSolve,
-                interruptedProperty,
-                faceMinimizeEmitter,
-              );
-
-              // Maybe... let it complete on the screen before we do complicated time consuming things
-              interruptableSleep(17, interruptedProperty);
-
-              if (!interruptedProperty.value) {
-                previewGeneratedNode.children = [];
-                options.loadPuzzle(BasicPuzzle.fromSolvedPuzzle(minimizedPuzzle));
-              }
-            } catch (e) {
-              if (e instanceof InterruptedError) {
-                // do nothing, we got interrupted and that's fine. Handled elsewhere
-              }
+            if (minimizedPuzzle) {
+              previewGeneratedNode.children = [];
+              options.loadPuzzle(BasicPuzzle.fromSolvedPuzzle(minimizedPuzzle));
             }
 
             if (interruptGenerateEmitter.hasListener(interruptListener)) {
