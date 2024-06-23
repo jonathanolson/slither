@@ -392,7 +392,14 @@ export class GenerateNode extends HBox {
               };
 
               let minimizablePuzzle = await getMinimizablePuzzle();
-              while (!canSolve(minimizablePuzzle.board, minimizablePuzzle.cleanState.clone())) {
+              while (
+                // Don't allow the "fully full" state, e.g. 4 in square, since it will be boring trivial puzzles, and for
+                // https://github.com/jonathanolson/slither/issues/2
+                minimizablePuzzle.board.faces.some(
+                  (face) => minimizablePuzzle.solvedState.getFaceValue(face) === face.edges.length,
+                ) ||
+                !canSolve(minimizablePuzzle.board, minimizablePuzzle.cleanState.clone())
+              ) {
                 faceResetEmitter.emit();
                 minimizablePuzzle = await getMinimizablePuzzle();
               }
