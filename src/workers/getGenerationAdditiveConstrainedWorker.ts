@@ -53,6 +53,22 @@ export const generateAdditiveConstrainedWithWorker = async (
       canSolveDifficulty: canSolveDifficulty.name,
     });
 
+    const cleanup = () => {
+      interruptedProperty.unlink(interruptedListener);
+      worker.removeEventListener('message', generationListener);
+    };
+
+    const interruptedListener = (interrupted: boolean) => {
+      if (interrupted) {
+        worker.postMessage({
+          type: 'generation-additive-constrained-interrupt',
+          id: id,
+        });
+        cleanup();
+        resolve(null);
+      }
+    };
+
     // TODO: fix up the message type, is a union
     const generationListener = (
       event: MessageEvent<{
@@ -67,7 +83,7 @@ export const generateAdditiveConstrainedWithWorker = async (
         if (event.data.type === 'generation-additive-constrained-response') {
           const result = event.data.solvedPuzzle ? deserializeSolvedPuzzle(event.data.solvedPuzzle) : null;
 
-          worker.removeEventListener('message', generationListener);
+          cleanup();
           resolve(result);
         } else if (event.data.type === 'generation-additive-constrained-face-define') {
           faceDefineEmitter.emit(event.data.index, event.data.faceValue);
@@ -78,6 +94,7 @@ export const generateAdditiveConstrainedWithWorker = async (
         }
       }
     };
+    interruptedProperty.lazyLink(interruptedListener);
     worker.addEventListener('message', generationListener);
   });
 };
