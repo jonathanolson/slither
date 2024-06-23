@@ -88,8 +88,6 @@
       - Show tooltips on disabled buttons
       - [nowayjay] tooltips usually under cursor!!!! fix this
     - 
-    - TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
-    - 
     - [nowayjay] Have numbers adjust highlighting based on color duals OR edges (implies either)
       - OR just... force color=>edge solving on color-only mode
     - 
