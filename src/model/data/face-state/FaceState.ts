@@ -1,6 +1,7 @@
 import { TBoard } from '../../board/core/TBoard.ts';
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { hasNonzeroSeparateFace } from '../../board/core/hasNonzeroSeparateFace.ts';
 import EdgeState from '../edge-state/EdgeState.ts';
 import { TFaceColor, TFaceColorData } from '../face-color/TFaceColorData.ts';
 import FaceValue from '../face-value/FaceValue.ts';
@@ -366,7 +367,7 @@ export class FaceState {
       }
 
       // Prevent simple face-only loops (if there is a non-adjacent face Face-based check to prevent loops
-      if (blackEdges.size === face.edges.length) {
+      if (blackEdges.size === face.edges.length && hasNonzeroSeparateFace(board, data, new Set([face]))) {
         for (const otherFace of board.faces) {
           if (data.getFaceValue(otherFace) !== null) {
             for (const edge of otherFace.edges) {

@@ -414,8 +414,8 @@ export class BinaryRuleCollection {
           if (embeddedRule) {
             return new ActionableRuleEmbedding(ruleIndex, embeddingIndex, rule, embeddedRule, embedding);
           } else {
-            debugger;
-            throw new Error('Why would this happen');
+            // Looks like this is happening in some degenerate 2x2 cases
+            return null;
           }
         }
       }

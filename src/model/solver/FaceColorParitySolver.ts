@@ -1,6 +1,7 @@
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
+import { hasNonzeroSeparateFace } from '../board/core/hasNonzeroSeparateFace.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
 import { CompositeAction } from '../data/core/CompositeAction.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
@@ -121,7 +122,11 @@ export class FaceColorParitySolver implements TSolver<Data, TAnnotatedAction<Dat
 
           // For a non-valued face, if all of the exterior colors are the same, then we know the interior is the same
           // color (otherwise it would create a closed loop around nothing)
-          if (allExterior && this.options.solveToRed) {
+          if (
+            allExterior &&
+            this.options.solveToRed &&
+            hasNonzeroSeparateFace(this.board, this.state, new Set([face]))
+          ) {
             const adjacentFaces = face.edges
               .map((edge) => edge.getOtherFace(face))
               .filter((face) => face !== null) as TFace[];

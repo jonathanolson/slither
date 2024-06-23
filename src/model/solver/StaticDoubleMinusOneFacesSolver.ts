@@ -1,6 +1,7 @@
 import { TBoard } from '../board/core/TBoard.ts';
 import { TEdge } from '../board/core/TEdge.ts';
 import { TFace } from '../board/core/TFace.ts';
+import { hasNonzeroSeparateFace } from '../board/core/hasNonzeroSeparateFace.ts';
 import { edgeHasVertex } from '../board/util/edgeHasVertex.ts';
 import { faceAdjacentFaces } from '../board/util/faceAdjacentFaces.ts';
 import { AnnotatedAction } from '../data/core/AnnotatedAction.ts';
@@ -97,7 +98,11 @@ export class StaticDoubleMinusOneFacesSolver implements TSolver<Data, TAnnotated
 
                 const redEdges = exteriorEdges.filter((edge) => this.state.getEdgeState(edge) !== EdgeState.RED);
 
-                if (blackEdges.length || redEdges.length) {
+                if (
+                  (blackEdges.length || redEdges.length) &&
+                  // Solver loop prevention should only happen if there are disconnected faces
+                  hasNonzeroSeparateFace(this.board, this.state, new Set([mainFace, otherFace]))
+                ) {
                   return new AnnotatedAction(
                     new CompositeAction([
                       ...blackEdges.map((edge) => new EdgeStateSetAction(edge, EdgeState.BLACK)),

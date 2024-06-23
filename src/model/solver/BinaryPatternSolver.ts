@@ -1,5 +1,7 @@
 import { TBoard } from '../board/core/TBoard.ts';
+import { TFace } from '../board/core/TFace.ts';
 import { getQuickBoardSpanningFaceCount } from '../board/core/getQuickBoardSpanningFaceCount.ts';
+import { hasNonzeroSeparateFace } from '../board/core/hasNonzeroSeparateFace.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TState } from '../data/core/TState.ts';
@@ -73,19 +75,46 @@ export class BinaryPatternSolver implements TSolver<Data, TAnnotatedAction<Data>
 
     const boardFeatureData = new BoardFeatureData(this.boardPatternBoard, this.state);
 
-    const match = this.binaryData.getNext(
-      boardFeatureData.boardPatternBoard,
-      boardFeatureData,
-      this.nextRuleIndex,
-      this.nextEmbeddingIndex,
-    );
-    if (match) {
-      this.nextRuleIndex = match.ruleIndex + 1; // If called again immediately, we will only start searching from here
+    while (true) {
+      const match = this.binaryData.getNext(
+        boardFeatureData.boardPatternBoard,
+        boardFeatureData,
+        this.nextRuleIndex,
+        this.nextEmbeddingIndex,
+      );
 
-      return getPatternRuleAction(this.boardPatternBoard, this.state, match.embeddedRule, match.rule, match.embedding);
-    } else {
-      this.nextRuleIndex = this.binaryData.size;
-      return null;
+      if (match) {
+        // If called again immediately, we will only start searching from here (find a new embedding)
+        this.nextRuleIndex = match.ruleIndex;
+        this.nextEmbeddingIndex = match.embeddingIndex + 1;
+
+        // Check to see if we can apply the rule (is there another unaffected face?)
+        // E.g. https://github.com/jonathanolson/slither/issues/2
+        if (match.rule.patternBoard.faces.length >= this.quickSpanningCount) {
+          // If the rule has the same or more faces than our quick span count, we'll need to do more checks
+
+          const rulePatternFaces = match.rule.patternBoard.faces.map((face) => match.embedding.mapFace(face));
+          const ruleFaces = new Set(
+            rulePatternFaces.map((face) => this.boardPatternBoard.getFace(face)).filter((f) => f !== null) as TFace[],
+          );
+
+          if (!hasNonzeroSeparateFace(this.board, this.state, ruleFaces)) {
+            continue;
+          }
+        }
+
+        return getPatternRuleAction(
+          this.boardPatternBoard,
+          this.state,
+          match.embeddedRule,
+          match.rule,
+          match.embedding,
+        );
+      } else {
+        this.nextRuleIndex = this.binaryData.size;
+        this.nextEmbeddingIndex = 0;
+        return null;
+      }
     }
   }
 
