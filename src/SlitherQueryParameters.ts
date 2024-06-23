@@ -9,8 +9,6 @@ export default QueryStringMachine.getAll({
 
   debugScan: { type: 'flag' },
 
-  debugSleep: { type: 'flag' },
-
   debugColors: { type: 'flag' },
 
   // like PhET sims

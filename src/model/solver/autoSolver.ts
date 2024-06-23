@@ -16,7 +16,7 @@ import { SimpleSectorSolver } from './SimpleSectorSolver.ts';
 import { SimpleVertexSolver } from './SimpleVertexSolver';
 import { StaticDoubleMinusOneFacesSolver } from './StaticDoubleMinusOneFacesSolver.ts';
 import { StaticSectorSolver } from './StaticSectorSolver.ts';
-import { AnnotatedSolverFactory, iterateSolverFactory } from './TSolver.ts';
+import { AnnotatedSolverFactory } from './TSolver.ts';
 import { VertexColorToFaceSolver } from './VertexColorToFaceSolver.ts';
 import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
 import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
@@ -26,7 +26,6 @@ import { safeSolverFactory } from './safeSolverFactory.ts';
 import { DerivedProperty } from 'phet-lib/axon';
 
 import { LocalStorageBooleanProperty } from '../../util/localStorage.ts';
-
 
 // Top-level setting that controls whether auto-solve is enabled at all
 export const autoSolveEnabledProperty = new LocalStorageBooleanProperty('autoSolveEnabledProperty', true);
@@ -134,19 +133,7 @@ export const autoSolveFaceToFaceColorsProperty = new LocalStorageBooleanProperty
 );
 export const autoSolveFaceToVertexProperty = new LocalStorageBooleanProperty('autoSolveFaceToVertexProperty', false);
 
-export const finalStateSolverFactory = (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
-  return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
-    safeSolverFactory(board, state, dirty),
-    new VertexColorToFaceSolver(board, state),
-  ]);
-};
-
-export const finalStateSolve = (board: TBoard, state: TState<TCompleteData>) => {
-  iterateSolverFactory(finalStateSolverFactory, board, state, true);
-};
-
 // TODO: we should use a more scalable approach(!)
-// @ts-expect-error - omg, DerivedProperty is... limit. TODO find a better approach, we hit the maximum number.
 export const autoSolverFactoryProperty = new DerivedProperty<
   AnnotatedSolverFactory<TStructure, TCompleteData>,
   boolean,
@@ -165,6 +152,7 @@ export const autoSolverFactoryProperty = new DerivedProperty<
   boolean,
   boolean
 >(
+  // @ts-expect-error - omg, DerivedProperty is... limit. TODO find a better approach, we hit the maximum number.
   [
     autoSolveSimpleVertexJointToRedProperty,
     autoSolveSimpleVertexForcedLineToBlackProperty,

@@ -6,7 +6,8 @@ import { TState } from '../data/core/TState.ts';
 import FaceValue from '../data/face-value/FaceValue.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
-import { TSolvedPuzzle, getSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { getSolvedPuzzle } from './getSolvedPuzzle.ts';
 
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import { dotRandom } from 'phet-lib/dot';

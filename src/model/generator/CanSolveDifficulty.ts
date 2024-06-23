@@ -18,8 +18,6 @@ import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 
 import { Enumeration, EnumerationValue } from 'phet-lib/phet-core';
 
-import { LocalStorageEnumerationProperty } from '../../util/localStorage.ts';
-
 export default class CanSolveDifficulty extends EnumerationValue {
   public constructor(public readonly canSolve: (board: TBoard, state: TState<TCompleteData>) => boolean) {
     super();
@@ -121,8 +119,3 @@ export default class CanSolveDifficulty extends EnumerationValue {
 
   public static readonly enumeration = new Enumeration(CanSolveDifficulty);
 }
-
-export const canSolveDifficultyProperty = new LocalStorageEnumerationProperty(
-  'canSolveDifficulty',
-  CanSolveDifficulty.EASY,
-);

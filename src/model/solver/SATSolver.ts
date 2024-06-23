@@ -17,11 +17,11 @@ import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TEdgeStateData } from '../data/edge-state/TEdgeStateData.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
-import { getSolvedPuzzle } from '../generator/TSolvedPuzzle.ts';
+import { getSolvedPuzzle } from '../generator/getSolvedPuzzle.ts';
 import { TSolvablePropertyPuzzle } from '../puzzle/TPuzzle.ts';
-import { finalStateSolve } from './autoSolver.ts';
 import { MaximumSolverIterationsError } from './errors/MaximumSolverIterationsError.ts';
 import { MultipleSolutionsError } from './errors/MultipleSolutionsError.ts';
+import { finalStateSolve } from './finalStateSolve.ts';
 // @ts-expect-error
 import Logic from './logic-solver/logic-solver.js';
 

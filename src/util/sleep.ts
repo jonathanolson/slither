@@ -1,5 +1,6 @@
 // Work around iOS Safari... just not really calling setTimeout. Fun times. Hook into the animation frame if it hasn't yet.
-import SlitherQueryParameters from '../SlitherQueryParameters.ts';
+
+const debugSleep = false;
 
 let workaroundResolve: ((value: unknown) => void) | null = null;
 let workaroundResolveCount = 0;
@@ -20,14 +21,14 @@ export const sleep = async function (milliseconds: number) {
     workaroundResolve = resolve;
     workaroundResolveCount = 0;
 
-    SlitherQueryParameters.debugSleep && console.log('sleep start');
+    debugSleep && console.log('sleep start');
     setTimeout(() => {
-      SlitherQueryParameters.debugSleep && console.log('sleep end');
+      debugSleep && console.log('sleep end');
       if (workaroundResolve === resolve) {
         workaroundResolve = null;
         resolve(null);
       }
-      SlitherQueryParameters.debugSleep && console.log('resolved');
+      debugSleep && console.log('resolved');
     }, milliseconds);
   });
 };

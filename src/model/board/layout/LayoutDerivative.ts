@@ -3,8 +3,6 @@ import { LayoutPuzzle } from './LayoutPuzzle.ts';
 import { LayoutVertex } from './layout.ts';
 
 import { DotUtils, Matrix, Matrix3, SingularValueDecomposition, Vector2 } from 'phet-lib/dot';
-import { Node } from 'phet-lib/scenery';
-import { ArrowNode } from 'phet-lib/scenery-phet';
 
 import _ from '../../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
@@ -75,27 +73,27 @@ export class LayoutDerivative {
     return areaDerivative;
   }
 
-  public getDebugNode(): Node {
-    const node = new Node();
-
-    this.layoutPuzzle.vertices.forEach((vertex) => {
-      const derivative = this.derivatives.get(vertex)!;
-      const point = vertex.viewCoordinates;
-
-      const arrow = new ArrowNode(point.x, point.y, point.x + derivative.x, point.y + derivative.y, {
-        lineWidth: 0.01,
-        headHeight: 0.05,
-        headWidth: 0.05,
-        tailWidth: 0.005,
-        fill: 'green',
-        stroke: 'green',
-      });
-
-      node.addChild(arrow);
-    });
-
-    return node;
-  }
+  // public getDebugNode(): Node {
+  //   const node = new Node();
+  //
+  //   this.layoutPuzzle.vertices.forEach((vertex) => {
+  //     const derivative = this.derivatives.get(vertex)!;
+  //     const point = vertex.viewCoordinates;
+  //
+  //     const arrow = new ArrowNode(point.x, point.y, point.x + derivative.x, point.y + derivative.y, {
+  //       lineWidth: 0.01,
+  //       headHeight: 0.05,
+  //       headWidth: 0.05,
+  //       tailWidth: 0.005,
+  //       fill: 'green',
+  //       stroke: 'green',
+  //     });
+  //
+  //     node.addChild(arrow);
+  //   });
+  //
+  //   return node;
+  // }
 
   public static getAreaScaledDeltas(layoutPuzzle: LayoutPuzzle, scale: number): LayoutDerivative {
     const centroid = layoutPuzzle.getCentroid();

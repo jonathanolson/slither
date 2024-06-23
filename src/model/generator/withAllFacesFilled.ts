@@ -1,6 +1,7 @@
 import { TStructure } from '../board/core/TStructure.ts';
 import { TCompleteData } from '../data/combined/TCompleteData.ts';
-import { TSolvedPuzzle, getSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { getSolvedPuzzle } from './getSolvedPuzzle.ts';
 
 export const withAllFacesFilled = <Structure extends TStructure, Data extends TCompleteData>(
   solvedPuzzle: TSolvedPuzzle<Structure, Data>,

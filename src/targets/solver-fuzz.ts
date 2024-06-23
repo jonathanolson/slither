@@ -12,7 +12,7 @@ import { simpleRegionIsSolved } from '../model/data/simple-region/TSimpleRegionD
 import { generateFaceAdditive } from '../model/generator/generateFaceAdditive.ts';
 import { greedyFaceMinimize } from '../model/generator/greedyFaceMinimize.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
-import { finalStateSolve } from '../model/solver/autoSolver.ts';
+import { finalStateSolve } from '../model/solver/finalStateSolve.ts';
 import { standardSolverFactory } from '../model/solver/standardSolverFactory.ts';
 
 import { sleep } from '../util/sleep.ts';

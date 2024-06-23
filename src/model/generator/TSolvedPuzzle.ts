@@ -1,13 +1,9 @@
 import { TBoard } from '../board/core/TBoard.ts';
-import { TEdge } from '../board/core/TEdge.ts';
+import { TSerializedBoard } from '../board/core/TSerializedBoard.ts';
 import { TStructure } from '../board/core/TStructure.ts';
-import { TCompleteData } from '../data/combined/TCompleteData.ts';
+import { TSerializedState } from '../data/core/TSerializedState.ts';
 import { TState } from '../data/core/TState.ts';
-import EdgeState from '../data/edge-state/EdgeState.ts';
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
-import { finalStateSolve } from '../solver/autoSolver.ts';
-
-import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 
 export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceValueData> {
   board: TBoard<Structure>;
@@ -16,22 +12,9 @@ export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceV
   blackEdges: Set<Structure['Edge']>;
 }
 
-export const getSolvedPuzzle = <Structure extends TStructure = TStructure, Data extends TCompleteData = TCompleteData>(
-  board: TBoard<Structure>,
-  cleanState: TState<Data>,
-  blackEdges: MultiIterable<TEdge>,
-): TSolvedPuzzle<Structure, Data> => {
-  const solvedState = cleanState.clone();
-
-  for (const edge of blackEdges) {
-    solvedState.setEdgeState(edge, EdgeState.BLACK);
-  }
-  finalStateSolve(board, solvedState);
-
-  return {
-    board: board,
-    cleanState: cleanState,
-    solvedState: solvedState,
-    blackEdges: new Set(blackEdges),
-  };
-};
+export interface TSerializedSolvedPuzzle {
+  board: TSerializedBoard;
+  cleanState: TSerializedState;
+  solvedState: TSerializedState;
+  blackEdges: number[];
+}

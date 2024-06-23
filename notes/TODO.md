@@ -8,6 +8,8 @@
   - 
   - Priorities:
     - 
+    - "measure difficulty" of puzzles accurately, then offline generate
+    - 
     - Better "Solved" screen (allow keep playing)
       - "Next" - if auto generated
     - Generate the "next" puzzle in the background (so it is ready when the user solves)

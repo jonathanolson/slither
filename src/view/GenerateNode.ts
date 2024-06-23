@@ -21,12 +21,14 @@ import { getCentroid } from '../model/board/core/createBoardDescriptor.ts';
 import { polygonGenerators } from '../model/board/generators/polygonGenerators.ts';
 import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
 import FaceValue from '../model/data/face-value/FaceValue.ts';
-import CanSolveDifficulty, { canSolveDifficultyProperty } from '../model/generator/CanSolveDifficulty.ts';
-import { generateAdditiveConstrained } from '../model/generator/generateAdditiveConstrained.ts';
+import CanSolveDifficulty from '../model/generator/CanSolveDifficulty.ts';
+import { canSolveDifficultyProperty } from '../model/generator/canSolveDifficultyProperty.ts';
 import { BasicPuzzle } from '../model/puzzle/BasicPuzzle.ts';
 import { TPropertyPuzzle } from '../model/puzzle/TPuzzle.ts';
 
 import { LocalStorageProperty } from '../util/localStorage.ts';
+
+import { generateAdditiveConstrainedWithWorker } from '../workers/getGenerationAdditiveConstrainedWorker.ts';
 
 type SelfOptions = {
   loadPuzzle: (puzzle: TPropertyPuzzle<TStructure, TCompleteData>) => void;
@@ -362,7 +364,8 @@ export class GenerateNode extends HBox {
               }
             });
 
-            const minimizedPuzzle = await generateAdditiveConstrained(
+            // const minimizedPuzzle = await generateAdditiveConstrained(
+            const minimizedPuzzle = await generateAdditiveConstrainedWithWorker(
               board,
               canSolveDifficultyProperty.value,
               interruptedProperty,

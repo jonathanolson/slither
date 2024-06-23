@@ -9,16 +9,17 @@ import FaceValue from '../data/face-value/FaceValue.ts';
 import { satSolve } from '../solver/SATSolver.ts';
 import { MaximumSolverIterationsError } from '../solver/errors/MaximumSolverIterationsError.ts';
 import { MultipleSolutionsError } from '../solver/errors/MultipleSolutionsError.ts';
-import { TSolvedPuzzle, getSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { TSolvedPuzzle } from './TSolvedPuzzle.ts';
+import { getSolvedPuzzle } from './getSolvedPuzzle.ts';
 
 import { TEmitter, TReadOnlyProperty } from 'phet-lib/axon';
 import { dotRandom } from 'phet-lib/dot';
 
-import SlitherQueryParameters from '../../SlitherQueryParameters.ts';
-
 import { interruptableSleep } from '../../util/interruptableSleep.ts';
 
 import _ from '../../workarounds/_.ts';
+
+const debugSleep = false;
 
 // TODO: adjust the proportion of.... face values? fewer zeros?
 // TODO: yes, explicit proportions! (we're regenerating if we start with a zero below, so removes likelyhood of 0)
@@ -61,9 +62,9 @@ export const generateFaceAdditive = async (
 
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for (const face of faceOrder) {
-      SlitherQueryParameters.debugSleep && console.log('going to sleep');
+      debugSleep && console.log('going to sleep');
       interruptedProperty && (await interruptableSleep(0, interruptedProperty));
-      SlitherQueryParameters.debugSleep && console.log('finished sleep, generating next!');
+      debugSleep && console.log('finished sleep, generating next!');
 
       // Don't allow the "fully full" state, e.g. 4 in square.
       let possibleStates = dotRandom.shuffle(_.range(0, face.edges.length));

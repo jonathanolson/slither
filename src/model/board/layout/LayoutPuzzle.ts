@@ -27,17 +27,10 @@ import {
 } from './layout.ts';
 
 import { Vector2 } from 'phet-lib/dot';
-import { Shape } from 'phet-lib/kite';
 import { arrayRemove } from 'phet-lib/phet-core';
-import { Circle, Color, Line, Node, Path, TColor, Text } from 'phet-lib/scenery';
-
-import { okhslToRGBString } from '../../../util/color.ts';
-
-import { currentTheme } from '../../../view/Theme.ts';
 
 import _ from '../../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../../workarounds/assert.ts';
-
 
 export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
   public edgeStateMap: Map<LayoutEdge, EdgeState> = new Map();
@@ -722,79 +715,79 @@ export class LayoutPuzzle extends BaseBoard<LayoutStructure> {
     });
   }
 
-  public getDebugNode(): Node {
-    // TODO: if we are still a planar-embedding, use a PuzzleNode?
-    const debugNode = new Node();
-
-    const showBackgrounds = false;
-    const showRedEdges = false; // TODO: useful for debugging
-    const showVertices = false; // TODO: useful for debugging
-
-    this.edges.forEach((edge) => {
-      const start = edge.start.viewCoordinates;
-      const end = edge.end.viewCoordinates;
-
-      let stroke: TColor;
-      let lineWidth: number;
-      const edgeState = this.edgeStateMap.get(edge);
-      if (edgeState === EdgeState.WHITE) {
-        stroke = currentTheme.blackLineColorProperty;
-        lineWidth = 0.02;
-      } else if (edgeState === EdgeState.BLACK) {
-        stroke = okhslToRGBString(Math.random() * 360, 0.7, 0.55);
-        lineWidth = 0.1;
-      } else {
-        stroke = showRedEdges ? 'red' : null;
-        lineWidth = 0.02;
-      }
-
-      debugNode.addChild(
-        new Line(start, end, {
-          stroke: stroke,
-          lineWidth: lineWidth,
-          lineCap: 'round',
-        }),
-      );
-    });
-
-    if (showBackgrounds) {
-      this.faces.forEach((face) => {
-        const backgroundColor = new Color(okhslToRGBString(Math.random() * 360, 0.7, 0.6)).withAlpha(0.5);
-        debugNode.addChild(
-          new Path(Shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates)), {
-            fill: backgroundColor,
-          }),
-        );
-      });
-    }
-
-    if (showVertices) {
-      this.vertices.forEach((vertex) => {
-        debugNode.addChild(
-          new Circle(0.1, {
-            x: vertex.viewCoordinates.x,
-            y: vertex.viewCoordinates.y,
-            fill: currentTheme.blackLineColorProperty,
-          }),
-        );
-      });
-    }
-
-    this.faces.forEach((face) => {
-      const faceValue = this.faceValueMap.get(face) ?? null;
-
-      if (faceValue !== null) {
-        debugNode.addChild(
-          new Text(faceValue, {
-            maxWidth: 0.9,
-            maxHeight: 0.9,
-            center: face.viewCoordinates,
-            fill: currentTheme.faceValueColorProperty,
-          }),
-        );
-      }
-    });
-
-    return debugNode;
-  }
+  // public getDebugNode(): Node {
+  //   // TODO: if we are still a planar-embedding, use a PuzzleNode?
+  //   const debugNode = new Node();
+  //
+  //   const showBackgrounds = false;
+  //   const showRedEdges = false; // TODO: useful for debugging
+  //   const showVertices = false; // TODO: useful for debugging
+  //
+  //   this.edges.forEach((edge) => {
+  //     const start = edge.start.viewCoordinates;
+  //     const end = edge.end.viewCoordinates;
+  //
+  //     let stroke: TColor;
+  //     let lineWidth: number;
+  //     const edgeState = this.edgeStateMap.get(edge);
+  //     if (edgeState === EdgeState.WHITE) {
+  //       stroke = currentTheme.blackLineColorProperty;
+  //       lineWidth = 0.02;
+  //     } else if (edgeState === EdgeState.BLACK) {
+  //       stroke = okhslToRGBString(Math.random() * 360, 0.7, 0.55);
+  //       lineWidth = 0.1;
+  //     } else {
+  //       stroke = showRedEdges ? 'red' : null;
+  //       lineWidth = 0.02;
+  //     }
+  //
+  //     debugNode.addChild(
+  //       new Line(start, end, {
+  //         stroke: stroke,
+  //         lineWidth: lineWidth,
+  //         lineCap: 'round',
+  //       }),
+  //     );
+  //   });
+  //
+  //   if (showBackgrounds) {
+  //     this.faces.forEach((face) => {
+  //       const backgroundColor = new Color(okhslToRGBString(Math.random() * 360, 0.7, 0.6)).withAlpha(0.5);
+  //       debugNode.addChild(
+  //         new Path(Shape.polygon(face.vertices.map((vertex) => vertex.viewCoordinates)), {
+  //           fill: backgroundColor,
+  //         }),
+  //       );
+  //     });
+  //   }
+  //
+  //   if (showVertices) {
+  //     this.vertices.forEach((vertex) => {
+  //       debugNode.addChild(
+  //         new Circle(0.1, {
+  //           x: vertex.viewCoordinates.x,
+  //           y: vertex.viewCoordinates.y,
+  //           fill: currentTheme.blackLineColorProperty,
+  //         }),
+  //       );
+  //     });
+  //   }
+  //
+  //   this.faces.forEach((face) => {
+  //     const faceValue = this.faceValueMap.get(face) ?? null;
+  //
+  //     if (faceValue !== null) {
+  //       debugNode.addChild(
+  //         new Text(faceValue, {
+  //           maxWidth: 0.9,
+  //           maxHeight: 0.9,
+  //           center: face.viewCoordinates,
+  //           fill: currentTheme.faceValueColorProperty,
+  //         }),
+  //       );
+  //     }
+  //   });
+  //
+  //   return debugNode;
+  // }
 }
