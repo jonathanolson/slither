@@ -1,18 +1,23 @@
 import { puzzleFont } from '../Theme.ts';
+import { DualColorView } from '../puzzle/FaceColorViewNode.ts';
 import PuzzleNode from '../puzzle/PuzzleNode.ts';
 import { TPuzzleStyle } from '../puzzle/TPuzzleStyle.ts';
 import { currentPuzzleStyle } from '../puzzle/puzzleStyles.ts';
 
+import { Vector2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
 import { optionize } from 'phet-lib/phet-core';
 import { HBox, Node, NodeOptions, Text } from 'phet-lib/scenery';
 import { ArrowNode } from 'phet-lib/scenery-phet';
 import { Panel } from 'phet-lib/sun';
 
+import { TFace } from '../../model/board/core/TFace.ts';
 import { DisplayEmbedding } from '../../model/pattern/embedding/DisplayEmbedding.ts';
 import { PatternRule } from '../../model/pattern/pattern-rule/PatternRule.ts';
 import { BasicPuzzle } from '../../model/puzzle/BasicPuzzle.ts';
 
+import _ from '../../workarounds/_.ts';
+import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 type SelfOptions = {
   style?: TPuzzleStyle;
@@ -44,6 +49,74 @@ export class EmbeddedPatternRuleNode extends Node {
       noninteractive: true,
       style: options.style,
     });
+
+    const inputDualColorViews = inputNode.getDualColorViews();
+    const outputDualColorViews = outputNode.getDualColorViews();
+
+    if (inputDualColorViews && outputDualColorViews) {
+      const isViewIncluded = (view: DualColorView) => {
+        return view.faceCount >= options.style.faceColorThresholdProperty.value && view.isUndecided();
+      };
+
+      const getMinimalFaceIndex = (view: DualColorView) =>
+        Math.min(...view.faces.map((face) => displayEmbedding.smallBoard.faces.indexOf(face)));
+
+      const displayedInputViews = _.sortBy([...inputDualColorViews].filter(isViewIncluded), getMinimalFaceIndex);
+      const displayedOutputViews = _.sortBy([...outputDualColorViews].filter(isViewIncluded), getMinimalFaceIndex);
+
+      // Only done right now for "displayed" ones
+      const faceToInputViewMap = new Map<TFace, DualColorView>();
+      for (const inputView of displayedInputViews) {
+        if (isViewIncluded(inputView)) {
+          inputView.faces.forEach((face) => faceToInputViewMap.set(face, inputView));
+        }
+      }
+
+      const unsortedFreshOutputViews: DualColorView[] = [];
+
+      const outputToInputViewMap = new Map<DualColorView, DualColorView | null>();
+      for (const outputView of displayedOutputViews) {
+        const connectedInputViews = outputView.faces
+          .map((face) => faceToInputViewMap.get(face))
+          .filter(_.identity) as DualColorView[];
+
+        // Sort by face count first, THEN by index for ties (approximately)
+        const bestInputView = _.minBy(
+          connectedInputViews,
+          (inputView) => inputView.faces.length * 20 + displayedInputViews.indexOf(inputView),
+        );
+
+        if (bestInputView) {
+          outputToInputViewMap.set(outputView, bestInputView);
+        } else {
+          outputToInputViewMap.set(outputView, null);
+          unsortedFreshOutputViews.push(outputView);
+        }
+      }
+
+      const uniquelyColoredViews = [...displayedInputViews, ..._.sortBy(unsortedFreshOutputViews, getMinimalFaceIndex)];
+
+      const getHue = (view: DualColorView): Vector2 => {
+        const index = uniquelyColoredViews.indexOf(view);
+        assertEnabled() && assert(index >= 0, 'view must be in the list');
+        console.log(index);
+
+        // TODO: better mapping? FIND BETTER HUES and displays
+        return Vector2.createPolar(1, 5.5 + (2 * Math.PI * index) / uniquelyColoredViews.length);
+      };
+
+      for (const view of displayedInputViews) {
+        view.overrideHueVector(getHue(view));
+      }
+      for (const view of displayedOutputViews) {
+        const inputView = outputToInputViewMap.get(view);
+        if (inputView) {
+          view.overrideHueVector(getHue(inputView));
+        } else {
+          view.overrideHueVector(getHue(view));
+        }
+      }
+    }
 
     const questionFacesNode =
       rule.highlander ?

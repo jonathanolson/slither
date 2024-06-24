@@ -8,7 +8,7 @@
   - 
   - Priorities:
     - 
-    - Consistent colors for hint patterns
+    - Improve color/hue for face colors(!) can be hard to see
     - 
     - "measure difficulty" of puzzles accurately, then offline generate
     - 

@@ -3,6 +3,7 @@ export const changelog = [
     'Fix edge dragging when pressing on an already-pressed edge',
     'Adding difficulties for generation',
     'Improved share icon',
+    'Consistent coloring in color hint patterns',
   ],
   [
     '2024-06-18',

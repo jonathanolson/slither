@@ -1,7 +1,7 @@
 import { puzzleFont } from '../Theme.ts';
 import { EdgeViewInteractionNode } from './EdgeViewInteractionNode.ts';
 import { EdgeViewNode } from './EdgeViewNode.ts';
-import { FaceColorViewNode } from './FaceColorViewNode.ts';
+import { DualColorView, FaceColorViewNode } from './FaceColorViewNode.ts';
 import { FaceStateViewNode } from './FaceStateViewNode.ts';
 import { FaceViewInteractionNode } from './FaceViewInteractionNode.ts';
 import { FaceViewNode } from './FaceViewNode.ts';
@@ -72,6 +72,8 @@ export default class PuzzleNode<
   private readonly backgroundNode: Node;
 
   public readonly onFaceBackgroundDragStart: (event: PressListenerEvent) => void;
+
+  private faceColorViewNode: FaceColorViewNode | null = null;
 
   public constructor(
     public readonly puzzle: TPropertyPuzzle<Structure, Data>,
@@ -144,16 +146,6 @@ export default class PuzzleNode<
       return regions.length === 1 && regions[0].isSolved;
     });
 
-    // Face Colors (for now, lazily added)
-    const faceColorListener = (faceColorsVisible: boolean) => {
-      if (faceColorsVisible) {
-        faceColorContainer.addChild(new FaceColorViewNode(puzzle.board, puzzle.stateProperty, style));
-      } else {
-        faceColorContainer.children.forEach((child) => child.dispose());
-      }
-    };
-    style.faceColorsVisibleProperty.link(faceColorListener);
-
     // TODO: consider getting rid of excess containers here
 
     faceContainer.addChild(new FaceViewNode(puzzle.board, puzzle.stateProperty, style, options));
@@ -212,6 +204,18 @@ export default class PuzzleNode<
         options,
       ),
     );
+
+    // Face Colors (for now, lazily added)
+    const faceColorListener = (faceColorsVisible: boolean) => {
+      if (faceColorsVisible) {
+        this.faceColorViewNode = new FaceColorViewNode(puzzle.board, puzzle.stateProperty, style);
+        faceColorContainer.addChild(this.faceColorViewNode);
+      } else if (this.faceColorViewNode) {
+        this.faceColorViewNode.dispose();
+        this.faceColorViewNode = null;
+      }
+    };
+    style.faceColorsVisibleProperty.link(faceColorListener);
 
     if (faceViewInteractionNode) {
       this.onFaceBackgroundDragStart = (event) => faceViewInteractionNode!.triggerDrag?.(event);
@@ -283,5 +287,10 @@ export default class PuzzleNode<
 
   public getBackgroundBounds(): Bounds2 {
     return this.backgroundNode.bounds;
+  }
+
+  // TODO: How should we handle theme changes?
+  public getDualColorViews(): Set<DualColorView> | null {
+    return this.faceColorViewNode?.getDualColorViews() ?? null;
   }
 }

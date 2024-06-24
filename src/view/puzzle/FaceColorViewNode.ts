@@ -15,7 +15,6 @@ import { MultiIterable } from '../../workarounds/MultiIterable.ts';
 import _ from '../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
-
 export class FaceColorViewNode extends Node {
   private readonly faceColorNodeMap: Map<TFaceColor, FaceColorNode> = new Map();
   private readonly faceColorIdMap: Map<number, TFaceColor> = new Map();
@@ -384,6 +383,11 @@ export class FaceColorViewNode extends Node {
       dualColorView.updateHue();
     }
   }
+
+  // For manual adjustments
+  public getDualColorViews(): Set<DualColorView> {
+    return this.dualColorViews;
+  }
 }
 
 export default class DualColorType extends EnumerationValue {
@@ -394,9 +398,11 @@ export default class DualColorType extends EnumerationValue {
   public static readonly enumeration = new Enumeration(DualColorType);
 }
 
-class DualColorView {
+export class DualColorView {
   public readonly hueVector: Vector2;
   public faceCount: number;
+
+  private hueVectorOverride: Vector2 | null = null;
 
   public constructor(
     public readonly colorNodes: FaceColorNode[],
@@ -459,10 +465,20 @@ class DualColorView {
 
   public updateHue(): void {
     for (const colorNode of this.colorNodes) {
-      colorNode.hueVector.set(this.hueVector);
+      colorNode.hueVector.set(this.hueVectorOverride ?? this.hueVector);
 
       colorNode.updateHue(this.faceCount >= this.style.faceColorThresholdProperty.value);
     }
+  }
+
+  public overrideHueVector(hueVectorOverride: Vector2 | null): void {
+    this.hueVectorOverride = hueVectorOverride;
+
+    this.updateHue();
+  }
+
+  public isUndecided(): boolean {
+    return this.colorNodes.every((colorNode) => colorNode.faceColor.colorState === FaceColorState.UNDECIDED);
   }
 
   public dispose(): void {
