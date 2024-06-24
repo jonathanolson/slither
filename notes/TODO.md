@@ -8,6 +8,8 @@
   - 
   - Priorities:
     - 
+    - Incorrect "color matching" in patterns, because I am only adjusting hue (not light/dark)
+    - 
     - IGNORE colors from the "singular" added cells?
     - 
     - Separation of "chrome" and "puzzle" theme?
