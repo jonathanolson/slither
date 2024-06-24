@@ -107,7 +107,7 @@ import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
 
 import _ from '../workarounds/_.ts';
 
-const DEBUG_COLORS = true;
+const DEBUG_COLORS = false;
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty(
   'advancedSettingsVisibleProperty',
