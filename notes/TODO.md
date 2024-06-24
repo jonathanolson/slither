@@ -8,6 +8,8 @@
   - 
   - Priorities:
     - 
+    - IGNORE colors from the "singular" added cells?
+    - 
     - Separation of "chrome" and "puzzle" theme?
     - 
     - "measure difficulty" of puzzles accurately, then offline generate
