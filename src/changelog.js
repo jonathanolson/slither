@@ -4,6 +4,7 @@ export const changelog = [
     'Adding difficulties for generation',
     'Improved share icon',
     'Consistent coloring in color hint patterns',
+    'Adjusting colors for visibility',
   ],
   [
     '2024-06-18',

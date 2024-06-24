@@ -58,7 +58,7 @@ import {
 } from './puzzle/puzzleStyles.ts';
 
 import { BooleanProperty, DerivedProperty, MappedProperty, Property } from 'phet-lib/axon';
-import { GridBox, HBox, Node, Text, VBox } from 'phet-lib/scenery';
+import { GridBox, HBox, Node, Rectangle, Text, VBox } from 'phet-lib/scenery';
 
 import SlitherQueryParameters from '../SlitherQueryParameters.ts';
 
@@ -104,6 +104,10 @@ import {
 } from '../model/solver/autoSolver';
 
 import { LocalStorageBooleanProperty } from '../util/localStorage.ts';
+
+import _ from '../workarounds/_.ts';
+
+const DEBUG_COLORS = true;
 
 export const advancedSettingsVisibleProperty = new LocalStorageBooleanProperty(
   'advancedSettingsVisibleProperty',
@@ -557,6 +561,30 @@ export class SettingsNode extends PopupNode {
     });
     reloadToDefaultsButton.addInputListener(tooltipListener);
 
+    const debugColors =
+      DEBUG_COLORS ?
+        new Node({
+          children: _.range(0, 360).map((hue) => {
+            return new Node({
+              children: [
+                new Rectangle(hue, 0, 1.5, 20, {
+                  fill: new DerivedProperty([currentTheme.simpleRegionHueLUTProperty], (colors) => colors[hue]),
+                }),
+                new Rectangle(hue, 60, 1.5, 20, {
+                  fill: new DerivedProperty([currentTheme.faceColorLightHueLUTProperty], (colors) => colors[hue]),
+                }),
+                new Rectangle(hue, 80, 1.5, 20, {
+                  fill: new DerivedProperty([currentTheme.faceColorBasicHueLUTProperty], (colors) => colors[hue]),
+                }),
+                new Rectangle(hue, 100, 1.5, 20, {
+                  fill: new DerivedProperty([currentTheme.faceColorDarkHueLUTProperty], (colors) => colors[hue]),
+                }),
+              ],
+            });
+          }),
+        })
+      : new Node();
+
     super(
       new VBox({
         spacing: 20,
@@ -564,6 +592,7 @@ export class SettingsNode extends PopupNode {
         stretch: true,
         children: [
           topLevelNode,
+          debugColors,
           new HBox({
             align: 'top',
             spacing: 30,

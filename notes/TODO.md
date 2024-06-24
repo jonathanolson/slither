@@ -8,7 +8,7 @@
   - 
   - Priorities:
     - 
-    - Improve color/hue for face colors(!) can be hard to see
+    - Separation of "chrome" and "puzzle" theme?
     - 
     - "measure difficulty" of puzzles accurately, then offline generate
     - 
