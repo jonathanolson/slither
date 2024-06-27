@@ -1,6 +1,34 @@
 
 - 
   - 
+  - s0: http-server -c-1 -p 8091 -s
+  - s1: node bin/next-board.js square only edge unrestricted
+  - s2: node bin/next-board.js square only edge
+  - s3: node bin/next-board.js general all unrestricted
+  - s4: node bin/next-board.js general all
+  - s5: node bin/next-board.js general color unrestricted
+  - s6: node bin/next-board.js general edge color unrestricted
+  - s7: node bin/next-board.js general edge color
+  - s8: node bin/next-board.js general edge sector unrestricted
+  - s9: node bin/next-board.js general edge sector
+  - s10: node bin/next-board.js general edge unrestricted
+  - s11: node bin/next-board.js general edge
+  - s12: node bin/next-board.js square only edge color unrestricted
+  - s13: node bin/next-board.js square only edge color
+  - s14: node bin/next-board.js square only edge sector unrestricted
+  - s15: node bin/next-board.js square only edge sector
+  - s16: node bin/next-board.js square only color unrestricted
+  - s17: node bin/next-board.js square only all unrestricted
+  - s18: node bin/next-board.js square only all
+  - s19: node bin/next-board.js square only edge unrestricted
+  - s20: node bin/next-board.js square only edge
+  - s21: node bin/next-board.js square only edge color unrestricted
+  - s22: node bin/next-board.js square only edge color
+  - s23: node bin/next-board.js square only edge color unrestricted
+  - s24: node bin/next-board.js square only edge color
+  - s25: node bin/next-board.js square only edge color unrestricted
+  - s26: node bin/next-board.js square only edge color
+  - 
   - Mac:
     - general all
     - general color unrestricted
