@@ -90,7 +90,7 @@ os.setPriority(os.constants.priority.PRIORITY_LOW);
   const browser = await getBrowser();
 
   const evaluateHooks = async (evaluate) => {
-    return browserEvaluate(browser, 'http://localhost:8091/test/dist/hooks.html', evaluate);
+    return browserEvaluate(browser, 'http://localhost/slither/dist/hooks.html', evaluate);
   };
 
   const sequenceName = await evaluateHooks(`getSequenceName( ${JSON.stringify(sequenceSpecifier)} )`);
