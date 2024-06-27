@@ -10,6 +10,8 @@ import { defineConfig } from 'vite';
     - Maybe we should... ditch loading all the data? (remove references for the collections tests?)
  */
 
+let chunkId = 0;
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '',
@@ -105,6 +107,10 @@ export default defineConfig({
         hooks: '/hooks.html',
         'test/model-tests': '/test/model-tests.html',
         'test/correctness-tests': '/test/correctness-tests.html',
+      },
+      output: {
+        chunkFileNames: () => `chunk-${chunkId++}.js`,
+        entryFileNames: () => `entry-${chunkId++}.js`,
       },
       plugins: [
         unassert({
