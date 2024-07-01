@@ -25,16 +25,16 @@
   - s21: node bin/next-board.js square only edge color unrestricted
   - s22: node bin/next-board.js square only edge color
   - s23: node bin/next-board.js square only edge color unrestricted
-  - s24: node bin/next-board.js square only edge color
-  - s25: node bin/next-board.js square only edge color unrestricted
-  - s26: node bin/next-board.js square only edge color
+  - s24: KILLED
+  - s25: KILLED
+  - s26: KILLED
   - s27: node bin/next-board.js general edge unrestricted
   - s28: node bin/next-board.js general edge
   - s29: node bin/next-board.js general edge color unrestricted
   - s30: node bin/next-board.js general edge color
-  - s31: node bin/next-board.js general edge color unrestricted
-  - s32: node bin/next-board.js general edge color unrestricted
-  - s33: node bin/next-board.js general edge color unrestricted
+  - s31: KILLED
+  - s32: KILLED
+  - s33: KILLED
   - s34: node bin/next-board.js general edge unrestricted
   - s35: node bin/next-board.js general edge
   - 
