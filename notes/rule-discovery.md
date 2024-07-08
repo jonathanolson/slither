@@ -34,7 +34,7 @@
   - s30: node bin/next-board.js general edge color
   - s31: node bin/next-board.js general edge color unrestricted
   - s32: node bin/next-board.js general edge color unrestricted
-  - s33: KILLED
+  - s33: node bin/next-board.js general edge color unrestricted
   - s34: node bin/next-board.js general edge unrestricted
   - s35: node bin/next-board.js general edge
   - 
