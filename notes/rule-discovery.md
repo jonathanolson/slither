@@ -30,11 +30,11 @@
   - s26: node bin/next-board.js general edge color unrestricted
   - s27: node bin/next-board.js general edge unrestricted
   - s28: node bin/next-board.js general edge
-  - s29: node bin/next-board.js general edge color unrestricted
+  - s29: node bin/next-board.js general edge color unrestricted square-2-4
   - s30: node bin/next-board.js general edge color
-  - s31: node bin/next-board.js general edge color unrestricted
-  - s32: node bin/next-board.js general edge color unrestricted
-  - s33: node bin/next-board.js general edge color unrestricted
+  - s31: node bin/next-board.js general edge color unrestricted trihexagonal-2-2
+  - s32: node bin/next-board.js general edge color unrestricted cairo-2-0
+  - s33: node bin/next-board.js general edge color unrestricted hexagonal-1-0
   - s34: node bin/next-board.js general edge unrestricted
   - s35: node bin/next-board.js general edge
   - 
