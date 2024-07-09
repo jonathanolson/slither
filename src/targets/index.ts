@@ -1,5 +1,3 @@
-import '../../index.css';
-
 import { BooleanProperty } from 'phet-lib/axon';
 import { Bounds2 } from 'phet-lib/dot';
 import { Shape } from 'phet-lib/kite';
