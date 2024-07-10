@@ -197,11 +197,16 @@ export const lightTheme = addThemeLUT({
   selectedFaceColorHighlightColorProperty: new PaintColorProperty('rgba(0,0,0,0.5)'),
   selectedSectorEditColorProperty: new PaintColorProperty('rgba(0,0,0,0.80000000000000004441)'),
   simpleRegionTargetColorProperty: new PaintColorProperty('rgba(79,140,238,0)'),
-  faceColorBasicTargetColorProperty: new PaintColorProperty('rgba(191,191,237,0.14999999999999999445)'),
-  faceColorLightTargetColorProperty: new PaintColorProperty('rgba(215,215,244,0.14999999999999999445)'),
-  faceColorDarkTargetColorProperty: new PaintColorProperty('rgba(168,168,230,0.14999999999999999445)'),
+  /*
+    basic 240 55% 84%
+    light 240 55% 90%
+    dark 240 55% 78%
+   */
+  faceColorBasicTargetColorProperty: new PaintColorProperty('hsla(240,50%,84%,0.14999999999999999445)'),
+  faceColorLightTargetColorProperty: new PaintColorProperty('hsla(240,50%,90%,0.14999999999999999445)'),
+  faceColorDarkTargetColorProperty: new PaintColorProperty('hsla(240,50%,78%,0.14999999999999999445)'),
   faceColorOutsideColorProperty: new PaintColorProperty('rgb(255,255,255)'),
-  faceColorInsideColorProperty: new PaintColorProperty('rgb(204,204,204)'),
+  faceColorInsideColorProperty: new PaintColorProperty('hsl(0,0%,84%)'),
   faceColorDefaultColorProperty: new PaintColorProperty('rgb(237,237,237)'),
   sectorOnlyOneColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   sectorNotOneColorProperty: new PaintColorProperty('rgb(0,153,204)'),
@@ -257,11 +262,16 @@ export const darkTheme = addThemeLUT({
   selectedFaceColorHighlightColorProperty: new PaintColorProperty('rgba(255,255,255,0.5)'),
   selectedSectorEditColorProperty: new PaintColorProperty('rgba(255,255,255,0.80000000000000004441)'),
   simpleRegionTargetColorProperty: new PaintColorProperty('rgba(207,80,128,0)'),
-  faceColorBasicTargetColorProperty: new PaintColorProperty('rgba(111,32,32,0)'),
-  faceColorLightTargetColorProperty: new PaintColorProperty('rgba(138,45,40,0)'),
-  faceColorDarkTargetColorProperty: new PaintColorProperty('rgba(82,25,25,0)'),
+  /*
+    basic 0 55% 28%
+    light 0 55% 35%
+    dark 0 55% 21%
+   */
+  faceColorBasicTargetColorProperty: new PaintColorProperty('hsla(0,50%,28%,0)'),
+  faceColorLightTargetColorProperty: new PaintColorProperty('hsla(0,50%,34%,0)'),
+  faceColorDarkTargetColorProperty: new PaintColorProperty('hsla(0,50%,22%,0)'),
   faceColorOutsideColorProperty: new PaintColorProperty('rgb(13,13,13)'),
-  faceColorInsideColorProperty: new PaintColorProperty('rgb(64,64,64)'),
+  faceColorInsideColorProperty: new PaintColorProperty('hsl(0,0%,28%)'),
   faceColorDefaultColorProperty: new PaintColorProperty('rgb(38,38,38)'),
   sectorOnlyOneColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   sectorNotOneColorProperty: new PaintColorProperty('rgb(8,164,217)'),
