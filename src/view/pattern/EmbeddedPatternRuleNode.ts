@@ -99,7 +99,6 @@ export class EmbeddedPatternRuleNode extends Node {
       const getHue = (view: DualColorView): Vector2 => {
         const index = uniquelyColoredViews.indexOf(view);
         assertEnabled() && assert(index >= 0, 'view must be in the list');
-        console.log(index);
 
         // TODO: better mapping? FIND BETTER HUES and displays
         return Vector2.createPolar(1, 5.5 + (2 * Math.PI * index) / uniquelyColoredViews.length);

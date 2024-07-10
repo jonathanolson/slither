@@ -17,6 +17,8 @@ import { planarPatternMaps } from '../model/pattern/pattern-board/planar-map/pla
 import { PatternRule } from '../model/pattern/pattern-rule/PatternRule.ts';
 import { puzzleFromCompressedString } from '../model/puzzle/puzzleFromCompressedString.ts';
 
+import { sleep } from '../util/sleep.ts';
+
 import { lightTheme } from '../view/Theme.ts';
 import { DisplayTiling } from '../view/pattern/DisplayTiling.ts';
 import { EmbeddedPatternRuleNode } from '../view/pattern/EmbeddedPatternRuleNode.ts';
@@ -68,6 +70,7 @@ const getDisplayWithIdentifier = (rootNode: Node, id: string): Display => {
     allowWebGL: true,
     allowBackingScaleAntialiasing: true,
     allowSceneOverflow: false,
+    allowCSSHacks: false,
     accessibility: true,
 
     assumeFullWindow: false,
@@ -76,7 +79,7 @@ const getDisplayWithIdentifier = (rootNode: Node, id: string): Display => {
   });
 };
 
-const staticNodeWithIdentifier = (node: Node, id: string) => {
+const staticNodeWithIdentifier = async (node: Node, id: string) => {
   node.left = 0;
   node.top = 0;
 
@@ -91,6 +94,23 @@ const staticNodeWithIdentifier = (node: Node, id: string) => {
   display.height = Math.ceil(node.bottom);
 
   display.updateDisplay();
+
+  const parentElement = display.domElement.parentElement!;
+
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      const containerWidth = entry.contentRect.width;
+
+      const scale = Math.min(1, containerWidth / display.width);
+
+      display.domElement.style.transform = `scale(${scale})`;
+    }
+  });
+
+  // Start observing the parent element
+  resizeObserver.observe(parentElement);
+
+  await sleep(0);
 };
 
 const addStaticPuzzle = async (id: string, style: TPuzzleStyle, puzzleString: string, additionalNode?: Node) => {
@@ -115,7 +135,7 @@ const addStaticPuzzle = async (id: string, style: TPuzzleStyle, puzzleString: st
       })
     : puzzleNode;
 
-  staticNodeWithIdentifier(node, id);
+  await staticNodeWithIdentifier(node, id);
 };
 
 const addStaticClippedPuzzle = async (id: string, style: TPuzzleStyle, clipBounds: Bounds2, puzzleString: string) => {
@@ -133,7 +153,7 @@ const addStaticClippedPuzzle = async (id: string, style: TPuzzleStyle, clipBound
     ],
   });
 
-  staticNodeWithIdentifier(container, id);
+  await staticNodeWithIdentifier(container, id);
 };
 
 const addStaticRule = async (
@@ -151,7 +171,7 @@ const addStaticRule = async (
     style: style,
   });
 
-  staticNodeWithIdentifier(node, id);
+  await staticNodeWithIdentifier(node, id);
 };
 
 const addStaticPatternRule = async (id: string, ruleBinaryIdentifier: string) => {
@@ -161,7 +181,7 @@ const addStaticPatternRule = async (id: string, ruleBinaryIdentifier: string) =>
     scale: puzzleScale / 30,
   });
 
-  staticNodeWithIdentifier(
+  await staticNodeWithIdentifier(
     new Panel(node, {
       fill: '#333',
     }),
