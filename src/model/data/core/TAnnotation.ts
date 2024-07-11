@@ -1,5 +1,6 @@
 import { TEdge } from '../../board/core/TEdge.ts';
 import { TFace } from '../../board/core/TFace.ts';
+import { THalfEdge } from '../../board/core/THalfEdge.ts';
 import { TVertex } from '../../board/core/TVertex.ts';
 import { Embedding } from '../../pattern/embedding/Embedding.ts';
 import { BoardPatternBoard } from '../../pattern/pattern-board/BoardPatternBoard.ts';
@@ -278,6 +279,13 @@ export type PatternAnnotation = {
   affectedFaces: Set<TFace>;
 };
 
+export type FaceColorDisconnection = {
+  type: 'FaceColorDisconnection';
+  disconnection: THalfEdge[];
+  facesA: TFace[];
+  facesB: TFace[];
+};
+
 export const annotationSetsEdgeState = (annotation: TAnnotation): boolean => {
   return (
     annotation.type === 'ForcedLine' ||
@@ -316,6 +324,7 @@ export const annotationSetsFaceColor = (annotation: TAnnotation): boolean => {
     annotation.type === 'VertexStateToOppositeFaceColor' ||
     annotation.type === 'FaceStateToSameFaceColor' ||
     annotation.type === 'FaceStateToOppositeFaceColor' ||
+    annotation.type === 'FaceColorDisconnection' ||
     (annotation.type === 'Pattern' && annotation.affectedFaces.size > 0)
   );
 };
@@ -375,7 +384,8 @@ export type TAnnotation =
   | FaceStateToSameFaceColorAnnotation
   | FaceStateToOppositeFaceColorAnnotation
   | FaceStateToVertexStateAnnotation
-  | PatternAnnotation;
+  | PatternAnnotation
+  | FaceColorDisconnection;
 
 export const getAnnotationDifficultyB = (annotation: TAnnotation): number => {
   if (
@@ -401,6 +411,8 @@ export const getAnnotationDifficultyB = (annotation: TAnnotation): number => {
     return 5;
   } else if (annotation.type === 'DoubleMinusOneFaces') {
     return 5;
+  } else if (annotation.type === 'FaceColorDisconnection') {
+    return 6;
   } else if (annotation.type === 'SingleEdgeToSector' || annotation.type === 'DoubleEdgeToSector') {
     return 6;
   } else if (annotation.type === 'ForcedSector') {

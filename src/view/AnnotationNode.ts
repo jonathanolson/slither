@@ -14,7 +14,6 @@ import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts
 
 import _ from '../workarounds/_.ts';
 
-
 export class AnnotationNode extends Node {
   public constructor(
     public readonly board: TBoard,
@@ -185,6 +184,13 @@ export class AnnotationNode extends Node {
         (edge) => annotation.vertices.includes(edge.start) || annotation.vertices.includes(edge.end),
       );
       children = edges.map((edge) => getEdgeColoredOutline(edge, 'red'));
+    } else if (annotation.type === 'FaceColorDisconnection') {
+      // TODO: better view! ZOMG
+      // TODO: show disconnection
+
+      const changedEdges = new Set([...annotation.facesA, ...annotation.facesB].flatMap((face) => face.edges));
+
+      children = [...[...changedEdges].map((edge) => getEdgeColoredOutline(edge, 'red'))];
     } else if (annotation.type === 'Pattern') {
       // const affectedEdges = new Set( annotation.affectedEdges );
       // annotation.affectedSectors.forEach( sector => {

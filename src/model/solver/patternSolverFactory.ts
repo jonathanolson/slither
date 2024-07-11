@@ -11,12 +11,13 @@ import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSe
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
+import { FaceColorDisconnectionSolver } from './FaceColorDisconnectionSolver.ts';
 import { SafeEdgeToFaceColorSolver } from './SafeEdgeToFaceColorSolver.ts';
 import { SafeEdgeToSimpleRegionSolver } from './SafeEdgeToSimpleRegionSolver.ts';
 import { SafeSolvedEdgeSolver } from './SafeSolvedEdgeSolver.ts';
 import { SimpleLoopSolver } from './SimpleLoopSolver.ts';
 
-const getFactory = (groups: BinaryMixedRuleGroup[]) => {
+const getFactory = (groups: BinaryMixedRuleGroup[], includeColorDisconnection: boolean) => {
   return (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
     const boardPatternBoard = BoardPatternBoard.get(board);
 
@@ -24,6 +25,8 @@ const getFactory = (groups: BinaryMixedRuleGroup[]) => {
       new SafeEdgeToSimpleRegionSolver(board, state),
       new SafeSolvedEdgeSolver(board, state),
       new SafeEdgeToFaceColorSolver(board, state),
+
+      ...(includeColorDisconnection ? [new FaceColorDisconnectionSolver(board, state)] : []),
 
       ...groups.map((group) => BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, group)),
 
@@ -36,18 +39,23 @@ const getFactory = (groups: BinaryMixedRuleGroup[]) => {
   };
 };
 
-export const generalEdgePatternSolverFactory = getFactory([generalEdgeMixedGroup]);
-export const generalColorPatternSolverFactory = getFactory([generalColorMixedGroup]);
-export const generalEdgeColorPatternSolverFactory = getFactory([
-  generalEdgeColorMixedGroup,
-  generalColorMixedGroup,
-  generalEdgeMixedGroup,
-]);
-export const generalEdgeSectorPatternSolverFactory = getFactory([generalEdgeSectorMixedGroup, generalEdgeMixedGroup]);
-export const generalAllPatternSolverFactory = getFactory([
-  generalAllMixedGroup,
-  generalEdgeColorMixedGroup,
-  generalEdgeSectorMixedGroup,
-  generalColorMixedGroup,
-  generalEdgeMixedGroup,
-]);
+export const generalEdgePatternSolverFactory = getFactory([generalEdgeMixedGroup], false);
+export const generalColorPatternSolverFactory = getFactory([generalColorMixedGroup], true);
+export const generalEdgeColorPatternSolverFactory = getFactory(
+  [generalEdgeColorMixedGroup, generalColorMixedGroup, generalEdgeMixedGroup],
+  true,
+);
+export const generalEdgeSectorPatternSolverFactory = getFactory(
+  [generalEdgeSectorMixedGroup, generalEdgeMixedGroup],
+  true,
+);
+export const generalAllPatternSolverFactory = getFactory(
+  [
+    generalAllMixedGroup,
+    generalEdgeColorMixedGroup,
+    generalEdgeSectorMixedGroup,
+    generalColorMixedGroup,
+    generalEdgeMixedGroup,
+  ],
+  true,
+);

@@ -80,26 +80,21 @@ export class AnnotatedAction<Data> implements TAction<Data> {
         regionEdges: [...this.annotation.regionEdges].map((edge) => this.board.edges.indexOf(edge)),
         pathEdges: [...this.annotation.pathEdges].map((edge) => this.board.edges.indexOf(edge)),
       };
-
-      /*
-export type ForcedSolveLoopAnnotation = {
-type: 'ForcedSolveLoop';
-a: TVertex;
-b: TVertex;
-regionEdges: TEdge[];
-pathEdges: TEdge[];
-};
- */
     } else if (this.annotation.type === 'PrematureForcedLoop') {
-      /*
-export type PrematureForcedLoopAnnotation = {
-type: 'PrematureForcedLoop';
-a: TVertex;
-b: TVertex;
-regionEdges: TEdge[];
-pathEdges: TEdge[];
-};
- */
+      serializedAnnotation = {
+        type: 'PrematureForcedLoop',
+        a: this.board.vertices.indexOf(this.annotation.a),
+        b: this.board.vertices.indexOf(this.annotation.b),
+        regionEdges: [...this.annotation.regionEdges].map((edge) => this.board.edges.indexOf(edge)),
+        pathEdges: [...this.annotation.pathEdges].map((edge) => this.board.edges.indexOf(edge)),
+      };
+    } else if (this.annotation.type === 'FaceColorDisconnection') {
+      serializedAnnotation = {
+        type: 'FaceColorDisconnection',
+        disconnection: this.annotation.disconnection.map((halfEdge) => this.board.halfEdges.indexOf(halfEdge)),
+        facesA: this.annotation.facesA.map((face) => this.board.faces.indexOf(face)),
+        facesB: this.annotation.facesB.map((face) => this.board.faces.indexOf(face)),
+      };
     }
 
     if (serializedAnnotation !== null) {
@@ -198,6 +193,13 @@ pathEdges: TEdge[];
         b: board.vertices[serializedAction.annotation.b],
         regionEdges: serializedAction.annotation.regionEdges.map((index: number) => board.edges[index]),
         pathEdges: serializedAction.annotation.pathEdges.map((index: number) => board.edges[index]),
+      };
+    } else if (annotationType === 'FaceColorDisconnection') {
+      annotation = {
+        type: 'FaceColorDisconnection',
+        disconnection: serializedAction.annotation.disconnection.map((index: number) => board.halfEdges[index]),
+        facesA: serializedAction.annotation.facesA.map((index: number) => board.faces[index]),
+        facesB: serializedAction.annotation.facesB.map((index: number) => board.faces[index]),
       };
     }
 

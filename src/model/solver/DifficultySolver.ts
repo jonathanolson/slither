@@ -11,6 +11,7 @@ import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSe
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from './BinaryPatternSolver.ts';
 import { CompositeSolver } from './CompositeSolver.ts';
+import { FaceColorDisconnectionSolver } from './FaceColorDisconnectionSolver.ts';
 import { FaceColorParitySolver } from './FaceColorParitySolver.ts';
 import { FaceToEdgeSolver } from './FaceToEdgeSolver.ts';
 import { FaceToFaceColorSolver } from './FaceToFaceColorSolver.ts';
@@ -123,6 +124,8 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
               solveColors: true,
               allowPartialReduction: true,
             }),
+
+          () => new FaceColorDisconnectionSolver(board, state),
 
           ...(options.solveVertexState ? [() => new VertexToFaceColorSolver(board, state)] : []),
         ]
