@@ -185,12 +185,29 @@ export class AnnotationNode extends Node {
       );
       children = edges.map((edge) => getEdgeColoredOutline(edge, 'red'));
     } else if (annotation.type === 'FaceColorDisconnection') {
-      // TODO: better view! ZOMG
-      // TODO: show disconnection
+      const disconnectionShape = Shape.polygon(
+        annotation.disconnection.map((halfEdge) => {
+          const face = halfEdge.reversed.face;
 
-      const changedEdges = new Set([...annotation.facesA, ...annotation.facesB].flatMap((face) => face.edges));
+          if (face) {
+            return face.viewCoordinates;
+          } else {
+            const center = halfEdge.start.viewCoordinates.average(halfEdge.end.viewCoordinates);
+            const opposite = halfEdge.face!.viewCoordinates;
 
-      children = [...[...changedEdges].map((edge) => getEdgeColoredOutline(edge, 'red'))];
+            return center.timesScalar(2).minus(opposite);
+          }
+        }),
+      );
+
+      children = [
+        new Path(disconnectionShape, {
+          lineWidth: 0.05,
+          lineCap: 'round',
+          lineJoin: 'round',
+          stroke: 'red',
+        }),
+      ];
     } else if (annotation.type === 'Pattern') {
       // const affectedEdges = new Set( annotation.affectedEdges );
       // annotation.affectedSectors.forEach( sector => {
