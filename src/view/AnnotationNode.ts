@@ -205,7 +205,7 @@ export class AnnotationNode extends Node {
           lineWidth: 0.05,
           lineCap: 'round',
           lineJoin: 'round',
-          stroke: 'red',
+          stroke: 'rgba(255,0,0,0.7)',
         }),
       ];
     } else if (annotation.type === 'Pattern') {

@@ -5,6 +5,7 @@ import { TFaceColor, TFaceColorData } from '../data/face-color/TFaceColorData.ts
 import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 
 import { MultiIterable } from '../../workarounds/MultiIterable.ts';
+import _ from '../../workarounds/_.ts';
 import assert, { assertEnabled } from '../../workarounds/assert.ts';
 
 export const getFaceColorDisconnectedComponent = (
@@ -27,6 +28,8 @@ export const getFaceColorDisconnectedComponent = (
   const getExteriorColor = (halfEdge: THalfEdge): TFaceColor => {
     return getInteriorColor(halfEdge.reversed);
   };
+
+  let disconnectedComponents: THalfEdge[][] = [];
 
   // We'll remove half-edges as we trace
   while (remainingHalfEdges.size) {
@@ -176,8 +179,12 @@ export const getFaceColorDisconnectedComponent = (
     const hasInteriorComponent = isComponent(interiorFaceSet, true);
 
     if (hasInteriorComponent) {
-      return boundaryHalfEdges;
+      disconnectedComponents.push(boundaryHalfEdges);
     }
+  }
+
+  if (disconnectedComponents.length > 0) {
+    return _.minBy(disconnectedComponents, (component) => component.length)!;
   }
 
   return null;
