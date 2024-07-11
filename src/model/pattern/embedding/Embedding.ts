@@ -96,14 +96,14 @@ export class Embedding {
 
   public mapNonExitEdge(edge: TPatternEdge): TPatternEdge {
     const result = this.nonExitEdgeMap.get(edge)!;
-    assertEnabled() && assert(result);
+    // assertEnabled() && assert(result);
 
     return result;
   }
 
   public mapExitEdges(edge: TPatternEdge): TPatternEdge[] {
     const result = this.exitEdgeMap.get(edge)!;
-    assertEnabled() && assert(result);
+    // assertEnabled() && assert(result);
 
     return result;
   }
@@ -117,7 +117,7 @@ export class Embedding {
 
   public mapFace(face: TPatternFace): TPatternFace {
     const result = this.faceMap.get(face)!;
-    assertEnabled() && assert(result);
+    // assertEnabled() && assert(result);
 
     return result;
   }

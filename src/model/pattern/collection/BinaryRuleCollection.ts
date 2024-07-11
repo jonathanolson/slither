@@ -433,7 +433,7 @@ export class BinaryRuleCollection {
     let byteIndex = this.ruleIndices[ruleIndex];
     const patternBoardIndex = this.data[byteIndex++];
     const patternBoard = this.patternBoards[patternBoardIndex];
-    assertEnabled() && assert(patternBoard, 'pattern board');
+    // assertEnabled() && assert(patternBoard, 'pattern board');
 
     const binaryMapping = getBinaryFeatureMapping(patternBoard);
 
@@ -446,7 +446,7 @@ export class BinaryRuleCollection {
       } else if (firstByte === 0xfe) {
         // First "next byte" should always be a primary face
         const mainPrimaryFaceIndex = this.data[byteIndex++];
-        assertEnabled() && assert(mainPrimaryFaceIndex < 0x80);
+        // assertEnabled() && assert(mainPrimaryFaceIndex < 0x80);
 
         while (true) {
           const nextByte = this.data[byteIndex++];
@@ -502,7 +502,7 @@ export class BinaryRuleCollection {
       } else if (firstByte === 0xfe) {
         // First "next byte" should always be a primary face
         const mainPrimaryFaceIndex = this.data[byteIndex++];
-        assertEnabled() && assert(mainPrimaryFaceIndex < 0x80);
+        // assertEnabled() && assert(mainPrimaryFaceIndex < 0x80);
 
         while (true) {
           const nextByte = this.data[byteIndex++];

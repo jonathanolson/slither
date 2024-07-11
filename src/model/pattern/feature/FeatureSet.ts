@@ -62,7 +62,7 @@ export class FeatureSet {
       this.size++;
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   // TODO: optimize this (so we're not creating things and replacing)
@@ -102,11 +102,11 @@ export class FeatureSet {
       this.faceToColorDualMap.set(face, feature);
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addBlackEdge(edge: TPatternEdge): void {
-    assertEnabled() && assert(edge);
+    // assertEnabled() && assert(edge);
 
     if (this.blackEdges.has(edge)) {
       return;
@@ -125,7 +125,7 @@ export class FeatureSet {
     if (sectors) {
       for (const sector of sectors) {
         const otherEdge = edge === sector.edges[0] ? sector.edges[1] : sector.edges[0];
-        assertEnabled() && assert(otherEdge);
+        // assertEnabled() && assert(otherEdge);
 
         let remainingSectorCount = 0;
 
@@ -185,11 +185,11 @@ export class FeatureSet {
       }
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addRedEdge(edge: TPatternEdge): void {
-    assertEnabled() && assert(edge);
+    // assertEnabled() && assert(edge);
 
     if (this.redEdges.has(edge)) {
       return;
@@ -207,7 +207,7 @@ export class FeatureSet {
     if (sectors) {
       for (const sector of sectors) {
         const otherEdge = edge === sector.edges[0] ? sector.edges[1] : sector.edges[0];
-        assertEnabled() && assert(otherEdge);
+        // assertEnabled() && assert(otherEdge);
 
         let remainingSectorCount = 0;
 
@@ -267,7 +267,7 @@ export class FeatureSet {
       }
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addSectorNotZero(sector: TPatternSector): void {
@@ -314,7 +314,7 @@ export class FeatureSet {
       this.ensureSector(sector);
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addSectorNotOne(sector: TPatternSector): void {
@@ -374,7 +374,7 @@ export class FeatureSet {
       this.ensureSector(sector);
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addSectorNotTwo(sector: TPatternSector): void {
@@ -421,7 +421,7 @@ export class FeatureSet {
       this.ensureSector(sector);
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   public addSectorOnlyOne(sector: TPatternSector): void {
@@ -482,7 +482,7 @@ export class FeatureSet {
     this.sectorsOnlyOne.add(sector);
     this.ensureSector(sector);
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   // Mutates by adding a feature
@@ -507,7 +507,7 @@ export class FeatureSet {
       throw new Error(`unimplemented type of feature for FeatureSet: ${feature}`);
     }
 
-    assertEnabled() && this.verifySize();
+    // assertEnabled() && this.verifySize();
   }
 
   private ensureSector(sector: TPatternSector): void {
@@ -577,9 +577,9 @@ export class FeatureSet {
     return size;
   }
 
-  private verifySize(): void {
-    assertEnabled() && assert(this.size === this.computeSize(), 'size mismatch');
-  }
+  // private verifySize(): void {
+  //   assertEnabled() && assert(this.size === this.computeSize(), 'size mismatch');
+  // }
 
   public getInputDifficultyScoreA(): number {
     let score = 0;
