@@ -39,6 +39,7 @@ export type DifficultySolverOptions = {
   solveFaceColors: boolean;
   solveVertexState: boolean;
   solveFaceState: boolean;
+  cutoffDifficulty: number;
 };
 
 export class DifficultySolver<Data extends TCompleteData> implements TSolver<Data, TAnnotatedAction<Data>> {
@@ -52,7 +53,7 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
       ...(options.solveEdges && options.solveFaceColors && options.solveSectors ? [generalAllMixedGroup] : []),
       ...(options.solveEdges && options.solveSectors ? [generalEdgeSectorMixedGroup] : []),
       ...(options.solveEdges && options.solveFaceColors ? [generalEdgeColorMixedGroup] : []),
-      ...(options.solveFaceColors ? [generalColorMixedGroup] : []),
+      ...(options.solveFaceColors && !options.solveEdges ? [generalColorMixedGroup] : []),
       ...(options.solveEdges ? [generalEdgeMixedGroup] : []),
     ];
 
@@ -72,8 +73,6 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
           solveToRed: true,
           solveToBlack: true,
         }),
-
-      ...groups.map((group) => () => BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, group)),
 
       () =>
         new SimpleLoopSolver(board, state, {
@@ -152,11 +151,20 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
           ...(options.solveVertexState ? [() => new FaceToVertexSolver(board, state)] : []),
         ]
       : []),
+
+      ...groups.map((group) => {
+        return (maxDifficulty: number) => {
+          const ruleCount = group.getRuleCountWithDifficulty(Math.min(options.cutoffDifficulty, maxDifficulty));
+          console.log('size', ruleCount, 'of', group.size, 'for maxDifficulty', maxDifficulty);
+
+          return BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, group, ruleCount);
+        };
+      }),
     ];
 
     let bestDifficulty = Number.POSITIVE_INFINITY;
     for (const solverFactory of solverFactories) {
-      const solver = solverFactory();
+      const solver = solverFactory(bestDifficulty);
 
       const action = solver.nextAction();
 

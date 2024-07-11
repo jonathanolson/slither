@@ -5,14 +5,10 @@ import { TState } from '../data/core/TState.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { DifficultySolver, DifficultySolverOptions } from '../solver/DifficultySolver.ts';
 
-export type EstimateDifficultyOptions = {
-  cutoffDifficulty: number;
-} & DifficultySolverOptions;
-
 export const estimateDifficulty = (
   board: TBoard,
   state: TState<TCompleteData>,
-  options: EstimateDifficultyOptions,
+  options: DifficultySolverOptions,
 ): number => {
   state = state.clone();
 

@@ -7,6 +7,8 @@ import { compressByteArray, decompressByteArray } from '../../../util/compressio
 import _ from '../../../workarounds/_.ts';
 
 export class BinaryMixedRuleGroup {
+  private readonly ruleDifficultyCache = new Map<number, number>();
+
   private constructor(
     public readonly collection: BinaryRuleCollection,
     // "highlander" bits"
@@ -36,6 +38,29 @@ export class BinaryMixedRuleGroup {
   public withPatternBoardFilter(patternBoardFilter: (patternBoard: TPatternBoard) => boolean): BinaryMixedRuleGroup {
     // TODO: can optimize further, no need to un-binary-ify
     return this.filterIndex((ruleIndex) => patternBoardFilter(this.getRule(ruleIndex).patternBoard));
+  }
+
+  public getRuleCountWithDifficulty(maxDifficulty: number): number {
+    if (isFinite(maxDifficulty)) {
+      if (this.ruleDifficultyCache.has(maxDifficulty)) {
+        return this.ruleDifficultyCache.get(maxDifficulty)!;
+      }
+
+      let numRules = 0;
+
+      for (; numRules < this.size; numRules++) {
+        const rule = this.getRule(numRules);
+        if (rule.getInputDifficultyScoreB() > maxDifficulty) {
+          break;
+        }
+      }
+
+      this.ruleDifficultyCache.set(maxDifficulty, numRules);
+
+      return numRules;
+    } else {
+      return this.size;
+    }
   }
 
   public withRuleIndices(ruleIndices: number[]): BinaryMixedRuleGroup {

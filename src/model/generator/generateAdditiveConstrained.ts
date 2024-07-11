@@ -72,11 +72,12 @@ export const generateAdditiveConstrained = async (
     //   'total difficulty',
     //   estimateDifficulty(minimizedPuzzle.board, minimizedPuzzle.cleanState, {
     //     solveEdges: true,
-    //     solveSectors: true,
+    //     solveSectors: false,
     //     solveFaceColors: true,
-    //     solveVertexState: true,
-    //     solveFaceState: true,
+    //     solveVertexState: false,
+    //     solveFaceState: false,
     //     cutoffDifficulty: Number.POSITIVE_INFINITY,
+    //     // cutoffDifficulty: 10,
     //   }),
     // );
 
