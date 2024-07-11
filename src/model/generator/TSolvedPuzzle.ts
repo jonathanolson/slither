@@ -8,6 +8,7 @@ import { TFaceValueData } from '../data/face-value/TFaceValueData.ts';
 export interface TSolvedPuzzle<Structure extends TStructure, Data extends TFaceValueData> {
   board: TBoard<Structure>;
   cleanState: TState<Data>;
+
   solvedState: TState<Data>;
   blackEdges: Set<Structure['Edge']>;
 }

@@ -1,5 +1,14 @@
+import { TinyEmitter, TinyProperty } from 'phet-lib/axon';
 import { Display, Node } from 'phet-lib/scenery';
 
+import { PolygonGeneratorBoard } from '../model/board/core/PolygonGeneratorBoard.ts';
+import { TBoard } from '../model/board/core/TBoard.ts';
+import { TStructure } from '../model/board/core/TStructure.ts';
+import { squarePolygonGenerator } from '../model/board/generators/squarePolygonGenerator.ts';
+import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
+import CanSolveDifficulty from '../model/generator/CanSolveDifficulty.ts';
+import { TSolvedPuzzle } from '../model/generator/TSolvedPuzzle.ts';
+import { generateAdditiveConstrained } from '../model/generator/generateAdditiveConstrained.ts';
 import {
   BinaryMixedRuleGroup,
   SerializedBinaryMixedRuleGroup,
@@ -20,6 +29,8 @@ import {
   standardSquareBoardGenerations,
 } from '../model/pattern/pattern-board/patternBoards.ts';
 import { serializePatternBoard } from '../model/pattern/pattern-board/serializePatternBoard.ts';
+import { TSerializedRatedPuzzle } from '../model/puzzle/TSerializedRatedPuzzle.ts';
+import { getSerializedRatedPuzzle } from '../model/puzzle/getSerializedRatedPuzzle.ts';
 
 import { compressString } from '../util/compression.ts';
 
@@ -43,6 +54,8 @@ const display = new Display(rootNode, {
 document.body.appendChild(display.domElement);
 
 display.setWidthHeight(window.innerWidth, window.innerHeight);
+
+type RatedPuzzleType = 'square-10x10';
 
 // TODO: use this more to get rid of the other globals
 declare global {
@@ -98,6 +111,8 @@ declare global {
       mainCollection: SerializedBinaryRuleCollection | null,
       highlanderCollection: SerializedBinaryRuleCollection | null,
     ) => SerializedBinaryMixedRuleGroup;
+
+    getMinimizedRatedPuzzle: (type: RatedPuzzleType) => Promise<TSerializedRatedPuzzle>;
   }
 }
 
@@ -245,4 +260,35 @@ window.collectionsToSortedMixedGroup = (
   console.log('rule count', mixedGroup.size);
 
   return mixedGroup.sortedDefault().serialize();
+};
+
+window.getMinimizedRatedPuzzle = async (type: RatedPuzzleType): Promise<TSerializedRatedPuzzle> => {
+  let board: TBoard;
+  if (type === 'square-10x10') {
+    board = PolygonGeneratorBoard.get(squarePolygonGenerator, {
+      width: 10,
+      height: 10,
+    });
+
+    console.log(board);
+  } else {
+    throw new Error('unknown type: ' + type);
+  }
+
+  let solvedPuzzle: TSolvedPuzzle<TStructure, TCompleteData> | null = null;
+
+  while (!solvedPuzzle) {
+    solvedPuzzle = await generateAdditiveConstrained(
+      board,
+      CanSolveDifficulty.NO_LIMIT,
+      new TinyProperty(false),
+      new TinyEmitter(),
+      new TinyEmitter(),
+      new TinyEmitter(),
+    );
+  }
+
+  const serializedRatedPuzzle = getSerializedRatedPuzzle(solvedPuzzle);
+
+  return serializedRatedPuzzle;
 };
