@@ -35,6 +35,7 @@ console.log('test');
 
 (async () => {
   const rule: PatternRule = PatternRule.fromBinaryIdentifier(queryParameters.r);
+  console.log(rule.getInputDifficultyScoreB());
   console.log(rule.serialize());
 
   scene.addChild(

@@ -376,3 +376,59 @@ export type TAnnotation =
   | FaceStateToOppositeFaceColorAnnotation
   | FaceStateToVertexStateAnnotation
   | PatternAnnotation;
+
+export const getAnnotationDifficultyB = (annotation: TAnnotation): number => {
+  if (
+    annotation.type === 'SimpleRegions' ||
+    annotation.type === 'CompletingEdgesAfterSolve' ||
+    annotation.type === 'GeneralFaceColoring' ||
+    annotation.type === 'InvalidFaceColoring' ||
+    annotation.type === 'FaceColoringBlackEdge' ||
+    annotation.type === 'FaceColoringRedEdge' ||
+    annotation.type === 'JointToRed' ||
+    annotation.type === 'ForcedLine' ||
+    annotation.type === 'AlmostEmptyToRed' ||
+    annotation.type === 'FaceSatisfied' ||
+    annotation.type === 'FaceAntiSatisfied' ||
+    annotation.type === 'FaceColorToBlack' ||
+    annotation.type === 'FaceColorToRed' ||
+    annotation.type === 'StaticFaceSectors'
+  ) {
+    return 0;
+  } else if (annotation.type === 'Pattern') {
+    return Math.max(0, annotation.rule.getInputDifficultyScoreB());
+  } else if (annotation.type === 'ForcedSolveLoop' || annotation.type === 'PrematureForcedLoop') {
+    return 5;
+  } else if (annotation.type === 'DoubleMinusOneFaces') {
+    return 5;
+  } else if (annotation.type === 'SingleEdgeToSector' || annotation.type === 'DoubleEdgeToSector') {
+    return 6;
+  } else if (annotation.type === 'ForcedSector') {
+    return 7;
+  } else if (annotation.type === 'FaceColorNoTrivialLoop') {
+    return 7;
+  } else if (annotation.type === 'FaceColorMatchToRed' || annotation.type === 'FaceColorMatchToBlack') {
+    return 9;
+  } else if (annotation.type === 'FaceColorBalance') {
+    return 11;
+  } else if (annotation.type === 'VertexState' || annotation.type === 'VertexStateToEdge') {
+    return 12;
+  } else if (
+    annotation.type === 'VertexStateToSector' ||
+    annotation.type === 'VertexStateToSameFaceColor' ||
+    annotation.type === 'VertexStateToOppositeFaceColor'
+  ) {
+    return 15;
+  } else if (
+    annotation.type === 'FaceState' ||
+    annotation.type === 'FaceStateToEdge' ||
+    annotation.type === 'FaceStateToSector' ||
+    annotation.type === 'FaceStateToSameFaceColor' ||
+    annotation.type === 'FaceStateToOppositeFaceColor' ||
+    annotation.type === 'FaceStateToVertexState'
+  ) {
+    return 20;
+  } else {
+    throw new Error(`unknown annotation type: ${(annotation as TAnnotation).type}`);
+  }
+};
