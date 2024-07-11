@@ -68,6 +68,18 @@ export const generateAdditiveConstrained = async (
     // Maybe... let it complete on the screen before we do complicated time consuming things
     interruptableSleep(17, interruptedProperty);
 
+    // console.log(
+    //   'total difficulty',
+    //   estimateDifficulty(minimizedPuzzle.board, minimizedPuzzle.cleanState, {
+    //     solveEdges: true,
+    //     solveSectors: true,
+    //     solveFaceColors: true,
+    //     solveVertexState: true,
+    //     solveFaceState: true,
+    //     cutoffDifficulty: Number.POSITIVE_INFINITY,
+    //   }),
+    // );
+
     return minimizedPuzzle;
   } catch (e) {
     if (e instanceof InterruptedError) {
