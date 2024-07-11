@@ -56,7 +56,17 @@ os.setPriority(os.constants.priority.PRIORITY_LOW);
   const getLock = async () => {
     // console.log( 'locking' );
     await waitForLockCheck();
-    const release = await lockfile.lock(puzzleFilename, lockfileOptions);
+
+    let release;
+
+    while (true) {
+      try {
+        release = await lockfile.lock(puzzleFilename, lockfileOptions);
+        break;
+      } catch (e) {
+        await waitForLockCheck();
+      }
+    }
     // console.log( 'locked' );
 
     return release;
