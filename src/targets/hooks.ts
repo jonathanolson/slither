@@ -55,7 +55,7 @@ document.body.appendChild(display.domElement);
 
 display.setWidthHeight(window.innerWidth, window.innerHeight);
 
-type RatedPuzzleType = 'square-10x10';
+type RatedPuzzleType = string;
 
 // TODO: use this more to get rid of the other globals
 declare global {
@@ -264,13 +264,20 @@ window.collectionsToSortedMixedGroup = (
 
 window.getMinimizedRatedPuzzle = async (type: RatedPuzzleType): Promise<TSerializedRatedPuzzle> => {
   let board: TBoard;
-  if (type === 'square-10x10') {
-    board = PolygonGeneratorBoard.get(squarePolygonGenerator, {
-      width: 10,
-      height: 10,
-    });
 
-    console.log(board);
+  if (type.startsWith('square-')) {
+    const size = type.split('-')[1];
+    const width = parseInt(size.split('x')[0], 10);
+    const height = parseInt(size.split('x')[1], 10);
+
+    if (!Number.isInteger(width) || !Number.isInteger(height)) {
+      throw new Error('invalid size');
+    }
+
+    board = PolygonGeneratorBoard.get(squarePolygonGenerator, {
+      width: width,
+      height: height,
+    });
   } else {
     throw new Error('unknown type: ' + type);
   }

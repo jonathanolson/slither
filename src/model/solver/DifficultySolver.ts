@@ -74,7 +74,6 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
           solveToRed: true,
           solveToBlack: true,
         }),
-
       () =>
         new SimpleLoopSolver(board, state, {
           solveToRed: true,

@@ -5,7 +5,7 @@ import lockfile from 'proper-lockfile';
 
 const boardType = process.argv[2];
 
-if (boardType !== 'square-10x10') {
+if (typeof boardType !== 'string') {
   throw new Error('unknown board type ' + boardType);
 }
 
