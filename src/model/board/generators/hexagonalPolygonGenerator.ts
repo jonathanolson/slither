@@ -6,6 +6,7 @@ import _ from '../../../workarounds/_.ts';
 
 export const hexagonalPolygonGenerator: PolygonGenerator = {
   name: 'Hexagonal',
+  urlName: 'hexagonal',
   parameters: {
     radius: {
       label: 'Radius',

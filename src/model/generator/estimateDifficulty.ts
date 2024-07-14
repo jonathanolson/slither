@@ -5,6 +5,10 @@ import { TState } from '../data/core/TState.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
 import { DifficultySolver, DifficultySolverOptions } from '../solver/DifficultySolver.ts';
 
+const BASE = 16;
+const logBase = (x: number) => Math.log(x) / Math.log(BASE);
+const expBase = (x: number) => Math.pow(BASE, x);
+
 export const estimateDifficulty = (
   board: TBoard,
   state: TState<TCompleteData>,
@@ -16,7 +20,7 @@ export const estimateDifficulty = (
   let totalActions = 0;
 
   const getFinalDifficulty = () => {
-    return Math.log(totalDifficulty / Math.sqrt(totalActions) + 1);
+    return logBase(totalDifficulty / Math.sqrt(totalActions) + 1);
   };
 
   while (true) {
@@ -36,7 +40,7 @@ export const estimateDifficulty = (
       const difficulty = getAnnotationDifficultyB(action.annotation);
       console.log('difficulty', difficulty, action.annotation.type);
       if (difficulty > 0) {
-        totalDifficulty += Math.exp(difficulty) - 1;
+        totalDifficulty += expBase(difficulty) - 1;
         totalActions += 1;
       }
     } else {

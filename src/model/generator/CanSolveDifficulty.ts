@@ -3,6 +3,7 @@ import { TCompleteData } from '../data/combined/TCompleteData.ts';
 import { TAnnotatedAction } from '../data/core/TAnnotatedAction.ts';
 import { TState } from '../data/core/TState.ts';
 import { simpleRegionIsSolved } from '../data/simple-region/TSimpleRegionData.ts';
+import { generalAllMixedGroup } from '../pattern/collection/generalAllMixedGroup.ts';
 import { generalEdgeColorMixedGroup } from '../pattern/collection/generalEdgeColorMixedGroup.ts';
 import { generalEdgeMixedGroup } from '../pattern/collection/generalEdgeMixedGroup.ts';
 import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSectorMixedGroup.ts';
@@ -140,6 +141,98 @@ export default class CanSolveDifficulty extends EnumerationValue {
           BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeColorMixedGroup, 600),
           BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup, 100),
           BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeMixedGroup, 1000),
+        ]);
+      },
+      board,
+      state,
+      true,
+    );
+
+    return simpleRegionIsSolved(state);
+  });
+
+  public static readonly VERY_HARD = new CanSolveDifficulty((board, state) => {
+    state = state.clone();
+
+    iterateSolverFactory(
+      (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+        const boardPatternBoard = BoardPatternBoard.get(board);
+
+        return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+          new SafeEdgeToSimpleRegionSolver(board, state),
+          new SafeSolvedEdgeSolver(board, state),
+          new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleVertexSolver(board, state, {
+            solveJointToRed: true,
+            solveForcedLineToBlack: true,
+            solveAlmostEmptyToRed: true,
+          }),
+          new SimpleFaceSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+          }),
+
+          new SimpleLoopSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+            resolveAllRegions: false, // NOTE: this will be faster
+          }),
+
+          standardSolverFactory(board, state, dirty),
+
+          new FaceColorDisconnectionSolver(board, state),
+
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalAllMixedGroup, 1000),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeColorMixedGroup, 2000),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup, 1000),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeMixedGroup, 3000),
+        ]);
+      },
+      board,
+      state,
+      true,
+    );
+
+    return simpleRegionIsSolved(state);
+  });
+
+  public static readonly FULL = new CanSolveDifficulty((board, state) => {
+    state = state.clone();
+
+    iterateSolverFactory(
+      (board: TBoard, state: TState<TCompleteData>, dirty?: boolean) => {
+        const boardPatternBoard = BoardPatternBoard.get(board);
+
+        return new CompositeSolver<TCompleteData, TAnnotatedAction<TCompleteData>>([
+          new SafeEdgeToSimpleRegionSolver(board, state),
+          new SafeSolvedEdgeSolver(board, state),
+          new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleVertexSolver(board, state, {
+            solveJointToRed: true,
+            solveForcedLineToBlack: true,
+            solveAlmostEmptyToRed: true,
+          }),
+          new SimpleFaceSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+          }),
+
+          new SimpleLoopSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+            resolveAllRegions: false, // NOTE: this will be faster
+          }),
+
+          standardSolverFactory(board, state, dirty),
+
+          new FaceColorDisconnectionSolver(board, state),
+
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalAllMixedGroup),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeColorMixedGroup),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup),
+          BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeMixedGroup),
         ]);
       },
       board,

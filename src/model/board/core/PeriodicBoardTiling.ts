@@ -2,6 +2,7 @@ import { Vector2 } from 'phet-lib/dot';
 
 export interface PeriodicBoardTiling {
   name: string;
+  urlName: string;
   basisA: Vector2;
   basisB: Vector2;
   polygons: Vector2[][];
@@ -11,6 +12,7 @@ export interface PeriodicBoardTiling {
 
 export const squareTiling: PeriodicBoardTiling = {
   name: 'Square Tiling',
+  urlName: 'square',
   basisA: new Vector2(1, 0),
   basisB: new Vector2(0, 1),
   polygons: [[new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0)]],
@@ -18,6 +20,7 @@ export const squareTiling: PeriodicBoardTiling = {
 };
 export const hexagonalTiling: PeriodicBoardTiling = {
   name: 'Hexagonal Tiling',
+  urlName: 'hexagonal',
   basisA: new Vector2(1, 0),
   basisB: new Vector2(0.5, Math.sqrt(3) / 2),
   polygons: [
@@ -34,6 +37,7 @@ export const hexagonalTiling: PeriodicBoardTiling = {
 };
 export const triangularTiling: PeriodicBoardTiling = {
   name: 'Triangular',
+  urlName: 'triangular',
   basisA: new Vector2(1, 0),
   basisB: new Vector2(0.5, Math.sqrt(3) / 2),
   polygons: [
@@ -44,6 +48,7 @@ export const triangularTiling: PeriodicBoardTiling = {
 };
 export const trihexagonalTiling: PeriodicBoardTiling = {
   name: 'Trihexagonal',
+  urlName: 'trihexagonal',
   basisA: new Vector2(2, 0),
   basisB: new Vector2(1, Math.sqrt(3)),
   polygons: [
@@ -62,6 +67,7 @@ export const trihexagonalTiling: PeriodicBoardTiling = {
 };
 export const smallRhombitrihexagonalTiling: PeriodicBoardTiling = {
   name: 'Rhombitrihexagonal',
+  urlName: 'rhombitrihexagonal',
   basisA: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
   basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
   polygons: [
@@ -102,6 +108,7 @@ export const smallRhombitrihexagonalTiling: PeriodicBoardTiling = {
 };
 export const truncatedSquareTiling: PeriodicBoardTiling = {
   name: 'Truncated Square',
+  urlName: 'truncated-square',
   basisA: new Vector2(2 + Math.sqrt(2), 0),
   basisB: new Vector2(0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
   polygons: [
@@ -126,6 +133,7 @@ export const truncatedSquareTiling: PeriodicBoardTiling = {
 };
 export const snubSquareTiling: PeriodicBoardTiling = {
   name: 'Snub Square',
+  urlName: 'snub-square',
   basisA: new Vector2((1 / 2) * (1 + Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
   basisB: new Vector2((1 / 2) * (-1 - Math.sqrt(3)), (1 / 2) * (-1 - Math.sqrt(3))),
   polygons: [
@@ -158,6 +166,7 @@ export const snubSquareTiling: PeriodicBoardTiling = {
 };
 export const truncatedHexagonalTiling: PeriodicBoardTiling = {
   name: 'Truncated Hexagonal',
+  urlName: 'truncated-hexagonal',
   basisA: new Vector2(2 + Math.sqrt(3), 0),
   basisB: new Vector2(0.5 * (2 + Math.sqrt(3)), 3 / 2 + Math.sqrt(3)),
   polygons: [
@@ -190,6 +199,7 @@ export const truncatedHexagonalTiling: PeriodicBoardTiling = {
 };
 export const elongatedTriangularTiling: PeriodicBoardTiling = {
   name: 'Elongated Triangular',
+  urlName: 'elongated-triangular',
   basisA: new Vector2(1, 0),
   basisB: new Vector2(0.5, 0.5 * (2 + Math.sqrt(3))),
   polygons: [
@@ -206,6 +216,7 @@ export const elongatedTriangularTiling: PeriodicBoardTiling = {
 };
 export const greatRhombitrihexagonalTiling: PeriodicBoardTiling = {
   name: 'Great Rhombitrihexagonal',
+  urlName: 'great-rhombitrihexagonal',
   basisA: new Vector2(3 + Math.sqrt(3), 0),
   basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
   polygons: [
@@ -262,6 +273,7 @@ export const greatRhombitrihexagonalTiling: PeriodicBoardTiling = {
 };
 export const snubHexagonalTiling: PeriodicBoardTiling = {
   name: 'Snub Hexagonal',
+  urlName: 'snub-hexagonal',
   basisA: new Vector2(5 / 2, -Math.sqrt(3) / 2),
   basisB: new Vector2(-1 / 2, (3 * Math.sqrt(3)) / 2),
   polygons: [
@@ -290,6 +302,7 @@ export const snubHexagonalTiling: PeriodicBoardTiling = {
 };
 export const rhombilleTiling: PeriodicBoardTiling = {
   name: 'Rhombille',
+  urlName: 'rhombille',
   basisA: new Vector2(2, 0),
   basisB: new Vector2(1, Math.sqrt(3)),
   polygons: [
@@ -316,6 +329,7 @@ export const rhombilleTiling: PeriodicBoardTiling = {
 };
 export const deltoidalTrihexagonalTiling: PeriodicBoardTiling = {
   name: 'Deltoidal Trihexagonal',
+  urlName: 'deltoidal-trihexagonal',
   basisA: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (1 + Math.sqrt(3))),
   basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
   polygons: [
@@ -360,6 +374,7 @@ export const deltoidalTrihexagonalTiling: PeriodicBoardTiling = {
 };
 export const tetrakisSquareTiling: PeriodicBoardTiling = {
   name: 'Tetrakis Square',
+  urlName: 'tetrakis-square',
   basisA: new Vector2(2 + Math.sqrt(2), 0),
   basisB: new Vector2(0.5 * (2 + Math.sqrt(2)), 1 + 1 / Math.sqrt(2)),
   polygons: [
@@ -388,6 +403,7 @@ export const tetrakisSquareTiling: PeriodicBoardTiling = {
 };
 export const cairoPentagonalTiling: PeriodicBoardTiling = {
   name: 'Cairo Pentagonal',
+  urlName: 'cairo-pentagonal',
   basisA: new Vector2(0.5 * (1 + Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
   basisB: new Vector2(0.5 * (-1 - Math.sqrt(3)), 0.5 * (-1 - Math.sqrt(3))),
   polygons: [
@@ -424,6 +440,7 @@ export const cairoPentagonalTiling: PeriodicBoardTiling = {
 };
 export const triakisTriangularTiling: PeriodicBoardTiling = {
   name: 'Triakis Triangular',
+  urlName: 'triakis-triangular',
   basisA: new Vector2(2 + Math.sqrt(3), 0),
   basisB: new Vector2(0.5 * (2 + Math.sqrt(3)), 1.5 + Math.sqrt(3)),
   polygons: [
@@ -462,6 +479,7 @@ export const triakisTriangularTiling: PeriodicBoardTiling = {
 };
 export const prismaticPentagonalTiling: PeriodicBoardTiling = {
   name: 'Prismatic Pentagonal',
+  urlName: 'prismatic-pentagonal',
   basisA: new Vector2(1, 0),
   basisB: new Vector2(0.5, 0.5 * (2 + Math.sqrt(3))),
   polygons: [
@@ -484,6 +502,7 @@ export const prismaticPentagonalTiling: PeriodicBoardTiling = {
 };
 export const bisectedHexagonalTiling: PeriodicBoardTiling = {
   name: 'Bisected Hexagonal',
+  urlName: 'bisected-hexagonal',
   basisA: new Vector2(3 + Math.sqrt(3), 0),
   basisB: new Vector2(0.5 * (3 + Math.sqrt(3)), 1.5 * (1 + Math.sqrt(3))),
   polygons: [
@@ -552,6 +571,7 @@ export const bisectedHexagonalTiling: PeriodicBoardTiling = {
 };
 export const floretPentagonalTiling: PeriodicBoardTiling = {
   name: 'Floret Pentagonal',
+  urlName: 'floret-pentagonal',
   basisA: new Vector2(2.5, -Math.sqrt(3) / 2),
   basisB: new Vector2(-0.5, (3 * Math.sqrt(3)) / 2),
   polygons: [
@@ -602,6 +622,7 @@ export const floretPentagonalTiling: PeriodicBoardTiling = {
 };
 export const portugalTiling: PeriodicBoardTiling = {
   name: 'Portugal',
+  urlName: 'portugal',
   basisA: new Vector2(2, 2),
   basisB: new Vector2(-2, 2),
   polygons: [
@@ -613,6 +634,7 @@ export const portugalTiling: PeriodicBoardTiling = {
 };
 export const falseCubicTiling: PeriodicBoardTiling = {
   name: 'False Cubic',
+  urlName: 'false-cubic',
   basisA: new Vector2(1.5, Math.sqrt(3) / 2),
   basisB: new Vector2(0, Math.sqrt(3)),
   polygons: [
@@ -636,6 +658,7 @@ export const falseCubicTiling: PeriodicBoardTiling = {
 };
 export const trihexAndHexTiling: PeriodicBoardTiling = {
   name: 'Trihex and Hex',
+  urlName: 'trihex-and-hex',
   basisA: new Vector2(2, 0),
   basisB: new Vector2(1, Math.sqrt(3)),
   polygons: [

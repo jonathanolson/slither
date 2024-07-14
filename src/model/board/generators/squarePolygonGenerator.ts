@@ -6,6 +6,7 @@ import _ from '../../../workarounds/_.ts';
 
 export const squarePolygonGenerator: PolygonGenerator = {
   name: 'Square',
+  urlName: 'square',
   parameters: {
     width: {
       label: 'Width',

@@ -7,6 +7,7 @@ import assert, { assertEnabled } from '../../../workarounds/assert.ts';
 
 export const penroseTilingGenerator: PolygonGenerator = {
   name: 'Penrose',
+  urlName: 'penrose',
   parameters: {
     // TODO: support all radii, and handle prescale
     radius: {

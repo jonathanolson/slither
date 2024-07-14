@@ -17,6 +17,7 @@ export const getPeriodicTilingGenerator = (
 ): PolygonGenerator => {
   return {
     name: periodicTiling.name,
+    urlName: periodicTiling.urlName,
     parameters: {
       width: {
         label: 'Width',

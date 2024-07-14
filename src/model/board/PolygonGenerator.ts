@@ -25,6 +25,7 @@ export type PolygonGeneratorParameter = {
 );
 export type PolygonGenerator = {
   name: string;
+  urlName: string;
   parameters: Record<string, PolygonGeneratorParameter>;
   defaultParameterValues: Record<string, any>; // TODO: maybe sometime do the typing work for this?
   generate: (parameters: Record<string, any>) => Vector2[][];

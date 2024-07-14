@@ -9,14 +9,26 @@ import { serializeFaceData } from './serializeFaceState.ts';
 export const getSerializedRatedPuzzle = <Structure extends TStructure, Data extends TCompleteData>(
   solvedPuzzle: TSolvedPuzzle<Structure, Data>,
 ): TSerializedRatedPuzzle => {
-  const edgeColorSectorDifficulty = estimateDifficulty(solvedPuzzle.board, solvedPuzzle.cleanState, {
+  const fullDifficulty = estimateDifficulty(solvedPuzzle.board, solvedPuzzle.cleanState, {
     solveEdges: true,
     solveSectors: true,
     solveFaceColors: true,
-    solveVertexState: false,
-    solveFaceState: false,
+    solveVertexState: true,
+    solveFaceState: true,
     cutoffDifficulty: Number.POSITIVE_INFINITY,
   });
+
+  const edgeColorSectorDifficulty =
+    isFinite(fullDifficulty) ?
+      estimateDifficulty(solvedPuzzle.board, solvedPuzzle.cleanState, {
+        solveEdges: true,
+        solveSectors: true,
+        solveFaceColors: true,
+        solveVertexState: false,
+        solveFaceState: false,
+        cutoffDifficulty: Number.POSITIVE_INFINITY,
+      })
+    : Number.POSITIVE_INFINITY;
 
   const edgeColorDifficulty =
     isFinite(edgeColorSectorDifficulty) ?
@@ -48,5 +60,6 @@ export const getSerializedRatedPuzzle = <Structure extends TStructure, Data exte
     edgeDifficulty,
     edgeColorDifficulty,
     edgeColorSectorDifficulty,
+    fullDifficulty,
   };
 };
