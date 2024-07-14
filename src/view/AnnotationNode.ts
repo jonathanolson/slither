@@ -1,4 +1,5 @@
 import { currentTheme } from './Theme.ts';
+import { UIRichText } from './UIRichText.ts';
 import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
@@ -6,6 +7,7 @@ import { Bounds2 } from 'phet-lib/dot';
 import { LineStyles, Shape } from 'phet-lib/kite';
 import { Orientation } from 'phet-lib/phet-core';
 import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
+import { Panel } from 'phet-lib/sun';
 
 import { TBoard } from '../model/board/core/TBoard.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
@@ -24,6 +26,34 @@ export class AnnotationNode extends Node {
     additionalContentLayoutBounds: Bounds2 | null = null,
   ) {
     let children: Node[];
+
+    const addStringDescription = (description: string): void => {
+      if (additionalContentLayoutBounds) {
+        const stringNode = new Panel(
+          new UIRichText(description, {
+            scale: 0.02,
+            lineWrap: 200,
+          }),
+          {
+            pickable: false,
+            xMargin: 0.2,
+            yMargin: 0.2,
+            lineWidth: 0.02,
+            cornerRadius: 0.2,
+            fill: currentTheme.uiBackgroundColorProperty,
+            stroke: currentTheme.uiForegroundColorProperty,
+          },
+        );
+
+        console.log(stringNode.bounds);
+
+        const centerBounds = children.reduce((bounds, child) => bounds.union(child.bounds), Bounds2.NOTHING);
+
+        AnnotationNode.adjustContentBounds(stringNode, additionalContentLayoutBounds, centerBounds);
+
+        children.push(stringNode);
+      }
+    };
 
     const getEdgeOutlineShape = (edge: TEdge) => {
       const initialShape = new Shape().moveToPoint(edge.start.viewCoordinates).lineToPoint(edge.end.viewCoordinates);
@@ -70,11 +100,13 @@ export class AnnotationNode extends Node {
         ...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
         ...annotation.blackEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
       ];
+      addStringDescription("Cell has correct number of lines, rest must be X's");
     } else if (annotation.type === 'FaceAntiSatisfied') {
       children = [
         ...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
         ...annotation.redEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
       ];
+      addStringDescription("Cell has maximum number of X's, rest must be lines");
     } else if (annotation.type === 'ForcedSolveLoop') {
       children = [
         ...annotation.regionEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
@@ -250,94 +282,11 @@ export class AnnotationNode extends Node {
           cursor: 'pointer',
         });
 
-        const margin = 0.5 + 0.05;
-        const offsetMargin = 0.15;
-        const emergencyMargin = 0.1;
-
-        const getMinSpace = (orientation: Orientation) => {
-          return (
-            displayEmbedding.expandedBounds[orientation.minCoordinate] +
-            offsetMargin -
-            (additionalContentLayoutBounds[orientation.minCoordinate] + margin)
-          );
-        };
-        const getMaxSpace = (orientation: Orientation) => {
-          return (
-            additionalContentLayoutBounds[orientation.maxCoordinate] -
-            margin -
-            (displayEmbedding.expandedBounds[orientation.maxCoordinate] - offsetMargin)
-          );
-        };
-        const getDesiredScale = (orientation: Orientation) => {
-          return Math.min(
-            (additionalContentLayoutBounds[orientation.opposite.size] - 2 * margin) /
-              patternDescriptionNode[orientation.opposite.size],
-            Math.max(getMinSpace(orientation), getMaxSpace(orientation)) / patternDescriptionNode[orientation.size],
-            1,
-          );
-        };
-        const adjustPosition = (orientation: Orientation) => {
-          patternDescriptionNode[orientation.opposite.centerCoordinate] =
-            displayEmbedding.expandedBounds[orientation.opposite.centerCoordinate];
-
-          if (getMinSpace(orientation) > getMaxSpace(orientation)) {
-            patternDescriptionNode[orientation.maxSide] =
-              displayEmbedding.expandedBounds[orientation.minCoordinate] - offsetMargin;
-
-            // Don't let it go off screen
-            if (
-              patternDescriptionNode[orientation.minSide] <
-              additionalContentLayoutBounds[orientation.minCoordinate] + emergencyMargin
-            ) {
-              patternDescriptionNode[orientation.minSide] =
-                additionalContentLayoutBounds[orientation.minCoordinate] + emergencyMargin;
-            }
-          } else {
-            patternDescriptionNode[orientation.minSide] =
-              displayEmbedding.expandedBounds[orientation.maxCoordinate] + offsetMargin;
-
-            // Don't let it go off screen
-            if (
-              patternDescriptionNode[orientation.maxSide] >
-              additionalContentLayoutBounds[orientation.maxCoordinate] - emergencyMargin
-            ) {
-              patternDescriptionNode[orientation.maxSide] =
-                additionalContentLayoutBounds[orientation.maxCoordinate] - emergencyMargin;
-            }
-          }
-
-          // Enforce opposite side constraints
-          if (
-            patternDescriptionNode[orientation.opposite.minSide] <
-            additionalContentLayoutBounds[orientation.opposite.minCoordinate] + emergencyMargin
-          ) {
-            patternDescriptionNode[orientation.opposite.minSide] =
-              additionalContentLayoutBounds[orientation.opposite.minCoordinate] + emergencyMargin;
-          }
-          if (
-            patternDescriptionNode[orientation.opposite.maxSide] >
-            additionalContentLayoutBounds[orientation.opposite.maxCoordinate] - emergencyMargin
-          ) {
-            patternDescriptionNode[orientation.opposite.maxSide] =
-              additionalContentLayoutBounds[orientation.opposite.maxCoordinate] - emergencyMargin;
-          }
-        };
-
-        let orientation = Orientation.VERTICAL;
-        let scale = getDesiredScale(orientation);
-
-        if (scale < 1) {
-          const otherScale = getDesiredScale(orientation.opposite);
-          if (otherScale > scale) {
-            orientation = orientation.opposite;
-            scale = otherScale;
-          }
-        }
-
-        // Don't let it get too small, let it overlap if it helps
-        patternDescriptionNode.scale(Math.max(scale, 0.3));
-
-        adjustPosition(orientation);
+        AnnotationNode.adjustContentBounds(
+          patternDescriptionNode,
+          additionalContentLayoutBounds,
+          displayEmbedding.expandedBounds,
+        );
 
         {
           const highlightBounds = displayEmbedding.tightBounds.dilated(0.21);
@@ -400,5 +349,95 @@ export class AnnotationNode extends Node {
     });
 
     this.disposeEmitter.addListener(() => disposeActions.forEach((action) => action()));
+  }
+
+  public static adjustContentBounds(
+    contentNode: Node,
+    additionalContentLayoutBounds: Bounds2,
+    centralBounds: Bounds2,
+  ): void {
+    const margin = 0.5 + 0.05;
+    const offsetMargin = 0.15;
+    const emergencyMargin = 0.1;
+
+    const getMinSpace = (orientation: Orientation) => {
+      return (
+        centralBounds[orientation.minCoordinate] +
+        offsetMargin -
+        (additionalContentLayoutBounds[orientation.minCoordinate] + margin)
+      );
+    };
+    const getMaxSpace = (orientation: Orientation) => {
+      return (
+        additionalContentLayoutBounds[orientation.maxCoordinate] -
+        margin -
+        (centralBounds[orientation.maxCoordinate] - offsetMargin)
+      );
+    };
+    const getDesiredScale = (orientation: Orientation) => {
+      return Math.min(
+        (additionalContentLayoutBounds[orientation.opposite.size] - 2 * margin) /
+          contentNode[orientation.opposite.size],
+        Math.max(getMinSpace(orientation), getMaxSpace(orientation)) / contentNode[orientation.size],
+        1,
+      );
+    };
+    const adjustPosition = (orientation: Orientation) => {
+      contentNode[orientation.opposite.centerCoordinate] = centralBounds[orientation.opposite.centerCoordinate];
+
+      if (getMinSpace(orientation) > getMaxSpace(orientation)) {
+        contentNode[orientation.maxSide] = centralBounds[orientation.minCoordinate] - offsetMargin;
+
+        // Don't let it go off screen
+        if (
+          contentNode[orientation.minSide] <
+          additionalContentLayoutBounds[orientation.minCoordinate] + emergencyMargin
+        ) {
+          contentNode[orientation.minSide] = additionalContentLayoutBounds[orientation.minCoordinate] + emergencyMargin;
+        }
+      } else {
+        contentNode[orientation.minSide] = centralBounds[orientation.maxCoordinate] + offsetMargin;
+
+        // Don't let it go off screen
+        if (
+          contentNode[orientation.maxSide] >
+          additionalContentLayoutBounds[orientation.maxCoordinate] - emergencyMargin
+        ) {
+          contentNode[orientation.maxSide] = additionalContentLayoutBounds[orientation.maxCoordinate] - emergencyMargin;
+        }
+      }
+
+      // Enforce opposite side constraints
+      if (
+        contentNode[orientation.opposite.minSide] <
+        additionalContentLayoutBounds[orientation.opposite.minCoordinate] + emergencyMargin
+      ) {
+        contentNode[orientation.opposite.minSide] =
+          additionalContentLayoutBounds[orientation.opposite.minCoordinate] + emergencyMargin;
+      }
+      if (
+        contentNode[orientation.opposite.maxSide] >
+        additionalContentLayoutBounds[orientation.opposite.maxCoordinate] - emergencyMargin
+      ) {
+        contentNode[orientation.opposite.maxSide] =
+          additionalContentLayoutBounds[orientation.opposite.maxCoordinate] - emergencyMargin;
+      }
+    };
+
+    let orientation = Orientation.VERTICAL;
+    let scale = getDesiredScale(orientation);
+
+    if (scale < 1) {
+      const otherScale = getDesiredScale(orientation.opposite);
+      if (otherScale > scale) {
+        orientation = orientation.opposite;
+        scale = otherScale;
+      }
+    }
+
+    // Don't let it get too small, let it overlap if it helps
+    contentNode.scale(Math.max(scale, 0.3));
+
+    adjustPosition(orientation);
   }
 }
