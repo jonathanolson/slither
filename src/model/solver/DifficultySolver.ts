@@ -61,7 +61,8 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
     const solverFactories = [
       () => new SafeEdgeToSimpleRegionSolver(board, state),
       () => new SafeSolvedEdgeSolver(board, state),
-      () => new SafeEdgeToFaceColorSolver(board, state),
+
+      ...(options.solveFaceColors ? [() => new SafeEdgeToFaceColorSolver(board, state)] : []),
 
       () =>
         new SimpleVertexSolver(board, state, {

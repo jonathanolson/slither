@@ -1,18 +1,7 @@
-import { TBoard } from '../model/board/core/TBoard.ts';
 import { CompleteValidator } from '../model/data/combined/CompleteValidator.ts';
-import { TCompleteData } from '../model/data/combined/TCompleteData.ts';
-import { TAnnotatedAction } from '../model/data/core/TAnnotatedAction.ts';
-import { TState } from '../model/data/core/TState.ts';
 import { deserializeSolvablePuzzle } from '../model/puzzle/deserializeSolvablePuzzle.ts';
-import { TSolver } from '../model/solver/TSolver.ts';
+import { DifficultySolver } from '../model/solver/DifficultySolver.ts';
 import { InvalidStateError } from '../model/solver/errors/InvalidStateError.ts';
-import {
-  generalAllPatternSolverFactory,
-  generalColorPatternSolverFactory,
-  generalEdgeColorPatternSolverFactory,
-  generalEdgePatternSolverFactory,
-  generalEdgeSectorPatternSolverFactory,
-} from '../model/solver/patternSolverFactory.ts';
 
 import { isAnnotationDisplayed } from '../view/isAnnotationDisplayed.ts';
 
@@ -47,29 +36,16 @@ self.addEventListener('message', (event) => {
     const state = puzzle.stateProperty.value;
     const board = puzzle.board;
 
-    // TODO: figure out what is best here
-    // TODO: make sure our entire puzzle isn't too small that the no-loop thing would cause an error
-    // const solver = standardSolverFactory( board, state, true );
-    // const solver = patternSolverFactory( board, state, true );
+    const solver = new DifficultySolver(board, state, {
+      solveEdges: solveEdges,
+      solveFaceColors: solveColors,
+      solveSectors: solveSectors,
+      solveVertexState: solveVertexState,
+      solveFaceState: solveFaceState,
+      cutoffDifficulty: Number.POSITIVE_INFINITY,
+    });
 
-    let factory: (
-      board: TBoard,
-      state: TState<TCompleteData>,
-      dirty?: boolean,
-    ) => TSolver<TCompleteData, TAnnotatedAction<TCompleteData>>;
-    if (solveEdges && !solveColors && !solveSectors) {
-      factory = generalEdgePatternSolverFactory;
-    } else if (solveColors && !solveEdges && !solveSectors) {
-      factory = generalColorPatternSolverFactory;
-    } else if (solveEdges && solveColors && !solveSectors) {
-      factory = generalEdgeColorPatternSolverFactory;
-    } else if (solveEdges && solveSectors && !solveColors) {
-      factory = generalEdgeSectorPatternSolverFactory;
-    } else {
-      factory = generalAllPatternSolverFactory;
-    }
-
-    const solver = factory(board, state, true);
+    console.log(data);
 
     try {
       let action = solver.nextAction();
