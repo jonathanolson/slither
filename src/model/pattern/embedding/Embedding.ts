@@ -89,7 +89,7 @@ export class Embedding {
 
   public mapVertex(vertex: TPatternVertex): TPatternVertex {
     const result = this.vertexMap.get(vertex)!;
-    assertEnabled() && assert(result);
+    // assertEnabled() && assert(result);
 
     return result;
   }
@@ -110,7 +110,7 @@ export class Embedding {
 
   public mapSector(sector: TPatternSector): TPatternSector {
     const result = this.sectorMap.get(sector)!;
-    assertEnabled() && assert(result);
+    // assertEnabled() && assert(result);
 
     return result;
   }

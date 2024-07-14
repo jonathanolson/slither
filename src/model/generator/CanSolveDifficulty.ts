@@ -9,10 +9,13 @@ import { generalEdgeSectorMixedGroup } from '../pattern/collection/generalEdgeSe
 import { BoardPatternBoard } from '../pattern/pattern-board/BoardPatternBoard.ts';
 import { BinaryPatternSolver } from '../solver/BinaryPatternSolver.ts';
 import { CompositeSolver } from '../solver/CompositeSolver.ts';
+import { FaceColorDisconnectionSolver } from '../solver/FaceColorDisconnectionSolver.ts';
 import { SafeEdgeToFaceColorSolver } from '../solver/SafeEdgeToFaceColorSolver.ts';
 import { SafeEdgeToSimpleRegionSolver } from '../solver/SafeEdgeToSimpleRegionSolver.ts';
 import { SafeSolvedEdgeSolver } from '../solver/SafeSolvedEdgeSolver.ts';
+import { SimpleFaceSolver } from '../solver/SimpleFaceSolver.ts';
 import { SimpleLoopSolver } from '../solver/SimpleLoopSolver.ts';
+import { SimpleVertexSolver } from '../solver/SimpleVertexSolver.ts';
 import { iterateSolverFactory } from '../solver/TSolver.ts';
 import { standardSolverFactory } from '../solver/standardSolverFactory.ts';
 
@@ -34,6 +37,16 @@ export default class CanSolveDifficulty extends EnumerationValue {
           new SafeEdgeToSimpleRegionSolver(board, state),
           new SafeSolvedEdgeSolver(board, state),
           new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleVertexSolver(board, state, {
+            solveJointToRed: true,
+            solveForcedLineToBlack: true,
+            solveAlmostEmptyToRed: true,
+          }),
+          new SimpleFaceSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+          }),
 
           new SimpleLoopSolver(board, state, {
             solveToRed: true,
@@ -63,6 +76,16 @@ export default class CanSolveDifficulty extends EnumerationValue {
           new SafeEdgeToSimpleRegionSolver(board, state),
           new SafeSolvedEdgeSolver(board, state),
           new SafeEdgeToFaceColorSolver(board, state),
+
+          new SimpleVertexSolver(board, state, {
+            solveJointToRed: true,
+            solveForcedLineToBlack: true,
+            solveAlmostEmptyToRed: true,
+          }),
+          new SimpleFaceSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+          }),
 
           new SimpleLoopSolver(board, state, {
             solveToRed: true,
@@ -94,6 +117,16 @@ export default class CanSolveDifficulty extends EnumerationValue {
           new SafeSolvedEdgeSolver(board, state),
           new SafeEdgeToFaceColorSolver(board, state),
 
+          new SimpleVertexSolver(board, state, {
+            solveJointToRed: true,
+            solveForcedLineToBlack: true,
+            solveAlmostEmptyToRed: true,
+          }),
+          new SimpleFaceSolver(board, state, {
+            solveToRed: true,
+            solveToBlack: true,
+          }),
+
           new SimpleLoopSolver(board, state, {
             solveToRed: true,
             solveToBlack: true,
@@ -101,6 +134,8 @@ export default class CanSolveDifficulty extends EnumerationValue {
           }),
 
           standardSolverFactory(board, state, dirty),
+
+          new FaceColorDisconnectionSolver(board, state),
 
           BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeColorMixedGroup, 600),
           BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, generalEdgeSectorMixedGroup, 100),
