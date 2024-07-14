@@ -69,6 +69,10 @@ export const themeColorPropertyNames = [
   'incorrectEdgeColorProperty',
   'incorrectFaceColorProperty',
 
+  'annotationRedColorProperty',
+  'annotationGreenColorProperty',
+  'annotationBlueColorProperty',
+
   'uiForegroundColorProperty',
   'uiBackgroundColorProperty',
   'uiButtonForegroundProperty',
@@ -224,6 +228,11 @@ export const lightTheme = addThemeLUT({
   edgeWeirdColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   incorrectEdgeColorProperty: new PaintColorProperty('rgba(255,0,0,0.2999999999999999889)'),
   incorrectFaceColorProperty: new PaintColorProperty('rgba(255,0,0,0.2999999999999999889)'),
+
+  annotationRedColorProperty: new PaintColorProperty('rgba(255,0,0,0.5)'),
+  annotationGreenColorProperty: new PaintColorProperty('rgba(0,255,0,0.45)'),
+  annotationBlueColorProperty: new PaintColorProperty('rgba(0,0,255,0.35)'),
+
   uiForegroundColorProperty: new PaintColorProperty('rgb(0,0,0)'),
   uiBackgroundColorProperty: new PaintColorProperty('rgb(255,255,255)'),
   uiButtonForegroundProperty: new PaintColorProperty('rgb(0,0,0)'),
@@ -289,6 +298,11 @@ export const darkTheme = addThemeLUT({
   edgeWeirdColorProperty: new PaintColorProperty('rgb(255,0,0)'),
   incorrectEdgeColorProperty: new PaintColorProperty('rgba(255,0,0,0.2999999999999999889)'),
   incorrectFaceColorProperty: new PaintColorProperty('rgba(255,0,0,0.2999999999999999889)'),
+
+  annotationRedColorProperty: new PaintColorProperty('rgba(255,0,0,0.45)'),
+  annotationGreenColorProperty: new PaintColorProperty('rgba(0,255,0,0.35)'),
+  annotationBlueColorProperty: new PaintColorProperty('rgba(0,0,255,0.5)'),
+
   uiForegroundColorProperty: new PaintColorProperty('rgb(204,204,204)'),
   uiBackgroundColorProperty: new PaintColorProperty('rgb(34,34,34)'),
   uiButtonForegroundProperty: new PaintColorProperty('rgb(0,0,0)'),

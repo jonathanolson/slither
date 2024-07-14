@@ -4,13 +4,14 @@ import { EmbeddedPatternRuleNode } from './pattern/EmbeddedPatternRuleNode.ts';
 import { TPuzzleStyle } from './puzzle/TPuzzleStyle.ts';
 
 import { Bounds2 } from 'phet-lib/dot';
-import { LineStyles, Shape } from 'phet-lib/kite';
+import { LineStyles, Shape, Subpath } from 'phet-lib/kite';
 import { Orientation } from 'phet-lib/phet-core';
-import { FireListener, Node, Path, TPaint } from 'phet-lib/scenery';
+import { FireListener, GaussianBlur, Node, Path, TPaint } from 'phet-lib/scenery';
 import { Panel } from 'phet-lib/sun';
 
 import { TBoard } from '../model/board/core/TBoard.ts';
 import { TEdge } from '../model/board/core/TEdge.ts';
+import { TVertex } from '../model/board/core/TVertex.ts';
 import { TAnnotation } from '../model/data/core/TAnnotation.ts';
 import { DisplayEmbedding } from '../model/pattern/embedding/DisplayEmbedding.ts';
 
@@ -55,6 +56,10 @@ export class AnnotationNode extends Node {
       }
     };
 
+    const getVertexOutlineShape = (vertex: TVertex) => {
+      return Shape.circle(vertex.viewCoordinates, 0.2);
+    };
+
     const getEdgeOutlineShape = (edge: TEdge) => {
       const initialShape = new Shape().moveToPoint(edge.start.viewCoordinates).lineToPoint(edge.end.viewCoordinates);
       const strokedShape = initialShape.getStrokedShape(
@@ -71,52 +76,93 @@ export class AnnotationNode extends Node {
       );
     };
 
+    const getEdgesOutlineShape = (edges: TEdge[]) => {
+      const subpaths: Subpath[] = [];
+
+      for (const edge of edges) {
+        const lineShape = new Shape().moveToPoint(edge.start.viewCoordinates).lineToPoint(edge.end.viewCoordinates);
+        const filledShape = lineShape.getStrokedShape(
+          new LineStyles({
+            lineWidth: 0.2,
+            lineCap: 'round',
+          }),
+        );
+        subpaths.push(...filledShape.subpaths);
+      }
+
+      return new Shape(subpaths);
+    };
+
     const getEdgeColoredOutline = (edge: TEdge, color: TPaint) => {
       return new Path(getEdgeOutlineShape(edge), { fill: color });
     };
 
     const disposeActions: (() => void)[] = [];
 
+    // TODO: reference frame for this is BAD
+    const blurFilters = [new GaussianBlur(4)];
+
+    const blurryEdges = (edges: TEdge[], fill: TPaint) => {
+      return new Path(getEdgesOutlineShape(edges), {
+        fill: fill,
+        filters: blurFilters,
+      });
+    };
+
+    const blurryVertex = (vertex: TVertex, fill: TPaint) => {
+      return new Path(getVertexOutlineShape(vertex), {
+        fill: fill,
+        filters: blurFilters,
+      });
+    };
+
     if (annotation.type === 'ForcedLine') {
       // TODO: culori, pick a palette
       children = [
-        // TODO: red edges / vertex
-        getEdgeColoredOutline(annotation.whiteEdge, 'red'),
-        getEdgeColoredOutline(annotation.blackEdge, 'blue'),
+        blurryEdges(annotation.redEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges([annotation.blackEdge], style.theme.annotationBlueColorProperty),
+        blurryEdges([annotation.whiteEdge], style.theme.annotationRedColorProperty),
+        blurryVertex(annotation.vertex, style.theme.annotationGreenColorProperty),
       ];
+      addStringDescription('Only one path for this line to exit the dot');
     } else if (annotation.type === 'AlmostEmptyToRed') {
       children = [
-        // TODO: vertex
-        getEdgeColoredOutline(annotation.whiteEdge, 'red'),
-        ...annotation.redEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
+        blurryEdges(annotation.redEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges([annotation.whiteEdge], style.theme.annotationRedColorProperty),
+        blurryVertex(annotation.vertex, style.theme.annotationGreenColorProperty),
       ];
+      addStringDescription('Cannot have two lines to this dot, must be an X');
     } else if (annotation.type === 'JointToRed') {
       children = [
-        ...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
-        ...annotation.blackEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
+        blurryEdges(annotation.blackEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges(annotation.whiteEdges, style.theme.annotationRedColorProperty),
+        blurryVertex(annotation.vertex, style.theme.annotationGreenColorProperty),
       ];
+      addStringDescription("Cannot have more than two lines to a dot, rest must be X's");
     } else if (annotation.type === 'FaceSatisfied') {
       children = [
-        ...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
-        ...annotation.blackEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
+        blurryEdges(annotation.blackEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges(annotation.whiteEdges, style.theme.annotationRedColorProperty),
       ];
       addStringDescription("Cell has correct number of lines, rest must be X's");
     } else if (annotation.type === 'FaceAntiSatisfied') {
       children = [
-        ...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
-        ...annotation.redEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
+        blurryEdges(annotation.redEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges(annotation.whiteEdges, style.theme.annotationRedColorProperty),
       ];
       addStringDescription("Cell has maximum number of X's, rest must be lines");
     } else if (annotation.type === 'ForcedSolveLoop') {
       children = [
-        ...annotation.regionEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
-        ...annotation.pathEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
+        blurryEdges(annotation.regionEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges(annotation.pathEdges, style.theme.annotationRedColorProperty),
       ];
+      addStringDescription('Lines would force a loop, and it completes the puzzle');
     } else if (annotation.type === 'PrematureForcedLoop') {
       children = [
-        ...annotation.regionEdges.map((edge) => getEdgeColoredOutline(edge, 'blue')),
-        ...annotation.pathEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
+        blurryEdges(annotation.regionEdges, style.theme.annotationBlueColorProperty),
+        blurryEdges(annotation.pathEdges, style.theme.annotationRedColorProperty),
       ];
+      addStringDescription("Lines would force a loop without solving the puzzle, so must be X's");
     } else if (annotation.type === 'CompletingEdgesAfterSolve') {
       children = [...annotation.whiteEdges.map((edge) => getEdgeColoredOutline(edge, 'red'))];
     } else if (annotation.type === 'FaceColoringBlackEdge') {
@@ -124,9 +170,11 @@ export class AnnotationNode extends Node {
     } else if (annotation.type === 'FaceColoringRedEdge') {
       children = [getEdgeColoredOutline(annotation.edge, 'red')];
     } else if (annotation.type === 'FaceColorToBlack') {
-      children = [getEdgeColoredOutline(annotation.edge, 'red')];
+      children = [blurryEdges([annotation.edge], style.theme.annotationRedColorProperty)];
+      addStringDescription('Colors are opposites on each side, so it must be a line');
     } else if (annotation.type === 'FaceColorToRed') {
-      children = [getEdgeColoredOutline(annotation.edge, 'red')];
+      children = [blurryEdges([annotation.edge], style.theme.annotationRedColorProperty)];
+      addStringDescription('Colors are the same on each side, so it must be an X');
     } else if (annotation.type === 'FaceColorNoTrivialLoop') {
       children = [...annotation.face.edges.map((edge) => getEdgeColoredOutline(edge, 'red'))];
     } else if (
@@ -237,9 +285,12 @@ export class AnnotationNode extends Node {
           lineWidth: 0.05,
           lineCap: 'round',
           lineJoin: 'round',
-          stroke: 'rgba(255,0,0,0.7)',
+          stroke: style.theme.annotationRedColorProperty,
         }),
       ];
+      addStringDescription(
+        'If the two colors along this path were made the same, it would disconnect the puzzle into two loops. Must be opposite colors',
+      );
     } else if (annotation.type === 'Pattern') {
       // const affectedEdges = new Set( annotation.affectedEdges );
       // annotation.affectedSectors.forEach( sector => {
