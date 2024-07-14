@@ -272,7 +272,7 @@ window.getMinimizedRatedPuzzle = async (shortName: ShortName): Promise<TSerializ
     CanSolveDifficulty.MEDIUM,
     CanSolveDifficulty.HARD,
     CanSolveDifficulty.VERY_HARD,
-    CanSolveDifficulty.FULL,
+    // CanSolveDifficulty.FULL,
     CanSolveDifficulty.NO_LIMIT,
   ]);
 
