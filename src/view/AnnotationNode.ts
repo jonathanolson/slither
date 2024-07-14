@@ -176,7 +176,10 @@ export class AnnotationNode extends Node {
       children = [blurryEdges([annotation.edge], style.theme.annotationRedColorProperty)];
       addStringDescription('Colors are the same on each side, so it must be an X');
     } else if (annotation.type === 'FaceColorNoTrivialLoop') {
-      children = [...annotation.face.edges.map((edge) => getEdgeColoredOutline(edge, 'red'))];
+      children = [blurryEdges(annotation.face.edges, style.theme.annotationRedColorProperty)];
+      addStringDescription(
+        'If all sides of a cell are one color, the inside needs to be the same color to prevent a loop',
+      );
     } else if (
       annotation.type === 'FaceColorMatchToRed' ||
       annotation.type === 'FaceColorMatchToBlack' ||
@@ -195,18 +198,38 @@ export class AnnotationNode extends Node {
       ];
 
       if (annotation.type === 'FaceColorMatchToRed') {
-        children.push(...annotation.matchingEdges.map((edge) => getEdgeColoredOutline(edge, 'red')));
+        children.push(blurryEdges(annotation.matchingEdges, style.theme.annotationRedColorProperty));
+        let string =
+          'The cell borders a color in too many places. If the cell were the opposite color, it would violate the number value';
+        if (annotation.balancedPairs.length) {
+          string += ". Other colors show pairs with a minimum number of lines/X's each";
+        }
+        addStringDescription(string);
       } else if (annotation.type === 'FaceColorMatchToBlack') {
-        children.push(...annotation.matchingEdges.map((edge) => getEdgeColoredOutline(edge, 'red')));
+        children.push(blurryEdges(annotation.matchingEdges, style.theme.annotationRedColorProperty));
+        let string =
+          'The cell borders a color in too many places. If the cell were the same color, it would violate the number value';
+        if (annotation.balancedPairs.length) {
+          string += ". Other colors show pairs with a minimum number of lines/X's each";
+        }
+        addStringDescription(string);
       } else if (annotation.type === 'FaceColorBalance') {
-        children.push(...annotation.matchingEdges.map((edge) => getEdgeColoredOutline(edge, 'orange')));
-        children.push(...annotation.oppositeEdges.map((edge) => getEdgeColoredOutline(edge, 'red')));
+        children.push(
+          blurryEdges(annotation.matchingEdges, style.theme.annotationRedColorProperty),
+          blurryEdges(annotation.oppositeEdges, style.theme.annotationBlueColorProperty),
+        );
+        let string =
+          'The cell is forced to have adjacent colors be opposites. If they were the same color, it would violate the number value';
+        if (annotation.balancedPairs.length) {
+          string += ". Other colors show pairs with a minimum number of lines/X's each";
+        }
+        addStringDescription(string);
       }
     } else if (annotation.type === 'DoubleMinusOneFaces') {
       children = [
-        ...annotation.toBlackEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
-        ...annotation.toRedEdges.map((edge) => getEdgeColoredOutline(edge, 'red')),
+        blurryEdges([...annotation.toBlackEdges, ...annotation.toRedEdges], style.theme.annotationRedColorProperty),
       ];
+      addStringDescription('Adjacent N-1 cells');
     } else if (annotation.type === 'SingleEdgeToSector' || annotation.type === 'DoubleEdgeToSector') {
       children = [annotation.sector.edge, annotation.sector.next.edge].map((edge) =>
         getEdgeColoredOutline(edge, 'red'),
