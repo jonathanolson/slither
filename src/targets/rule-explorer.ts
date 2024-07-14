@@ -542,8 +542,10 @@ class ViewStyleMode extends EnumerationValue {
             displayEmbedding = getBestDisplayEmbeddingForRule(rule, displayTiling);
           }
 
+          let ruleNode: Node;
+
           if (displayEmbedding) {
-            return new EmbeddedPatternRuleNode(rule, displayEmbedding, {
+            ruleNode = new EmbeddedPatternRuleNode(rule, displayEmbedding, {
               cursor: 'pointer',
               inputListeners: [inputListener],
               scale: 30, // TODO: this is the scale internally in PatternNode, move it out?
@@ -551,7 +553,7 @@ class ViewStyleMode extends EnumerationValue {
             });
             // return new Rectangle( 0, 0, 2, 2, { fill: 'red' } );
           } else {
-            return new Panel(
+            ruleNode = new Panel(
               new PatternRuleNode(rule, planarPatternMap, {
                 cursor: 'pointer',
               }),
@@ -561,6 +563,16 @@ class ViewStyleMode extends EnumerationValue {
                 inputListeners: [inputListener],
               },
             );
+          }
+
+          const SHOW_SCORE = false;
+
+          if (SHOW_SCORE) {
+            return new VBox({
+              children: [ruleNode, new Text(rule.getInputDifficultyScoreB(), { font: uiFont, fill: 'white' })],
+            });
+          } else {
+            return ruleNode;
           }
         });
       } else {
