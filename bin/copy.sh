@@ -13,7 +13,7 @@ permalink: /slitherlink/index
 categories: article
 header: slitherlink
 importance: 7
-thumbnail: /img/slitherlink-dark-pattern.png
+image: /img/slitherlink-dark-pattern.png
 description: >-
   An opinionated guide on new techniques and strategies for solving Slitherlink puzzles, with a web app to play with the concepts and a library of patterns.
 ---
