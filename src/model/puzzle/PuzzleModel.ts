@@ -1031,6 +1031,14 @@ export default class PuzzleModel<
       this.updateState();
     }
   }
+
+  public onUserHintKey(): void {
+    if (this.pendingHintActionProperty.value) {
+      this.onUserApplyHint();
+    } else {
+      this.onUserRequestHint();
+    }
+  }
 }
 
 export type PuzzleModelUserAction =

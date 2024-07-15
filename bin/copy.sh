@@ -9,7 +9,7 @@ echo "---
 layout: default
 title: How Slitherlink Should be Solved
 lead: An opinionated guide on new techniques and strategies
-permalink: /slitherlink/index.html
+permalink: /slitherlink/index
 categories: article
 header: slitherlink
 importance: 7

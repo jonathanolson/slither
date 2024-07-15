@@ -1259,14 +1259,57 @@
     have deduced some lines and X's doesn't prevent ruling out things using solutions that contradict those deductions.
   </p>
 
-  <p>
-    TODO: add examples of this, worked out, and better visualizations of the excluded solutions.
-  </p>
-
   <h2 id="solving-with-loops-and-regions">Solving with Loops and Regions</h2>
 
   <p>
-    TODO (sorry!)
+    Below is a case (with two representations) where there is a constriction: if certain moves are made, it will split the puzzle into two
+    disconnected regions.
+  </p>
+
+  <div class="examples">
+    <div class="example">
+      <div id="loop-region-0" class="example-div"></div>
+    </div>
+  </div>
+
+  <p>
+    <strong>When thinking in terms of lines and X's</strong>: The blue loop goes through only two paths that could have lines.
+    The rest have X's. Since the blue loop has lines on the inside and outside, there must be at least 2 lines connecting through it
+    so that the puzzle doesn't split into two disconnected loops. Notably, any closed loop that you can draw must have an
+    even number of lines through it!
+  </p>
+
+  <div class="examples">
+    <div class="example">
+      <div id="loop-region-0-colors" class="example-div"></div>
+    </div>
+  </div>
+
+  <p>
+    <strong>When thinking in terms of colors</strong>: The blue line goes through only two colors: the outside (white)
+    and another color (marked with purple). If the purple-dashed color turns into the outside (white) color, it would cut off
+    the region in the blue loop from the rest of the puzzle. Therefore the purple color must be the inside color (gray).
+  </p>
+
+  <div class="examples">
+    <div class="example">
+      <div id="loop-region-1-internal" class="example-div"></div>
+    </div>
+  </div>
+
+  <p>
+    These can also be <em>internal</em>, or with arbitrary colors, as seen above. The interior loop needs to be connected to the outside.
+  </p>
+
+  <div class="examples">
+    <div class="example">
+      <div id="loop-region-2-multiple" class="example-div"></div>
+    </div>
+  </div>
+
+  <p>
+    The two colors can actually alternate back-and-forth, and be present in multiple locations, like the example above.
+    Here, both purple-dashed regions are the same color, and for similar reasons they must be the "inside" color (gray).
   </p>
 
   <h2 id="user-interface">User Interface</h2>

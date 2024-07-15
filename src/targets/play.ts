@@ -229,6 +229,8 @@ document.addEventListener('keydown', (event) => {
     }
   } else if (event.key === 'Escape') {
     puzzleModelProperty.value?.onUserEscape();
+  } else if (event.key === 'h') {
+    puzzleModelProperty.value?.onUserHintKey();
   }
 });
 
