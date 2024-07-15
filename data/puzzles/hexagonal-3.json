@@ -1,0 +1,1 @@
+[{"board":{"type":"PolygonGeneratorBoard","generator":"Hexagonal","parameters":{"squareRegion":false,"radius":3,"isPointyTop":true,"holeRadius":0}},"faceData":".23.....3.33...432..2..543.....35....","edgeDifficulty":null,"edgeColorDifficulty":10.359920557135311,"edgeColorSectorDifficulty":10.144491939313248,"fullDifficulty":10.144491939313248}]
