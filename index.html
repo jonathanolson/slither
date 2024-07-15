@@ -13,10 +13,9 @@
       <li><a href="#coloring">Coloring</a></li>
       <li><a href="#colors-and-sectors">Colors and Sectors</a></li>
       <li><a href="#highlander">Highlander</a></li>
-      <li><a href="#solving-with-loops-and-regions">Solving with Loops and Regions</a></li>
-      <li><a href="#user-interface">User Interface</a></li>
-      <li><a href="#pattern-explorer">Pattern Explorer</a></li>
-      <li><a href="#technical-details">Technical Details</a></li>
+      <li><a href="#loops-and-regions">Loops and Regions</a></li>
+      <li><a href="#more-patterns">More Patterns</a></li>
+      <li><a href="#practice">Practice</a></li>
     </ul>
   </nav>
 </aside>
@@ -1259,7 +1258,7 @@
     have deduced some lines and X's doesn't prevent ruling out things using solutions that contradict those deductions.
   </p>
 
-  <h2 id="solving-with-loops-and-regions">Solving with Loops and Regions</h2>
+  <h2 id="loops-and-regions">Loops and Regions</h2>
 
   <p>
     Below is a case (with two representations) where there is a constriction: if certain moves are made, it will split the puzzle into two
@@ -1312,43 +1311,68 @@
     Here, both purple-dashed regions are the same color, and for similar reasons they must be the "inside" color (gray).
   </p>
 
-  <h2 id="user-interface">User Interface</h2>
+  <h2 id="more-patterns">More Patterns</h2>
 
   <p>
-    TODO (sorry!)
+    There are <strong>many</strong> more patterns for Slitherlink. The above are just a few of the most common ones.
   </p>
 
-  <h2 id="pattern-explorer">Pattern Explorer</h2>
-
-  <p>
-    TODO (sorry!)
-  </p>
-
-  <h2 id="technical-details">Technical Details</h2>
-
-  <p>
-    TODO (sorry!)
+  <p class="p-center">
+    <a href="./rule-explorer"><img src="/img/rule-explorer.png" style="width: auto; height: auto; max-width: 30em;" alt="Pattern Explorer"></a>
   </p>
 
   <p>
-    For this part, I'll use some different terminology that is a bit more mathematically-oriented:
+    I have computed a large number of patterns, and you can browse them in the <a href="./rule-explorer">pattern explorer</a>.
+  </p>
+
+  <p>
+    Fundamentally, there are 5 different databases of patterns:
   </p>
 
   <ul>
-    <li>
-      <strong>Vertices:</strong> "Dots" where the loop can turn.
-    </li>
-    <li>
-      <strong>Edges:</strong> "Lines" between vertices that may be part of the loop.
-    </li>
-    <li>
-      <strong>Faces:</strong> "Cells" (areas surrounded by edges), with some faces containing numbers indicating the number of edges that must surround them.
-    </li>
-    <li>
-      <strong>Board:</strong> The combination of vertices, edges, and faces, that make up the
-      <a href="https://en.wikipedia.org/wiki/Planar_graphs">planar graph</a> (grid) of the puzzle.
-    </li>
+    <li>Edge (no colors/sectors)</li>
+    <li>Color (no edges/sectors)</li>
+    <li>Edge + Color (no sectors)</li>
+    <li>Edge + Sector (no colors)</li>
+    <li>Edge + Color + Sector</li>
   </ul>
+
+  <p style="margin-top: 1em;">
+    It also allows filtering by:
+  </p>
+
+  <ul>
+    <li>Highlander</li>
+    <li>Numbers/red (helpful for finding "starting" patterns that don't need lines/colors)</li>
+    <li>Compatible Tiling</li>
+  </ul>
+
+  <p>
+    Clicking on any pattern will take you to a page that displays more information about it, and shows how the pattern
+    might work in different tilings.
+  </p>
+
+  <h2 id="practice">Practice</h2>
+
+  <p>
+    To learn patterns, I would highly recommend using the <a href="./play">interactive app</a>. Generate a puzzle,
+    solve all that you can, and when you get stuck, hit the "hint" button.
+  </p>
+
+  <p>
+    It should show you a new pattern that you missed. This is great for learning new patterns!
+  </p>
+
+  <p>
+    If you do not understand the pattern, you can click on it to see more details. Try to see if there is a "solution"
+    that breaks the pattern (i.e. satisfies all constraints, and has no loops). This can help you understand why the
+    pattern is valid.
+  </p>
+
+  <p>
+    Additionally, please let me know if I can fix or update anything in the app or on this page!
+  </p>
+
 </main>
 
 <script type="module" src="/src/targets/index.ts" async></script>
