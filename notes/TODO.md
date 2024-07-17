@@ -8,13 +8,20 @@
   - 
   - Priorities:
     - 
-    - Incorrect "color matching" in patterns, because I am only adjusting hue (not light/dark)
+    - Article:
+      - More detail on diagonal 2s (parity and importance)
+      - Multi-cell parity (https://www.reddit.com/r/puzzles/comments/m4c01q/a_deeper_type_of_parity_check_in_hexagonal/)
+        - Vertices 0 or 2, adjacent edges add up (with doubling of repeated edges), leading to parity of non-doubled edges.
+          - Easy to add a solver for this too?
+    - 
+    - Scaffolding for new/finished puzzles
+      - Use generated puzzle library (keep up)
+    - 
+    - Hint - if no hint found, see if there is a hint for OTHER representations
     - 
     - IGNORE colors from the "singular" added cells?
     - 
     - Separation of "chrome" and "puzzle" theme?
-    - 
-    - "measure difficulty" of puzzles accurately, then offline generate
     - 
     - Better "Solved" screen (allow keep playing)
       - "Next" - if auto generated
