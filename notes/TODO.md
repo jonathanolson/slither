@@ -17,6 +17,8 @@
     - Scaffolding for new/finished puzzles
       - Use generated puzzle library (keep up)
     - 
+    - Color-opposite drag: no opposite-color changes if already the same color (e.g. drag from A to B, to B)
+    - 
     - Hint - if no hint found, see if there is a hint for OTHER representations
     - 
     - IGNORE colors from the "singular" added cells?
