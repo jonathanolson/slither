@@ -17,6 +17,8 @@
     - Scaffolding for new/finished puzzles
       - Use generated puzzle library (keep up)
     - 
+    - Assertion stripping from production versions - seems very slow right now!
+    - 
     - Color-opposite drag: no opposite-color changes if already the same color (e.g. drag from A to B, to B)
     - 
     - Hint - if no hint found, see if there is a hint for OTHER representations
