@@ -51,6 +51,7 @@ export const greedyFaceMinimize = async <Structure extends TStructure, Data exte
   assertEnabled() && assert(isEasyEnough(board, state.clone()), 'Initial state is not easy enough');
 
   for (const face of faceOrder) {
+    console.log(`remove ${faceOrder.indexOf(face)} of ${faceOrder.length}`);
     interruptedProperty && (await interruptableSleep(0, interruptedProperty));
 
     const previousValue = state.getFaceValue(face);

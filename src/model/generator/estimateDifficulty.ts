@@ -16,6 +16,8 @@ export const estimateDifficulty = (
 ): number => {
   state = state.clone();
 
+  console.log('estimateDifficulty');
+
   let totalDifficulty = 0;
   let totalActions = 0;
 
@@ -23,6 +25,7 @@ export const estimateDifficulty = (
     return logBase(totalDifficulty / Math.sqrt(totalActions) + 1);
   };
 
+  let count = 0;
   while (true) {
     if (getFinalDifficulty() > options.cutoffDifficulty) {
       return Number.POSITIVE_INFINITY;
@@ -38,7 +41,8 @@ export const estimateDifficulty = (
       action.apply(state);
 
       const difficulty = getAnnotationDifficultyB(action.annotation);
-      console.log('difficulty', difficulty, action.annotation.type);
+      // console.log('difficulty', difficulty, action.annotation.type);
+      console.log(`action ${count++} difficulty ${difficulty} ${action.annotation.type}`);
       if (difficulty > 0) {
         totalDifficulty += expBase(difficulty) - 1;
         totalActions += 1;

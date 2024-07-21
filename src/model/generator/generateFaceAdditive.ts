@@ -62,6 +62,7 @@ export const generateFaceAdditive = async (
 
     // TODO: faster approach might try adding multiple faces at once before trying to solve (maybe that isn't faster)
     for (const face of faceOrder) {
+      console.log(`add ${faceOrder.indexOf(face)} of ${faceOrder.length}`);
       debugSleep && console.log('going to sleep');
       interruptedProperty && (await interruptableSleep(0, interruptedProperty));
       debugSleep && console.log('finished sleep, generating next!');

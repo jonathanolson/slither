@@ -9,6 +9,12 @@ const lockfileOptions = {
 
 os.setPriority(os.constants.priority.PRIORITY_LOW);
 
+const difficulty = process.argv[2];
+
+if (!difficulty) {
+  throw new Error('difficulty required');
+}
+
 (async () => {
   const browser = await getBrowser();
 
@@ -135,7 +141,9 @@ os.setPriority(os.constants.priority.PRIORITY_LOW);
       return JSON.parse(fs.readFileSync(puzzleFilename, 'utf8'));
     };
 
-    const minimizedRatedPuzzle = await evaluateHooks(`getMinimizedRatedPuzzle( ${JSON.stringify(shortName)} )`);
+    const minimizedRatedPuzzle = await evaluateHooks(
+      `getMinimizedRatedPuzzle( ${JSON.stringify(shortName)}, ${JSON.stringify(difficulty)} )`,
+    );
 
     if (minimizedRatedPuzzle !== null) {
       const release = await getLock();

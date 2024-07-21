@@ -32,8 +32,6 @@ import { getSerializedRatedPuzzle } from '../model/puzzle/getSerializedRatedPuzz
 
 import { compressString } from '../util/compression.ts';
 
-import _ from '../workarounds/_.ts';
-
 // Load with `http://localhost:5173/rules-test.html?debugger`
 
 // // @ts-expect-error
@@ -56,6 +54,7 @@ document.body.appendChild(display.domElement);
 display.setWidthHeight(window.innerWidth, window.innerHeight);
 
 type ShortName = string;
+type DifficultyString = 'easy' | 'medium' | 'hard' | 'very-hard' | 'full' | 'no-limit';
 
 // TODO: use this more to get rid of the other globals
 declare global {
@@ -112,7 +111,10 @@ declare global {
       highlanderCollection: SerializedBinaryRuleCollection | null,
     ) => SerializedBinaryMixedRuleGroup;
 
-    getMinimizedRatedPuzzle: (shortName: ShortName) => Promise<TSerializedRatedPuzzle | null>;
+    getMinimizedRatedPuzzle: (
+      shortName: ShortName,
+      difficultyString: DifficultyString,
+    ) => Promise<TSerializedRatedPuzzle | null>;
   }
 }
 
@@ -262,19 +264,24 @@ window.collectionsToSortedMixedGroup = (
   return mixedGroup.sortedDefault().serialize();
 };
 
-window.getMinimizedRatedPuzzle = async (shortName: ShortName): Promise<TSerializedRatedPuzzle | null> => {
+window.getMinimizedRatedPuzzle = async (
+  shortName: ShortName,
+  difficultyString: DifficultyString,
+): Promise<TSerializedRatedPuzzle | null> => {
   const board = PolygonGeneratorBoard.fromShortName(shortName);
 
   let solvedPuzzle: TSolvedPuzzle<TStructure, TCompleteData> | null = null;
 
-  const difficulty = _.sample([
-    CanSolveDifficulty.EASY,
-    CanSolveDifficulty.MEDIUM,
-    CanSolveDifficulty.HARD,
-    CanSolveDifficulty.VERY_HARD,
-    // CanSolveDifficulty.FULL,
-    CanSolveDifficulty.NO_LIMIT,
-  ]);
+  const difficulty = {
+    easy: CanSolveDifficulty.EASY,
+    medium: CanSolveDifficulty.MEDIUM,
+    hard: CanSolveDifficulty.HARD,
+    'very-hard': CanSolveDifficulty.VERY_HARD,
+    full: CanSolveDifficulty.NO_LIMIT,
+    'no-limit': CanSolveDifficulty.NO_LIMIT,
+  }[difficultyString];
+
+  console.log(difficulty.name);
 
   try {
     while (!solvedPuzzle) {
@@ -287,7 +294,7 @@ window.getMinimizedRatedPuzzle = async (shortName: ShortName): Promise<TSerializ
         new TinyEmitter(),
       );
     }
-
+    console.log('rating');
     return getSerializedRatedPuzzle(solvedPuzzle);
   } catch (e) {
     return null;

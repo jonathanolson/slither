@@ -158,7 +158,7 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
       ...groups.map((group) => {
         return (maxDifficulty: number) => {
           const ruleCount = group.getRuleCountWithDifficulty(Math.min(options.cutoffDifficulty, maxDifficulty));
-          console.log('size', ruleCount, 'of', group.size, 'for maxDifficulty', maxDifficulty);
+          // console.log('size', ruleCount, 'of', group.size, 'for maxDifficulty', maxDifficulty);
 
           return BinaryPatternSolver.fromGroup(board, boardPatternBoard, state, group, ruleCount);
         };

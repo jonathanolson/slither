@@ -372,12 +372,12 @@ export class BinaryRuleCollection {
     highlanderOverride?: (ruleIndex: number) => boolean,
     maxRules = this.size,
   ): ActionableRuleEmbedding | null {
-    let count = 0;
+    // let count = 0;
     for (let ruleIndex = initialRuleIndex; ruleIndex < maxRules; ruleIndex++) {
-      if (count % 1000 === 0) {
-        console.log('search', count);
-      }
-      count++;
+      // if (count % 10000 === 0) {
+      //   console.log('search', count);
+      // }
+      // count++;
 
       const byteIndex = this.ruleIndices[ruleIndex];
       const patternBoardIndex = this.data[byteIndex];
