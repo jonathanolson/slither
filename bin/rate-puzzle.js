@@ -79,7 +79,7 @@ if (!difficulty) {
       'penrose-20',
     ];
     const selectedBoardNames =
-      Math.random() < 0.25 ? boardShortNames : boardShortNames.filter((name) => name.startsWith('square'));
+      Math.random() < 0.75 ? boardShortNames : boardShortNames.filter((name) => name.startsWith('square'));
 
     const shortName = selectedBoardNames[Math.floor(Math.random() * selectedBoardNames.length)];
     console.log('shortName', shortName);
