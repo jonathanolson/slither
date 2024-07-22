@@ -34,20 +34,25 @@ import { VertexToEdgeSolver } from './VertexToEdgeSolver.ts';
 import { VertexToFaceColorSolver } from './VertexToFaceColorSolver.ts';
 import { VertexToSectorSolver } from './VertexToSectorSolver.ts';
 
-export type DifficultySolverOptions = {
+export type DifficultySolverOptions<Data extends TCompleteData> = {
   solveEdges: boolean;
   solveSectors: boolean;
   solveFaceColors: boolean;
   solveVertexState: boolean;
   solveFaceState: boolean;
   cutoffDifficulty: number;
+
+  // Can be passed in IF the state delta between this solver and the previous one includes no changes that pattern solvers would catch
+  previousSolver?: DifficultySolver<Data> | null;
 };
 
 export class DifficultySolver<Data extends TCompleteData> implements TSolver<Data, TAnnotatedAction<Data>> {
   private _dirty = true;
   private _action: TAnnotatedAction<Data> | null = null;
 
-  public constructor(board: TBoard, state: TState<Data>, options: DifficultySolverOptions) {
+  private noPatternWithDifficulty: number | null = null;
+
+  public constructor(board: TBoard, state: TState<Data>, options: DifficultySolverOptions<Data>) {
     const boardPatternBoard = BoardPatternBoard.get(board);
 
     const groups = [
@@ -165,13 +170,31 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
       }),
     ];
 
+    let patternDifficulty = Number.POSITIVE_INFINITY;
+    let foundPattern = false;
+
     let bestDifficulty = Number.POSITIVE_INFINITY;
     for (const solverFactory of solverFactories) {
       const solver = solverFactory(bestDifficulty);
 
-      const action = solver.nextAction();
+      const isPattern = solver instanceof BinaryPatternSolver;
+
+      // If we found no patterns previously at a certain difficulty, AND we haven't changed anything in the state that
+      // would detect those patterns, then skip pattern scanning.
+      const isIgnoredPattern =
+        isPattern &&
+        options.previousSolver &&
+        options.previousSolver.noPatternWithDifficulty &&
+        bestDifficulty <= options.previousSolver.noPatternWithDifficulty;
+
+      const action = !isIgnoredPattern ? solver.nextAction() : null;
 
       solver.dispose();
+
+      if (isPattern) {
+        foundPattern = foundPattern || !!action;
+        patternDifficulty = Math.min(patternDifficulty, bestDifficulty);
+      }
 
       if (action) {
         const difficulty = getAnnotationDifficultyB(action.annotation);
@@ -185,6 +208,11 @@ export class DifficultySolver<Data extends TCompleteData> implements TSolver<Dat
           break;
         }
       }
+    }
+
+    if (isFinite(patternDifficulty) && !foundPattern) {
+      // console.log(`    no pattern with difficulty ${patternDifficulty}`);
+      this.noPatternWithDifficulty = patternDifficulty;
     }
   }
 

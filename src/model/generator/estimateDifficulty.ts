@@ -12,7 +12,7 @@ const expBase = (x: number) => Math.pow(BASE, x);
 export const estimateDifficulty = (
   board: TBoard,
   state: TState<TCompleteData>,
-  options: DifficultySolverOptions,
+  options: DifficultySolverOptions<TCompleteData>,
 ): number => {
   state = state.clone();
 
@@ -25,13 +25,29 @@ export const estimateDifficulty = (
     return logBase(totalDifficulty / Math.sqrt(totalActions) + 1);
   };
 
+  let previousSolver: DifficultySolver<TCompleteData> | null = null;
+  [
+    state.faceValueChangedEmitter,
+    state.edgeStateChangedEmitter,
+    state.faceColorsChangedEmitter,
+    state.sectorStateChangedEmitter,
+  ].forEach((emitter) =>
+    emitter.addListener(() => {
+      previousSolver = null;
+    }),
+  );
+
   let count = 0;
   while (true) {
     if (getFinalDifficulty() > options.cutoffDifficulty) {
       return Number.POSITIVE_INFINITY;
     }
 
-    const solver = new DifficultySolver(board, state, options);
+    const solver: DifficultySolver<TCompleteData> = new DifficultySolver(board, state, {
+      ...options,
+      previousSolver: previousSolver,
+    });
+    previousSolver = solver;
 
     const action = solver.nextAction();
 
