@@ -5,36 +5,36 @@
   - s1: node bin/next-board.js square only edge unrestricted
   - s2: node bin/next-board.js square only edge
   - s3: node bin/next-board.js general all unrestricted
-  - s4: node bin/next-board.js general all
+  - s4: node bin/next-board.js general all -- crashed
   - s5: node bin/next-board.js general color unrestricted
   - s6: node bin/next-board.js general edge color unrestricted
-  - s7: node bin/next-board.js general edge color
+  - s7: node bin/next-board.js general edge color -- crashed
   - s8: node bin/next-board.js general edge sector unrestricted
   - s9: node bin/next-board.js general edge sector
   - s10: node bin/next-board.js general edge unrestricted
   - s11: node bin/next-board.js general edge
   - s12: node bin/next-board.js square only edge color unrestricted
-  - s13: node bin/next-board.js square only edge color
+  - s13: node bin/next-board.js square only edge color -- crashed
   - s14: node bin/next-board.js square only edge sector unrestricted
-  - s15: node bin/next-board.js square only edge sector
+  - s15: node bin/next-board.js square only edge sector -- crashed
   - s16: node bin/next-board.js square only color unrestricted
-  - s17: node bin/next-board.js square only all unrestricted
-  - s18: node bin/next-board.js square only all
+  - s17: node bin/next-board.js square only all unrestricted -- crashed
+  - s18: node bin/next-board.js square only all -- crashed
   - s19: node bin/next-board.js square only edge unrestricted
   - s20: node bin/next-board.js square only edge
-  - s21: node bin/next-board.js square only edge color unrestricted
+  - s21: node bin/next-board.js square only edge color unrestricted -- crashed
   - s22: node bin/next-board.js general edge color unrestricted
-  - s23: node bin/next-board.js square only edge color unrestricted
+  - s23: node bin/next-board.js square only edge color unrestricted -- crashed
   - s24: node bin/next-board.js general edge color unrestricted
   - s25: node bin/next-board.js general edge color unrestricted
   - s26: node bin/next-board.js general edge color unrestricted
   - s27: node bin/next-board.js general edge unrestricted
   - s28: node bin/next-board.js general edge
   - s29: node bin/next-board.js general edge color unrestricted square-2-4
-  - s30: node bin/next-board.js general edge color
+  - s30: node bin/next-board.js general edge color -- crashed
   - s31: node bin/next-board.js general edge color unrestricted trihexagonal-2-2
   - s32: node bin/next-board.js general edge color unrestricted cairo-2-0
-  - s33: node bin/next-board.js general edge color unrestricted hexagonal-1-0
+  - s33: node bin/next-board.js general edge color unrestricted hexagonal-1-0 (10000)
   - s34: node bin/next-board.js general edge unrestricted
   - s35: node bin/next-board.js general edge
   - 
